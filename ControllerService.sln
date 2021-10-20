@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControllerService", "ControllerService\ControllerService.csproj", "{6B7B570E-8C8B-4189-9C98-B3BBFE630615}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6B7B570E-8C8B-4189-9C98-B3BBFE630615}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B7B570E-8C8B-4189-9C98-B3BBFE630615}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B7B570E-8C8B-4189-9C98-B3BBFE630615}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B7B570E-8C8B-4189-9C98-B3BBFE630615}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AD9A944E-70E1-4512-9F51-8786F866BACA}
+	EndGlobalSection
+EndGlobal
