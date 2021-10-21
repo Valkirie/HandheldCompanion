@@ -13,15 +13,14 @@ namespace ControllerService
     {
         public string name { get; set; }
         public string path { get; set; }
-        public bool whitelisted { get; set; }
-        public bool legacy { get; set; } // not yet implemented
+        public bool whitelisted { get; set; }   // can see through the HidHide cloak
+        public bool legacy { get; set; }        // not yet implemented
 
         public void Serialize()
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(this, options);
 
-            // write to disk
             string settingsPath = Path.Combine(ControllerService.CurrentPathProfiles, this.name, "Settings.json");
             File.WriteAllText(settingsPath, jsonString);
         }

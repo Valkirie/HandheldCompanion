@@ -33,7 +33,7 @@ namespace ControllerService
         private static UdpServer UDPServer;
         public static HidHide Hidder;
 
-        public static string CurrentPath, CurrentPathCli, CurrentPathProfiles;
+        public static string CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathClient;
         private static bool IsRunning;
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -66,10 +66,17 @@ namespace ControllerService
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
             CurrentPathCli = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
             CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
+            CurrentPathClient = Path.Combine(CurrentPath, "ControllerServiceClient.exe");
 
             if (!File.Exists(CurrentPathCli))
             {
                 eventLog1.WriteEntry("HidHide is missing. Please get it from: https://github.com/ViGEm/HidHide/releases");
+                this.Stop();
+            }
+
+            if (!File.Exists(CurrentPathClient))
+            {
+                eventLog1.WriteEntry("CurrentPathClient is missing. Application will stop.");
                 this.Stop();
             }
 
@@ -171,7 +178,7 @@ namespace ControllerService
                         Profile CurrentProfile = CurrentManager.profiles[CurrentProcess.ProcessName];
                         PhysicalController.muted = CurrentProfile.whitelisted;
                     }
-                    catch (Exception) { }
+                    catch (Exception ex) { Debug.WriteLine(ex.Message); }
 
                     CurrenthProcess = ProcessId;
                 }
