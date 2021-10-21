@@ -18,7 +18,6 @@ namespace ControllerServiceClient
         {
             const int nChars = 256;
             StringBuilder buff = new StringBuilder(nChars);
-            string title = "- ";
             IntPtr hWnd = GetForegroundWindow();
 
             IntPtr processId;
