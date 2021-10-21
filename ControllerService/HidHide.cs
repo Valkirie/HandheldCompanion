@@ -5,10 +5,10 @@ using System.Text.Json;
 
 namespace ControllerService
 {
-    class HidHide
+    public class HidHide
     {
         private Process process;
-        RootDevice root;
+        public RootDevice root;
 
         public HidHide(string _path)
         {
@@ -24,6 +24,34 @@ namespace ControllerService
                     Verb = "runas"
                 }
             };
+        }
+
+        public List<string> GetRegisteredApplications()
+        {
+            process.StartInfo.Arguments = $"--app-list";
+            process.Start();
+            process.WaitForExit();
+
+            string standard_output;
+            List<string> whitelist = new List<string>();
+            while ((standard_output = process.StandardOutput.ReadLine()) != null)
+            {
+                if (!standard_output.Contains("app-reg"))
+                    break;
+
+                // --app-reg \"C:\\Program Files\\Nefarius Software Solutions e.U\\HidHideCLI\\HidHideCLI.exe\"
+                string path = Utils.Between(standard_output, "--app-reg \"", "\"");
+                whitelist.Add(path);
+            }
+            return whitelist;
+        }
+
+        public void UnregisterApplication(string path)
+        {
+            process.StartInfo.Arguments = $"--app-unreg \"{path}\"";
+            process.Start();
+            process.WaitForExit();
+            process.StandardOutput.ReadToEnd();
         }
 
         public void RegisterApplication(string path)

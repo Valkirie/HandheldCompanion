@@ -7,6 +7,7 @@ using System;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace ControllerService
@@ -27,9 +28,23 @@ namespace ControllerService
 
         public UserIndex index;
         public bool connected;
+        public bool muted;
 
         private long microseconds;
         private Stopwatch stopwatch;
+        
+        struct _DS4_TOUCH
+        {
+            public byte bPacketCounter;         // timestamp / packet counter associated with touch event
+            public byte bIsUpTrackingNum1;      // 0 means down; active low
+                                                // unique to each finger down, so for a lift and repress the value is incremented
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] bTouchData1;          // Two 12 bits values (for X and Y) 
+                                                // middle byte holds last 4 bits of X and the starting 4 bits of Y
+            public byte bIsUpTrackingNum2;      // second touch data immediately follows data of first touch
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] bTouchData2;          // resolution is 1920x942
+        }
 
         public XInputController(UserIndex _idx)
         {
@@ -117,9 +132,16 @@ namespace ControllerService
 
         private void UpdateDS4()
         {
+            _DS4_TOUCH touch1 = new _DS4_TOUCH()
+            {
+                bPacketCounter = 1,
+                bIsUpTrackingNum1 = (0 << 7) + 1
+            };
+
+
             while (true)
             {
-                if (connected)
+                if (connected && !muted)
                 {
                     State state = controller.GetState();
                     if (previousState.PacketNumber != state.PacketNumber)
@@ -175,8 +197,10 @@ namespace ControllerService
 
                         buffer[7] = gamepad.LeftTrigger; // Left Trigger
                         buffer[8] = gamepad.RightTrigger; // Right Trigger
+
                         buffer[9] = (byte)microseconds;                    // timestamp
                         buffer[10] = (byte)((ushort)microseconds >> 8);    // timestamp
+
                         buffer[11] = (byte)0xff; // battery
 
                         // wGyro
@@ -196,6 +220,9 @@ namespace ControllerService
                         buffer[23] = (byte)((short)Acceleration.Z >> 8);
 
                         buffer[29] = (byte)0xff; // battery
+
+                        buffer[33] = (byte)touch1.bPacketCounter;
+
                         vcontroller.SubmitRawReport(buffer);
                     }
                     previousState = state;

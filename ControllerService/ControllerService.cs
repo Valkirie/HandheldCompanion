@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Management;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading;
@@ -21,7 +23,7 @@ using System.Windows.Forms;
 
 namespace ControllerService
 {
-    public partial class Service1 : ServiceBase
+    public partial class ControllerService : ServiceBase
     {
         // controllers vars
         private static XInputController PhysicalController;
@@ -29,13 +31,19 @@ namespace ControllerService
         private static XInputGirometer Gyrometer;
         private static XInputAccelerometer Accelerometer;
         private static UdpServer UDPServer;
-        private static HidHide Hidder;
+        public static HidHide Hidder;
 
-        private static string CurrentPath, CurrentPathCli;
-
+        public static string CurrentPath, CurrentPathCli, CurrentPathProfiles;
         private static bool IsRunning;
 
-        public Service1()
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint GetWindowThreadProcessId(int hWnd, out uint lpdwProcessId);
+        private static int CurrenthProcess;
+        private static Thread MonitorThread;
+
+        public static ProfileManager CurrentManager;
+
+        public ControllerService(string[] args)
         {
             InitializeComponent();
 
@@ -57,6 +65,7 @@ namespace ControllerService
             // paths
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
             CurrentPathCli = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
+            CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
 
             if (!File.Exists(CurrentPathCli))
             {
@@ -67,7 +76,9 @@ namespace ControllerService
             // initialize HidHide
             Hidder = new HidHide(CurrentPathCli);
             Hidder.RegisterApplication(Assembly.GetExecutingAssembly().Location);
-            Hidder.RegisterApplication(@"C:\Program Files (x86)\AYASpace\AYASpace.exe");
+
+            // initialize Profile Manager
+            CurrentManager = new ProfileManager(CurrentPathProfiles);
 
             // initialize ViGem
             try
@@ -141,7 +152,32 @@ namespace ControllerService
             // initialize UDP Server
             UDPServer = new UdpServer();
 
+            // monitor processes and settings
+            MonitorThread = new Thread(MonitorProcess);
+
             // todo : Configurez le mécanisme d’interrogation
+        }
+
+        static void MonitorProcess()
+        {
+            while (IsRunning)
+            {
+                int ProcessId = Utils.GetProcessIdByPath(CurrentPath + "ControllerServiceClient.exe");
+                if (ProcessId != CurrenthProcess)
+                {
+                    try
+                    {
+                        Process CurrentProcess = Process.GetProcessById((int)ProcessId);
+                        Profile CurrentProfile = CurrentManager.profiles[CurrentProcess.ProcessName];
+                        PhysicalController.muted = CurrentProfile.whitelisted;
+                    }
+                    catch (Exception) { }
+
+                    CurrenthProcess = ProcessId;
+                }
+
+                Thread.Sleep(1000);
+            }
         }
 
         protected override void OnStart(string[] args)
@@ -155,6 +191,9 @@ namespace ControllerService
                 UDPServer.Start(26760);
                 PhysicalController.SetUdpServer(UDPServer);
             }
+
+            // start monitoring processes
+            MonitorThread.Start();
 
             // turn on the cloaking
             Hidder.SetCloaking(true);

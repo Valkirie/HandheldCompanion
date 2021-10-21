@@ -1,7 +1,7 @@
 ﻿
 namespace ControllerService
 {
-    partial class Service1
+    partial class ControllerService
     {
         /// <summary> 
         /// Variable nécessaire au concepteur.
@@ -32,7 +32,7 @@ namespace ControllerService
             this.eventLog1 = new System.Diagnostics.EventLog();
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
             // 
-            // Service1
+            // ControllerService
             // 
             this.ServiceName = "ControllerService";
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).EndInit();

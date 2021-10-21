@@ -42,7 +42,7 @@ namespace ControllerService
             // 
             this.serviceInstaller1.Description = "Provides gyroscope and accelerometer support to the Aya Neo 2020 and 2021";
             this.serviceInstaller1.DisplayName = "Controller Service";
-            this.serviceInstaller1.ServiceName = "Service1";
+            this.serviceInstaller1.ServiceName = "ControllerService";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller

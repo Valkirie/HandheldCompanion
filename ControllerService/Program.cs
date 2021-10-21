@@ -19,10 +19,10 @@ namespace ControllerService
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new Service1()
+                new ControllerService(args)
             };
 
-            var parameter = string.Concat(args);
+            string parameter = string.Concat(args);
             switch (parameter)
             {
                 case "--install":
