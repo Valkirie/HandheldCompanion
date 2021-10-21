@@ -69,7 +69,11 @@ namespace ControllerService
             if (File.Exists(fileName))
             {
                 profiles[output.name] = output;
-                ControllerService.Hidder.RegisterApplication(output.path);
+
+                if(output.whitelisted)
+                    ControllerService.Hidder.RegisterApplication(output.path);
+                else
+                    ControllerService.Hidder.UnregisterApplication(output.path);
             }
         }
 
