@@ -175,8 +175,16 @@ namespace ControllerService
                     try
                     {
                         Process CurrentProcess = Process.GetProcessById((int)ProcessId);
-                        Profile CurrentProfile = CurrentManager.profiles[CurrentProcess.ProcessName];
-                        PhysicalController.muted = CurrentProfile.whitelisted;
+                        string ProcessName = CurrentProcess.ProcessName;
+
+                        if (CurrentManager.profiles.ContainsKey(ProcessName))
+                        {
+                            Profile CurrentProfile = CurrentManager.profiles[ProcessName];
+                            PhysicalController.muted = CurrentProfile.whitelisted;
+                            Debug.WriteLine($"Muted {PhysicalController.GetType().Name} for process {ProcessName}");
+                        }
+                        else
+                            PhysicalController.muted = false;
                     }
                     catch (Exception ex) { Debug.WriteLine(ex.Message); }
 
