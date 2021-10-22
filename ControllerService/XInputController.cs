@@ -14,7 +14,7 @@ namespace ControllerService
 {
     public class XInputController
     {
-        private Controller controller;
+        public Controller controller;
         private Gamepad gamepad;
 
         private UdpServer server;
@@ -27,7 +27,6 @@ namespace ControllerService
         public Vector3 Acceleration;
 
         public UserIndex index;
-        public bool connected;
         public bool muted;
 
         private long microseconds;
@@ -51,9 +50,8 @@ namespace ControllerService
             // initilize controller
             controller = new Controller(_idx);
             index = _idx;
-            connected = controller.IsConnected;
 
-            if (!connected)
+            if (!controller.IsConnected)
                 return;
 
             // initialize vectors
@@ -96,10 +94,13 @@ namespace ControllerService
 
         private void UpdateUDP()
         {
-            while(server.running)
+            while(true)
             {
-                microseconds = stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L));
-                server.NewReportIncoming(this, microseconds);
+                if (controller.IsConnected)
+                {
+                    microseconds = stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L));
+                    server.NewReportIncoming(this, microseconds);
+                }
                 Thread.Sleep(10);
             }
         }
@@ -138,10 +139,9 @@ namespace ControllerService
                 bIsUpTrackingNum1 = (0 << 7) + 1
             };
 
-
             while (true)
             {
-                if (connected && !muted)
+                if (controller.IsConnected && !muted)
                 {
                     State state = controller.GetState();
                     if (previousState.PacketNumber != state.PacketNumber)
@@ -221,7 +221,7 @@ namespace ControllerService
 
                         buffer[29] = (byte)0xff; // battery
 
-                        buffer[33] = (byte)touch1.bPacketCounter;
+                        // buffer[33] = (byte)touch1.bPacketCounter;
 
                         vcontroller.SubmitRawReport(buffer);
                     }

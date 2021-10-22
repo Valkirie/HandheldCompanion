@@ -109,7 +109,7 @@ namespace ControllerService
             for (int i = 0; i < 4; i++)
             {
                 PhysicalController = new XInputController((SharpDX.XInput.UserIndex)i);
-                if (PhysicalController.connected)
+                if (PhysicalController.controller.IsConnected)
                     break; // got it !
             }
 
@@ -146,7 +146,7 @@ namespace ControllerService
                 }
             }
 
-            // default is 10ms rating and 10 samples
+            // default is 10ms rating
             Gyrometer = new XInputGirometer(eventLog1);
             if (Gyrometer.sensor == null)
                 eventLog1.WriteEntry("No Gyrometer detected.");
@@ -169,7 +169,7 @@ namespace ControllerService
         {
             while (IsRunning)
             {
-                int ProcessId = Utils.GetProcessIdByPath(CurrentPath + "ControllerServiceClient.exe");
+                int ProcessId = Utils.GetProcessIdByPath(CurrentPathClient);
                 if (ProcessId != CurrenthProcess)
                 {
                     try
@@ -242,7 +242,8 @@ namespace ControllerService
                 eventLog1.WriteEntry($"UDP server has stopped.");
             }
 
-            Hidder.SetCloaking(false);
+            if (Hidder != null)
+                Hidder.SetCloaking(false);
             eventLog1.WriteEntry($"Uncloaking {PhysicalController.GetType().Name}");
         }
     }
