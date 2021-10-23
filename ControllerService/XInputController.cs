@@ -67,9 +67,23 @@ namespace ControllerService
         {
             vcontroller = _controller;
             vcontroller.AutoSubmitReport = false;
+            vcontroller.FeedbackReceived += Vcontroller_FeedbackReceived;
 
             Thread UpdateThread = new Thread(UpdateDS4);
             UpdateThread.Start();
+        }
+
+        private void Vcontroller_FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)
+        {
+            if (controller.IsConnected)
+            {
+                Vibration inputMotor = new Vibration()
+                {
+                    LeftMotorSpeed = (ushort)(e.LargeMotor * ushort.MaxValue / byte.MaxValue),
+                    RightMotorSpeed = (ushort)(e.SmallMotor * ushort.MaxValue / byte.MaxValue),
+                };
+                controller.SetVibration(inputMotor);
+            }
         }
 
         public void SetGyroscope(XInputGirometer _gyrometer)
