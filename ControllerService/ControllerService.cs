@@ -42,6 +42,7 @@ namespace ControllerService
         private static Thread MonitorThread;
 
         public static ProfileManager CurrentManager;
+        public static Assembly CurrentAssembly;
 
         public ControllerService(string[] args)
         {
@@ -55,8 +56,8 @@ namespace ControllerService
             if (!EventLog.SourceExists(eventLog1.Source))
                 EventLog.CreateEventSource(eventLog1.Source, eventLog1.Source);
 
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+            CurrentAssembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
 
@@ -82,10 +83,10 @@ namespace ControllerService
 
             // initialize HidHide
             Hidder = new HidHide(CurrentPathCli);
-            Hidder.RegisterApplication(Assembly.GetExecutingAssembly().Location);
+            Hidder.RegisterApplication(CurrentAssembly.Location);
 
             // initialize Profile Manager
-            CurrentManager = new ProfileManager(CurrentPathProfiles);
+            CurrentManager = new ProfileManager(CurrentPathProfiles, CurrentAssembly.Location);
 
             // initialize ViGem
             try
@@ -108,9 +109,9 @@ namespace ControllerService
             // prepare physical controller
             for (int i = 0; i < 4; i++)
             {
-                PhysicalController = new XInputController((SharpDX.XInput.UserIndex)i);
-                if (PhysicalController.controller.IsConnected)
-                    break; // got it !
+                XInputController tmpController = new XInputController((SharpDX.XInput.UserIndex)i);
+                if (tmpController.controller.IsConnected)
+                    PhysicalController = tmpController;
             }
 
             if (PhysicalController == null)
