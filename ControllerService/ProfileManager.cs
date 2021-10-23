@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -31,7 +32,7 @@ namespace ControllerService
         public Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
         public FileSystemWatcher profileWatcher { get; set; }
 
-        public ProfileManager(string path)
+        public ProfileManager(string path, string location)
         {
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -53,8 +54,9 @@ namespace ControllerService
             // import profiles from HidHide
             List<string> hid_pathes = ControllerService.Hidder.GetRegisteredApplications();
             List<string> pro_pathes = profiles.Values.Select(a => a.path).ToList();
+            pro_pathes.Add(location);
 
-            foreach(string fileName in hid_pathes.Where(a => !pro_pathes.Contains(a)))
+            foreach (string fileName in hid_pathes.Where(a => !pro_pathes.Contains(a)))
                 ControllerService.Hidder.UnregisterApplication(fileName);
         }
 
