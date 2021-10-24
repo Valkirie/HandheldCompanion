@@ -491,8 +491,8 @@ namespace ControllerService
 
                 if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder)) outputData[outIdx] |= 0x08;
                 if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder)) outputData[outIdx] |= 0x04;
-                if (hidReport.gamepad.RightTrigger == 255) outputData[outIdx] |= 0x02;
-                if (hidReport.gamepad.LeftTrigger == 255) outputData[outIdx] |= 0x01;
+                if (hidReport.gamepad.RightTrigger == byte.MaxValue) outputData[outIdx] |= 0x02;
+                if (hidReport.gamepad.LeftTrigger == byte.MaxValue) outputData[outIdx] |= 0x01;
 
                 outputData[++outIdx] = (byte)0; // (hidReport.PS) ? (byte)1 : 
                 outputData[++outIdx] = (byte)0; // (hidReport.TouchButton) ? (byte)1 : 
@@ -500,12 +500,12 @@ namespace ControllerService
                 //Left stick
                 outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.LeftThumbX);
                 outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.LeftThumbY);
-                outputData[outIdx] = (byte)(255 - outputData[outIdx]); //invert Y by convention
+                outputData[outIdx] = (byte)(byte.MaxValue - outputData[outIdx]); //invert Y by convention
 
                 //Right stick
                 outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.RightThumbX);
                 outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.RightThumbY);
-                outputData[outIdx] = (byte)(255 - outputData[outIdx]); //invert Y by convention
+                outputData[outIdx] = (byte)(byte.MaxValue - outputData[outIdx]); //invert Y by convention
 
                 //we don't have analog buttons on DS4 :(
                 outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft) ? (byte)0xFF : (byte)0x00;
