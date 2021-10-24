@@ -165,7 +165,7 @@ namespace ControllerService
         {
             input = (short)Math.Max(short.MinValue, Math.Min(short.MaxValue, input));
             float output = (float)input / (float)ushort.MaxValue * (float)byte.MaxValue + (float)(byte.MaxValue / 2.0f);
-            return (byte)output;
+            return (byte)Math.Round(output);
         }
     }
 }
