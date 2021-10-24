@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ControllerService
 {
@@ -72,7 +68,7 @@ namespace ControllerService
             {
                 profiles[output.name] = output;
 
-                if(output.whitelisted)
+                if (output.whitelisted)
                     ControllerService.Hidder.RegisterApplication(output.path);
                 else
                     ControllerService.Hidder.UnregisterApplication(output.path);

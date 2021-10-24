@@ -1,8 +1,5 @@
-﻿using SharpDX.XInput;
-using System;
+﻿using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Numerics;
 using Windows.Devices.Sensors;
 
 namespace ControllerService

@@ -1,13 +1,8 @@
-﻿using Nefarius.ViGEm.Client;
-using Nefarius.ViGEm.Client.Targets;
+﻿using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
-using Nefarius.ViGEm.Client.Targets.Xbox360;
 using SharpDX.XInput;
-using System;
 using System.Diagnostics;
-using System.Net.NetworkInformation;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 

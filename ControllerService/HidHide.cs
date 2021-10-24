@@ -81,7 +81,7 @@ namespace ControllerService
                 jsonString = jsonString.Replace(@"\", @"\\");
                 root = JsonSerializer.Deserialize<RootDevice>(jsonString);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 string tempString = Utils.Between(jsonString, "symbolicLink", ",");
                 root = new RootDevice();
