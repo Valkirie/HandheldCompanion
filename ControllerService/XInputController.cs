@@ -1,6 +1,7 @@
 ﻿using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using SharpDX.XInput;
+using System;
 using System.Diagnostics;
 using System.Numerics;
 using System.Threading;
@@ -162,15 +163,18 @@ namespace ControllerService
                     tempDPad = DualShock4DPadDirection.None;
 
                     State state = controller.GetState();
+
                     if (previousState.PacketNumber != state.PacketNumber)
                     {
-                        gamepad = controller.GetState().Gamepad;
+                        gamepad = state.Gamepad;
 
-                        buffer[0] = Utils.NormalizeInput(gamepad.LeftThumbX); // Left Stick X
-                        buffer[1] = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.LeftThumbY)); // Left Stick Y
+                        // Left Stick
+                        buffer[0] = Utils.NormalizeInput(gamepad.LeftThumbX);
+                        buffer[1] = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.LeftThumbY));
 
-                        buffer[2] = Utils.NormalizeInput(gamepad.RightThumbX); ; // Right Stick X
-                        buffer[3] = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.RightThumbY)); // Right Stick Y
+                        // Right Stick
+                        buffer[2] = Utils.NormalizeInput(gamepad.RightThumbX);
+                        buffer[3] = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.RightThumbY));
 
                         if (gamepad.Buttons.HasFlag(GamepadButtonFlags.A))
                             tempButtons |= DualShock4Button.Cross.Value;
@@ -207,6 +211,11 @@ namespace ControllerService
 
                         buffer[7] = gamepad.LeftTrigger; // Left Trigger
                         buffer[8] = gamepad.RightTrigger; // Right Trigger
+                    }
+                    else
+                    {
+                        // Left Stick, Right Stick
+                        Array.Copy(new byte[4] { 128, 128, 128, 128 }, 0, buffer, 0, 4);
                     }
 
                     // update state

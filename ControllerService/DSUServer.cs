@@ -99,7 +99,7 @@ namespace ControllerService
             padMeta = new DualShockPadMeta()
             {
                 BatteryStatus = DsBattery.Full,
-                ConnectionType = DsConnection.Bluetooth,
+                ConnectionType = DsConnection.Usb,
                 IsActive = true,
                 PadId = (byte)0,
                 PadMacAddress = PadMacAddress,
@@ -587,6 +587,7 @@ namespace ControllerService
 
             // update battery
             padMeta.BatteryStatus = hidReport.BatteryStatus;
+            padMeta.IsActive = hidReport.controller.IsConnected;
 
             var clientsList = new List<IPEndPoint>();
             var now = DateTime.UtcNow;
