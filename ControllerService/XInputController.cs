@@ -9,15 +9,16 @@ using System.Net.NetworkInformation;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace ControllerService
 {
     public class XInputController
     {
         public Controller controller;
-        private Gamepad gamepad;
+        public Gamepad gamepad;
 
-        private UdpServer server;
+        private DSUServer dsu;
         private IDualShock4Controller vcontroller;
 
         public XInputGirometer gyrometer;
@@ -29,21 +30,21 @@ namespace ControllerService
         public UserIndex index;
         public bool muted;
 
-        private long microseconds;
+        public long microseconds;
         private Stopwatch stopwatch;
-        
-        struct _DS4_TOUCH
+
+        public struct TrackPadTouch
         {
-            public byte bPacketCounter;         // timestamp / packet counter associated with touch event
-            public byte bIsUpTrackingNum1;      // 0 means down; active low
-                                                // unique to each finger down, so for a lift and repress the value is incremented
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] bTouchData1;          // Two 12 bits values (for X and Y) 
-                                                // middle byte holds last 4 bits of X and the starting 4 bits of Y
-            public byte bIsUpTrackingNum2;      // second touch data immediately follows data of first touch
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] bTouchData2;          // resolution is 1920x942
+            public bool IsActive;
+            public byte Id;
+            public ushort X;
+            public ushort Y;
         }
+
+        public TrackPadTouch TrackPadTouch0;
+        public TrackPadTouch TrackPadTouch1;
+
+        public DsBattery BatteryStatus;
 
         public XInputController(UserIndex _idx)
         {
@@ -71,6 +72,9 @@ namespace ControllerService
 
             Thread UpdateThread = new Thread(UpdateDS4);
             UpdateThread.Start();
+
+            Thread MonitorBattery = new Thread(MonitorBatteryLife);
+            MonitorBattery.Start();
         }
 
         private void Vcontroller_FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)
@@ -86,6 +90,32 @@ namespace ControllerService
             }
         }
 
+        private void MonitorBatteryLife()
+        {
+            while (true)
+            {
+                if (controller.IsConnected)
+                {
+                    BatteryChargeStatus ChargeStatus = SystemInformation.PowerStatus.BatteryChargeStatus;
+
+                    if (ChargeStatus.HasFlag(BatteryChargeStatus.Charging))
+                        BatteryStatus = DsBattery.Charging;
+                    else if (ChargeStatus.HasFlag(BatteryChargeStatus.NoSystemBattery))
+                        BatteryStatus = DsBattery.None;
+                    else if (ChargeStatus.HasFlag(BatteryChargeStatus.High))
+                        BatteryStatus = DsBattery.High;
+                    else if (ChargeStatus.HasFlag(BatteryChargeStatus.Low))
+                        BatteryStatus = DsBattery.Low;
+                    else if (ChargeStatus.HasFlag(BatteryChargeStatus.Critical))
+                        BatteryStatus = DsBattery.Dying;
+                    else
+                        BatteryStatus = DsBattery.Medium;
+                }
+
+                Thread.Sleep(1000);
+            }
+        }
+
         public void SetGyroscope(XInputGirometer _gyrometer)
         {
             gyrometer = _gyrometer;
@@ -98,25 +128,9 @@ namespace ControllerService
             accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
         }
 
-        public void SetUdpServer(UdpServer _server)
+        public void SetDSUServer(DSUServer _server)
         {
-            server = _server;
-
-            Thread ThreadServer = new Thread(UpdateUDP);
-            ThreadServer.Start();
-        }
-
-        private void UpdateUDP()
-        {
-            while(true)
-            {
-                if (controller.IsConnected)
-                {
-                    microseconds = stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L));
-                    server.NewReportIncoming(this, microseconds);
-                }
-                Thread.Sleep(10);
-            }
+            dsu = _server;
         }
 
         private void Accelerometer_ReadingChanged(object sender, XInputAccelerometerReadingChangedEventArgs e)
@@ -133,13 +147,6 @@ namespace ControllerService
             AngularVelocity.Z = e.AngularVelocityZ;
         }
 
-        private byte NormalizeInput(short input)
-        {
-            input = (short)Math.Max(short.MinValue, Math.Min(short.MaxValue, input));
-            float output = (float)input / (float)ushort.MaxValue * (float)byte.MaxValue + (float)(byte.MaxValue / 2.0f);
-            return (byte)output;
-        }
-
         private State previousState;
         private ushort tempButtons;
         private DualShock4DPadDirection tempDPad;
@@ -147,30 +154,28 @@ namespace ControllerService
 
         private void UpdateDS4()
         {
-            _DS4_TOUCH touch1 = new _DS4_TOUCH()
-            {
-                bPacketCounter = 1,
-                bIsUpTrackingNum1 = (0 << 7) + 1
-            };
-
             while (true)
             {
-                if (controller.IsConnected && !muted)
+                // update timestamp
+                microseconds = stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L));
+
+                if (controller.IsConnected)
                 {
+                    // reset vars
+                    buffer = new byte[63];
+                    tempButtons = 0;
+                    tempDPad = DualShock4DPadDirection.None;
+
                     State state = controller.GetState();
                     if (previousState.PacketNumber != state.PacketNumber)
                     {
                         gamepad = controller.GetState().Gamepad;
-                        buffer = new byte[63];
 
-                        tempButtons = 0;
-                        tempDPad = DualShock4DPadDirection.None;
+                        buffer[0] = Utils.NormalizeInput(gamepad.LeftThumbX); // Left Stick X
+                        buffer[1] = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.LeftThumbY)); // Left Stick Y
 
-                        buffer[0] = NormalizeInput(gamepad.LeftThumbX); // Left Stick X
-                        buffer[1] = (byte)(byte.MaxValue - NormalizeInput(gamepad.LeftThumbY)); // Left Stick Y
-
-                        buffer[2] = NormalizeInput(gamepad.RightThumbX); ; // Right Stick X
-                        buffer[3] = (byte)(byte.MaxValue - NormalizeInput(gamepad.RightThumbY)); // Right Stick Y
+                        buffer[2] = Utils.NormalizeInput(gamepad.RightThumbX); ; // Right Stick X
+                        buffer[3] = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.RightThumbY)); // Right Stick Y
 
                         if (gamepad.Buttons.HasFlag(GamepadButtonFlags.A))
                             tempButtons |= DualShock4Button.Cross.Value;
@@ -205,41 +210,48 @@ namespace ControllerService
                         else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown)) tempDPad = DualShock4DPadDirection.South;
                         else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft)) tempDPad = DualShock4DPadDirection.West;
 
-                        tempButtons |= tempDPad.Value;
-                        buffer[4] = (byte)tempButtons; // dpad
-                        buffer[5] = (byte)((short)tempButtons >> 8); // dpad
-
                         buffer[7] = gamepad.LeftTrigger; // Left Trigger
                         buffer[8] = gamepad.RightTrigger; // Right Trigger
-
-                        buffer[9] = (byte)microseconds;                    // timestamp
-                        buffer[10] = (byte)((ushort)microseconds >> 8);    // timestamp
-
-                        buffer[11] = (byte)0xff; // battery
-
-                        // wGyro
-                        buffer[12] = (byte)AngularVelocity.X;
-                        buffer[13] = (byte)((short)AngularVelocity.X >> 8);
-                        buffer[14] = (byte)AngularVelocity.Y;
-                        buffer[15] = (byte)((short)AngularVelocity.Y >> 8);
-                        buffer[16] = (byte)AngularVelocity.Z;
-                        buffer[17] = (byte)((short)AngularVelocity.Z >> 8);
-
-                        // wAccel
-                        buffer[18] = (byte)Acceleration.X;
-                        buffer[19] = (byte)((short)Acceleration.X >> 8);
-                        buffer[20] = (byte)Acceleration.Y;
-                        buffer[21] = (byte)((short)Acceleration.Y >> 8);
-                        buffer[22] = (byte)Acceleration.Z;
-                        buffer[23] = (byte)((short)Acceleration.Z >> 8);
-
-                        buffer[29] = (byte)0xff; // battery
-
-                        // buffer[33] = (byte)touch1.bPacketCounter;
-
-                        vcontroller.SubmitRawReport(buffer);
                     }
+
+                    // update state
                     previousState = state;
+
+                    // buttons and dpad
+                    tempButtons |= tempDPad.Value;
+                    buffer[4] = (byte)tempButtons; // dpad
+                    buffer[5] = (byte)((short)tempButtons >> 8); // dpad
+
+                    // timestamp
+                    buffer[9] = (byte)microseconds;
+                    buffer[10] = (byte)((ushort)microseconds >> 8);
+
+                    // battery
+                    buffer[11] = (byte)BatteryStatus; // bBatteryLvl
+                    buffer[29] = (byte)BatteryStatus; // bBatteryLvlSpecial
+
+                    // wGyro
+                    buffer[12] = (byte)AngularVelocity.X;
+                    buffer[13] = (byte)((short)AngularVelocity.X >> 8);
+                    buffer[14] = (byte)AngularVelocity.Y;
+                    buffer[15] = (byte)((short)AngularVelocity.Y >> 8);
+                    buffer[16] = (byte)AngularVelocity.Z;
+                    buffer[17] = (byte)((short)AngularVelocity.Z >> 8);
+
+                    // wAccel
+                    buffer[18] = (byte)Acceleration.X;
+                    buffer[19] = (byte)((short)Acceleration.X >> 8);
+                    buffer[20] = (byte)Acceleration.Y;
+                    buffer[21] = (byte)((short)Acceleration.Y >> 8);
+                    buffer[22] = (byte)Acceleration.Z;
+                    buffer[23] = (byte)((short)Acceleration.Z >> 8);
+
+                    // send report to server
+                    dsu.NewReportIncoming(this, microseconds);
+
+                    // send report to controller
+                    if (!muted)
+                        vcontroller.SubmitRawReport(buffer);
                 }
 
                 Thread.Sleep(10);

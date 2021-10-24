@@ -1,4 +1,5 @@
 ﻿using Force.Crc32;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -67,7 +68,7 @@ namespace ControllerService
         public bool IsActive;
     }
 
-    public class UdpServer
+    public class DSUServer
     {
         public const int NUMBER_SLOTS = 4;
         private Socket udpSock;
@@ -87,14 +88,13 @@ namespace ControllerService
         public delegate void GetPadDetail(int padIdx, ref DualShockPadMeta meta);
 
         private GetPadDetail portInfoGet;
-        private Thread MonitorBattery;
 
         void GetPadDetailForIdx(int padIdx, ref DualShockPadMeta meta)
         {
             meta = padMeta;
         }
 
-        public UdpServer()
+        public DSUServer()
         {
             PadMacAddress = new PhysicalAddress(new byte[] { 0x10, 0x10, 0x10, 0x10, 0x10, 0x10 });
             portInfoGet = GetPadDetailForIdx;
@@ -118,31 +118,6 @@ namespace ControllerService
                 args.SetBuffer(new byte[100], 0, 100);
                 args.Completed += SocketEvent_Completed;
                 argsList[num] = args;
-            }
-
-            MonitorBattery = new Thread(MonitorBatteryLife);
-        }
-
-        private void MonitorBatteryLife()
-        {
-            while (running)
-            {
-                BatteryChargeStatus ChargeStatus = SystemInformation.PowerStatus.BatteryChargeStatus;
-
-                if (ChargeStatus.HasFlag(BatteryChargeStatus.Charging))
-                    padMeta.BatteryStatus = DsBattery.Charging;
-                else if (ChargeStatus.HasFlag(BatteryChargeStatus.NoSystemBattery))
-                    padMeta.BatteryStatus = DsBattery.None;
-                else if (ChargeStatus.HasFlag(BatteryChargeStatus.High))
-                    padMeta.BatteryStatus = DsBattery.High;
-                else if (ChargeStatus.HasFlag(BatteryChargeStatus.Low))
-                    padMeta.BatteryStatus = DsBattery.Low;
-                else if (ChargeStatus.HasFlag(BatteryChargeStatus.Critical))
-                    padMeta.BatteryStatus = DsBattery.Dying;
-                else
-                    padMeta.BatteryStatus = DsBattery.Medium;
-
-                Thread.Sleep(1000);
             }
         }
 
@@ -482,7 +457,6 @@ namespace ControllerService
 
             running = true;
             StartReceive();
-            MonitorBattery.Start();
         }
 
         public void Stop()
@@ -499,10 +473,77 @@ namespace ControllerService
         {
             unchecked
             {
-                outIdx = 68;
+                outputData[outIdx] = 0;
+
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft)) outputData[outIdx] |= 0x80;
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown)) outputData[outIdx] |= 0x40;
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight)) outputData[outIdx] |= 0x20;
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp)) outputData[outIdx] |= 0x10;
+
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.Start)) outputData[outIdx] |= 0x08;
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb)) outputData[outIdx] |= 0x04;
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb)) outputData[outIdx] |= 0x02;
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.Back)) outputData[outIdx] |= 0x01;
+
+                outputData[++outIdx] = 0;
+
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.X)) outputData[outIdx] |= 0x80;
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.A)) outputData[outIdx] |= 0x40;
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.B)) outputData[outIdx] |= 0x20;
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.Y)) outputData[outIdx] |= 0x10;
+
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder)) outputData[outIdx] |= 0x08;
+                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder)) outputData[outIdx] |= 0x04;
+                if (hidReport.gamepad.RightTrigger == 255) outputData[outIdx] |= 0x02;
+                if (hidReport.gamepad.LeftTrigger == 255) outputData[outIdx] |= 0x01;
+
+                outputData[++outIdx] = (byte)0; // (hidReport.PS) ? (byte)1 : 
+                outputData[++outIdx] = (byte)0; // (hidReport.TouchButton) ? (byte)1 : 
+
+                //Left stick
+                outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.LeftThumbX);
+                outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.LeftThumbY);
+                outputData[outIdx] = (byte)(255 - outputData[outIdx]); //invert Y by convention
+
+                //Right stick
+                outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.RightThumbX);
+                outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.RightThumbY);
+                outputData[outIdx] = (byte)(255 - outputData[outIdx]); //invert Y by convention
+
+                //we don't have analog buttons on DS4 :(
+                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) ? (byte)0xFF : (byte)0x00;
+
+                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.X) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.A) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.B) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.Y) ? (byte)0xFF : (byte)0x00;
+
+                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder) ? (byte)0xFF : (byte)0x00;
+
+                outputData[++outIdx] = hidReport.gamepad.RightTrigger;
+                outputData[++outIdx] = hidReport.gamepad.LeftTrigger;
+
+                outIdx++;
+
+                //DS4 only: touchpad points
+                for (int i = 0; i < 2; i++)
+                {
+                    var tpad = (i == 0) ? hidReport.TrackPadTouch0 : hidReport.TrackPadTouch1;
+
+                    outputData[outIdx++] = tpad.IsActive ? (byte)1 : (byte)0;
+                    outputData[outIdx++] = (byte)tpad.Id;
+                    Array.Copy(BitConverter.GetBytes((ushort)tpad.X), 0, outputData, outIdx, 2);
+                    outIdx += 2;
+                    Array.Copy(BitConverter.GetBytes((ushort)tpad.Y), 0, outputData, outIdx, 2);
+                    outIdx += 2;
+                }
 
                 //motion timestamp
-                Array.Copy(BitConverter.GetBytes((ulong)microseconds), 0, outputData, outIdx, 8);
+                Array.Copy(BitConverter.GetBytes((ulong)hidReport.microseconds), 0, outputData, outIdx, 8);
 
                 outIdx += 8;
 
@@ -546,6 +587,9 @@ namespace ControllerService
         {
             if (!running)
                 return;
+
+            // update battery
+            padMeta.BatteryStatus = hidReport.BatteryStatus;
 
             var clientsList = new List<IPEndPoint>();
             var now = DateTime.UtcNow;
@@ -629,7 +673,6 @@ namespace ControllerService
                 outputData[outIdx++] = (byte)padMeta.BatteryStatus;
                 outputData[outIdx++] = padMeta.IsActive ? (byte)1 : (byte)0;
 
-                // (uint)hidReport.PacketCounter
                 Array.Copy(BitConverter.GetBytes((uint)udpPacketCount++), 0, outputData, outIdx, 4);
                 outIdx += 4;
 

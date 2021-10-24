@@ -30,7 +30,7 @@ namespace ControllerService
         private static IDualShock4Controller VirtualController;
         private static XInputGirometer Gyrometer;
         private static XInputAccelerometer Accelerometer;
-        private static UdpServer UDPServer;
+        private static DSUServer DSUServer;
         public static HidHide Hidder;
 
         public static string CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathClient;
@@ -157,8 +157,8 @@ namespace ControllerService
             if (Accelerometer.sensor == null)
                 eventLog1.WriteEntry("No Accelerometer detected.");
 
-            // initialize UDP Server
-            UDPServer = new UdpServer();
+            // initialize DSUClient
+            DSUServer = new DSUServer();
 
             // monitor processes and settings
             MonitorThread = new Thread(MonitorProcess);
@@ -199,12 +199,12 @@ namespace ControllerService
         {
             IsRunning = true;
 
-            // start the UDP server
-            if (UDPServer != null)
+            // start the DSUClient
+            if (DSUServer != null)
             {
-                eventLog1.WriteEntry($"UDP server has started. Listening to port: {26760}");
-                UDPServer.Start(26760);
-                PhysicalController.SetUdpServer(UDPServer);
+                eventLog1.WriteEntry($"DSU Server has started. Listening to port: {26760}");
+                DSUServer.Start(26760);
+                PhysicalController.SetDSUServer(DSUServer);
             }
 
             // start monitoring processes
@@ -237,10 +237,10 @@ namespace ControllerService
             }
             catch (Exception) { }
 
-            if (UDPServer != null)
+            if (DSUServer != null)
             {
-                UDPServer.Stop();
-                eventLog1.WriteEntry($"UDP server has stopped.");
+                DSUServer.Stop();
+                eventLog1.WriteEntry($"DSU Server has stopped.");
             }
 
             if (Hidder != null)
