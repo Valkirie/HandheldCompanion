@@ -22,14 +22,14 @@ namespace ControllerService
         public event XInputGirometerReadingChangedEventHandler ReadingChanged;
         public delegate void XInputGirometerReadingChangedEventHandler(Object sender, XInputGirometerReadingChangedEventArgs e);
 
-        public XInputGirometer(EventLog eventLog1)
+        public XInputGirometer(EventLog CurrentLog)
         {
             sensor = Gyrometer.GetDefault();
             if (sensor != null)
             {
                 sensor.ReportInterval = sensor.MinimumReportInterval;
-                eventLog1.WriteEntry($"Gyrometer initialised.");
-                eventLog1.WriteEntry($"Gyrometer report interval set to {sensor.ReportInterval}ms");
+                CurrentLog.WriteEntry($"Gyrometer initialised.");
+                CurrentLog.WriteEntry($"Gyrometer report interval set to {sensor.ReportInterval}ms");
 
                 sensor.ReadingChanged += GyroReadingChanged;
             }

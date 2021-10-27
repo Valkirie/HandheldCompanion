@@ -12,6 +12,7 @@ namespace ControllerService
         public string path { get; set; }
         public bool whitelisted { get; set; }   // can see through the HidHide cloak
         public bool legacy { get; set; }        // not yet implemented
+        public bool use_wrapper { get; set; }   // if yes, deploy xinput1_3.dll
 
         public void Serialize()
         {

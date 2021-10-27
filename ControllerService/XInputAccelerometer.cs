@@ -18,14 +18,14 @@ namespace ControllerService
         public event XInputAccelerometerReadingChangedEventHandler ReadingChanged;
         public delegate void XInputAccelerometerReadingChangedEventHandler(Object sender, XInputAccelerometerReadingChangedEventArgs e);
 
-        public XInputAccelerometer(EventLog eventLog1)
+        public XInputAccelerometer(EventLog CurrentLog)
         {
             sensor = Accelerometer.GetDefault();
             if (sensor != null)
             {
                 sensor.ReportInterval = sensor.MinimumReportInterval;
-                eventLog1.WriteEntry($"Accelerometer initialised.");
-                eventLog1.WriteEntry($"Accelerometer report interval set to {sensor.ReportInterval}ms");
+                CurrentLog.WriteEntry($"Accelerometer initialised.");
+                CurrentLog.WriteEntry($"Accelerometer report interval set to {sensor.ReportInterval}ms");
 
                 sensor.ReadingChanged += AcceleroReadingChanged;
             }

@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Threading;
+using static ControllerService.Utils;
 
 namespace ControllerService
 {
@@ -25,51 +26,52 @@ namespace ControllerService
         private static DSUServer DSUServer;
         public static HidHide Hidder;
 
-        public static string CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathClient;
+        public static string CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathClient, CurrentPathDep;
         private static bool IsRunning;
 
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(int hWnd, out uint lpdwProcessId);
         private static int CurrenthProcess;
         private static Thread MonitorThread;
 
         public static ProfileManager CurrentManager;
         public static Assembly CurrentAssembly;
+        private static EventLog CurrentLog;
 
         public ControllerService(string[] args)
         {
             InitializeComponent();
-
-            // initialize log
-            string ServiceName = this.ServiceName;
-            RegistryKey key = Registry.LocalMachine.CreateSubKey($"SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\{ServiceName}");
-
-            eventLog1.Source = ServiceName;
-            if (!EventLog.SourceExists(eventLog1.Source))
-                EventLog.CreateEventSource(eventLog1.Source, eventLog1.Source);
 
             CurrentAssembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
 
-            eventLog1.WriteEntry($"AyaGyroAiming ({fileVersionInfo.ProductVersion})");
-
             // paths
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
             CurrentPathCli = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
             CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
             CurrentPathClient = Path.Combine(CurrentPath, "ControllerServiceClient.exe");
+            CurrentPathDep = Path.Combine(CurrentPath, "dependencies");
+
+            // initialize log
+            string ServiceName = this.ServiceName;
+            CurrentLog = new EventLog(CurrentPath);
+            RegistryKey key = Registry.LocalMachine.CreateSubKey($"SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\{ServiceName}");
+
+            CurrentLog.Source = $"{ServiceName}.log";
+            if (!CurrentLog.SourceExists())
+                CurrentLog.CreateEventSource();
+
+            CurrentLog.WriteEntry($"AyaGyroAiming ({fileVersionInfo.ProductVersion})");
 
             if (!File.Exists(CurrentPathCli))
             {
-                eventLog1.WriteEntry("HidHide is missing. Please get it from: https://github.com/ViGEm/HidHide/releases");
+                CurrentLog.WriteEntry("HidHide is missing. Please get it from: https://github.com/ViGEm/HidHide/releases");
                 this.Stop();
             }
 
             if (!File.Exists(CurrentPathClient))
             {
-                eventLog1.WriteEntry("CurrentPathClient is missing. Application will stop.");
+                CurrentLog.WriteEntry("CurrentPathClient is missing. Application will stop.");
                 this.Stop();
             }
 
@@ -88,13 +90,13 @@ namespace ControllerService
 
                 if (VirtualController == null)
                 {
-                    eventLog1.WriteEntry("No Virtual controller detected. Application will stop.");
+                    CurrentLog.WriteEntry("No Virtual controller detected. Application will stop.");
                     this.Stop();
                 }
             }
             catch (Exception)
             {
-                eventLog1.WriteEntry("ViGEm is missing. Please get it from: https://github.com/ViGEm/ViGEmBus/releases");
+                CurrentLog.WriteEntry("ViGEm is missing. Please get it from: https://github.com/ViGEm/ViGEmBus/releases");
                 this.Stop();
             }
 
@@ -108,7 +110,7 @@ namespace ControllerService
 
             if (PhysicalController == null)
             {
-                eventLog1.WriteEntry("No physical controller detected. Application will stop.");
+                CurrentLog.WriteEntry("No physical controller detected. Application will stop.");
                 this.Stop();
             }
 
@@ -132,7 +134,7 @@ namespace ControllerService
                             string DeviceID = ((string)item.Value);
                             Hidder.HideDevice(DeviceID);
                             Hidder.HideDevice(d.deviceInstancePath);
-                            eventLog1.WriteEntry($"HideDevice hidding {DeviceID}");
+                            CurrentLog.WriteEntry($"HideDevice hidding {DeviceID}");
                             break;
                         }
                     }
@@ -140,14 +142,14 @@ namespace ControllerService
             }
 
             // default is 10ms rating
-            Gyrometer = new XInputGirometer(eventLog1);
+            Gyrometer = new XInputGirometer(CurrentLog);
             if (Gyrometer.sensor == null)
-                eventLog1.WriteEntry("No Gyrometer detected.");
+                CurrentLog.WriteEntry("No Gyrometer detected.");
 
             // default is 10ms rating
-            Accelerometer = new XInputAccelerometer(eventLog1);
+            Accelerometer = new XInputAccelerometer(CurrentLog);
             if (Accelerometer.sensor == null)
-                eventLog1.WriteEntry("No Accelerometer detected.");
+                CurrentLog.WriteEntry("No Accelerometer detected.");
 
             // initialize DSUClient
             DSUServer = new DSUServer();
@@ -172,8 +174,25 @@ namespace ControllerService
 
                         if (CurrentManager.profiles.ContainsKey(ProcessName))
                         {
+                            // muting process
                             Profile CurrentProfile = CurrentManager.profiles[ProcessName];
                             PhysicalController.muted = CurrentProfile.whitelisted;
+
+                            // wrapper process
+                            BinaryType bt;
+                            GetBinaryType(CurrentProfile.path, out bt);
+
+                            string wrapperpath = Path.Combine(CurrentPathDep, bt == BinaryType.SCS_64BIT_BINARY ? "x64" : "x86");
+                            string wrapperdllpath = Path.Combine(wrapperpath, "xinput1_3.dll");
+
+                            string processpath = Path.GetDirectoryName(CurrentProfile.path);
+                            string processdllpath = Path.Combine(processpath, "xinput1_3.dll");
+
+                            bool wrapped = File.Exists(processdllpath);
+                            if (CurrentProfile.use_wrapper && !wrapped)
+                                File.Copy(wrapperdllpath, processdllpath);
+                            else if (!CurrentProfile.use_wrapper && wrapped)
+                                File.Delete(processdllpath);
                         }
                         else
                             PhysicalController.muted = false;
@@ -194,7 +213,7 @@ namespace ControllerService
             // start the DSUClient
             if (DSUServer != null)
             {
-                eventLog1.WriteEntry($"DSU Server has started. Listening to port: {26760}");
+                CurrentLog.WriteEntry($"DSU Server has started. Listening to port: {26760}");
                 DSUServer.Start(26760);
                 PhysicalController.SetDSUServer(DSUServer);
             }
@@ -204,15 +223,17 @@ namespace ControllerService
 
             // turn on the cloaking
             Hidder.SetCloaking(true);
-            eventLog1.WriteEntry($"Cloaking {PhysicalController.GetType().Name}");
+            CurrentLog.WriteEntry($"Cloaking {PhysicalController.GetType().Name}");
 
             // plug the virtual controler
             VirtualController.Connect();
-            eventLog1.WriteEntry($"Virtual {VirtualController.GetType().Name} connected.");
+            CurrentLog.WriteEntry($"Virtual {VirtualController.GetType().Name} connected.");
             PhysicalController.SetVirtualController(VirtualController);
             PhysicalController.SetGyroscope(Gyrometer);
             PhysicalController.SetAccelerometer(Accelerometer);
-            eventLog1.WriteEntry($"Virtual {VirtualController.GetType().Name} attached to {PhysicalController.GetType().Name} {PhysicalController.index}.");
+            CurrentLog.WriteEntry($"Virtual {VirtualController.GetType().Name} attached to {PhysicalController.GetType().Name} {PhysicalController.index}.");
+
+            base.OnStart(args);
         }
 
         protected override void OnStop()
@@ -224,7 +245,7 @@ namespace ControllerService
                 if (VirtualController != null)
                 {
                     VirtualController.Disconnect();
-                    eventLog1.WriteEntry($"Virtual {VirtualController.GetType().Name} disconnected.");
+                    CurrentLog.WriteEntry($"Virtual {VirtualController.GetType().Name} disconnected.");
                 }
             }
             catch (Exception) { }
@@ -232,12 +253,14 @@ namespace ControllerService
             if (DSUServer != null)
             {
                 DSUServer.Stop();
-                eventLog1.WriteEntry($"DSU Server has stopped.");
+                CurrentLog.WriteEntry($"DSU Server has stopped.");
             }
 
             if (Hidder != null)
                 Hidder.SetCloaking(false);
-            eventLog1.WriteEntry($"Uncloaking {PhysicalController.GetType().Name}");
+            CurrentLog.WriteEntry($"Uncloaking {PhysicalController.GetType().Name}");
+
+            base.OnStop();
         }
     }
 }
