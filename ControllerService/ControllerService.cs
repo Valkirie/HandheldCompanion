@@ -9,10 +9,10 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.ServiceProcess;
-using System.Threading;
+using System.Timers;
 using static ControllerService.Utils;
+using Timer = System.Timers.Timer;
 
 namespace ControllerService
 {
@@ -27,10 +27,9 @@ namespace ControllerService
         public static HidHide Hidder;
 
         public static string CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathClient, CurrentPathDep;
-        private static bool IsRunning;
 
         private static int CurrenthProcess;
-        private static Thread MonitorThread;
+        private static Timer UpdateMonitor;
 
         public static ProfileManager CurrentManager;
         public static Assembly CurrentAssembly;
@@ -155,61 +154,55 @@ namespace ControllerService
             DSUServer = new DSUServer();
 
             // monitor processes and settings
-            MonitorThread = new Thread(MonitorProcess);
+            UpdateMonitor = new Timer(1000) { Enabled = true, AutoReset = true };
+            UpdateMonitor.Elapsed += MonitorProcess;
 
             // todo : Configurez le mécanisme d’interrogation
         }
 
-        static void MonitorProcess()
+        private void MonitorProcess(object sender, ElapsedEventArgs e)
         {
-            while (IsRunning)
+            int ProcessId = Utils.GetProcessIdByPath(CurrentPathClient);
+            if (ProcessId != CurrenthProcess)
             {
-                int ProcessId = Utils.GetProcessIdByPath(CurrentPathClient);
-                if (ProcessId != CurrenthProcess)
+                try
                 {
-                    try
+                    Process CurrentProcess = Process.GetProcessById((int)ProcessId);
+                    string ProcessName = CurrentProcess.ProcessName;
+
+                    if (CurrentManager.profiles.ContainsKey(ProcessName))
                     {
-                        Process CurrentProcess = Process.GetProcessById((int)ProcessId);
-                        string ProcessName = CurrentProcess.ProcessName;
+                        // muting process
+                        Profile CurrentProfile = CurrentManager.profiles[ProcessName];
+                        PhysicalController.muted = CurrentProfile.whitelisted;
 
-                        if (CurrentManager.profiles.ContainsKey(ProcessName))
-                        {
-                            // muting process
-                            Profile CurrentProfile = CurrentManager.profiles[ProcessName];
-                            PhysicalController.muted = CurrentProfile.whitelisted;
+                        // wrapper process
+                        BinaryType bt;
+                        GetBinaryType(CurrentProfile.path, out bt);
 
-                            // wrapper process
-                            BinaryType bt;
-                            GetBinaryType(CurrentProfile.path, out bt);
+                        string wrapperpath = Path.Combine(CurrentPathDep, bt == BinaryType.SCS_64BIT_BINARY ? "x64" : "x86");
+                        string wrapperdllpath = Path.Combine(wrapperpath, "xinput1_3.dll");
 
-                            string wrapperpath = Path.Combine(CurrentPathDep, bt == BinaryType.SCS_64BIT_BINARY ? "x64" : "x86");
-                            string wrapperdllpath = Path.Combine(wrapperpath, "xinput1_3.dll");
+                        string processpath = Path.GetDirectoryName(CurrentProfile.path);
+                        string processdllpath = Path.Combine(processpath, "xinput1_3.dll");
 
-                            string processpath = Path.GetDirectoryName(CurrentProfile.path);
-                            string processdllpath = Path.Combine(processpath, "xinput1_3.dll");
-
-                            bool wrapped = File.Exists(processdllpath);
-                            if (CurrentProfile.use_wrapper && !wrapped)
-                                File.Copy(wrapperdllpath, processdllpath);
-                            else if (!CurrentProfile.use_wrapper && wrapped)
-                                File.Delete(processdllpath);
-                        }
-                        else
-                            PhysicalController.muted = false;
+                        bool wrapped = File.Exists(processdllpath);
+                        if (CurrentProfile.use_wrapper && !wrapped)
+                            File.Copy(wrapperdllpath, processdllpath);
+                        else if (!CurrentProfile.use_wrapper && wrapped)
+                            File.Delete(processdllpath);
                     }
-                    catch (Exception ex) { Debug.WriteLine(ex.Message); }
-
-                    CurrenthProcess = ProcessId;
+                    else
+                        PhysicalController.muted = false;
                 }
+                catch (Exception) { }
 
-                Thread.Sleep(1000);
+                CurrenthProcess = ProcessId;
             }
         }
 
         protected override void OnStart(string[] args)
         {
-            IsRunning = true;
-
             // start the DSUClient
             if (DSUServer != null)
             {
@@ -219,7 +212,7 @@ namespace ControllerService
             }
 
             // start monitoring processes
-            MonitorThread.Start();
+            UpdateMonitor.Start();
 
             // turn on the cloaking
             Hidder.SetCloaking(true);
@@ -238,8 +231,6 @@ namespace ControllerService
 
         protected override void OnStop()
         {
-            IsRunning = false;
-
             try
             {
                 if (VirtualController != null)
@@ -258,6 +249,10 @@ namespace ControllerService
 
             if (Hidder != null)
                 Hidder.SetCloaking(false);
+
+            if(UpdateMonitor.Enabled)
+                UpdateMonitor.Stop();
+
             CurrentLog.WriteEntry($"Uncloaking {PhysicalController.GetType().Name}");
 
             base.OnStop();
