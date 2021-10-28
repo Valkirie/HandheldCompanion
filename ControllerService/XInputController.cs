@@ -40,6 +40,8 @@ namespace ControllerService
         public TrackPadTouch TrackPadTouch0;
         public TrackPadTouch TrackPadTouch1;
 
+        private DS4_REPORT_EX outDS4Report;
+
         public DsBattery BatteryStatus;
 
         public XInputController(UserIndex _idx)
@@ -143,62 +145,50 @@ namespace ControllerService
             AngularVelocity.Z = e.AngularVelocityZ;
         }
 
-        private State previousState;
-        private ushort tempButtons;
-        private DualShock4DPadDirection tempDPad;
-        private byte[] buffer;
-
         private void UpdateDS4()
         {
             while (true)
             {
-                // update timestamp
-                microseconds = stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L));
-
                 if (controller.IsConnected)
                 {
-                    // reset vars
-                    buffer = new byte[63];
-                    tempButtons = 0;
-                    tempDPad = DualShock4DPadDirection.None;
+                    // update timestamp
+                    microseconds = stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L));
 
+                    // get current gamepad state
                     State state = controller.GetState();
+                    gamepad = state.Gamepad;
 
-                    if (previousState.PacketNumber != state.PacketNumber)
+                    // send report to server
+                    dsu.NewReportIncoming(this, microseconds);
+
+                    if (muted)
                     {
-                        gamepad = state.Gamepad;
+                        vcontroller.ResetReport();
+                        vcontroller.SubmitReport();
+                        continue;
+                    }
 
-                        // Left Stick
-                        buffer[0] = Utils.NormalizeInput(gamepad.LeftThumbX);
-                        buffer[1] = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.LeftThumbY));
+                    // reset vars
+                    byte[] rawOutReportEx = new byte[63];
+                    ushort tempButtons = 0;
+                    ushort tempSpecial = 0;
+                    DualShock4DPadDirection tempDPad = DualShock4DPadDirection.None;
 
-                        // Right Stick
-                        buffer[2] = Utils.NormalizeInput(gamepad.RightThumbX);
-                        buffer[3] = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.RightThumbY));
+                    unchecked
+                    {
+                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.A)) tempButtons |= DualShock4Button.Cross.Value;
+                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.B)) tempButtons |= DualShock4Button.Circle.Value;
+                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.X)) tempButtons |= DualShock4Button.Square.Value;
+                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Y)) tempButtons |= DualShock4Button.Triangle.Value;
 
-                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.A))
-                            tempButtons |= DualShock4Button.Cross.Value;
-                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.B))
-                            tempButtons |= DualShock4Button.Circle.Value;
-                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.X))
-                            tempButtons |= DualShock4Button.Square.Value;
-                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Y))
-                            tempButtons |= DualShock4Button.Triangle.Value;
+                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Start)) tempButtons |= DualShock4Button.Options.Value;
+                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Back)) tempButtons |= DualShock4Button.Share.Value;
 
-                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Start))
-                            tempButtons |= DualShock4Button.Options.Value;
-                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Back))
-                            tempButtons |= DualShock4Button.Share.Value;
+                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb)) tempButtons |= DualShock4Button.ThumbRight.Value;
+                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb)) tempButtons |= DualShock4Button.ThumbLeft.Value;
 
-                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb))
-                            tempButtons |= DualShock4Button.ThumbRight.Value;
-                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb))
-                            tempButtons |= DualShock4Button.ThumbLeft.Value;
-
-                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder))
-                            tempButtons |= DualShock4Button.ShoulderRight.Value;
-                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder))
-                            tempButtons |= DualShock4Button.ShoulderLeft.Value;
+                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder)) tempButtons |= DualShock4Button.ShoulderRight.Value;
+                        if (gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder)) tempButtons |= DualShock4Button.ShoulderLeft.Value;
 
                         if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) && gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight)) tempDPad = DualShock4DPadDirection.Northeast;
                         else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) && gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft)) tempDPad = DualShock4DPadDirection.Northwest;
@@ -208,54 +198,44 @@ namespace ControllerService
                         else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown) && gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft)) tempDPad = DualShock4DPadDirection.Southwest;
                         else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown)) tempDPad = DualShock4DPadDirection.South;
                         else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft)) tempDPad = DualShock4DPadDirection.West;
+                        
+                        // if (state.PS) tempSpecial |= DualShock4SpecialButton.Ps.Value;
+                        // if (state.OutputTouchButton) tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
 
-                        buffer[7] = gamepad.LeftTrigger; // Left Trigger
-                        buffer[8] = gamepad.RightTrigger; // Right Trigger
+                        outDS4Report.wButtons = tempButtons;
+                        outDS4Report.bSpecial = (byte)tempSpecial;
+                        outDS4Report.wButtons |= tempDPad.Value;
                     }
-                    else
-                    {
-                        // Left Stick, Right Stick
-                        Array.Copy(new byte[4] { 128, 128, 128, 128 }, 0, buffer, 0, 4);
-                    }
 
-                    // update state
-                    previousState = state;
+                    outDS4Report.bTriggerL = gamepad.LeftTrigger;
+                    outDS4Report.bTriggerR = gamepad.RightTrigger;
 
-                    // buttons and dpad
-                    tempButtons |= tempDPad.Value;
-                    buffer[4] = (byte)tempButtons; // dpad
-                    buffer[5] = (byte)((short)tempButtons >> 8); // dpad
+                    outDS4Report.bThumbLX = Utils.NormalizeInput(gamepad.LeftThumbX);
+                    outDS4Report.bThumbLY = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.LeftThumbY));
 
-                    // timestamp
-                    buffer[9] = (byte)microseconds;
-                    buffer[10] = (byte)((ushort)microseconds >> 8);
+                    outDS4Report.bThumbRX = Utils.NormalizeInput(gamepad.RightThumbX);
+                    outDS4Report.bThumbRY = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.RightThumbY));
 
-                    // battery
-                    buffer[11] = (byte)BatteryStatus; // bBatteryLvl
-                    buffer[29] = (byte)BatteryStatus; // bBatteryLvlSpecial
+                    outDS4Report.bTouchPacketsN = 0; // todo
 
-                    // wGyro
-                    buffer[12] = (byte)AngularVelocity.X;
-                    buffer[13] = (byte)((short)AngularVelocity.X >> 8);
-                    buffer[14] = (byte)AngularVelocity.Y;
-                    buffer[15] = (byte)((short)AngularVelocity.Y >> 8);
-                    buffer[16] = (byte)AngularVelocity.Z;
-                    buffer[17] = (byte)((short)AngularVelocity.Z >> 8);
+                    outDS4Report.wGyroX = (short)AngularVelocity.X;
+                    outDS4Report.wGyroY = (short)AngularVelocity.Y;
+                    outDS4Report.wGyroZ = (short)AngularVelocity.Z;
 
-                    // wAccel
-                    buffer[18] = (byte)Acceleration.X;
-                    buffer[19] = (byte)((short)Acceleration.X >> 8);
-                    buffer[20] = (byte)Acceleration.Y;
-                    buffer[21] = (byte)((short)Acceleration.Y >> 8);
-                    buffer[22] = (byte)Acceleration.Z;
-                    buffer[23] = (byte)((short)Acceleration.Z >> 8);
+                    outDS4Report.wAccelX = (short)Acceleration.X;
+                    outDS4Report.wAccelY = (short)Acceleration.Y;
+                    outDS4Report.wAccelZ = (short)Acceleration.Z;
 
-                    // send report to server
-                    dsu.NewReportIncoming(this, microseconds);
+                    outDS4Report.bBatteryLvl = (byte)BatteryStatus;
+                    
+                    // USB DS4 v.1 battery level range is [0-11]
+                    outDS4Report.bBatteryLvlSpecial = (byte)((byte)BatteryStatus / 11);
+                    outDS4Report.wTimestamp = (ushort)microseconds;
+
+                    DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
 
                     // send report to controller
-                    if (!muted)
-                        vcontroller.SubmitRawReport(buffer);
+                    vcontroller.SubmitRawReport(rawOutReportEx);
                 }
 
                 Thread.Sleep(10);
