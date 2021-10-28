@@ -162,7 +162,8 @@ namespace ControllerService
             gamepad = state.Gamepad;
 
             // send report to server
-            dsu.NewReportIncoming(this, microseconds);
+            if (dsu != null)
+                dsu.NewReportIncoming(this, microseconds);
 
             if (muted)
                 return;
