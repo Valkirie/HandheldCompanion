@@ -141,7 +141,8 @@ namespace ControllerService
             gamepad = state.Gamepad;
 
             // send report to server
-            dsu.NewReportIncoming(this, microseconds);
+            if (dsu != null)
+                dsu.NewReportIncoming(this, microseconds);
 
             // reset vars
             byte[] rawOutReportEx = new byte[63];
