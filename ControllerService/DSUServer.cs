@@ -7,6 +7,9 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
+using System.Timers;
+using System.Windows.Forms;
+using Timer = System.Timers.Timer;
 
 namespace ControllerService
 {
@@ -85,6 +88,7 @@ namespace ControllerService
         public delegate void GetPadDetail(int padIdx, ref DualShockPadMeta meta);
 
         private GetPadDetail portInfoGet;
+        private Timer BatteryTimer;
 
         void GetPadDetailForIdx(int padIdx, ref DualShockPadMeta meta)
         {
@@ -116,6 +120,30 @@ namespace ControllerService
                 args.Completed += SocketEvent_Completed;
                 argsList[num] = args;
             }
+
+            BatteryTimer = new Timer(1000) { Enabled = false, AutoReset = true };
+            BatteryTimer.Elapsed += UpdateBattery;
+        }
+
+        private void UpdateBattery(object sender, ElapsedEventArgs e)
+        {
+            if (!running)
+                return;
+
+            BatteryChargeStatus ChargeStatus = SystemInformation.PowerStatus.BatteryChargeStatus;
+
+            if (ChargeStatus.HasFlag(BatteryChargeStatus.Charging))
+                padMeta.BatteryStatus = DsBattery.Charging;
+            else if (ChargeStatus.HasFlag(BatteryChargeStatus.NoSystemBattery))
+                padMeta.BatteryStatus = DsBattery.None;
+            else if (ChargeStatus.HasFlag(BatteryChargeStatus.High))
+                padMeta.BatteryStatus = DsBattery.High;
+            else if (ChargeStatus.HasFlag(BatteryChargeStatus.Low))
+                padMeta.BatteryStatus = DsBattery.Low;
+            else if (ChargeStatus.HasFlag(BatteryChargeStatus.Critical))
+                padMeta.BatteryStatus = DsBattery.Dying;
+            else
+                padMeta.BatteryStatus = DsBattery.Medium;
         }
 
         private void SocketEvent_Completed(object sender, SocketAsyncEventArgs e)
@@ -454,6 +482,9 @@ namespace ControllerService
 
             running = true;
             StartReceive();
+
+            BatteryTimer.Enabled = true;
+            BatteryTimer.Start();
         }
 
         public void Stop()
@@ -532,7 +563,7 @@ namespace ControllerService
                     var tpad = (i == 0) ? hidReport.TrackPadTouch0 : hidReport.TrackPadTouch1;
 
                     outputData[outIdx++] = tpad.IsActive ? (byte)1 : (byte)0;
-                    outputData[outIdx++] = (byte)tpad.Id;
+                    outputData[outIdx++] = (byte)tpad.RawTrackingNum;
                     Array.Copy(BitConverter.GetBytes((ushort)tpad.X), 0, outputData, outIdx, 2);
                     outIdx += 2;
                     Array.Copy(BitConverter.GetBytes((ushort)tpad.Y), 0, outputData, outIdx, 2);
@@ -585,8 +616,7 @@ namespace ControllerService
             if (!running)
                 return;
 
-            // update battery
-            padMeta.BatteryStatus = hidReport.BatteryStatus;
+            // update status
             padMeta.IsActive = hidReport.controller.IsConnected;
 
             var clientsList = new List<IPEndPoint>();

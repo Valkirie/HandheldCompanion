@@ -11,6 +11,8 @@ using System.Management;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Timers;
+using Windows.UI.Notifications;
+using Windows.UI.Xaml.Media.Imaging;
 using static ControllerService.Utils;
 using Timer = System.Timers.Timer;
 
@@ -85,7 +87,12 @@ namespace ControllerService
             try
             {
                 ViGEmClient client = new ViGEmClient();
-                VirtualController = client.CreateDualShock4Controller();
+
+                // 0x05C4 (Original V1)
+                // 0x09CC (Pro V2)
+
+                VirtualController = client.CreateDualShock4Controller(0x054C, 0x09CC);
+                // VirtualController = client.CreateDualShock4Controller();
 
                 if (VirtualController == null)
                 {
@@ -156,8 +163,6 @@ namespace ControllerService
             // monitor processes and settings
             UpdateMonitor = new Timer(1000) { Enabled = true, AutoReset = true };
             UpdateMonitor.Elapsed += MonitorProcess;
-
-            // todo : Configurez le mécanisme d’interrogation
         }
 
         private void MonitorProcess(object sender, ElapsedEventArgs e)
@@ -225,7 +230,7 @@ namespace ControllerService
             PhysicalController.SetGyroscope(Gyrometer);
             PhysicalController.SetAccelerometer(Accelerometer);
             CurrentLog.WriteEntry($"Virtual {VirtualController.GetType().Name} attached to {PhysicalController.GetType().Name} {PhysicalController.index}.");
-
+            
             base.OnStart(args);
         }
 

@@ -26,7 +26,6 @@ namespace ControllerService
         public Vector3 Acceleration;
 
         private Timer UpdateTimer;
-        private Timer BatteryTimer;
 
         public UserIndex index;
         public bool muted;
@@ -34,10 +33,13 @@ namespace ControllerService
         public long microseconds;
         private Stopwatch stopwatch;
 
+        private byte TouchPacketCounter = 0;
+        private byte FrameCounter = 0;
+
         public struct TrackPadTouch
         {
             public bool IsActive;
-            public byte Id;
+            public byte RawTrackingNum;
             public ushort X;
             public ushort Y;
         }
@@ -46,8 +48,6 @@ namespace ControllerService
         public TrackPadTouch TrackPadTouch1;
 
         private DS4_REPORT_EX outDS4Report;
-
-        public DsBattery BatteryStatus;
 
         public XInputController(UserIndex _idx)
         {
@@ -67,11 +67,8 @@ namespace ControllerService
             stopwatch.Start();
 
             // initialize timers
-            UpdateTimer = new Timer(10) { Enabled = true, AutoReset = true };
+            UpdateTimer = new Timer(10) { Enabled = false, AutoReset = true };
             UpdateTimer.Elapsed += UpdateController;
-
-            BatteryTimer = new Timer(1000) { Enabled = true, AutoReset = true };
-            BatteryTimer.Elapsed += UpdateBattery;
         }
 
         public void SetVirtualController(IDualShock4Controller _controller)
@@ -80,8 +77,8 @@ namespace ControllerService
             vcontroller.AutoSubmitReport = false;
             vcontroller.FeedbackReceived += Vcontroller_FeedbackReceived;
 
+            UpdateTimer.Enabled = true;
             UpdateTimer.Start();
-            BatteryTimer.Stop();
         }
 
         private void Vcontroller_FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)
@@ -95,27 +92,6 @@ namespace ControllerService
                 };
                 controller.SetVibration(inputMotor);
             }
-        }
-
-        private void UpdateBattery(object sender, ElapsedEventArgs e)
-        {
-            if (!controller.IsConnected)
-                return;
-
-            BatteryChargeStatus ChargeStatus = SystemInformation.PowerStatus.BatteryChargeStatus;
-
-            if (ChargeStatus.HasFlag(BatteryChargeStatus.Charging))
-                BatteryStatus = DsBattery.Charging;
-            else if (ChargeStatus.HasFlag(BatteryChargeStatus.NoSystemBattery))
-                BatteryStatus = DsBattery.None;
-            else if (ChargeStatus.HasFlag(BatteryChargeStatus.High))
-                BatteryStatus = DsBattery.High;
-            else if (ChargeStatus.HasFlag(BatteryChargeStatus.Low))
-                BatteryStatus = DsBattery.Low;
-            else if (ChargeStatus.HasFlag(BatteryChargeStatus.Critical))
-                BatteryStatus = DsBattery.Dying;
-            else
-                BatteryStatus = DsBattery.Medium;
         }
 
         public void SetGyroscope(XInputGirometer _gyrometer)
@@ -154,8 +130,11 @@ namespace ControllerService
             if (!controller.IsConnected)
                 return;
 
+            // update framecounter
+            FrameCounter++;
+
             // update timestamp
-            microseconds = stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L));
+            microseconds = (long)(stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L))/* / 5.33f */);
 
             // get current gamepad state
             State state = controller.GetState();
@@ -164,14 +143,16 @@ namespace ControllerService
             // send report to server
             dsu.NewReportIncoming(this, microseconds);
 
-            if (muted)
-                return;
-
             // reset vars
             byte[] rawOutReportEx = new byte[63];
             ushort tempButtons = 0;
             ushort tempSpecial = 0;
             DualShock4DPadDirection tempDPad = DualShock4DPadDirection.None;
+
+            outDS4Report.bThumbLX = 128;
+            outDS4Report.bThumbLY = 128;
+            outDS4Report.bThumbRX = 128;
+            outDS4Report.bThumbRY = 128;
 
             unchecked
             {
@@ -200,22 +181,45 @@ namespace ControllerService
 
                 // if (state.PS) tempSpecial |= DualShock4SpecialButton.Ps.Value;
                 // if (state.OutputTouchButton) tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
-
-                outDS4Report.wButtons = tempButtons;
-                outDS4Report.bSpecial = (byte)tempSpecial;
-                outDS4Report.wButtons |= tempDPad.Value;
+                // outDS4Report.bSpecial = (byte)tempSpecial;
+                outDS4Report.bSpecial = (byte)(tempSpecial | (FrameCounter << 2));
             }
 
-            outDS4Report.bTriggerL = gamepad.LeftTrigger;
-            outDS4Report.bTriggerR = gamepad.RightTrigger;
+            if (!muted)
+            {
+                outDS4Report.wButtons = tempButtons;
+                outDS4Report.wButtons |= tempDPad.Value;
 
-            outDS4Report.bThumbLX = Utils.NormalizeInput(gamepad.LeftThumbX);
-            outDS4Report.bThumbLY = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.LeftThumbY));
+                outDS4Report.bTriggerL = gamepad.LeftTrigger;
+                outDS4Report.bTriggerR = gamepad.RightTrigger;
 
-            outDS4Report.bThumbRX = Utils.NormalizeInput(gamepad.RightThumbX);
-            outDS4Report.bThumbRY = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.RightThumbY));
+                outDS4Report.bThumbLX = Utils.NormalizeInput(gamepad.LeftThumbX);
+                outDS4Report.bThumbLY = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.LeftThumbY));
+                outDS4Report.bThumbRX = Utils.NormalizeInput(gamepad.RightThumbX);
+                outDS4Report.bThumbRY = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.RightThumbY));
+            }
 
-            outDS4Report.bTouchPacketsN = 0; // todo
+            /*
+                0x00: No data for T-PAD[1]
+                0x01: Set data for 2 current touches
+                0x02: set data for previous touches at [44-51]
+             */
+
+            outDS4Report.bTouchPacketsN = 0;
+
+            unsafe
+            {
+                outDS4Report.sCurrentTouch.bPacketCounter = TouchPacketCounter;
+                outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = TrackPadTouch0.RawTrackingNum;
+                outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(TrackPadTouch0.X & 0xFF);
+                outDS4Report.sCurrentTouch.bTouchData1[1] = (byte)((TrackPadTouch0.X >> 8) & 0x0F | (TrackPadTouch0.Y << 4) & 0xF0);
+                outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(TrackPadTouch0.Y >> 4);
+
+                outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = TrackPadTouch1.RawTrackingNum;
+                outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(TrackPadTouch1.X & 0xFF);
+                outDS4Report.sCurrentTouch.bTouchData2[1] = (byte)((TrackPadTouch1.X >> 8) & 0x0F | (TrackPadTouch1.Y << 4) & 0xF0);
+                outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(TrackPadTouch1.Y >> 4);
+            }
 
             outDS4Report.wGyroX = (short)AngularVelocity.X;
             outDS4Report.wGyroY = (short)AngularVelocity.Y;
@@ -225,10 +229,19 @@ namespace ControllerService
             outDS4Report.wAccelY = (short)Acceleration.Y;
             outDS4Report.wAccelZ = (short)Acceleration.Z;
 
-            outDS4Report.bBatteryLvl = (byte)BatteryStatus;
+            outDS4Report.bBatteryLvl = 0xFF;
 
-            // USB DS4 v.1 battery level range is [0-11]
-            outDS4Report.bBatteryLvlSpecial = (byte)((byte)BatteryStatus / 11);
+            /*
+                EXT/HeadSet/Earset: bitmask
+                01111011 is headset with mic (0x7B)
+                00111011 is headphones (0x3B)
+                00011011 is nothing attached (0x1B)
+                00001000 is bluetooth? (0x08)
+                00000101 is ? (0x05)
+            */
+
+            outDS4Report.bBatteryLvlSpecial = 0x1B;
+
             outDS4Report.wTimestamp = (ushort)microseconds;
 
             DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
