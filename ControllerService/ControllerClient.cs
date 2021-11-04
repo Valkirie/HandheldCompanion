@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace ControllerService
         }
     }
 
-    public class Utils
+    public class ControllerClient
     {
         public enum BinaryType : uint
         {
@@ -68,6 +69,9 @@ namespace ControllerService
             FinalString = STR.Substring(Pos1, Pos2 - Pos1);
             return FinalString;
         }
+
+        private static STARTUPINFO si;
+        private static PROCESS_INFORMATION pi;
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct STARTUPINFO
@@ -142,7 +146,7 @@ namespace ControllerService
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         static extern uint WaitForSingleObject(IntPtr hProcess, uint dwMilliseconds);
 
-        public static int GetProcessIdByPath(string path)
+        public static int GetProcessIdByPath()
         {
             IntPtr read = new IntPtr();
             IntPtr write = new IntPtr();
@@ -156,20 +160,20 @@ namespace ControllerService
             CreatePipe(ref read, ref write, ref saAttr, 0);
             CreatePipe(ref read2, ref write2, ref saAttr, 0);
 
-            uint CREATE_NO_WINDOW = 0x08000000;
             int STARTF_USESTDHANDLES = 0x00000100;
-            STARTUPINFO si = new STARTUPINFO();
+            si = new STARTUPINFO();
             si.cb = Marshal.SizeOf(typeof(STARTUPINFO));
             si.hStdOutput = write;
             si.hStdError = write;
             si.hStdInput = read2;
             si.lpDesktop = "Winsta0\\default";
             si.dwFlags = STARTF_USESTDHANDLES;
-            PROCESS_INFORMATION pi;
 
             IntPtr hToken;
             bool err = WTSQueryUserToken(WTSGetActiveConsoleSessionId(), out hToken);
-            if (CreateProcessAsUser(hToken, path, null, IntPtr.Zero, IntPtr.Zero, true, CREATE_NO_WINDOW, IntPtr.Zero, IntPtr.Zero, ref si, out pi))
+
+            string cmdLine = "-g";
+            if (CreateProcessAsUser(hToken, ControllerService.CurrentPathClient, $@"""{ControllerService.CurrentPathClient}"" {cmdLine}", IntPtr.Zero, IntPtr.Zero, true, 0x08000000, IntPtr.Zero, IntPtr.Zero, ref si, out pi))
             {
                 uint ret = WaitForSingleObject(pi.hProcess, 2000); //wait for the child process exit.
                 if (ret == 0)
@@ -192,27 +196,27 @@ namespace ControllerService
             return 0;
         }
 
-        public static string GetProcessPath(int ProcessId)
+        public static bool SendToast(string title, string content)
         {
-            var wmiQueryString = $"SELECT ProcessId, ExecutablePath, CommandLine FROM Win32_Process WHERE ProcessId = {ProcessId}";
-            using (var searcher = new ManagementObjectSearcher(wmiQueryString))
-            using (var results = searcher.Get())
-            {
-                var query = from p in Process.GetProcesses()
-                            join mo in results.Cast<ManagementObject>()
-                            on p.Id equals (int)(uint)mo["ProcessId"]
-                            select new
-                            {
-                                Process = p,
-                                Path = (string)mo["ExecutablePath"],
-                                CommandLine = (string)mo["CommandLine"],
-                            };
-                foreach (var item in query)
-                    return item.Path.ToLower();
-            }
-            return "";
-        }
+            si = new STARTUPINFO();
 
+            IntPtr hToken;
+            bool err = WTSQueryUserToken(WTSGetActiveConsoleSessionId(), out hToken);
+
+            string cmdLine = $"-t \"{title}\" \"{content}\"";
+            if (CreateProcessAsUser(hToken, ControllerService.CurrentPathClient, $@"""{ControllerService.CurrentPathClient}"" {cmdLine}", IntPtr.Zero, IntPtr.Zero, true, 0x08000000, IntPtr.Zero, IntPtr.Zero, ref si, out pi))
+            {
+                uint ret = WaitForSingleObject(pi.hProcess, 2000); //wait for the child process exit.
+                if (ret == 0)
+                    return true;
+            }
+
+            return false;
+        }
+    }
+    
+    public class ControllerHelper
+    {
         public static byte NormalizeInput(short input)
         {
             input = (short)Math.Max(short.MinValue, Math.Min(short.MaxValue, input));

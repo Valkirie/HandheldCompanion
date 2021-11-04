@@ -193,10 +193,10 @@ namespace ControllerService
                 outDS4Report.bTriggerL = gamepad.LeftTrigger;
                 outDS4Report.bTriggerR = gamepad.RightTrigger;
 
-                outDS4Report.bThumbLX = Utils.NormalizeInput(gamepad.LeftThumbX);
-                outDS4Report.bThumbLY = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.LeftThumbY));
-                outDS4Report.bThumbRX = Utils.NormalizeInput(gamepad.RightThumbX);
-                outDS4Report.bThumbRY = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.RightThumbY));
+                outDS4Report.bThumbLX = ControllerHelper.NormalizeInput(gamepad.LeftThumbX);
+                outDS4Report.bThumbLY = (byte)(byte.MaxValue - ControllerHelper.NormalizeInput(gamepad.LeftThumbY));
+                outDS4Report.bThumbRX = ControllerHelper.NormalizeInput(gamepad.RightThumbX);
+                outDS4Report.bThumbRY = (byte)(byte.MaxValue - ControllerHelper.NormalizeInput(gamepad.RightThumbY));
             }
 
             /*

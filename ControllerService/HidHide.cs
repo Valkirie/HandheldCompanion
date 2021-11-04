@@ -40,7 +40,7 @@ namespace ControllerService
                     break;
 
                 // --app-reg \"C:\\Program Files\\Nefarius Software Solutions e.U\\HidHideCLI\\HidHideCLI.exe\"
-                string path = Utils.Between(standard_output, "--app-reg \"", "\"");
+                string path = ControllerClient.Between(standard_output, "--app-reg \"", "\"");
                 whitelist.Add(path);
             }
             return whitelist;
@@ -83,7 +83,7 @@ namespace ControllerService
             }
             catch (Exception)
             {
-                string tempString = Utils.Between(jsonString, "symbolicLink", ",");
+                string tempString = ControllerClient.Between(jsonString, "symbolicLink", ",");
                 root = new RootDevice();
                 root.friendlyName = "Unknown";
                 root.devices = new List<Device>() { new Device() { gamingDevice = true, deviceInstancePath = tempString } };

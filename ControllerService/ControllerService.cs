@@ -11,9 +11,7 @@ using System.Management;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Timers;
-using Windows.UI.Notifications;
-using Windows.UI.Xaml.Media.Imaging;
-using static ControllerService.Utils;
+using static ControllerService.ControllerClient;
 using Timer = System.Timers.Timer;
 
 namespace ControllerService
@@ -123,8 +121,8 @@ namespace ControllerService
             // hide the physical controller
             foreach (Device d in Hidder.GetDevices().Where(a => a.gamingDevice))
             {
-                string VID = Utils.Between(d.deviceInstancePath.ToLower(), "vid_", "&");
-                string PID = Utils.Between(d.deviceInstancePath.ToLower(), "pid_", "&");
+                string VID = ControllerClient.Between(d.deviceInstancePath.ToLower(), "vid_", "&");
+                string PID = ControllerClient.Between(d.deviceInstancePath.ToLower(), "pid_", "&");
 
                 string query = $"SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE \"%VID_{VID}&PID_{PID}%\"";
 
@@ -163,11 +161,13 @@ namespace ControllerService
             // monitor processes and settings
             UpdateMonitor = new Timer(1000) { Enabled = true, AutoReset = true };
             UpdateMonitor.Elapsed += MonitorProcess;
+
+            SendToast("DualShock 4 Controller", "Virtual device is now connected");
         }
 
         private void MonitorProcess(object sender, ElapsedEventArgs e)
         {
-            int ProcessId = Utils.GetProcessIdByPath(CurrentPathClient);
+            int ProcessId = GetProcessIdByPath();
             if (ProcessId != CurrenthProcess)
             {
                 try
@@ -259,6 +259,8 @@ namespace ControllerService
                 UpdateMonitor.Stop();
 
             CurrentLog.WriteEntry($"Uncloaking {PhysicalController.GetType().Name}");
+
+            SendToast("DualShock 4 Controller", "Virtual device is now disconnected");
 
             base.OnStop();
         }
