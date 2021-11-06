@@ -1,9 +1,5 @@
-﻿using Microsoft.Toolkit.Uwp.Notifications;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -39,8 +35,8 @@ namespace ControllerService
             lock (locker)
             {
                 using (FileStream file = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.Read))
-                    using (StreamWriter writer = new StreamWriter(file, Encoding.Unicode))
-                        writer.Write($"{entry}\n");
+                using (StreamWriter writer = new StreamWriter(file, Encoding.Unicode))
+                    writer.Write($"{entry}\n");
             }
         }
     }
@@ -214,7 +210,7 @@ namespace ControllerService
             return false;
         }
     }
-    
+
     public class ControllerHelper
     {
         public static byte NormalizeInput(short input)

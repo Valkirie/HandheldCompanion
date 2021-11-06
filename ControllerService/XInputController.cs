@@ -1,12 +1,9 @@
 ﻿using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using SharpDX.XInput;
-using System;
 using System.Diagnostics;
 using System.Numerics;
-using System.Threading;
 using System.Timers;
-using System.Windows.Forms;
 using Timer = System.Timers.Timer;
 
 namespace ControllerService

@@ -1,13 +1,11 @@
 ﻿using Microsoft.Win32;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
+using SharpDX.XInput;
 using System;
-using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Management;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Timers;
@@ -107,9 +105,9 @@ namespace ControllerService
             }
 
             // prepare physical controller
-            for (int i = 0; i < 4; i++)
+            for (int i = (int)UserIndex.One; i <= (int)UserIndex.Three; i++)
             {
-                XInputController tmpController = new XInputController((SharpDX.XInput.UserIndex)i);
+                XInputController tmpController = new XInputController((UserIndex)i);
                 if (tmpController.controller.IsConnected)
                     PhysicalController = tmpController;
             }
@@ -205,7 +203,7 @@ namespace ControllerService
             PhysicalController.SetGyroscope(Gyrometer);
             PhysicalController.SetAccelerometer(Accelerometer);
             CurrentLog.WriteEntry($"Virtual {VirtualController.GetType().Name} attached to {PhysicalController.GetType().Name} {PhysicalController.index}.");
-            
+
             base.OnStart(args);
         }
 
@@ -230,7 +228,7 @@ namespace ControllerService
             if (Hidder != null)
                 Hidder.SetCloaking(false);
 
-            if(UpdateMonitor.Enabled)
+            if (UpdateMonitor.Enabled)
                 UpdateMonitor.Stop();
 
             CurrentLog.WriteEntry($"Uncloaking {PhysicalController.GetType().Name}");
