@@ -30,6 +30,11 @@ namespace ControllerService
 
         internal void WriteEntry(string entry)
         {
+            //
+            // TODO: replace
+            // 
+            return;
+
             string fileName = Path.Combine(Location, Source);
 
             lock (locker)

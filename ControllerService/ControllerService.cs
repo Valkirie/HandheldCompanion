@@ -7,14 +7,16 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.ServiceProcess;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
+using Microsoft.Extensions.Hosting;
 using static ControllerService.ControllerClient;
 using Timer = System.Timers.Timer;
 
 namespace ControllerService
 {
-    public partial class ControllerService : ServiceBase
+    public class ControllerService : IHostedService
     {
         // controllers vars
         private static XInputController PhysicalController;
@@ -33,10 +35,8 @@ namespace ControllerService
         public static Assembly CurrentAssembly;
         public static EventLog CurrentLog;
 
-        public ControllerService(string[] args)
+        public ControllerService()
         {
-            InitializeComponent();
-
             CurrentAssembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
@@ -50,36 +50,44 @@ namespace ControllerService
             CurrentPathDep = Path.Combine(CurrentPath, "dependencies");
 
             // initialize log
-            string ServiceName = this.ServiceName;
+            string ServiceName = nameof(ControllerService);
             CurrentLog = new EventLog(CurrentPath);
-            RegistryKey key = Registry.LocalMachine.CreateSubKey($"SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\{ServiceName}");
+            try
+            {
+                var key =
+                    Registry.LocalMachine.CreateSubKey(
+                        $"SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\{ServiceName}");
 
-            CurrentLog.Source = $"{ServiceName}.log";
-            if (!CurrentLog.SourceExists())
-                CurrentLog.CreateEventSource();
+                CurrentLog.Source = $"{ServiceName}.log";
+                if (!CurrentLog.SourceExists())
+                    CurrentLog.CreateEventSource();
+            }
+            catch (UnauthorizedAccessException)
+            {
+            }
 
             CurrentLog.WriteEntry($"AyaGyroAiming ({fileVersionInfo.ProductVersion})");
 
             if (!File.Exists(CurrentPathCli))
             {
                 CurrentLog.WriteEntry("HidHide is missing. Please get it from: https://github.com/ViGEm/HidHide/releases");
-                this.Stop();
+                //this.Stop();
             }
 
             if (!File.Exists(CurrentPathClient))
             {
                 CurrentLog.WriteEntry("CurrentPathClient is missing. Application will stop.");
-                this.Stop();
+                //this.Stop();
             }
 
             // initialize HidHide
             Hidder = new HidHide(CurrentPathCli);
-            Hidder.RegisterApplication(CurrentAssembly.Location);
+            Hidder.RegisterApplication(Process.GetCurrentProcess().MainModule.FileName);
             Hidder.GetDevices();
             Hidder.HideDevices();
 
             // initialize Profile Manager
-            CurrentManager = new ProfileManager(CurrentPathProfiles, CurrentAssembly.Location);
+            CurrentManager = new ProfileManager(CurrentPathProfiles, Process.GetCurrentProcess().MainModule.FileName);
 
             // initialize ViGem
             try
@@ -95,13 +103,13 @@ namespace ControllerService
                 if (VirtualController == null)
                 {
                     CurrentLog.WriteEntry("No Virtual controller detected. Application will stop.");
-                    this.Stop();
+                    //this.Stop();
                 }
             }
             catch (Exception)
             {
                 CurrentLog.WriteEntry("ViGEm is missing. Please get it from: https://github.com/ViGEm/ViGEmBus/releases");
-                this.Stop();
+                //this.Stop();
             }
 
             // prepare physical controller
@@ -115,7 +123,7 @@ namespace ControllerService
             if (PhysicalController == null)
             {
                 CurrentLog.WriteEntry("No physical controller detected. Application will stop.");
-                this.Stop();
+                //this.Stop();
             }
 
             // default is 10ms rating
@@ -179,7 +187,7 @@ namespace ControllerService
             }
         }
 
-        protected override void OnStart(string[] args)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             // start the DSUClient
             if (DSUServer != null)
@@ -196,18 +204,16 @@ namespace ControllerService
             Hidder.SetCloaking(true);
             CurrentLog.WriteEntry($"Cloaking {PhysicalController.GetType().Name}");
 
-            // plug the virtual controler
+            // plug the virtual controller
             VirtualController.Connect();
             CurrentLog.WriteEntry($"Virtual {VirtualController.GetType().Name} connected.");
             PhysicalController.SetVirtualController(VirtualController);
             PhysicalController.SetGyroscope(Gyrometer);
             PhysicalController.SetAccelerometer(Accelerometer);
             CurrentLog.WriteEntry($"Virtual {VirtualController.GetType().Name} attached to {PhysicalController.GetType().Name} {PhysicalController.index}.");
-
-            base.OnStart(args);
         }
 
-        protected override void OnStop()
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -234,8 +240,6 @@ namespace ControllerService
             CurrentLog.WriteEntry($"Uncloaking {PhysicalController.GetType().Name}");
 
             SendToast("DualShock 4 Controller", "Virtual device is now disconnected");
-
-            base.OnStop();
         }
     }
 }
