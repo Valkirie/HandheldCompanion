@@ -1,104 +1,68 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6B7B570E-8C8B-4189-9C98-B3BBFE630615}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ControllerService</RootNamespace>
-    <AssemblyName>ControllerService</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net461</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <AssemblyTitle>ControllerService</AssemblyTitle>
+    <Product>ControllerService</Product>
+    <Copyright>Copyright ©  2021</Copyright>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+    <Compile Remove="dependencies\x64\**" />
+    <Compile Remove="dependencies\x86\**" />
+    <EmbeddedResource Remove="dependencies\x64\**" />
+    <EmbeddedResource Remove="dependencies\x86\**" />
+    <None Remove="dependencies\x64\**" />
+    <None Remove="dependencies\x86\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Device.cs" />
-    <Compile Include="DS4OutDevice.cs" />
-    <Compile Include="HidHide.cs" />
-    <Compile Include="ProfileManager.cs" />
-    <Compile Include="ProjectInstaller.cs">
+    <Compile Update="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ProjectInstaller.Designer.cs">
+    <Compile Update="ProjectInstaller.Designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
+    <Compile Update="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ControllerService.cs">
+    <Compile Update="ControllerService.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ControllerService.Designer.cs">
+    <Compile Update="ControllerService.Designer.cs">
       <DependentUpon>ControllerService.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DSUServer.cs" />
-    <Compile Include="ControllerClient.cs" />
-    <Compile Include="XInputAccelerometer.cs" />
-    <Compile Include="XInputController.cs" />
-    <Compile Include="XInputGirometer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="app.manifest" />
     <None Include="dependencies\HidHideMSI.msi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="dependencies\ViGEmBusSetup_x64.msi">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="dependencies\x64\x360ce.ini">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="dependencies\x86\x360ce.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="profiles\AYASpace.json">
@@ -116,89 +80,38 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ProjectInstaller.resx">
+    <EmbeddedResource Update="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ControllerService.resx">
+    <EmbeddedResource Update="ControllerService.resx">
       <DependentUpon>ControllerService.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="dependencies\x64\xinput1_3.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="dependencies\x86\xinput1_3.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Crc32.NET">
-      <Version>1.2.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces">
-      <Version>5.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies">
-      <Version>1.0.0</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    <PackageReference Include="Crc32.NET" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461">
-      <Version>1.0.0</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications">
-      <Version>7.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Windows.SDK.Contracts">
-      <Version>10.0.19041.1</Version>
-    </PackageReference>
-    <PackageReference Include="MouseKeyHook">
-      <Version>5.6.0</Version>
-    </PackageReference>
-    <PackageReference Include="Nefarius.ViGEm.Client">
-      <Version>1.17.178</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="SharpDX">
-      <Version>4.2.0</Version>
-    </PackageReference>
-    <PackageReference Include="SharpDX.XInput">
-      <Version>4.2.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Buffers">
-      <Version>4.5.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Memory">
-      <Version>4.5.4</Version>
-    </PackageReference>
-    <PackageReference Include="System.Numerics.Vectors">
-      <Version>4.5.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
-      <Version>5.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.WindowsRuntime">
-      <Version>4.6.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.WindowsRuntime.UI.Xaml">
-      <Version>4.6.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.Encodings.Web">
-      <Version>5.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.Json">
-      <Version>5.0.2</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading.Tasks.Extensions">
-      <Version>4.5.4</Version>
-    </PackageReference>
-    <PackageReference Include="System.ValueTuple">
-      <Version>4.5.0</Version>
-    </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.1" />
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.1" />
+    <PackageReference Include="MouseKeyHook" Version="5.6.0" />
+    <PackageReference Include="Nefarius.ViGEm.Client" Version="1.17.178" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="SharpDX" Version="4.2.0" />
+    <PackageReference Include="SharpDX.XInput" Version="4.2.0" />
+    <PackageReference Include="System.Buffers" Version="4.5.1" />
+    <PackageReference Include="System.Memory" Version="4.5.4" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
+    <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.6.0" />
+    <PackageReference Include="System.Runtime.WindowsRuntime.UI.Xaml" Version="4.6.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
