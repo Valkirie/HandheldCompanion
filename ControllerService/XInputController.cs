@@ -39,9 +39,10 @@ namespace ControllerService
         public struct TrackPadTouch
         {
             public bool IsActive;
+            public byte Id;
+            public short X;
+            public short Y;
             public byte RawTrackingNum;
-            public ushort X;
-            public ushort Y;
         }
 
         public TrackPadTouch TrackPadTouch0;
@@ -125,7 +126,7 @@ namespace ControllerService
             AngularVelocity.Z = e.AngularVelocityZ;
         }
 
-        private void UpdateController(object sender, ElapsedEventArgs e)
+        private unsafe void UpdateController(object sender, ElapsedEventArgs e)
         {
             if (!controller.IsConnected)
                 return;
@@ -205,31 +206,27 @@ namespace ControllerService
                 0x02: set data for previous touches at [44-51]
              */
 
-            outDS4Report.bTouchPacketsN = 0;
+            outDS4Report.bTouchPacketsN = 1;
+            outDS4Report.sCurrentTouch.bPacketCounter = TouchPacketCounter;
+            outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = TrackPadTouch0.RawTrackingNum;
+            outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(TrackPadTouch0.X & 0xFF);
+            outDS4Report.sCurrentTouch.bTouchData1[1] =
+                (byte)(((TrackPadTouch0.X >> 8) & 0x0F) | ((TrackPadTouch0.Y << 4) & 0xF0));
+            outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(TrackPadTouch0.Y >> 4);
 
-            unsafe
-            {
-                outDS4Report.sCurrentTouch.bPacketCounter = TouchPacketCounter;
-                outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = TrackPadTouch0.RawTrackingNum;
-                outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(TrackPadTouch0.X & 0xFF);
-                outDS4Report.sCurrentTouch.bTouchData1[1] = (byte)((TrackPadTouch0.X >> 8) & 0x0F | (TrackPadTouch0.Y << 4) & 0xF0);
-                outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(TrackPadTouch0.Y >> 4);
+            outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = TrackPadTouch1.RawTrackingNum;
+            outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(TrackPadTouch1.X & 0xFF);
+            outDS4Report.sCurrentTouch.bTouchData2[1] =
+                (byte)(((TrackPadTouch1.X >> 8) & 0x0F) | ((TrackPadTouch1.Y << 4) & 0xF0));
+            outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(TrackPadTouch1.Y >> 4);
 
-                outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = TrackPadTouch1.RawTrackingNum;
-                outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(TrackPadTouch1.X & 0xFF);
-                outDS4Report.sCurrentTouch.bTouchData2[1] = (byte)((TrackPadTouch1.X >> 8) & 0x0F | (TrackPadTouch1.Y << 4) & 0xF0);
-                outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(TrackPadTouch1.Y >> 4);
-            }
+            outDS4Report.wGyroX = (short)AngularVelocity.X; // gyroPitchFull
+            outDS4Report.wGyroY = (short)AngularVelocity.Y; // gyroYawFull
+            outDS4Report.wGyroZ = (short)AngularVelocity.Z; // gyroRollFull
 
-            outDS4Report.wGyroX = (short)AngularVelocity.X;
-            outDS4Report.wGyroY = (short)AngularVelocity.Y;
-            outDS4Report.wGyroZ = (short)AngularVelocity.Z;
-
-            outDS4Report.wAccelX = (short)Acceleration.X;
-            outDS4Report.wAccelY = (short)Acceleration.Y;
-            outDS4Report.wAccelZ = (short)Acceleration.Z;
-
-            outDS4Report.bBatteryLvl = 0xFF;
+            outDS4Report.wAccelX = (short)Acceleration.X; // accelXFull
+            outDS4Report.wAccelY = (short)Acceleration.Y; // accelYFull
+            outDS4Report.wAccelZ = (short)Acceleration.Z; // accelZFull
 
             /*
                 EXT/HeadSet/Earset: bitmask
@@ -240,7 +237,7 @@ namespace ControllerService
                 00000101 is ? (0x05)
             */
 
-            outDS4Report.bBatteryLvlSpecial = 0x1B;
+            outDS4Report.bBatteryLvlSpecial = 10;
 
             outDS4Report.wTimestamp = (ushort)microseconds;
 

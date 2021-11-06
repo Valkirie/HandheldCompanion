@@ -89,8 +89,8 @@ namespace ControllerService
                 // 0x05C4 (Original V1)
                 // 0x09CC (Pro V2)
 
-                VirtualController = client.CreateDualShock4Controller(0x054C, 0x09CC);
-                // VirtualController = client.CreateDualShock4Controller();
+                // VirtualController = client.CreateDualShock4Controller(0x054C, 0x09CC);
+                VirtualController = client.CreateDualShock4Controller();
 
                 if (VirtualController == null)
                 {
