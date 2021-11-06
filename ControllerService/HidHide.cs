@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Management;
 using System.Text.Json;
 
 namespace ControllerService
@@ -9,6 +11,7 @@ namespace ControllerService
     {
         private Process process;
         public RootDevice root;
+        public List<Device> devices = new List<Device>();
 
         public HidHide(string _path)
         {
@@ -62,7 +65,7 @@ namespace ControllerService
             process.StandardOutput.ReadToEnd();
         }
 
-        public List<Device> GetDevices()
+        public void GetDevices()
         {
             process.StartInfo.Arguments = $"--dev-gaming";
             process.Start();
@@ -71,7 +74,7 @@ namespace ControllerService
             string jsonString = process.StandardOutput.ReadToEnd();
 
             if (jsonString == "")
-                return new List<Device>();
+                return;
 
             try
             {
@@ -89,7 +92,7 @@ namespace ControllerService
                 root.devices = new List<Device>() { new Device() { gamingDevice = true, deviceInstancePath = tempString } };
             }
 
-            return root.devices;
+            devices = root.devices;
         }
 
         public void SetCloaking(bool status)
@@ -114,6 +117,35 @@ namespace ControllerService
             process.Start();
             process.WaitForExit();
             process.StandardOutput.ReadToEnd();
+        }
+
+        internal void HideDevices()
+        {
+            foreach (Device d in devices.Where(a => a.gamingDevice))
+            {
+                string VID = ControllerClient.Between(d.deviceInstancePath.ToLower(), "vid_", "&");
+                string PID = ControllerClient.Between(d.deviceInstancePath.ToLower(), "pid_", "&");
+
+                string query = $"SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE \"%VID_{VID}&PID_{PID}%\"";
+
+                var moSearch = new ManagementObjectSearcher(query);
+                var moCollection = moSearch.Get();
+
+                foreach (ManagementObject mo in moCollection)
+                {
+                    foreach (var item in mo.Properties)
+                    {
+                        if (item.Name == "DeviceID")
+                        {
+                            string DeviceID = ((string)item.Value);
+                            HideDevice(DeviceID);
+                            HideDevice(d.deviceInstancePath);
+                            ControllerService.CurrentLog.WriteEntry($"HideDevice hidding {DeviceID}");
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 }

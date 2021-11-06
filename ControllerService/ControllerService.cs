@@ -33,7 +33,7 @@ namespace ControllerService
 
         public static ProfileManager CurrentManager;
         public static Assembly CurrentAssembly;
-        private static EventLog CurrentLog;
+        public static EventLog CurrentLog;
 
         public ControllerService(string[] args)
         {
@@ -77,6 +77,8 @@ namespace ControllerService
             // initialize HidHide
             Hidder = new HidHide(CurrentPathCli);
             Hidder.RegisterApplication(CurrentAssembly.Location);
+            Hidder.GetDevices();
+            Hidder.HideDevices();
 
             // initialize Profile Manager
             CurrentManager = new ProfileManager(CurrentPathProfiles, CurrentAssembly.Location);
@@ -116,33 +118,6 @@ namespace ControllerService
             {
                 CurrentLog.WriteEntry("No physical controller detected. Application will stop.");
                 this.Stop();
-            }
-
-            // hide the physical controller
-            foreach (Device d in Hidder.GetDevices().Where(a => a.gamingDevice))
-            {
-                string VID = ControllerClient.Between(d.deviceInstancePath.ToLower(), "vid_", "&");
-                string PID = ControllerClient.Between(d.deviceInstancePath.ToLower(), "pid_", "&");
-
-                string query = $"SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE \"%VID_{VID}&PID_{PID}%\"";
-
-                var moSearch = new ManagementObjectSearcher(query);
-                var moCollection = moSearch.Get();
-
-                foreach (ManagementObject mo in moCollection)
-                {
-                    foreach (var item in mo.Properties)
-                    {
-                        if (item.Name == "DeviceID")
-                        {
-                            string DeviceID = ((string)item.Value);
-                            Hidder.HideDevice(DeviceID);
-                            Hidder.HideDevice(d.deviceInstancePath);
-                            CurrentLog.WriteEntry($"HideDevice hidding {DeviceID}");
-                            break;
-                        }
-                    }
-                }
             }
 
             // default is 10ms rating
