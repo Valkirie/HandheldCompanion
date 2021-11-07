@@ -1,5 +1,6 @@
 ﻿using System;
 using Windows.Devices.Sensors;
+using Microsoft.Extensions.Logging;
 
 namespace ControllerService
 {
@@ -17,14 +18,18 @@ namespace ControllerService
         public event XInputAccelerometerReadingChangedEventHandler ReadingChanged;
         public delegate void XInputAccelerometerReadingChangedEventHandler(Object sender, XInputAccelerometerReadingChangedEventArgs e);
 
-        public XInputAccelerometer(EventLog CurrentLog)
+        private readonly ILogger<ControllerService> logger;
+
+        public XInputAccelerometer( ILogger<ControllerService> logger)
         {
+            this.logger = logger;
+
             sensor = Accelerometer.GetDefault();
             if (sensor != null)
             {
                 sensor.ReportInterval = sensor.MinimumReportInterval;
-                CurrentLog.WriteEntry($"Accelerometer initialised.");
-                CurrentLog.WriteEntry($"Accelerometer report interval set to {sensor.ReportInterval}ms");
+                logger.LogInformation($"Accelerometer initialised.");
+                logger.LogInformation($"Accelerometer report interval set to {sensor.ReportInterval}ms");
 
                 sensor.ReadingChanged += AcceleroReadingChanged;
             }

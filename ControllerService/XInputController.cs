@@ -33,6 +33,8 @@ namespace ControllerService
         private byte TouchPacketCounter = 0;
         private byte FrameCounter = 0;
 
+        private object updateLock = new();
+
         public struct TrackPadTouch
         {
             public bool IsActive;
@@ -128,120 +130,141 @@ namespace ControllerService
             if (!controller.IsConnected)
                 return;
 
-            // update framecounter
-            FrameCounter++;
-
-            // update timestamp
-            microseconds = (long)(stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L))/* / 5.33f */);
-
-            // get current gamepad state
-            State state = controller.GetState();
-            gamepad = state.Gamepad;
-
-            // send report to server
-            dsu?.NewReportIncoming(this, microseconds);
-
-            // reset vars
-            byte[] rawOutReportEx = new byte[63];
-            ushort tempButtons = 0;
-            ushort tempSpecial = 0;
-            DualShock4DPadDirection tempDPad = DualShock4DPadDirection.None;
-
-            outDS4Report.bThumbLX = 128;
-            outDS4Report.bThumbLY = 128;
-            outDS4Report.bThumbRX = 128;
-            outDS4Report.bThumbRY = 128;
-
-            unchecked
+            lock (updateLock)
             {
-                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.A)) tempButtons |= DualShock4Button.Cross.Value;
-                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.B)) tempButtons |= DualShock4Button.Circle.Value;
-                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.X)) tempButtons |= DualShock4Button.Square.Value;
-                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Y)) tempButtons |= DualShock4Button.Triangle.Value;
+                // update framecounter
+                FrameCounter++;
 
-                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Start)) tempButtons |= DualShock4Button.Options.Value;
-                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Back)) tempButtons |= DualShock4Button.Share.Value;
+                // update timestamp
+                microseconds = (long)(stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L)) /* / 5.33f */);
 
-                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb)) tempButtons |= DualShock4Button.ThumbRight.Value;
-                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb)) tempButtons |= DualShock4Button.ThumbLeft.Value;
+                // get current gamepad state
+                State state = controller.GetState();
+                gamepad = state.Gamepad;
 
-                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder)) tempButtons |= DualShock4Button.ShoulderRight.Value;
-                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder)) tempButtons |= DualShock4Button.ShoulderLeft.Value;
+                // send report to server
+                dsu?.NewReportIncoming(this, microseconds);
 
-                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) && gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight)) tempDPad = DualShock4DPadDirection.Northeast;
-                else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) && gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft)) tempDPad = DualShock4DPadDirection.Northwest;
-                else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp)) tempDPad = DualShock4DPadDirection.North;
-                else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight) && gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown)) tempDPad = DualShock4DPadDirection.Southeast;
-                else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight)) tempDPad = DualShock4DPadDirection.East;
-                else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown) && gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft)) tempDPad = DualShock4DPadDirection.Southwest;
-                else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown)) tempDPad = DualShock4DPadDirection.South;
-                else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft)) tempDPad = DualShock4DPadDirection.West;
+                // reset vars
+                byte[] rawOutReportEx = new byte[63];
+                ushort tempButtons = 0;
+                ushort tempSpecial = 0;
+                DualShock4DPadDirection tempDPad = DualShock4DPadDirection.None;
 
-                // if (state.PS) tempSpecial |= DualShock4SpecialButton.Ps.Value;
-                // if (state.OutputTouchButton) tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
-                // outDS4Report.bSpecial = (byte)tempSpecial;
-                outDS4Report.bSpecial = (byte)(tempSpecial | (FrameCounter << 2));
+                outDS4Report.bThumbLX = 128;
+                outDS4Report.bThumbLY = 128;
+                outDS4Report.bThumbRX = 128;
+                outDS4Report.bThumbRY = 128;
+
+                unchecked
+                {
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.A)) tempButtons |= DualShock4Button.Cross.Value;
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.B)) tempButtons |= DualShock4Button.Circle.Value;
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.X)) tempButtons |= DualShock4Button.Square.Value;
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Y)) tempButtons |= DualShock4Button.Triangle.Value;
+
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Start))
+                        tempButtons |= DualShock4Button.Options.Value;
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Back)) tempButtons |= DualShock4Button.Share.Value;
+
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb))
+                        tempButtons |= DualShock4Button.ThumbRight.Value;
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb))
+                        tempButtons |= DualShock4Button.ThumbLeft.Value;
+
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder))
+                        tempButtons |= DualShock4Button.ShoulderRight.Value;
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder))
+                        tempButtons |= DualShock4Button.ShoulderLeft.Value;
+
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) &&
+                        gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
+                        tempDPad = DualShock4DPadDirection.Northeast;
+                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) &&
+                             gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
+                        tempDPad = DualShock4DPadDirection.Northwest;
+                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp))
+                        tempDPad = DualShock4DPadDirection.North;
+                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight) &&
+                             gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
+                        tempDPad = DualShock4DPadDirection.Southeast;
+                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
+                        tempDPad = DualShock4DPadDirection.East;
+                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown) &&
+                             gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
+                        tempDPad = DualShock4DPadDirection.Southwest;
+                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
+                        tempDPad = DualShock4DPadDirection.South;
+                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
+                        tempDPad = DualShock4DPadDirection.West;
+
+                    // if (state.PS) tempSpecial |= DualShock4SpecialButton.Ps.Value;
+                    // if (state.OutputTouchButton) tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
+                    // outDS4Report.bSpecial = (byte)tempSpecial;
+                    outDS4Report.bSpecial = (byte)(tempSpecial | (FrameCounter << 2));
+                }
+
+                if (!muted)
+                {
+                    outDS4Report.wButtons = tempButtons;
+                    outDS4Report.wButtons |= tempDPad.Value;
+
+                    outDS4Report.bTriggerL = gamepad.LeftTrigger;
+                    outDS4Report.bTriggerR = gamepad.RightTrigger;
+
+                    outDS4Report.bThumbLX = ControllerHelper.NormalizeInput(gamepad.LeftThumbX);
+                    outDS4Report.bThumbLY = (byte)(byte.MaxValue - ControllerHelper.NormalizeInput(gamepad.LeftThumbY));
+                    outDS4Report.bThumbRX = ControllerHelper.NormalizeInput(gamepad.RightThumbX);
+                    outDS4Report.bThumbRY =
+                        (byte)(byte.MaxValue - ControllerHelper.NormalizeInput(gamepad.RightThumbY));
+                }
+
+                /*
+                    0x00: No data for T-PAD[1]
+                    0x01: Set data for 2 current touches
+                    0x02: set data for previous touches at [44-51]
+                 */
+
+                outDS4Report.bTouchPacketsN = 1;
+                outDS4Report.sCurrentTouch.bPacketCounter = TouchPacketCounter;
+                outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = TrackPadTouch0.RawTrackingNum;
+                outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(TrackPadTouch0.X & 0xFF);
+                outDS4Report.sCurrentTouch.bTouchData1[1] =
+                    (byte)(((TrackPadTouch0.X >> 8) & 0x0F) | ((TrackPadTouch0.Y << 4) & 0xF0));
+                outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(TrackPadTouch0.Y >> 4);
+
+                outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = TrackPadTouch1.RawTrackingNum;
+                outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(TrackPadTouch1.X & 0xFF);
+                outDS4Report.sCurrentTouch.bTouchData2[1] =
+                    (byte)(((TrackPadTouch1.X >> 8) & 0x0F) | ((TrackPadTouch1.Y << 4) & 0xF0));
+                outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(TrackPadTouch1.Y >> 4);
+
+                outDS4Report.wGyroX = (short)AngularVelocity.X; // gyroPitchFull
+                outDS4Report.wGyroY = (short)AngularVelocity.Y; // gyroYawFull
+                outDS4Report.wGyroZ = (short)AngularVelocity.Z; // gyroRollFull
+
+                outDS4Report.wAccelX = (short)Acceleration.X; // accelXFull
+                outDS4Report.wAccelY = (short)Acceleration.Y; // accelYFull
+                outDS4Report.wAccelZ = (short)Acceleration.Z; // accelZFull
+
+                /*
+                    EXT/HeadSet/Earset: bitmask
+                    01111011 is headset with mic (0x7B)
+                    00111011 is headphones (0x3B)
+                    00011011 is nothing attached (0x1B)
+                    00001000 is bluetooth? (0x08)
+                    00000101 is ? (0x05)
+                */
+
+                outDS4Report.bBatteryLvlSpecial = 10;
+
+                outDS4Report.wTimestamp = (ushort)microseconds;
+
+                DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
+
+                // send report to controller
+                vcontroller.SubmitRawReport(rawOutReportEx);
             }
-
-            if (!muted)
-            {
-                outDS4Report.wButtons = tempButtons;
-                outDS4Report.wButtons |= tempDPad.Value;
-
-                outDS4Report.bTriggerL = gamepad.LeftTrigger;
-                outDS4Report.bTriggerR = gamepad.RightTrigger;
-
-                outDS4Report.bThumbLX = ControllerHelper.NormalizeInput(gamepad.LeftThumbX);
-                outDS4Report.bThumbLY = (byte)(byte.MaxValue - ControllerHelper.NormalizeInput(gamepad.LeftThumbY));
-                outDS4Report.bThumbRX = ControllerHelper.NormalizeInput(gamepad.RightThumbX);
-                outDS4Report.bThumbRY = (byte)(byte.MaxValue - ControllerHelper.NormalizeInput(gamepad.RightThumbY));
-            }
-
-            /*
-                0x00: No data for T-PAD[1]
-                0x01: Set data for 2 current touches
-                0x02: set data for previous touches at [44-51]
-             */
-
-            outDS4Report.bTouchPacketsN = 1;
-            outDS4Report.sCurrentTouch.bPacketCounter = TouchPacketCounter;
-            outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = TrackPadTouch0.RawTrackingNum;
-            outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(TrackPadTouch0.X & 0xFF);
-            outDS4Report.sCurrentTouch.bTouchData1[1] =
-                (byte)(((TrackPadTouch0.X >> 8) & 0x0F) | ((TrackPadTouch0.Y << 4) & 0xF0));
-            outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(TrackPadTouch0.Y >> 4);
-
-            outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = TrackPadTouch1.RawTrackingNum;
-            outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(TrackPadTouch1.X & 0xFF);
-            outDS4Report.sCurrentTouch.bTouchData2[1] =
-                (byte)(((TrackPadTouch1.X >> 8) & 0x0F) | ((TrackPadTouch1.Y << 4) & 0xF0));
-            outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(TrackPadTouch1.Y >> 4);
-
-            outDS4Report.wGyroX = (short)AngularVelocity.X; // gyroPitchFull
-            outDS4Report.wGyroY = (short)AngularVelocity.Y; // gyroYawFull
-            outDS4Report.wGyroZ = (short)AngularVelocity.Z; // gyroRollFull
-
-            outDS4Report.wAccelX = (short)Acceleration.X; // accelXFull
-            outDS4Report.wAccelY = (short)Acceleration.Y; // accelYFull
-            outDS4Report.wAccelZ = (short)Acceleration.Z; // accelZFull
-
-            /*
-                EXT/HeadSet/Earset: bitmask
-                01111011 is headset with mic (0x7B)
-                00111011 is headphones (0x3B)
-                00011011 is nothing attached (0x1B)
-                00001000 is bluetooth? (0x08)
-                00000101 is ? (0x05)
-            */
-
-            outDS4Report.bBatteryLvlSpecial = 10;
-
-            outDS4Report.wTimestamp = (ushort)microseconds;
-
-            DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
-
-            // send report to controller
-            vcontroller.SubmitRawReport(rawOutReportEx);
         }
     }
 }

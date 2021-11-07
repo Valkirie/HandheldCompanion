@@ -1,35 +1,42 @@
-﻿using System.Configuration.Install;
-using System.Reflection;
-using System.ServiceProcess;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace ControllerService
 {
-    static class Program
+    internal static class Program
     {
-        /// <summary>
-        /// Point d'entrée principal de l'application.
-        /// </summary>
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[]
-            {
-                new ControllerService(args)
-            };
+            CreateHostBuilder(args).Build().Run();
+        }
 
-            string parameter = string.Concat(args);
-            switch (parameter)
-            {
-                case "--install":
-                    ManagedInstallerClass.InstallHelper(new[] { Assembly.GetExecutingAssembly().Location });
-                    break;
-                case "--uninstall":
-                    ManagedInstallerClass.InstallHelper(new[] { "/u", Assembly.GetExecutingAssembly().Location });
-                    break;
-                default:
-                    ServiceBase.Run(ServicesToRun);
-                    break;
-            }
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                .UseWindowsService()
+                .ConfigureServices((hostContext, services) =>
+                {
+                    var configuration = new ConfigurationBuilder()
+                        .AddJsonFile("appsettings.json")
+                        .Build();
+
+                    var logger = new LoggerConfiguration()
+                        .ReadFrom.Configuration(configuration)
+                        .CreateLogger();
+
+                    services.AddLogging(builder =>
+                    {
+                        builder.SetMinimumLevel(LogLevel.Information);
+                        builder.AddSerilog(logger, true);
+                    });
+
+                    services.AddSingleton(new LoggerFactory().AddSerilog(logger));
+
+                    services.AddHostedService<ControllerService>();
+                });
         }
     }
 }
