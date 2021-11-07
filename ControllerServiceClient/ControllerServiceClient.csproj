@@ -3,6 +3,7 @@
     <ProjectGuid>{15236FBC-7E2A-4BE9-9A0E-9F4A75348892}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <TargetFramework>net461</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyTitle>ControllerServiceClient</AssemblyTitle>

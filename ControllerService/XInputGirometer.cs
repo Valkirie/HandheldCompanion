@@ -1,5 +1,6 @@
 ﻿using System;
 using Windows.Devices.Sensors;
+using Microsoft.Extensions.Logging;
 
 namespace ControllerService
 {
@@ -21,14 +22,17 @@ namespace ControllerService
         public event XInputGirometerReadingChangedEventHandler ReadingChanged;
         public delegate void XInputGirometerReadingChangedEventHandler(Object sender, XInputGirometerReadingChangedEventArgs e);
 
-        public XInputGirometer(EventLog CurrentLog)
+        private readonly ILogger<ControllerService> logger;
+
+        public XInputGirometer(ILogger<ControllerService> logger)
         {
+            this.logger = logger;
             sensor = Gyrometer.GetDefault();
             if (sensor != null)
             {
                 sensor.ReportInterval = sensor.MinimumReportInterval;
-                CurrentLog.WriteEntry($"Gyrometer initialised.");
-                CurrentLog.WriteEntry($"Gyrometer report interval set to {sensor.ReportInterval}ms");
+                logger.LogInformation($"Gyrometer initialised.");
+                logger.LogInformation($"Gyrometer report interval set to {sensor.ReportInterval}ms");
 
                 sensor.ReadingChanged += GyroReadingChanged;
             }

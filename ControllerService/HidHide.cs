@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Management;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace ControllerService
 {
@@ -13,8 +14,12 @@ namespace ControllerService
         public RootDevice root;
         public List<Device> devices = new List<Device>();
 
-        public HidHide(string _path)
+        private readonly ILogger<ControllerService> logger;
+
+        public HidHide(string _path, ILogger<ControllerService> logger)
         {
+            this.logger = logger;
+
             process = new Process
             {
                 StartInfo =
@@ -87,9 +92,11 @@ namespace ControllerService
             catch (Exception)
             {
                 string tempString = ControllerClient.Between(jsonString, "symbolicLink", ",");
-                root = new RootDevice();
-                root.friendlyName = "Unknown";
-                root.devices = new List<Device>() { new Device() { gamingDevice = true, deviceInstancePath = tempString } };
+                root = new RootDevice
+                {
+                    friendlyName = "Unknown",
+                    devices = new List<Device>() { new Device() { gamingDevice = true, deviceInstancePath = tempString } }
+                };
             }
 
             devices = root.devices;
@@ -140,7 +147,7 @@ namespace ControllerService
                             string DeviceID = ((string)item.Value);
                             HideDevice(DeviceID);
                             HideDevice(d.deviceInstancePath);
-                            ControllerService.CurrentLog.WriteEntry($"HideDevice hidding {DeviceID}");
+                            logger.LogInformation($"HideDevice hiding {DeviceID}");
                             break;
                         }
                     }

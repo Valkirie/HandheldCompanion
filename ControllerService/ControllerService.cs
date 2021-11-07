@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using static ControllerService.ControllerClient;
 using Timer = System.Timers.Timer;
 
@@ -33,10 +34,13 @@ namespace ControllerService
 
         public static ProfileManager CurrentManager;
         public static Assembly CurrentAssembly;
-        public static EventLog CurrentLog;
 
-        public ControllerService()
+        private readonly ILogger<ControllerService> logger;
+
+        public ControllerService(ILogger<ControllerService> logger)
         {
+            this.logger = logger;
+
             CurrentAssembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
@@ -51,37 +55,23 @@ namespace ControllerService
 
             // initialize log
             string ServiceName = nameof(ControllerService);
-            CurrentLog = new EventLog(CurrentPath);
-            try
-            {
-                var key =
-                    Registry.LocalMachine.CreateSubKey(
-                        $"SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\{ServiceName}");
 
-                CurrentLog.Source = $"{ServiceName}.log";
-                if (!CurrentLog.SourceExists())
-                    CurrentLog.CreateEventSource();
-            }
-            catch (UnauthorizedAccessException)
-            {
-            }
-
-            CurrentLog.WriteEntry($"AyaGyroAiming ({fileVersionInfo.ProductVersion})");
+            logger.LogInformation($"AyaGyroAiming ({fileVersionInfo.ProductVersion})");
 
             if (!File.Exists(CurrentPathCli))
             {
-                CurrentLog.WriteEntry("HidHide is missing. Please get it from: https://github.com/ViGEm/HidHide/releases");
-                //this.Stop();
+                logger.LogError("HidHide is missing. Please get it from: https://github.com/ViGEm/HidHide/releases");
+                throw new InvalidOperationException();
             }
 
             if (!File.Exists(CurrentPathClient))
             {
-                CurrentLog.WriteEntry("CurrentPathClient is missing. Application will stop.");
-                //this.Stop();
+                logger.LogError("CurrentPathClient is missing. Application will stop.");
+                throw new InvalidOperationException();
             }
 
             // initialize HidHide
-            Hidder = new HidHide(CurrentPathCli);
+            Hidder = new HidHide(CurrentPathCli, logger);
             Hidder.RegisterApplication(Process.GetCurrentProcess().MainModule.FileName);
             Hidder.GetDevices();
             Hidder.HideDevices();
@@ -102,14 +92,14 @@ namespace ControllerService
 
                 if (VirtualController == null)
                 {
-                    CurrentLog.WriteEntry("No Virtual controller detected. Application will stop.");
-                    //this.Stop();
+                    logger.LogError("No Virtual controller detected. Application will stop.");
+                    throw new InvalidOperationException();
                 }
             }
             catch (Exception)
             {
-                CurrentLog.WriteEntry("ViGEm is missing. Please get it from: https://github.com/ViGEm/ViGEmBus/releases");
-                //this.Stop();
+                logger.LogError("ViGEm is missing. Please get it from: https://github.com/ViGEm/ViGEmBus/releases");
+                throw new InvalidOperationException();
             }
 
             // prepare physical controller
@@ -122,19 +112,19 @@ namespace ControllerService
 
             if (PhysicalController == null)
             {
-                CurrentLog.WriteEntry("No physical controller detected. Application will stop.");
-                //this.Stop();
+                logger.LogError("No physical controller detected. Application will stop.");
+                throw new InvalidOperationException();
             }
 
             // default is 10ms rating
-            Gyrometer = new XInputGirometer(CurrentLog);
+            Gyrometer = new XInputGirometer(logger);
             if (Gyrometer.sensor == null)
-                CurrentLog.WriteEntry("No Gyrometer detected.");
+                logger.LogWarning("No Gyrometer detected.");
 
             // default is 10ms rating
-            Accelerometer = new XInputAccelerometer(CurrentLog);
+            Accelerometer = new XInputAccelerometer(logger);
             if (Accelerometer.sensor == null)
-                CurrentLog.WriteEntry("No Accelerometer detected.");
+                logger.LogWarning("No Accelerometer detected.");
 
             // initialize DSUClient
             DSUServer = new DSUServer();
@@ -192,7 +182,7 @@ namespace ControllerService
             // start the DSUClient
             if (DSUServer != null)
             {
-                CurrentLog.WriteEntry($"DSU Server has started. Listening to port: {26760}");
+                logger.LogInformation($"DSU Server has started. Listening to port: {26760}");
                 DSUServer.Start(26760);
                 PhysicalController.SetDSUServer(DSUServer);
             }
@@ -202,25 +192,25 @@ namespace ControllerService
 
             // turn on the cloaking
             Hidder.SetCloaking(true);
-            CurrentLog.WriteEntry($"Cloaking {PhysicalController.GetType().Name}");
+            logger.LogInformation($"Cloaking {PhysicalController.GetType().Name}");
 
             // plug the virtual controller
             VirtualController.Connect();
-            CurrentLog.WriteEntry($"Virtual {VirtualController.GetType().Name} connected.");
+            logger.LogInformation($"Virtual {VirtualController.GetType().Name} connected.");
             PhysicalController.SetVirtualController(VirtualController);
             PhysicalController.SetGyroscope(Gyrometer);
             PhysicalController.SetAccelerometer(Accelerometer);
-            CurrentLog.WriteEntry($"Virtual {VirtualController.GetType().Name} attached to {PhysicalController.GetType().Name} {PhysicalController.index}.");
+            logger.LogInformation($"Virtual {VirtualController.GetType().Name} attached to {PhysicalController.GetType().Name} {PhysicalController.index}.");
         }
 
-        public async Task StopAsync(CancellationToken cancellationToken)
+        public Task StopAsync(CancellationToken cancellationToken)
         {
             try
             {
                 if (VirtualController != null)
                 {
                     VirtualController.Disconnect();
-                    CurrentLog.WriteEntry($"Virtual {VirtualController.GetType().Name} disconnected.");
+                    logger.LogInformation($"Virtual {VirtualController.GetType().Name} disconnected.");
                 }
             }
             catch (Exception) { }
@@ -228,7 +218,7 @@ namespace ControllerService
             if (DSUServer != null)
             {
                 DSUServer.Stop();
-                CurrentLog.WriteEntry($"DSU Server has stopped.");
+                logger.LogInformation($"DSU Server has stopped.");
             }
 
             if (Hidder != null)
@@ -237,9 +227,11 @@ namespace ControllerService
             if (UpdateMonitor.Enabled)
                 UpdateMonitor.Stop();
 
-            CurrentLog.WriteEntry($"Uncloaking {PhysicalController.GetType().Name}");
+            logger.LogInformation($"Uncloaking {PhysicalController.GetType().Name}");
 
             SendToast("DualShock 4 Controller", "Virtual device is now disconnected");
+
+            return Task.CompletedTask;
         }
     }
 }
