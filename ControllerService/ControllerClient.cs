@@ -5,47 +5,6 @@ using System.Text;
 
 namespace ControllerService
 {
-    public class EventLog
-    {
-        private string Location;
-        public string Source;
-        private static object locker = new Object();
-
-        public EventLog(string _Path)
-        {
-            Location = _Path;
-        }
-
-        internal bool SourceExists()
-        {
-            string fileName = Path.Combine(Location, Source);
-            return File.Exists(fileName);
-        }
-
-        internal void CreateEventSource()
-        {
-            string fileName = Path.Combine(Location, Source);
-            File.CreateText(fileName);
-        }
-
-        internal void WriteEntry(string entry)
-        {
-            //
-            // TODO: replace
-            // 
-            return;
-
-            string fileName = Path.Combine(Location, Source);
-
-            lock (locker)
-            {
-                using (FileStream file = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.Read))
-                using (StreamWriter writer = new StreamWriter(file, Encoding.Unicode))
-                    writer.Write($"{entry}\n");
-            }
-        }
-    }
-
     public class ControllerClient
     {
         public enum BinaryType : uint
