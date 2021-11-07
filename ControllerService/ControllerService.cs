@@ -37,8 +37,6 @@ namespace ControllerService
 
         public ControllerService()
         {
-            return;
-
             CurrentAssembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
@@ -191,8 +189,6 @@ namespace ControllerService
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            return;
-
             // start the DSUClient
             if (DSUServer != null)
             {
