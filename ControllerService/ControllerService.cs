@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using SharpDX.XInput;
@@ -10,8 +11,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using static ControllerService.ControllerClient;
 using Timer = System.Timers.Timer;
 

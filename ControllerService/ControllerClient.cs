@@ -1,7 +1,7 @@
 ﻿using System;
-using System.IO;
+using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace ControllerService
 {
@@ -182,6 +182,26 @@ namespace ControllerService
             input = (short)Math.Max(short.MinValue, Math.Min(short.MaxValue, input));
             float output = (float)input / (float)ushort.MaxValue * (float)byte.MaxValue + (float)(byte.MaxValue / 2.0f);
             return (byte)Math.Round(output);
+        }
+    }
+
+    public class Utils
+    {
+        public static string GetMainModuleFilepath(int processId)
+        {
+            string wmiQueryString = "SELECT ProcessId, ExecutablePath FROM Win32_Process WHERE ProcessId = " + processId;
+            using (var searcher = new ManagementObjectSearcher(wmiQueryString))
+            {
+                using (var results = searcher.Get())
+                {
+                    ManagementObject mo = results.Cast<ManagementObject>().FirstOrDefault();
+                    if (mo != null)
+                    {
+                        return (string)mo["ExecutablePath"];
+                    }
+                }
+            }
+            return null;
         }
     }
 }

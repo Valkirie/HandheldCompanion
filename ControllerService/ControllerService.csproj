@@ -32,7 +32,16 @@
     <None Remove="dependencies\x86\**" />
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="profiles\Cemu.json" />
+    <Content Remove="profiles\Yuzu.json" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="ControllerService.cs" />
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="dependencies\HidHideMSI.msi">
@@ -41,7 +50,15 @@
     <None Include="dependencies\ViGEmBusSetup_x64.msi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="dependencies\x64\xinput1_3.dll" />
+    <None Include="dependencies\x86\xinput1_3.dll" />
     <None Include="profiles\AYASpace.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="profiles\Yuzu.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="profiles\Cemu.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="profiles\HidHideCLI.json">
@@ -63,7 +80,6 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="MouseKeyHook" Version="5.6.0" />
     <PackageReference Include="Nefarius.ViGEm.Client" Version="1.17.178" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
@@ -83,5 +99,11 @@
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
