@@ -1,0 +1,8 @@
+{
+  "name": "Yuzu",
+  "path": "yuzu.exe",
+  "whitelisted": false,
+  "use_wrapper": false,
+  "legacy": false,
+  "accelerometer": 1.25
+}

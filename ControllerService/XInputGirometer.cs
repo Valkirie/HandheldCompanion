@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using Windows.Devices.Sensors;
-using Microsoft.Extensions.Logging;
 
 namespace ControllerService
 {
@@ -18,6 +18,7 @@ namespace ControllerService
     public class XInputGirometer
     {
         public Gyrometer sensor;
+        public float multiplier = 1.0f;
 
         public event XInputGirometerReadingChangedEventHandler ReadingChanged;
         public delegate void XInputGirometerReadingChangedEventHandler(Object sender, XInputGirometerReadingChangedEventArgs e);
@@ -45,9 +46,9 @@ namespace ControllerService
             // raise event
             XInputGirometerReadingChangedEventArgs newargs = new XInputGirometerReadingChangedEventArgs()
             {
-                AngularVelocityX = (float)reading.AngularVelocityX,
-                AngularVelocityY = (float)reading.AngularVelocityY,
-                AngularVelocityZ = (float)reading.AngularVelocityZ
+                AngularVelocityX = (float)reading.AngularVelocityX * multiplier,
+                AngularVelocityY = (float)reading.AngularVelocityY * multiplier,
+                AngularVelocityZ = (float)reading.AngularVelocityZ * multiplier
             };
             ReadingChanged?.Invoke(this, newargs);
         }

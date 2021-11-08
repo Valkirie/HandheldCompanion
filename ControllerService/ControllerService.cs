@@ -143,33 +143,23 @@ namespace ControllerService
             {
                 try
                 {
-                    Process CurrentProcess = Process.GetProcessById((int)ProcessId);
-                    string ProcessName = CurrentProcess.ProcessName;
+                    Process CurrentProcess = Process.GetProcessById(ProcessId);
+                    string ProcessPath = Utils.GetMainModuleFilepath(ProcessId);
+                    string ProcessName = Path.GetFileName(ProcessPath);
 
                     if (CurrentManager.profiles.ContainsKey(ProcessName))
                     {
                         // muting process
                         Profile CurrentProfile = CurrentManager.profiles[ProcessName];
                         PhysicalController.muted = CurrentProfile.whitelisted;
-
-                        // wrapper process
-                        BinaryType bt;
-                        GetBinaryType(CurrentProfile.path, out bt);
-
-                        string wrapperpath = Path.Combine(CurrentPathDep, bt == BinaryType.SCS_64BIT_BINARY ? "x64" : "x86");
-                        string wrapperdllpath = Path.Combine(wrapperpath, "xinput1_3.dll");
-
-                        string processpath = Path.GetDirectoryName(CurrentProfile.path);
-                        string processdllpath = Path.Combine(processpath, "xinput1_3.dll");
-
-                        bool wrapped = File.Exists(processdllpath);
-                        if (CurrentProfile.use_wrapper && !wrapped)
-                            File.Copy(wrapperdllpath, processdllpath);
-                        else if (!CurrentProfile.use_wrapper && wrapped)
-                            File.Delete(processdllpath);
+                        PhysicalController.accelerometer.multiplier = CurrentProfile.accelerometer;
+                        logger.LogInformation($"Profile {CurrentProfile.name} applied.");
                     }
                     else
+                    {
                         PhysicalController.muted = false;
+                        PhysicalController.accelerometer.multiplier = 1.0f;
+                    }
                 }
                 catch (Exception) { }
 

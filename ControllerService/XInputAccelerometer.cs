@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using Windows.Devices.Sensors;
-using Microsoft.Extensions.Logging;
 
 namespace ControllerService
 {
@@ -14,13 +14,14 @@ namespace ControllerService
     public class XInputAccelerometer
     {
         public Accelerometer sensor;
+        public float multiplier = 1.0f;
 
         public event XInputAccelerometerReadingChangedEventHandler ReadingChanged;
         public delegate void XInputAccelerometerReadingChangedEventHandler(Object sender, XInputAccelerometerReadingChangedEventArgs e);
 
         private readonly ILogger<ControllerService> logger;
 
-        public XInputAccelerometer( ILogger<ControllerService> logger)
+        public XInputAccelerometer(ILogger<ControllerService> logger)
         {
             this.logger = logger;
 
@@ -42,9 +43,9 @@ namespace ControllerService
             // raise event
             XInputAccelerometerReadingChangedEventArgs newargs = new XInputAccelerometerReadingChangedEventArgs()
             {
-                AccelerationX = (float)reading.AccelerationX,
-                AccelerationY = (float)reading.AccelerationY,
-                AccelerationZ = (float)reading.AccelerationZ
+                AccelerationX = (float)reading.AccelerationX * multiplier,
+                AccelerationY = (float)reading.AccelerationY * multiplier,
+                AccelerationZ = (float)reading.AccelerationZ * multiplier
             };
             ReadingChanged?.Invoke(this, newargs);
         }

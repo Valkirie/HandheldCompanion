@@ -2,5 +2,7 @@
   "name": "AYASpace",
   "path": "C:\\Program Files (x86)\\AYASpace\\AYASpace.exe",
   "whitelisted": true,
-  "legacy": false
+  "use_wrapper": false,
+  "legacy": false,
+  "accelerometer":  1.0
 }

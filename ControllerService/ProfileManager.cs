@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
+using static ControllerService.ControllerClient;
 
 namespace ControllerService
 {
@@ -10,9 +11,10 @@ namespace ControllerService
     {
         public string name { get; set; }
         public string path { get; set; }
-        public bool whitelisted { get; set; }   // can see through the HidHide cloak
+        public bool whitelisted { get; set; }   // if true, can see through the HidHide cloak
         public bool legacy { get; set; }        // not yet implemented
-        public bool use_wrapper { get; set; }   // if yes, deploy xinput1_3.dll
+        public bool use_wrapper { get; set; }   // if true, deploy xinput1_3.dll
+        public float accelerometer { get; set; } // accelerometer multiplicator
 
         public void Serialize()
         {
@@ -67,12 +69,36 @@ namespace ControllerService
 
             if (File.Exists(fileName))
             {
-                profiles[output.name] = output;
+                string ProcessName = Path.GetFileName(output.path);
+                profiles[ProcessName] = output;
 
+                // cloak or uncloak application
                 if (output.whitelisted)
                     ControllerService.Hidder.RegisterApplication(output.path);
                 else
                     ControllerService.Hidder.UnregisterApplication(output.path);
+
+                // deploy xinput wrapper
+                string processpath = Path.GetDirectoryName(output.path);
+                string dllpath = Path.Combine(processpath, "xinput1_3.dll");
+                string inipath = Path.Combine(processpath, "x360ce.ini");
+                bool wrapped = File.Exists(dllpath);
+
+                if (output.use_wrapper && !wrapped)
+                {
+                    BinaryType bt;
+                    GetBinaryType(output.path, out bt);
+
+                    byte[] wrapper = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_3_x64 : Properties.Resources.xinput1_3_x86;
+
+                    File.WriteAllBytes(dllpath, wrapper);
+                    File.WriteAllBytes(inipath, Properties.Resources.x360ce);
+                }
+                else if (!output.use_wrapper && wrapped)
+                {
+                    File.Delete(dllpath);
+                    File.Delete(inipath);
+                }
             }
         }
 
@@ -84,8 +110,10 @@ namespace ControllerService
         private void ProfileDeleted(object sender, FileSystemEventArgs e)
         {
             string fileName = Path.GetFileName(e.FullPath);
-            if (profiles.ContainsKey(fileName))
-                profiles.Remove(fileName);
+            string ProcessName = Path.GetFileName(fileName);
+
+            if (profiles.ContainsKey(ProcessName))
+                profiles.Remove(ProcessName);
 
             ControllerService.Hidder.UnregisterApplication(e.FullPath);
         }
