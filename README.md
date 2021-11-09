@@ -29,7 +29,9 @@ Have an idea for a new feature? Let's have a chat about your request on [Discord
 ### Questions & Support
 Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Discord server](https://discord.gg/cKaZ5SX8kx), where you're welcome to check out and engage in discussions!
 
+### Donation
+If you would like to support this project, please consider making a donation to `BenjaminLSR` via [PayPal](https://www.paypal.com/paypalme/BenjaminLSR).
 
 ## Installation
 Pre-built production-signed binaries are [available as an all-in-one setup](../../releases/latest).
-When extracted, run the `install.cmd` as administrator and you'll be set !
+When extracted, run the `install.cmd` as administrator and you'll be set!
