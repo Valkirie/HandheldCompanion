@@ -16,7 +16,7 @@ Controller Service supports emulation of the following USB Gamepads:
 A few examples of the most common use cases for `Controller Service` are:
 - You want to add high-precision motion controls to your Windows game library through [Steam](https://store.steampowered.com/controller/update/dec15).
 - You want to play your Sony Playstation 4 library through [PlayStation Now](https://www.playstation.com/en-us/ps-now/) or [PS4 Remote Play](<https://remoteplay.dl.playstation.net/remoteplay/>).
-- You want to enjoy your all your WiiU and Switch games with full motion controls.
+- You want to enjoy all your WiiU and Switch games with full motion controls.
 
 ## Supported Systems
 The software is built for Windows 10/Windows 11 (x86 and amd64).
