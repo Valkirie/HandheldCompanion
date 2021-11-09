@@ -1,6 +1,6 @@
 # Controller Service
 
-Windows Service enabling AYA NEO built in 6-axis gyroscope/accelerometer, providing great features like high-precision aiming assistance.
+Windows Service enables AYA NEO built in 6-axis gyroscope/accelerometer, providing great features like high-precision aiming assistance.
 
 ----
 
