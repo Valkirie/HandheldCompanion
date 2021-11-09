@@ -34,6 +34,11 @@ namespace ControllerService
         private byte TouchPacketCounter = 0;
         private byte FrameCounter = 0; // always 0 on USB
 
+        private const int ACC_RES_PER_G = 8192;
+        private const float F_ACC_RES_PER_G = ACC_RES_PER_G;
+        private const int GYRO_RES_IN_DEG_SEC = 16;
+        private const float F_GYRO_RES_IN_DEG_SEC = GYRO_RES_IN_DEG_SEC;
+
         private object updateLock = new();
 
         public struct TrackPadTouch
@@ -240,13 +245,13 @@ namespace ControllerService
                     outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(TrackPadTouch1.Y >> 4);
                 }
 
-                outDS4Report.wGyroX = Convert.ToInt16(AngularVelocity.X); // gyroPitchFull
-                outDS4Report.wGyroY = Convert.ToInt16(AngularVelocity.Y); // gyroYawFull
-                outDS4Report.wGyroZ = Convert.ToInt16(AngularVelocity.Z); // gyroRollFull
+                outDS4Report.wGyroX = Convert.ToInt16(AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
+                outDS4Report.wGyroY = Convert.ToInt16(-AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
+                outDS4Report.wGyroZ = Convert.ToInt16(AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
 
-                outDS4Report.wAccelX = Convert.ToInt16(Acceleration.X); // accelXFull
-                outDS4Report.wAccelY = Convert.ToInt16(Acceleration.Y); // accelYFull
-                outDS4Report.wAccelZ = Convert.ToInt16(Acceleration.Z); // accelZFull
+                outDS4Report.wAccelX = Convert.ToInt16(-Acceleration.X * F_ACC_RES_PER_G); // accelXFull
+                outDS4Report.wAccelY = Convert.ToInt16(-Acceleration.Z * F_ACC_RES_PER_G); // accelYFull
+                outDS4Report.wAccelZ = Convert.ToInt16(Acceleration.Y * F_ACC_RES_PER_G); // accelZFull
 
                 /*
                     EXT/HeadSet/Earset: bitmask
@@ -259,7 +264,7 @@ namespace ControllerService
 
                 outDS4Report.bBatteryLvlSpecial = 10;
 
-                outDS4Report.wTimestamp = (ushort)microseconds;
+                outDS4Report.wTimestamp = (ushort)(microseconds / 5.33f);
 
                 DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
 
