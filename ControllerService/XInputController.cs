@@ -1,6 +1,7 @@
 ﻿using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using SharpDX.XInput;
+using System;
 using System.Diagnostics;
 using System.Numerics;
 using System.Timers;
@@ -113,15 +114,15 @@ namespace ControllerService
 
         private void Accelerometer_ReadingChanged(object sender, XInputAccelerometerReadingChangedEventArgs e)
         {
-            Acceleration.X = e.AccelerationX;
-            Acceleration.Y = e.AccelerationY;
+            Acceleration.X = -e.AccelerationY;
+            Acceleration.Y = e.AccelerationX;
             Acceleration.Z = e.AccelerationZ;
         }
 
         private void Girometer_ReadingChanged(object sender, XInputGirometerReadingChangedEventArgs e)
         {
-            AngularVelocity.X = e.AngularVelocityX;
-            AngularVelocity.Y = e.AngularVelocityY;
+            AngularVelocity.X = -e.AngularVelocityY;
+            AngularVelocity.Y = e.AngularVelocityX;
             AngularVelocity.Z = e.AngularVelocityZ;
         }
 
@@ -239,13 +240,13 @@ namespace ControllerService
                     outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(TrackPadTouch1.Y >> 4);
                 }
 
-                outDS4Report.wGyroX = (short)AngularVelocity.X; // gyroPitchFull
-                outDS4Report.wGyroY = (short)AngularVelocity.Y; // gyroYawFull
-                outDS4Report.wGyroZ = (short)AngularVelocity.Z; // gyroRollFull
+                outDS4Report.wGyroX = Convert.ToInt16(AngularVelocity.X); // gyroPitchFull
+                outDS4Report.wGyroY = Convert.ToInt16(AngularVelocity.Y); // gyroYawFull
+                outDS4Report.wGyroZ = Convert.ToInt16(AngularVelocity.Z); // gyroRollFull
 
-                outDS4Report.wAccelX = (short)Acceleration.X; // accelXFull
-                outDS4Report.wAccelY = (short)Acceleration.Y; // accelYFull
-                outDS4Report.wAccelZ = (short)Acceleration.Z; // accelZFull
+                outDS4Report.wAccelX = Convert.ToInt16(Acceleration.X); // accelXFull
+                outDS4Report.wAccelY = Convert.ToInt16(Acceleration.Y); // accelYFull
+                outDS4Report.wAccelZ = Convert.ToInt16(Acceleration.Z); // accelZFull
 
                 /*
                     EXT/HeadSet/Earset: bitmask
