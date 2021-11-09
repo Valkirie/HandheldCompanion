@@ -129,7 +129,7 @@ namespace ControllerService
             DSUServer = new DSUServer();
 
             // monitor processes and settings
-            UpdateMonitor = new Timer(1000) { Enabled = true, AutoReset = true };
+            UpdateMonitor = new Timer(1000) { Enabled = false, AutoReset = true };
             UpdateMonitor.Elapsed += MonitorProcess;
 
             SendToast("DualShock 4 Controller", "Virtual device is now connected");
@@ -177,6 +177,7 @@ namespace ControllerService
             }
 
             // start monitoring processes
+            UpdateMonitor.Enabled = true;
             UpdateMonitor.Start();
 
             // turn on the cloaking
