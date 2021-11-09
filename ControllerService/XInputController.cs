@@ -31,7 +31,7 @@ namespace ControllerService
         private Stopwatch stopwatch;
 
         private byte TouchPacketCounter = 0;
-        private byte FrameCounter = 0;
+        private byte FrameCounter = 0; // always 0 on USB
 
         private object updateLock = new();
 
@@ -132,9 +132,6 @@ namespace ControllerService
 
             lock (updateLock)
             {
-                // update framecounter
-                FrameCounter++;
-
                 // update timestamp
                 microseconds = (long)(stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L)) /* / 5.33f */);
 
@@ -225,19 +222,22 @@ namespace ControllerService
                     0x02: set data for previous touches at [44-51]
                  */
 
-                outDS4Report.bTouchPacketsN = 1;
-                outDS4Report.sCurrentTouch.bPacketCounter = TouchPacketCounter;
-                outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = TrackPadTouch0.RawTrackingNum;
-                outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(TrackPadTouch0.X & 0xFF);
-                outDS4Report.sCurrentTouch.bTouchData1[1] =
-                    (byte)(((TrackPadTouch0.X >> 8) & 0x0F) | ((TrackPadTouch0.Y << 4) & 0xF0));
-                outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(TrackPadTouch0.Y >> 4);
+                unchecked
+                {
+                    outDS4Report.bTouchPacketsN = 1;
+                    outDS4Report.sCurrentTouch.bPacketCounter = TouchPacketCounter;
+                    outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = (byte)128; // TrackPadTouch0.RawTrackingNum;
+                    outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(TrackPadTouch0.X & 0xFF);
+                    outDS4Report.sCurrentTouch.bTouchData1[1] =
+                        (byte)(((TrackPadTouch0.X >> 8) & 0x0F) | ((TrackPadTouch0.Y << 4) & 0xF0));
+                    outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(TrackPadTouch0.Y >> 4);
 
-                outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = TrackPadTouch1.RawTrackingNum;
-                outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(TrackPadTouch1.X & 0xFF);
-                outDS4Report.sCurrentTouch.bTouchData2[1] =
-                    (byte)(((TrackPadTouch1.X >> 8) & 0x0F) | ((TrackPadTouch1.Y << 4) & 0xF0));
-                outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(TrackPadTouch1.Y >> 4);
+                    outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = (byte)128; // TrackPadTouch1.RawTrackingNum;
+                    outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(TrackPadTouch1.X & 0xFF);
+                    outDS4Report.sCurrentTouch.bTouchData2[1] =
+                        (byte)(((TrackPadTouch1.X >> 8) & 0x0F) | ((TrackPadTouch1.Y << 4) & 0xF0));
+                    outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(TrackPadTouch1.Y >> 4);
+                }
 
                 outDS4Report.wGyroX = (short)AngularVelocity.X; // gyroPitchFull
                 outDS4Report.wGyroY = (short)AngularVelocity.Y; // gyroYawFull
