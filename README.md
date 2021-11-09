@@ -24,7 +24,7 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 ## Contribute
 ### Bugs & Features
 Found a bug and want it fixed? Open a detailed issue on the [GitHub issue tracker](../../issues)!
-Have an idea for a new feature? Let's have a chat about your request on [Discord](https://discord.vigem.org) or the [community forums](https://forums.vigem.org).
+Have an idea for a new feature? Let's have a chat about your request on [Discord](https://discord.gg/cKaZ5SX8kx).
 
 ### Questions & Support
 Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Discord server](https://discord.gg/cKaZ5SX8kx), where you're welcome to check out and engage in discussions!
