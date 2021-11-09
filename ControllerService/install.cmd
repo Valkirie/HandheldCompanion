@@ -22,7 +22,7 @@ sc.exe delete "ControllerService"
 echo Installing Controller Service
 echo.
 sc.exe create "ControllerService" binpath= "%cd%\ControllerService.exe" start= auto DisplayName= "Controller Service"
-sc.exe description "ControllerService" "Provides gyroscope and accelerometer support to the Aya Neo 2020 and 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled."
+sc.exe description "ControllerService" "Provides gyroscope and accelerometer support to the AYA NEO 2020, 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled."
 
 echo Starting Controller Service
 echo.
