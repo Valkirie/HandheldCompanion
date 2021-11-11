@@ -55,8 +55,6 @@ namespace ControllerService
             CurrentPathDep = Path.Combine(CurrentPath, "dependencies");
 
             // initialize log
-            string ServiceName = nameof(ControllerService);
-
             logger.LogInformation($"AyaGyroAiming ({fileVersionInfo.ProductVersion})");
 
             if (!File.Exists(CurrentPathCli))
@@ -84,11 +82,6 @@ namespace ControllerService
             try
             {
                 ViGEmClient client = new ViGEmClient();
-
-                // 0x05C4 (Original V1)
-                // 0x09CC (Pro V2)
-
-                // VirtualController = client.CreateDualShock4Controller(0x054C, 0x09CC);
                 VirtualController = client.CreateDualShock4Controller();
 
                 if (VirtualController == null)
@@ -157,12 +150,14 @@ namespace ControllerService
                         Profile CurrentProfile = CurrentManager.profiles[ProcessName];
                         PhysicalController.muted = CurrentProfile.whitelisted;
                         PhysicalController.accelerometer.multiplier = CurrentProfile.accelerometer;
+                        PhysicalController.gyrometer.multiplier = CurrentProfile.gyrometer;
                         logger.LogInformation($"Profile {CurrentProfile.name} applied.");
                     }
                     else
                     {
                         PhysicalController.muted = false;
                         PhysicalController.accelerometer.multiplier = 1.0f;
+                        PhysicalController.gyrometer.multiplier = 1.0f;
                     }
                 }
                 catch (Exception) { }
@@ -197,6 +192,7 @@ namespace ControllerService
             PhysicalController.SetVirtualController(VirtualController);
             PhysicalController.SetGyroscope(Gyrometer);
             PhysicalController.SetAccelerometer(Accelerometer);
+
             logger.LogInformation($"Virtual {VirtualController.GetType().Name} attached to {PhysicalController.GetType().Name} {PhysicalController.index}.");
         }
 

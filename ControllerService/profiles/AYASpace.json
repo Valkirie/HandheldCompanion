@@ -4,5 +4,6 @@
   "whitelisted": true,
   "use_wrapper": false,
   "legacy": false,
-  "accelerometer":  1.0
+  "gyrometer": 1.0,
+  "accelerometer": 1.0
 }

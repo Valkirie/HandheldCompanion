@@ -14,6 +14,7 @@ namespace ControllerService
         public bool whitelisted { get; set; }   // if true, can see through the HidHide cloak
         public bool legacy { get; set; }        // not yet implemented
         public bool use_wrapper { get; set; }   // if true, deploy xinput1_3.dll
+        public float gyrometer { get; set; } // gyroscope multiplicator
         public float accelerometer { get; set; } // accelerometer multiplicator
 
         public void Serialize()
