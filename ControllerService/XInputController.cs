@@ -19,6 +19,7 @@ namespace ControllerService
 
         public XInputGirometer gyrometer;
         public XInputAccelerometer accelerometer;
+        public DS4Touch touch;
 
         public Vector3 AngularVelocity;
         public Vector3 Acceleration;
@@ -31,7 +32,6 @@ namespace ControllerService
         public long microseconds;
         private Stopwatch stopwatch;
 
-        private byte TouchPacketCounter = 0;
         private byte FrameCounter = 0; // always 0 on USB
 
         private const int ACC_RES_PER_G = 8192;
@@ -40,18 +40,6 @@ namespace ControllerService
         private const float F_GYRO_RES_IN_DEG_SEC = GYRO_RES_IN_DEG_SEC;
 
         private object updateLock = new();
-
-        public struct TrackPadTouch
-        {
-            public bool IsActive;
-            public byte Id;
-            public short X;
-            public short Y;
-            public byte RawTrackingNum;
-        }
-
-        public TrackPadTouch TrackPadTouch0;
-        public TrackPadTouch TrackPadTouch1;
 
         private DS4_REPORT_EX outDS4Report;
 
@@ -77,6 +65,11 @@ namespace ControllerService
             UpdateTimer.Elapsed += UpdateController;
         }
 
+        public void SetTouch(DS4Touch _touch)
+        {
+            touch = _touch;
+        }
+        
         public void SetVirtualController(IDualShock4Controller _controller)
         {
             vcontroller = _controller;
@@ -230,37 +223,28 @@ namespace ControllerService
 
                 unchecked
                 {
-                    outDS4Report.bTouchPacketsN = 1;
-                    outDS4Report.sCurrentTouch.bPacketCounter = TouchPacketCounter;
-                    outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = (byte)128; // TrackPadTouch0.RawTrackingNum;
-                    outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(TrackPadTouch0.X & 0xFF);
+                    outDS4Report.bTouchPacketsN = 0x01;
+                    outDS4Report.sCurrentTouch.bPacketCounter = touch.TouchPacketCounter;
+                    outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = touch.TrackPadTouch0.RawTrackingNum;
+                    outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(touch.TrackPadTouch0.X & 0xFF);
                     outDS4Report.sCurrentTouch.bTouchData1[1] =
-                        (byte)(((TrackPadTouch0.X >> 8) & 0x0F) | ((TrackPadTouch0.Y << 4) & 0xF0));
-                    outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(TrackPadTouch0.Y >> 4);
+                        (byte)(((touch.TrackPadTouch0.X >> 8) & 0x0F) | ((touch.TrackPadTouch0.Y << 4) & 0xF0));
+                    outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(touch.TrackPadTouch0.Y >> 4);
 
-                    outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = (byte)128; // TrackPadTouch1.RawTrackingNum;
-                    outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(TrackPadTouch1.X & 0xFF);
+                    outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = touch.TrackPadTouch1.RawTrackingNum;
+                    outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(touch.TrackPadTouch1.X & 0xFF);
                     outDS4Report.sCurrentTouch.bTouchData2[1] =
-                        (byte)(((TrackPadTouch1.X >> 8) & 0x0F) | ((TrackPadTouch1.Y << 4) & 0xF0));
-                    outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(TrackPadTouch1.Y >> 4);
+                        (byte)(((touch.TrackPadTouch1.X >> 8) & 0x0F) | ((touch.TrackPadTouch1.Y << 4) & 0xF0));
+                    outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(touch.TrackPadTouch1.Y >> 4);
                 }
 
-                outDS4Report.wGyroX = Convert.ToInt16(AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
-                outDS4Report.wGyroY = Convert.ToInt16(-AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
-                outDS4Report.wGyroZ = Convert.ToInt16(AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
+                outDS4Report.wGyroX = (short)(AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
+                outDS4Report.wGyroY = (short)(-AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
+                outDS4Report.wGyroZ = (short)(AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
 
-                outDS4Report.wAccelX = Convert.ToInt16(-Acceleration.X * F_ACC_RES_PER_G); // accelXFull
-                outDS4Report.wAccelY = Convert.ToInt16(-Acceleration.Z * F_ACC_RES_PER_G); // accelYFull
-                outDS4Report.wAccelZ = Convert.ToInt16(Acceleration.Y * F_ACC_RES_PER_G); // accelZFull
-
-                /*
-                    EXT/HeadSet/Earset: bitmask
-                    01111011 is headset with mic (0x7B)
-                    00111011 is headphones (0x3B)
-                    00011011 is nothing attached (0x1B)
-                    00001000 is bluetooth? (0x08)
-                    00000101 is ? (0x05)
-                */
+                outDS4Report.wAccelX = (short)(-Acceleration.X * F_ACC_RES_PER_G); // accelXFull
+                outDS4Report.wAccelY = (short)(-Acceleration.Z * F_ACC_RES_PER_G); // accelYFull
+                outDS4Report.wAccelZ = (short)(Acceleration.Y * F_ACC_RES_PER_G); // accelZFull
 
                 outDS4Report.bBatteryLvlSpecial = 10;
 

@@ -23,6 +23,8 @@ namespace ControllerService
         private static IDualShock4Controller VirtualController;
         private static XInputGirometer Gyrometer;
         private static XInputAccelerometer Accelerometer;
+        private static DS4Touch DS4Touch;
+
         private static DSUServer DSUServer;
         public static HidHide Hidder;
 
@@ -125,6 +127,9 @@ namespace ControllerService
             if (Accelerometer.sensor == null)
                 logger.LogWarning("No Accelerometer detected.");
 
+            // initialize DS4Touch
+            DS4Touch = new DS4Touch();
+
             // initialize DSUClient
             DSUServer = new DSUServer();
 
@@ -187,6 +192,8 @@ namespace ControllerService
             // plug the virtual controller
             VirtualController.Connect();
             logger.LogInformation($"Virtual {VirtualController.GetType().Name} connected.");
+
+            PhysicalController.SetTouch(DS4Touch);
             PhysicalController.SetVirtualController(VirtualController);
             PhysicalController.SetGyroscope(Gyrometer);
             PhysicalController.SetAccelerometer(Accelerometer);
@@ -216,6 +223,8 @@ namespace ControllerService
 
             if (UpdateMonitor.Enabled)
                 UpdateMonitor.Stop();
+
+            DS4Touch.Stop();
 
             logger.LogInformation($"Uncloaking {PhysicalController.GetType().Name}");
 

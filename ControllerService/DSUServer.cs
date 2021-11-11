@@ -560,7 +560,7 @@ namespace ControllerService
                 //DS4 only: touchpad points
                 for (int i = 0; i < 2; i++)
                 {
-                    var tpad = (i == 0) ? hidReport.TrackPadTouch0 : hidReport.TrackPadTouch1;
+                    var tpad = (i == 0) ? hidReport.touch.TrackPadTouch0 : hidReport.touch.TrackPadTouch1;
 
                     outputData[outIdx++] = tpad.IsActive ? (byte)1 : (byte)0;
                     outputData[outIdx++] = (byte)tpad.RawTrackingNum;
