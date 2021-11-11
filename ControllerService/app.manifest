@@ -39,14 +39,13 @@
        également affecter la valeur 'true' au paramètre 'EnableWindowsFormsHighDpiAutoResizing' dans leur fichier app.config. 
        
        Permet à l'application de prendre en charge les chemins longs. Consultez https://docs.microsoft.com/windows/win32/fileio/maximum-file-path-limitation -->
-  <!--
+  
   <application xmlns="urn:schemas-microsoft-com:asm.v3">
     <windowsSettings>
       <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true</dpiAware>
       <longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
     </windowsSettings>
   </application>
-  -->
 
   <!-- Activer les thèmes pour les contrôles et boîtes de dialogue communes de Windows (Windows XP et version ultérieure) -->
   <!--

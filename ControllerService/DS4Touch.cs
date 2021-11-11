@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
+using System.Timers;
 using Timer = System.Timers.Timer;
 
 namespace ControllerService
@@ -15,12 +16,17 @@ namespace ControllerService
     {
         private IKeyboardMouseEvents m_Events;
         private Thread m_Hook;
+        private Timer m_Timer;
 
         private float RatioWidth;
         private float RatioHeight;
 
         private const int TOUCHPAD_WIDTH = 1920;
         private const int TOUCHPAD_HEIGHT = 943;
+
+        private const int TOUCH0_ID = 126;
+        private const int TOUCH1_ID = 127;
+        private const int TOUCH_DISABLE = 128;
 
         public struct TrackPadTouch
         {
@@ -45,8 +51,12 @@ namespace ControllerService
             RatioHeight = (float)TOUCHPAD_HEIGHT / (float)Screen.PrimaryScreen.Bounds.Height;
 
             // default values
-            TrackPadTouch0.RawTrackingNum = 126;
-            TrackPadTouch1.RawTrackingNum = 127;
+            TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
+            TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
+
+            // send MouseUp after 50ms (needed ?)
+            m_Timer = new Timer() { Enabled = false, Interval = 50, AutoReset = false };
+            m_Timer.Elapsed += SendMouseUp;
 
             m_Hook = new Thread(Subscribe) { IsBackground = true };
             m_Hook.Start();
@@ -63,22 +73,30 @@ namespace ControllerService
 
         private void OnMouseUp(object sender, MouseEventExtArgs e)
         {
+            m_Timer.Start();
+        }
+
+        private void SendMouseUp(object sender, ElapsedEventArgs e)
+        {
             TouchDown = false;
 
             // release touch inputs
-            TrackPadTouch0.RawTrackingNum += 128;
-            TrackPadTouch1.RawTrackingNum += 128;
+            TrackPadTouch0.RawTrackingNum += TOUCH_DISABLE;
+            TrackPadTouch1.RawTrackingNum += TOUCH_DISABLE;
+
+            TouchPacketCounter++;
         }
 
         private void OnMouseDown(object sender, MouseEventExtArgs e)
         {
             TouchDown = true;
+            m_Timer.Stop();
 
-            TrackPadTouch0.RawTrackingNum = 126;
+            TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
             TrackPadTouch0.X = TouchX;
             TrackPadTouch0.Y = TouchY;
 
-            TrackPadTouch1.RawTrackingNum = 127;
+            TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
             TrackPadTouch1.X = TouchX;
             TrackPadTouch1.Y = TouchY;
         }
