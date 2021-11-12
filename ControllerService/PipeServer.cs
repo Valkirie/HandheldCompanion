@@ -49,8 +49,11 @@ namespace ControllerService
             m_timer.Elapsed += SendMessageQueue;
 
             PipeSecurity ps = new PipeSecurity();
-            ps.AddAccessRule(new PipeAccessRule("Users", PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance, AccessControlType.Allow));
-            ps.AddAccessRule(new PipeAccessRule("SYSTEM", PipeAccessRights.FullControl, AccessControlType.Allow));
+
+            System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.BuiltinUsersSid, null);
+            PipeAccessRule par = new PipeAccessRule(sid, PipeAccessRights.ReadWrite, System.Security.AccessControl.AccessControlType.Allow);
+
+            ps.AddAccessRule(par);
 
             server = new NamedPipeServer<PipeMessage>(pipeName, ps);
             server.ClientConnected += OnClientConnected;
