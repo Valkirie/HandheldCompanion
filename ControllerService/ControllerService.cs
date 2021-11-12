@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using static ControllerService.ControllerClient;
 using Timer = System.Timers.Timer;
 
 namespace ControllerService
@@ -19,19 +18,19 @@ namespace ControllerService
     public class ControllerService : IHostedService
     {
         // controllers vars
-        private static XInputController PhysicalController;
-        private static IDualShock4Controller VirtualController;
-        private static XInputGirometer Gyrometer;
-        private static XInputAccelerometer Accelerometer;
-        private static DS4Touch DS4Touch;
+        public XInputController PhysicalController;
+        private IDualShock4Controller VirtualController;
+        private XInputGirometer Gyrometer;
+        private XInputAccelerometer Accelerometer;
+
+        private static PipeServer PipeServer;
 
         private static DSUServer DSUServer;
         public static HidHide Hidder;
 
-        public static string CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathClient, CurrentPathDep;
+        public static string CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathHelper, CurrentPathDep;
 
-        private static int CurrenthProcess;
-        private static Timer UpdateMonitor;
+        private static Timer MonitorTimer;
 
         public static ProfileManager CurrentManager;
         public static Assembly CurrentAssembly;
@@ -51,7 +50,7 @@ namespace ControllerService
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
             CurrentPathCli = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
             CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
-            CurrentPathClient = Path.Combine(CurrentPath, "ControllerServiceClient.exe");
+            CurrentPathHelper = Path.Combine(CurrentPath, "ControllerHelper.exe");
             CurrentPathDep = Path.Combine(CurrentPath, "dependencies");
 
             // initialize log
@@ -63,11 +62,14 @@ namespace ControllerService
                 throw new InvalidOperationException();
             }
 
-            if (!File.Exists(CurrentPathClient))
+            if (!File.Exists(CurrentPathHelper))
             {
-                logger.LogError("CurrentPathClient is missing. Application will stop.");
+                logger.LogError("Controller Helper is missing. Application will stop.");
                 throw new InvalidOperationException();
             }
+
+            // initialize PipeServer and PipeClient
+            PipeServer = new PipeServer("ControllerService", this, logger);
 
             // initialize HidHide
             Hidder = new HidHide(CurrentPathCli, logger);
@@ -120,65 +122,67 @@ namespace ControllerService
             if (Accelerometer.sensor == null)
                 logger.LogWarning("No Accelerometer detected.");
 
-            // initialize DS4Touch
-            DS4Touch = new DS4Touch();
-
             // initialize DSUClient
-            DSUServer = new DSUServer();
+            DSUServer = new DSUServer(logger);
 
-            // monitor processes and settings
-            UpdateMonitor = new Timer(1000) { Enabled = false, AutoReset = true };
-            UpdateMonitor.Elapsed += MonitorProcess;
-
-            SendToast("DualShock 4 Controller", "Virtual device is now connected");
+            // monitors processes and settings
+            MonitorTimer = new Timer(1000) { Enabled = false, AutoReset = true };
+            MonitorTimer.Elapsed += MonitorHelper;
         }
 
-        private void MonitorProcess(object sender, ElapsedEventArgs e)
+        public void UpdateProcess(int ProcessId)
         {
-            int ProcessId = GetProcessIdByPath();
-            if (ProcessId != CurrenthProcess)
+            try
             {
-                try
+                Process CurrentProcess = Process.GetProcessById(ProcessId);
+                string ProcessPath = Utils.GetMainModuleFilepath(ProcessId);
+                string ProcessName = Path.GetFileName(ProcessPath);
+
+                if (CurrentManager.profiles.ContainsKey(ProcessName))
                 {
-                    Process CurrentProcess = Process.GetProcessById(ProcessId);
-                    string ProcessPath = Utils.GetMainModuleFilepath(ProcessId);
-                    string ProcessName = Path.GetFileName(ProcessPath);
-
-                    if (CurrentManager.profiles.ContainsKey(ProcessName))
-                    {
-                        // muting process
-                        Profile CurrentProfile = CurrentManager.profiles[ProcessName];
-                        PhysicalController.muted = CurrentProfile.whitelisted;
-                        PhysicalController.accelerometer.multiplier = CurrentProfile.accelerometer;
-                        PhysicalController.gyrometer.multiplier = CurrentProfile.gyrometer;
-                        logger.LogInformation($"Profile {CurrentProfile.name} applied.");
-                    }
-                    else
-                    {
-                        PhysicalController.muted = false;
-                        PhysicalController.accelerometer.multiplier = 1.0f;
-                        PhysicalController.gyrometer.multiplier = 1.0f;
-                    }
+                    // muting process
+                    Profile CurrentProfile = CurrentManager.profiles[ProcessName];
+                    PhysicalController.muted = CurrentProfile.whitelisted;
+                    PhysicalController.accelerometer.multiplier = CurrentProfile.accelerometer;
+                    PhysicalController.gyrometer.multiplier = CurrentProfile.gyrometer;
+                    logger.LogInformation($"Profile {CurrentProfile.name} applied.");
                 }
-                catch (Exception) { }
-
-                CurrenthProcess = ProcessId;
+                else
+                {
+                    PhysicalController.muted = false;
+                    PhysicalController.accelerometer.multiplier = 1.0f;
+                    PhysicalController.gyrometer.multiplier = 1.0f;
+                }
             }
+            catch (Exception) { }
+        }
+
+        private void MonitorHelper(object sender, ElapsedEventArgs e)
+        {
+            // check if PipeServer is connected
+            if (PipeServer.connected)
+                return;
+
+            // check if Controller Service Helper is running
+            Process[] pname = Process.GetProcessesByName("ControllerHelper");
+            if (pname.Length != 0)
+                return;
+
+            // start Controller Service Helper            
+            ControllerClient.CreateHelper();
+
+            logger.LogInformation("Controller Helper has started.");
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             // start the DSUClient
-            if (DSUServer != null)
-            {
-                logger.LogInformation($"DSU Server has started. Listening to port: {26760}");
-                DSUServer.Start(26760);
-                PhysicalController.SetDSUServer(DSUServer);
-            }
+            DSUServer.Start(26760);
+            PhysicalController.SetDSUServer(DSUServer);
 
-            // start monitoring processes
-            UpdateMonitor.Enabled = true;
-            UpdateMonitor.Start();
+            // start PipeServer
+            PipeServer.Start();
+            MonitorTimer.Start();
 
             // turn on the cloaking
             Hidder.SetCloaking(true);
@@ -188,12 +192,14 @@ namespace ControllerService
             VirtualController.Connect();
             logger.LogInformation($"Virtual {VirtualController.GetType().Name} connected.");
 
-            PhysicalController.SetTouch(DS4Touch);
             PhysicalController.SetVirtualController(VirtualController);
             PhysicalController.SetGyroscope(Gyrometer);
             PhysicalController.SetAccelerometer(Accelerometer);
 
             logger.LogInformation($"Virtual {VirtualController.GetType().Name} attached to {PhysicalController.GetType().Name} {PhysicalController.index}.");
+
+            // send notification
+            PipeServer.SendMessage(new PipeMessage { Code = PipeCode.CODE_TOAST, args = new string[] { "DualShock 4 Controller", "Virtual device is now connected" } });
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
@@ -204,6 +210,9 @@ namespace ControllerService
                 {
                     VirtualController.Disconnect();
                     logger.LogInformation($"Virtual {VirtualController.GetType().Name} disconnected.");
+
+                    // send notification
+                    PipeServer.SendMessage(new PipeMessage { Code = PipeCode.CODE_TOAST, args = new string[] { "DualShock 4 Controller", "Virtual device is now disconnected" } });
                 }
             }
             catch (Exception) { }
@@ -215,16 +224,15 @@ namespace ControllerService
             }
 
             if (Hidder != null)
+            {
                 Hidder.SetCloaking(false);
+                logger.LogInformation($"Uncloaking {PhysicalController.GetType().Name}");
+            }
 
-            if (UpdateMonitor.Enabled)
-                UpdateMonitor.Stop();
+            if (MonitorTimer.Enabled)
+                MonitorTimer.Stop();
 
-            DS4Touch.Stop();
-
-            logger.LogInformation($"Uncloaking {PhysicalController.GetType().Name}");
-
-            SendToast("DualShock 4 Controller", "Virtual device is now disconnected");
+            PipeServer.Stop();
 
             return Task.CompletedTask;
         }

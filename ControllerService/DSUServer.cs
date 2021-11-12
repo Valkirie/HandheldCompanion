@@ -1,4 +1,5 @@
 ﻿using Force.Crc32;
+using Microsoft.Extensions.Logging;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -95,8 +96,12 @@ namespace ControllerService
             meta = padMeta;
         }
 
-        public DSUServer()
+        private readonly ILogger<ControllerService> logger;
+
+        public DSUServer(ILogger<ControllerService> logger)
         {
+            this.logger = logger;
+
             PadMacAddress = new PhysicalAddress(new byte[] { 0x10, 0x10, 0x10, 0x10, 0x10, 0x10 });
             portInfoGet = GetPadDetailForIdx;
 
@@ -485,6 +490,8 @@ namespace ControllerService
 
             BatteryTimer.Enabled = true;
             BatteryTimer.Start();
+
+            logger.LogInformation($"DSU Server has started. Listening to port: {26760}");
         }
 
         public void Stop()

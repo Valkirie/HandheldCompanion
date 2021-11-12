@@ -106,65 +106,16 @@ namespace ControllerService
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         static extern uint WaitForSingleObject(IntPtr hProcess, uint dwMilliseconds);
 
-        public static int GetProcessIdByPath()
-        {
-            IntPtr read = new IntPtr();
-            IntPtr write = new IntPtr();
-            IntPtr read2 = new IntPtr();
-            IntPtr write2 = new IntPtr();
-            SECURITY_ATTRIBUTES saAttr = new SECURITY_ATTRIBUTES();
-            saAttr.nLength = Marshal.SizeOf(typeof(SECURITY_ATTRIBUTES));
-            saAttr.bInheritHandle = 1;
-            saAttr.lpSecurityDescriptor = IntPtr.Zero;
 
-            CreatePipe(ref read, ref write, ref saAttr, 0);
-            CreatePipe(ref read2, ref write2, ref saAttr, 0);
-
-            int STARTF_USESTDHANDLES = 0x00000100;
-            si = new STARTUPINFO();
-            si.cb = Marshal.SizeOf(typeof(STARTUPINFO));
-            si.hStdOutput = write;
-            si.hStdError = write;
-            si.hStdInput = read2;
-            si.lpDesktop = "Winsta0\\default";
-            si.dwFlags = STARTF_USESTDHANDLES;
-
-            IntPtr hToken;
-            bool err = WTSQueryUserToken(WTSGetActiveConsoleSessionId(), out hToken);
-
-            string cmdLine = "-g";
-            if (CreateProcessAsUser(hToken, ControllerService.CurrentPathClient, $@"""{ControllerService.CurrentPathClient}"" {cmdLine}", IntPtr.Zero, IntPtr.Zero, true, 0x08000000, IntPtr.Zero, IntPtr.Zero, ref si, out pi))
-            {
-                uint ret = WaitForSingleObject(pi.hProcess, 2000); //wait for the child process exit.
-                if (ret == 0)
-                {
-                    byte[] title = new byte[10];
-                    uint reads = 0;
-                    CloseHandle(write);
-                    err = ReadFile(read, title, 10, out reads, IntPtr.Zero);
-                    string result = System.Text.Encoding.UTF8.GetString(title).Replace("\0", "").Replace("\r", "").Replace("\n", "");
-
-                    int ProcessId;
-                    int.TryParse(result, out ProcessId);
-                    return ProcessId;
-                }
-            }
-            CloseHandle(read2);
-            CloseHandle(write2);
-            CloseHandle(read);
-
-            return 0;
-        }
-
-        public static bool SendToast(string title, string content)
+        public static bool CreateHelper()
         {
             si = new STARTUPINFO();
 
             IntPtr hToken;
             bool err = WTSQueryUserToken(WTSGetActiveConsoleSessionId(), out hToken);
 
-            string cmdLine = $"-t \"{title}\" \"{content}\"";
-            if (CreateProcessAsUser(hToken, ControllerService.CurrentPathClient, $@"""{ControllerService.CurrentPathClient}"" {cmdLine}", IntPtr.Zero, IntPtr.Zero, true, 0x08000000, IntPtr.Zero, IntPtr.Zero, ref si, out pi))
+            string cmdLine = "";
+            if (CreateProcessAsUser(hToken, ControllerService.CurrentPathHelper, $@"""{ControllerService.CurrentPathHelper}"" {cmdLine}", IntPtr.Zero, IntPtr.Zero, true, 0x08000000, IntPtr.Zero, IntPtr.Zero, ref si, out pi))
             {
                 uint ret = WaitForSingleObject(pi.hProcess, 2000); //wait for the child process exit.
                 if (ret == 0)
@@ -187,6 +138,15 @@ namespace ControllerService
 
     public class Utils
     {
+        public static string Between(string STR, string FirstString, string LastString)
+        {
+            string FinalString;
+            int Pos1 = STR.IndexOf(FirstString) + FirstString.Length;
+            int Pos2 = STR.IndexOf(LastString, Pos1);
+            FinalString = STR.Substring(Pos1, Pos2 - Pos1);
+            return FinalString;
+        }
+
         public static string GetMainModuleFilepath(int processId)
         {
             string wmiQueryString = "SELECT ProcessId, ExecutablePath FROM Win32_Process WHERE ProcessId = " + processId;

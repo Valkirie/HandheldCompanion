@@ -48,7 +48,7 @@ namespace ControllerService
                     break;
 
                 // --app-reg \"C:\\Program Files\\Nefarius Software Solutions e.U\\HidHideCLI\\HidHideCLI.exe\"
-                string path = ControllerClient.Between(standard_output, "--app-reg \"", "\"");
+                string path = Utils.Between(standard_output, "--app-reg \"", "\"");
                 whitelist.Add(path);
             }
             return whitelist;
@@ -91,7 +91,7 @@ namespace ControllerService
             }
             catch (Exception)
             {
-                string tempString = ControllerClient.Between(jsonString, "symbolicLink", ",");
+                string tempString = Utils.Between(jsonString, "symbolicLink", ",");
                 root = new RootDevice
                 {
                     friendlyName = "Unknown",
@@ -130,8 +130,8 @@ namespace ControllerService
         {
             foreach (Device d in devices.Where(a => a.gamingDevice))
             {
-                string VID = ControllerClient.Between(d.deviceInstancePath.ToLower(), "vid_", "&");
-                string PID = ControllerClient.Between(d.deviceInstancePath.ToLower(), "pid_", "&");
+                string VID = Utils.Between(d.deviceInstancePath.ToLower(), "vid_", "&");
+                string PID = Utils.Between(d.deviceInstancePath.ToLower(), "pid_", "&");
 
                 string query = $"SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE \"%VID_{VID}&PID_{PID}%\"";
 

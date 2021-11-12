@@ -1,7 +1,6 @@
 ﻿using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using SharpDX.XInput;
-using System;
 using System.Diagnostics;
 using System.Numerics;
 using System.Timers;
@@ -63,13 +62,11 @@ namespace ControllerService
             // initialize timers
             UpdateTimer = new Timer(10) { Enabled = false, AutoReset = true };
             UpdateTimer.Elapsed += UpdateController;
+
+            // initialize touch
+            touch = new DS4Touch();
         }
 
-        public void SetTouch(DS4Touch _touch)
-        {
-            touch = _touch;
-        }
-        
         public void SetVirtualController(IDualShock4Controller _controller)
         {
             vcontroller = _controller;
@@ -214,12 +211,6 @@ namespace ControllerService
                     outDS4Report.bThumbRY =
                         (byte)(byte.MaxValue - ControllerHelper.NormalizeInput(gamepad.RightThumbY));
                 }
-
-                /*
-                    0x00: No data for T-PAD[1]
-                    0x01: Set data for 2 current touches
-                    0x02: set data for previous touches at [44-51]
-                 */
 
                 unchecked
                 {

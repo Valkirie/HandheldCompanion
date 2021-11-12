@@ -1,23 +1,9 @@
-﻿using Gma.System.MouseKeyHook;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Timers;
-using System.Windows.Forms;
-using System.Timers;
-using Timer = System.Timers.Timer;
+﻿using System.Windows.Forms;
 
 namespace ControllerService
 {
     public class DS4Touch
     {
-        private IKeyboardMouseEvents m_Events;
-        private Thread m_Hook;
-        private Timer m_Timer;
-
         private float RatioWidth;
         private float RatioHeight;
 
@@ -53,30 +39,9 @@ namespace ControllerService
             // default values
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
             TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
-
-            // send MouseUp after 50ms (needed ?)
-            m_Timer = new Timer() { Enabled = false, Interval = 50, AutoReset = false };
-            m_Timer.Elapsed += SendMouseUp;
-
-            m_Hook = new Thread(Subscribe) { IsBackground = true };
-            m_Hook.Start();
         }
 
-        private void Subscribe()
-        {
-            m_Events = Hook.GlobalEvents();
-            m_Events.MouseMoveExt += OnMouseMove;
-            m_Events.MouseDownExt += OnMouseDown;
-            m_Events.MouseUpExt += OnMouseUp;
-            Application.Run();
-        }
-
-        private void OnMouseUp(object sender, MouseEventExtArgs e)
-        {
-            m_Timer.Start();
-        }
-
-        private void SendMouseUp(object sender, ElapsedEventArgs e)
+        public void OnMouseUp()
         {
             TouchDown = false;
 
@@ -87,10 +52,9 @@ namespace ControllerService
             TouchPacketCounter++;
         }
 
-        private void OnMouseDown(object sender, MouseEventExtArgs e)
+        public void OnMouseDown()
         {
             TouchDown = true;
-            m_Timer.Stop();
 
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
             TrackPadTouch0.X = TouchX;
@@ -101,10 +65,10 @@ namespace ControllerService
             TrackPadTouch1.Y = TouchY;
         }
 
-        private void OnMouseMove(object sender, MouseEventExtArgs e)
+        public void OnMouseMove(short X, short Y)
         {
-            TouchX = (short)(e.X * RatioWidth);
-            TouchY = (short)(e.Y * RatioHeight);
+            TouchX = (short)(X * RatioWidth);
+            TouchY = (short)(Y * RatioHeight);
 
             if (!TouchDown)
                 return;
@@ -122,12 +86,6 @@ namespace ControllerService
             }
 
             TouchPacketCounter++;
-        }
-
-        internal void Stop()
-        {
-            m_Events.Dispose();
-            m_Hook = null;
         }
     }
 }
