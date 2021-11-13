@@ -109,16 +109,16 @@ namespace ControllerService
 
         private void Accelerometer_ReadingChanged(object sender, XInputAccelerometerReadingChangedEventArgs e)
         {
-            Acceleration.X = -e.AccelerationY;
-            Acceleration.Y = e.AccelerationX;
-            Acceleration.Z = e.AccelerationZ;
+            Acceleration.X = e.AccelerationY;
+            Acceleration.Y = e.AccelerationZ;
+            Acceleration.Z = e.AccelerationX;
         }
 
         private void Girometer_ReadingChanged(object sender, XInputGirometerReadingChangedEventArgs e)
         {
-            AngularVelocity.X = -e.AngularVelocityY;
-            AngularVelocity.Y = e.AngularVelocityX;
-            AngularVelocity.Z = e.AngularVelocityZ;
+            AngularVelocity.X = e.AngularVelocityY;
+            AngularVelocity.Y = e.AngularVelocityZ;
+            AngularVelocity.Z = e.AngularVelocityX;
         }
 
         private unsafe void UpdateController(object sender, ElapsedEventArgs e)
@@ -229,15 +229,14 @@ namespace ControllerService
                     outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(touch.TrackPadTouch1.Y >> 4);
                 }
 
-                outDS4Report.wGyroX = (short)(AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
-                outDS4Report.wGyroY = (short)(-AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
-                outDS4Report.wGyroZ = (short)(AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
+                outDS4Report.wGyroX = (short)(-AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
+                outDS4Report.wGyroY = (short)(-AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
+                outDS4Report.wGyroZ = (short)(AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
+                outDS4Report.wAccelX = (short)(Acceleration.X * F_ACC_RES_PER_G); // accelXFull
+                outDS4Report.wAccelY = (short)(-Acceleration.Y * F_ACC_RES_PER_G); // accelYFull
+                outDS4Report.wAccelZ = (short)(Acceleration.Z * F_ACC_RES_PER_G); // accelZFull
 
-                outDS4Report.wAccelX = (short)(-Acceleration.X * F_ACC_RES_PER_G); // accelXFull
-                outDS4Report.wAccelY = (short)(-Acceleration.Z * F_ACC_RES_PER_G); // accelYFull
-                outDS4Report.wAccelZ = (short)(Acceleration.Y * F_ACC_RES_PER_G); // accelZFull
-
-                outDS4Report.bBatteryLvlSpecial = 10;
+                outDS4Report.bBatteryLvlSpecial = 11;
 
                 outDS4Report.wTimestamp = (ushort)(microseconds / 5.33f);
 

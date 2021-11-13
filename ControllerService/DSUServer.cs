@@ -586,13 +586,13 @@ namespace ControllerService
                 if (hidReport.Acceleration != null)
                 {
                     // accelXG
-                    Array.Copy(BitConverter.GetBytes(hidReport.Acceleration.X), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(-hidReport.Acceleration.X), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // accelYG
-                    Array.Copy(BitConverter.GetBytes(hidReport.Acceleration.Z), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(hidReport.Acceleration.Y), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // accelZG
-                    Array.Copy(BitConverter.GetBytes(-hidReport.Acceleration.Y), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(-hidReport.Acceleration.Z), 0, outputData, outIdx, 4);
                     outIdx += 4;
                 }
                 else
@@ -605,13 +605,13 @@ namespace ControllerService
                 if (hidReport.AngularVelocity != null)
                 {
                     // angVelPitch
-                    Array.Copy(BitConverter.GetBytes(hidReport.AngularVelocity.X), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(-hidReport.AngularVelocity.X), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // angVelYaw
-                    Array.Copy(BitConverter.GetBytes(hidReport.AngularVelocity.Z), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(hidReport.AngularVelocity.Y), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // angVelRoll
-                    Array.Copy(BitConverter.GetBytes(-hidReport.AngularVelocity.Y), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(-hidReport.AngularVelocity.Z), 0, outputData, outIdx, 4);
                     outIdx += 4;
                 }
                 else
