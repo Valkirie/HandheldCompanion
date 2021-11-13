@@ -1,5 +1,6 @@
 ﻿using ControllerService;
 using Gma.System.MouseKeyHook;
+using System;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
@@ -53,9 +54,7 @@ namespace ControllerHelper
 
         private void OnMouseMove(object sender, MouseEventExtArgs e)
         {
-            short TouchX = (short)(e.X);
-            short TouchY = (short)(e.Y);
-            client.SendMessage(new PipeMessage { Code = PipeCode.CODE_CURSOR_MOVE, args = new string[] { TouchX.ToString(), TouchY.ToString() } });
+            client.SendMessage(new PipeMessage { Code = PipeCode.CODE_CURSOR_MOVE, args = new string[] { Convert.ToString(e.X), Convert.ToString(e.Y) } });
         }
 
         private void OnMouseUp(object sender, MouseEventExtArgs e)
