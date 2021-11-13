@@ -1,7 +1,6 @@
 ﻿using ControllerService;
 using NamedPipeWrapper;
 using System;
-using System.Windows.Forms;
 
 namespace ControllerHelper
 {

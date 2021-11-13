@@ -3,7 +3,6 @@ using NamedPipeWrapper;
 using System;
 using System.Collections.Generic;
 using System.IO.Pipes;
-using System.Security.AccessControl;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
