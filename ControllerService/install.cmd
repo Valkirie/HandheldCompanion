@@ -12,6 +12,9 @@ msiexec /i dependencies\HidHideMSI.msi /quiet /qn /norestart /log HidHideSetup.l
 echo Installing ViGEm
 msiexec /i dependencies\ViGEmBusSetup_x64.msi /quiet /qn /norestart /log ViGEmBusSetup.log
 
+echo Installing DirectX
+dependencies\dxwebsetup.exe
+
 echo Creating LocalDumps registry key
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe" /f >> ControllerServiceSetup.log
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe" /v "LocalDumps" /t REG_EXPAND_SZ /d "%cd%" /f >> ControllerServiceSetup.log
