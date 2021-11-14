@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Force.Crc32;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -31,6 +32,9 @@ namespace ControllerService
     {
         public Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
         public FileSystemWatcher profileWatcher { get; set; }
+
+        private const uint CRC32_X64 = 0x906f6806;
+        private const uint CRC32_X86 = 0x456b57cc;
 
         public ProfileManager(string path, string location)
         {
@@ -85,17 +89,24 @@ namespace ControllerService
                 string inipath = Path.Combine(processpath, "x360ce.ini");
                 bool wrapped = File.Exists(dllpath);
 
+                // compute CRC32
+                BinaryType bt; GetBinaryType(output.path, out bt);
+                byte[] data = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_3_x64 : Properties.Resources.xinput1_3_x86;
+                uint CRC32 = Crc32Algorithm.Compute(data);
+                bool x360ce = bt == BinaryType.SCS_64BIT_BINARY ? (CRC32 == CRC32_X64) : (CRC32 == CRC32_X86);
+
+                // has dll, not x360ce : backup
+                if (output.use_wrapper && wrapped && !x360ce)
+                    File.Move(dllpath, $"{dllpath}.back");
+
+                // no dll : create
                 if (output.use_wrapper && !wrapped)
                 {
-                    BinaryType bt;
-                    GetBinaryType(output.path, out bt);
-
-                    byte[] wrapper = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_3_x64 : Properties.Resources.xinput1_3_x86;
-
-                    File.WriteAllBytes(dllpath, wrapper);
+                    File.WriteAllBytes(dllpath, data);
                     File.WriteAllBytes(inipath, Properties.Resources.x360ce);
                 }
-                else if (!output.use_wrapper && wrapped)
+                // has dll, is x360ce : remove
+                else if (!output.use_wrapper && wrapped && x360ce)
                 {
                     File.Delete(dllpath);
                     File.Delete(inipath);
