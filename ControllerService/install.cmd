@@ -17,7 +17,7 @@ dependencies\dxwebsetup.exe
 
 echo Creating LocalDumps registry key
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe" /f >> ControllerServiceSetup.log
-REG ADD "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe" /v "LocalDumps" /t REG_EXPAND_SZ /d "%cd%" /f >> ControllerServiceSetup.log
+REG ADD "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe" /v "DumpFolder" /t REG_EXPAND_SZ /d "%cd%" /f >> ControllerServiceSetup.log
 
 echo Uninstalling previous installation
 sc.exe stop "ControllerService" >> ControllerServiceSetup.log
