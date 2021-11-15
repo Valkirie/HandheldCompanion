@@ -28,7 +28,7 @@ namespace ControllerService
         private static DSUServer DSUServer;
         public static HidHide Hidder;
 
-        public static string CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathHelper, CurrentPathDep;
+        public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathHelper, CurrentPathDep;
 
         private static Timer MonitorTimer;
 
@@ -47,6 +47,7 @@ namespace ControllerService
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
 
             // paths
+            CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
             CurrentPathCli = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
             CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
@@ -73,12 +74,12 @@ namespace ControllerService
 
             // initialize HidHide
             Hidder = new HidHide(CurrentPathCli, logger);
-            Hidder.RegisterApplication(Process.GetCurrentProcess().MainModule.FileName);
+            Hidder.RegisterApplication(CurrentExe);
             Hidder.GetDevices();
             Hidder.HideDevices();
 
             // initialize Profile Manager
-            CurrentManager = new ProfileManager(CurrentPathProfiles, Process.GetCurrentProcess().MainModule.FileName);
+            CurrentManager = new ProfileManager(CurrentPathProfiles, CurrentExe, logger);
 
             // initialize ViGem
             try
@@ -136,15 +137,18 @@ namespace ControllerService
             {
                 Process CurrentProcess = Process.GetProcessById(ProcessId);
                 string ProcessPath = Utils.GetMainModuleFilepath(ProcessId);
-                string ProcessName = Path.GetFileName(ProcessPath);
+                string ProcessExec = Path.GetFileName(ProcessPath);
 
-                if (CurrentManager.profiles.ContainsKey(ProcessName))
+                if (CurrentManager.profiles.ContainsKey(ProcessExec))
                 {
-                    // muting process
-                    Profile CurrentProfile = CurrentManager.profiles[ProcessName];
+                    Profile CurrentProfile = CurrentManager.profiles[ProcessExec];
+                    CurrentProfile.path = ProcessPath; // update path
+                    CurrentProfile.Serialize();
+
                     PhysicalController.muted = CurrentProfile.whitelisted;
                     PhysicalController.accelerometer.multiplier = CurrentProfile.accelerometer;
                     PhysicalController.gyrometer.multiplier = CurrentProfile.gyrometer;
+
                     logger.LogInformation($"Profile {CurrentProfile.name} applied.");
                 }
                 else

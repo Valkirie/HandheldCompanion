@@ -1,4 +1,5 @@
 ﻿using Force.Crc32;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,13 +19,68 @@ namespace ControllerService
         public float gyrometer { get; set; } // gyroscope multiplicator
         public float accelerometer { get; set; } // accelerometer multiplicator
 
+        private const uint CRC32_X64 = 0x906f6806;
+        private const uint CRC32_X86 = 0x456b57cc;
+
         public void Serialize()
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(this, options);
 
-            string settingsPath = Path.Combine(ControllerService.CurrentPathProfiles, this.name, "Settings.json");
+            string settingsPath = Path.Combine(ControllerService.CurrentPathProfiles, $"{name}.json");
             File.WriteAllText(settingsPath, jsonString);
+        }
+
+        public void Update()
+        {
+            // update cloaking
+            UpdateCloacking();
+
+            // update wrapper
+            UpdateWrapper();
+        }
+
+        private void UpdateCloacking()
+        {
+            if (!File.Exists(path))
+                return;
+
+            if (whitelisted)
+                ControllerService.Hidder.RegisterApplication(path);
+            else
+                ControllerService.Hidder.UnregisterApplication(path);
+        }
+
+        private void UpdateWrapper()
+        {
+            // deploy xinput wrapper
+            string processpath = Path.GetDirectoryName(path);
+            string dllpath = Path.Combine(processpath, "xinput1_3.dll");
+            string inipath = Path.Combine(processpath, "x360ce.ini");
+            bool wrapped = File.Exists(dllpath);
+
+            // compute CRC32
+            BinaryType bt; GetBinaryType(path, out bt);
+            byte[] data = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_3_x64 : Properties.Resources.xinput1_3_x86;
+            uint CRC32 = Crc32Algorithm.Compute(data);
+            bool x360ce = bt == BinaryType.SCS_64BIT_BINARY ? (CRC32 == CRC32_X64) : (CRC32 == CRC32_X86);
+
+            // has dll, not x360ce : backup
+            if (use_wrapper && wrapped && !x360ce)
+                File.Move(dllpath, $"{dllpath}.back");
+
+            // no dll : create
+            if (use_wrapper && !wrapped)
+            {
+                File.WriteAllBytes(dllpath, data);
+                File.WriteAllBytes(inipath, Properties.Resources.x360ce);
+            }
+            // has dll, is x360ce : remove
+            else if (!use_wrapper && wrapped && x360ce)
+            {
+                File.Delete(dllpath);
+                File.Delete(inipath);
+            }
         }
     }
 
@@ -33,11 +89,12 @@ namespace ControllerService
         public Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
         public FileSystemWatcher profileWatcher { get; set; }
 
-        private const uint CRC32_X64 = 0x906f6806;
-        private const uint CRC32_X86 = 0x456b57cc;
+        private readonly ILogger<ControllerService> logger;
 
-        public ProfileManager(string path, string location)
+        public ProfileManager(string path, string location, ILogger<ControllerService> logger)
         {
+            this.logger = logger;
+
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
@@ -70,47 +127,25 @@ namespace ControllerService
             Thread.Sleep(250);
 
             string outputraw = File.ReadAllText(fileName);
-            Profile output = JsonSerializer.Deserialize<Profile>(outputraw);
+            Profile output = null;
+
+            try
+            {
+                output = JsonSerializer.Deserialize<Profile>(outputraw);
+            }
+            catch (JsonException ex)
+            {
+                logger.LogError($"Could not parse {fileName}. {ex.Message}");
+            }
+
+            if (output == null)
+                return;
 
             if (File.Exists(fileName))
             {
                 string ProcessName = Path.GetFileName(output.path);
                 profiles[ProcessName] = output;
-
-                // cloak or uncloak application
-                if (output.whitelisted)
-                    ControllerService.Hidder.RegisterApplication(output.path);
-                else
-                    ControllerService.Hidder.UnregisterApplication(output.path);
-
-                // deploy xinput wrapper
-                string processpath = Path.GetDirectoryName(output.path);
-                string dllpath = Path.Combine(processpath, "xinput1_3.dll");
-                string inipath = Path.Combine(processpath, "x360ce.ini");
-                bool wrapped = File.Exists(dllpath);
-
-                // compute CRC32
-                BinaryType bt; GetBinaryType(output.path, out bt);
-                byte[] data = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_3_x64 : Properties.Resources.xinput1_3_x86;
-                uint CRC32 = Crc32Algorithm.Compute(data);
-                bool x360ce = bt == BinaryType.SCS_64BIT_BINARY ? (CRC32 == CRC32_X64) : (CRC32 == CRC32_X86);
-
-                // has dll, not x360ce : backup
-                if (output.use_wrapper && wrapped && !x360ce)
-                    File.Move(dllpath, $"{dllpath}.back");
-
-                // no dll : create
-                if (output.use_wrapper && !wrapped)
-                {
-                    File.WriteAllBytes(dllpath, data);
-                    File.WriteAllBytes(inipath, Properties.Resources.x360ce);
-                }
-                // has dll, is x360ce : remove
-                else if (!output.use_wrapper && wrapped && x360ce)
-                {
-                    File.Delete(dllpath);
-                    File.Delete(inipath);
-                }
+                output.Update();
             }
         }
 
