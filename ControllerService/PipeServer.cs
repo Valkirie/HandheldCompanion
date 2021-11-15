@@ -99,7 +99,7 @@ namespace ControllerService
             switch (message.Code)
             {
                 case PipeCode.CODE_PROCESS:
-                    service.UpdateProcess(int.Parse(message.args[0]));
+                    service.UpdateProcess(int.Parse(message.args[0]), message.args[1]);
                     break;
                 case PipeCode.CODE_CURSOR_UP:
                     service.PhysicalController.touch.OnMouseUp();

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Management;
 using System.Runtime.InteropServices;
 
 namespace ControllerService
@@ -136,7 +134,7 @@ namespace ControllerService
         }
     }
 
-    public class Utils
+    public static class Utils
     {
         public static string Between(string STR, string FirstString, string LastString)
         {
@@ -145,23 +143,6 @@ namespace ControllerService
             int Pos2 = STR.IndexOf(LastString, Pos1);
             FinalString = STR.Substring(Pos1, Pos2 - Pos1);
             return FinalString;
-        }
-
-        public static string GetMainModuleFilepath(int processId)
-        {
-            string wmiQueryString = "SELECT ProcessId, ExecutablePath FROM Win32_Process WHERE ProcessId = " + processId;
-            using (var searcher = new ManagementObjectSearcher(wmiQueryString))
-            {
-                using (var results = searcher.Get())
-                {
-                    ManagementObject mo = results.Cast<ManagementObject>().FirstOrDefault();
-                    if (mo != null)
-                    {
-                        return (string)mo["ExecutablePath"];
-                    }
-                }
-            }
-            return null;
         }
     }
 }

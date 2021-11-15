@@ -131,12 +131,10 @@ namespace ControllerService
             MonitorTimer.Elapsed += MonitorHelper;
         }
 
-        public void UpdateProcess(int ProcessId)
+        public void UpdateProcess(int ProcessId, string ProcessPath)
         {
             try
             {
-                Process CurrentProcess = Process.GetProcessById(ProcessId);
-                string ProcessPath = Utils.GetMainModuleFilepath(ProcessId);
                 string ProcessExec = Path.GetFileName(ProcessPath);
 
                 if (CurrentManager.profiles.ContainsKey(ProcessExec))
