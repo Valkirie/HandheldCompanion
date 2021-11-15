@@ -33,6 +33,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Remove="profiles\Cemu.json" />
+    <Content Remove="profiles\ControllerCompanion.json" />
+    <Content Remove="profiles\Playnite.FullscreenApp.json" />
     <Content Remove="profiles\Yuzu.json" />
   </ItemGroup>
   <ItemGroup>
@@ -57,6 +59,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="profiles\AYASpace.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="profiles\ControllerCompanion.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="profiles\Playnite.FullscreenApp.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="profiles\Yuzu.json">

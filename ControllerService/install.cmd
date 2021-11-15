@@ -13,7 +13,10 @@ echo Installing ViGEm
 msiexec /i dependencies\ViGEmBusSetup_x64.msi /quiet /qn /norestart /log ViGEmBusSetup.log
 
 echo Installing DirectX
-dependencies\dxwebsetup.exe
+dependencies\dxwebsetup.exe /q
+
+echo Installing Windows Desktop Runtime 5.0.12
+dependencies\windowsdesktop-runtime-5.0.12-win-x64.exe /install /quiet /norestart
 
 echo Creating LocalDumps registry key
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe" /f >> ControllerServiceSetup.log
