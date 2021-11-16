@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
+using System.IO;
 
 namespace ControllerService
 {
@@ -11,6 +12,8 @@ namespace ControllerService
     {
         public static void Main(string[] args)
         {
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+
             CreateHostBuilder(args).Build().Run();
         }
 
@@ -21,13 +24,11 @@ namespace ControllerService
                 .ConfigureServices((hostContext, services) =>
                 {
                     var configuration = new ConfigurationBuilder()
-                        .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                         .AddJsonFile("appsettings.json")
                         .Build();
 
                     var logger = new LoggerConfiguration()
                         .ReadFrom.Configuration(configuration)
-                        .WriteTo.File($"{AppDomain.CurrentDomain.BaseDirectory}\\Logs\\ControllerService.log",rollingInterval: RollingInterval.Day)
                         .CreateLogger();
 
                     services.AddLogging(builder =>
