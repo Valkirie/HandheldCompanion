@@ -1,5 +1,6 @@
 ﻿using Force.Crc32;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -89,6 +90,8 @@ namespace ControllerService
         public Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
         public FileSystemWatcher profileWatcher { get; set; }
 
+        private Dictionary<string, DateTime> dateTimeDictionary = new Dictionary<string, DateTime>();
+
         private readonly ILogger<ControllerService> logger;
 
         public ProfileManager(string path, string location, ILogger<ControllerService> logger)
@@ -98,16 +101,21 @@ namespace ControllerService
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
+            // monitor changes, deletions and creations of profiles
             profileWatcher = new FileSystemWatcher()
             {
                 Path = path,
                 EnableRaisingEvents = true,
-                IncludeSubdirectories = true
+                IncludeSubdirectories = true,
+                Filter = "*.json",
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size
             };
+
             profileWatcher.Created += ProfileCreated;
             profileWatcher.Deleted += ProfileDeleted;
             profileWatcher.Changed += ProfileChanged;
 
+            // process existing profiles
             string[] fileEntries = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
                 ProcessProfile(fileName);
@@ -123,21 +131,18 @@ namespace ControllerService
 
         private void ProcessProfile(string fileName)
         {
-            // Waits until a file can be opened with write permission
-            Thread.Sleep(250);
-
-            string outputraw = File.ReadAllText(fileName);
             Profile output = null;
-
             try
             {
+                string outputraw = File.ReadAllText(fileName);
                 output = JsonSerializer.Deserialize<Profile>(outputraw);
             }
-            catch (JsonException ex)
+            catch (Exception ex)
             {
                 logger.LogError($"Could not parse {fileName}. {ex.Message}");
             }
 
+            // failed to parse
             if (output == null)
                 return;
 
@@ -151,7 +156,13 @@ namespace ControllerService
 
         private void ProfileChanged(object sender, FileSystemEventArgs e)
         {
-            ProcessProfile(e.FullPath);
+            if (!dateTimeDictionary.ContainsKey(e.FullPath) || (dateTimeDictionary.ContainsKey(e.FullPath) && System.IO.File.GetLastWriteTime(e.FullPath) != dateTimeDictionary[e.FullPath]))
+            {
+                dateTimeDictionary[e.FullPath] = System.IO.File.GetLastWriteTime(e.FullPath);
+
+                ProcessProfile(e.FullPath);
+                logger.LogInformation($"Updated profile {e.FullPath}");
+            }
         }
 
         private void ProfileDeleted(object sender, FileSystemEventArgs e)
@@ -168,6 +179,7 @@ namespace ControllerService
         private void ProfileCreated(object sender, FileSystemEventArgs e)
         {
             ProcessProfile(e.FullPath);
+            logger.LogInformation($"Created profile {e.FullPath}");
         }
     }
 }
