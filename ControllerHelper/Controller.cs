@@ -11,16 +11,12 @@ namespace ControllerHelper
         public string name;
         public Guid guid;
         public int index;
-        public bool gyrometer;
-        public bool accelerometer;
 
-        public Controller(string name, Guid guid, int index, bool gyrometer, bool accelerometer)
+        public Controller(string name, Guid guid, int index)
         {
             this.name = name;
             this.guid = guid;
             this.index = index;
-            this.gyrometer = gyrometer;
-            this.accelerometer = accelerometer;
         }
 
         public override string ToString()

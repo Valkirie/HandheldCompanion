@@ -14,5 +14,8 @@
     <Setting Name="DSUport" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">26760</Value>
     </Setting>
+    <Setting Name="HIDrate" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

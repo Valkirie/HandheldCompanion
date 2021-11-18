@@ -47,7 +47,7 @@ namespace ControllerService
 
         private DS4_REPORT_EX outDS4Report;
 
-        public XInputController(UserIndex _idx)
+        public XInputController(UserIndex _idx, int HIDrate)
         {
             // initilize controller
             controller = new Controller(_idx);
@@ -65,10 +65,15 @@ namespace ControllerService
             stopwatch.Start();
 
             // initialize timers
-            UpdateTimer = new Timer(10) { Enabled = false, AutoReset = true };
+            UpdateTimer = new Timer(HIDrate) { Enabled = false, AutoReset = true };
 
             // initialize touch
             touch = new DS4Touch();
+        }
+
+        public void SetPollRate(int HIDrate)
+        {
+            UpdateTimer.Interval = HIDrate;
         }
 
         public Dictionary<string, string> ToArgs()
@@ -76,9 +81,7 @@ namespace ControllerService
             return new Dictionary<string, string>() {
                 { "name", instance.ProductName },
                 { "guid", $"{instance.InstanceGuid}" },
-                { "index", $"{(int)index}" },
-                { "gyrometer", $"{gyrometer != null}" },
-                { "accelerometer", $"{accelerometer != null}" }
+                { "index", $"{(int)index}" }
             };
         }
 

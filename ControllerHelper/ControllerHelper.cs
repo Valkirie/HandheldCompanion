@@ -133,7 +133,7 @@ namespace ControllerHelper
 
         public void UpdateController(Dictionary<string, string> args)
         {
-            CurrentController = new Controller(args["name"], Guid.Parse(args["guid"]), int.Parse(args["index"]), bool.Parse(args["gyrometer"]), bool.Parse(args["accelerometer"]));
+            CurrentController = new Controller(args["name"], Guid.Parse(args["guid"]), int.Parse(args["index"]));
 
             this.BeginInvoke((MethodInvoker)delegate ()
             {
@@ -150,6 +150,11 @@ namespace ControllerHelper
             {
                 cB_HIDdevice.SelectedItem = HIDmodes[args["HIDmode"]];
                 cB_HIDcloak.SelectedItem = args["HIDcloaked"];
+                checkBox1.Checked = bool.Parse(args["gyrometer"]);
+                checkBox2.Checked = bool.Parse(args["accelerometer"]);
+
+                trackBar1.Value = int.Parse(args["HIDrate"]);
+                label4.Text = $"{trackBar1.Value} Miliseconds";
             });
         }
 
@@ -180,6 +185,23 @@ namespace ControllerHelper
                 args = new Dictionary<string, string>
                 {
                     { "HIDcloaked", cB_HIDcloak.Text }
+                }
+            });
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            this.BeginInvoke((MethodInvoker)delegate ()
+            {
+                label4.Text = $"{trackBar1.Value} Miliseconds";
+            });
+
+            PipeClient.SendMessage(new PipeMessage
+            {
+                Code = PipeCode.CLIENT_SETTINGS,
+                args = new Dictionary<string, string>
+                {
+                    { "HIDrate", $"{trackBar1.Value}" }
                 }
             });
         }

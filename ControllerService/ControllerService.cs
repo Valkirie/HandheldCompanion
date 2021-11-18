@@ -32,7 +32,7 @@ namespace ControllerService
 
         private string HIDmode;
         private bool HIDcloaked, DSUEnabled;
-        private int DSUport;
+        private int DSUport, HIDrate;
 
         public ProfileManager CurrentManager;
         public Assembly CurrentAssembly;
@@ -60,9 +60,10 @@ namespace ControllerService
             HIDmode = Properties.Settings.Default.HIDmode;
             DSUEnabled = Properties.Settings.Default.DSUEnabled;
             DSUport = Properties.Settings.Default.DSUport;
+            HIDrate = Properties.Settings.Default.HIDrate;
 
             // initialize log
-            logger.LogInformation($"AyaGyroAiming ({fileVersionInfo.ProductVersion})");
+            logger.LogInformation($"{CurrentAssembly.GetName()} ({fileVersionInfo.ProductVersion})");
 
             // verifying HidHide is installed
             if (!File.Exists(CurrentPathCli))
@@ -83,7 +84,7 @@ namespace ControllerService
             }
 
             // initialize HidHide
-            Hidder = new HidHide(CurrentPathCli, logger);
+            Hidder = new HidHide(CurrentPathCli, logger, this);
             Hidder.RegisterApplication(CurrentExe);
 
             // initialize Profile Manager
@@ -113,7 +114,7 @@ namespace ControllerService
 
             for (int i = (int)UserIndex.One; i <= (int)UserIndex.Three; i++)
             {
-                XInputController tmpController = new XInputController((UserIndex)i);
+                XInputController tmpController = new XInputController((UserIndex)i, HIDrate);
 
                 if (tmpController.controller.IsConnected)
                 {
@@ -230,10 +231,12 @@ namespace ControllerService
                 {
                     case "HIDcloaked":
                         Hidder.SetCloaking((bool)NewValue);
-                        logger.LogInformation($"Uncloaking {PhysicalController.GetType().Name}");
                         break;
                     case "HIDmode":
                         // todo
+                        break;
+                    case "HIDrate":
+                        PhysicalController.SetPollRate((int)NewValue);
                         break;
                 }
             }
@@ -247,7 +250,6 @@ namespace ControllerService
 
             // turn on the cloaking
             Hidder.SetCloaking(HIDcloaked);
-            logger.LogInformation($"Cloaking {PhysicalController.GetType().Name}");
 
             VirtualController.Connect();
             logger.LogInformation($"Virtual {VirtualController.GetType().Name} connected.");
@@ -303,10 +305,7 @@ namespace ControllerService
 
             // uncloak on shutdown !?
             if (Hidder != null)
-            {
                 Hidder.SetCloaking(false);
-                logger.LogInformation($"Uncloaking {PhysicalController.GetType().Name}");
-            }
             PipeServer.Stop();
 
             return Task.CompletedTask;
@@ -315,8 +314,13 @@ namespace ControllerService
         public Dictionary<string, string> GetSettings()
         {
             Dictionary<string, string> settings = new Dictionary<string, string>();
+
             foreach(SettingsProperty s in Properties.Settings.Default.Properties)
                 settings.Add(s.Name, s.DefaultValue.ToString());
+
+            settings.Add("gyrometer", $"{PhysicalController.gyrometer != null}");
+            settings.Add("accelerometer", $"{PhysicalController.accelerometer != null}");
+
             return settings;
         }
     }

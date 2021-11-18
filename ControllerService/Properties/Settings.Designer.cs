@@ -58,5 +58,14 @@ namespace ControllerService.Properties {
                 return ((int)(this["DSUport"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int HIDrate {
+            get {
+                return ((int)(this["HIDrate"]));
+            }
+        }
     }
 }

@@ -15,10 +15,12 @@ namespace ControllerService
         public List<Device> devices = new List<Device>();
 
         private readonly ILogger<ControllerService> logger;
+        private readonly ControllerService service;
 
-        public HidHide(string _path, ILogger<ControllerService> logger)
+        public HidHide(string _path, ILogger<ControllerService> logger, ControllerService service)
         {
             this.logger = logger;
+            this.service = service;
 
             process = new Process
             {
@@ -112,6 +114,8 @@ namespace ControllerService
             process.Start();
             process.WaitForExit();
             process.StandardOutput.ReadToEnd();
+
+            logger.LogInformation($"{service.PhysicalController.instance.ProductName} cloak status set to {status}");
         }
 
         public void RegisterDevice(string deviceInstancePath)
