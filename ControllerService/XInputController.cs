@@ -1,6 +1,10 @@
-﻿using Nefarius.ViGEm.Client.Targets;
+﻿using Nefarius.ViGEm.Client;
+using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
+using SharpDX.DirectInput;
 using SharpDX.XInput;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Timers;
@@ -12,9 +16,10 @@ namespace ControllerService
     {
         public Controller controller;
         public Gamepad gamepad;
+        public DeviceInstance instance;
 
-        private DSUServer dsu;
-        private IDualShock4Controller vcontroller;
+        private DSUServer server;
+        private IVirtualGamepad vcontroller;
 
         public XInputGirometer gyrometer;
         public XInputAccelerometer accelerometer;
@@ -61,23 +66,43 @@ namespace ControllerService
 
             // initialize timers
             UpdateTimer = new Timer(10) { Enabled = false, AutoReset = true };
-            UpdateTimer.Elapsed += UpdateController;
 
             // initialize touch
             touch = new DS4Touch();
         }
 
-        public void SetVirtualController(IDualShock4Controller _controller)
+        public Dictionary<string, string> ToArgs()
+        {
+            return new Dictionary<string, string>() {
+                { "name", instance.ProductName },
+                { "guid", $"{instance.InstanceGuid}" },
+                { "index", $"{(int)index}" },
+                { "gyrometer", $"{gyrometer != null}" },
+                { "accelerometer", $"{accelerometer != null}" }
+            };
+        }
+
+        public void SetVirtualController(IVirtualGamepad _controller)
         {
             vcontroller = _controller;
             vcontroller.AutoSubmitReport = false;
-            vcontroller.FeedbackReceived += Vcontroller_FeedbackReceived;
+
+            switch(vcontroller.GetType().FullName)
+            {
+                case "Nefarius.ViGEm.Client.Targets.DualShock4Controller":
+                    UpdateTimer.Elapsed += DS4_UpdateReport;
+                    ((IDualShock4Controller)vcontroller).FeedbackReceived += DS4_FeedbackReceived;
+                    break;
+                case "Nefarius.ViGEm.Client.Targets.Xbox360Controller":
+                    throw new NotImplementedException();
+                    break;
+            }
 
             UpdateTimer.Enabled = true;
             UpdateTimer.Start();
         }
 
-        private void Vcontroller_FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)
+        private void DS4_FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)
         {
             if (controller.IsConnected)
             {
@@ -104,7 +129,7 @@ namespace ControllerService
 
         public void SetDSUServer(DSUServer _server)
         {
-            dsu = _server;
+            server = _server;
         }
 
         private void Accelerometer_ReadingChanged(object sender, XInputAccelerometerReadingChangedEventArgs e)
@@ -121,7 +146,7 @@ namespace ControllerService
             AngularVelocity.Z = e.AngularVelocityX;
         }
 
-        private unsafe void UpdateController(object sender, ElapsedEventArgs e)
+        private unsafe void DS4_UpdateReport(object sender, ElapsedEventArgs e)
         {
             if (!controller.IsConnected)
                 return;
@@ -136,7 +161,7 @@ namespace ControllerService
                 gamepad = state.Gamepad;
 
                 // send report to server
-                dsu?.NewReportIncoming(this, microseconds);
+                server?.NewReportIncoming(this, microseconds);
 
                 // reset vars
                 byte[] rawOutReportEx = new byte[63];
@@ -205,11 +230,10 @@ namespace ControllerService
                     outDS4Report.bTriggerL = gamepad.LeftTrigger;
                     outDS4Report.bTriggerR = gamepad.RightTrigger;
 
-                    outDS4Report.bThumbLX = ControllerHelper.NormalizeInput(gamepad.LeftThumbX);
-                    outDS4Report.bThumbLY = (byte)(byte.MaxValue - ControllerHelper.NormalizeInput(gamepad.LeftThumbY));
-                    outDS4Report.bThumbRX = ControllerHelper.NormalizeInput(gamepad.RightThumbX);
-                    outDS4Report.bThumbRY =
-                        (byte)(byte.MaxValue - ControllerHelper.NormalizeInput(gamepad.RightThumbY));
+                    outDS4Report.bThumbLX = Utils.NormalizeInput(gamepad.LeftThumbX);
+                    outDS4Report.bThumbLY = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.LeftThumbY));
+                    outDS4Report.bThumbRX = Utils.NormalizeInput(gamepad.RightThumbX);
+                    outDS4Report.bThumbRY = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.RightThumbY));
                 }
 
                 unchecked
@@ -243,7 +267,7 @@ namespace ControllerService
                 DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
 
                 // send report to controller
-                vcontroller.SubmitRawReport(rawOutReportEx);
+                ((IDualShock4Controller)vcontroller).SubmitRawReport(rawOutReportEx);
             }
         }
     }

@@ -1,6 +1,8 @@
 ﻿using ControllerService;
 using Gma.System.MouseKeyHook;
 using System;
+using System.Collections.Generic;
+using System.Numerics;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
@@ -15,6 +17,7 @@ namespace ControllerHelper
         private Timer m_Timer;
 
         private PipeClient client;
+        private Vector2 TouchPos;
 
         public MouseHook(PipeClient client)
         {
@@ -35,7 +38,6 @@ namespace ControllerHelper
         private void Subscribe()
         {
             m_Events = Hook.GlobalEvents();
-            m_Events.MouseMoveExt += OnMouseMove;
             m_Events.MouseDownExt += OnMouseDown;
             m_Events.MouseUpExt += OnMouseUp;
             Application.Run();
@@ -43,22 +45,51 @@ namespace ControllerHelper
 
         private void SendMouseUp(object sender, ElapsedEventArgs e)
         {
-            client.SendMessage(new PipeMessage { Code = PipeCode.CODE_CURSOR_UP });
+            client.SendMessage(new PipeMessage
+            {
+                Code = PipeCode.CLIENT_CURSORUP,
+                args = new Dictionary<string, string>
+                {
+                    { "X", Convert.ToString(TouchPos.X) },
+                    { "Y", Convert.ToString(TouchPos.Y) }
+                }
+            });
         }
 
         private void OnMouseDown(object sender, MouseEventExtArgs e)
         {
+            m_Events.MouseMoveExt += OnMouseMove;
+
             m_Timer.Stop();
-            client.SendMessage(new PipeMessage { Code = PipeCode.CODE_CURSOR_DOWN });
+            client.SendMessage(new PipeMessage
+            {
+                Code = PipeCode.CLIENT_CURSORDOWN,
+                args = new Dictionary<string, string>
+                {
+                    { "X", Convert.ToString(e.X) },
+                    { "Y", Convert.ToString(e.Y) }
+                }
+            });
         }
 
         private void OnMouseMove(object sender, MouseEventExtArgs e)
         {
-            client.SendMessage(new PipeMessage { Code = PipeCode.CODE_CURSOR_MOVE, args = new string[] { Convert.ToString(e.X), Convert.ToString(e.Y) } });
+            client.SendMessage(new PipeMessage
+            {
+                Code = PipeCode.CLIENT_CURSORUP,
+                args = new Dictionary<string, string>
+                {
+                    { "X", Convert.ToString(e.X) },
+                    { "Y", Convert.ToString(e.Y) }
+                }
+            });
         }
 
         private void OnMouseUp(object sender, MouseEventExtArgs e)
         {
+            m_Events.MouseMoveExt -= OnMouseMove;
+
+            TouchPos = new Vector2(e.X, e.Y);
             m_Timer.Start();
         }
 

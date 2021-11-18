@@ -28,7 +28,6 @@ namespace ControllerService
         public byte TouchPacketCounter = 0;
 
         private short TouchX, TouchY;
-        private bool TouchDown;
 
         public DS4Touch()
         {
@@ -41,20 +40,21 @@ namespace ControllerService
             TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
         }
 
-        public void OnMouseUp()
+        public void OnMouseUp(short X, short Y)
         {
-            TouchDown = false;
+            TouchX = (short)(X * RatioWidth);
+            TouchY = (short)(Y * RatioHeight);
 
-            // release touch inputs
             TrackPadTouch0.RawTrackingNum += TOUCH_DISABLE;
             TrackPadTouch1.RawTrackingNum += TOUCH_DISABLE;
 
             TouchPacketCounter++;
         }
 
-        public void OnMouseDown()
+        public void OnMouseDown(short X, short Y)
         {
-            TouchDown = true;
+            TouchX = (short)(X * RatioWidth);
+            TouchY = (short)(Y * RatioHeight);
 
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
             TrackPadTouch0.X = TouchX;
@@ -69,9 +69,6 @@ namespace ControllerService
         {
             TouchX = (short)(X * RatioWidth);
             TouchY = (short)(Y * RatioHeight);
-
-            if (!TouchDown)
-                return;
 
             switch (TouchPacketCounter % 2)
             {

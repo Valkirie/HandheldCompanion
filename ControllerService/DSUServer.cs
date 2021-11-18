@@ -536,13 +536,13 @@ namespace ControllerService
                 outputData[++outIdx] = (byte)0; // (hidReport.TouchButton) ? (byte)1 : 
 
                 //Left stick
-                outputData[++outIdx] = ControllerHelper.NormalizeInput(hidReport.gamepad.LeftThumbX);
-                outputData[++outIdx] = ControllerHelper.NormalizeInput(hidReport.gamepad.LeftThumbY);
+                outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.LeftThumbX);
+                outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.LeftThumbY);
                 outputData[outIdx] = (byte)(byte.MaxValue - outputData[outIdx]); //invert Y by convention
 
                 //Right stick
-                outputData[++outIdx] = ControllerHelper.NormalizeInput(hidReport.gamepad.RightThumbX);
-                outputData[++outIdx] = ControllerHelper.NormalizeInput(hidReport.gamepad.RightThumbY);
+                outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.RightThumbX);
+                outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.RightThumbY);
                 outputData[outIdx] = (byte)(byte.MaxValue - outputData[outIdx]); //invert Y by convention
 
                 //we don't have analog buttons on DS4 :(

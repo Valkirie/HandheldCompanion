@@ -16,7 +16,10 @@ namespace ControllerHelper
             String thisprocessname = Process.GetCurrentProcess().ProcessName;
 
             if (Process.GetProcesses().Count(p => p.ProcessName == thisprocessname) > 1)
+            {
+                MessageBox.Show("An instance of Controller Helper is already running.");
                 return;
+            }
 
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();

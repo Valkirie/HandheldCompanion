@@ -32,6 +32,10 @@ namespace ControllerService
                     Verb = "runas"
                 }
             };
+
+            // update and register devices list
+            ListDevices();
+            RegisterDevices();
         }
 
         public List<string> GetRegisteredApplications()
@@ -70,7 +74,7 @@ namespace ControllerService
             process.StandardOutput.ReadToEnd();
         }
 
-        public void GetDevices()
+        private void ListDevices()
         {
             process.StartInfo.Arguments = $"--dev-gaming";
             process.Start();
@@ -110,7 +114,7 @@ namespace ControllerService
             process.StandardOutput.ReadToEnd();
         }
 
-        public void HideDevice(string deviceInstancePath)
+        public void RegisterDevice(string deviceInstancePath)
         {
             process.StartInfo.Arguments = $"--dev-hide \"{deviceInstancePath}\"";
             process.Start();
@@ -126,7 +130,7 @@ namespace ControllerService
             process.StandardOutput.ReadToEnd();
         }
 
-        internal void HideDevices()
+        private void RegisterDevices()
         {
             foreach (Device d in devices.Where(a => a.gamingDevice))
             {
@@ -145,8 +149,8 @@ namespace ControllerService
                         if (item.Name == "DeviceID")
                         {
                             string DeviceID = ((string)item.Value);
-                            HideDevice(DeviceID);
-                            HideDevice(d.deviceInstancePath);
+                            RegisterDevice(DeviceID);
+                            RegisterDevice(d.deviceInstancePath);
                             logger.LogInformation($"HideDevice hiding {DeviceID}");
                             break;
                         }

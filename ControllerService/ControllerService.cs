@@ -1,17 +1,17 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
-using Nefarius.ViGEm.Client.Targets;
+using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
-using Timer = System.Timers.Timer;
 
 namespace ControllerService
 {
@@ -19,21 +19,23 @@ namespace ControllerService
     {
         // controllers vars
         public XInputController PhysicalController;
-        private IDualShock4Controller VirtualController;
+        private IVirtualGamepad VirtualController;
         private XInputGirometer Gyrometer;
         private XInputAccelerometer Accelerometer;
+        private ViGEmClient VirtualClient;
 
-        private static PipeServer PipeServer;
-
-        private static DSUServer DSUServer;
+        private PipeServer PipeServer;
+        private DSUServer DSUServer;
         public static HidHide Hidder;
 
-        public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathHelper, CurrentPathDep;
+        public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathDep;
 
-        private static Timer MonitorTimer;
+        private string HIDmode;
+        private bool HIDcloaked, DSUEnabled;
+        private int DSUport;
 
-        public static ProfileManager CurrentManager;
-        public static Assembly CurrentAssembly;
+        public ProfileManager CurrentManager;
+        public Assembly CurrentAssembly;
 
         private readonly ILogger<ControllerService> logger;
 
@@ -51,65 +53,79 @@ namespace ControllerService
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
             CurrentPathCli = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
             CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
-            CurrentPathHelper = Path.Combine(CurrentPath, "ControllerHelper.exe");
             CurrentPathDep = Path.Combine(CurrentPath, "dependencies");
+
+            // settings
+            HIDcloaked = Properties.Settings.Default.HIDcloaked;
+            HIDmode = Properties.Settings.Default.HIDmode;
+            DSUEnabled = Properties.Settings.Default.DSUEnabled;
+            DSUport = Properties.Settings.Default.DSUport;
 
             // initialize log
             logger.LogInformation($"AyaGyroAiming ({fileVersionInfo.ProductVersion})");
 
+            // verifying HidHide is installed
             if (!File.Exists(CurrentPathCli))
             {
-                logger.LogError("HidHide is missing. Please get it from: https://github.com/ViGEm/HidHide/releases");
+                logger.LogCritical("HidHide is missing. Please get it from: https://github.com/ViGEm/HidHide/releases");
                 throw new InvalidOperationException();
             }
 
-            if (!File.Exists(CurrentPathHelper))
+            // verifying ViGEm is installed
+            try
             {
-                logger.LogError("Controller Helper is missing. Application will stop.");
+                VirtualClient = new ViGEmClient();
+            }
+            catch (Exception)
+            {
+                logger.LogCritical("ViGEm is missing. Please get it from: https://github.com/ViGEm/ViGEmBus/releases");
                 throw new InvalidOperationException();
             }
-
-            // initialize PipeServer and PipeClient
-            PipeServer = new PipeServer("ControllerService", this, logger);
 
             // initialize HidHide
             Hidder = new HidHide(CurrentPathCli, logger);
             Hidder.RegisterApplication(CurrentExe);
-            Hidder.GetDevices();
-            Hidder.HideDevices();
 
             // initialize Profile Manager
             CurrentManager = new ProfileManager(CurrentPathProfiles, CurrentExe, logger);
 
-            // initialize ViGem
-            try
+            // initialize controller
+            switch (HIDmode)
             {
-                ViGEmClient client = new ViGEmClient();
-                VirtualController = client.CreateDualShock4Controller();
-
-                if (VirtualController == null)
-                {
-                    logger.LogError("No Virtual controller detected. Application will stop.");
-                    throw new InvalidOperationException();
-                }
+                default:
+                case "DualShock4Controller":
+                    VirtualController = VirtualClient.CreateDualShock4Controller();
+                    break;
+                case "Xbox360Controller":
+                    VirtualController = VirtualClient.CreateXbox360Controller();
+                    break;
             }
-            catch (Exception)
+
+            if (VirtualController == null)
             {
-                logger.LogError("ViGEm is missing. Please get it from: https://github.com/ViGEm/ViGEmBus/releases");
+                logger.LogCritical("No Virtual controller detected. Application will stop.");
                 throw new InvalidOperationException();
             }
 
             // prepare physical controller
+            DirectInput dinput = new DirectInput();
+            IList<DeviceInstance> dinstances = dinput.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly);
+
             for (int i = (int)UserIndex.One; i <= (int)UserIndex.Three; i++)
             {
                 XInputController tmpController = new XInputController((UserIndex)i);
+
                 if (tmpController.controller.IsConnected)
+                {
                     PhysicalController = tmpController;
+                    PhysicalController.instance = dinstances[i];
+                    break;
+                }
             }
 
             if (PhysicalController == null)
             {
-                logger.LogError("No physical controller detected. Application will stop.");
+                logger.LogCritical("No physical controller detected. Application will stop.");
                 throw new InvalidOperationException();
             }
 
@@ -126,9 +142,9 @@ namespace ControllerService
             // initialize DSUClient
             DSUServer = new DSUServer(logger);
 
-            // monitors processes and settings
-            MonitorTimer = new Timer(1000) { Enabled = false, AutoReset = true };
-            MonitorTimer.Elapsed += MonitorHelper;
+            // initialize PipeServer
+            PipeServer = new PipeServer("ControllerService", this, logger);
+            PipeServer.Start();
         }
 
         public void UpdateProcess(int ProcessId, string ProcessPath)
@@ -159,49 +175,101 @@ namespace ControllerService
             catch (Exception) { }
         }
 
-        private void MonitorHelper(object sender, ElapsedEventArgs e)
+        public void UpdateSettings(Dictionary<string, string> args)
         {
-            // check if PipeServer is connected
-            if (PipeServer.connected)
-                return;
+            foreach(KeyValuePair<string, string> pair in args)
+            {
+                string name = pair.Key;
+                string value = pair.Value;
 
-            // check if Controller Service Helper is running
-            Process[] pname = Process.GetProcessesByName("ControllerHelper");
-            if (pname.Length != 0)
-                return;
+                SettingsProperty setting = Properties.Settings.Default.Properties[name];
 
-            // start Controller Service Helper            
-            ControllerClient.CreateHelper();
+                if (setting == null)
+                    continue;
 
-            logger.LogInformation("Controller Helper has started.");
+                object OldValue = setting.DefaultValue;
+                object NewValue = OldValue;
+
+                TypeCode typeCode = Type.GetTypeCode(setting.PropertyType);
+                switch (typeCode)
+                {
+                    case TypeCode.Boolean:
+                        NewValue = bool.Parse(value);
+                        break;
+                    case TypeCode.Single:
+                    case TypeCode.Decimal:
+                        NewValue = float.Parse(value);
+                        break;
+                    case TypeCode.Int16:
+                    case TypeCode.Int32:
+                    case TypeCode.Int64:
+                        NewValue = int.Parse(value);
+                        break;
+                    case TypeCode.UInt16:
+                    case TypeCode.UInt32:
+                    case TypeCode.UInt64:
+                        NewValue = uint.Parse(value);
+                        break;
+                    default:
+                        NewValue = value;
+                        break;
+                }
+
+                Properties.Settings.Default[name] = NewValue;
+                ApplySetting(name, OldValue, NewValue);
+            }
+
+            Properties.Settings.Default.Save();
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        private void ApplySetting(string name, object OldValue, object NewValue)
+        {
+            if (OldValue != NewValue)
+            {
+                switch(name)
+                {
+                    case "HIDcloaked":
+                        Hidder.SetCloaking((bool)NewValue);
+                        logger.LogInformation($"Uncloaking {PhysicalController.GetType().Name}");
+                        break;
+                    case "HIDmode":
+                        // todo
+                        break;
+                }
+            }
+        }
+
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             // start the DSUClient
-            DSUServer.Start(26760);
-            PhysicalController.SetDSUServer(DSUServer);
-
-            // start PipeServer
-            PipeServer.Start();
-            MonitorTimer.Start();
+            if (DSUEnabled)
+                DSUServer.Start(DSUport);
 
             // turn on the cloaking
-            Hidder.SetCloaking(true);
+            Hidder.SetCloaking(HIDcloaked);
             logger.LogInformation($"Cloaking {PhysicalController.GetType().Name}");
 
-            // plug the virtual controller
             VirtualController.Connect();
             logger.LogInformation($"Virtual {VirtualController.GetType().Name} connected.");
 
+            PhysicalController.SetDSUServer(DSUServer);
             PhysicalController.SetVirtualController(VirtualController);
             PhysicalController.SetGyroscope(Gyrometer);
             PhysicalController.SetAccelerometer(Accelerometer);
 
-            logger.LogInformation($"Virtual {VirtualController.GetType().Name} attached to {PhysicalController.GetType().Name} {PhysicalController.index}.");
+            logger.LogInformation($"Virtual {VirtualController.GetType().Name} attached to {PhysicalController.instance.InstanceName} on slot {PhysicalController.index}.");
 
             // send notification
-            PipeServer.SendMessage(new PipeMessage { Code = PipeCode.CODE_TOAST, args = new string[] { "DualShock 4 Controller", "Virtual device is now connected" } });
+            PipeServer.SendMessage(new PipeMessage {
+                Code = PipeCode.SERVER_TOAST,
+                args = new Dictionary<string, string>
+                {
+                    { "title", $"{VirtualController.GetType().Name}" },
+                    { "content", "Virtual device is now connected"}
+                }
+            });
+
+            return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
@@ -214,7 +282,15 @@ namespace ControllerService
                     logger.LogInformation($"Virtual {VirtualController.GetType().Name} disconnected.");
 
                     // send notification
-                    PipeServer.SendMessage(new PipeMessage { Code = PipeCode.CODE_TOAST, args = new string[] { "DualShock 4 Controller", "Virtual device is now disconnected" } });
+                    PipeServer.SendMessage(new PipeMessage
+                    {
+                        Code = PipeCode.SERVER_TOAST,
+                        args = new Dictionary<string, string>
+                        {
+                            { "title", $"{VirtualController.GetType().Name}" },
+                            { "content", "Virtual device is now disconnected"}
+                        }
+                    });
                 }
             }
             catch (Exception) { }
@@ -225,18 +301,23 @@ namespace ControllerService
                 logger.LogInformation($"DSU Server has stopped.");
             }
 
+            // uncloak on shutdown !?
             if (Hidder != null)
             {
                 Hidder.SetCloaking(false);
                 logger.LogInformation($"Uncloaking {PhysicalController.GetType().Name}");
             }
-
-            if (MonitorTimer.Enabled)
-                MonitorTimer.Stop();
-
             PipeServer.Stop();
 
             return Task.CompletedTask;
+        }
+
+        public Dictionary<string, string> GetSettings()
+        {
+            Dictionary<string, string> settings = new Dictionary<string, string>();
+            foreach(SettingsProperty s in Properties.Settings.Default.Properties)
+                settings.Add(s.Name, s.DefaultValue.ToString());
+            return settings;
         }
     }
 }

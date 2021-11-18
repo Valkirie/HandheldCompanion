@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NamedPipeWrapper;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Timers;
@@ -12,17 +13,37 @@ namespace ControllerService
     public class PipeMessage
     {
         public PipeCode Code;
-        public string[] args = new string[] { };
+        public Dictionary<string, string> args = new Dictionary<string, string>();
     }
 
     public enum PipeCode
     {
-        CODE_HELLO = 0,
-        CODE_PROCESS = 1,
-        CODE_TOAST = 2,
-        CODE_CURSOR_UP = 3,
-        CODE_CURSOR_DOWN = 4,
-        CODE_CURSOR_MOVE = 5
+        SERVER_CONNECTED = 0,               // Sent to client during initialization
+                                            // args: ...
+
+        CLIENT_PROCESS = 1,                 // Sent to server each time a new process is in the foreground. Used to switch profiles
+                                            // args: process id, process path
+
+        SERVER_TOAST = 2,                   // Sent to client to display toast notification.
+                                            // args: title, message
+
+        CLIENT_CURSORUP = 3,                // Sent to server when mouse click is up
+                                            // args: cursor x, cursor Y
+
+        CLIENT_CURSORDOWN = 4,              // Sent to server when mouse click is down
+                                            // args: cursor x, cursor Y
+
+        CLIENT_CURSORMOVE = 5,              // Sent to server when mouse is moving
+                                            // args: cursor x, cursor Y
+
+        SERVER_SETTINGS = 6,                // Sent to client during initialization
+                                            // args: ...
+
+        SERVER_CONTROLLER = 7,              // Sent to client during initialization
+                                            // args: ...
+
+        CLIENT_SETTINGS = 8,                // Sent to server to update settings
+                                            // args: ...
     }
 
     public class PipeServer
@@ -31,7 +52,7 @@ namespace ControllerService
         private readonly ILogger<ControllerService> logger;
         private readonly ControllerService service;
 
-        private List<PipeMessage> m_queue;
+        private ConcurrentQueue<PipeMessage> m_queue;
         private Timer m_timer;
 
         public bool connected;
@@ -41,17 +62,15 @@ namespace ControllerService
             this.service = service;
             this.logger = logger;
 
-            m_queue = new List<PipeMessage>();
+            m_queue = new ConcurrentQueue<PipeMessage>();
 
             // monitors processes and settings
             m_timer = new Timer(1000) { Enabled = false, AutoReset = true };
             m_timer.Elapsed += SendMessageQueue;
 
             PipeSecurity ps = new PipeSecurity();
-
             System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.BuiltinUsersSid, null);
             PipeAccessRule par = new PipeAccessRule(sid, PipeAccessRights.ReadWrite, System.Security.AccessControl.AccessControlType.Allow);
-
             ps.AddAccessRule(par);
 
             server = new NamedPipeServer<PipeMessage>(pipeName, ps);
@@ -83,7 +102,23 @@ namespace ControllerService
         {
             connected = true;
             logger.LogInformation("Client {0} is now connected!", connection.Id);
-            connection.PushMessage(new PipeMessage { Code = PipeCode.CODE_HELLO });
+
+            SendMessage(new PipeMessage()
+            {
+                Code = PipeCode.SERVER_CONNECTED
+            });
+
+            SendMessage(new PipeMessage()
+            {
+                Code = PipeCode.SERVER_CONTROLLER,
+                args = service.PhysicalController.ToArgs()
+            });
+
+            SendMessage(new PipeMessage()
+            {
+                Code = PipeCode.SERVER_SETTINGS,
+                args = service.GetSettings()
+            });
         }
 
         private void OnClientDisconnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
@@ -98,17 +133,24 @@ namespace ControllerService
 
             switch (message.Code)
             {
-                case PipeCode.CODE_PROCESS:
-                    service.UpdateProcess(int.Parse(message.args[0]), message.args[1]);
+                case PipeCode.CLIENT_PROCESS:
+                    service.UpdateProcess(int.Parse(message.args["processId"]), message.args["processPath"]);
                     break;
-                case PipeCode.CODE_CURSOR_UP:
-                    service.PhysicalController.touch.OnMouseUp();
+
+                case PipeCode.CLIENT_CURSORUP:
+                    service.PhysicalController.touch.OnMouseUp(short.Parse(message.args["X"]), short.Parse(message.args["Y"]));
                     break;
-                case PipeCode.CODE_CURSOR_DOWN:
-                    service.PhysicalController.touch.OnMouseDown();
+
+                case PipeCode.CLIENT_CURSORDOWN:
+                    service.PhysicalController.touch.OnMouseDown(short.Parse(message.args["X"]), short.Parse(message.args["Y"]));
                     break;
-                case PipeCode.CODE_CURSOR_MOVE:
-                    service.PhysicalController.touch.OnMouseMove(short.Parse(message.args[0]), short.Parse(message.args[1]));
+
+                case PipeCode.CLIENT_CURSORMOVE:
+                    service.PhysicalController.touch.OnMouseMove(short.Parse(message.args["X"]), short.Parse(message.args["Y"]));
+                    break;
+
+                case PipeCode.CLIENT_SETTINGS:
+                    service.UpdateSettings(message.args);
                     break;
             }
         }
@@ -122,7 +164,7 @@ namespace ControllerService
         {
             if (!connected)
             {
-                m_queue.Add(message);
+                m_queue.Enqueue(message);
                 m_timer.Start();
                 return;
             }

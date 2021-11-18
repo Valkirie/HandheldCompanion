@@ -1,5 +1,6 @@
 ﻿using ControllerService;
 using NamedPipeWrapper;
+using SharpDX.XInput;
 using System;
 
 namespace ControllerHelper
@@ -23,8 +24,7 @@ namespace ControllerHelper
 
         private void OnClientDisconnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
         {
-            client.Stop();
-            helper.Kill();
+            helper.UpdateStatus(false);
         }
 
         public void Start()
@@ -47,20 +47,33 @@ namespace ControllerHelper
         {
             switch (message.Code)
             {
-                case PipeCode.CODE_TOAST:
-                    helper.SendToast(message.args[0], message.args[1]);
+                case PipeCode.SERVER_CONNECTED:
+                    helper.UpdateStatus(true);
+                    break;
+
+                case PipeCode.SERVER_TOAST:
+                    Utils.SendToast(message.args["title"], message.args["content"]);
+                    break;
+
+                case PipeCode.SERVER_CONTROLLER:
+                    helper.UpdateController(message.args);
+                    break;
+
+                case PipeCode.SERVER_SETTINGS:
+                    helper.UpdateSettings(message.args);
                     break;
             }
         }
 
         private void OnError(Exception exception)
         {
-            client.Stop();
-            helper.Kill();
         }
 
         public void SendMessage(PipeMessage message)
         {
+            if (client == null)
+                return;
+
             client.PushMessage(message);
         }
     }
