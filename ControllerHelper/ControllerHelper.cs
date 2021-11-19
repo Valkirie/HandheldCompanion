@@ -1,4 +1,5 @@
 ﻿using ControllerService;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,6 +34,8 @@ namespace ControllerHelper
         private HIDmode HideXBOX = new HIDmode("Xbox360Controller", "Xbox 360 emulation");
         private Dictionary<string, HIDmode> HIDmodes = new();
 
+        private bool RunAtStartup, StartMinimized, CloseMinimises;
+
         public ControllerHelper()
         {
             InitializeComponent();
@@ -42,6 +45,17 @@ namespace ControllerHelper
 
             HIDmodes.Add("DualShock4Controller", HideDS4);
             HIDmodes.Add("Xbox360Controller", HideXBOX);
+
+            // settings
+            checkBox3.Checked = RunAtStartup = Properties.Settings.Default.RunAtStartup;
+            checkBox4.Checked = StartMinimized = Properties.Settings.Default.StartMinimized;
+            checkBox5.Checked = CloseMinimises = Properties.Settings.Default.CloseMinimises;
+
+            if (StartMinimized)
+            {
+                WindowState = FormWindowState.Minimized;
+                ShowInTaskbar = false;
+            }
         }
 
         private void ControllerHelper_Load(object sender, EventArgs e)
@@ -59,7 +73,7 @@ namespace ControllerHelper
             MonitorTimer.Elapsed += MonitorHelper;
         }
 
-        private void ControllerHelper_Shown(object sender, System.EventArgs e)
+        private void ControllerHelper_Shown(object sender, EventArgs e)
         {
         }
 
@@ -80,6 +94,15 @@ namespace ControllerHelper
             }
 
             CurrentWindowState = WindowState;
+        }
+
+        private void ControllerHelper_Close(object sender, FormClosingEventArgs e)
+        {
+            if (CloseMinimises && e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                WindowState = FormWindowState.Minimized;
+            }
         }
 
         private void notifyIcon1_DoubleClick(object sender, EventArgs e)
@@ -223,6 +246,37 @@ namespace ControllerHelper
                     { "DSUEnabled", $"{checkBox6.Checked}" }
                 }
             });
+        }
+
+        /*
+            echo Installing Controller Helper
+            REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /V "ControllerHelper" /t REG_SZ /F /D "%cd%\ControllerHelper.exe" >> "Logs\ControllerServiceSetup.log"
+            timeout /t 1 /nobreak > nul
+        */
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+
+            RegistryKey rWrite = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            rWrite.SetValue("ControllerHelper", AppDomain.CurrentDomain.BaseDirectory + $"{AppDomain.CurrentDomain.FriendlyName}.exe");
+
+            RunAtStartup = checkBox3.Checked;
+            Properties.Settings.Default.RunAtStartup = RunAtStartup;
+            Properties.Settings.Default.Save();
+        }
+
+        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        {
+            StartMinimized = checkBox4.Checked;
+            Properties.Settings.Default.StartMinimized = StartMinimized;
+            Properties.Settings.Default.Save();
+        }
+
+        private void checkBox5_CheckedChanged(object sender, EventArgs e)
+        {
+            CloseMinimises = checkBox5.Checked;
+            Properties.Settings.Default.CloseMinimises = CloseMinimises;
+            Properties.Settings.Default.Save();
         }
         #endregion
     }

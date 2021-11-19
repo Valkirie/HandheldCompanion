@@ -36,10 +36,6 @@ timeout /t 2 /nobreak > nul
 sc.exe description "ControllerService" "Provides gyroscope and accelerometer support to the AYA NEO 2020, 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled." >> "Logs\ControllerServiceSetup.log"
 timeout /t 2 /nobreak > nul
 
-echo Installing Controller Helper
-REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /V "ControllerHelper" /t REG_SZ /F /D "%cd%\ControllerHelper.exe" >> "Logs\ControllerServiceSetup.log"
-timeout /t 1 /nobreak > nul
-
 echo Starting Controller Service
 sc.exe start "ControllerService" >> "Logs\ControllerServiceSetup.log"
 timeout /t 2 /nobreak > nul

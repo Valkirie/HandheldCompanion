@@ -58,6 +58,7 @@ namespace ControllerHelper
             this.tabProfiles = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -66,7 +67,6 @@ namespace ControllerHelper
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBox5 = new System.Windows.Forms.CheckBox();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.contextMenuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabDevices.SuspendLayout();
@@ -344,6 +344,16 @@ namespace ControllerHelper
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "UDP Server";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(671, 15);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 35);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Apply";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // numericUpDown1
             // 
             this.numericUpDown1.Location = new System.Drawing.Point(249, 21);
@@ -409,6 +419,7 @@ namespace ControllerHelper
             this.checkBox3.TabIndex = 0;
             this.checkBox3.Text = "Run At Startup";
             this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
             // 
             // checkBox5
             // 
@@ -419,6 +430,7 @@ namespace ControllerHelper
             this.checkBox5.TabIndex = 2;
             this.checkBox5.Text = "Close Minimizes";
             this.checkBox5.UseVisualStyleBackColor = true;
+            this.checkBox5.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
             // 
             // checkBox4
             // 
@@ -429,16 +441,7 @@ namespace ControllerHelper
             this.checkBox4.TabIndex = 1;
             this.checkBox4.Text = "Start Minimized";
             this.checkBox4.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(671, 15);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 35);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Apply";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
             // 
             // ControllerHelper
             // 
@@ -451,10 +454,9 @@ namespace ControllerHelper
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "ControllerHelper";
-            this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "ControllerHelper";
-            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ControllerHelper_Close);
             this.Load += new System.EventHandler(this.ControllerHelper_Load);
             this.Shown += new System.EventHandler(this.ControllerHelper_Shown);
             this.Resize += new System.EventHandler(this.ControllerHelper_Resize);
