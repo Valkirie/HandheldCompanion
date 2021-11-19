@@ -66,7 +66,7 @@ namespace ControllerHelper
 
             // start mouse hook
             m_Hook = new MouseHook(PipeClient);
-            // m_Hook.Start();
+            m_Hook.Start();
 
             // monitors processes
             MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
@@ -247,12 +247,6 @@ namespace ControllerHelper
                 }
             });
         }
-
-        /*
-            echo Installing Controller Helper
-            REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /V "ControllerHelper" /t REG_SZ /F /D "%cd%\ControllerHelper.exe" >> "Logs\ControllerServiceSetup.log"
-            timeout /t 1 /nobreak > nul
-        */
 
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
