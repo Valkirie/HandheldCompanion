@@ -30,7 +30,7 @@ namespace ControllerService
 
         public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathDep;
 
-        private string HIDmode;
+        private string DSUip, HIDmode;
         private bool HIDcloaked, DSUEnabled;
         private int DSUport, HIDrate;
 
@@ -59,16 +59,17 @@ namespace ControllerService
             HIDcloaked = Properties.Settings.Default.HIDcloaked;
             HIDmode = Properties.Settings.Default.HIDmode;
             DSUEnabled = Properties.Settings.Default.DSUEnabled;
+            DSUip = Properties.Settings.Default.DSUip;
             DSUport = Properties.Settings.Default.DSUport;
             HIDrate = Properties.Settings.Default.HIDrate;
 
             // initialize log
-            logger.LogInformation($"{CurrentAssembly.GetName()} ({fileVersionInfo.ProductVersion})");
+            logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
 
             // verifying HidHide is installed
             if (!File.Exists(CurrentPathCli))
             {
-                logger.LogCritical("HidHide is missing. Please get it from: https://github.com/ViGEm/HidHide/releases");
+                logger.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
                 throw new InvalidOperationException();
             }
 
@@ -79,7 +80,7 @@ namespace ControllerService
             }
             catch (Exception)
             {
-                logger.LogCritical("ViGEm is missing. Please get it from: https://github.com/ViGEm/ViGEmBus/releases");
+                logger.LogCritical("ViGEm is missing. Please get it from: {0}", "https://github.com/ViGEm/ViGEmBus/releases");
                 throw new InvalidOperationException();
             }
 
@@ -114,7 +115,7 @@ namespace ControllerService
 
             for (int i = (int)UserIndex.One; i <= (int)UserIndex.Three; i++)
             {
-                XInputController tmpController = new XInputController((UserIndex)i, HIDrate);
+                XInputController tmpController = new XInputController((UserIndex)i, HIDrate, logger);
 
                 if (tmpController.controller.IsConnected)
                 {
@@ -141,7 +142,7 @@ namespace ControllerService
                 logger.LogWarning("No Accelerometer detected.");
 
             // initialize DSUClient
-            DSUServer = new DSUServer(logger);
+            DSUServer = new DSUServer(DSUip, DSUport, logger);
 
             // initialize PipeServer
             PipeServer = new PipeServer("ControllerService", this, logger);
@@ -164,7 +165,7 @@ namespace ControllerService
                     PhysicalController.accelerometer.multiplier = CurrentProfile.accelerometer;
                     PhysicalController.gyrometer.multiplier = CurrentProfile.gyrometer;
 
-                    logger.LogInformation($"Profile {CurrentProfile.name} applied.");
+                    logger.LogInformation("Profile {0} applied.", CurrentProfile.name);
                 }
                 else
                 {
@@ -189,7 +190,7 @@ namespace ControllerService
                     continue;
 
                 object OldValue = setting.DefaultValue;
-                object NewValue = OldValue;
+                object NewValue;
 
                 TypeCode typeCode = Type.GetTypeCode(setting.PropertyType);
                 switch (typeCode)
@@ -217,13 +218,13 @@ namespace ControllerService
                 }
 
                 Properties.Settings.Default[name] = NewValue;
-                ApplySetting(name, OldValue, NewValue);
+                ApplySetting(name, OldValue, NewValue, typeCode);
             }
 
             Properties.Settings.Default.Save();
         }
 
-        private void ApplySetting(string name, object OldValue, object NewValue)
+        private void ApplySetting(string name, object OldValue, object NewValue, TypeCode typeCode)
         {
             if (OldValue != NewValue)
             {
@@ -238,6 +239,19 @@ namespace ControllerService
                     case "HIDrate":
                         PhysicalController.SetPollRate((int)NewValue);
                         break;
+                    case "DSUEnabled":
+                        switch((bool)NewValue)
+                        {
+                            case true: DSUServer.Start(); break;
+                            case false: DSUServer.Stop(); break;
+                        }
+                        break;
+                    case "DSUip":
+                        DSUServer.ip = (string)NewValue;
+                        break;
+                    case "DSUport":
+                        DSUServer.port = (int)NewValue;
+                        break;
                 }
             }
         }
@@ -246,20 +260,18 @@ namespace ControllerService
         {
             // start the DSUClient
             if (DSUEnabled)
-                DSUServer.Start(DSUport);
+                DSUServer.Start();
 
             // turn on the cloaking
             Hidder.SetCloaking(HIDcloaked);
 
             VirtualController.Connect();
-            logger.LogInformation($"Virtual {VirtualController.GetType().Name} connected.");
+            logger.LogInformation("Virtual {0} connected.", VirtualController.GetType().Name);
 
             PhysicalController.SetDSUServer(DSUServer);
             PhysicalController.SetVirtualController(VirtualController);
             PhysicalController.SetGyroscope(Gyrometer);
             PhysicalController.SetAccelerometer(Accelerometer);
-
-            logger.LogInformation($"Virtual {VirtualController.GetType().Name} attached to {PhysicalController.instance.InstanceName} on slot {PhysicalController.index}.");
 
             // send notification
             PipeServer.SendMessage(new PipeMessage {
@@ -281,7 +293,7 @@ namespace ControllerService
                 if (VirtualController != null)
                 {
                     VirtualController.Disconnect();
-                    logger.LogInformation($"Virtual {VirtualController.GetType().Name} disconnected.");
+                    logger.LogInformation("Virtual {0} disconnected.", VirtualController.GetType().Name);
 
                     // send notification
                     PipeServer.SendMessage(new PipeMessage
@@ -298,15 +310,14 @@ namespace ControllerService
             catch (Exception) { }
 
             if (DSUServer != null)
-            {
                 DSUServer.Stop();
-                logger.LogInformation($"DSU Server has stopped.");
-            }
 
             // uncloak on shutdown !?
             if (Hidder != null)
                 Hidder.SetCloaking(false);
-            PipeServer.Stop();
+
+            if (PipeServer != null)
+                PipeServer.Stop();
 
             return Task.CompletedTask;
         }

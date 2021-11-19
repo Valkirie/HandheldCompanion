@@ -1,4 +1,5 @@
-﻿using Nefarius.ViGEm.Client;
+﻿using Microsoft.Extensions.Logging;
+using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using SharpDX.DirectInput;
@@ -47,8 +48,12 @@ namespace ControllerService
 
         private DS4_REPORT_EX outDS4Report;
 
-        public XInputController(UserIndex _idx, int HIDrate)
+        private readonly ILogger<ControllerService> logger;
+
+        public XInputController(UserIndex _idx, int HIDrate, ILogger<ControllerService> logger)
         {
+            this.logger = logger;
+
             // initilize controller
             controller = new Controller(_idx);
             index = _idx;
@@ -74,6 +79,7 @@ namespace ControllerService
         public void SetPollRate(int HIDrate)
         {
             UpdateTimer.Interval = HIDrate;
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", vcontroller.GetType().Name, UpdateTimer.Interval);
         }
 
         public Dictionary<string, string> ToArgs()
@@ -103,6 +109,9 @@ namespace ControllerService
 
             UpdateTimer.Enabled = true;
             UpdateTimer.Start();
+
+            logger.LogInformation("Virtual {0} attached to {1} on slot {2}.", vcontroller.GetType().Name, instance.InstanceName, index);
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", vcontroller.GetType().Name, UpdateTimer.Interval);
         }
 
         private void DS4_FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)

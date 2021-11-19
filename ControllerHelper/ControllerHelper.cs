@@ -153,8 +153,12 @@ namespace ControllerHelper
                 checkBox1.Checked = bool.Parse(args["gyrometer"]);
                 checkBox2.Checked = bool.Parse(args["accelerometer"]);
 
-                trackBar1.Value = int.Parse(args["HIDrate"]);
-                label4.Text = $"{trackBar1.Value} Miliseconds";
+                tB_HIDrate.Value = int.Parse(args["HIDrate"]);
+                label4.Text = $"{tB_HIDrate.Value} Miliseconds";
+
+                checkBox6.Checked = bool.Parse(args["DSUEnabled"]);
+                textBox1.Text = args["DSUip"];
+                numericUpDown1.Value = int.Parse(args["DSUport"]);
             });
         }
 
@@ -163,6 +167,7 @@ namespace ControllerHelper
             Application.Exit();
         }
 
+        #region GUI
         private void listBoxDevices_SelectedIndexChanged(object sender, EventArgs e)
         {
             Controller con = (Controller)listBoxDevices.SelectedItem;
@@ -193,7 +198,7 @@ namespace ControllerHelper
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                label4.Text = $"{trackBar1.Value} Miliseconds";
+                label4.Text = $"{tB_HIDrate.Value} Miliseconds";
             });
 
             PipeClient.SendMessage(new PipeMessage
@@ -201,9 +206,24 @@ namespace ControllerHelper
                 Code = PipeCode.CLIENT_SETTINGS,
                 args = new Dictionary<string, string>
                 {
-                    { "HIDrate", $"{trackBar1.Value}" }
+                    { "HIDrate", $"{tB_HIDrate.Value}" }
                 }
             });
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            PipeClient.SendMessage(new PipeMessage
+            {
+                Code = PipeCode.CLIENT_SETTINGS,
+                args = new Dictionary<string, string>
+                {
+                    { "DSUip", $"{textBox1.Text}" },
+                    { "DSUport", $"{numericUpDown1.Value}" },
+                    { "DSUEnabled", $"{checkBox6.Checked}" }
+                }
+            });
+        }
+        #endregion
     }
 }

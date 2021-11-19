@@ -67,6 +67,7 @@ namespace ControllerHelper
 
         private void OnError(Exception exception)
         {
+            // logger.LogError("PipClient failed. {0}", exception.Message);
         }
 
         public void SendMessage(PipeMessage message)

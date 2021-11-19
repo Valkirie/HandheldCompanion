@@ -39,7 +39,8 @@ namespace ControllerHelper
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabDevices = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tB_HIDrate = new System.Windows.Forms.TrackBar();
             this.label3 = new System.Windows.Forms.Label();
             this.lB_HidMode = new System.Windows.Forms.Label();
             this.cB_HIDdevice = new System.Windows.Forms.ComboBox();
@@ -54,15 +55,29 @@ namespace ControllerHelper
             this.lB_InstanceID = new System.Windows.Forms.Label();
             this.groupBoxXinput = new System.Windows.Forms.GroupBox();
             this.listBoxDevices = new System.Windows.Forms.ListBox();
+            this.tabProfiles = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
-            this.label4 = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.checkBox6 = new System.Windows.Forms.CheckBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.checkBox5 = new System.Windows.Forms.CheckBox();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.contextMenuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabDevices.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tB_HIDrate)).BeginInit();
             this.groupBoxDetails.SuspendLayout();
             this.groupBoxXinput.SuspendLayout();
+            this.tabSettings.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // notifyIcon1
@@ -90,6 +105,7 @@ namespace ControllerHelper
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabDevices);
+            this.tabControl1.Controls.Add(this.tabProfiles);
             this.tabControl1.Controls.Add(this.tabSettings);
             this.tabControl1.Enabled = false;
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
@@ -114,7 +130,7 @@ namespace ControllerHelper
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.trackBar1);
+            this.groupBox1.Controls.Add(this.tB_HIDrate);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.lB_HidMode);
             this.groupBox1.Controls.Add(this.cB_HIDdevice);
@@ -125,19 +141,28 @@ namespace ControllerHelper
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "HID Details";
             // 
-            // trackBar1
+            // label4
             // 
-            this.trackBar1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
-            this.trackBar1.Location = new System.Drawing.Point(156, 64);
-            this.trackBar1.Maximum = 300;
-            this.trackBar1.Minimum = 5;
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(190, 45);
-            this.trackBar1.SmallChange = 5;
-            this.trackBar1.TabIndex = 5;
-            this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBar1.Value = 5;
-            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(352, 66);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(85, 15);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "10 Miliseconds";
+            // 
+            // tB_HIDrate
+            // 
+            this.tB_HIDrate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
+            this.tB_HIDrate.Location = new System.Drawing.Point(156, 64);
+            this.tB_HIDrate.Maximum = 300;
+            this.tB_HIDrate.Minimum = 5;
+            this.tB_HIDrate.Name = "tB_HIDrate";
+            this.tB_HIDrate.Size = new System.Drawing.Size(190, 45);
+            this.tB_HIDrate.SmallChange = 5;
+            this.tB_HIDrate.TabIndex = 5;
+            this.tB_HIDrate.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.tB_HIDrate.Value = 10;
+            this.tB_HIDrate.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // label3
             // 
@@ -284,8 +309,19 @@ namespace ControllerHelper
             this.listBoxDevices.TabIndex = 0;
             this.listBoxDevices.SelectedIndexChanged += new System.EventHandler(this.listBoxDevices_SelectedIndexChanged);
             // 
+            // tabProfiles
+            // 
+            this.tabProfiles.Location = new System.Drawing.Point(4, 24);
+            this.tabProfiles.Name = "tabProfiles";
+            this.tabProfiles.Size = new System.Drawing.Size(764, 564);
+            this.tabProfiles.TabIndex = 2;
+            this.tabProfiles.Text = "Profiles";
+            this.tabProfiles.UseVisualStyleBackColor = true;
+            // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.groupBox3);
+            this.tabSettings.Controls.Add(this.groupBox2);
             this.tabSettings.Location = new System.Drawing.Point(4, 24);
             this.tabSettings.Name = "tabSettings";
             this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
@@ -294,14 +330,115 @@ namespace ControllerHelper
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
             // 
-            // label4
+            // groupBox3
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(352, 66);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(91, 15);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "150 Miliseconds";
+            this.groupBox3.Controls.Add(this.button1);
+            this.groupBox3.Controls.Add(this.numericUpDown1);
+            this.groupBox3.Controls.Add(this.label5);
+            this.groupBox3.Controls.Add(this.textBox1);
+            this.groupBox3.Controls.Add(this.checkBox6);
+            this.groupBox3.Location = new System.Drawing.Point(6, 113);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(752, 56);
+            this.groupBox3.TabIndex = 4;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "UDP Server";
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(249, 21);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(120, 23);
+            this.numericUpDown1.TabIndex = 3;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            26760,
+            0,
+            0,
+            0});
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(214, 23);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(29, 15);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "Port";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(108, 20);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 23);
+            this.textBox1.TabIndex = 1;
+            this.textBox1.Text = "127.0.0.1";
+            // 
+            // checkBox6
+            // 
+            this.checkBox6.AutoSize = true;
+            this.checkBox6.Location = new System.Drawing.Point(6, 22);
+            this.checkBox6.Name = "checkBox6";
+            this.checkBox6.Size = new System.Drawing.Size(96, 19);
+            this.checkBox6.TabIndex = 0;
+            this.checkBox6.Text = "Enable Server";
+            this.checkBox6.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.checkBox3);
+            this.groupBox2.Controls.Add(this.checkBox5);
+            this.groupBox2.Controls.Add(this.checkBox4);
+            this.groupBox2.Location = new System.Drawing.Point(6, 6);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(752, 101);
+            this.groupBox2.TabIndex = 3;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Interface";
+            // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Location = new System.Drawing.Point(6, 22);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(103, 19);
+            this.checkBox3.TabIndex = 0;
+            this.checkBox3.Text = "Run At Startup";
+            this.checkBox3.UseVisualStyleBackColor = true;
+            // 
+            // checkBox5
+            // 
+            this.checkBox5.AutoSize = true;
+            this.checkBox5.Location = new System.Drawing.Point(6, 72);
+            this.checkBox5.Name = "checkBox5";
+            this.checkBox5.Size = new System.Drawing.Size(112, 19);
+            this.checkBox5.TabIndex = 2;
+            this.checkBox5.Text = "Close Minimizes";
+            this.checkBox5.UseVisualStyleBackColor = true;
+            // 
+            // checkBox4
+            // 
+            this.checkBox4.AutoSize = true;
+            this.checkBox4.Location = new System.Drawing.Point(6, 47);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.Size = new System.Drawing.Size(109, 19);
+            this.checkBox4.TabIndex = 1;
+            this.checkBox4.Text = "Start Minimized";
+            this.checkBox4.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(671, 15);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 35);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Apply";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // ControllerHelper
             // 
@@ -326,10 +463,16 @@ namespace ControllerHelper
             this.tabDevices.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tB_HIDrate)).EndInit();
             this.groupBoxDetails.ResumeLayout(false);
             this.groupBoxDetails.PerformLayout();
             this.groupBoxXinput.ResumeLayout(false);
+            this.tabSettings.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -357,8 +500,19 @@ namespace ControllerHelper
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.TrackBar tB_HIDrate;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TabPage tabProfiles;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox checkBox3;
+        private System.Windows.Forms.CheckBox checkBox5;
+        private System.Windows.Forms.CheckBox checkBox4;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.CheckBox checkBox6;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.Button button1;
     }
 }
 

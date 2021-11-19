@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,6 +48,12 @@ namespace ControllerHelper
             }
 
             return pathToExe;
+        }
+        
+        public static bool IsTextAValidIPAddress(string text)
+        {
+            IPAddress test;
+            return IPAddress.TryParse(text, out test);
         }
     }
 }

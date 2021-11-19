@@ -138,7 +138,7 @@ namespace ControllerService
             }
             catch (Exception ex)
             {
-                logger.LogError($"Could not parse {fileName}. {ex.Message}");
+                logger.LogError("Could not parse {0}. {1}", fileName, ex.Message);
             }
 
             // failed to parse
@@ -160,7 +160,7 @@ namespace ControllerService
                 dateTimeDictionary[e.FullPath] = System.IO.File.GetLastWriteTime(e.FullPath);
 
                 ProcessProfile(e.FullPath);
-                logger.LogInformation($"Updated profile {e.FullPath}");
+                logger.LogInformation("Updated profile {0}", e.FullPath);
             }
         }
 
@@ -178,7 +178,7 @@ namespace ControllerService
         private void ProfileCreated(object sender, FileSystemEventArgs e)
         {
             ProcessProfile(e.FullPath);
-            logger.LogInformation($"Created profile {e.FullPath}");
+            logger.LogInformation("Created profile {0}", e.FullPath);
         }
     }
 }

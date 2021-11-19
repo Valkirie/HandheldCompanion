@@ -115,7 +115,7 @@ namespace ControllerService
             process.WaitForExit();
             process.StandardOutput.ReadToEnd();
 
-            logger.LogInformation($"{service.PhysicalController.instance.ProductName} cloak status set to {status}");
+            logger.LogInformation("{0} cloak status set to {1}", service.PhysicalController.instance.ProductName, status);
         }
 
         public void RegisterDevice(string deviceInstancePath)
@@ -155,7 +155,7 @@ namespace ControllerService
                             string DeviceID = ((string)item.Value);
                             RegisterDevice(DeviceID);
                             RegisterDevice(d.deviceInstancePath);
-                            logger.LogInformation($"HideDevice hiding {DeviceID}");
+                            logger.LogInformation("HideDevice hiding {0}", DeviceID);
                             break;
                         }
                     }

@@ -97,10 +97,17 @@ namespace ControllerService
         }
 
         private readonly ILogger<ControllerService> logger;
+        public string ip;
+        public int port;
 
-        public DSUServer(ILogger<ControllerService> logger)
+        public DSUServer(string ipString, int port, ILogger<ControllerService> logger)
         {
             this.logger = logger;
+            this.ip = ipString;
+            this.port = port;
+
+            if (!Utils.IsTextAValidIPAddress(ip))
+                this.ip = "127.0.0.1";
 
             PadMacAddress = new PhysicalAddress(new byte[] { 0x10, 0x10, 0x10, 0x10, 0x10, 0x10 });
             portInfoGet = GetPadDetailForIdx;
@@ -465,12 +472,15 @@ namespace ControllerService
             }
         }
 
-        public void Start(int port)
+        public void Start()
         {
+            if (running)
+                Stop();
+
             udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             try
             {
-                IPAddress udpListenIPAddress = IPAddress.Loopback;
+                IPAddress udpListenIPAddress = IPAddress.Parse(ip);
                 udpSock.Bind(new IPEndPoint(udpListenIPAddress, port));
             }
             catch (SocketException ex)
@@ -491,7 +501,7 @@ namespace ControllerService
             BatteryTimer.Enabled = true;
             BatteryTimer.Start();
 
-            logger.LogInformation($"DSU Server has started. Listening to port: {26760}");
+            logger.LogInformation("DSU Server has started. Listening to ip: {0} port: {1}", ip, port);
         }
 
         public void Stop()
@@ -502,6 +512,8 @@ namespace ControllerService
                 udpSock.Close();
                 udpSock = null;
             }
+
+            logger.LogInformation($"DSU Server has stopped.");
         }
 
         private bool ReportToBuffer(XInputController hidReport, byte[] outputData, long microseconds, ref int outIdx)

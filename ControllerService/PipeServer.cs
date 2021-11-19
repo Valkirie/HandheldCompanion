@@ -157,7 +157,7 @@ namespace ControllerService
 
         private void OnError(Exception exception)
         {
-            logger.LogError("PipeServer failed. {exception.Message}");
+            logger.LogError("PipeServer failed. {0}", exception.Message);
         }
 
         public void SendMessage(PipeMessage message)

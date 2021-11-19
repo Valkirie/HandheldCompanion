@@ -32,8 +32,8 @@ namespace ControllerService
             if (sensor != null)
             {
                 sensor.ReportInterval = sensor.MinimumReportInterval;
-                logger.LogInformation($"Gyrometer initialised.");
-                logger.LogInformation($"Gyrometer report interval set to {sensor.ReportInterval}ms");
+                logger.LogInformation("Gyrometer initialised.");
+                logger.LogInformation("Gyrometer report interval set to {0}ms", sensor.ReportInterval);
 
                 sensor.ReadingChanged += GyroReadingChanged;
             }

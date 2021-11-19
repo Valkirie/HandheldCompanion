@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Runtime.InteropServices;
 
 namespace ControllerService
@@ -35,6 +36,12 @@ namespace ControllerService
             input = (short)Math.Max(short.MinValue, Math.Min(short.MaxValue, input));
             float output = (float)input / (float)ushort.MaxValue * (float)byte.MaxValue + (float)(byte.MaxValue / 2.0f);
             return (byte)Math.Round(output);
+        }
+
+        public static bool IsTextAValidIPAddress(string text)
+        {
+            IPAddress test;
+            return IPAddress.TryParse(text, out test);
         }
     }
 }

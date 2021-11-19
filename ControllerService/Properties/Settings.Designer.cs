@@ -67,5 +67,17 @@ namespace ControllerService.Properties {
                 return ((int)(this["HIDrate"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
+        public string DSUip {
+            get {
+                return ((string)(this["DSUip"]));
+            }
+            set {
+                this["DSUip"] = value;
+            }
+        }
     }
 }
