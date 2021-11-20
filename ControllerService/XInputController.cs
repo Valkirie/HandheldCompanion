@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -15,8 +16,29 @@ namespace ControllerService
 {
     public class XInputController
     {
+        #region imports
+        [StructLayout(LayoutKind.Sequential)]
+        public struct XInputStateSecret
+        {
+            public uint eventCount;
+            public ushort wButtons;
+            public byte bLeftTrigger;
+            public byte bRightTrigger;
+            public short sThumbLX;
+            public short sThumbLY;
+            public short sThumbRX;
+            public short sThumbRY;
+        }
+
+        [DllImport("xinput1_3.dll", EntryPoint = "#100")]
+        private static extern int XInputGetStateSecret13(int playerIndex, out XInputStateSecret struc);
+        [DllImport("xinput1_4.dll", EntryPoint = "#100")]
+        private static extern int XInputGetStateSecret14(int playerIndex, out XInputStateSecret struc);
+        #endregion
+
         public Controller controller;
         public Gamepad gamepad;
+        public XInputStateSecret secret;
         public DeviceInstance instance;
 
         private DSUServer server;
@@ -64,6 +86,9 @@ namespace ControllerService
             // initialize vectors
             AngularVelocity = new Vector3();
             Acceleration = new Vector3();
+
+            // initialize secret state
+            secret = new XInputStateSecret();
 
             // initialize stopwatch
             stopwatch = new Stopwatch();
@@ -171,6 +196,7 @@ namespace ControllerService
                 // get current gamepad state
                 State state = controller.GetState();
                 gamepad = state.Gamepad;
+                XInputGetStateSecret13((int)index, out secret);
 
                 // send report to server
                 server?.NewReportIncoming(this, microseconds);
@@ -228,9 +254,9 @@ namespace ControllerService
                     else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
                         tempDPad = DualShock4DPadDirection.West;
 
-                    // if (state.PS) tempSpecial |= DualShock4SpecialButton.Ps.Value;
+                    if ((secret.wButtons & 0x0400) == 0x0400) tempSpecial |= DualShock4SpecialButton.Ps.Value;
                     // if (state.OutputTouchButton) tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
-                    // outDS4Report.bSpecial = (byte)tempSpecial;
+                    outDS4Report.bSpecial = (byte)tempSpecial;
                     outDS4Report.bSpecial = (byte)(tempSpecial | (FrameCounter << 2));
                 }
 
