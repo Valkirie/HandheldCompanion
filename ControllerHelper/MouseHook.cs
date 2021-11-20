@@ -76,7 +76,7 @@ namespace ControllerHelper
         {
             client.SendMessage(new PipeMessage
             {
-                Code = PipeCode.CLIENT_CURSORUP,
+                Code = PipeCode.CLIENT_CURSORMOVE,
                 args = new Dictionary<string, string>
                 {
                     { "X", Convert.ToString(e.X) },
