@@ -58,15 +58,25 @@ namespace ControllerService
             string dllpath = Path.Combine(processpath, "xinput1_3.dll");
             string inipath = Path.Combine(processpath, "x360ce.ini");
             bool wrapped = File.Exists(dllpath);
+            bool is_x360ce = false;
+            byte[] data;
+            uint CRC32;
 
-            // compute CRC32
+            // get binary type (x64, x86)
             BinaryType bt; GetBinaryType(path, out bt);
-            byte[] data = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_3_x64 : Properties.Resources.xinput1_3_x86;
-            uint CRC32 = Crc32Algorithm.Compute(data);
-            bool x360ce = bt == BinaryType.SCS_64BIT_BINARY ? (CRC32 == CRC32_X64) : (CRC32 == CRC32_X86);
+
+            // has dll, check if that's ours
+            if (wrapped)
+            {
+                data = File.ReadAllBytes(dllpath);
+                CRC32 = Crc32Algorithm.Compute(data);
+                is_x360ce = bt == BinaryType.SCS_64BIT_BINARY ? (CRC32 == CRC32_X64) : (CRC32 == CRC32_X86);
+            }
+
+            data = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_3_x64 : Properties.Resources.xinput1_3_x86;
 
             // has dll, not x360ce : backup
-            if (use_wrapper && wrapped && !x360ce)
+            if (use_wrapper && wrapped && !is_x360ce)
                 File.Move(dllpath, $"{dllpath}.back");
 
             // no dll : create
@@ -76,7 +86,7 @@ namespace ControllerService
                 File.WriteAllBytes(inipath, Properties.Resources.x360ce);
             }
             // has dll, is x360ce : remove
-            else if (!use_wrapper && wrapped && x360ce)
+            else if (!use_wrapper && wrapped && is_x360ce)
             {
                 File.Delete(dllpath);
                 File.Delete(inipath);
