@@ -36,8 +36,10 @@ namespace ControllerService
             RatioHeight = (float)TOUCHPAD_HEIGHT / (float)Screen.PrimaryScreen.Bounds.Height;
 
             // default values
-            TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
-            TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
+            TrackPadTouch0.RawTrackingNum = TOUCH0_ID + TOUCH_DISABLE;
+            TrackPadTouch1.RawTrackingNum = TOUCH1_ID + TOUCH_DISABLE;
+
+            TouchPacketCounter++;
         }
 
         public void OnMouseUp(short X, short Y)
@@ -45,8 +47,8 @@ namespace ControllerService
             TouchX = (short)(X * RatioWidth);
             TouchY = (short)(Y * RatioHeight);
 
-            TrackPadTouch0.RawTrackingNum += TOUCH_DISABLE;
-            TrackPadTouch1.RawTrackingNum += TOUCH_DISABLE;
+            TrackPadTouch0.RawTrackingNum = TOUCH0_ID + TOUCH_DISABLE;
+            TrackPadTouch1.RawTrackingNum = TOUCH1_ID + TOUCH_DISABLE;
 
             TouchPacketCounter++;
         }
@@ -57,11 +59,12 @@ namespace ControllerService
             TouchY = (short)(Y * RatioHeight);
 
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
-            TrackPadTouch0.X = TouchX;
-            TrackPadTouch0.Y = TouchY;
-
             TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
+
+            TrackPadTouch0.X = TouchX;
             TrackPadTouch1.X = TouchX;
+
+            TrackPadTouch0.Y = TouchY;
             TrackPadTouch1.Y = TouchY;
         }
 
