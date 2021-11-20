@@ -48,7 +48,7 @@ namespace ControllerService
 
     public class PipeServer
     {
-        private readonly NamedPipeServer<PipeMessage> server;
+        private NamedPipeServer<PipeMessage> server;
         private readonly ILogger<ControllerService> logger;
         private readonly ControllerService service;
 
@@ -95,7 +95,7 @@ namespace ControllerService
             if (server == null)
                 return;
 
-            server.Stop();
+            server = null;
         }
 
         private void OnClientConnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
