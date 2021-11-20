@@ -173,6 +173,8 @@ namespace ControllerHelper
             {
                 cB_HIDdevice.SelectedItem = HIDmodes[args["HIDmode"]];
                 cB_HIDcloak.SelectedItem = args["HIDcloaked"];
+                checkBox7.Checked = bool.Parse(args["HIDuncloakonclose"]);
+
                 checkBox1.Checked = bool.Parse(args["gyrometer"]);
                 checkBox2.Checked = bool.Parse(args["accelerometer"]);
 
@@ -257,6 +259,18 @@ namespace ControllerHelper
             RunAtStartup = checkBox3.Checked;
             Properties.Settings.Default.RunAtStartup = RunAtStartup;
             Properties.Settings.Default.Save();
+        }
+
+        private void checkBox7_CheckedChanged(object sender, EventArgs e)
+        {
+            PipeClient.SendMessage(new PipeMessage
+            {
+                Code = PipeCode.CLIENT_SETTINGS,
+                args = new Dictionary<string, string>
+                {
+                    { "HIDuncloakonclose", $"{checkBox7.Checked}" }
+                }
+            });
         }
 
         private void checkBox4_CheckedChanged(object sender, EventArgs e)

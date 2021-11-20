@@ -31,7 +31,7 @@ namespace ControllerService
         public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathDep;
 
         private string DSUip, HIDmode;
-        private bool HIDcloaked, DSUEnabled;
+        private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
         private int DSUport, HIDrate;
 
         public ProfileManager CurrentManager;
@@ -57,6 +57,7 @@ namespace ControllerService
 
             // settings
             HIDcloaked = Properties.Settings.Default.HIDcloaked;
+            HIDuncloakonclose = Properties.Settings.Default.HIDuncloakonclose;
             HIDmode = Properties.Settings.Default.HIDmode;
             DSUEnabled = Properties.Settings.Default.DSUEnabled;
             DSUip = Properties.Settings.Default.DSUip;
@@ -146,7 +147,6 @@ namespace ControllerService
 
             // initialize PipeServer
             PipeServer = new PipeServer("ControllerService", this, logger);
-            PipeServer.Start();
         }
 
         public void UpdateProcess(int ProcessId, string ProcessPath)
@@ -158,8 +158,11 @@ namespace ControllerService
                 if (CurrentManager.profiles.ContainsKey(ProcessExec))
                 {
                     Profile CurrentProfile = CurrentManager.profiles[ProcessExec];
-                    CurrentProfile.path = ProcessPath; // update path
-                    CurrentProfile.Serialize();
+                    if (CurrentProfile.path != ProcessPath)
+                    {
+                        CurrentProfile.path = ProcessPath;
+                        CurrentProfile.Serialize();
+                    }
 
                     PhysicalController.muted = CurrentProfile.whitelisted;
                     PhysicalController.accelerometer.multiplier = CurrentProfile.accelerometer;
@@ -189,7 +192,7 @@ namespace ControllerService
                 if (setting == null)
                     continue;
 
-                object OldValue = setting.DefaultValue;
+                object OldValue = Properties.Settings.Default[name].ToString();
                 object NewValue;
 
                 TypeCode typeCode = Type.GetTypeCode(setting.PropertyType);
@@ -197,23 +200,28 @@ namespace ControllerService
                 {
                     case TypeCode.Boolean:
                         NewValue = bool.Parse(value);
+                        OldValue = bool.Parse((string)OldValue);
                         break;
                     case TypeCode.Single:
                     case TypeCode.Decimal:
                         NewValue = float.Parse(value);
+                        OldValue = float.Parse((string)OldValue);
                         break;
                     case TypeCode.Int16:
                     case TypeCode.Int32:
                     case TypeCode.Int64:
                         NewValue = int.Parse(value);
+                        OldValue = int.Parse((string)OldValue);
                         break;
                     case TypeCode.UInt16:
                     case TypeCode.UInt32:
                     case TypeCode.UInt64:
                         NewValue = uint.Parse(value);
+                        OldValue = uint.Parse((string)OldValue);
                         break;
                     default:
                         NewValue = value;
+                        OldValue = (string)OldValue;
                         break;
                 }
 
@@ -226,12 +234,19 @@ namespace ControllerService
 
         private void ApplySetting(string name, object OldValue, object NewValue, TypeCode typeCode)
         {
-            if (OldValue != NewValue)
+            // dirty !!!
+            if (OldValue.ToString() != NewValue.ToString())
             {
-                switch(name)
+                logger.LogInformation("{0} set to {1}", name, NewValue.ToString());
+
+                switch (name)
                 {
                     case "HIDcloaked":
                         Hidder.SetCloaking((bool)NewValue);
+                        HIDcloaked = (bool)NewValue;
+                        break;
+                    case "HIDuncloakonclose":
+                        HIDuncloakonclose = (bool)NewValue;
                         break;
                     case "HIDmode":
                         // todo
@@ -273,6 +288,9 @@ namespace ControllerService
             PhysicalController.SetGyroscope(Gyrometer);
             PhysicalController.SetAccelerometer(Accelerometer);
 
+            // start the Pipe Server
+            PipeServer.Start();
+
             // send notification
             PipeServer.SendMessage(new PipeMessage {
                 Code = PipeCode.SERVER_TOAST,
@@ -312,8 +330,7 @@ namespace ControllerService
             if (DSUServer != null)
                 DSUServer.Stop();
 
-            // uncloak on shutdown !?
-            if (Hidder != null)
+            if (Hidder != null && HIDuncloakonclose)
                 Hidder.SetCloaking(false);
 
             if (PipeServer != null)
@@ -327,10 +344,10 @@ namespace ControllerService
             Dictionary<string, string> settings = new Dictionary<string, string>();
 
             foreach(SettingsProperty s in Properties.Settings.Default.Properties)
-                settings.Add(s.Name, s.DefaultValue.ToString());
+                settings.Add(s.Name, Properties.Settings.Default[s.Name].ToString());
 
-            settings.Add("gyrometer", $"{PhysicalController.gyrometer != null}");
-            settings.Add("accelerometer", $"{PhysicalController.accelerometer != null}");
+            settings.Add("gyrometer", $"{PhysicalController.gyrometer.sensor != null}");
+            settings.Add("accelerometer", $"{PhysicalController.accelerometer.sensor != null}");
 
             return settings;
         }

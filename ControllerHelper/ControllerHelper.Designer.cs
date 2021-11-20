@@ -38,6 +38,11 @@ namespace ControllerHelper
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabDevices = new System.Windows.Forms.TabPage();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
             this.tB_HIDrate = new System.Windows.Forms.TrackBar();
@@ -45,10 +50,7 @@ namespace ControllerHelper
             this.lB_HidMode = new System.Windows.Forms.Label();
             this.cB_HIDdevice = new System.Windows.Forms.ComboBox();
             this.groupBoxDetails = new System.Windows.Forms.GroupBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.checkBox7 = new System.Windows.Forms.CheckBox();
             this.cB_HIDcloak = new System.Windows.Forms.ComboBox();
             this.lB_HidCloak = new System.Windows.Forms.Label();
             this.tB_InstanceID = new System.Windows.Forms.TextBox();
@@ -70,6 +72,7 @@ namespace ControllerHelper
             this.contextMenuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabDevices.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tB_HIDrate)).BeginInit();
             this.groupBoxDetails.SuspendLayout();
@@ -116,6 +119,7 @@ namespace ControllerHelper
             // 
             // tabDevices
             // 
+            this.tabDevices.Controls.Add(this.groupBox4);
             this.tabDevices.Controls.Add(this.groupBox1);
             this.tabDevices.Controls.Add(this.groupBoxDetails);
             this.tabDevices.Controls.Add(this.groupBoxXinput);
@@ -127,6 +131,59 @@ namespace ControllerHelper
             this.tabDevices.Text = "Devices";
             this.tabDevices.UseVisualStyleBackColor = true;
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.label1);
+            this.groupBox4.Controls.Add(this.checkBox2);
+            this.groupBox4.Controls.Add(this.checkBox1);
+            this.groupBox4.Controls.Add(this.label2);
+            this.groupBox4.Location = new System.Drawing.Point(252, 132);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(506, 97);
+            this.groupBox4.TabIndex = 3;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "6-axis Details";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 32);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(63, 15);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Gyrometer";
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Enabled = false;
+            this.checkBox2.Location = new System.Drawing.Point(156, 56);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(148, 19);
+            this.checkBox2.TabIndex = 9;
+            this.checkBox2.Text = "Accelerometer enabled";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Enabled = false;
+            this.checkBox1.Location = new System.Drawing.Point(156, 31);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(127, 19);
+            this.checkBox1.TabIndex = 7;
+            this.checkBox1.Text = "Gyrometer enabled";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 57);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(84, 15);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Accelerometer";
+            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.label4);
@@ -134,9 +191,9 @@ namespace ControllerHelper
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.lB_HidMode);
             this.groupBox1.Controls.Add(this.cB_HIDdevice);
-            this.groupBox1.Location = new System.Drawing.Point(252, 175);
+            this.groupBox1.Location = new System.Drawing.Point(252, 235);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(506, 383);
+            this.groupBox1.Size = new System.Drawing.Size(506, 323);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "HID Details";
@@ -194,60 +251,28 @@ namespace ControllerHelper
             // 
             // groupBoxDetails
             // 
-            this.groupBoxDetails.Controls.Add(this.checkBox2);
-            this.groupBoxDetails.Controls.Add(this.label2);
-            this.groupBoxDetails.Controls.Add(this.checkBox1);
-            this.groupBoxDetails.Controls.Add(this.label1);
+            this.groupBoxDetails.Controls.Add(this.checkBox7);
             this.groupBoxDetails.Controls.Add(this.cB_HIDcloak);
             this.groupBoxDetails.Controls.Add(this.lB_HidCloak);
             this.groupBoxDetails.Controls.Add(this.tB_InstanceID);
             this.groupBoxDetails.Controls.Add(this.lB_InstanceID);
             this.groupBoxDetails.Location = new System.Drawing.Point(252, 6);
             this.groupBoxDetails.Name = "groupBoxDetails";
-            this.groupBoxDetails.Size = new System.Drawing.Size(506, 163);
+            this.groupBoxDetails.Size = new System.Drawing.Size(506, 120);
             this.groupBoxDetails.TabIndex = 1;
             this.groupBoxDetails.TabStop = false;
             this.groupBoxDetails.Text = "Device Details";
             // 
-            // checkBox2
+            // checkBox7
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Enabled = false;
-            this.checkBox2.Location = new System.Drawing.Point(156, 127);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(148, 19);
-            this.checkBox2.TabIndex = 9;
-            this.checkBox2.Text = "Accelerometer enabled";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 128);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(84, 15);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "Accelerometer";
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Enabled = false;
-            this.checkBox1.Location = new System.Drawing.Point(156, 95);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(127, 19);
-            this.checkBox1.TabIndex = 7;
-            this.checkBox1.Text = "Gyrometer enabled";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 96);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(63, 15);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Gyrometer";
+            this.checkBox7.AutoSize = true;
+            this.checkBox7.Location = new System.Drawing.Point(156, 87);
+            this.checkBox7.Name = "checkBox7";
+            this.checkBox7.Size = new System.Drawing.Size(116, 19);
+            this.checkBox7.TabIndex = 10;
+            this.checkBox7.Text = "Uncloak on close";
+            this.checkBox7.UseVisualStyleBackColor = true;
+            this.checkBox7.CheckedChanged += new System.EventHandler(this.checkBox7_CheckedChanged);
             // 
             // cB_HIDcloak
             // 
@@ -256,7 +281,7 @@ namespace ControllerHelper
             this.cB_HIDcloak.Items.AddRange(new object[] {
             "True",
             "False"});
-            this.cB_HIDcloak.Location = new System.Drawing.Point(156, 61);
+            this.cB_HIDcloak.Location = new System.Drawing.Point(156, 58);
             this.cB_HIDcloak.Name = "cB_HIDcloak";
             this.cB_HIDcloak.Size = new System.Drawing.Size(81, 23);
             this.cB_HIDcloak.TabIndex = 5;
@@ -265,7 +290,7 @@ namespace ControllerHelper
             // lB_HidCloak
             // 
             this.lB_HidCloak.AutoSize = true;
-            this.lB_HidCloak.Location = new System.Drawing.Point(6, 64);
+            this.lB_HidCloak.Location = new System.Drawing.Point(6, 61);
             this.lB_HidCloak.Name = "lB_HidCloak";
             this.lB_HidCloak.Size = new System.Drawing.Size(76, 15);
             this.lB_HidCloak.TabIndex = 4;
@@ -278,7 +303,6 @@ namespace ControllerHelper
             this.tB_InstanceID.ReadOnly = true;
             this.tB_InstanceID.Size = new System.Drawing.Size(222, 23);
             this.tB_InstanceID.TabIndex = 1;
-            this.tB_InstanceID.Text = "82b721a0-e8b0-11eb-800a-444553540000";
             // 
             // lB_InstanceID
             // 
@@ -463,6 +487,8 @@ namespace ControllerHelper
             this.contextMenuStrip1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabDevices.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tB_HIDrate)).EndInit();
@@ -515,6 +541,8 @@ namespace ControllerHelper
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox checkBox7;
+        private System.Windows.Forms.GroupBox groupBox4;
     }
 }
 

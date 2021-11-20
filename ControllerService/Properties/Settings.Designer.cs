@@ -23,48 +23,63 @@ namespace ControllerService.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool HIDcloaked {
             get {
                 return ((bool)(this["HIDcloaked"]));
             }
+            set {
+                this["HIDcloaked"] = value;
+            }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("DualShock4Controller")]
         public string HIDmode {
             get {
                 return ((string)(this["HIDmode"]));
             }
+            set {
+                this["HIDmode"] = value;
+            }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool DSUEnabled {
             get {
                 return ((bool)(this["DSUEnabled"]));
             }
+            set {
+                this["DSUEnabled"] = value;
+            }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("26760")]
         public int DSUport {
             get {
                 return ((int)(this["DSUport"]));
             }
+            set {
+                this["DSUport"] = value;
+            }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
         public int HIDrate {
             get {
                 return ((int)(this["HIDrate"]));
+            }
+            set {
+                this["HIDrate"] = value;
             }
         }
         
@@ -77,6 +92,18 @@ namespace ControllerService.Properties {
             }
             set {
                 this["DSUip"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool HIDuncloakonclose {
+            get {
+                return ((bool)(this["HIDuncloakonclose"]));
+            }
+            set {
+                this["HIDuncloakonclose"] = value;
             }
         }
     }

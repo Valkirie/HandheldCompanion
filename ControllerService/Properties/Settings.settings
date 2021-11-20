@@ -2,23 +2,26 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ControllerService.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="HIDcloaked" Type="System.Boolean" Scope="Application">
+    <Setting Name="HIDcloaked" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="HIDmode" Type="System.String" Scope="Application">
+    <Setting Name="HIDmode" Type="System.String" Scope="User">
       <Value Profile="(Default)">DualShock4Controller</Value>
     </Setting>
-    <Setting Name="DSUEnabled" Type="System.Boolean" Scope="Application">
+    <Setting Name="DSUEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="DSUport" Type="System.Int32" Scope="Application">
+    <Setting Name="DSUport" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">26760</Value>
     </Setting>
-    <Setting Name="HIDrate" Type="System.Int32" Scope="Application">
+    <Setting Name="HIDrate" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="DSUip" Type="System.String" Scope="User">
       <Value Profile="(Default)">127.0.0.1</Value>
+    </Setting>
+    <Setting Name="HIDuncloakonclose" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>
