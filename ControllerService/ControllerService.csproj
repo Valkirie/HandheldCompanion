@@ -34,6 +34,7 @@
   <ItemGroup>
     <Content Remove="profiles\Cemu.json" />
     <Content Remove="profiles\ControllerCompanion.json" />
+    <Content Remove="profiles\JoyXOff.json" />
     <Content Remove="profiles\Playnite.FullscreenApp.json" />
     <Content Remove="profiles\Yuzu.json" />
   </ItemGroup>
@@ -70,6 +71,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="profiles\Playnite.FullscreenApp.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="profiles\JoyXOff.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="profiles\Yuzu.json">
