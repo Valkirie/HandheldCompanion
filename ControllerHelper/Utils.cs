@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Management;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -30,24 +31,30 @@ namespace ControllerHelper
                 .Show();
         }
 
-        public static string GetPathToApp(Process proc)
+        public static string GetPathToApp(Process process)
         {
-            string pathToExe = string.Empty;
-
-            if (null != proc)
+            try
             {
-                uint nChars = 256;
-                StringBuilder Buff = new StringBuilder((int)nChars);
+                return process.MainModule.FileName;
+            }
+            catch
+            {
+                string query = "SELECT ExecutablePath, ProcessID FROM Win32_Process";
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
 
-                uint success = QueryFullProcessImageName(proc.Handle, 0, Buff, out nChars);
+                foreach (ManagementObject item in searcher.Get())
+                {
+                    object id = item["ProcessID"];
+                    object path = item["ExecutablePath"];
 
-                if (0 != success)
-                    pathToExe = Buff.ToString();
-                else
-                    pathToExe = "";
+                    if (path != null && id.ToString() == process.Id.ToString())
+                    {
+                        return path.ToString();
+                    }
+                }
             }
 
-            return pathToExe;
+            return "";
         }
         
         public static bool IsTextAValidIPAddress(string text)
