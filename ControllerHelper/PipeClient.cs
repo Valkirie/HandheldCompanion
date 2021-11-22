@@ -1,7 +1,11 @@
 ﻿using ControllerService;
 using NamedPipeWrapper;
+using Serilog.Core;
 using SharpDX.XInput;
 using System;
+using System.Collections.Concurrent;
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace ControllerHelper
 {
@@ -9,10 +13,23 @@ namespace ControllerHelper
     {
         private readonly NamedPipeClient<PipeMessage> client;
         private readonly ControllerHelper helper;
+        private readonly Logger logger;
 
-        public PipeClient(string pipeName, ControllerHelper helper)
+        private ConcurrentQueue<PipeMessage> m_queue;
+        private Timer m_timer;
+
+        public bool connected;
+
+        public PipeClient(string pipeName, ControllerHelper helper, Logger logger)
         {
             this.helper = helper;
+            this.logger = logger;
+
+            m_queue = new ConcurrentQueue<PipeMessage>();
+
+            // monitors processes and settings
+            m_timer = new Timer(1000) { Enabled = false, AutoReset = true };
+            m_timer.Elapsed += SendMessageQueue;
 
             client = new NamedPipeClient<PipeMessage>(pipeName);
             client.AutoReconnect = true;
@@ -24,6 +41,7 @@ namespace ControllerHelper
 
         private void OnClientDisconnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
         {
+            connected = false;
             helper.UpdateStatus(false);
         }
 
@@ -48,6 +66,7 @@ namespace ControllerHelper
             switch (message.Code)
             {
                 case PipeCode.SERVER_CONNECTED:
+                    connected = true;
                     helper.UpdateStatus(true);
                     break;
 
@@ -72,10 +91,26 @@ namespace ControllerHelper
 
         public void SendMessage(PipeMessage message)
         {
-            if (client == null)
+            if (!connected)
+            {
+                m_queue.Enqueue(message);
+                m_timer.Start();
                 return;
+            }
 
             client.PushMessage(message);
+        }
+
+        private void SendMessageQueue(object sender, ElapsedEventArgs e)
+        {
+            if (!connected)
+                return;
+
+            foreach (PipeMessage m in m_queue)
+                client.PushMessage(m);
+
+            m_queue.Clear();
+            m_timer.Stop();
         }
     }
 }

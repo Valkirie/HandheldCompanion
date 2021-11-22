@@ -26,15 +26,14 @@ namespace ControllerService
 
         private PipeServer PipeServer;
         private DSUServer DSUServer;
-        public static HidHide Hidder;
+        public HidHide Hidder;
 
-        public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathProfiles, CurrentPathDep;
+        public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathDep;
 
         private string DSUip, HIDmode;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
         private int DSUport, HIDrate;
 
-        public ProfileManager CurrentManager;
         public Assembly CurrentAssembly;
 
         private readonly ILogger<ControllerService> logger;
@@ -52,7 +51,6 @@ namespace ControllerService
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
             CurrentPathCli = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
-            CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
             CurrentPathDep = Path.Combine(CurrentPath, "dependencies");
 
             // settings
@@ -88,9 +86,6 @@ namespace ControllerService
             // initialize HidHide
             Hidder = new HidHide(CurrentPathCli, logger, this);
             Hidder.RegisterApplication(CurrentExe);
-
-            // initialize Profile Manager
-            CurrentManager = new ProfileManager(CurrentPathProfiles, CurrentExe, logger);
 
             // initialize controller
             switch (HIDmode)
@@ -149,35 +144,26 @@ namespace ControllerService
             PipeServer = new PipeServer("ControllerService", this, logger);
         }
 
-        public void UpdateProcess(int ProcessId, string ProcessPath)
+        internal void UpdateProfile(Dictionary<string, string> args)
         {
-            try
+            foreach (KeyValuePair<string, string> pair in args)
             {
-                string ProcessExec = Path.GetFileName(ProcessPath);
+                string name = pair.Key;
+                string value = pair.Value;
 
-                if (CurrentManager.profiles.ContainsKey(ProcessExec))
+                switch (name)
                 {
-                    Profile CurrentProfile = CurrentManager.profiles[ProcessExec];
-                    if (CurrentProfile.path != ProcessPath)
-                    {
-                        CurrentProfile.path = ProcessPath;
-                        CurrentProfile.Serialize();
-                    }
-
-                    PhysicalController.muted = CurrentProfile.whitelisted;
-                    PhysicalController.accelerometer.multiplier = CurrentProfile.accelerometer;
-                    PhysicalController.gyrometer.multiplier = CurrentProfile.gyrometer;
-
-                    logger.LogInformation("Profile {0} applied.", CurrentProfile.name);
-                }
-                else
-                {
-                    PhysicalController.muted = false;
-                    PhysicalController.accelerometer.multiplier = 1.0f;
-                    PhysicalController.gyrometer.multiplier = 1.0f;
+                    case "muted":
+                        PhysicalController.muted = bool.Parse(value);
+                        break;
+                    case "accelerometer":
+                        PhysicalController.accelerometer.multiplier = float.Parse(value);
+                        break;
+                    case "gyrometer":
+                        PhysicalController.gyrometer.multiplier = float.Parse(value);
+                        break;
                 }
             }
-            catch (Exception) { }
         }
 
         public void UpdateSettings(Dictionary<string, string> args)
@@ -234,7 +220,6 @@ namespace ControllerService
 
         private void ApplySetting(string name, object OldValue, object NewValue, TypeCode typeCode)
         {
-            // dirty !!!
             if (OldValue.ToString() != NewValue.ToString())
             {
                 logger.LogInformation("{0} set to {1}", name, NewValue.ToString());

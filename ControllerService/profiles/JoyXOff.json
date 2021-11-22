@@ -1,9 +1,0 @@
-{
-  "name": "Joyxoff",
-  "path": "Joyxoff.exe",
-  "whitelisted": true,
-  "use_wrapper": false,
-  "legacy": false,
-  "gyrometer": 1.0,
-  "accelerometer": 1.0
-}

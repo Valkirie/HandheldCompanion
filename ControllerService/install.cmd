@@ -9,16 +9,16 @@ echo.
 mkdir Logs
 
 echo Installing HidHide
-msiexec /i dependencies\HidHideMSI.msi /quiet /qn /norestart /log "Logs\HidHideSetup.log"
+msiexec /i Resources\HidHideMSI.msi /quiet /qn /norestart /log "Logs\HidHideSetup.log"
 
 echo Installing ViGEm
-msiexec /i dependencies\ViGEmBusSetup_x64.msi /quiet /qn /norestart /log "Logs\ViGEmBusSetup.log"
+msiexec /i Resources\ViGEmBusSetup_x64.msi /quiet /qn /norestart /log "Logs\ViGEmBusSetup.log"
 
 echo Installing DirectX
-dependencies\dxwebsetup.exe /q
+Resources\dxwebsetup.exe /q
 
 echo Installing Windows Desktop Runtime 5.0.12
-dependencies\windowsdesktop-runtime-5.0.12-win-x64.exe /install /quiet /norestart
+Resources\windowsdesktop-runtime-5.0.12-win-x64.exe /install /quiet /norestart
 
 echo Creating LocalDumps registry key
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe" /f >> "Logs\ControllerServiceSetup.log"

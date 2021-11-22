@@ -1,9 +1,0 @@
-{
-  "name": "Cemu",
-  "path": "Cemu.exe",
-  "whitelisted": false,
-  "use_wrapper": false,
-  "legacy": false,
-  "gyrometer": 1.0,
-  "accelerometer": 1.0
-}

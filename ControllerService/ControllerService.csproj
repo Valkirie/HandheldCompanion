@@ -24,19 +24,10 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="dependencies\x64\**" />
-    <Compile Remove="dependencies\x86\**" />
-    <EmbeddedResource Remove="dependencies\x64\**" />
-    <EmbeddedResource Remove="dependencies\x86\**" />
-    <None Remove="dependencies\x64\**" />
-    <None Remove="dependencies\x86\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="profiles\Cemu.json" />
-    <Content Remove="profiles\ControllerCompanion.json" />
-    <Content Remove="profiles\JoyXOff.json" />
-    <Content Remove="profiles\Playnite.FullscreenApp.json" />
-    <Content Remove="profiles\Yuzu.json" />
+    <Compile Remove="dependencies\**" />
+    <Content Remove="dependencies\**" />
+    <EmbeddedResource Remove="dependencies\**" />
+    <None Remove="dependencies\**" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="ControllerService.cs" />
@@ -52,39 +43,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="dependencies\HidHideMSI.msi">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="dependencies\ViGEmBusSetup_x64.msi">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="dependencies\x64\xinput1_3.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="dependencies\x86\xinput1_3.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="profiles\AYASpace.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="profiles\ControllerCompanion.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="profiles\Playnite.FullscreenApp.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="profiles\JoyXOff.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="profiles\Yuzu.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="profiles\Cemu.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="profiles\HidHideCLI.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="install.cmd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -122,18 +80,21 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Update="dependencies\dxwebsetup.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="dependencies\windowsdesktop-runtime-5.0.12-win-x64.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="dependencies\x360ce.ini">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Resources\dxwebsetup.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\HidHideMSI.msi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\ViGEmBusSetup_x64.msi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\windowsdesktop-runtime-5.0.12-win-x64.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 </Project>

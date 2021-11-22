@@ -118,13 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="x360ce" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\dependencies\x360ce.ini;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="dxwebsetup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\dxwebsetup.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="xinput1_3_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\dependencies\x64\xinput1_3.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="HidHideMSI" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HidHideMSI.msi;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="xinput1_3_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\dependencies\x86\xinput1_3.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="ViGEmBusSetup_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ViGEmBusSetup_x64.msi;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="windowsdesktop_runtime_5_0_12_win_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\windowsdesktop-runtime-5.0.12-win-x64.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

@@ -21,7 +21,7 @@ namespace ControllerService
         SERVER_CONNECTED = 0,               // Sent to client during initialization
                                             // args: ...
 
-        CLIENT_PROCESS = 1,                 // Sent to server each time a new process is in the foreground. Used to switch profiles
+        CLIENT_PROFILE = 1,                 // Sent to server each time a new process is in the foreground. Used to switch profiles
                                             // args: process id, process path
 
         SERVER_TOAST = 2,                   // Sent to client to display toast notification.
@@ -43,6 +43,12 @@ namespace ControllerService
                                             // args: ...
 
         CLIENT_SETTINGS = 8,                // Sent to server to update settings
+                                            // args: ...
+
+        CLIENT_HIDDER_REG = 9,              // Sent to server to register applications
+                                            // args: ...
+
+        CLIENT_HIDDER_UNREG = 10,           // Sent to server to unregister applications
                                             // args: ...
     }
 
@@ -135,8 +141,8 @@ namespace ControllerService
 
             switch (message.Code)
             {
-                case PipeCode.CLIENT_PROCESS:
-                    service.UpdateProcess(int.Parse(message.args["processId"]), message.args["processPath"]);
+                case PipeCode.CLIENT_PROFILE:
+                    service.UpdateProfile(message.args);
                     break;
 
                 case PipeCode.CLIENT_CURSORUP:
@@ -153,6 +159,14 @@ namespace ControllerService
 
                 case PipeCode.CLIENT_SETTINGS:
                     service.UpdateSettings(message.args);
+                    break;
+
+                case PipeCode.CLIENT_HIDDER_REG:
+                    service.Hidder.RegisterApplication(message.args["path"]);
+                    break;
+
+                case PipeCode.CLIENT_HIDDER_UNREG:
+                    service.Hidder.UnregisterApplication(message.args["path"]);
                     break;
             }
         }
