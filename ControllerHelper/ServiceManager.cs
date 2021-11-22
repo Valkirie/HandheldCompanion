@@ -19,7 +19,7 @@ namespace ControllerHelper
 
         private ServiceController controller;
         private ServiceControllerStatus status;
-        private ServiceControllerStatus prevStatus = ServiceControllerStatus.Stopped;
+        private int prevStatus = -1;
         private ServiceControllerStatus nextStatus;
 
         private Process process;
@@ -75,10 +75,10 @@ namespace ControllerHelper
                 if(nextStatus != 0)
                     controller.WaitForStatus(nextStatus, TimeSpan.FromSeconds(5));
 
-                if (prevStatus != status)
+                if (prevStatus != (int)status)
                     helper.UpdateService(status);
 
-                prevStatus = status;
+                prevStatus = (int)status;
             }
         }
 

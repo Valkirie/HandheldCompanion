@@ -563,6 +563,7 @@ namespace ControllerHelper
             // 
             // button7
             // 
+            this.button7.Enabled = false;
             this.button7.Location = new System.Drawing.Point(383, 66);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(363, 23);
@@ -573,6 +574,7 @@ namespace ControllerHelper
             // 
             // button6
             // 
+            this.button6.Enabled = false;
             this.button6.Location = new System.Drawing.Point(6, 66);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(363, 23);
@@ -583,6 +585,7 @@ namespace ControllerHelper
             // 
             // button5
             // 
+            this.button5.Enabled = false;
             this.button5.Location = new System.Drawing.Point(383, 37);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(363, 23);
@@ -593,6 +596,7 @@ namespace ControllerHelper
             // 
             // button4
             // 
+            this.button4.Enabled = false;
             this.button4.Location = new System.Drawing.Point(6, 37);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(363, 23);
