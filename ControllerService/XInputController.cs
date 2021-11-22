@@ -38,7 +38,7 @@ namespace ControllerService
 
         public Controller controller;
         public Gamepad gamepad;
-        public XInputStateSecret secret;
+        public XInputStateSecret state_s;
         public DeviceInstance instance;
 
         private DSUServer server;
@@ -88,7 +88,7 @@ namespace ControllerService
             Acceleration = new Vector3();
 
             // initialize secret state
-            secret = new XInputStateSecret();
+            state_s = new XInputStateSecret();
 
             // initialize stopwatch
             stopwatch = new Stopwatch();
@@ -191,12 +191,13 @@ namespace ControllerService
             lock (updateLock)
             {
                 // update timestamp
-                microseconds = (long)(stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L)) /* / 5.33f */);
+                microseconds = (long)(stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L)));
 
                 // get current gamepad state
                 State state = controller.GetState();
                 gamepad = state.Gamepad;
-                XInputGetStateSecret13((int)index, out secret);
+
+                XInputGetStateSecret13((int)index, out state_s);
 
                 // send report to server
                 server?.NewReportIncoming(this, microseconds);
@@ -254,9 +255,8 @@ namespace ControllerService
                     else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
                         tempDPad = DualShock4DPadDirection.West;
 
-                    if ((secret.wButtons & 0x0400) == 0x0400) tempSpecial |= DualShock4SpecialButton.Ps.Value;
-                    // if (state.OutputTouchButton) tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
-                    outDS4Report.bSpecial = (byte)tempSpecial;
+                    if ((state_s.wButtons & 0x0400) == 0x0400) tempSpecial |= DualShock4SpecialButton.Ps.Value;
+                    if (touch.OutputTouchButton) tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
                     outDS4Report.bSpecial = (byte)(tempSpecial | (FrameCounter << 2));
                 }
 

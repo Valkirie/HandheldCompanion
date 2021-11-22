@@ -23,15 +23,14 @@ namespace ControllerHelper
         {
             this.client = client;
 
-            // send MouseUp after 50ms interval
-            m_Timer = new Timer() { Enabled = false, Interval = 50, AutoReset = false };
+            // send MouseUp after 10ms interval
+            m_Timer = new Timer() { Enabled = false, Interval = 10, AutoReset = false };
             m_Timer.Elapsed += SendMouseUp;
-
-            m_Hook = new Thread(Subscribe) { IsBackground = true };
         }
 
         public void Start()
         {
+            m_Hook = new Thread(Subscribe) { IsBackground = true };
             m_Hook.Start();
         }
 
@@ -96,7 +95,6 @@ namespace ControllerHelper
         internal void Stop()
         {
             m_Events.Dispose();
-            m_Hook = null;
         }
     }
 }

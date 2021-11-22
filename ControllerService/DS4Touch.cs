@@ -28,6 +28,7 @@ namespace ControllerService
         public byte TouchPacketCounter = 0;
 
         private short TouchX, TouchY;
+        public bool OutputMoveButton, OutputTouchButton;
 
         public DS4Touch()
         {
@@ -44,8 +45,11 @@ namespace ControllerService
 
         public void OnMouseUp(short X, short Y)
         {
-            TouchX = (short)(X * RatioWidth);
-            TouchY = (short)(Y * RatioHeight);
+            OutputMoveButton = false;
+            OutputTouchButton = false;
+
+            if (X != -1) TouchX = (short)(X * RatioWidth);
+            if (Y != -1) TouchY = (short)(Y * RatioHeight);
 
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID + TOUCH_DISABLE;
             TrackPadTouch1.RawTrackingNum = TOUCH1_ID + TOUCH_DISABLE;
@@ -55,6 +59,9 @@ namespace ControllerService
 
         public void OnMouseDown(short X, short Y)
         {
+            OutputMoveButton = false;
+            OutputTouchButton = true;
+
             TouchX = (short)(X * RatioWidth);
             TouchY = (short)(Y * RatioHeight);
 
@@ -70,6 +77,9 @@ namespace ControllerService
 
         public void OnMouseMove(short X, short Y)
         {
+            OutputMoveButton = true;
+            OutputTouchButton = false;
+
             TouchX = (short)(X * RatioWidth);
             TouchY = (short)(Y * RatioHeight);
 
