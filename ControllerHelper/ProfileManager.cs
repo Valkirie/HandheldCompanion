@@ -32,6 +32,12 @@ namespace ControllerHelper
             this.path = path;
         }
 
+        public void Delete()
+        {
+            string settingsPath = Path.Combine(ControllerHelper.CurrentPathProfiles, $"{name}.json");
+            File.Delete(settingsPath);
+        }
+
         public void Serialize()
         {
             var options = new JsonSerializerOptions { WriteIndented = true };

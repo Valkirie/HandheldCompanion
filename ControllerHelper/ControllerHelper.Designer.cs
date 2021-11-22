@@ -66,14 +66,21 @@ namespace ControllerHelper
             this.checkBox9 = new System.Windows.Forms.CheckBox();
             this.checkBox8 = new System.Windows.Forms.CheckBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.button3 = new System.Windows.Forms.Button();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.tabSettings = new System.Windows.Forms.TabPage();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.button7 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.label11 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
@@ -85,7 +92,6 @@ namespace ControllerHelper
             this.checkBox5 = new System.Windows.Forms.CheckBox();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.button2 = new System.Windows.Forms.Button();
             this.contextMenuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabDevices.SuspendLayout();
@@ -99,6 +105,7 @@ namespace ControllerHelper
             this.groupBox6.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.tabSettings.SuspendLayout();
+            this.groupBox8.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -131,7 +138,6 @@ namespace ControllerHelper
             this.tabControl1.Controls.Add(this.tabDevices);
             this.tabControl1.Controls.Add(this.tabProfiles);
             this.tabControl1.Controls.Add(this.tabSettings);
-            this.tabControl1.Enabled = false;
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -394,12 +400,12 @@ namespace ControllerHelper
             this.groupBox7.Controls.Add(this.label8);
             this.groupBox7.Controls.Add(this.checkBox9);
             this.groupBox7.Controls.Add(this.checkBox8);
-            this.groupBox7.Location = new System.Drawing.Point(252, 105);
+            this.groupBox7.Location = new System.Drawing.Point(252, 135);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(506, 453);
+            this.groupBox7.Size = new System.Drawing.Size(506, 423);
             this.groupBox7.TabIndex = 2;
             this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "groupBox7";
+            this.groupBox7.Text = "Profile Options";
             // 
             // label9
             // 
@@ -441,16 +447,27 @@ namespace ControllerHelper
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.button3);
             this.groupBox6.Controls.Add(this.textBox3);
             this.groupBox6.Controls.Add(this.label7);
             this.groupBox6.Controls.Add(this.textBox2);
             this.groupBox6.Controls.Add(this.label6);
             this.groupBox6.Location = new System.Drawing.Point(252, 6);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(506, 93);
+            this.groupBox6.Size = new System.Drawing.Size(506, 123);
             this.groupBox6.TabIndex = 1;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Profile Details";
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(156, 87);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(104, 23);
+            this.button3.TabIndex = 6;
+            this.button3.Text = "Delete profile";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // textBox3
             // 
@@ -497,6 +514,16 @@ namespace ControllerHelper
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Profiles";
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(6, 522);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(228, 23);
+            this.button2.TabIndex = 1;
+            this.button2.Text = "Create new profile";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
@@ -522,12 +549,68 @@ namespace ControllerHelper
             // 
             // groupBox8
             // 
+            this.groupBox8.Controls.Add(this.button7);
+            this.groupBox8.Controls.Add(this.button6);
+            this.groupBox8.Controls.Add(this.button5);
+            this.groupBox8.Controls.Add(this.button4);
+            this.groupBox8.Controls.Add(this.label11);
             this.groupBox8.Location = new System.Drawing.Point(6, 175);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(752, 141);
+            this.groupBox8.Size = new System.Drawing.Size(752, 383);
             this.groupBox8.TabIndex = 5;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Controller Service";
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(383, 66);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(363, 23);
+            this.button7.TabIndex = 4;
+            this.button7.Text = "Stop Controller Service";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(6, 66);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(363, 23);
+            this.button6.TabIndex = 3;
+            this.button6.Text = "Start Controller Service";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(383, 37);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(363, 23);
+            this.button5.TabIndex = 2;
+            this.button5.Text = "Delete Controller Service";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(6, 37);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(363, 23);
+            this.button4.TabIndex = 1;
+            this.button4.Text = "Install Controller Service";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // label11
+            // 
+            this.label11.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label11.Location = new System.Drawing.Point(3, 19);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(746, 15);
+            this.label11.TabIndex = 0;
+            this.label11.Text = "Run this tool as Administrator to unlock these settings.";
+            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label11.Visible = false;
             // 
             // groupBox3
             // 
@@ -646,16 +729,6 @@ namespace ControllerHelper
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(6, 522);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(228, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Create new profile";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // ControllerHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -691,6 +764,7 @@ namespace ControllerHelper
             this.groupBox6.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.tabSettings.ResumeLayout(false);
+            this.groupBox8.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
@@ -755,6 +829,12 @@ namespace ControllerHelper
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button button6;
     }
 }
 

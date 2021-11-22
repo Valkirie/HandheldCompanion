@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.ServiceProcess;
 using System.Timers;
 using System.Windows.Forms;
 using Timer = System.Timers.Timer;
@@ -38,11 +39,13 @@ namespace ControllerHelper
         private HIDmode HideXBOX = new HIDmode("Xbox360Controller", "Xbox 360 emulation");
         private Dictionary<string, HIDmode> HIDmodes = new();
 
-        public static string CurrentExe, CurrentPath, CurrentPathProfiles, CurrentPathLogs;
+        public static string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
 
         private bool RunAtStartup, StartMinimized, CloseMinimises, HookMouse;
+        private bool IsAdmin;
 
         public ProfileManager ProfileManager;
+        public ServiceManager ServiceManager;
         private readonly Logger logger;
 
         public ControllerHelper()
@@ -53,7 +56,10 @@ namespace ControllerHelper
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
             CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
+            CurrentPathService = Path.Combine(CurrentPath, "ControllerService.exe");
             CurrentPathLogs = Path.Combine(CurrentPath, "Logs");
+            
+            IsAdmin = Utils.IsAdministrator();
 
             // initialize logger
             logger = new LoggerConfiguration()
@@ -88,6 +94,22 @@ namespace ControllerHelper
 
         private void ControllerHelper_Load(object sender, EventArgs e)
         {
+            // initialize GUI
+            this.BeginInvoke((MethodInvoker)delegate ()
+            {
+                if (!IsAdmin)
+                {
+                    foreach (Control ctrl in groupBox8.Controls)
+                        ctrl.Visible = false;
+                    label11.Visible = true;
+                }
+            });
+
+            UpdateStatus(false);
+
+            // start Service Manager
+            if (IsAdmin) ServiceManager = new ServiceManager("ControllerService", this, Properties.Settings.Default.ServiceName, Properties.Settings.Default.ServiceDescription);
+
             // start pipe client
             PipeClient.Start();
 
@@ -97,7 +119,7 @@ namespace ControllerHelper
             // start mouse hook
             if (HookMouse) m_Hook.Start();
 
-            // monitors processes
+            // monitor processes
             MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
             MonitorTimer.Elapsed += MonitorHelper;
         }
@@ -209,8 +231,6 @@ namespace ControllerHelper
 
                     CurrentProcess = processId;
                 }
-
-                // refresh service status
             }
         }
 
@@ -218,7 +238,9 @@ namespace ControllerHelper
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                tabControl1.Enabled = status;
+                foreach (Control ctl in tabDevices.Controls)
+                    ctl.Enabled = status;
+                groupBox3.Enabled = status;
             });
         }
 
@@ -337,11 +359,22 @@ namespace ControllerHelper
             }
         }
 
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Profile profile = (Profile)listBox1.SelectedItem;
+            profile.Delete();
+
+            listBox1.SelectedIndex = -1;
+        }
+
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
-
             RegistryKey rWrite = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-            rWrite.SetValue("ControllerHelper", AppDomain.CurrentDomain.BaseDirectory + $"{AppDomain.CurrentDomain.FriendlyName}.exe");
+
+            if (checkBox3.Checked)
+                rWrite.SetValue("ControllerHelper", AppDomain.CurrentDomain.BaseDirectory + $"{AppDomain.CurrentDomain.FriendlyName}.exe");
+            else
+                rWrite.DeleteValue("ControllerHelper");
 
             RunAtStartup = checkBox3.Checked;
             Properties.Settings.Default.RunAtStartup = RunAtStartup;
@@ -387,13 +420,20 @@ namespace ControllerHelper
         {
             Profile profile = (Profile)listBox1.SelectedItem;
 
-            if (profile == null)
-                return;
-
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                textBox2.Text = profile.name;
-                textBox3.Text = profile.path;
+                if (profile == null)
+                {
+                    groupBox6.Enabled = false;
+                    groupBox7.Enabled = false;
+                }
+                else
+                {
+                    textBox2.Text = profile.name;
+                    textBox3.Text = profile.path;
+                    groupBox6.Enabled = true;
+                    groupBox7.Enabled = true;
+                }
             });
         }
 
@@ -406,6 +446,8 @@ namespace ControllerHelper
                     listBox1.Items.Add(profile);
                 else
                     listBox1.Items[idx] = profile;
+
+                listBox1.SelectedItem = profile;
             });
         }
 
@@ -416,6 +458,83 @@ namespace ControllerHelper
                 int idx = listBox1.Items.IndexOf(profile);
                 if (idx != -1)
                     listBox1.Items.RemoveAt(idx);
+            });
+        }
+
+        public void UpdateService(ServiceControllerStatus status)
+        {
+            this.BeginInvoke((MethodInvoker)delegate ()
+            {
+                groupBox8.SuspendLayout();
+
+                switch (status)
+                {
+                    case ServiceControllerStatus.Paused:
+                    case ServiceControllerStatus.Stopped:
+                        if (button4.Enabled == true) button4.Enabled = false;
+                        if (button5.Enabled == false) button5.Enabled = true;
+                        if (button6.Enabled == false) button6.Enabled = true;
+                        if (button7.Enabled == true) button7.Enabled = false;
+                        break;
+                    case ServiceControllerStatus.Running:
+                        if (button4.Enabled == true) button4.Enabled = false;
+                        if (button5.Enabled == true) button5.Enabled = false;
+                        if (button6.Enabled == true) button6.Enabled = false;
+                        if (button7.Enabled == false) button7.Enabled = true;
+                        break;
+                    default:
+                        if (button4.Enabled == false) button4.Enabled = true;
+                        if (button5.Enabled == true) button5.Enabled = false;
+                        if (button6.Enabled == true) button6.Enabled = false;
+                        if (button7.Enabled == true) button7.Enabled = false;
+                        break;
+                }
+
+                groupBox8.ResumeLayout();
+            });
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            this.BeginInvoke((MethodInvoker)delegate ()
+            {
+                foreach (Control ctrl in groupBox8.Controls)
+                    ctrl.Enabled = false;
+
+                ServiceManager.CreateService(CurrentPathService);
+            });
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            this.BeginInvoke((MethodInvoker)delegate ()
+            {
+                foreach (Control ctrl in groupBox8.Controls)
+                    ctrl.Enabled = false;
+
+                ServiceManager.DeleteService();
+            });
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            this.BeginInvoke((MethodInvoker)delegate ()
+            {
+                foreach (Control ctrl in groupBox8.Controls)
+                    ctrl.Enabled = false;
+
+                ServiceManager.StartService();
+            });
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            this.BeginInvoke((MethodInvoker)delegate ()
+            {
+                foreach (Control ctrl in groupBox8.Controls)
+                    ctrl.Enabled = false;
+
+                ServiceManager.StopService();
             });
         }
         #endregion

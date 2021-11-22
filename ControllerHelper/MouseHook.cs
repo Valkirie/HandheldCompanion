@@ -94,7 +94,10 @@ namespace ControllerHelper
 
         internal void Stop()
         {
+            m_Events.MouseDownExt -= OnMouseDown;
+            m_Events.MouseUpExt -= OnMouseUp;
             m_Events.Dispose();
+            m_Events = null;
         }
     }
 }

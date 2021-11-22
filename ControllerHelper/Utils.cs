@@ -6,8 +6,10 @@ using System.Linq;
 using System.Management;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ControllerHelper
 {
@@ -62,5 +64,16 @@ namespace ControllerHelper
             IPAddress test;
             return IPAddress.TryParse(text, out test);
         }
+
+        public static bool IsAdministrator()
+        {
+            var identity = WindowsIdentity.GetCurrent();
+            var principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+    }
+
+    public class TabPageHelper : TabPage
+    {
     }
 }
