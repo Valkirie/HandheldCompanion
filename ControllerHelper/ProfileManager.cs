@@ -17,11 +17,11 @@ namespace ControllerHelper
     {
         public string name { get; set; }
         public string path { get; set; }
-        public bool whitelisted { get; set; }       // if true, can see through the HidHide cloak
-        public bool legacy { get; set; }            // not yet implemented
-        public bool use_wrapper { get; set; }       // if true, deploy xinput1_3.dll
-        public float gyrometer { get; set; }        // gyroscope multiplicator (remove me)
-        public float accelerometer { get; set; }    // accelerometer multiplicator (remove me)
+        public bool whitelisted { get; set; }               // if true, can see through the HidHide cloak
+        public bool legacy { get; set; }                    // not yet implemented
+        public bool use_wrapper { get; set; }               // if true, deploy xinput1_3.dll
+        public float gyrometer { get; set; } = 1.0f;        // gyroscope multiplicator (remove me)
+        public float accelerometer { get; set; } = 1.0f;    // accelerometer multiplicator (remove me)
 
         [JsonIgnore] private const uint CRC32_X64 = 0x906f6806;
         [JsonIgnore] private const uint CRC32_X86 = 0x456b57cc;
