@@ -269,6 +269,7 @@ namespace ControllerHelper
                 checkBox2.Checked = bool.Parse(args["accelerometer"]);
 
                 tB_HIDrate.Value = int.Parse(args["HIDrate"]);
+                m_Hook.SetInterval(tB_HIDrate.Value);
                 label4.Text = $"{tB_HIDrate.Value} Miliseconds";
 
                 checkBox6.Checked = bool.Parse(args["DSUEnabled"]);
@@ -311,6 +312,8 @@ namespace ControllerHelper
 
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
+            m_Hook.SetInterval(tB_HIDrate.Value);
+
             this.BeginInvoke((MethodInvoker)delegate ()
             {
                 label4.Text = $"{tB_HIDrate.Value} Miliseconds";
