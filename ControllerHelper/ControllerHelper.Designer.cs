@@ -38,77 +38,84 @@ namespace ControllerHelper
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabDevices = new System.Windows.Forms.TabPage();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.checkBox10 = new System.Windows.Forms.CheckBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.tB_HIDrate = new System.Windows.Forms.TrackBar();
-            this.label3 = new System.Windows.Forms.Label();
-            this.lB_HidMode = new System.Windows.Forms.Label();
-            this.cB_HIDdevice = new System.Windows.Forms.ComboBox();
-            this.groupBoxDetails = new System.Windows.Forms.GroupBox();
-            this.checkBox7 = new System.Windows.Forms.CheckBox();
+            this.gB_DeviceDetails = new System.Windows.Forms.GroupBox();
+            this.cB_touchpad = new System.Windows.Forms.CheckBox();
+            this.lb_touchpad = new System.Windows.Forms.Label();
+            this.lb_gyro = new System.Windows.Forms.Label();
+            this.cB_accelero = new System.Windows.Forms.CheckBox();
+            this.cB_gyro = new System.Windows.Forms.CheckBox();
+            this.lb_accelero = new System.Windows.Forms.Label();
+            this.gB_HIDDetails = new System.Windows.Forms.GroupBox();
+            this.tB_PullRate = new System.Windows.Forms.TrackBar();
+            this.lb_PullRate = new System.Windows.Forms.Label();
+            this.lb_HidMode = new System.Windows.Forms.Label();
+            this.cB_HidMode = new System.Windows.Forms.ComboBox();
+            this.gB_XinputDetails = new System.Windows.Forms.GroupBox();
+            this.cB_uncloak = new System.Windows.Forms.CheckBox();
             this.cB_HIDcloak = new System.Windows.Forms.ComboBox();
-            this.lB_HidCloak = new System.Windows.Forms.Label();
+            this.lb_HidCloak = new System.Windows.Forms.Label();
             this.tB_InstanceID = new System.Windows.Forms.TextBox();
-            this.lB_InstanceID = new System.Windows.Forms.Label();
-            this.groupBoxXinput = new System.Windows.Forms.GroupBox();
-            this.listBoxDevices = new System.Windows.Forms.ListBox();
+            this.lb_InstanceID = new System.Windows.Forms.Label();
+            this.gB_XinputDevices = new System.Windows.Forms.GroupBox();
+            this.lB_Devices = new System.Windows.Forms.ListBox();
             this.tabProfiles = new System.Windows.Forms.TabPage();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.checkBox9 = new System.Windows.Forms.CheckBox();
-            this.checkBox8 = new System.Windows.Forms.CheckBox();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.gB_ProfileOptions = new System.Windows.Forms.GroupBox();
+            this.tb_ProfileAcceleroValue = new System.Windows.Forms.TrackBar();
+            this.lb_ProfileAccelero = new System.Windows.Forms.Label();
+            this.tb_ProfileGyroValue = new System.Windows.Forms.TrackBar();
+            this.lb_ProfileGyro = new System.Windows.Forms.Label();
+            this.lb_Wrapper = new System.Windows.Forms.Label();
+            this.lb_Whitelist = new System.Windows.Forms.Label();
+            this.cB_Wrapper = new System.Windows.Forms.CheckBox();
+            this.cB_Whitelist = new System.Windows.Forms.CheckBox();
+            this.gB_ProfileDetails = new System.Windows.Forms.GroupBox();
+            this.b_ApplyProfile = new System.Windows.Forms.Button();
+            this.b_DeleteProfile = new System.Windows.Forms.Button();
+            this.tB_ProfilePath = new System.Windows.Forms.TextBox();
+            this.lb_ProfilePath = new System.Windows.Forms.Label();
+            this.tB_ProfileName = new System.Windows.Forms.TextBox();
+            this.lb_ProfileName = new System.Windows.Forms.Label();
+            this.gB_Profiles = new System.Windows.Forms.GroupBox();
+            this.b_CreateProfile = new System.Windows.Forms.Button();
+            this.lB_Profiles = new System.Windows.Forms.ListBox();
             this.tabSettings = new System.Windows.Forms.TabPage();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
-            this.button7 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.label11 = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.label5 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.checkBox6 = new System.Windows.Forms.CheckBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.checkBox5 = new System.Windows.Forms.CheckBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.gb_SettingsService = new System.Windows.Forms.GroupBox();
+            this.b_ServiceStop = new System.Windows.Forms.Button();
+            this.b_ServiceStart = new System.Windows.Forms.Button();
+            this.b_ServiceDelete = new System.Windows.Forms.Button();
+            this.b_ServiceInstall = new System.Windows.Forms.Button();
+            this.lb_Service_Error = new System.Windows.Forms.Label();
+            this.gb_SettingsUDP = new System.Windows.Forms.GroupBox();
+            this.b_UDPApply = new System.Windows.Forms.Button();
+            this.tB_UDPPort = new System.Windows.Forms.NumericUpDown();
+            this.lb_UDPport = new System.Windows.Forms.Label();
+            this.tB_UDPIP = new System.Windows.Forms.TextBox();
+            this.cB_UDPEnable = new System.Windows.Forms.CheckBox();
+            this.gb_SettingsInterface = new System.Windows.Forms.GroupBox();
+            this.cB_RunAtStartup = new System.Windows.Forms.CheckBox();
+            this.cB_CloseMinimizes = new System.Windows.Forms.CheckBox();
+            this.cB_StartMinimized = new System.Windows.Forms.CheckBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabDevices.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tB_HIDrate)).BeginInit();
-            this.groupBoxDetails.SuspendLayout();
-            this.groupBoxXinput.SuspendLayout();
+            this.gB_DeviceDetails.SuspendLayout();
+            this.gB_HIDDetails.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tB_PullRate)).BeginInit();
+            this.gB_XinputDetails.SuspendLayout();
+            this.gB_XinputDevices.SuspendLayout();
             this.tabProfiles.SuspendLayout();
-            this.groupBox7.SuspendLayout();
-            this.groupBox6.SuspendLayout();
-            this.groupBox5.SuspendLayout();
+            this.gB_ProfileOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tb_ProfileAcceleroValue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tb_ProfileGyroValue)).BeginInit();
+            this.gB_ProfileDetails.SuspendLayout();
+            this.gB_Profiles.SuspendLayout();
             this.tabSettings.SuspendLayout();
-            this.groupBox8.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            this.groupBox2.SuspendLayout();
+            this.gb_SettingsService.SuspendLayout();
+            this.gb_SettingsUDP.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tB_UDPPort)).BeginInit();
+            this.gb_SettingsInterface.SuspendLayout();
             this.SuspendLayout();
             // 
             // notifyIcon1
@@ -146,10 +153,10 @@ namespace ControllerHelper
             // 
             // tabDevices
             // 
-            this.tabDevices.Controls.Add(this.groupBox4);
-            this.tabDevices.Controls.Add(this.groupBox1);
-            this.tabDevices.Controls.Add(this.groupBoxDetails);
-            this.tabDevices.Controls.Add(this.groupBoxXinput);
+            this.tabDevices.Controls.Add(this.gB_DeviceDetails);
+            this.tabDevices.Controls.Add(this.gB_HIDDetails);
+            this.tabDevices.Controls.Add(this.gB_XinputDetails);
+            this.tabDevices.Controls.Add(this.gB_XinputDevices);
             this.tabDevices.Location = new System.Drawing.Point(4, 24);
             this.tabDevices.Name = "tabDevices";
             this.tabDevices.Padding = new System.Windows.Forms.Padding(3);
@@ -158,170 +165,162 @@ namespace ControllerHelper
             this.tabDevices.Text = "Devices";
             this.tabDevices.UseVisualStyleBackColor = true;
             // 
-            // groupBox4
+            // gB_DeviceDetails
             // 
-            this.groupBox4.Controls.Add(this.checkBox10);
-            this.groupBox4.Controls.Add(this.label10);
-            this.groupBox4.Controls.Add(this.label1);
-            this.groupBox4.Controls.Add(this.checkBox2);
-            this.groupBox4.Controls.Add(this.checkBox1);
-            this.groupBox4.Controls.Add(this.label2);
-            this.groupBox4.Location = new System.Drawing.Point(252, 132);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(506, 176);
-            this.groupBox4.TabIndex = 3;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Device Details";
+            this.gB_DeviceDetails.Controls.Add(this.cB_touchpad);
+            this.gB_DeviceDetails.Controls.Add(this.lb_touchpad);
+            this.gB_DeviceDetails.Controls.Add(this.lb_gyro);
+            this.gB_DeviceDetails.Controls.Add(this.cB_accelero);
+            this.gB_DeviceDetails.Controls.Add(this.cB_gyro);
+            this.gB_DeviceDetails.Controls.Add(this.lb_accelero);
+            this.gB_DeviceDetails.Location = new System.Drawing.Point(252, 132);
+            this.gB_DeviceDetails.Name = "gB_DeviceDetails";
+            this.gB_DeviceDetails.Size = new System.Drawing.Size(506, 176);
+            this.gB_DeviceDetails.TabIndex = 3;
+            this.gB_DeviceDetails.TabStop = false;
+            this.gB_DeviceDetails.Text = "Device Details";
             // 
-            // checkBox10
+            // cB_touchpad
             // 
-            this.checkBox10.AutoSize = true;
-            this.checkBox10.Location = new System.Drawing.Point(156, 81);
-            this.checkBox10.Name = "checkBox10";
-            this.checkBox10.Size = new System.Drawing.Size(142, 19);
-            this.checkBox10.TabIndex = 11;
-            this.checkBox10.Text = "Send touchpad inputs";
-            this.checkBox10.UseVisualStyleBackColor = true;
-            this.checkBox10.CheckedChanged += new System.EventHandler(this.checkBox10_CheckedChanged);
+            this.cB_touchpad.AutoSize = true;
+            this.cB_touchpad.Location = new System.Drawing.Point(156, 81);
+            this.cB_touchpad.Name = "cB_touchpad";
+            this.cB_touchpad.Size = new System.Drawing.Size(142, 19);
+            this.cB_touchpad.TabIndex = 11;
+            this.cB_touchpad.Text = "Send touchpad inputs";
+            this.cB_touchpad.UseVisualStyleBackColor = true;
+            this.cB_touchpad.CheckedChanged += new System.EventHandler(this.checkBox10_CheckedChanged);
             // 
-            // label10
+            // lb_touchpad
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 82);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(59, 15);
-            this.label10.TabIndex = 10;
-            this.label10.Text = "Touchpad";
+            this.lb_touchpad.AutoSize = true;
+            this.lb_touchpad.Location = new System.Drawing.Point(6, 82);
+            this.lb_touchpad.Name = "lb_touchpad";
+            this.lb_touchpad.Size = new System.Drawing.Size(62, 15);
+            this.lb_touchpad.TabIndex = 10;
+            this.lb_touchpad.Text = "Touchpad:";
             // 
-            // label1
+            // lb_gyro
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 32);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(63, 15);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Gyrometer";
+            this.lb_gyro.AutoSize = true;
+            this.lb_gyro.Location = new System.Drawing.Point(6, 32);
+            this.lb_gyro.Name = "lb_gyro";
+            this.lb_gyro.Size = new System.Drawing.Size(66, 15);
+            this.lb_gyro.TabIndex = 6;
+            this.lb_gyro.Text = "Gyrometer:";
             // 
-            // checkBox2
+            // cB_accelero
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Enabled = false;
-            this.checkBox2.Location = new System.Drawing.Point(156, 56);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(148, 19);
-            this.checkBox2.TabIndex = 9;
-            this.checkBox2.Text = "Accelerometer enabled";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.cB_accelero.AutoSize = true;
+            this.cB_accelero.Enabled = false;
+            this.cB_accelero.Location = new System.Drawing.Point(156, 56);
+            this.cB_accelero.Name = "cB_accelero";
+            this.cB_accelero.Size = new System.Drawing.Size(169, 19);
+            this.cB_accelero.TabIndex = 9;
+            this.cB_accelero.Text = "No accelerometer detected";
+            this.cB_accelero.UseVisualStyleBackColor = true;
+            this.cB_accelero.CheckedChanged += new System.EventHandler(this.cB_accelero_CheckedChanged);
             // 
-            // checkBox1
+            // cB_gyro
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Enabled = false;
-            this.checkBox1.Location = new System.Drawing.Point(156, 31);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(127, 19);
-            this.checkBox1.TabIndex = 7;
-            this.checkBox1.Text = "Gyrometer enabled";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.cB_gyro.AutoSize = true;
+            this.cB_gyro.Enabled = false;
+            this.cB_gyro.Location = new System.Drawing.Point(156, 31);
+            this.cB_gyro.Name = "cB_gyro";
+            this.cB_gyro.Size = new System.Drawing.Size(149, 19);
+            this.cB_gyro.TabIndex = 7;
+            this.cB_gyro.Text = "No gyrometer detected";
+            this.cB_gyro.UseVisualStyleBackColor = true;
+            this.cB_gyro.CheckedChanged += new System.EventHandler(this.cB_gyro_CheckedChanged);
             // 
-            // label2
+            // lb_accelero
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 57);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(84, 15);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "Accelerometer";
+            this.lb_accelero.AutoSize = true;
+            this.lb_accelero.Location = new System.Drawing.Point(6, 57);
+            this.lb_accelero.Name = "lb_accelero";
+            this.lb_accelero.Size = new System.Drawing.Size(87, 15);
+            this.lb_accelero.TabIndex = 8;
+            this.lb_accelero.Text = "Accelerometer:";
             // 
-            // groupBox1
+            // gB_HIDDetails
             // 
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.tB_HIDrate);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.lB_HidMode);
-            this.groupBox1.Controls.Add(this.cB_HIDdevice);
-            this.groupBox1.Location = new System.Drawing.Point(252, 356);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(506, 202);
-            this.groupBox1.TabIndex = 2;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "HID Details";
+            this.gB_HIDDetails.Controls.Add(this.tB_PullRate);
+            this.gB_HIDDetails.Controls.Add(this.lb_PullRate);
+            this.gB_HIDDetails.Controls.Add(this.lb_HidMode);
+            this.gB_HIDDetails.Controls.Add(this.cB_HidMode);
+            this.gB_HIDDetails.Location = new System.Drawing.Point(252, 314);
+            this.gB_HIDDetails.Name = "gB_HIDDetails";
+            this.gB_HIDDetails.Size = new System.Drawing.Size(506, 244);
+            this.gB_HIDDetails.TabIndex = 2;
+            this.gB_HIDDetails.TabStop = false;
+            this.gB_HIDDetails.Text = "HID Details";
             // 
-            // label4
+            // tB_PullRate
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(352, 66);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(85, 15);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "10 Miliseconds";
+            this.tB_PullRate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
+            this.tB_PullRate.Location = new System.Drawing.Point(156, 64);
+            this.tB_PullRate.Maximum = 300;
+            this.tB_PullRate.Minimum = 5;
+            this.tB_PullRate.Name = "tB_PullRate";
+            this.tB_PullRate.Size = new System.Drawing.Size(190, 45);
+            this.tB_PullRate.SmallChange = 5;
+            this.tB_PullRate.TabIndex = 5;
+            this.tB_PullRate.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.tB_PullRate.Value = 150;
+            this.tB_PullRate.ValueChanged += new System.EventHandler(this.trackBar1_Scroll);
             // 
-            // tB_HIDrate
+            // lb_PullRate
             // 
-            this.tB_HIDrate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
-            this.tB_HIDrate.Location = new System.Drawing.Point(156, 64);
-            this.tB_HIDrate.Maximum = 300;
-            this.tB_HIDrate.Minimum = 5;
-            this.tB_HIDrate.Name = "tB_HIDrate";
-            this.tB_HIDrate.Size = new System.Drawing.Size(190, 45);
-            this.tB_HIDrate.SmallChange = 5;
-            this.tB_HIDrate.TabIndex = 5;
-            this.tB_HIDrate.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.tB_HIDrate.Value = 10;
-            this.tB_HIDrate.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            this.lb_PullRate.AutoSize = true;
+            this.lb_PullRate.Location = new System.Drawing.Point(6, 64);
+            this.lb_PullRate.Name = "lb_PullRate";
+            this.lb_PullRate.Size = new System.Drawing.Size(112, 15);
+            this.lb_PullRate.TabIndex = 4;
+            this.lb_PullRate.Text = "Output rate control:";
             // 
-            // label3
+            // lb_HidMode
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 64);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(112, 15);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Output rate control:";
+            this.lb_HidMode.AutoSize = true;
+            this.lb_HidMode.Location = new System.Drawing.Point(6, 32);
+            this.lb_HidMode.Name = "lb_HidMode";
+            this.lb_HidMode.Size = new System.Drawing.Size(101, 15);
+            this.lb_HidMode.TabIndex = 2;
+            this.lb_HidMode.Text = "HID device mode:";
             // 
-            // lB_HidMode
+            // cB_HidMode
             // 
-            this.lB_HidMode.AutoSize = true;
-            this.lB_HidMode.Location = new System.Drawing.Point(6, 32);
-            this.lB_HidMode.Name = "lB_HidMode";
-            this.lB_HidMode.Size = new System.Drawing.Size(101, 15);
-            this.lB_HidMode.TabIndex = 2;
-            this.lB_HidMode.Text = "HID device mode:";
+            this.cB_HidMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cB_HidMode.Enabled = false;
+            this.cB_HidMode.FormattingEnabled = true;
+            this.cB_HidMode.Location = new System.Drawing.Point(156, 29);
+            this.cB_HidMode.Name = "cB_HidMode";
+            this.cB_HidMode.Size = new System.Drawing.Size(190, 23);
+            this.cB_HidMode.TabIndex = 3;
             // 
-            // cB_HIDdevice
+            // gB_XinputDetails
             // 
-            this.cB_HIDdevice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cB_HIDdevice.Enabled = false;
-            this.cB_HIDdevice.FormattingEnabled = true;
-            this.cB_HIDdevice.Location = new System.Drawing.Point(156, 29);
-            this.cB_HIDdevice.Name = "cB_HIDdevice";
-            this.cB_HIDdevice.Size = new System.Drawing.Size(190, 23);
-            this.cB_HIDdevice.TabIndex = 3;
+            this.gB_XinputDetails.Controls.Add(this.cB_uncloak);
+            this.gB_XinputDetails.Controls.Add(this.cB_HIDcloak);
+            this.gB_XinputDetails.Controls.Add(this.lb_HidCloak);
+            this.gB_XinputDetails.Controls.Add(this.tB_InstanceID);
+            this.gB_XinputDetails.Controls.Add(this.lb_InstanceID);
+            this.gB_XinputDetails.Location = new System.Drawing.Point(252, 6);
+            this.gB_XinputDetails.Name = "gB_XinputDetails";
+            this.gB_XinputDetails.Size = new System.Drawing.Size(506, 120);
+            this.gB_XinputDetails.TabIndex = 1;
+            this.gB_XinputDetails.TabStop = false;
+            this.gB_XinputDetails.Text = "Xinput Details";
             // 
-            // groupBoxDetails
+            // cB_uncloak
             // 
-            this.groupBoxDetails.Controls.Add(this.checkBox7);
-            this.groupBoxDetails.Controls.Add(this.cB_HIDcloak);
-            this.groupBoxDetails.Controls.Add(this.lB_HidCloak);
-            this.groupBoxDetails.Controls.Add(this.tB_InstanceID);
-            this.groupBoxDetails.Controls.Add(this.lB_InstanceID);
-            this.groupBoxDetails.Location = new System.Drawing.Point(252, 6);
-            this.groupBoxDetails.Name = "groupBoxDetails";
-            this.groupBoxDetails.Size = new System.Drawing.Size(506, 120);
-            this.groupBoxDetails.TabIndex = 1;
-            this.groupBoxDetails.TabStop = false;
-            this.groupBoxDetails.Text = "Xinput Details";
-            // 
-            // checkBox7
-            // 
-            this.checkBox7.AutoSize = true;
-            this.checkBox7.Location = new System.Drawing.Point(156, 87);
-            this.checkBox7.Name = "checkBox7";
-            this.checkBox7.Size = new System.Drawing.Size(116, 19);
-            this.checkBox7.TabIndex = 10;
-            this.checkBox7.Text = "Uncloak on close";
-            this.checkBox7.UseVisualStyleBackColor = true;
-            this.checkBox7.CheckedChanged += new System.EventHandler(this.checkBox7_CheckedChanged);
+            this.cB_uncloak.AutoSize = true;
+            this.cB_uncloak.Location = new System.Drawing.Point(156, 87);
+            this.cB_uncloak.Name = "cB_uncloak";
+            this.cB_uncloak.Size = new System.Drawing.Size(116, 19);
+            this.cB_uncloak.TabIndex = 10;
+            this.cB_uncloak.Text = "Uncloak on close";
+            this.cB_uncloak.UseVisualStyleBackColor = true;
+            this.cB_uncloak.CheckedChanged += new System.EventHandler(this.checkBox7_CheckedChanged);
             // 
             // cB_HIDcloak
             // 
@@ -336,14 +335,14 @@ namespace ControllerHelper
             this.cB_HIDcloak.TabIndex = 5;
             this.cB_HIDcloak.SelectedIndexChanged += new System.EventHandler(this.cB_HIDcloak_SelectedIndexChanged);
             // 
-            // lB_HidCloak
+            // lb_HidCloak
             // 
-            this.lB_HidCloak.AutoSize = true;
-            this.lB_HidCloak.Location = new System.Drawing.Point(6, 61);
-            this.lB_HidCloak.Name = "lB_HidCloak";
-            this.lB_HidCloak.Size = new System.Drawing.Size(76, 15);
-            this.lB_HidCloak.TabIndex = 4;
-            this.lB_HidCloak.Text = "Device cloak:";
+            this.lb_HidCloak.AutoSize = true;
+            this.lb_HidCloak.Location = new System.Drawing.Point(6, 61);
+            this.lb_HidCloak.Name = "lb_HidCloak";
+            this.lb_HidCloak.Size = new System.Drawing.Size(76, 15);
+            this.lb_HidCloak.TabIndex = 4;
+            this.lb_HidCloak.Text = "Device cloak:";
             // 
             // tB_InstanceID
             // 
@@ -353,40 +352,40 @@ namespace ControllerHelper
             this.tB_InstanceID.Size = new System.Drawing.Size(222, 23);
             this.tB_InstanceID.TabIndex = 1;
             // 
-            // lB_InstanceID
+            // lb_InstanceID
             // 
-            this.lB_InstanceID.AutoSize = true;
-            this.lB_InstanceID.Location = new System.Drawing.Point(6, 32);
-            this.lB_InstanceID.Name = "lB_InstanceID";
-            this.lB_InstanceID.Size = new System.Drawing.Size(68, 15);
-            this.lB_InstanceID.TabIndex = 0;
-            this.lB_InstanceID.Text = "Instance ID:";
+            this.lb_InstanceID.AutoSize = true;
+            this.lb_InstanceID.Location = new System.Drawing.Point(6, 32);
+            this.lb_InstanceID.Name = "lb_InstanceID";
+            this.lb_InstanceID.Size = new System.Drawing.Size(68, 15);
+            this.lb_InstanceID.TabIndex = 0;
+            this.lb_InstanceID.Text = "Instance ID:";
             // 
-            // groupBoxXinput
+            // gB_XinputDevices
             // 
-            this.groupBoxXinput.Controls.Add(this.listBoxDevices);
-            this.groupBoxXinput.Location = new System.Drawing.Point(6, 6);
-            this.groupBoxXinput.Name = "groupBoxXinput";
-            this.groupBoxXinput.Size = new System.Drawing.Size(240, 552);
-            this.groupBoxXinput.TabIndex = 0;
-            this.groupBoxXinput.TabStop = false;
-            this.groupBoxXinput.Text = "Xinput Devices";
+            this.gB_XinputDevices.Controls.Add(this.lB_Devices);
+            this.gB_XinputDevices.Location = new System.Drawing.Point(6, 6);
+            this.gB_XinputDevices.Name = "gB_XinputDevices";
+            this.gB_XinputDevices.Size = new System.Drawing.Size(240, 552);
+            this.gB_XinputDevices.TabIndex = 0;
+            this.gB_XinputDevices.TabStop = false;
+            this.gB_XinputDevices.Text = "Xinput Devices";
             // 
-            // listBoxDevices
+            // lB_Devices
             // 
-            this.listBoxDevices.FormattingEnabled = true;
-            this.listBoxDevices.ItemHeight = 15;
-            this.listBoxDevices.Location = new System.Drawing.Point(6, 32);
-            this.listBoxDevices.Name = "listBoxDevices";
-            this.listBoxDevices.Size = new System.Drawing.Size(228, 514);
-            this.listBoxDevices.TabIndex = 0;
-            this.listBoxDevices.SelectedIndexChanged += new System.EventHandler(this.listBoxDevices_SelectedIndexChanged);
+            this.lB_Devices.FormattingEnabled = true;
+            this.lB_Devices.ItemHeight = 15;
+            this.lB_Devices.Location = new System.Drawing.Point(6, 32);
+            this.lB_Devices.Name = "lB_Devices";
+            this.lB_Devices.Size = new System.Drawing.Size(228, 514);
+            this.lB_Devices.TabIndex = 0;
+            this.lB_Devices.SelectedIndexChanged += new System.EventHandler(this.listBoxDevices_SelectedIndexChanged);
             // 
             // tabProfiles
             // 
-            this.tabProfiles.Controls.Add(this.groupBox7);
-            this.tabProfiles.Controls.Add(this.groupBox6);
-            this.tabProfiles.Controls.Add(this.groupBox5);
+            this.tabProfiles.Controls.Add(this.gB_ProfileOptions);
+            this.tabProfiles.Controls.Add(this.gB_ProfileDetails);
+            this.tabProfiles.Controls.Add(this.gB_Profiles);
             this.tabProfiles.Location = new System.Drawing.Point(4, 24);
             this.tabProfiles.Name = "tabProfiles";
             this.tabProfiles.Size = new System.Drawing.Size(764, 564);
@@ -394,151 +393,212 @@ namespace ControllerHelper
             this.tabProfiles.Text = "Profiles";
             this.tabProfiles.UseVisualStyleBackColor = true;
             // 
-            // groupBox7
+            // gB_ProfileOptions
             // 
-            this.groupBox7.Controls.Add(this.label9);
-            this.groupBox7.Controls.Add(this.label8);
-            this.groupBox7.Controls.Add(this.checkBox9);
-            this.groupBox7.Controls.Add(this.checkBox8);
-            this.groupBox7.Location = new System.Drawing.Point(252, 135);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(506, 423);
-            this.groupBox7.TabIndex = 2;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Profile Options";
+            this.gB_ProfileOptions.Controls.Add(this.tb_ProfileAcceleroValue);
+            this.gB_ProfileOptions.Controls.Add(this.lb_ProfileAccelero);
+            this.gB_ProfileOptions.Controls.Add(this.tb_ProfileGyroValue);
+            this.gB_ProfileOptions.Controls.Add(this.lb_ProfileGyro);
+            this.gB_ProfileOptions.Controls.Add(this.lb_Wrapper);
+            this.gB_ProfileOptions.Controls.Add(this.lb_Whitelist);
+            this.gB_ProfileOptions.Controls.Add(this.cB_Wrapper);
+            this.gB_ProfileOptions.Controls.Add(this.cB_Whitelist);
+            this.gB_ProfileOptions.Location = new System.Drawing.Point(252, 135);
+            this.gB_ProfileOptions.Name = "gB_ProfileOptions";
+            this.gB_ProfileOptions.Size = new System.Drawing.Size(506, 423);
+            this.gB_ProfileOptions.TabIndex = 2;
+            this.gB_ProfileOptions.TabStop = false;
+            this.gB_ProfileOptions.Text = "Profile Options";
             // 
-            // label9
+            // tb_ProfileAcceleroValue
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 55);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(52, 15);
-            this.label9.TabIndex = 10;
-            this.label9.Text = "Wrapper";
+            this.tb_ProfileAcceleroValue.AutoSize = false;
+            this.tb_ProfileAcceleroValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
+            this.tb_ProfileAcceleroValue.Location = new System.Drawing.Point(156, 125);
+            this.tb_ProfileAcceleroValue.Maximum = 20;
+            this.tb_ProfileAcceleroValue.Minimum = 1;
+            this.tb_ProfileAcceleroValue.Name = "tb_ProfileAcceleroValue";
+            this.tb_ProfileAcceleroValue.Size = new System.Drawing.Size(243, 25);
+            this.tb_ProfileAcceleroValue.TabIndex = 15;
+            this.tb_ProfileAcceleroValue.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.tb_ProfileAcceleroValue.Value = 1;
+            this.tb_ProfileAcceleroValue.ValueChanged += new System.EventHandler(this.trackBar2_Scroll);
             // 
-            // label8
+            // lb_ProfileAccelero
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 30);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(66, 15);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "Whitelisted";
+            this.lb_ProfileAccelero.AutoSize = true;
+            this.lb_ProfileAccelero.Location = new System.Drawing.Point(6, 125);
+            this.lb_ProfileAccelero.Name = "lb_ProfileAccelero";
+            this.lb_ProfileAccelero.Size = new System.Drawing.Size(141, 15);
+            this.lb_ProfileAccelero.TabIndex = 14;
+            this.lb_ProfileAccelero.Text = "Accelerometer multiplier:";
             // 
-            // checkBox9
+            // tb_ProfileGyroValue
             // 
-            this.checkBox9.AutoSize = true;
-            this.checkBox9.Location = new System.Drawing.Point(156, 54);
-            this.checkBox9.Name = "checkBox9";
-            this.checkBox9.Size = new System.Drawing.Size(148, 19);
-            this.checkBox9.TabIndex = 11;
-            this.checkBox9.Text = "Deploy x360ce wrapper";
-            this.checkBox9.UseVisualStyleBackColor = true;
+            this.tb_ProfileGyroValue.AutoSize = false;
+            this.tb_ProfileGyroValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
+            this.tb_ProfileGyroValue.Location = new System.Drawing.Point(156, 94);
+            this.tb_ProfileGyroValue.Maximum = 20;
+            this.tb_ProfileGyroValue.Minimum = 1;
+            this.tb_ProfileGyroValue.Name = "tb_ProfileGyroValue";
+            this.tb_ProfileGyroValue.Size = new System.Drawing.Size(243, 25);
+            this.tb_ProfileGyroValue.TabIndex = 13;
+            this.tb_ProfileGyroValue.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.tb_ProfileGyroValue.Value = 1;
+            this.tb_ProfileGyroValue.ValueChanged += new System.EventHandler(this.trackBar1_Scroll_1);
             // 
-            // checkBox8
+            // lb_ProfileGyro
             // 
-            this.checkBox8.AutoSize = true;
-            this.checkBox8.Location = new System.Drawing.Point(156, 29);
-            this.checkBox8.Name = "checkBox8";
-            this.checkBox8.Size = new System.Drawing.Size(161, 19);
-            this.checkBox8.TabIndex = 9;
-            this.checkBox8.Text = "Can see through cloaking";
-            this.checkBox8.UseVisualStyleBackColor = true;
+            this.lb_ProfileGyro.AutoSize = true;
+            this.lb_ProfileGyro.Location = new System.Drawing.Point(6, 94);
+            this.lb_ProfileGyro.Name = "lb_ProfileGyro";
+            this.lb_ProfileGyro.Size = new System.Drawing.Size(120, 15);
+            this.lb_ProfileGyro.TabIndex = 12;
+            this.lb_ProfileGyro.Text = "Gyrometer multiplier:";
             // 
-            // groupBox6
+            // lb_Wrapper
             // 
-            this.groupBox6.Controls.Add(this.button3);
-            this.groupBox6.Controls.Add(this.textBox3);
-            this.groupBox6.Controls.Add(this.label7);
-            this.groupBox6.Controls.Add(this.textBox2);
-            this.groupBox6.Controls.Add(this.label6);
-            this.groupBox6.Location = new System.Drawing.Point(252, 6);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(506, 123);
-            this.groupBox6.TabIndex = 1;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Profile Details";
+            this.lb_Wrapper.AutoSize = true;
+            this.lb_Wrapper.Location = new System.Drawing.Point(6, 55);
+            this.lb_Wrapper.Name = "lb_Wrapper";
+            this.lb_Wrapper.Size = new System.Drawing.Size(77, 15);
+            this.lb_Wrapper.TabIndex = 10;
+            this.lb_Wrapper.Text = "Use Wrapper:";
             // 
-            // button3
+            // lb_Whitelist
             // 
-            this.button3.Location = new System.Drawing.Point(156, 87);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(104, 23);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "Delete profile";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.lb_Whitelist.AutoSize = true;
+            this.lb_Whitelist.Location = new System.Drawing.Point(6, 30);
+            this.lb_Whitelist.Name = "lb_Whitelist";
+            this.lb_Whitelist.Size = new System.Drawing.Size(69, 15);
+            this.lb_Whitelist.TabIndex = 8;
+            this.lb_Whitelist.Text = "Whitelisted:";
             // 
-            // textBox3
+            // cB_Wrapper
             // 
-            this.textBox3.Location = new System.Drawing.Point(156, 58);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(344, 23);
-            this.textBox3.TabIndex = 5;
+            this.cB_Wrapper.AutoSize = true;
+            this.cB_Wrapper.Location = new System.Drawing.Point(156, 54);
+            this.cB_Wrapper.Name = "cB_Wrapper";
+            this.cB_Wrapper.Size = new System.Drawing.Size(243, 19);
+            this.cB_Wrapper.TabIndex = 11;
+            this.cB_Wrapper.Text = "Translates XInput calls to DirectInput calls";
+            this.cB_Wrapper.UseVisualStyleBackColor = true;
             // 
-            // label7
+            // cB_Whitelist
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 61);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(34, 15);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Path:";
+            this.cB_Whitelist.AutoSize = true;
+            this.cB_Whitelist.Location = new System.Drawing.Point(156, 29);
+            this.cB_Whitelist.Name = "cB_Whitelist";
+            this.cB_Whitelist.Size = new System.Drawing.Size(184, 19);
+            this.cB_Whitelist.TabIndex = 9;
+            this.cB_Whitelist.Text = "Can access physical controller";
+            this.cB_Whitelist.UseVisualStyleBackColor = true;
             // 
-            // textBox2
+            // gB_ProfileDetails
             // 
-            this.textBox2.Location = new System.Drawing.Point(156, 29);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(222, 23);
-            this.textBox2.TabIndex = 3;
+            this.gB_ProfileDetails.Controls.Add(this.b_ApplyProfile);
+            this.gB_ProfileDetails.Controls.Add(this.b_DeleteProfile);
+            this.gB_ProfileDetails.Controls.Add(this.tB_ProfilePath);
+            this.gB_ProfileDetails.Controls.Add(this.lb_ProfilePath);
+            this.gB_ProfileDetails.Controls.Add(this.tB_ProfileName);
+            this.gB_ProfileDetails.Controls.Add(this.lb_ProfileName);
+            this.gB_ProfileDetails.Location = new System.Drawing.Point(252, 6);
+            this.gB_ProfileDetails.Name = "gB_ProfileDetails";
+            this.gB_ProfileDetails.Size = new System.Drawing.Size(506, 123);
+            this.gB_ProfileDetails.TabIndex = 1;
+            this.gB_ProfileDetails.TabStop = false;
+            this.gB_ProfileDetails.Text = "Profile Details";
             // 
-            // label6
+            // b_ApplyProfile
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 32);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(42, 15);
-            this.label6.TabIndex = 2;
-            this.label6.Text = "Name:";
+            this.b_ApplyProfile.Location = new System.Drawing.Point(266, 87);
+            this.b_ApplyProfile.Name = "b_ApplyProfile";
+            this.b_ApplyProfile.Size = new System.Drawing.Size(75, 23);
+            this.b_ApplyProfile.TabIndex = 7;
+            this.b_ApplyProfile.Text = "Apply";
+            this.b_ApplyProfile.UseVisualStyleBackColor = true;
+            this.b_ApplyProfile.Click += new System.EventHandler(this.button1_Click_1);
             // 
-            // groupBox5
+            // b_DeleteProfile
             // 
-            this.groupBox5.Controls.Add(this.button2);
-            this.groupBox5.Controls.Add(this.listBox1);
-            this.groupBox5.Location = new System.Drawing.Point(6, 6);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(240, 552);
-            this.groupBox5.TabIndex = 0;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Profiles";
+            this.b_DeleteProfile.Location = new System.Drawing.Point(156, 87);
+            this.b_DeleteProfile.Name = "b_DeleteProfile";
+            this.b_DeleteProfile.Size = new System.Drawing.Size(104, 23);
+            this.b_DeleteProfile.TabIndex = 6;
+            this.b_DeleteProfile.Text = "Delete profile";
+            this.b_DeleteProfile.UseVisualStyleBackColor = true;
+            this.b_DeleteProfile.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button2
+            // tB_ProfilePath
             // 
-            this.button2.Location = new System.Drawing.Point(6, 522);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(228, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Create new profile";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.tB_ProfilePath.Location = new System.Drawing.Point(156, 58);
+            this.tB_ProfilePath.Name = "tB_ProfilePath";
+            this.tB_ProfilePath.ReadOnly = true;
+            this.tB_ProfilePath.Size = new System.Drawing.Size(344, 23);
+            this.tB_ProfilePath.TabIndex = 5;
             // 
-            // listBox1
+            // lb_ProfilePath
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 15;
-            this.listBox1.Location = new System.Drawing.Point(6, 32);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(228, 484);
-            this.listBox1.TabIndex = 0;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.lb_ProfilePath.AutoSize = true;
+            this.lb_ProfilePath.Location = new System.Drawing.Point(6, 61);
+            this.lb_ProfilePath.Name = "lb_ProfilePath";
+            this.lb_ProfilePath.Size = new System.Drawing.Size(34, 15);
+            this.lb_ProfilePath.TabIndex = 4;
+            this.lb_ProfilePath.Text = "Path:";
+            // 
+            // tB_ProfileName
+            // 
+            this.tB_ProfileName.Location = new System.Drawing.Point(156, 29);
+            this.tB_ProfileName.Name = "tB_ProfileName";
+            this.tB_ProfileName.ReadOnly = true;
+            this.tB_ProfileName.Size = new System.Drawing.Size(222, 23);
+            this.tB_ProfileName.TabIndex = 3;
+            // 
+            // lb_ProfileName
+            // 
+            this.lb_ProfileName.AutoSize = true;
+            this.lb_ProfileName.Location = new System.Drawing.Point(6, 32);
+            this.lb_ProfileName.Name = "lb_ProfileName";
+            this.lb_ProfileName.Size = new System.Drawing.Size(42, 15);
+            this.lb_ProfileName.TabIndex = 2;
+            this.lb_ProfileName.Text = "Name:";
+            // 
+            // gB_Profiles
+            // 
+            this.gB_Profiles.Controls.Add(this.b_CreateProfile);
+            this.gB_Profiles.Controls.Add(this.lB_Profiles);
+            this.gB_Profiles.Location = new System.Drawing.Point(6, 6);
+            this.gB_Profiles.Name = "gB_Profiles";
+            this.gB_Profiles.Size = new System.Drawing.Size(240, 552);
+            this.gB_Profiles.TabIndex = 0;
+            this.gB_Profiles.TabStop = false;
+            this.gB_Profiles.Text = "Profiles";
+            // 
+            // b_CreateProfile
+            // 
+            this.b_CreateProfile.Location = new System.Drawing.Point(6, 522);
+            this.b_CreateProfile.Name = "b_CreateProfile";
+            this.b_CreateProfile.Size = new System.Drawing.Size(228, 23);
+            this.b_CreateProfile.TabIndex = 1;
+            this.b_CreateProfile.Text = "Create new profile";
+            this.b_CreateProfile.UseVisualStyleBackColor = true;
+            this.b_CreateProfile.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // lB_Profiles
+            // 
+            this.lB_Profiles.FormattingEnabled = true;
+            this.lB_Profiles.ItemHeight = 15;
+            this.lB_Profiles.Location = new System.Drawing.Point(6, 32);
+            this.lB_Profiles.Name = "lB_Profiles";
+            this.lB_Profiles.Size = new System.Drawing.Size(228, 484);
+            this.lB_Profiles.TabIndex = 0;
+            this.lB_Profiles.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // tabSettings
             // 
-            this.tabSettings.Controls.Add(this.groupBox8);
-            this.tabSettings.Controls.Add(this.groupBox3);
-            this.tabSettings.Controls.Add(this.groupBox2);
+            this.tabSettings.Controls.Add(this.gb_SettingsService);
+            this.tabSettings.Controls.Add(this.gb_SettingsUDP);
+            this.tabSettings.Controls.Add(this.gb_SettingsInterface);
             this.tabSettings.Location = new System.Drawing.Point(4, 24);
             this.tabSettings.Name = "tabSettings";
             this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
@@ -547,191 +607,195 @@ namespace ControllerHelper
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
             // 
-            // groupBox8
+            // gb_SettingsService
             // 
-            this.groupBox8.Controls.Add(this.button7);
-            this.groupBox8.Controls.Add(this.button6);
-            this.groupBox8.Controls.Add(this.button5);
-            this.groupBox8.Controls.Add(this.button4);
-            this.groupBox8.Controls.Add(this.label11);
-            this.groupBox8.Location = new System.Drawing.Point(6, 175);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(752, 383);
-            this.groupBox8.TabIndex = 5;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Controller Service";
+            this.gb_SettingsService.Controls.Add(this.b_ServiceStop);
+            this.gb_SettingsService.Controls.Add(this.b_ServiceStart);
+            this.gb_SettingsService.Controls.Add(this.b_ServiceDelete);
+            this.gb_SettingsService.Controls.Add(this.b_ServiceInstall);
+            this.gb_SettingsService.Controls.Add(this.lb_Service_Error);
+            this.gb_SettingsService.Location = new System.Drawing.Point(6, 175);
+            this.gb_SettingsService.Name = "gb_SettingsService";
+            this.gb_SettingsService.Size = new System.Drawing.Size(752, 383);
+            this.gb_SettingsService.TabIndex = 5;
+            this.gb_SettingsService.TabStop = false;
+            this.gb_SettingsService.Text = "Controller Service";
             // 
-            // button7
+            // b_ServiceStop
             // 
-            this.button7.Enabled = false;
-            this.button7.Location = new System.Drawing.Point(383, 66);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(363, 23);
-            this.button7.TabIndex = 4;
-            this.button7.Text = "Stop Controller Service";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
+            this.b_ServiceStop.Enabled = false;
+            this.b_ServiceStop.Location = new System.Drawing.Point(383, 66);
+            this.b_ServiceStop.Name = "b_ServiceStop";
+            this.b_ServiceStop.Size = new System.Drawing.Size(363, 23);
+            this.b_ServiceStop.TabIndex = 4;
+            this.b_ServiceStop.Text = "Stop Controller Service";
+            this.b_ServiceStop.UseVisualStyleBackColor = true;
+            this.b_ServiceStop.Click += new System.EventHandler(this.button7_Click);
             // 
-            // button6
+            // b_ServiceStart
             // 
-            this.button6.Enabled = false;
-            this.button6.Location = new System.Drawing.Point(6, 66);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(363, 23);
-            this.button6.TabIndex = 3;
-            this.button6.Text = "Start Controller Service";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.b_ServiceStart.Enabled = false;
+            this.b_ServiceStart.Location = new System.Drawing.Point(6, 66);
+            this.b_ServiceStart.Name = "b_ServiceStart";
+            this.b_ServiceStart.Size = new System.Drawing.Size(363, 23);
+            this.b_ServiceStart.TabIndex = 3;
+            this.b_ServiceStart.Text = "Start Controller Service";
+            this.b_ServiceStart.UseVisualStyleBackColor = true;
+            this.b_ServiceStart.Click += new System.EventHandler(this.button6_Click);
             // 
-            // button5
+            // b_ServiceDelete
             // 
-            this.button5.Enabled = false;
-            this.button5.Location = new System.Drawing.Point(383, 37);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(363, 23);
-            this.button5.TabIndex = 2;
-            this.button5.Text = "Delete Controller Service";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.b_ServiceDelete.Enabled = false;
+            this.b_ServiceDelete.Location = new System.Drawing.Point(383, 37);
+            this.b_ServiceDelete.Name = "b_ServiceDelete";
+            this.b_ServiceDelete.Size = new System.Drawing.Size(363, 23);
+            this.b_ServiceDelete.TabIndex = 2;
+            this.b_ServiceDelete.Text = "Delete Controller Service";
+            this.b_ServiceDelete.UseVisualStyleBackColor = true;
+            this.b_ServiceDelete.Click += new System.EventHandler(this.button5_Click);
             // 
-            // button4
+            // b_ServiceInstall
             // 
-            this.button4.Enabled = false;
-            this.button4.Location = new System.Drawing.Point(6, 37);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(363, 23);
-            this.button4.TabIndex = 1;
-            this.button4.Text = "Install Controller Service";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.b_ServiceInstall.Enabled = false;
+            this.b_ServiceInstall.Location = new System.Drawing.Point(6, 37);
+            this.b_ServiceInstall.Name = "b_ServiceInstall";
+            this.b_ServiceInstall.Size = new System.Drawing.Size(363, 23);
+            this.b_ServiceInstall.TabIndex = 1;
+            this.b_ServiceInstall.Text = "Install Controller Service";
+            this.b_ServiceInstall.UseVisualStyleBackColor = true;
+            this.b_ServiceInstall.Click += new System.EventHandler(this.button4_Click);
             // 
-            // label11
+            // lb_Service_Error
             // 
-            this.label11.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label11.Location = new System.Drawing.Point(3, 19);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(746, 15);
-            this.label11.TabIndex = 0;
-            this.label11.Text = "Run this tool as Administrator to unlock these settings.";
-            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label11.Visible = false;
+            this.lb_Service_Error.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lb_Service_Error.Location = new System.Drawing.Point(3, 19);
+            this.lb_Service_Error.Name = "lb_Service_Error";
+            this.lb_Service_Error.Size = new System.Drawing.Size(746, 15);
+            this.lb_Service_Error.TabIndex = 0;
+            this.lb_Service_Error.Text = "Run this tool as Administrator to unlock these settings.";
+            this.lb_Service_Error.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lb_Service_Error.Visible = false;
             // 
-            // groupBox3
+            // gb_SettingsUDP
             // 
-            this.groupBox3.Controls.Add(this.button1);
-            this.groupBox3.Controls.Add(this.numericUpDown1);
-            this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Controls.Add(this.textBox1);
-            this.groupBox3.Controls.Add(this.checkBox6);
-            this.groupBox3.Location = new System.Drawing.Point(6, 113);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(752, 56);
-            this.groupBox3.TabIndex = 4;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "UDP Server";
+            this.gb_SettingsUDP.Controls.Add(this.b_UDPApply);
+            this.gb_SettingsUDP.Controls.Add(this.tB_UDPPort);
+            this.gb_SettingsUDP.Controls.Add(this.lb_UDPport);
+            this.gb_SettingsUDP.Controls.Add(this.tB_UDPIP);
+            this.gb_SettingsUDP.Controls.Add(this.cB_UDPEnable);
+            this.gb_SettingsUDP.Location = new System.Drawing.Point(6, 113);
+            this.gb_SettingsUDP.Name = "gb_SettingsUDP";
+            this.gb_SettingsUDP.Size = new System.Drawing.Size(752, 56);
+            this.gb_SettingsUDP.TabIndex = 4;
+            this.gb_SettingsUDP.TabStop = false;
+            this.gb_SettingsUDP.Text = "UDP Server";
             // 
-            // button1
+            // b_UDPApply
             // 
-            this.button1.Location = new System.Drawing.Point(671, 15);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 35);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Apply";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.b_UDPApply.Location = new System.Drawing.Point(671, 15);
+            this.b_UDPApply.Name = "b_UDPApply";
+            this.b_UDPApply.Size = new System.Drawing.Size(75, 35);
+            this.b_UDPApply.TabIndex = 4;
+            this.b_UDPApply.Text = "Apply";
+            this.b_UDPApply.UseVisualStyleBackColor = true;
+            this.b_UDPApply.Click += new System.EventHandler(this.button1_Click);
             // 
-            // numericUpDown1
+            // tB_UDPPort
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(249, 21);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.tB_UDPPort.Location = new System.Drawing.Point(249, 21);
+            this.tB_UDPPort.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(120, 23);
-            this.numericUpDown1.TabIndex = 3;
-            this.numericUpDown1.Value = new decimal(new int[] {
+            this.tB_UDPPort.Name = "tB_UDPPort";
+            this.tB_UDPPort.Size = new System.Drawing.Size(120, 23);
+            this.tB_UDPPort.TabIndex = 3;
+            this.tB_UDPPort.Value = new decimal(new int[] {
             26760,
             0,
             0,
             0});
             // 
-            // label5
+            // lb_UDPport
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(214, 23);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(29, 15);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Port";
+            this.lb_UDPport.AutoSize = true;
+            this.lb_UDPport.Location = new System.Drawing.Point(214, 23);
+            this.lb_UDPport.Name = "lb_UDPport";
+            this.lb_UDPport.Size = new System.Drawing.Size(29, 15);
+            this.lb_UDPport.TabIndex = 2;
+            this.lb_UDPport.Text = "Port";
             // 
-            // textBox1
+            // tB_UDPIP
             // 
-            this.textBox1.Location = new System.Drawing.Point(108, 20);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "127.0.0.1";
+            this.tB_UDPIP.Location = new System.Drawing.Point(108, 20);
+            this.tB_UDPIP.Name = "tB_UDPIP";
+            this.tB_UDPIP.Size = new System.Drawing.Size(100, 23);
+            this.tB_UDPIP.TabIndex = 1;
+            this.tB_UDPIP.Text = "127.0.0.1";
             // 
-            // checkBox6
+            // cB_UDPEnable
             // 
-            this.checkBox6.AutoSize = true;
-            this.checkBox6.Location = new System.Drawing.Point(6, 22);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(96, 19);
-            this.checkBox6.TabIndex = 0;
-            this.checkBox6.Text = "Enable Server";
-            this.checkBox6.UseVisualStyleBackColor = true;
+            this.cB_UDPEnable.AutoSize = true;
+            this.cB_UDPEnable.Location = new System.Drawing.Point(6, 22);
+            this.cB_UDPEnable.Name = "cB_UDPEnable";
+            this.cB_UDPEnable.Size = new System.Drawing.Size(96, 19);
+            this.cB_UDPEnable.TabIndex = 0;
+            this.cB_UDPEnable.Text = "Enable Server";
+            this.cB_UDPEnable.UseVisualStyleBackColor = true;
             // 
-            // groupBox2
+            // gb_SettingsInterface
             // 
-            this.groupBox2.Controls.Add(this.checkBox3);
-            this.groupBox2.Controls.Add(this.checkBox5);
-            this.groupBox2.Controls.Add(this.checkBox4);
-            this.groupBox2.Location = new System.Drawing.Point(6, 6);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(752, 101);
-            this.groupBox2.TabIndex = 3;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Interface";
+            this.gb_SettingsInterface.Controls.Add(this.cB_RunAtStartup);
+            this.gb_SettingsInterface.Controls.Add(this.cB_CloseMinimizes);
+            this.gb_SettingsInterface.Controls.Add(this.cB_StartMinimized);
+            this.gb_SettingsInterface.Location = new System.Drawing.Point(6, 6);
+            this.gb_SettingsInterface.Name = "gb_SettingsInterface";
+            this.gb_SettingsInterface.Size = new System.Drawing.Size(752, 101);
+            this.gb_SettingsInterface.TabIndex = 3;
+            this.gb_SettingsInterface.TabStop = false;
+            this.gb_SettingsInterface.Text = "Interface";
             // 
-            // checkBox3
+            // cB_RunAtStartup
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(6, 22);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(103, 19);
-            this.checkBox3.TabIndex = 0;
-            this.checkBox3.Text = "Run At Startup";
-            this.checkBox3.UseVisualStyleBackColor = true;
-            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
+            this.cB_RunAtStartup.AutoSize = true;
+            this.cB_RunAtStartup.Location = new System.Drawing.Point(6, 22);
+            this.cB_RunAtStartup.Name = "cB_RunAtStartup";
+            this.cB_RunAtStartup.Size = new System.Drawing.Size(103, 19);
+            this.cB_RunAtStartup.TabIndex = 0;
+            this.cB_RunAtStartup.Text = "Run At Startup";
+            this.cB_RunAtStartup.UseVisualStyleBackColor = true;
+            this.cB_RunAtStartup.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
             // 
-            // checkBox5
+            // cB_CloseMinimizes
             // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.Location = new System.Drawing.Point(6, 72);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(112, 19);
-            this.checkBox5.TabIndex = 2;
-            this.checkBox5.Text = "Close Minimizes";
-            this.checkBox5.UseVisualStyleBackColor = true;
-            this.checkBox5.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
+            this.cB_CloseMinimizes.AutoSize = true;
+            this.cB_CloseMinimizes.Location = new System.Drawing.Point(6, 72);
+            this.cB_CloseMinimizes.Name = "cB_CloseMinimizes";
+            this.cB_CloseMinimizes.Size = new System.Drawing.Size(112, 19);
+            this.cB_CloseMinimizes.TabIndex = 2;
+            this.cB_CloseMinimizes.Text = "Close Minimizes";
+            this.cB_CloseMinimizes.UseVisualStyleBackColor = true;
+            this.cB_CloseMinimizes.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
             // 
-            // checkBox4
+            // cB_StartMinimized
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(6, 47);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(109, 19);
-            this.checkBox4.TabIndex = 1;
-            this.checkBox4.Text = "Start Minimized";
-            this.checkBox4.UseVisualStyleBackColor = true;
-            this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
+            this.cB_StartMinimized.AutoSize = true;
+            this.cB_StartMinimized.Location = new System.Drawing.Point(6, 47);
+            this.cB_StartMinimized.Name = "cB_StartMinimized";
+            this.cB_StartMinimized.Size = new System.Drawing.Size(109, 19);
+            this.cB_StartMinimized.TabIndex = 1;
+            this.cB_StartMinimized.Text = "Start Minimized";
+            this.cB_StartMinimized.UseVisualStyleBackColor = true;
+            this.cB_StartMinimized.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
             // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.AutomaticDelay = 100;
             // 
             // ControllerHelper
             // 
@@ -753,27 +817,29 @@ namespace ControllerHelper
             this.contextMenuStrip1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabDevices.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tB_HIDrate)).EndInit();
-            this.groupBoxDetails.ResumeLayout(false);
-            this.groupBoxDetails.PerformLayout();
-            this.groupBoxXinput.ResumeLayout(false);
+            this.gB_DeviceDetails.ResumeLayout(false);
+            this.gB_DeviceDetails.PerformLayout();
+            this.gB_HIDDetails.ResumeLayout(false);
+            this.gB_HIDDetails.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tB_PullRate)).EndInit();
+            this.gB_XinputDetails.ResumeLayout(false);
+            this.gB_XinputDetails.PerformLayout();
+            this.gB_XinputDevices.ResumeLayout(false);
             this.tabProfiles.ResumeLayout(false);
-            this.groupBox7.ResumeLayout(false);
-            this.groupBox7.PerformLayout();
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
+            this.gB_ProfileOptions.ResumeLayout(false);
+            this.gB_ProfileOptions.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tb_ProfileAcceleroValue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tb_ProfileGyroValue)).EndInit();
+            this.gB_ProfileDetails.ResumeLayout(false);
+            this.gB_ProfileDetails.PerformLayout();
+            this.gB_Profiles.ResumeLayout(false);
             this.tabSettings.ResumeLayout(false);
-            this.groupBox8.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.gb_SettingsService.ResumeLayout(false);
+            this.gb_SettingsUDP.ResumeLayout(false);
+            this.gb_SettingsUDP.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tB_UDPPort)).EndInit();
+            this.gb_SettingsInterface.ResumeLayout(false);
+            this.gb_SettingsInterface.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -786,59 +852,64 @@ namespace ControllerHelper
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabDevices;
         private System.Windows.Forms.TabPage tabSettings;
-        private System.Windows.Forms.GroupBox groupBoxXinput;
-        private System.Windows.Forms.GroupBox groupBoxDetails;
-        private System.Windows.Forms.ListBox listBoxDevices;
-        private System.Windows.Forms.Label lB_InstanceID;
+        private System.Windows.Forms.GroupBox gB_XinputDevices;
+        private System.Windows.Forms.GroupBox gB_XinputDetails;
+        private System.Windows.Forms.ListBox lB_Devices;
+        private System.Windows.Forms.Label lb_InstanceID;
         private System.Windows.Forms.TextBox tB_InstanceID;
-        private System.Windows.Forms.ComboBox cB_HIDdevice;
-        private System.Windows.Forms.Label lB_HidMode;
-        private System.Windows.Forms.Label lB_HidCloak;
+        private System.Windows.Forms.ComboBox cB_HidMode;
+        private System.Windows.Forms.Label lb_HidMode;
+        private System.Windows.Forms.Label lb_HidCloak;
         private System.Windows.Forms.ComboBox cB_HIDcloak;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.CheckBox checkBox2;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TrackBar tB_HIDrate;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.GroupBox gB_HIDDetails;
+        private System.Windows.Forms.Label lb_gyro;
+        private System.Windows.Forms.CheckBox cB_gyro;
+        private System.Windows.Forms.CheckBox cB_accelero;
+        private System.Windows.Forms.Label lb_accelero;
+        private System.Windows.Forms.Label lb_PullRate;
+        private System.Windows.Forms.TrackBar tB_PullRate;
         private System.Windows.Forms.TabPage tabProfiles;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.CheckBox checkBox3;
-        private System.Windows.Forms.CheckBox checkBox5;
-        private System.Windows.Forms.CheckBox checkBox4;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.CheckBox checkBox6;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.CheckBox checkBox7;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.CheckBox checkBox8;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.CheckBox checkBox9;
-        private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.GroupBox groupBox8;
-        private System.Windows.Forms.CheckBox checkBox10;
-        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.GroupBox gb_SettingsInterface;
+        private System.Windows.Forms.CheckBox cB_RunAtStartup;
+        private System.Windows.Forms.CheckBox cB_CloseMinimizes;
+        private System.Windows.Forms.CheckBox cB_StartMinimized;
+        private System.Windows.Forms.GroupBox gb_SettingsUDP;
+        private System.Windows.Forms.CheckBox cB_UDPEnable;
+        private System.Windows.Forms.TextBox tB_UDPIP;
+        private System.Windows.Forms.Label lb_UDPport;
+        private System.Windows.Forms.NumericUpDown tB_UDPPort;
+        private System.Windows.Forms.Button b_UDPApply;
+        private System.Windows.Forms.CheckBox cB_uncloak;
+        private System.Windows.Forms.GroupBox gB_DeviceDetails;
+        private System.Windows.Forms.GroupBox gB_Profiles;
+        private System.Windows.Forms.ListBox lB_Profiles;
+        private System.Windows.Forms.GroupBox gB_ProfileDetails;
+        private System.Windows.Forms.TextBox tB_ProfilePath;
+        private System.Windows.Forms.Label lb_ProfilePath;
+        private System.Windows.Forms.TextBox tB_ProfileName;
+        private System.Windows.Forms.Label lb_ProfileName;
+        private System.Windows.Forms.Label lb_Whitelist;
+        private System.Windows.Forms.CheckBox cB_Whitelist;
+        private System.Windows.Forms.Label lb_Wrapper;
+        private System.Windows.Forms.CheckBox cB_Wrapper;
+        private System.Windows.Forms.GroupBox gB_ProfileOptions;
+        private System.Windows.Forms.GroupBox gb_SettingsService;
+        private System.Windows.Forms.CheckBox cB_touchpad;
+        private System.Windows.Forms.Label lb_touchpad;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button b_CreateProfile;
+        private System.Windows.Forms.Button b_DeleteProfile;
+        private System.Windows.Forms.Label lb_Service_Error;
+        private System.Windows.Forms.Button b_ServiceDelete;
+        private System.Windows.Forms.Button b_ServiceInstall;
+        private System.Windows.Forms.Button b_ServiceStop;
+        private System.Windows.Forms.Button b_ServiceStart;
+        private System.Windows.Forms.TrackBar tb_ProfileGyroValue;
+        private System.Windows.Forms.Label lb_ProfileGyro;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.TrackBar tb_ProfileAcceleroValue;
+        private System.Windows.Forms.Label lb_ProfileAccelero;
+        private System.Windows.Forms.Button b_ApplyProfile;
     }
 }
 

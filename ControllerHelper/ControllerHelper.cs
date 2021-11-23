@@ -73,17 +73,17 @@ namespace ControllerHelper
             // initialize mouse hook
             m_Hook = new MouseHook(PipeClient);
 
-            cB_HIDdevice.Items.Add(HideDS4);
-            cB_HIDdevice.Items.Add(HideXBOX);
+            cB_HidMode.Items.Add(HideDS4);
+            cB_HidMode.Items.Add(HideXBOX);
 
             HIDmodes.Add("DualShock4Controller", HideDS4);
             HIDmodes.Add("Xbox360Controller", HideXBOX);
 
             // settings
-            checkBox3.Checked = RunAtStartup = Properties.Settings.Default.RunAtStartup;
-            checkBox4.Checked = StartMinimized = Properties.Settings.Default.StartMinimized;
-            checkBox5.Checked = CloseMinimises = Properties.Settings.Default.CloseMinimises;
-            checkBox10.Checked = HookMouse = Properties.Settings.Default.HookMouse;
+            cB_RunAtStartup.Checked = RunAtStartup = Properties.Settings.Default.RunAtStartup;
+            cB_StartMinimized.Checked = StartMinimized = Properties.Settings.Default.StartMinimized;
+            cB_CloseMinimizes.Checked = CloseMinimises = Properties.Settings.Default.CloseMinimises;
+            cB_touchpad.Checked = HookMouse = Properties.Settings.Default.HookMouse;
 
             if (StartMinimized)
             {
@@ -99,9 +99,9 @@ namespace ControllerHelper
             {
                 if (!IsAdmin)
                 {
-                    foreach (Control ctrl in groupBox8.Controls)
+                    foreach (Control ctrl in gb_SettingsService.Controls)
                         ctrl.Visible = false;
-                    label11.Visible = true;
+                    lb_Service_Error.Visible = true;
                 }
             });
 
@@ -240,7 +240,7 @@ namespace ControllerHelper
             {
                 foreach (Control ctl in tabDevices.Controls)
                     ctl.Enabled = status;
-                groupBox3.Enabled = status;
+                gb_SettingsUDP.Enabled = status;
             });
         }
 
@@ -250,10 +250,10 @@ namespace ControllerHelper
 
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                listBoxDevices.Items.Clear();
-                listBoxDevices.Items.Add(CurrentController);
+                lB_Devices.Items.Clear();
+                lB_Devices.Items.Add(CurrentController);
 
-                listBoxDevices.SelectedItem = CurrentController;
+                lB_Devices.SelectedItem = CurrentController;
             });
         }
 
@@ -261,20 +261,19 @@ namespace ControllerHelper
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                cB_HIDdevice.SelectedItem = HIDmodes[args["HIDmode"]];
+                cB_HidMode.SelectedItem = HIDmodes[args["HIDmode"]];
                 cB_HIDcloak.SelectedItem = args["HIDcloaked"];
-                checkBox7.Checked = bool.Parse(args["HIDuncloakonclose"]);
+                cB_uncloak.Checked = bool.Parse(args["HIDuncloakonclose"]);
 
-                checkBox1.Checked = bool.Parse(args["gyrometer"]);
-                checkBox2.Checked = bool.Parse(args["accelerometer"]);
+                cB_gyro.Checked = bool.Parse(args["gyrometer"]);
+                cB_accelero.Checked = bool.Parse(args["accelerometer"]);
 
-                tB_HIDrate.Value = int.Parse(args["HIDrate"]);
-                m_Hook.SetInterval(tB_HIDrate.Value);
-                label4.Text = $"{tB_HIDrate.Value} Miliseconds";
+                tB_PullRate.Value = int.Parse(args["HIDrate"]);
+                m_Hook.SetInterval(tB_PullRate.Value);
 
-                checkBox6.Checked = bool.Parse(args["DSUEnabled"]);
-                textBox1.Text = args["DSUip"];
-                numericUpDown1.Value = int.Parse(args["DSUport"]);
+                cB_UDPEnable.Checked = bool.Parse(args["DSUEnabled"]);
+                tB_UDPIP.Text = args["DSUip"];
+                tB_UDPPort.Value = int.Parse(args["DSUport"]);
             });
         }
 
@@ -286,7 +285,7 @@ namespace ControllerHelper
         #region GUI
         private void listBoxDevices_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Controller con = (Controller)listBoxDevices.SelectedItem;
+            Controller con = (Controller)lB_Devices.SelectedItem;
 
             if (con == null)
                 return;
@@ -312,11 +311,12 @@ namespace ControllerHelper
 
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
-            m_Hook.SetInterval(tB_HIDrate.Value);
+            // update mouse hook delay based on controller pull rate
+            m_Hook.SetInterval(tB_PullRate.Value);
 
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                label4.Text = $"{tB_HIDrate.Value} Miliseconds";
+                toolTip1.SetToolTip(tB_PullRate, $"{tB_PullRate.Value} Miliseconds");
             });
 
             PipeClient.SendMessage(new PipeMessage
@@ -324,7 +324,7 @@ namespace ControllerHelper
                 Code = PipeCode.CLIENT_SETTINGS,
                 args = new Dictionary<string, string>
                 {
-                    { "HIDrate", $"{tB_HIDrate.Value}" }
+                    { "HIDrate", $"{tB_PullRate.Value}" }
                 }
             });
         }
@@ -336,9 +336,9 @@ namespace ControllerHelper
                 Code = PipeCode.CLIENT_SETTINGS,
                 args = new Dictionary<string, string>
                 {
-                    { "DSUip", $"{textBox1.Text}" },
-                    { "DSUport", $"{numericUpDown1.Value}" },
-                    { "DSUEnabled", $"{checkBox6.Checked}" }
+                    { "DSUip", $"{tB_UDPIP.Text}" },
+                    { "DSUport", $"{tB_UDPPort.Value}" },
+                    { "DSUEnabled", $"{cB_UDPEnable.Checked}" }
                 }
             });
         }
@@ -364,22 +364,22 @@ namespace ControllerHelper
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Profile profile = (Profile)listBox1.SelectedItem;
+            Profile profile = (Profile)lB_Profiles.SelectedItem;
             profile.Delete();
 
-            listBox1.SelectedIndex = -1;
+            lB_Profiles.SelectedIndex = -1;
         }
 
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
             RegistryKey rWrite = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
-            if (checkBox3.Checked)
+            if (cB_RunAtStartup.Checked)
                 rWrite.SetValue("ControllerHelper", AppDomain.CurrentDomain.BaseDirectory + $"{AppDomain.CurrentDomain.FriendlyName}.exe");
             else
                 rWrite.DeleteValue("ControllerHelper");
 
-            RunAtStartup = checkBox3.Checked;
+            RunAtStartup = cB_RunAtStartup.Checked;
             Properties.Settings.Default.RunAtStartup = RunAtStartup;
             Properties.Settings.Default.Save();
         }
@@ -391,14 +391,14 @@ namespace ControllerHelper
                 Code = PipeCode.CLIENT_SETTINGS,
                 args = new Dictionary<string, string>
                 {
-                    { "HIDuncloakonclose", $"{checkBox7.Checked}" }
+                    { "HIDuncloakonclose", $"{cB_uncloak.Checked}" }
                 }
             });
         }
 
         private void checkBox10_CheckedChanged(object sender, EventArgs e)
         {
-            HookMouse = checkBox10.Checked;
+            HookMouse = cB_touchpad.Checked;
             Properties.Settings.Default.HookMouse = HookMouse;
             Properties.Settings.Default.Save();
 
@@ -407,36 +407,104 @@ namespace ControllerHelper
 
         private void checkBox4_CheckedChanged(object sender, EventArgs e)
         {
-            StartMinimized = checkBox4.Checked;
+            StartMinimized = cB_StartMinimized.Checked;
             Properties.Settings.Default.StartMinimized = StartMinimized;
             Properties.Settings.Default.Save();
         }
 
         private void checkBox5_CheckedChanged(object sender, EventArgs e)
         {
-            CloseMinimises = checkBox5.Checked;
+            CloseMinimises = cB_CloseMinimizes.Checked;
             Properties.Settings.Default.CloseMinimises = CloseMinimises;
             Properties.Settings.Default.Save();
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Profile profile = (Profile)listBox1.SelectedItem;
+            Profile profile = (Profile)lB_Profiles.SelectedItem;
 
             this.BeginInvoke((MethodInvoker)delegate ()
             {
                 if (profile == null)
                 {
-                    groupBox6.Enabled = false;
-                    groupBox7.Enabled = false;
+                    gB_ProfileDetails.Enabled = false;
+                    gB_ProfileOptions.Enabled = false;
                 }
                 else
                 {
-                    textBox2.Text = profile.name;
-                    textBox3.Text = profile.path;
-                    groupBox6.Enabled = true;
-                    groupBox7.Enabled = true;
+                    gB_ProfileDetails.Enabled = true;
+                    gB_ProfileOptions.Enabled = true;
+
+                    tB_ProfileName.Text = profile.name;
+                    tB_ProfilePath.Text = profile.path;
+
+                    cB_Whitelist.Checked = profile.whitelisted;
+                    cB_Wrapper.Checked = profile.use_wrapper;
+
+                    tb_ProfileGyroValue.Value = (int)(profile.gyrometer * 10.0f);
+                    tb_ProfileAcceleroValue.Value = (int)(profile.accelerometer * 10.0f);
                 }
+            });
+        }
+
+        private void trackBar1_Scroll_1(object sender, EventArgs e)
+        {
+            Profile profile = (Profile)lB_Profiles.SelectedItem;
+            if (profile == null)
+                return;
+
+            float value = tb_ProfileGyroValue.Value / 10.0f;
+
+            this.BeginInvoke((MethodInvoker)delegate ()
+            {
+                toolTip1.SetToolTip(tb_ProfileGyroValue, $"value: {value}");
+            });
+        }
+
+        private void trackBar2_Scroll(object sender, EventArgs e)
+        {
+            Profile profile = (Profile)lB_Profiles.SelectedItem;
+            if (profile == null)
+                return;
+
+            float value = tb_ProfileAcceleroValue.Value / 10.0f;
+
+            this.BeginInvoke((MethodInvoker)delegate ()
+            {
+                toolTip1.SetToolTip(tb_ProfileAcceleroValue, $"value: {value}");
+            });
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            Profile profile = (Profile)lB_Profiles.SelectedItem;
+            if (profile == null)
+                return;
+
+            float gyro_value = tb_ProfileGyroValue.Value / 10.0f;
+            float acce_value = tb_ProfileAcceleroValue.Value / 10.0f;
+
+            profile.gyrometer = gyro_value;
+            profile.accelerometer = acce_value;
+            profile.whitelisted = cB_Whitelist.Checked;
+            profile.use_wrapper = cB_Wrapper.Checked;
+
+            profile.Serialize();
+        }
+
+        private void cB_gyro_CheckedChanged(object sender, EventArgs e)
+        {
+            this.BeginInvoke((MethodInvoker)delegate ()
+            {
+                cB_gyro.Text = cB_gyro.Checked ? "Gyrometer detected" : "No gyrometer detected";
+            });
+        }
+
+        private void cB_accelero_CheckedChanged(object sender, EventArgs e)
+        {
+            this.BeginInvoke((MethodInvoker)delegate ()
+            {
+                cB_accelero.Text = cB_accelero.Checked ? "Accelerometer detected" : "No accelerometer detected";
             });
         }
 
@@ -444,13 +512,13 @@ namespace ControllerHelper
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                int idx = listBox1.Items.IndexOf(profile);
+                int idx = lB_Profiles.Items.IndexOf(profile);
                 if (idx == -1)
-                    listBox1.Items.Add(profile);
+                    lB_Profiles.Items.Add(profile);
                 else
-                    listBox1.Items[idx] = profile;
+                    lB_Profiles.Items[idx] = profile;
 
-                listBox1.SelectedItem = profile;
+                lB_Profiles.SelectedItem = profile;
             });
         }
 
@@ -458,9 +526,9 @@ namespace ControllerHelper
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                int idx = listBox1.Items.IndexOf(profile);
+                int idx = lB_Profiles.Items.IndexOf(profile);
                 if (idx != -1)
-                    listBox1.Items.RemoveAt(idx);
+                    lB_Profiles.Items.RemoveAt(idx);
             });
         }
 
@@ -468,32 +536,32 @@ namespace ControllerHelper
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                groupBox8.SuspendLayout();
+                gb_SettingsService.SuspendLayout();
 
                 switch (status)
                 {
                     case ServiceControllerStatus.Paused:
                     case ServiceControllerStatus.Stopped:
-                        if (button4.Enabled == true) button4.Enabled = false;
-                        if (button5.Enabled == false) button5.Enabled = true;
-                        if (button6.Enabled == false) button6.Enabled = true;
-                        if (button7.Enabled == true) button7.Enabled = false;
+                        if (b_ServiceInstall.Enabled == true) b_ServiceInstall.Enabled = false;
+                        if (b_ServiceDelete.Enabled == false) b_ServiceDelete.Enabled = true;
+                        if (b_ServiceStart.Enabled == false) b_ServiceStart.Enabled = true;
+                        if (b_ServiceStop.Enabled == true) b_ServiceStop.Enabled = false;
                         break;
                     case ServiceControllerStatus.Running:
-                        if (button4.Enabled == true) button4.Enabled = false;
-                        if (button5.Enabled == true) button5.Enabled = false;
-                        if (button6.Enabled == true) button6.Enabled = false;
-                        if (button7.Enabled == false) button7.Enabled = true;
+                        if (b_ServiceInstall.Enabled == true) b_ServiceInstall.Enabled = false;
+                        if (b_ServiceDelete.Enabled == true) b_ServiceDelete.Enabled = false;
+                        if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
+                        if (b_ServiceStop.Enabled == false) b_ServiceStop.Enabled = true;
                         break;
                     default:
-                        if (button4.Enabled == false) button4.Enabled = true;
-                        if (button5.Enabled == true) button5.Enabled = false;
-                        if (button6.Enabled == true) button6.Enabled = false;
-                        if (button7.Enabled == true) button7.Enabled = false;
+                        if (b_ServiceInstall.Enabled == false) b_ServiceInstall.Enabled = true;
+                        if (b_ServiceDelete.Enabled == true) b_ServiceDelete.Enabled = false;
+                        if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
+                        if (b_ServiceStop.Enabled == true) b_ServiceStop.Enabled = false;
                         break;
                 }
 
-                groupBox8.ResumeLayout();
+                gb_SettingsService.ResumeLayout();
             });
         }
 
@@ -501,7 +569,7 @@ namespace ControllerHelper
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                foreach (Control ctrl in groupBox8.Controls)
+                foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Enabled = false;
 
                 ServiceManager.CreateService(CurrentPathService);
@@ -512,7 +580,7 @@ namespace ControllerHelper
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                foreach (Control ctrl in groupBox8.Controls)
+                foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Enabled = false;
 
                 ServiceManager.DeleteService();
@@ -523,7 +591,7 @@ namespace ControllerHelper
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                foreach (Control ctrl in groupBox8.Controls)
+                foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Enabled = false;
 
                 ServiceManager.StartService();
@@ -534,7 +602,7 @@ namespace ControllerHelper
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                foreach (Control ctrl in groupBox8.Controls)
+                foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Enabled = false;
 
                 ServiceManager.StopService();

@@ -72,8 +72,4 @@ namespace ControllerHelper
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
-
-    public class TabPageHelper : TabPage
-    {
-    }
 }
