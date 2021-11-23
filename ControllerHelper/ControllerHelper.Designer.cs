@@ -189,7 +189,7 @@ namespace ControllerHelper
             this.cB_touchpad.TabIndex = 11;
             this.cB_touchpad.Text = "Send touchpad inputs";
             this.cB_touchpad.UseVisualStyleBackColor = true;
-            this.cB_touchpad.CheckedChanged += new System.EventHandler(this.checkBox10_CheckedChanged);
+            this.cB_touchpad.CheckedChanged += new System.EventHandler(this.cB_touchpad_CheckedChanged);
             // 
             // lb_touchpad
             // 
@@ -267,7 +267,7 @@ namespace ControllerHelper
             this.tB_PullRate.TabIndex = 5;
             this.tB_PullRate.TickStyle = System.Windows.Forms.TickStyle.None;
             this.tB_PullRate.Value = 150;
-            this.tB_PullRate.ValueChanged += new System.EventHandler(this.trackBar1_Scroll);
+            this.tB_PullRate.ValueChanged += new System.EventHandler(this.tB_PullRate_Scroll);
             // 
             // lb_PullRate
             // 
@@ -320,7 +320,7 @@ namespace ControllerHelper
             this.cB_uncloak.TabIndex = 10;
             this.cB_uncloak.Text = "Uncloak on close";
             this.cB_uncloak.UseVisualStyleBackColor = true;
-            this.cB_uncloak.CheckedChanged += new System.EventHandler(this.checkBox7_CheckedChanged);
+            this.cB_uncloak.CheckedChanged += new System.EventHandler(this.cB_uncloak_CheckedChanged);
             // 
             // cB_HIDcloak
             // 
@@ -379,7 +379,7 @@ namespace ControllerHelper
             this.lB_Devices.Name = "lB_Devices";
             this.lB_Devices.Size = new System.Drawing.Size(228, 514);
             this.lB_Devices.TabIndex = 0;
-            this.lB_Devices.SelectedIndexChanged += new System.EventHandler(this.listBoxDevices_SelectedIndexChanged);
+            this.lB_Devices.SelectedIndexChanged += new System.EventHandler(this.lB_Devices_SelectedIndexChanged);
             // 
             // tabProfiles
             // 
@@ -422,7 +422,7 @@ namespace ControllerHelper
             this.tb_ProfileAcceleroValue.TabIndex = 15;
             this.tb_ProfileAcceleroValue.TickStyle = System.Windows.Forms.TickStyle.None;
             this.tb_ProfileAcceleroValue.Value = 1;
-            this.tb_ProfileAcceleroValue.ValueChanged += new System.EventHandler(this.trackBar2_Scroll);
+            this.tb_ProfileAcceleroValue.ValueChanged += new System.EventHandler(this.tb_ProfileAcceleroValue_Scroll);
             // 
             // lb_ProfileAccelero
             // 
@@ -445,7 +445,7 @@ namespace ControllerHelper
             this.tb_ProfileGyroValue.TabIndex = 13;
             this.tb_ProfileGyroValue.TickStyle = System.Windows.Forms.TickStyle.None;
             this.tb_ProfileGyroValue.Value = 1;
-            this.tb_ProfileGyroValue.ValueChanged += new System.EventHandler(this.trackBar1_Scroll_1);
+            this.tb_ProfileGyroValue.ValueChanged += new System.EventHandler(this.tb_ProfileGyroValue_Scroll);
             // 
             // lb_ProfileGyro
             // 
@@ -517,7 +517,7 @@ namespace ControllerHelper
             this.b_ApplyProfile.TabIndex = 7;
             this.b_ApplyProfile.Text = "Apply";
             this.b_ApplyProfile.UseVisualStyleBackColor = true;
-            this.b_ApplyProfile.Click += new System.EventHandler(this.button1_Click_1);
+            this.b_ApplyProfile.Click += new System.EventHandler(this.b_ApplyProfile_Click);
             // 
             // b_DeleteProfile
             // 
@@ -527,7 +527,7 @@ namespace ControllerHelper
             this.b_DeleteProfile.TabIndex = 6;
             this.b_DeleteProfile.Text = "Delete profile";
             this.b_DeleteProfile.UseVisualStyleBackColor = true;
-            this.b_DeleteProfile.Click += new System.EventHandler(this.button3_Click);
+            this.b_DeleteProfile.Click += new System.EventHandler(this.b_DeleteProfile_Click);
             // 
             // tB_ProfilePath
             // 
@@ -582,7 +582,7 @@ namespace ControllerHelper
             this.b_CreateProfile.TabIndex = 1;
             this.b_CreateProfile.Text = "Create new profile";
             this.b_CreateProfile.UseVisualStyleBackColor = true;
-            this.b_CreateProfile.Click += new System.EventHandler(this.button2_Click);
+            this.b_CreateProfile.Click += new System.EventHandler(this.b_CreateProfile_Click);
             // 
             // lB_Profiles
             // 
@@ -592,7 +592,7 @@ namespace ControllerHelper
             this.lB_Profiles.Name = "lB_Profiles";
             this.lB_Profiles.Size = new System.Drawing.Size(228, 484);
             this.lB_Profiles.TabIndex = 0;
-            this.lB_Profiles.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.lB_Profiles.SelectedIndexChanged += new System.EventHandler(this.lB_Profiles_SelectedIndexChanged);
             // 
             // tabSettings
             // 
@@ -630,7 +630,7 @@ namespace ControllerHelper
             this.b_ServiceStop.TabIndex = 4;
             this.b_ServiceStop.Text = "Stop Controller Service";
             this.b_ServiceStop.UseVisualStyleBackColor = true;
-            this.b_ServiceStop.Click += new System.EventHandler(this.button7_Click);
+            this.b_ServiceStop.Click += new System.EventHandler(this.b_ServiceStop_Click);
             // 
             // b_ServiceStart
             // 
@@ -641,7 +641,7 @@ namespace ControllerHelper
             this.b_ServiceStart.TabIndex = 3;
             this.b_ServiceStart.Text = "Start Controller Service";
             this.b_ServiceStart.UseVisualStyleBackColor = true;
-            this.b_ServiceStart.Click += new System.EventHandler(this.button6_Click);
+            this.b_ServiceStart.Click += new System.EventHandler(this.b_ServiceStart_Click);
             // 
             // b_ServiceDelete
             // 
@@ -652,7 +652,7 @@ namespace ControllerHelper
             this.b_ServiceDelete.TabIndex = 2;
             this.b_ServiceDelete.Text = "Delete Controller Service";
             this.b_ServiceDelete.UseVisualStyleBackColor = true;
-            this.b_ServiceDelete.Click += new System.EventHandler(this.button5_Click);
+            this.b_ServiceDelete.Click += new System.EventHandler(this.b_ServiceDelete_Click);
             // 
             // b_ServiceInstall
             // 
@@ -663,7 +663,7 @@ namespace ControllerHelper
             this.b_ServiceInstall.TabIndex = 1;
             this.b_ServiceInstall.Text = "Install Controller Service";
             this.b_ServiceInstall.UseVisualStyleBackColor = true;
-            this.b_ServiceInstall.Click += new System.EventHandler(this.button4_Click);
+            this.b_ServiceInstall.Click += new System.EventHandler(this.b_ServiceInstall_Click);
             // 
             // lb_Service_Error
             // 
@@ -698,7 +698,7 @@ namespace ControllerHelper
             this.b_UDPApply.TabIndex = 4;
             this.b_UDPApply.Text = "Apply";
             this.b_UDPApply.UseVisualStyleBackColor = true;
-            this.b_UDPApply.Click += new System.EventHandler(this.button1_Click);
+            this.b_UDPApply.Click += new System.EventHandler(this.b_UDPApply_Click);
             // 
             // tB_UDPPort
             // 
@@ -765,7 +765,7 @@ namespace ControllerHelper
             this.cB_RunAtStartup.TabIndex = 0;
             this.cB_RunAtStartup.Text = "Run At Startup";
             this.cB_RunAtStartup.UseVisualStyleBackColor = true;
-            this.cB_RunAtStartup.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
+            this.cB_RunAtStartup.CheckedChanged += new System.EventHandler(this.cB_RunAtStartup_CheckedChanged);
             // 
             // cB_CloseMinimizes
             // 
@@ -776,7 +776,7 @@ namespace ControllerHelper
             this.cB_CloseMinimizes.TabIndex = 2;
             this.cB_CloseMinimizes.Text = "Close Minimizes";
             this.cB_CloseMinimizes.UseVisualStyleBackColor = true;
-            this.cB_CloseMinimizes.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
+            this.cB_CloseMinimizes.CheckedChanged += new System.EventHandler(this.cB_CloseMinimizes_CheckedChanged);
             // 
             // cB_StartMinimized
             // 
@@ -787,7 +787,7 @@ namespace ControllerHelper
             this.cB_StartMinimized.TabIndex = 1;
             this.cB_StartMinimized.Text = "Start Minimized";
             this.cB_StartMinimized.UseVisualStyleBackColor = true;
-            this.cB_StartMinimized.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
+            this.cB_StartMinimized.CheckedChanged += new System.EventHandler(this.cB_StartMinimized_CheckedChanged);
             // 
             // openFileDialog1
             // 

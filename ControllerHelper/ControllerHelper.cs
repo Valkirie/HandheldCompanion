@@ -283,7 +283,7 @@ namespace ControllerHelper
         }
 
         #region GUI
-        private void listBoxDevices_SelectedIndexChanged(object sender, EventArgs e)
+        private void lB_Devices_SelectedIndexChanged(object sender, EventArgs e)
         {
             Controller con = (Controller)lB_Devices.SelectedItem;
 
@@ -309,7 +309,7 @@ namespace ControllerHelper
             });
         }
 
-        private void trackBar1_Scroll(object sender, EventArgs e)
+        private void tB_PullRate_Scroll(object sender, EventArgs e)
         {
             // update mouse hook delay based on controller pull rate
             m_Hook.SetInterval(tB_PullRate.Value);
@@ -329,7 +329,7 @@ namespace ControllerHelper
             });
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void b_UDPApply_Click(object sender, EventArgs e)
         {
             PipeClient.SendMessage(new PipeMessage
             {
@@ -343,7 +343,7 @@ namespace ControllerHelper
             });
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void b_CreateProfile_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -362,7 +362,7 @@ namespace ControllerHelper
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void b_DeleteProfile_Click(object sender, EventArgs e)
         {
             Profile profile = (Profile)lB_Profiles.SelectedItem;
             profile.Delete();
@@ -370,7 +370,7 @@ namespace ControllerHelper
             lB_Profiles.SelectedIndex = -1;
         }
 
-        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        private void cB_RunAtStartup_CheckedChanged(object sender, EventArgs e)
         {
             RegistryKey rWrite = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
@@ -384,7 +384,7 @@ namespace ControllerHelper
             Properties.Settings.Default.Save();
         }
 
-        private void checkBox7_CheckedChanged(object sender, EventArgs e)
+        private void cB_uncloak_CheckedChanged(object sender, EventArgs e)
         {
             PipeClient.SendMessage(new PipeMessage
             {
@@ -396,7 +396,7 @@ namespace ControllerHelper
             });
         }
 
-        private void checkBox10_CheckedChanged(object sender, EventArgs e)
+        private void cB_touchpad_CheckedChanged(object sender, EventArgs e)
         {
             HookMouse = cB_touchpad.Checked;
             Properties.Settings.Default.HookMouse = HookMouse;
@@ -405,21 +405,21 @@ namespace ControllerHelper
             if (HookMouse) m_Hook.Start(); else m_Hook.Stop();
         }
 
-        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        private void cB_StartMinimized_CheckedChanged(object sender, EventArgs e)
         {
             StartMinimized = cB_StartMinimized.Checked;
             Properties.Settings.Default.StartMinimized = StartMinimized;
             Properties.Settings.Default.Save();
         }
 
-        private void checkBox5_CheckedChanged(object sender, EventArgs e)
+        private void cB_CloseMinimizes_CheckedChanged(object sender, EventArgs e)
         {
             CloseMinimises = cB_CloseMinimizes.Checked;
             Properties.Settings.Default.CloseMinimises = CloseMinimises;
             Properties.Settings.Default.Save();
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void lB_Profiles_SelectedIndexChanged(object sender, EventArgs e)
         {
             Profile profile = (Profile)lB_Profiles.SelectedItem;
 
@@ -447,7 +447,7 @@ namespace ControllerHelper
             });
         }
 
-        private void trackBar1_Scroll_1(object sender, EventArgs e)
+        private void tb_ProfileGyroValue_Scroll(object sender, EventArgs e)
         {
             Profile profile = (Profile)lB_Profiles.SelectedItem;
             if (profile == null)
@@ -461,7 +461,7 @@ namespace ControllerHelper
             });
         }
 
-        private void trackBar2_Scroll(object sender, EventArgs e)
+        private void tb_ProfileAcceleroValue_Scroll(object sender, EventArgs e)
         {
             Profile profile = (Profile)lB_Profiles.SelectedItem;
             if (profile == null)
@@ -475,7 +475,7 @@ namespace ControllerHelper
             });
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private void b_ApplyProfile_Click(object sender, EventArgs e)
         {
             Profile profile = (Profile)lB_Profiles.SelectedItem;
             if (profile == null)
@@ -513,6 +513,15 @@ namespace ControllerHelper
             this.BeginInvoke((MethodInvoker)delegate ()
             {
                 int idx = lB_Profiles.Items.IndexOf(profile);
+
+                foreach (Profile pr in lB_Profiles.Items)
+                    if (pr.path == profile.path)
+                    {
+                        // IndexOf will always fail !
+                        idx = lB_Profiles.Items.IndexOf(pr);
+                        break;
+                    }
+
                 if (idx == -1)
                     lB_Profiles.Items.Add(profile);
                 else
@@ -565,7 +574,7 @@ namespace ControllerHelper
             });
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void b_ServiceInstall_Click(object sender, EventArgs e)
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
@@ -576,7 +585,7 @@ namespace ControllerHelper
             });
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void b_ServiceDelete_Click(object sender, EventArgs e)
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
@@ -587,7 +596,7 @@ namespace ControllerHelper
             });
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void b_ServiceStart_Click(object sender, EventArgs e)
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
@@ -598,7 +607,7 @@ namespace ControllerHelper
             });
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void b_ServiceStop_Click(object sender, EventArgs e)
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
