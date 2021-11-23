@@ -12,19 +12,26 @@ namespace ControllerHelper
 {
     public class MouseHook
     {
+        public struct TouchInput
+        {
+            public float X;
+            public float Y;
+            public MouseButtons Button;
+        }
+
         private IKeyboardMouseEvents m_Events;
         private Thread m_Hook;
         private Timer m_Timer;
 
         private PipeClient client;
-        private Vector2 TouchPos;
+        private TouchInput TouchPos;
 
         public MouseHook(PipeClient client)
         {
             this.client = client;
 
-            // send MouseUp after 10ms interval
-            m_Timer = new Timer() { Enabled = false, Interval = 10, AutoReset = false };
+            // send MouseUp after default interval (40ms)
+            m_Timer = new Timer() { Enabled = false, Interval = 40, AutoReset = false };
             m_Timer.Elapsed += SendMouseUp;
         }
 
@@ -32,6 +39,11 @@ namespace ControllerHelper
         {
             m_Hook = new Thread(Subscribe) { IsBackground = true };
             m_Hook.Start();
+        }
+
+        public void SetInterval(double ms)
+        {
+            m_Timer.Interval = ms * 4;
         }
 
         private void Subscribe()
@@ -50,7 +62,8 @@ namespace ControllerHelper
                 args = new Dictionary<string, string>
                 {
                     { "X", Convert.ToString(TouchPos.X) },
-                    { "Y", Convert.ToString(TouchPos.Y) }
+                    { "Y", Convert.ToString(TouchPos.Y) },
+                    { "Button", Convert.ToString((int)TouchPos.Button) }
                 }
             });
         }
@@ -66,7 +79,8 @@ namespace ControllerHelper
                 args = new Dictionary<string, string>
                 {
                     { "X", Convert.ToString(e.X) },
-                    { "Y", Convert.ToString(e.Y) }
+                    { "Y", Convert.ToString(e.Y) },
+                    { "Button", Convert.ToString((int)e.Button) }
                 }
             });
         }
@@ -79,7 +93,8 @@ namespace ControllerHelper
                 args = new Dictionary<string, string>
                 {
                     { "X", Convert.ToString(e.X) },
-                    { "Y", Convert.ToString(e.Y) }
+                    { "Y", Convert.ToString(e.Y) },
+                    { "Button", Convert.ToString((int)e.Button) }
                 }
             });
         }
@@ -88,7 +103,13 @@ namespace ControllerHelper
         {
             m_Events.MouseMoveExt -= OnMouseMove;
 
-            TouchPos = new Vector2(e.X, e.Y);
+            TouchPos = new TouchInput()
+            {
+                X = e.X,
+                Y = e.Y,
+                Button = e.Button
+            };
+
             m_Timer.Start();
         }
 

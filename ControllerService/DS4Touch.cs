@@ -28,7 +28,7 @@ namespace ControllerService
         public byte TouchPacketCounter = 0;
 
         private short TouchX, TouchY;
-        public bool OutputMoveButton, OutputTouchButton;
+        public bool OutputClickButton;
 
         public DS4Touch()
         {
@@ -43,10 +43,12 @@ namespace ControllerService
             TouchPacketCounter++;
         }
 
-        public void OnMouseUp(short X, short Y)
+        public void OnMouseUp(short X, short Y, int Button)
         {
-            OutputMoveButton = false;
-            OutputTouchButton = false;
+            OutputClickButton = false;
+
+            if (Button == 2097152) // MouseButtons.Right
+                return;
 
             if (X != -1) TouchX = (short)(X * RatioWidth);
             if (Y != -1) TouchY = (short)(Y * RatioHeight);
@@ -57,16 +59,19 @@ namespace ControllerService
             TouchPacketCounter++;
         }
 
-        public void OnMouseDown(short X, short Y)
+        public void OnMouseDown(short X, short Y, int Button)
         {
-            OutputMoveButton = false;
-            OutputTouchButton = true;
-
-            TouchX = (short)(X * RatioWidth);
-            TouchY = (short)(Y * RatioHeight);
+            if (Button == 2097152) // MouseButtons.Right
+            {
+                OutputClickButton = true;
+                return;
+            }
 
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
             TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
+
+            TouchX = (short)(X * RatioWidth);
+            TouchY = (short)(Y * RatioHeight);
 
             TrackPadTouch0.X = TouchX;
             TrackPadTouch1.X = TouchX;
@@ -75,10 +80,9 @@ namespace ControllerService
             TrackPadTouch1.Y = TouchY;
         }
 
-        public void OnMouseMove(short X, short Y)
+        public void OnMouseMove(short X, short Y, int Button)
         {
-            OutputMoveButton = true;
-            OutputTouchButton = false;
+            OutputClickButton = false;
 
             TouchX = (short)(X * RatioWidth);
             TouchY = (short)(Y * RatioHeight);

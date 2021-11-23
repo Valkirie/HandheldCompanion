@@ -132,7 +132,7 @@ namespace ControllerService
             connected = false;
             logger.LogInformation("Client {0} disconnected", connection.Id);
             
-            service.PhysicalController.touch.OnMouseUp(-1, -1);
+            service.PhysicalController.touch.OnMouseUp(-1, -1, 1048576 /* MouseButtons.Left */);
         }
 
         private void OnClientMessage(NamedPipeConnection<PipeMessage, PipeMessage> connection, PipeMessage message)
@@ -146,15 +146,15 @@ namespace ControllerService
                     break;
 
                 case PipeCode.CLIENT_CURSORUP:
-                    service.PhysicalController.touch.OnMouseUp(short.Parse(message.args["X"]), short.Parse(message.args["Y"]));
+                    service.PhysicalController.touch.OnMouseUp(short.Parse(message.args["X"]), short.Parse(message.args["Y"]), int.Parse(message.args["Button"]));
                     break;
 
                 case PipeCode.CLIENT_CURSORDOWN:
-                    service.PhysicalController.touch.OnMouseDown(short.Parse(message.args["X"]), short.Parse(message.args["Y"]));
+                    service.PhysicalController.touch.OnMouseDown(short.Parse(message.args["X"]), short.Parse(message.args["Y"]), int.Parse(message.args["Button"]));
                     break;
 
                 case PipeCode.CLIENT_CURSORMOVE:
-                    service.PhysicalController.touch.OnMouseMove(short.Parse(message.args["X"]), short.Parse(message.args["Y"]));
+                    service.PhysicalController.touch.OnMouseMove(short.Parse(message.args["X"]), short.Parse(message.args["Y"]), int.Parse(message.args["Button"]));
                     break;
 
                 case PipeCode.CLIENT_SETTINGS:
