@@ -795,7 +795,9 @@ namespace ControllerHelper
             // 
             // toolTip1
             // 
-            this.toolTip1.AutomaticDelay = 100;
+            this.toolTip1.AutoPopDelay = 5000;
+            this.toolTip1.InitialDelay = 100;
+            this.toolTip1.ReshowDelay = 100;
             // 
             // ControllerHelper
             // 
