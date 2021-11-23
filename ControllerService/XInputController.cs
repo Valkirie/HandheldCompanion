@@ -234,6 +234,11 @@ namespace ControllerService
                     if (gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder))
                         tempButtons |= DualShock4Button.ShoulderLeft.Value;
 
+                    if (gamepad.LeftTrigger > 0)
+                        tempButtons |= DualShock4Button.TriggerLeft.Value;
+                    if (gamepad.RightTrigger > 0)
+                        tempButtons |= DualShock4Button.TriggerRight.Value;
+
                     if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) &&
                         gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
                         tempDPad = DualShock4DPadDirection.Northeast;
