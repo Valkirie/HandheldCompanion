@@ -215,14 +215,19 @@ namespace ControllerService
 
                 unchecked
                 {
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.A)) tempButtons |= DualShock4Button.Cross.Value;
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.B)) tempButtons |= DualShock4Button.Circle.Value;
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.X)) tempButtons |= DualShock4Button.Square.Value;
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Y)) tempButtons |= DualShock4Button.Triangle.Value;
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.A))
+                        tempButtons |= DualShock4Button.Cross.Value;
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.B))
+                        tempButtons |= DualShock4Button.Circle.Value;
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.X))
+                        tempButtons |= DualShock4Button.Square.Value;
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Y))
+                        tempButtons |= DualShock4Button.Triangle.Value;
 
                     if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Start))
                         tempButtons |= DualShock4Button.Options.Value;
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Back)) tempButtons |= DualShock4Button.Share.Value;
+                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Back))
+                        tempButtons |= DualShock4Button.Share.Value;
 
                     if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb))
                         tempButtons |= DualShock4Button.ThumbRight.Value;
@@ -260,8 +265,11 @@ namespace ControllerService
                     else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
                         tempDPad = DualShock4DPadDirection.West;
 
-                    if ((state_s.wButtons & 0x0400) == 0x0400) tempSpecial |= DualShock4SpecialButton.Ps.Value;
-                    if (touch.OutputTouchButton) tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
+                    if ((state_s.wButtons & 0x0400) == 0x0400)
+                        tempSpecial |= DualShock4SpecialButton.Ps.Value;
+                    if (touch.OutputClickButton)
+                        tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
+
                     outDS4Report.bSpecial = (byte)(tempSpecial | (FrameCounter << 2));
                 }
 
@@ -308,8 +316,6 @@ namespace ControllerService
                 outDS4Report.wTimestamp = (ushort)(microseconds / 5.33f);
 
                 DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
-
-                // send report to controller
                 ((IDualShock4Controller)vcontroller).SubmitRawReport(rawOutReportEx);
             }
         }
