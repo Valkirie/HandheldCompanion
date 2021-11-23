@@ -45,13 +45,20 @@ namespace ControllerService
 
         public void OnMouseUp(short X, short Y, int Button)
         {
-            OutputClickButton = false;
-
-            if (Button == 2097152) // MouseButtons.Right
-                return;
-
             if (X != -1) TouchX = (short)(X * RatioWidth);
             if (Y != -1) TouchY = (short)(Y * RatioHeight);
+
+            TrackPadTouch0.X = TouchX;
+            TrackPadTouch1.X = TouchX;
+
+            TrackPadTouch0.Y = TouchY;
+            TrackPadTouch1.Y = TouchY;
+
+            if (Button == 2097152) // MouseButtons.Right
+            {
+                OutputClickButton = false;
+                return;
+            }
 
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID + TOUCH_DISABLE;
             TrackPadTouch1.RawTrackingNum = TOUCH1_ID + TOUCH_DISABLE;
@@ -61,15 +68,6 @@ namespace ControllerService
 
         public void OnMouseDown(short X, short Y, int Button)
         {
-            if (Button == 2097152) // MouseButtons.Right
-            {
-                OutputClickButton = true;
-                return;
-            }
-
-            TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
-            TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
-
             TouchX = (short)(X * RatioWidth);
             TouchY = (short)(Y * RatioHeight);
 
@@ -78,12 +76,19 @@ namespace ControllerService
 
             TrackPadTouch0.Y = TouchY;
             TrackPadTouch1.Y = TouchY;
+
+            if (Button == 2097152) // MouseButtons.Right
+            {
+                OutputClickButton = true;
+                return;
+            }
+
+            TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
+            TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
         }
 
         public void OnMouseMove(short X, short Y, int Button)
         {
-            OutputClickButton = false;
-
             TouchX = (short)(X * RatioWidth);
             TouchY = (short)(Y * RatioHeight);
 
