@@ -11,7 +11,7 @@
     <Product>ControllerHelper</Product>
     <Copyright>Copyright ©  2021</Copyright>
     <OutputPath>$(SolutionDir)bin\</OutputPath>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>gamepad.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

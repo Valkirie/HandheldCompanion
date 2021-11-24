@@ -6,6 +6,7 @@ using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
@@ -28,7 +29,7 @@ namespace ControllerHelper
         private Timer MonitorTimer;
         private IntPtr CurrentProcess;
 
-        private Controller CurrentController;
+        public static Controller CurrentController;
 
         private MouseHook m_Hook;
 
@@ -133,11 +134,14 @@ namespace ControllerHelper
                 if (ProfileManager.profiles.ContainsKey(ProcessExec))
                 {
                     Profile CurrentProfile = ProfileManager.profiles[ProcessExec];
+
                     if (CurrentProfile.path != ProcessPath)
                     {
                         CurrentProfile.path = ProcessPath;
                         CurrentProfile.Serialize();
                     }
+
+                    CurrentProfile.Update();
 
                     PipeClient.SendMessage(new PipeMessage
                     {
@@ -244,9 +248,11 @@ namespace ControllerHelper
             });
         }
 
+
+
         public void UpdateController(Dictionary<string, string> args)
         {
-            CurrentController = new Controller(args["name"], Guid.Parse(args["guid"]), int.Parse(args["index"]));
+            CurrentController = new Controller(args["ProductName"], Guid.Parse(args["InstanceGuid"]), Guid.Parse(args["ProductGuid"]), int.Parse(args["ProductIndex"]));
 
             this.BeginInvoke((MethodInvoker)delegate ()
             {
@@ -292,7 +298,8 @@ namespace ControllerHelper
 
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                tB_InstanceID.Text = $"{con.guid}";
+                tB_InstanceID.Text = $"{con.InstanceGuid}";
+                tB_ProductID.Text = $"{con.ProductGuid}";
             });
 
         }
@@ -437,6 +444,7 @@ namespace ControllerHelper
 
                     tB_ProfileName.Text = profile.name;
                     tB_ProfilePath.Text = profile.path;
+                    toolTip1.SetToolTip(tB_ProfilePath, profile.error != Profile.ErrorCode.None ? $"Can't reach: {profile.path}" : $"{profile.path}");
 
                     cB_Whitelist.Checked = profile.whitelisted;
                     cB_Wrapper.Checked = profile.use_wrapper;
@@ -489,6 +497,7 @@ namespace ControllerHelper
             profile.whitelisted = cB_Whitelist.Checked;
             profile.use_wrapper = cB_Wrapper.Checked;
 
+            profile.Update();
             profile.Serialize();
         }
 

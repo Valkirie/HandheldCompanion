@@ -51,6 +51,8 @@ namespace ControllerHelper
             this.lb_HidMode = new System.Windows.Forms.Label();
             this.cB_HidMode = new System.Windows.Forms.ComboBox();
             this.gB_XinputDetails = new System.Windows.Forms.GroupBox();
+            this.tB_ProductID = new System.Windows.Forms.TextBox();
+            this.lb_ProductID = new System.Windows.Forms.Label();
             this.cB_uncloak = new System.Windows.Forms.CheckBox();
             this.cB_HIDcloak = new System.Windows.Forms.ComboBox();
             this.lb_HidCloak = new System.Windows.Forms.Label();
@@ -173,9 +175,9 @@ namespace ControllerHelper
             this.gB_DeviceDetails.Controls.Add(this.cB_accelero);
             this.gB_DeviceDetails.Controls.Add(this.cB_gyro);
             this.gB_DeviceDetails.Controls.Add(this.lb_accelero);
-            this.gB_DeviceDetails.Location = new System.Drawing.Point(252, 132);
+            this.gB_DeviceDetails.Location = new System.Drawing.Point(252, 162);
             this.gB_DeviceDetails.Name = "gB_DeviceDetails";
-            this.gB_DeviceDetails.Size = new System.Drawing.Size(506, 176);
+            this.gB_DeviceDetails.Size = new System.Drawing.Size(506, 117);
             this.gB_DeviceDetails.TabIndex = 3;
             this.gB_DeviceDetails.TabStop = false;
             this.gB_DeviceDetails.Text = "Device Details";
@@ -248,9 +250,9 @@ namespace ControllerHelper
             this.gB_HIDDetails.Controls.Add(this.lb_PullRate);
             this.gB_HIDDetails.Controls.Add(this.lb_HidMode);
             this.gB_HIDDetails.Controls.Add(this.cB_HidMode);
-            this.gB_HIDDetails.Location = new System.Drawing.Point(252, 314);
+            this.gB_HIDDetails.Location = new System.Drawing.Point(252, 285);
             this.gB_HIDDetails.Name = "gB_HIDDetails";
-            this.gB_HIDDetails.Size = new System.Drawing.Size(506, 244);
+            this.gB_HIDDetails.Size = new System.Drawing.Size(506, 273);
             this.gB_HIDDetails.TabIndex = 2;
             this.gB_HIDDetails.TabStop = false;
             this.gB_HIDDetails.Text = "HID Details";
@@ -299,6 +301,8 @@ namespace ControllerHelper
             // 
             // gB_XinputDetails
             // 
+            this.gB_XinputDetails.Controls.Add(this.tB_ProductID);
+            this.gB_XinputDetails.Controls.Add(this.lb_ProductID);
             this.gB_XinputDetails.Controls.Add(this.cB_uncloak);
             this.gB_XinputDetails.Controls.Add(this.cB_HIDcloak);
             this.gB_XinputDetails.Controls.Add(this.lb_HidCloak);
@@ -306,15 +310,32 @@ namespace ControllerHelper
             this.gB_XinputDetails.Controls.Add(this.lb_InstanceID);
             this.gB_XinputDetails.Location = new System.Drawing.Point(252, 6);
             this.gB_XinputDetails.Name = "gB_XinputDetails";
-            this.gB_XinputDetails.Size = new System.Drawing.Size(506, 120);
+            this.gB_XinputDetails.Size = new System.Drawing.Size(506, 150);
             this.gB_XinputDetails.TabIndex = 1;
             this.gB_XinputDetails.TabStop = false;
             this.gB_XinputDetails.Text = "Xinput Details";
             // 
+            // tB_ProductID
+            // 
+            this.tB_ProductID.Location = new System.Drawing.Point(156, 58);
+            this.tB_ProductID.Name = "tB_ProductID";
+            this.tB_ProductID.ReadOnly = true;
+            this.tB_ProductID.Size = new System.Drawing.Size(222, 23);
+            this.tB_ProductID.TabIndex = 12;
+            // 
+            // lb_ProductID
+            // 
+            this.lb_ProductID.AutoSize = true;
+            this.lb_ProductID.Location = new System.Drawing.Point(6, 61);
+            this.lb_ProductID.Name = "lb_ProductID";
+            this.lb_ProductID.Size = new System.Drawing.Size(66, 15);
+            this.lb_ProductID.TabIndex = 11;
+            this.lb_ProductID.Text = "Product ID:";
+            // 
             // cB_uncloak
             // 
             this.cB_uncloak.AutoSize = true;
-            this.cB_uncloak.Location = new System.Drawing.Point(156, 87);
+            this.cB_uncloak.Location = new System.Drawing.Point(156, 116);
             this.cB_uncloak.Name = "cB_uncloak";
             this.cB_uncloak.Size = new System.Drawing.Size(116, 19);
             this.cB_uncloak.TabIndex = 10;
@@ -329,7 +350,7 @@ namespace ControllerHelper
             this.cB_HIDcloak.Items.AddRange(new object[] {
             "True",
             "False"});
-            this.cB_HIDcloak.Location = new System.Drawing.Point(156, 58);
+            this.cB_HIDcloak.Location = new System.Drawing.Point(156, 87);
             this.cB_HIDcloak.Name = "cB_HIDcloak";
             this.cB_HIDcloak.Size = new System.Drawing.Size(81, 23);
             this.cB_HIDcloak.TabIndex = 5;
@@ -338,7 +359,7 @@ namespace ControllerHelper
             // lb_HidCloak
             // 
             this.lb_HidCloak.AutoSize = true;
-            this.lb_HidCloak.Location = new System.Drawing.Point(6, 61);
+            this.lb_HidCloak.Location = new System.Drawing.Point(6, 90);
             this.lb_HidCloak.Name = "lb_HidCloak";
             this.lb_HidCloak.Size = new System.Drawing.Size(76, 15);
             this.lb_HidCloak.TabIndex = 4;
@@ -912,6 +933,8 @@ namespace ControllerHelper
         private System.Windows.Forms.TrackBar tb_ProfileAcceleroValue;
         private System.Windows.Forms.Label lb_ProfileAccelero;
         private System.Windows.Forms.Button b_ApplyProfile;
+        private System.Windows.Forms.TextBox tB_ProductID;
+        private System.Windows.Forms.Label lb_ProductID;
     }
 }
 

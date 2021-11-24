@@ -110,9 +110,10 @@ namespace ControllerService
         public Dictionary<string, string> ToArgs()
         {
             return new Dictionary<string, string>() {
-                { "name", instance.ProductName },
-                { "guid", $"{instance.InstanceGuid}" },
-                { "index", $"{(int)index}" }
+                { "ProductName", instance.ProductName },
+                { "InstanceGuid", $"{instance.InstanceGuid}" },
+                { "ProductGuid", $"{instance.ProductGuid}" },
+                { "ProductIndex", $"{(int)index}" }
             };
         }
 

@@ -1,6 +1,5 @@
 ﻿using ControllerService;
 using Force.Crc32;
-using Microsoft.Extensions.Logging;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
@@ -15,6 +14,12 @@ namespace ControllerHelper
     [Serializable]
     public class Profile
     {
+        public enum ErrorCode
+        {
+            None = 0,
+            CantReach = 1
+        }
+
         public string name { get; set; }
         public string path { get; set; }
         public bool whitelisted { get; set; }               // if true, can see through the HidHide cloak
@@ -25,6 +30,7 @@ namespace ControllerHelper
 
         [JsonIgnore] private const uint CRC32_X64 = 0x906f6806;
         [JsonIgnore] private const uint CRC32_X86 = 0x456b57cc;
+        [JsonIgnore] public ErrorCode error;
 
         public Profile(string name, string path)
         {
@@ -49,18 +55,27 @@ namespace ControllerHelper
 
         public void Update()
         {
-            // update cloaking
-            UpdateCloacking();
+            error = SanityCheck();
 
-            // update wrapper
+            if (error != ErrorCode.None)
+                return;
+
+            UpdateCloacking();
             UpdateWrapper();
+        }
+
+        private ErrorCode SanityCheck()
+        {
+            string processpath = Path.GetDirectoryName(path);
+
+            if (!File.Exists(path) || !Directory.Exists(processpath))
+                return ErrorCode.CantReach;
+
+            return ErrorCode.None;
         }
 
         private void UpdateCloacking()
         {
-            if (!File.Exists(path))
-                return;
-
             if (whitelisted)
                 RegisterApplication();
             else
@@ -89,6 +104,7 @@ namespace ControllerHelper
         {
             // deploy xinput wrapper
             string processpath = Path.GetDirectoryName(path);
+
             string dllpath = Path.Combine(processpath, "xinput1_3.dll");
             string inipath = Path.Combine(processpath, "x360ce.ini");
             bool wrapped = File.Exists(dllpath);
@@ -107,24 +123,29 @@ namespace ControllerHelper
                 is_x360ce = bt == BinaryType.SCS_64BIT_BINARY ? (CRC32 == CRC32_X64) : (CRC32 == CRC32_X86);
             }
 
+            // update data array to appropriate resource
             data = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_3_64 : Properties.Resources.xinput1_3_86;
 
-            // has dll, not x360ce : backup
+            // has xinput1_3.dll but failed CRC check : create backup
             if (use_wrapper && wrapped && !is_x360ce)
                 File.Move(dllpath, $"{dllpath}.back");
 
-            // no dll : create
-            if (use_wrapper && !wrapped)
+            if (use_wrapper)
             {
-                File.WriteAllBytes(dllpath, data);
-                // todo: tweak guid / instance id
-                File.WriteAllText(inipath, Properties.Resources.x360ce);
+                // no xinput1_3.dll : deploy wrapper
+                if (!wrapped)
+                    File.WriteAllBytes(dllpath, data);
+
+                string x360ce = Properties.Resources.x360ce;
+                File.WriteAllText(inipath, x360ce);
             }
-            // has dll, is x360ce : remove
             else if (!use_wrapper && wrapped && is_x360ce)
             {
-                File.Delete(dllpath);
-                File.Delete(inipath);
+                // has wrapped : delete it
+                if (File.Exists(dllpath))
+                    File.Delete(dllpath);
+                if (File.Exists(inipath))
+                    File.Delete(inipath);
             }
         }
 

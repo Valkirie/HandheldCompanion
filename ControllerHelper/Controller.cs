@@ -6,22 +6,24 @@ using System.Threading.Tasks;
 
 namespace ControllerHelper
 {
-    class Controller
+    public class Controller
     {
-        public string name;
-        public Guid guid;
-        public int index;
+        public string ProductName;
+        public Guid ProductGuid;
+        public Guid InstanceGuid;
+        public int ProductIndex;
 
-        public Controller(string name, Guid guid, int index)
+        public Controller(string ProductName, Guid InstanceGuid, Guid ProductGuid, int ProductIndex)
         {
-            this.name = name;
-            this.guid = guid;
-            this.index = index;
+            this.ProductName = ProductName;
+            this.InstanceGuid = InstanceGuid;
+            this.ProductGuid = ProductGuid;
+            this.ProductIndex = ProductIndex;
         }
 
         public override string ToString()
         {
-            return this.name;
+            return this.ProductName;
         }
     }
 

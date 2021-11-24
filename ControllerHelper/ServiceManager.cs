@@ -7,6 +7,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Forms;
 using Timer = System.Timers.Timer;
 
 namespace ControllerHelper
@@ -72,8 +73,18 @@ namespace ControllerHelper
                     status = 0;
                 }
 
-                if(nextStatus != 0)
-                    controller.WaitForStatus(nextStatus, TimeSpan.FromSeconds(5));
+                if (nextStatus != 0)
+                {
+                    try
+                    {
+                        controller.WaitForStatus(nextStatus, TimeSpan.FromSeconds(5));
+                    }
+                    catch(Exception ex)
+                    {
+                        nextStatus = status;
+                        MessageBox.Show(ex.Message);
+                    }
+                }
 
                 if (prevStatus != (int)status)
                     helper.UpdateService(status);
