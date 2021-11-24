@@ -134,13 +134,7 @@ namespace ControllerHelper
                 if (ProfileManager.profiles.ContainsKey(ProcessExec))
                 {
                     Profile CurrentProfile = ProfileManager.profiles[ProcessExec];
-
-                    if (CurrentProfile.path != ProcessPath)
-                    {
-                        CurrentProfile.path = ProcessPath;
-                        CurrentProfile.Serialize();
-                    }
-
+                    CurrentProfile.fullpath = ProcessPath;
                     CurrentProfile.Update();
 
                     PipeClient.SendMessage(new PipeMessage

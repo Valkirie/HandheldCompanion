@@ -31,11 +31,13 @@ namespace ControllerHelper
         [JsonIgnore] private const uint CRC32_X64 = 0x906f6806;
         [JsonIgnore] private const uint CRC32_X86 = 0x456b57cc;
         [JsonIgnore] public ErrorCode error;
+        [JsonIgnore] public string fullpath { get; set; }
 
         public Profile(string name, string path)
         {
             this.name = name;
             this.path = path;
+            this.fullpath = path;
         }
 
         public void Delete()
@@ -66,9 +68,9 @@ namespace ControllerHelper
 
         private ErrorCode SanityCheck()
         {
-            string processpath = Path.GetDirectoryName(path);
+            string processpath = Path.GetDirectoryName(fullpath);
 
-            if (!File.Exists(path) || !Directory.Exists(processpath))
+            if (!File.Exists(fullpath) || !Directory.Exists(processpath))
                 return ErrorCode.CantReach;
 
             return ErrorCode.None;
@@ -87,7 +89,7 @@ namespace ControllerHelper
             ControllerHelper.PipeClient.SendMessage(new PipeMessage
             {
                 Code = PipeCode.CLIENT_HIDDER_UNREG,
-                args = new Dictionary<string, string> { { "path", path } }
+                args = new Dictionary<string, string> { { "path", fullpath } }
             });
         }
 
@@ -96,14 +98,14 @@ namespace ControllerHelper
             ControllerHelper.PipeClient.SendMessage(new PipeMessage
             {
                 Code = PipeCode.CLIENT_HIDDER_REG,
-                args = new Dictionary<string, string> { { "path", path } }
+                args = new Dictionary<string, string> { { "path", fullpath } }
             });
         }
 
         private void UpdateWrapper()
         {
             // deploy xinput wrapper
-            string processpath = Path.GetDirectoryName(path);
+            string processpath = Path.GetDirectoryName(fullpath);
 
             string dllpath = Path.Combine(processpath, "xinput1_3.dll");
             string inipath = Path.Combine(processpath, "x360ce.ini");
@@ -113,7 +115,7 @@ namespace ControllerHelper
             uint CRC32;
 
             // get binary type (x64, x86)
-            BinaryType bt; GetBinaryType(path, out bt);
+            BinaryType bt; GetBinaryType(fullpath, out bt);
 
             // has dll, check if that's ours
             if (wrapped)
@@ -200,6 +202,7 @@ namespace ControllerHelper
             {
                 string outputraw = File.ReadAllText(fileName);
                 profile = JsonSerializer.Deserialize<Profile>(outputraw);
+                profile.fullpath = profile.path;
             }
             catch (Exception ex)
             {
