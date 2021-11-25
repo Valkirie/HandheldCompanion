@@ -68,6 +68,7 @@ namespace ControllerHelper
                 case PipeCode.SERVER_CONNECTED:
                     connected = true;
                     helper.UpdateStatus(true);
+                    helper.UpdateScreen();
                     break;
 
                 case PipeCode.SERVER_TOAST:

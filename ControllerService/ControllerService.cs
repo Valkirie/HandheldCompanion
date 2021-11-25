@@ -171,86 +171,85 @@ namespace ControllerService
             foreach(KeyValuePair<string, string> pair in args)
             {
                 string name = pair.Key;
-                string value = pair.Value;
+                string property = pair.Value;
 
                 SettingsProperty setting = Properties.Settings.Default.Properties[name];
-
-                if (setting == null)
-                    continue;
-
-                object OldValue = Properties.Settings.Default[name].ToString();
-                object NewValue;
-
-                TypeCode typeCode = Type.GetTypeCode(setting.PropertyType);
-                switch (typeCode)
+                if (setting != null)
                 {
-                    case TypeCode.Boolean:
-                        NewValue = bool.Parse(value);
-                        OldValue = bool.Parse((string)OldValue);
-                        break;
-                    case TypeCode.Single:
-                    case TypeCode.Decimal:
-                        NewValue = float.Parse(value);
-                        OldValue = float.Parse((string)OldValue);
-                        break;
-                    case TypeCode.Int16:
-                    case TypeCode.Int32:
-                    case TypeCode.Int64:
-                        NewValue = int.Parse(value);
-                        OldValue = int.Parse((string)OldValue);
-                        break;
-                    case TypeCode.UInt16:
-                    case TypeCode.UInt32:
-                    case TypeCode.UInt64:
-                        NewValue = uint.Parse(value);
-                        OldValue = uint.Parse((string)OldValue);
-                        break;
-                    default:
-                        NewValue = value;
-                        OldValue = (string)OldValue;
-                        break;
-                }
+                    object prev_value = Properties.Settings.Default[name].ToString();
+                    object value;
 
-                Properties.Settings.Default[name] = NewValue;
-                ApplySetting(name, OldValue, NewValue, typeCode);
+                    TypeCode typeCode = Type.GetTypeCode(setting.PropertyType);
+                    switch (typeCode)
+                    {
+                        case TypeCode.Boolean:
+                            value = bool.Parse(property);
+                            prev_value = bool.Parse((string)prev_value);
+                            break;
+                        case TypeCode.Single:
+                        case TypeCode.Decimal:
+                            value = float.Parse(property);
+                            prev_value = float.Parse((string)prev_value);
+                            break;
+                        case TypeCode.Int16:
+                        case TypeCode.Int32:
+                        case TypeCode.Int64:
+                            value = int.Parse(property);
+                            prev_value = int.Parse((string)prev_value);
+                            break;
+                        case TypeCode.UInt16:
+                        case TypeCode.UInt32:
+                        case TypeCode.UInt64:
+                            value = uint.Parse(property);
+                            prev_value = uint.Parse((string)prev_value);
+                            break;
+                        default:
+                            value = property;
+                            prev_value = (string)prev_value;
+                            break;
+                    }
+
+                    Properties.Settings.Default[name] = value;
+                    ApplySetting(name, prev_value, value);
+                }
             }
 
             Properties.Settings.Default.Save();
         }
 
-        private void ApplySetting(string name, object OldValue, object NewValue, TypeCode typeCode)
+        private void ApplySetting(string name, object prev_value, object value)
         {
-            if (OldValue.ToString() != NewValue.ToString())
+            if (prev_value.ToString() != value.ToString())
             {
-                logger.LogInformation("{0} set to {1}", name, NewValue.ToString());
+                logger.LogInformation("{0} set to {1}", name, value.ToString());
 
                 switch (name)
                 {
                     case "HIDcloaked":
-                        Hidder.SetCloaking((bool)NewValue);
-                        HIDcloaked = (bool)NewValue;
+                        Hidder.SetCloaking((bool)value);
+                        HIDcloaked = (bool)value;
                         break;
                     case "HIDuncloakonclose":
-                        HIDuncloakonclose = (bool)NewValue;
+                        HIDuncloakonclose = (bool)value;
                         break;
                     case "HIDmode":
                         // todo
                         break;
                     case "HIDrate":
-                        PhysicalController.SetPollRate((int)NewValue);
+                        PhysicalController.SetPollRate((int)value);
                         break;
                     case "DSUEnabled":
-                        switch((bool)NewValue)
+                        switch((bool)value)
                         {
                             case true: DSUServer.Start(); break;
                             case false: DSUServer.Stop(); break;
                         }
                         break;
                     case "DSUip":
-                        DSUServer.ip = (string)NewValue;
+                        DSUServer.ip = (string)value;
                         break;
                     case "DSUport":
-                        DSUServer.port = (int)NewValue;
+                        DSUServer.port = (int)value;
                         break;
                 }
             }

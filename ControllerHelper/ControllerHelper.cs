@@ -242,7 +242,18 @@ namespace ControllerHelper
             });
         }
 
-
+        public void UpdateScreen()
+        {
+            PipeClient.SendMessage(new PipeMessage
+            {
+                Code = PipeCode.CLIENT_SIZE_DETAILS,
+                args = new Dictionary<string, string>
+                    {
+                        { "Bounds.Width", Convert.ToString(Screen.PrimaryScreen.Bounds.Width) },
+                        { "Bounds.Height", Convert.ToString(Screen.PrimaryScreen.Bounds.Height) }
+                    }
+            });
+        }
 
         public void UpdateController(Dictionary<string, string> args)
         {

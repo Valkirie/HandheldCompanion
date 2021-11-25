@@ -50,6 +50,9 @@ namespace ControllerService
 
         CLIENT_HIDDER_UNREG = 10,           // Sent to server to unregister applications
                                             // args: ...
+
+        CLIENT_SIZE_DETAILS = 11,           // Sent to server to update screen details
+                                            // args: width, height
     }
 
     public class PipeServer
@@ -155,6 +158,10 @@ namespace ControllerService
 
                 case PipeCode.CLIENT_CURSORMOVE:
                     service.PhysicalController.touch.OnMouseMove(short.Parse(message.args["X"]), short.Parse(message.args["Y"]), int.Parse(message.args["Button"]));
+                    break;
+
+                case PipeCode.CLIENT_SIZE_DETAILS:
+                    service.PhysicalController.touch.UpdateRatio(float.Parse(message.args["Bounds.Width"]), float.Parse(message.args["Bounds.Height"]));
                     break;
 
                 case PipeCode.CLIENT_SETTINGS:

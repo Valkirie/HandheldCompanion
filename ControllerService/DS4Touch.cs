@@ -30,17 +30,26 @@ namespace ControllerService
         private short TouchX, TouchY;
         public bool OutputClickButton;
 
+        private float BoundsWidth, BoundsHeight;
+
         public DS4Touch()
         {
-            // get screen size
-            RatioWidth = (float)TOUCHPAD_WIDTH / (float)Screen.PrimaryScreen.Bounds.Width;
-            RatioHeight = (float)TOUCHPAD_HEIGHT / (float)Screen.PrimaryScreen.Bounds.Height;
+            UpdateRatio(TOUCHPAD_WIDTH, TOUCHPAD_HEIGHT);
 
             // default values
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID + TOUCH_DISABLE;
             TrackPadTouch1.RawTrackingNum = TOUCH1_ID + TOUCH_DISABLE;
 
             TouchPacketCounter++;
+        }
+
+        public void UpdateRatio(float w, float h)
+        {
+            BoundsWidth = w;
+            BoundsHeight = h;
+
+            RatioWidth = (float)TOUCHPAD_WIDTH / BoundsWidth;
+            RatioHeight = (float)TOUCHPAD_HEIGHT / BoundsHeight;
         }
 
         public void OnMouseUp(short X, short Y, int Button)
