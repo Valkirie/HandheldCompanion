@@ -167,7 +167,7 @@ namespace ControllerService
 
         public void UpdateSettings(Dictionary<string, string> args)
         {
-            foreach(KeyValuePair<string, string> pair in args)
+            foreach (KeyValuePair<string, string> pair in args)
             {
                 string name = pair.Key;
                 string property = pair.Value;
@@ -241,7 +241,7 @@ namespace ControllerService
                         PhysicalController.SetVibrationStrength((int)value);
                         break;
                     case "DSUEnabled":
-                        switch((bool)value)
+                        switch ((bool)value)
                         {
                             case true: DSUServer.Start(); break;
                             case false: DSUServer.Stop(); break;
@@ -279,7 +279,8 @@ namespace ControllerService
             PipeServer.Start();
 
             // send notification
-            PipeServer.SendMessage(new PipeMessage {
+            PipeServer.SendMessage(new PipeMessage
+            {
                 Code = PipeCode.SERVER_TOAST,
                 args = new Dictionary<string, string>
                 {
@@ -330,7 +331,7 @@ namespace ControllerService
         {
             Dictionary<string, string> settings = new Dictionary<string, string>();
 
-            foreach(SettingsProperty s in Properties.Settings.Default.Properties)
+            foreach (SettingsProperty s in Properties.Settings.Default.Properties)
                 settings.Add(s.Name, Properties.Settings.Default[s.Name].ToString());
 
             settings.Add("gyrometer", $"{PhysicalController.gyrometer.sensor != null}");

@@ -1,7 +1,6 @@
 ﻿using ControllerService;
 using NamedPipeWrapper;
 using Serilog.Core;
-using SharpDX.XInput;
 using System;
 using System.Collections.Concurrent;
 using System.Timers;

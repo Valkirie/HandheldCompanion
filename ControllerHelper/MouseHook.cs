@@ -3,7 +3,6 @@ using Gma.System.MouseKeyHook;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;

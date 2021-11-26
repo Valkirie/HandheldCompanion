@@ -125,7 +125,7 @@ namespace ControllerService
             vcontroller = _controller;
             vcontroller.AutoSubmitReport = false;
 
-            switch(vcontroller.GetType().FullName)
+            switch (vcontroller.GetType().FullName)
             {
                 case "Nefarius.ViGEm.Client.Targets.DualShock4Controller":
                     UpdateTimer.Elapsed += DS4_UpdateReport;

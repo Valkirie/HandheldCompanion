@@ -1,13 +1,9 @@
 ﻿using ControllerService;
-using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
-using Serilog;
 using Serilog.Core;
-using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Reflection;

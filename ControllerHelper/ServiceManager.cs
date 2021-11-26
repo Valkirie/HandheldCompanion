@@ -1,14 +1,8 @@
 ﻿using Serilog.Core;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
-using System.Windows.Forms;
 using Timer = System.Timers.Timer;
 
 namespace ControllerHelper
@@ -71,7 +65,7 @@ namespace ControllerHelper
                     controller.Refresh();
                     status = controller.Status;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     status = 0;
                 }
@@ -82,7 +76,7 @@ namespace ControllerHelper
                     {
                         controller.WaitForStatus(nextStatus, TimeSpan.FromSeconds(5));
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         nextStatus = status;
                         logger.Error("{0} set to {1}", name, ex.Message);

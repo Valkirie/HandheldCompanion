@@ -134,7 +134,7 @@ namespace ControllerService
         {
             connected = false;
             logger.LogInformation("Client {0} disconnected", connection.Id);
-            
+
             service.PhysicalController.touch.OnMouseUp(-1, -1, 1048576 /* MouseButtons.Left */);
         }
 
