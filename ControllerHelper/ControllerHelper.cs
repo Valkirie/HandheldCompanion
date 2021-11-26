@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -59,6 +60,11 @@ namespace ControllerHelper
 
             this.logger = logger;
 
+            Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
+
             // paths
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -72,8 +78,6 @@ namespace ControllerHelper
             ServiceDescription = Properties.Settings.Default.ServiceDescription;
 
             // initialize log
-            Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
             logger.Information("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
 
             // verifying HidHide is installed
