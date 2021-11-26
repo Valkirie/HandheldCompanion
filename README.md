@@ -35,3 +35,9 @@ If you would like to support this project, please consider making a donation to 
 ## Installation
 Pre-built production-signed binaries are [available as an all-in-one setup](../../releases/latest).
 When extracted, run the `install.cmd` as administrator and you'll be set!
+
+## Credits & Libraries
+- ViGEmBus: [Nefarius](https://github.com/ViGEm/ViGEmBus)
+- ViGEmClient : [Nefarius](https://github.com/ViGEm/ViGEmClient)
+- SharpDX : [https://github.com/sharpdx/SharpDX](https://github.com/sharpdx/SharpDX)
+- Icon : [Nikita Golubev](https://www.flaticon.com/authors/nikita-golubev)
