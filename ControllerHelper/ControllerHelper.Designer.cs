@@ -46,6 +46,8 @@ namespace ControllerHelper
             this.cB_gyro = new System.Windows.Forms.CheckBox();
             this.lb_accelero = new System.Windows.Forms.Label();
             this.gB_HIDDetails = new System.Windows.Forms.GroupBox();
+            this.tB_VibrationStr = new System.Windows.Forms.TrackBar();
+            this.lb_VibrationStr = new System.Windows.Forms.Label();
             this.tB_PullRate = new System.Windows.Forms.TrackBar();
             this.lb_PullRate = new System.Windows.Forms.Label();
             this.lb_HidMode = new System.Windows.Forms.Label();
@@ -104,6 +106,7 @@ namespace ControllerHelper
             this.tabDevices.SuspendLayout();
             this.gB_DeviceDetails.SuspendLayout();
             this.gB_HIDDetails.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tB_VibrationStr)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tB_PullRate)).BeginInit();
             this.gB_XinputDetails.SuspendLayout();
             this.gB_XinputDevices.SuspendLayout();
@@ -246,6 +249,8 @@ namespace ControllerHelper
             // 
             // gB_HIDDetails
             // 
+            this.gB_HIDDetails.Controls.Add(this.tB_VibrationStr);
+            this.gB_HIDDetails.Controls.Add(this.lb_VibrationStr);
             this.gB_HIDDetails.Controls.Add(this.tB_PullRate);
             this.gB_HIDDetails.Controls.Add(this.lb_PullRate);
             this.gB_HIDDetails.Controls.Add(this.lb_HidMode);
@@ -257,14 +262,40 @@ namespace ControllerHelper
             this.gB_HIDDetails.TabStop = false;
             this.gB_HIDDetails.Text = "HID Details";
             // 
+            // tB_VibrationStr
+            // 
+            this.tB_VibrationStr.AutoSize = false;
+            this.tB_VibrationStr.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
+            this.tB_VibrationStr.LargeChange = 10;
+            this.tB_VibrationStr.Location = new System.Drawing.Point(156, 95);
+            this.tB_VibrationStr.Maximum = 100;
+            this.tB_VibrationStr.Minimum = 1;
+            this.tB_VibrationStr.Name = "tB_VibrationStr";
+            this.tB_VibrationStr.Size = new System.Drawing.Size(190, 25);
+            this.tB_VibrationStr.SmallChange = 2;
+            this.tB_VibrationStr.TabIndex = 7;
+            this.tB_VibrationStr.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.tB_VibrationStr.Value = 50;
+            this.tB_VibrationStr.ValueChanged += new System.EventHandler(this.tB_VibrationStr_Scroll);
+            // 
+            // lb_VibrationStr
+            // 
+            this.lb_VibrationStr.AutoSize = true;
+            this.lb_VibrationStr.Location = new System.Drawing.Point(6, 95);
+            this.lb_VibrationStr.Name = "lb_VibrationStr";
+            this.lb_VibrationStr.Size = new System.Drawing.Size(105, 15);
+            this.lb_VibrationStr.TabIndex = 6;
+            this.lb_VibrationStr.Text = "Vibration strength:";
+            // 
             // tB_PullRate
             // 
+            this.tB_PullRate.AutoSize = false;
             this.tB_PullRate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
             this.tB_PullRate.Location = new System.Drawing.Point(156, 64);
             this.tB_PullRate.Maximum = 300;
             this.tB_PullRate.Minimum = 5;
             this.tB_PullRate.Name = "tB_PullRate";
-            this.tB_PullRate.Size = new System.Drawing.Size(190, 45);
+            this.tB_PullRate.Size = new System.Drawing.Size(190, 25);
             this.tB_PullRate.SmallChange = 5;
             this.tB_PullRate.TabIndex = 5;
             this.tB_PullRate.TickStyle = System.Windows.Forms.TickStyle.None;
@@ -844,6 +875,7 @@ namespace ControllerHelper
             this.gB_DeviceDetails.PerformLayout();
             this.gB_HIDDetails.ResumeLayout(false);
             this.gB_HIDDetails.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tB_VibrationStr)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tB_PullRate)).EndInit();
             this.gB_XinputDetails.ResumeLayout(false);
             this.gB_XinputDetails.PerformLayout();
@@ -935,6 +967,8 @@ namespace ControllerHelper
         private System.Windows.Forms.Button b_ApplyProfile;
         private System.Windows.Forms.TextBox tB_ProductID;
         private System.Windows.Forms.Label lb_ProductID;
+        private System.Windows.Forms.TrackBar tB_VibrationStr;
+        private System.Windows.Forms.Label lb_VibrationStr;
     }
 }
 

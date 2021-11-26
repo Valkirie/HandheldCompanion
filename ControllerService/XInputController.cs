@@ -36,6 +36,9 @@ namespace ControllerService
         private static extern int XInputGetStateSecret14(int playerIndex, out XInputStateSecret struc);
         #endregion
 
+        private const float F_ACC_RES_PER_G = 8192.0f;
+        private const float F_GYRO_RES_IN_DEG_SEC = 16.0f;
+
         public Controller controller;
         public Gamepad gamepad;
         public XInputStateSecret state_s;
@@ -52,19 +55,13 @@ namespace ControllerService
         public Vector3 Acceleration;
 
         private Timer UpdateTimer;
+        private float strength;
 
         public UserIndex index;
         public bool muted;
 
         public long microseconds;
         private Stopwatch stopwatch;
-
-        private byte FrameCounter = 0; // always 0 on USB
-
-        private const int ACC_RES_PER_G = 8192;
-        private const float F_ACC_RES_PER_G = ACC_RES_PER_G;
-        private const int GYRO_RES_IN_DEG_SEC = 16;
-        private const float F_GYRO_RES_IN_DEG_SEC = GYRO_RES_IN_DEG_SEC;
 
         private object updateLock = new();
 
@@ -107,6 +104,12 @@ namespace ControllerService
             logger.LogInformation("Virtual {0} report interval set to {1}ms", vcontroller.GetType().Name, UpdateTimer.Interval);
         }
 
+        public void SetVibrationStrength(float strength)
+        {
+            this.strength = strength / 100.0f;
+            logger.LogInformation("Virtual {0} vibration strength set to {1}%", vcontroller.GetType().Name, strength);
+        }
+
         public Dictionary<string, string> ToArgs()
         {
             return new Dictionary<string, string>() {
@@ -146,8 +149,8 @@ namespace ControllerService
             {
                 Vibration inputMotor = new Vibration()
                 {
-                    LeftMotorSpeed = (ushort)(e.LargeMotor * ushort.MaxValue / byte.MaxValue),
-                    RightMotorSpeed = (ushort)(e.SmallMotor * ushort.MaxValue / byte.MaxValue),
+                    LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * strength),
+                    RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * strength),
                 };
                 controller.SetVibration(inputMotor);
             }
@@ -271,7 +274,7 @@ namespace ControllerService
                     if (touch.OutputClickButton)
                         tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
 
-                    outDS4Report.bSpecial = (byte)(tempSpecial | (FrameCounter << 2));
+                    outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
                 }
 
                 if (!muted)

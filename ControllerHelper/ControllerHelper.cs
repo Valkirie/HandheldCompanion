@@ -295,6 +295,7 @@ namespace ControllerHelper
                 cB_gyro.Checked = bool.Parse(args["gyrometer"]);
                 cB_accelero.Checked = bool.Parse(args["accelerometer"]);
                 tB_PullRate.Value = int.Parse(args["HIDrate"]);
+                tB_VibrationStr.Value = int.Parse(args["HIDstrength"]);
                 cB_UDPEnable.Checked = bool.Parse(args["DSUEnabled"]);
                 tB_UDPIP.Text = args["DSUip"];
                 tB_UDPPort.Value = int.Parse(args["DSUport"]);
@@ -350,6 +351,23 @@ namespace ControllerHelper
                 args = new Dictionary<string, string>
                 {
                     { "HIDrate", $"{tB_PullRate.Value}" }
+                }
+            });
+        }
+
+        private void tB_VibrationStr_Scroll(object sender, EventArgs e)
+        {
+            this.BeginInvoke((MethodInvoker)delegate ()
+            {
+                toolTip1.SetToolTip(tB_VibrationStr, $"{tB_VibrationStr.Value}%");
+            });
+
+            PipeClient.SendMessage(new PipeMessage
+            {
+                Code = PipeCode.CLIENT_SETTINGS,
+                args = new Dictionary<string, string>
+                {
+                    { "HIDstrength", $"{tB_VibrationStr.Value}" }
                 }
             });
         }

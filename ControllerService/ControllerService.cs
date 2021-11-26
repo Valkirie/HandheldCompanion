@@ -32,7 +32,7 @@ namespace ControllerService
 
         private string DSUip, HIDmode;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
-        private int DSUport, HIDrate;
+        private int DSUport, HIDrate, HIDstrength;
 
         private readonly ILogger<ControllerService> logger;
 
@@ -59,6 +59,7 @@ namespace ControllerService
             DSUip = Properties.Settings.Default.DSUip;
             DSUport = Properties.Settings.Default.DSUport;
             HIDrate = Properties.Settings.Default.HIDrate;
+            HIDstrength = Properties.Settings.Default.HIDstrength;
 
             // initialize log
             logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
@@ -236,6 +237,9 @@ namespace ControllerService
                     case "HIDrate":
                         PhysicalController.SetPollRate((int)value);
                         break;
+                    case "HIDstrength":
+                        PhysicalController.SetVibrationStrength((int)value);
+                        break;
                     case "DSUEnabled":
                         switch((bool)value)
                         {
@@ -269,6 +273,7 @@ namespace ControllerService
             PhysicalController.SetVirtualController(VirtualController);
             PhysicalController.SetGyroscope(Gyrometer);
             PhysicalController.SetAccelerometer(Accelerometer);
+            PhysicalController.SetVibrationStrength(HIDstrength);
 
             // start the Pipe Server
             PipeServer.Start();

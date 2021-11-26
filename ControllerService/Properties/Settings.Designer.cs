@@ -106,5 +106,17 @@ namespace ControllerService.Properties {
                 this["HIDuncloakonclose"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int HIDstrength {
+            get {
+                return ((int)(this["HIDstrength"]));
+            }
+            set {
+                this["HIDstrength"] = value;
+            }
+        }
     }
 }
