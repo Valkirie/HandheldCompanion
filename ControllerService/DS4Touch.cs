@@ -34,7 +34,8 @@ namespace ControllerService
 
         public DS4Touch()
         {
-            UpdateRatio(TOUCHPAD_WIDTH, TOUCHPAD_HEIGHT);
+            // default ratio (not dpi aware)
+            UpdateRatio(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
             // default values
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID + TOUCH_DISABLE;
