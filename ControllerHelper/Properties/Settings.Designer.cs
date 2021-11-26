@@ -94,5 +94,17 @@ namespace ControllerHelper.Properties {
                 this["ServiceDescription"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int LogEventLevel {
+            get {
+                return ((int)(this["LogEventLevel"]));
+            }
+            set {
+                this["LogEventLevel"] = value;
+            }
+        }
     }
 }

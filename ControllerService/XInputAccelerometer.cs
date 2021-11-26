@@ -29,7 +29,7 @@ namespace ControllerService
             if (sensor != null)
             {
                 sensor.ReportInterval = sensor.MinimumReportInterval;
-                logger.LogInformation("Accelerometer initialised.");
+                logger.LogInformation("Accelerometer initialised");
                 logger.LogInformation("Accelerometer report interval set to {0}ms", sensor.ReportInterval);
 
                 sensor.ReadingChanged += AcceleroReadingChanged;

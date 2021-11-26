@@ -95,8 +95,7 @@ namespace ControllerService
                 return;
 
             server.Start();
-
-            logger.LogInformation($"Pipe Server has started.");
+            logger.LogInformation($"Pipe Server has started");
         }
 
         public void Stop()
@@ -105,6 +104,7 @@ namespace ControllerService
                 return;
 
             server = null;
+            logger.LogInformation($"Pipe Server has halted");
         }
 
         private void OnClientConnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)

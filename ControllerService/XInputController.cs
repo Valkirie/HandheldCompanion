@@ -136,7 +136,7 @@ namespace ControllerService
             UpdateTimer.Enabled = true;
             UpdateTimer.Start();
 
-            logger.LogInformation("Virtual {0} attached to {1} on slot {2}.", vcontroller.GetType().Name, instance.InstanceName, index);
+            logger.LogInformation("Virtual {0} attached to {1} on slot {2}", vcontroller.GetType().Name, instance.InstanceName, index);
             logger.LogInformation("Virtual {0} report interval set to {1}ms", vcontroller.GetType().Name, UpdateTimer.Interval);
         }
 

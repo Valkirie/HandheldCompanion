@@ -34,15 +34,13 @@ namespace ControllerService
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
         private int DSUport, HIDrate;
 
-        public Assembly CurrentAssembly;
-
         private readonly ILogger<ControllerService> logger;
 
         public ControllerService(ILogger<ControllerService> logger)
         {
             this.logger = logger;
 
-            CurrentAssembly = Assembly.GetExecutingAssembly();
+            Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
@@ -101,7 +99,7 @@ namespace ControllerService
 
             if (VirtualController == null)
             {
-                logger.LogCritical("No Virtual controller detected. Application will stop.");
+                logger.LogCritical("No Virtual controller detected. Application will stop");
                 throw new InvalidOperationException();
             }
 
@@ -123,19 +121,19 @@ namespace ControllerService
 
             if (PhysicalController == null)
             {
-                logger.LogCritical("No physical controller detected. Application will stop.");
+                logger.LogCritical("No physical controller detected. Application will stop");
                 throw new InvalidOperationException();
             }
 
             // default is 10ms rating
             Gyrometer = new XInputGirometer(logger);
             if (Gyrometer.sensor == null)
-                logger.LogWarning("No Gyrometer detected.");
+                logger.LogWarning("No Gyrometer detected");
 
             // default is 10ms rating
             Accelerometer = new XInputAccelerometer(logger);
             if (Accelerometer.sensor == null)
-                logger.LogWarning("No Accelerometer detected.");
+                logger.LogWarning("No Accelerometer detected");
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
@@ -265,7 +263,7 @@ namespace ControllerService
             Hidder.SetCloaking(HIDcloaked);
 
             VirtualController.Connect();
-            logger.LogInformation("Virtual {0} connected.", VirtualController.GetType().Name);
+            logger.LogInformation("Virtual {0} connected", VirtualController.GetType().Name);
 
             PhysicalController.SetDSUServer(DSUServer);
             PhysicalController.SetVirtualController(VirtualController);
@@ -295,7 +293,7 @@ namespace ControllerService
                 if (VirtualController != null)
                 {
                     VirtualController.Disconnect();
-                    logger.LogInformation("Virtual {0} disconnected.", VirtualController.GetType().Name);
+                    logger.LogInformation("Virtual {0} disconnected", VirtualController.GetType().Name);
 
                     // send notification
                     PipeServer.SendMessage(new PipeMessage

@@ -1,5 +1,6 @@
 ﻿using ControllerService;
 using Gma.System.MouseKeyHook;
+using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -23,12 +24,17 @@ namespace ControllerHelper
         private Thread m_Hook;
         private Timer m_Timer;
 
-        private PipeClient client;
+        private readonly PipeClient client;
+        private readonly ControllerHelper helper;
+        private readonly Logger logger;
+
         private TouchInput TouchPos;
 
-        public MouseHook(PipeClient client)
+        public MouseHook(PipeClient client, ControllerHelper helper, Logger logger)
         {
             this.client = client;
+            this.helper = helper;
+            this.logger = logger;
 
             // send MouseUp after default interval (40ms)
             m_Timer = new Timer() { Enabled = false, Interval = 40, AutoReset = false };
@@ -37,13 +43,19 @@ namespace ControllerHelper
 
         public void Start()
         {
+            if (m_Hook != null)
+                return;
+
             m_Hook = new Thread(Subscribe) { IsBackground = true };
             m_Hook.Start();
+
+            logger.Information("Mouse hook has started");
         }
 
         public void SetInterval(double ms)
         {
             m_Timer.Interval = ms * 4;
+            logger.Information("Mouse hook interval set to {0}", m_Timer.Interval);
         }
 
         private void Subscribe()
@@ -83,6 +95,7 @@ namespace ControllerHelper
                     { "Button", Convert.ToString((int)e.Button) }
                 }
             });
+            logger.Verbose("OnMouseDown x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
         }
 
         private void OnMouseMove(object sender, MouseEventExtArgs e)
@@ -97,6 +110,7 @@ namespace ControllerHelper
                     { "Button", Convert.ToString((int)e.Button) }
                 }
             });
+            logger.Verbose("OnMouseMove x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
         }
 
         private void OnMouseUp(object sender, MouseEventExtArgs e)
@@ -109,6 +123,7 @@ namespace ControllerHelper
                 Y = e.Y,
                 Button = e.Button
             };
+            logger.Verbose("OnMouseUp x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
 
             m_Timer.Start();
         }
@@ -119,6 +134,8 @@ namespace ControllerHelper
             m_Events.MouseUpExt -= OnMouseUp;
             m_Events.Dispose();
             m_Events = null;
+
+            logger.Information("Mouse hook has halted");
         }
     }
 }

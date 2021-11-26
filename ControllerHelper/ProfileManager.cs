@@ -17,7 +17,8 @@ namespace ControllerHelper
         public enum ErrorCode
         {
             None = 0,
-            CantReach = 1
+            MissingExecutable = 1,
+            MissingPath = 2
         }
 
         public string name { get; set; }
@@ -55,12 +56,15 @@ namespace ControllerHelper
             File.WriteAllText(settingsPath, jsonString);
         }
 
-        public void Update()
+        public void Update(Logger logger)
         {
             error = SanityCheck();
 
             if (error != ErrorCode.None)
+            {
+                logger.Error("Profile {0} returned error code {1}", this.name, this.error);
                 return;
+            }
 
             UpdateCloacking();
             UpdateWrapper();
@@ -70,8 +74,10 @@ namespace ControllerHelper
         {
             string processpath = Path.GetDirectoryName(fullpath);
 
-            if (!File.Exists(fullpath) || !Directory.Exists(processpath))
-                return ErrorCode.CantReach;
+            if (!Directory.Exists(processpath))
+                return ErrorCode.MissingPath;
+            else if (!File.Exists(fullpath))
+                return ErrorCode.MissingExecutable;
 
             return ErrorCode.None;
         }
@@ -217,7 +223,7 @@ namespace ControllerHelper
             {
                 string ProcessName = Path.GetFileName(profile.path);
                 profiles[ProcessName] = profile;
-                profile.Update();
+                profile.Update(logger);
 
                 helper.UpdateProfile(profile);
             }

@@ -41,6 +41,8 @@ namespace ControllerHelper
 
         private void OnClientDisconnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
         {
+            logger.Information("Client {0} disconnected", connection.Id);
+
             connected = false;
             helper.UpdateStatus(false);
         }
@@ -51,6 +53,7 @@ namespace ControllerHelper
                 return;
 
             client.Start();
+            logger.Information($"Pipe Client has started");
         }
 
         public void Stop()
@@ -59,16 +62,20 @@ namespace ControllerHelper
                 return;
 
             client.Stop();
+            logger.Information($"Pipe Client has halted");
         }
 
         private void OnServerMessage(NamedPipeConnection<PipeMessage, PipeMessage> connection, PipeMessage message)
         {
+            logger.Debug("Client {0} opcode: {1} says: {2}", connection.Id, message.Code, string.Join(" ", message.args));
+
             switch (message.Code)
             {
                 case PipeCode.SERVER_CONNECTED:
                     connected = true;
                     helper.UpdateStatus(true);
                     helper.UpdateScreen();
+                    logger.Information("Client {0} is now connected!", connection.Id);
                     break;
 
                 case PipeCode.SERVER_TOAST:
@@ -87,7 +94,7 @@ namespace ControllerHelper
 
         private void OnError(Exception exception)
         {
-            // logger.LogError("PipClient failed. {0}", exception.Message);
+            logger.Error("PipClient failed. {0}", exception.Message);
         }
 
         public void SendMessage(PipeMessage message)

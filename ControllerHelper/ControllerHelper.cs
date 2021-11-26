@@ -3,11 +3,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using Serilog;
 using Serilog.Core;
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Timers;
@@ -47,11 +49,15 @@ namespace ControllerHelper
 
         public ProfileManager ProfileManager;
         public ServiceManager ServiceManager;
+        private readonly string ServiceName, ServiceDescription;
+
         private readonly Logger logger;
 
-        public ControllerHelper()
+        public ControllerHelper(Logger logger)
         {
             InitializeComponent();
+
+            this.logger = logger;
 
             // paths
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
@@ -59,32 +65,35 @@ namespace ControllerHelper
             CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
             CurrentPathService = Path.Combine(CurrentPath, "ControllerService.exe");
             CurrentPathLogs = Path.Combine(CurrentPath, "Logs");
-            
-            IsAdmin = Utils.IsAdministrator();
 
-            // initialize logger
-            logger = new LoggerConfiguration()
-            .WriteTo.Console()
-            .WriteTo.File($"{CurrentPathLogs}\\ControllerHelper.log", rollingInterval: RollingInterval.Day)
-            .CreateLogger();
+            // settings
+            IsAdmin = Utils.IsAdministrator();
+            ServiceName = Properties.Settings.Default.ServiceName;
+            ServiceDescription = Properties.Settings.Default.ServiceDescription;
+
+            // initialize log
+            Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
+            logger.Information("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
+
+            // verifying HidHide is installed
+            if (!File.Exists(CurrentPathService))
+            {
+                logger.Fatal("Controller Service executable is missing");
+                throw new InvalidOperationException();
+            }
 
             // initialize pipe client
             PipeClient = new PipeClient("ControllerService", this, logger);
 
             // initialize mouse hook
-            m_Hook = new MouseHook(PipeClient);
+            m_Hook = new MouseHook(PipeClient, this, logger);
 
             cB_HidMode.Items.Add(HideDS4);
             cB_HidMode.Items.Add(HideXBOX);
 
             HIDmodes.Add("DualShock4Controller", HideDS4);
             HIDmodes.Add("Xbox360Controller", HideXBOX);
-
-            // settings
-            cB_RunAtStartup.Checked = RunAtStartup = Properties.Settings.Default.RunAtStartup;
-            cB_StartMinimized.Checked = StartMinimized = Properties.Settings.Default.StartMinimized;
-            cB_CloseMinimizes.Checked = CloseMinimises = Properties.Settings.Default.CloseMinimises;
-            cB_touchpad.Checked = HookMouse = Properties.Settings.Default.HookMouse;
 
             if (StartMinimized)
             {
@@ -96,20 +105,22 @@ namespace ControllerHelper
         private void ControllerHelper_Load(object sender, EventArgs e)
         {
             // initialize GUI
-            this.BeginInvoke((MethodInvoker)delegate ()
+            cB_RunAtStartup.Checked = RunAtStartup = Properties.Settings.Default.RunAtStartup;
+            cB_StartMinimized.Checked = StartMinimized = Properties.Settings.Default.StartMinimized;
+            cB_CloseMinimizes.Checked = CloseMinimises = Properties.Settings.Default.CloseMinimises;
+            cB_touchpad.Checked = HookMouse = Properties.Settings.Default.HookMouse;
+
+            if (!IsAdmin)
             {
-                if (!IsAdmin)
-                {
-                    foreach (Control ctrl in gb_SettingsService.Controls)
-                        ctrl.Visible = false;
-                    lb_Service_Error.Visible = true;
-                }
-            });
+                foreach (Control ctrl in gb_SettingsService.Controls)
+                    ctrl.Visible = false;
+                lb_Service_Error.Visible = true;
+            }
 
             UpdateStatus(false);
 
             // start Service Manager
-            if (IsAdmin) ServiceManager = new ServiceManager("ControllerService", this, Properties.Settings.Default.ServiceName, Properties.Settings.Default.ServiceDescription);
+            ServiceManager = new ServiceManager("ControllerService", this, ServiceName, ServiceDescription, logger);
 
             // start pipe client
             PipeClient.Start();
@@ -135,7 +146,7 @@ namespace ControllerHelper
                 {
                     Profile CurrentProfile = ProfileManager.profiles[ProcessExec];
                     CurrentProfile.fullpath = ProcessPath;
-                    CurrentProfile.Update();
+                    CurrentProfile.Update(logger);
 
                     PipeClient.SendMessage(new PipeMessage
                     {
@@ -148,7 +159,7 @@ namespace ControllerHelper
                         }
                     });
 
-                    logger.Information("Profile {0} applied.", CurrentProfile.name);
+                    logger.Information("Profile {0} applied", CurrentProfile.name);
                 }
                 else
                 {
@@ -266,6 +277,8 @@ namespace ControllerHelper
 
                 lB_Devices.SelectedItem = CurrentController;
             });
+
+            logger.Information("{0} connected on port {1}", CurrentController.ProductName, CurrentController.ProductIndex);
         }
 
         public void UpdateSettings(Dictionary<string, string> args)
@@ -275,13 +288,9 @@ namespace ControllerHelper
                 cB_HidMode.SelectedItem = HIDmodes[args["HIDmode"]];
                 cB_HIDcloak.SelectedItem = args["HIDcloaked"];
                 cB_uncloak.Checked = bool.Parse(args["HIDuncloakonclose"]);
-
                 cB_gyro.Checked = bool.Parse(args["gyrometer"]);
                 cB_accelero.Checked = bool.Parse(args["accelerometer"]);
-
                 tB_PullRate.Value = int.Parse(args["HIDrate"]);
-                m_Hook.SetInterval(tB_PullRate.Value);
-
                 cB_UDPEnable.Checked = bool.Parse(args["DSUEnabled"]);
                 tB_UDPIP.Text = args["DSUip"];
                 tB_UDPPort.Value = int.Parse(args["DSUport"]);
@@ -394,6 +403,8 @@ namespace ControllerHelper
             RunAtStartup = cB_RunAtStartup.Checked;
             Properties.Settings.Default.RunAtStartup = RunAtStartup;
             Properties.Settings.Default.Save();
+
+            logger.Information("Controller Helper run at startup set to {0}", RunAtStartup);
         }
 
         private void cB_uncloak_CheckedChanged(object sender, EventArgs e)
@@ -502,7 +513,7 @@ namespace ControllerHelper
             profile.whitelisted = cB_Whitelist.Checked;
             profile.use_wrapper = cB_Wrapper.Checked;
 
-            profile.Update();
+            profile.Update(logger);
             profile.Serialize();
         }
 

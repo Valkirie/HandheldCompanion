@@ -513,7 +513,7 @@ namespace ControllerService
                 udpSock = null;
             }
 
-            logger.LogInformation($"DSU Server has stopped.");
+            logger.LogInformation($"DSU Server has stopped");
         }
 
         private bool ReportToBuffer(XInputController hidReport, byte[] outputData, long microseconds, ref int outIdx)
