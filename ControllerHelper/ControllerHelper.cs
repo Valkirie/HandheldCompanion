@@ -42,7 +42,7 @@ namespace ControllerHelper
         public static string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
 
         private bool RunAtStartup, StartMinimized, CloseMinimises, HookMouse;
-        private bool IsAdmin;
+        private bool IsAdmin, FirstStart;
 
         public ProfileManager ProfileManager;
         public ServiceManager ServiceManager;
@@ -72,6 +72,7 @@ namespace ControllerHelper
             IsAdmin = Utils.IsAdministrator();
             ServiceName = Properties.Settings.Default.ServiceName;
             ServiceDescription = Properties.Settings.Default.ServiceDescription;
+            FirstStart = Properties.Settings.Default.FirstStart;
 
             // initialize log
             logger.Information("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
@@ -99,6 +100,22 @@ namespace ControllerHelper
             {
                 WindowState = FormWindowState.Minimized;
                 ShowInTaskbar = false;
+            }
+
+            if (FirstStart)
+            {
+                DialogResult dr = MessageBox.Show("Dear handheld gamer,\n\nThe service you are about to use was made for free in order to bring the best possible gaming experience out of your device.\n\nIf you are enjoying it, please consider giving back to the author's efforts and show your appreciation through a donation.\n\nHave fun !", "Please, gives us a minute", MessageBoxButtons.YesNo);
+                switch (dr)
+                {
+                    case DialogResult.Yes:
+                        Utils.OpenUrl("https://www.paypal.com/paypalme/BenjaminLSR");
+                        break;
+                    case DialogResult.No:
+                        break;
+                }
+                FirstStart = false;
+                Properties.Settings.Default.FirstStart = FirstStart;
+                Properties.Settings.Default.Save();
             }
         }
 
