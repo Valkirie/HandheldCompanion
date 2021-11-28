@@ -1,0 +1,23 @@
+﻿{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "Serilog": {
+    "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Console" ],
+    "MinimumLevel": "Information",
+    "WriteTo": [
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs\\ControllerHelper.log",
+          "rollingInterval": "Day"
+        }
+      },
+      { "Name": "Console" }
+    ]
+  }
+}

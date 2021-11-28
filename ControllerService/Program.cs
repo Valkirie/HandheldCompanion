@@ -24,7 +24,7 @@ namespace ControllerService
                 .ConfigureServices((hostContext, services) =>
                 {
                     var configuration = new ConfigurationBuilder()
-                        .AddJsonFile("appsettings.json")
+                        .AddJsonFile("servicesettings.json")
                         .Build();
 
                     var logger = new LoggerConfiguration()

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
@@ -26,11 +27,13 @@ namespace ControllerHelper
                 return;
             }
 
+            var configuration = new ConfigurationBuilder()
+                        .AddJsonFile("helpersettings.json")
+                        .Build();
+
             var serilogLogger = new LoggerConfiguration()
-            .Enrich.FromLogContext()
-            .MinimumLevel.Verbose()
-            .WriteTo.File($"{AppDomain.CurrentDomain.BaseDirectory}\\Logs\\ControllerHelper.log", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: (LogEventLevel)Properties.Settings.Default.LogEventLevel)
-            .CreateLogger();
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
 
             var microsoftLogger = new SerilogLoggerFactory(serilogLogger).CreateLogger("ControllerHelper");
 
