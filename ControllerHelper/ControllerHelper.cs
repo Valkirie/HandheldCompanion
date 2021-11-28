@@ -1,5 +1,6 @@
 ﻿using ControllerService;
 using Microsoft.Win32;
+using Microsoft.Win32.TaskScheduler;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
@@ -42,11 +43,14 @@ namespace ControllerHelper
         public static string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
 
         private bool RunAtStartup, StartMinimized, CloseMinimises, HookMouse;
-        private bool IsAdmin, FirstStart;
+        private bool IsElevated, FirstStart;
 
         public ProfileManager ProfileManager;
         public ServiceManager ServiceManager;
         private readonly string ServiceName, ServiceDescription;
+
+        // TaskManager vars
+        private static Task CurrentTask;
 
         private readonly Logger logger;
 
@@ -69,7 +73,7 @@ namespace ControllerHelper
             CurrentPathLogs = Path.Combine(CurrentPath, "Logs");
 
             // settings
-            IsAdmin = Utils.IsAdministrator();
+            IsElevated = Utils.IsAdministrator();
             ServiceName = Properties.Settings.Default.ServiceName;
             ServiceDescription = Properties.Settings.Default.ServiceDescription;
             FirstStart = Properties.Settings.Default.FirstStart;
@@ -127,11 +131,24 @@ namespace ControllerHelper
             cB_CloseMinimizes.Checked = CloseMinimises = Properties.Settings.Default.CloseMinimises;
             cB_touchpad.Checked = HookMouse = Properties.Settings.Default.HookMouse;
 
-            if (!IsAdmin)
+            // elevation check
+
+            if (!IsElevated)
             {
+                // disable service control
                 foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Visible = false;
+
+                // display warning message
                 lb_Service_Error.Visible = true;
+
+                // disable run at startup button
+                cB_RunAtStartup.Enabled = false;
+            }
+            else
+            {
+                // initialize task manager
+                DefineTask();
             }
 
             UpdateStatus(false);
@@ -428,18 +445,43 @@ namespace ControllerHelper
 
         private void cB_RunAtStartup_CheckedChanged(object sender, EventArgs e)
         {
-            RegistryKey rWrite = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-
-            if (cB_RunAtStartup.Checked)
-                rWrite.SetValue("ControllerHelper", AppDomain.CurrentDomain.BaseDirectory + $"{AppDomain.CurrentDomain.FriendlyName}.exe");
-            else
-                rWrite.DeleteValue("ControllerHelper");
-
             RunAtStartup = cB_RunAtStartup.Checked;
             Properties.Settings.Default.RunAtStartup = RunAtStartup;
             Properties.Settings.Default.Save();
 
+            UpdateTask();
+
             logger.Information("Controller Helper run at startup set to {0}", RunAtStartup);
+        }
+
+        private void DefineTask()
+        {
+            TaskService TaskServ = new TaskService();
+            CurrentTask = TaskServ.FindTask(ServiceName);
+
+            TaskDefinition td = TaskService.Instance.NewTask();
+            td.Principal.RunLevel = TaskRunLevel.Highest;
+            td.Principal.LogonType = TaskLogonType.InteractiveToken;
+            td.Settings.DisallowStartIfOnBatteries = false;
+            td.Settings.StopIfGoingOnBatteries = false;
+            td.Settings.ExecutionTimeLimit = TimeSpan.Zero;
+            td.Settings.Enabled = false;
+            td.Triggers.Add(new LogonTrigger());
+            td.Actions.Add(new ExecAction(CurrentExe));
+            CurrentTask = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, td);
+
+            logger.Information("Task Scheduler: {0} created", ServiceName);
+        }
+
+        public void UpdateTask()
+        {
+            if (CurrentTask == null)
+                return;
+
+            if (RunAtStartup && !CurrentTask.Enabled)
+                CurrentTask.Enabled = true;
+            else if (!RunAtStartup && CurrentTask.Enabled)
+                CurrentTask.Enabled = false;
         }
 
         private void cB_uncloak_CheckedChanged(object sender, EventArgs e)
