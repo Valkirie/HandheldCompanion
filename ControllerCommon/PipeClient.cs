@@ -1,4 +1,4 @@
-﻿using ControllerService;
+﻿using Microsoft.Extensions.Logging;
 using NamedPipeWrapper;
 using Serilog.Core;
 using System;
@@ -6,22 +6,26 @@ using System.Collections.Concurrent;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
-namespace ControllerHelper
+namespace ControllerCommon
 {
     public class PipeClient
     {
-        private readonly NamedPipeClient<PipeMessage> client;
-        private readonly ControllerHelper helper;
-        private readonly Logger logger;
+        public readonly NamedPipeClient<PipeMessage> client;
+        private readonly ILogger logger;
+
+        public event DisconnectedEventHandler Disconnected;
+        public delegate void DisconnectedEventHandler(Object sender);
+
+        public event ServerMessageEventHandler ServerMessage;
+        public delegate void ServerMessageEventHandler(Object sender, PipeMessage e);
 
         private ConcurrentQueue<PipeMessage> m_queue;
         private Timer m_timer;
 
         public bool connected;
 
-        public PipeClient(string pipeName, ControllerHelper helper, Logger logger)
+        public PipeClient(string pipeName, ILogger logger)
         {
-            this.helper = helper;
             this.logger = logger;
 
             m_queue = new ConcurrentQueue<PipeMessage>();
@@ -40,10 +44,10 @@ namespace ControllerHelper
 
         private void OnClientDisconnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
         {
-            logger.Information("Client {0} disconnected", connection.Id);
+            logger.LogInformation("Client {0} disconnected", connection.Id);
+            Disconnected?.Invoke(this);
 
             connected = false;
-            helper.UpdateStatus(false);
         }
 
         public void Start()
@@ -52,7 +56,7 @@ namespace ControllerHelper
                 return;
 
             client.Start();
-            logger.Information($"Pipe Client has started");
+            logger.LogInformation($"Pipe Client has started");
         }
 
         public void Stop()
@@ -61,39 +65,26 @@ namespace ControllerHelper
                 return;
 
             client.Stop();
-            logger.Information($"Pipe Client has halted");
+            logger.LogInformation($"Pipe Client has halted");
         }
 
         private void OnServerMessage(NamedPipeConnection<PipeMessage, PipeMessage> connection, PipeMessage message)
         {
-            logger.Debug("Client {0} opcode: {1} says: {2}", connection.Id, message.Code, string.Join(" ", message.args));
+            logger.LogDebug("Client {0} opcode: {1} says: {2}", connection.Id, message.code, string.Join(" ", message.ToString()));
+            ServerMessage?.Invoke(this, message);
 
-            switch (message.Code)
+            switch (message.code)
             {
-                case PipeCode.SERVER_CONNECTED:
+                case PipeCode.SERVER_PING:
                     connected = true;
-                    helper.UpdateStatus(true);
-                    helper.UpdateScreen();
-                    logger.Information("Client {0} is now connected!", connection.Id);
-                    break;
-
-                case PipeCode.SERVER_TOAST:
-                    Utils.SendToast(message.args["title"], message.args["content"]);
-                    break;
-
-                case PipeCode.SERVER_CONTROLLER:
-                    helper.UpdateController(message.args);
-                    break;
-
-                case PipeCode.SERVER_SETTINGS:
-                    helper.UpdateSettings(message.args);
+                    logger.LogInformation("Client {0} is now connected!", connection.Id);
                     break;
             }
         }
 
         private void OnError(Exception exception)
         {
-            logger.Error("PipClient failed. {0}", exception.Message);
+            logger.LogError("PipClient failed. {0}", exception.Message);
         }
 
         public void SendMessage(PipeMessage message)

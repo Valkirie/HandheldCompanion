@@ -1,4 +1,5 @@
-﻿using ControllerService;
+﻿using ControllerCommon;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
 using Serilog.Core;
@@ -52,9 +53,9 @@ namespace ControllerHelper
         // TaskManager vars
         private static Task CurrentTask;
 
-        private readonly Logger logger;
+        private readonly ILogger logger;
 
-        public ControllerHelper(Logger logger)
+        public ControllerHelper(ILogger logger)
         {
             InitializeComponent();
 
@@ -79,17 +80,19 @@ namespace ControllerHelper
             FirstStart = Properties.Settings.Default.FirstStart;
 
             // initialize log
-            logger.Information("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
+            logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
 
             // verifying HidHide is installed
             if (!File.Exists(CurrentPathService))
             {
-                logger.Fatal("Controller Service executable is missing");
+                logger.LogCritical("Controller Service executable is missing");
                 throw new InvalidOperationException();
             }
 
             // initialize pipe client
-            PipeClient = new PipeClient("ControllerService", this, logger);
+            PipeClient = new PipeClient("ControllerService", logger);
+            PipeClient.Disconnected += OnClientDisconnected;
+            PipeClient.ServerMessage += OnServerMessage;
 
             // initialize mouse hook
             m_Hook = new MouseHook(PipeClient, this, logger);
@@ -123,6 +126,38 @@ namespace ControllerHelper
             }
         }
 
+        private void OnServerMessage(object sender, PipeMessage message)
+        {
+            switch (message.code)
+            {
+                case PipeCode.SERVER_PING:
+                    PipeServerPing ping = (PipeServerPing)message;
+                    UpdateStatus(true);
+                    UpdateScreen();
+                    break;
+
+                case PipeCode.SERVER_TOAST:
+                    PipeServerToast toast = (PipeServerToast)message;
+                    Utils.SendToast(toast.title, toast.content);
+                    break;
+
+                case PipeCode.SERVER_CONTROLLER:
+                    PipeServerController controller = (PipeServerController)message;
+                    UpdateController(controller.ProductName, controller.InstanceGuid, controller.ProductGuid, (int)controller.ProductIndex);
+                    break;
+
+                case PipeCode.SERVER_SETTINGS:
+                    PipeServerSettings settings = (PipeServerSettings)message;
+                    UpdateSettings(settings.settings);
+                    break;
+            }
+        }
+
+        private void OnClientDisconnected(object sender)
+        {
+            UpdateStatus(false);
+        }
+
         private void ControllerHelper_Load(object sender, EventArgs e)
         {
             // initialize GUI
@@ -137,24 +172,25 @@ namespace ControllerHelper
             {
                 // disable service control
                 foreach (Control ctrl in gb_SettingsService.Controls)
-                    ctrl.Visible = false;
+                    ctrl.Enabled = false;
 
                 // display warning message
-                lb_Service_Error.Visible = true;
+                toolTip1.SetToolTip(cB_RunAtStartup, "Run this tool as Administrator to unlock these settings.");
+                toolTip1.SetToolTip(gb_SettingsService, "Run this tool as Administrator to unlock these settings.");
 
                 // disable run at startup button
                 cB_RunAtStartup.Enabled = false;
             }
             else
             {
-                // initialize task manager
+                // initialize Service Manager
+                ServiceManager = new ServiceManager("ControllerService", this, ServiceName, ServiceDescription, logger);
+
+                // initialize Task Manager
                 DefineTask();
             }
 
             UpdateStatus(false);
-
-            // start Service Manager
-            ServiceManager = new ServiceManager("ControllerService", this, ServiceName, ServiceDescription, logger);
 
             // start pipe client
             PipeClient.Start();
@@ -178,35 +214,17 @@ namespace ControllerHelper
 
                 if (ProfileManager.profiles.ContainsKey(ProcessExec))
                 {
-                    Profile CurrentProfile = ProfileManager.profiles[ProcessExec];
-                    CurrentProfile.fullpath = ProcessPath;
-                    CurrentProfile.Update(logger);
+                    Profile profile = ProfileManager.profiles[ProcessExec];
+                    profile.fullpath = ProcessPath;
 
-                    PipeClient.SendMessage(new PipeMessage
-                    {
-                        Code = PipeCode.CLIENT_PROFILE,
-                        args = new Dictionary<string, string>
-                        {
-                            { "muted", Convert.ToString(CurrentProfile.whitelisted) },
-                            { "gyrometer", Convert.ToString(CurrentProfile.gyrometer) },
-                            { "accelerometer", Convert.ToString(CurrentProfile.accelerometer) }
-                        }
-                    });
+                    ProfileManager.UpdateProfile(profile);
 
-                    logger.Information("Profile {0} applied", CurrentProfile.name);
+                    PipeClient.SendMessage(new PipeClientProfile { profile = profile });
+
+                    logger.LogInformation("Profile {0} applied", profile.name);
                 }
                 else
-                {
-                    PipeClient.SendMessage(new PipeMessage
-                    {
-                        Code = PipeCode.CLIENT_PROFILE,
-                        args = new Dictionary<string, string> {
-                            { "muted", Convert.ToString(false) },
-                            { "gyrometer", Convert.ToString(1.0f) },
-                            { "accelerometer", Convert.ToString(1.0f) }
-                        }
-                    });
-                }
+                    PipeClient.SendMessage(new PipeClientProfile() { profile = new Profile("default", "") } );
             }
             catch (Exception) { }
         }
@@ -289,20 +307,16 @@ namespace ControllerHelper
 
         public void UpdateScreen()
         {
-            PipeClient.SendMessage(new PipeMessage
+            PipeClient.SendMessage(new PipeClientScreen
             {
-                Code = PipeCode.CLIENT_SIZE_DETAILS,
-                args = new Dictionary<string, string>
-                    {
-                        { "Bounds.Width", Convert.ToString(Screen.PrimaryScreen.Bounds.Width) },
-                        { "Bounds.Height", Convert.ToString(Screen.PrimaryScreen.Bounds.Height) }
-                    }
+                width = Screen.PrimaryScreen.Bounds.Width,
+                height = Screen.PrimaryScreen.Bounds.Height
             });
         }
 
-        public void UpdateController(Dictionary<string, string> args)
+        public void UpdateController(string ProductName, Guid InstanceGuid, Guid ProductGuid, int ProductIndex)
         {
-            CurrentController = new Controller(args["ProductName"], Guid.Parse(args["InstanceGuid"]), Guid.Parse(args["ProductGuid"]), int.Parse(args["ProductIndex"]));
+            CurrentController = new Controller(ProductName, InstanceGuid, ProductGuid, ProductIndex);
 
             this.BeginInvoke((MethodInvoker)delegate ()
             {
@@ -312,7 +326,7 @@ namespace ControllerHelper
                 lB_Devices.SelectedItem = CurrentController;
             });
 
-            logger.Information("{0} connected on port {1}", CurrentController.ProductName, CurrentController.ProductIndex);
+            logger.LogInformation("{0} connected on port {1}", CurrentController.ProductName, CurrentController.ProductIndex);
         }
 
         public void UpdateSettings(Dictionary<string, string> args)
@@ -355,10 +369,9 @@ namespace ControllerHelper
 
         private void cB_HIDcloak_SelectedIndexChanged(object sender, EventArgs e)
         {
-            PipeClient.SendMessage(new PipeMessage
+            PipeClient.SendMessage(new PipeClientSettings
             {
-                Code = PipeCode.CLIENT_SETTINGS,
-                args = new Dictionary<string, string>
+                settings = new Dictionary<string, string>
                 {
                     { "HIDcloaked", cB_HIDcloak.Text }
                 }
@@ -375,10 +388,9 @@ namespace ControllerHelper
                 toolTip1.SetToolTip(tB_PullRate, $"{tB_PullRate.Value} Miliseconds");
             });
 
-            PipeClient.SendMessage(new PipeMessage
+            PipeClient.SendMessage(new PipeClientSettings
             {
-                Code = PipeCode.CLIENT_SETTINGS,
-                args = new Dictionary<string, string>
+                settings = new Dictionary<string, string>
                 {
                     { "HIDrate", $"{tB_PullRate.Value}" }
                 }
@@ -392,10 +404,9 @@ namespace ControllerHelper
                 toolTip1.SetToolTip(tB_VibrationStr, $"{tB_VibrationStr.Value}%");
             });
 
-            PipeClient.SendMessage(new PipeMessage
+            PipeClient.SendMessage(new PipeClientSettings
             {
-                Code = PipeCode.CLIENT_SETTINGS,
-                args = new Dictionary<string, string>
+                settings = new Dictionary<string, string>
                 {
                     { "HIDstrength", $"{tB_VibrationStr.Value}" }
                 }
@@ -404,10 +415,9 @@ namespace ControllerHelper
 
         private void b_UDPApply_Click(object sender, EventArgs e)
         {
-            PipeClient.SendMessage(new PipeMessage
+            PipeClient.SendMessage(new PipeClientSettings
             {
-                Code = PipeCode.CLIENT_SETTINGS,
-                args = new Dictionary<string, string>
+                settings = new Dictionary<string, string>
                 {
                     { "DSUip", $"{tB_UDPIP.Text}" },
                     { "DSUport", $"{tB_UDPPort.Value}" },
@@ -425,12 +435,14 @@ namespace ControllerHelper
                     var path = openFileDialog1.FileName;
                     var name = openFileDialog1.SafeFileName;
 
-                    ProfileManager.profiles[name] = new Profile(name, path);
-                    ProfileManager.profiles[name].Serialize();
+                    Profile profile = new Profile(name, path);
+
+                    ProfileManager.profiles[name] = profile;
+                    ProfileManager.SerializeProfile(profile);
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex.Message);
+                    logger.LogError(ex.Message);
                 }
             }
         }
@@ -438,7 +450,7 @@ namespace ControllerHelper
         private void b_DeleteProfile_Click(object sender, EventArgs e)
         {
             Profile profile = (Profile)lB_Profiles.SelectedItem;
-            profile.Delete();
+            ProfileManager.DeleteProfile(profile);
 
             lB_Profiles.SelectedIndex = -1;
         }
@@ -451,7 +463,7 @@ namespace ControllerHelper
 
             UpdateTask();
 
-            logger.Information("Controller Helper run at startup set to {0}", RunAtStartup);
+            logger.LogInformation("Controller Helper run at startup set to {0}", RunAtStartup);
         }
 
         private void DefineTask()
@@ -470,7 +482,7 @@ namespace ControllerHelper
             td.Actions.Add(new ExecAction(CurrentExe));
             CurrentTask = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, td);
 
-            logger.Information("Task Scheduler: {0} created", ServiceName);
+            logger.LogInformation("Task Scheduler: {0} created", ServiceName);
         }
 
         public void UpdateTask()
@@ -486,10 +498,9 @@ namespace ControllerHelper
 
         private void cB_uncloak_CheckedChanged(object sender, EventArgs e)
         {
-            PipeClient.SendMessage(new PipeMessage
+            PipeClient.SendMessage(new PipeClientSettings
             {
-                Code = PipeCode.CLIENT_SETTINGS,
-                args = new Dictionary<string, string>
+                settings = new Dictionary<string, string>
                 {
                     { "HIDuncloakonclose", $"{cB_uncloak.Checked}" }
                 }
@@ -537,7 +548,7 @@ namespace ControllerHelper
 
                     tB_ProfileName.Text = profile.name;
                     tB_ProfilePath.Text = profile.path;
-                    toolTip1.SetToolTip(tB_ProfilePath, profile.error != Profile.ErrorCode.None ? $"Can't reach: {profile.path}" : $"{profile.path}");
+                    toolTip1.SetToolTip(tB_ProfilePath, profile.error != ProfileErrorCode.None ? $"Can't reach: {profile.path}" : $"{profile.path}");
 
                     cB_Whitelist.Checked = profile.whitelisted;
                     cB_Wrapper.Checked = profile.use_wrapper;
@@ -590,8 +601,8 @@ namespace ControllerHelper
             profile.whitelisted = cB_Whitelist.Checked;
             profile.use_wrapper = cB_Wrapper.Checked;
 
-            profile.Update(logger);
-            profile.Serialize();
+            ProfileManager.UpdateProfile(profile);
+            ProfileManager.SerializeProfile(profile);
         }
 
         private void cB_gyro_CheckedChanged(object sender, EventArgs e)
@@ -610,7 +621,7 @@ namespace ControllerHelper
             });
         }
 
-        public void UpdateProfile(Profile profile)
+        public void UpdateProfileList(Profile profile)
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {

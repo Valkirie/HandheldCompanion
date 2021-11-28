@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ControllerHelper.Properties {
+namespace ControllerCommon.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ControllerHelper.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ControllerHelper.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ControllerCommon.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,66 +57,6 @@ namespace ControllerHelper.Properties {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à [Options]
-        ///UseInitBeep=1
-        ///Log=0
-        ///Console=0
-        ///DebugMode=0
-        ///InternetDatabaseUrl=http://www.x360ce.com/webservices/x360ce.asmx
-        ///InternetFeatures=1
-        ///InternetAutoload=1
-        ///AllowOnlyOneCopy=1
-        ///ProgramScanLocations=C:\Program Files,C:\Program Files (x86)
-        ///Version=2
-        ///CombineEnabled=0
-        ///ExcludeSupplementalDevices=0
-        ///ExcludeVirtualDevices=0
-        ///
-        ///[InputHook]
-        ///HookMode=1
-        ///
-        ///[Mappings]
-        ///PAD1=VirtualDS4
-        ///PAD2=
-        ///PAD3=
-        ///PAD4=
-        ///
-        ///[PAD1]
-        ///[PAD2]
-        ///[PAD3]
-        ///[PAD4]
-        ///
-        ///[VirtualDS4]
-        ///ProductName=Wireless Controller
-        ///ProductGuid=05c4054c [le reste de la chaîne a été tronqué]&quot;;.
-        /// </summary>
-        internal static string x360ce {
-            get {
-                return ResourceManager.GetString("x360ce", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        internal static byte[] xinput1_3_64 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_3_64", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        internal static byte[] xinput1_3_86 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_3_86", resourceCulture);
-                return ((byte[])(obj));
             }
         }
     }

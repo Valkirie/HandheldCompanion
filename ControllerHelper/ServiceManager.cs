@@ -1,4 +1,5 @@
-﻿using Serilog.Core;
+﻿using Microsoft.Extensions.Logging;
+using Serilog.Core;
 using System;
 using System.Diagnostics;
 using System.ServiceProcess;
@@ -24,9 +25,9 @@ namespace ControllerHelper
         private object updateLock = new();
 
         private readonly ControllerHelper helper;
-        private readonly Logger logger;
+        private readonly ILogger logger;
 
-        public ServiceManager(string name, ControllerHelper helper, string display, string description, Logger logger)
+        public ServiceManager(string name, ControllerHelper helper, string display, string description, ILogger logger)
         {
             this.helper = helper;
             this.logger = logger;
@@ -79,14 +80,14 @@ namespace ControllerHelper
                     catch (Exception ex)
                     {
                         nextStatus = status;
-                        logger.Error("{0} set to {1}", name, ex.Message);
+                        logger.LogError("{0} set to {1}", name, ex.Message);
                     }
                 }
 
                 if (prevStatus != (int)status)
                 {
                     helper.UpdateService(status);
-                    logger.Information("Controller Service status has changed to: {0}", status.ToString());
+                    logger.LogInformation("Controller Service status has changed to: {0}", status.ToString());
                 }
 
                 prevStatus = (int)status;

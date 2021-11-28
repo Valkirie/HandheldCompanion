@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using ControllerCommon;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
+using Serilog.Core;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
@@ -140,29 +142,89 @@ namespace ControllerService
             DSUServer = new DSUServer(DSUip, DSUport, logger);
 
             // initialize PipeServer
-            PipeServer = new PipeServer("ControllerService", this, logger);
+            PipeServer = new PipeServer("ControllerService", logger);
+            PipeServer.Connected += OnClientConnected;
+            PipeServer.Disconnected += OnClientDisconnected;
+            PipeServer.ClientMessage += OnClientMessage;
         }
 
-        internal void UpdateProfile(Dictionary<string, string> args)
+        private void OnClientMessage(object sender, PipeMessage message)
         {
-            foreach (KeyValuePair<string, string> pair in args)
+            switch (message.code)
             {
-                string name = pair.Key;
-                string value = pair.Value;
+                case PipeCode.CLIENT_PROFILE:
+                    PipeClientProfile profile = (PipeClientProfile)message;
+                    UpdateProfile(profile.profile);
+                    break;
 
-                switch (name)
-                {
-                    case "muted":
-                        PhysicalController.muted = bool.Parse(value);
-                        break;
-                    case "accelerometer":
-                        PhysicalController.accelerometer.multiplier = float.Parse(value);
-                        break;
-                    case "gyrometer":
-                        PhysicalController.gyrometer.multiplier = float.Parse(value);
-                        break;
-                }
+                case PipeCode.CLIENT_CURSOR:
+                    PipeClientCursor cursor = (PipeClientCursor)message;
+
+                    switch(cursor.action)
+                    {
+                        case 0: // up
+                            PhysicalController.touch.OnMouseUp((short)cursor.x, (short)cursor.y, cursor.button);
+                            break;
+                        case 1: // down
+                            PhysicalController.touch.OnMouseDown((short)cursor.x, (short)cursor.y, cursor.button);
+                            break;
+                        case 2: // move
+                            PhysicalController.touch.OnMouseMove((short)cursor.x, (short)cursor.y, cursor.button);
+                            break;
+                    }
+                    break;
+
+                case PipeCode.CLIENT_SCREEN:
+                    PipeClientScreen screen = (PipeClientScreen)message;
+                    PhysicalController.touch.UpdateRatio(screen.width, screen.height);
+                    break;
+
+                case PipeCode.CLIENT_SETTINGS:
+                    PipeClientSettings settings = (PipeClientSettings)message;
+                    UpdateSettings(settings.settings);
+                    break;
+
+                case PipeCode.CLIENT_HIDDER:
+                    PipeClientHidder hidder = (PipeClientHidder)message;
+
+                    switch (hidder.action)
+                    {
+                        case 0: // reg
+                            Hidder.RegisterApplication(hidder.path);
+                            break;
+                        case 1: // unreg
+                            Hidder.UnregisterApplication(hidder.path);
+                            break;
+                    }
+                    break;
             }
+        }
+
+        private void OnClientDisconnected(object sender)
+        {
+            PhysicalController.touch.OnMouseUp(-1, -1, 1048576 /* MouseButtons.Left */);
+        }
+
+        private void OnClientConnected(object sender)
+        {
+            // send controller details
+            PipeServer.SendMessage(new PipeServerController()
+            {
+                ProductName = PhysicalController.instance.ProductName,
+                InstanceGuid = PhysicalController.instance.InstanceGuid,
+                ProductGuid = PhysicalController.instance.ProductGuid,
+                ProductIndex = (int)PhysicalController.index
+            });
+
+            // send server settings
+            PipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
+        }
+
+        internal void UpdateProfile(Profile profile)
+        {
+            PhysicalController.muted = profile.whitelisted;
+            PhysicalController.gyrometer.multiplier = profile.gyrometer;
+            PhysicalController.accelerometer.multiplier = profile.accelerometer;
         }
 
         public void UpdateSettings(Dictionary<string, string> args)
@@ -279,14 +341,10 @@ namespace ControllerService
             PipeServer.Start();
 
             // send notification
-            PipeServer.SendMessage(new PipeMessage
+            PipeServer.SendMessage(new PipeServerToast
             {
-                Code = PipeCode.SERVER_TOAST,
-                args = new Dictionary<string, string>
-                {
-                    { "title", $"{VirtualController.GetType().Name}" },
-                    { "content", "Virtual device is now connected"}
-                }
+                title = $"{VirtualController.GetType().Name}",
+                content = "Virtual device is now connected"
             });
 
             return Task.CompletedTask;
@@ -302,14 +360,10 @@ namespace ControllerService
                     logger.LogInformation("Virtual {0} disconnected", VirtualController.GetType().Name);
 
                     // send notification
-                    PipeServer.SendMessage(new PipeMessage
+                    PipeServer.SendMessage(new PipeServerToast
                     {
-                        Code = PipeCode.SERVER_TOAST,
-                        args = new Dictionary<string, string>
-                        {
-                            { "title", $"{VirtualController.GetType().Name}" },
-                            { "content", "Virtual device is now disconnected"}
-                        }
+                        title = $"{VirtualController.GetType().Name}",
+                        content = "Virtual device is now disconnected"
                     });
                 }
             }

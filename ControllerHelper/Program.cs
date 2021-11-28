@@ -1,6 +1,6 @@
 using Serilog;
-using Serilog.Core;
 using Serilog.Events;
+using Serilog.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -26,16 +26,18 @@ namespace ControllerHelper
                 return;
             }
 
-            // initialize logger
-            Logger logger = new LoggerConfiguration()
-            .WriteTo.Console()
+            var serilogLogger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .MinimumLevel.Verbose()
             .WriteTo.File($"{AppDomain.CurrentDomain.BaseDirectory}\\Logs\\ControllerHelper.log", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: (LogEventLevel)Properties.Settings.Default.LogEventLevel)
             .CreateLogger();
+
+            var microsoftLogger = new SerilogLoggerFactory(serilogLogger).CreateLogger("ControllerHelper");
 
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ControllerHelper(logger));
+            Application.Run(new ControllerHelper(microsoftLogger));
         }
     }
 }

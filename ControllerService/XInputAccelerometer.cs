@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Serilog.Core;
 using System;
 using Windows.Devices.Sensors;
 
@@ -19,9 +20,9 @@ namespace ControllerService
         public event XInputAccelerometerReadingChangedEventHandler ReadingChanged;
         public delegate void XInputAccelerometerReadingChangedEventHandler(Object sender, XInputAccelerometerReadingChangedEventArgs e);
 
-        private readonly ILogger<ControllerService> logger;
+        private readonly ILogger logger;
 
-        public XInputAccelerometer(ILogger<ControllerService> logger)
+        public XInputAccelerometer(ILogger logger)
         {
             this.logger = logger;
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using ControllerCommon;
+using Microsoft.Extensions.Logging;
+using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,10 +16,10 @@ namespace ControllerService
         public RootDevice root;
         public List<Device> devices = new List<Device>();
 
-        private readonly ILogger<ControllerService> logger;
+        private readonly ILogger logger;
         private readonly ControllerService service;
 
-        public HidHide(string _path, ILogger<ControllerService> logger, ControllerService service)
+        public HidHide(string _path, ILogger logger, ControllerService service)
         {
             this.logger = logger;
             this.service = service;

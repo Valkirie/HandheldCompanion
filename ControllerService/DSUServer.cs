@@ -1,5 +1,7 @@
-﻿using Force.Crc32;
+﻿using ControllerCommon;
+using Force.Crc32;
 using Microsoft.Extensions.Logging;
+using Serilog.Core;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -96,11 +98,11 @@ namespace ControllerService
             meta = padMeta;
         }
 
-        private readonly ILogger<ControllerService> logger;
+        private readonly ILogger logger;
         public string ip;
         public int port;
 
-        public DSUServer(string ipString, int port, ILogger<ControllerService> logger)
+        public DSUServer(string ipString, int port, ILogger logger)
         {
             this.logger = logger;
             this.ip = ipString;
@@ -461,7 +463,7 @@ namespace ControllerService
                     udpSock.BeginReceiveFrom(recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ref newClientEP, ReceiveCallback, udpSock);
                 }
             }
-            catch (SocketException /*ex*/)
+            catch (SocketException)
             {
                 uint IOC_IN = 0x80000000;
                 uint IOC_VENDOR = 0x18000000;
@@ -483,12 +485,10 @@ namespace ControllerService
                 IPAddress udpListenIPAddress = IPAddress.Parse(ip);
                 udpSock.Bind(new IPEndPoint(udpListenIPAddress, port));
             }
-            catch (SocketException ex)
+            catch (SocketException)
             {
                 udpSock.Close();
                 udpSock = null;
-
-                throw ex;
             }
 
             byte[] randomBuf = new byte[4];

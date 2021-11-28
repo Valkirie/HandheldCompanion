@@ -7,11 +7,24 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 
-namespace ControllerHelper
+namespace ControllerCommon
 {
-    class Utils
+    public static class Utils
     {
         #region imports
+        public enum BinaryType : uint
+        {
+            SCS_32BIT_BINARY = 0,   // A 32-bit Windows-based application
+            SCS_64BIT_BINARY = 6,   // A 64-bit Windows-based application.
+            SCS_DOS_BINARY = 1,     // An MS-DOS based application
+            SCS_OS216_BINARY = 5,   // A 16-bit OS/2-based application
+            SCS_PIF_BINARY = 3,     // A PIF file that executes an MS-DOS based application
+            SCS_POSIX_BINARY = 4,   // A POSIX based application
+            SCS_WOW_BINARY = 2      // A 16-bit Windows-based application
+        }
+
+        [DllImport("kernel32.dll")]
+        public static extern bool GetBinaryType(string lpApplicationName, out BinaryType lpBinaryType);
         [DllImport("Kernel32.dll")]
         static extern uint QueryFullProcessImageName(IntPtr hProcess, uint flags, StringBuilder text, out uint size);
         #endregion
@@ -38,6 +51,19 @@ namespace ControllerHelper
             return FinalString;
         }
 
+        public static byte NormalizeInput(short input)
+        {
+            input = (short)Math.Max(short.MinValue, Math.Min(short.MaxValue, input));
+            float output = (float)input / (float)ushort.MaxValue * (float)byte.MaxValue + (float)(byte.MaxValue / 2.0f);
+            return (byte)Math.Round(output);
+        }
+
+        public static bool IsTextAValidIPAddress(string text)
+        {
+            IPAddress test;
+            return IPAddress.TryParse(text, out test);
+        }
+
         public static string GetPathToApp(Process process)
         {
             try
@@ -62,12 +88,6 @@ namespace ControllerHelper
             }
 
             return "";
-        }
-
-        public static bool IsTextAValidIPAddress(string text)
-        {
-            IPAddress test;
-            return IPAddress.TryParse(text, out test);
         }
 
         public static bool IsAdministrator()

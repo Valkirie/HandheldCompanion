@@ -1,5 +1,6 @@
-﻿using ControllerService;
+﻿using ControllerCommon;
 using Gma.System.MouseKeyHook;
+using Microsoft.Extensions.Logging;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
@@ -25,11 +26,11 @@ namespace ControllerHelper
 
         private readonly PipeClient client;
         private readonly ControllerHelper helper;
-        private readonly Logger logger;
+        private readonly ILogger logger;
 
         private TouchInput TouchPos;
 
-        public MouseHook(PipeClient client, ControllerHelper helper, Logger logger)
+        public MouseHook(PipeClient client, ControllerHelper helper, ILogger logger)
         {
             this.client = client;
             this.helper = helper;
@@ -48,13 +49,13 @@ namespace ControllerHelper
             m_Hook = new Thread(Subscribe) { IsBackground = true };
             m_Hook.Start();
 
-            logger.Information("Mouse hook has started");
+            logger.LogInformation("Mouse hook has started");
         }
 
         public void SetInterval(double ms)
         {
             m_Timer.Interval = ms * 4;
-            logger.Information("Mouse hook interval set to {0}", m_Timer.Interval);
+            logger.LogInformation("Mouse hook interval set to {0}", m_Timer.Interval);
         }
 
         private void Subscribe()
@@ -67,49 +68,42 @@ namespace ControllerHelper
 
         private void SendMouseUp(object sender, ElapsedEventArgs e)
         {
-            client.SendMessage(new PipeMessage
+            client.SendMessage(new PipeClientCursor
             {
-                Code = PipeCode.CLIENT_CURSORUP,
-                args = new Dictionary<string, string>
-                {
-                    { "X", Convert.ToString(TouchPos.X) },
-                    { "Y", Convert.ToString(TouchPos.Y) },
-                    { "Button", Convert.ToString((int)TouchPos.Button) }
-                }
+                action = 0, // up
+                x = TouchPos.X,
+                y = TouchPos.Y,
+                button = (int)TouchPos.Button
             });
         }
 
         private void OnMouseDown(object sender, MouseEventExtArgs e)
         {
             m_Events.MouseMoveExt += OnMouseMove;
-
             m_Timer.Stop();
-            client.SendMessage(new PipeMessage
+
+            client.SendMessage(new PipeClientCursor
             {
-                Code = PipeCode.CLIENT_CURSORDOWN,
-                args = new Dictionary<string, string>
-                {
-                    { "X", Convert.ToString(e.X) },
-                    { "Y", Convert.ToString(e.Y) },
-                    { "Button", Convert.ToString((int)e.Button) }
-                }
+                action = 1, // down
+                x = e.X,
+                y = e.Y,
+                button = (int)e.Button
             });
-            logger.Verbose("OnMouseDown x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
+
+            logger.LogDebug("OnMouseDown x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
         }
 
         private void OnMouseMove(object sender, MouseEventExtArgs e)
         {
-            client.SendMessage(new PipeMessage
+            client.SendMessage(new PipeClientCursor
             {
-                Code = PipeCode.CLIENT_CURSORMOVE,
-                args = new Dictionary<string, string>
-                {
-                    { "X", Convert.ToString(e.X) },
-                    { "Y", Convert.ToString(e.Y) },
-                    { "Button", Convert.ToString((int)e.Button) }
-                }
+                action = 2, // move
+                x = e.X,
+                y = e.Y,
+                button = (int)e.Button
             });
-            logger.Verbose("OnMouseMove x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
+
+            logger.LogDebug("OnMouseMove x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
         }
 
         private void OnMouseUp(object sender, MouseEventExtArgs e)
@@ -122,7 +116,7 @@ namespace ControllerHelper
                 Y = e.Y,
                 Button = e.Button
             };
-            logger.Verbose("OnMouseUp x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
+            logger.LogDebug("OnMouseUp x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
 
             m_Timer.Start();
         }
@@ -134,7 +128,7 @@ namespace ControllerHelper
             m_Events.Dispose();
             m_Events = null;
 
-            logger.Information("Mouse hook has halted");
+            logger.LogInformation("Mouse hook has halted");
         }
     }
 }

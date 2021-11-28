@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using ControllerCommon;
+using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
+using Serilog.Core;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
@@ -67,9 +69,9 @@ namespace ControllerService
 
         private DS4_REPORT_EX outDS4Report;
 
-        private readonly ILogger<ControllerService> logger;
+        private readonly ILogger logger;
 
-        public XInputController(UserIndex _idx, int HIDrate, ILogger<ControllerService> logger)
+        public XInputController(UserIndex _idx, int HIDrate, ILogger logger)
         {
             this.logger = logger;
 

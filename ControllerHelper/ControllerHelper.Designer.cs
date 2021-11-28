@@ -88,7 +88,6 @@ namespace ControllerHelper
             this.b_ServiceStart = new System.Windows.Forms.Button();
             this.b_ServiceDelete = new System.Windows.Forms.Button();
             this.b_ServiceInstall = new System.Windows.Forms.Button();
-            this.lb_Service_Error = new System.Windows.Forms.Label();
             this.gb_SettingsUDP = new System.Windows.Forms.GroupBox();
             this.b_UDPApply = new System.Windows.Forms.Button();
             this.tB_UDPPort = new System.Windows.Forms.NumericUpDown();
@@ -665,7 +664,6 @@ namespace ControllerHelper
             this.gb_SettingsService.Controls.Add(this.b_ServiceStart);
             this.gb_SettingsService.Controls.Add(this.b_ServiceDelete);
             this.gb_SettingsService.Controls.Add(this.b_ServiceInstall);
-            this.gb_SettingsService.Controls.Add(this.lb_Service_Error);
             this.gb_SettingsService.Location = new System.Drawing.Point(6, 175);
             this.gb_SettingsService.Name = "gb_SettingsService";
             this.gb_SettingsService.Size = new System.Drawing.Size(752, 383);
@@ -716,17 +714,6 @@ namespace ControllerHelper
             this.b_ServiceInstall.Text = "Install Controller Service";
             this.b_ServiceInstall.UseVisualStyleBackColor = true;
             this.b_ServiceInstall.Click += new System.EventHandler(this.b_ServiceInstall_Click);
-            // 
-            // lb_Service_Error
-            // 
-            this.lb_Service_Error.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lb_Service_Error.Location = new System.Drawing.Point(3, 19);
-            this.lb_Service_Error.Name = "lb_Service_Error";
-            this.lb_Service_Error.Size = new System.Drawing.Size(746, 15);
-            this.lb_Service_Error.TabIndex = 0;
-            this.lb_Service_Error.Text = "Run this tool as Administrator to unlock these settings.";
-            this.lb_Service_Error.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lb_Service_Error.Visible = false;
             // 
             // gb_SettingsUDP
             // 
@@ -954,7 +941,6 @@ namespace ControllerHelper
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button b_CreateProfile;
         private System.Windows.Forms.Button b_DeleteProfile;
-        private System.Windows.Forms.Label lb_Service_Error;
         private System.Windows.Forms.Button b_ServiceDelete;
         private System.Windows.Forms.Button b_ServiceInstall;
         private System.Windows.Forms.Button b_ServiceStop;
