@@ -125,7 +125,7 @@ namespace ControllerHelper
             m_Events.Dispose();
             m_Events = null;
 
-            logger.LogInformation("Mouse hook has halted");
+            logger.LogInformation("Mouse hook has stopped");
         }
     }
 }

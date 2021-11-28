@@ -94,7 +94,7 @@ namespace ControllerCommon
                 return;
 
             server = null;
-            logger.LogInformation($"Pipe Server has halted");
+            logger.LogInformation($"Pipe Server has stopped");
         }
 
         private void OnClientConnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)

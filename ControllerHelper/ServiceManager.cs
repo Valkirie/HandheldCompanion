@@ -78,7 +78,7 @@ namespace ControllerHelper
                     }
                     catch (Exception ex)
                     {
-                        nextStatus = status;
+                        nextStatus = 0;
                         logger.LogError("{0} set to {1}", name, ex.Message);
                     }
                 }

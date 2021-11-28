@@ -4,9 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControllerService", "ControllerService\ControllerService.csproj", "{6B7B570E-8C8B-4189-9C98-B3BBFE630615}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D1B95ACA-77CF-4332-A1DC-AF4A6DA54FC2} = {D1B95ACA-77CF-4332-A1DC-AF4A6DA54FC2}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControllerHelper", "ControllerHelper\ControllerHelper.csproj", "{3BB6F372-E910-4A27-810B-64152F163709}"
 EndProject
