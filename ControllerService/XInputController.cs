@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
-using Serilog.Core;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;

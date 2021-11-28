@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using NamedPipeWrapper;
-using Serilog.Core;
 using System;
 using System.Collections.Concurrent;
 using System.IO.Pipes;

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Serilog.Core;
 using System;
 using Windows.Devices.Sensors;
 

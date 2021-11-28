@@ -1,8 +1,6 @@
 ﻿using ControllerCommon;
 using Microsoft.Extensions.Logging;
-using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
-using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -224,7 +222,7 @@ namespace ControllerHelper
                     logger.LogInformation("Profile {0} applied", profile.name);
                 }
                 else
-                    PipeClient.SendMessage(new PipeClientProfile() { profile = new Profile("default", "") } );
+                    PipeClient.SendMessage(new PipeClientProfile() { profile = new Profile("default", "") });
             }
             catch (Exception) { }
         }

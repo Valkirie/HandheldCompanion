@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
-using Serilog.Core;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
@@ -160,7 +159,7 @@ namespace ControllerService
                 case PipeCode.CLIENT_CURSOR:
                     PipeClientCursor cursor = (PipeClientCursor)message;
 
-                    switch(cursor.action)
+                    switch (cursor.action)
                     {
                         case 0: // up
                             PhysicalController.touch.OnMouseUp((short)cursor.x, (short)cursor.y, cursor.button);

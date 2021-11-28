@@ -1,9 +1,6 @@
 ﻿using ControllerCommon;
 using Gma.System.MouseKeyHook;
 using Microsoft.Extensions.Logging;
-using Serilog.Core;
-using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
