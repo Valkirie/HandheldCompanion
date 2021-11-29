@@ -79,6 +79,7 @@ namespace ControllerHelper
                     catch (Exception ex)
                     {
                         nextStatus = 0;
+                        prevStatus = 0;
                         logger.LogError("{0} set to {1}", name, ex.Message);
                     }
                 }
