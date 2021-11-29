@@ -186,6 +186,7 @@ namespace ControllerHelper
 
                 // initialize Task Manager
                 DefineTask();
+                UpdateTask();
             }
 
             UpdateStatus(false);
@@ -479,8 +480,6 @@ namespace ControllerHelper
             td.Triggers.Add(new LogonTrigger());
             td.Actions.Add(new ExecAction(CurrentExe));
             CurrentTask = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, td);
-
-            logger.LogInformation("Task Scheduler: {0} created", ServiceName);
         }
 
         public void UpdateTask()
@@ -488,10 +487,7 @@ namespace ControllerHelper
             if (CurrentTask == null)
                 return;
 
-            if (RunAtStartup && !CurrentTask.Enabled)
-                CurrentTask.Enabled = true;
-            else if (!RunAtStartup && CurrentTask.Enabled)
-                CurrentTask.Enabled = false;
+            CurrentTask.Enabled = RunAtStartup;
         }
 
         private void cB_uncloak_CheckedChanged(object sender, EventArgs e)
