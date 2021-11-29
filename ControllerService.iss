@@ -649,18 +649,6 @@ Source: "netcorecheck.exe"; Flags: dontcopy noencryption
 Source: "netcorecheck_x64.exe"; Flags: dontcopy noencryption
 #endif
 
-#ifdef UseDirectX
-Source: "dxwebsetup.exe"; Flags: dontcopy noencryption
-#endif
-
-#ifdef UseHideHide
-Source: "HidHideMSI.msi"; Flags: dontcopy noencryption
-#endif
-
-#ifdef UseViGem
-Source: "ViGEmBusSetup_x64.msi"; Flags: dontcopy noencryption
-#endif
-
 Source: "E:\GitHub\ControllerService\bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "E:\GitHub\ControllerService\bin\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
@@ -763,17 +751,14 @@ begin
 #endif
 
 #ifdef UseDirectX
-  ExtractTemporaryFile('dxwebsetup.exe');
   Dependency_AddDirectX;
 #endif
 
 #ifdef UseHideHide
-  ExtractTemporaryFile('HidHideMSI.msi');
   Dependency_AddHideHide;
 #endif
 
 #ifdef UseViGem
-  ExtractTemporaryFile('ViGEmBusSetup_x64.msi');
   Dependency_AddViGem;
 #endif
 
