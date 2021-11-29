@@ -59,45 +59,5 @@ namespace ControllerService.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        internal static byte[] dxwebsetup {
-            get {
-                object obj = ResourceManager.GetObject("dxwebsetup", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        internal static byte[] HidHideMSI {
-            get {
-                object obj = ResourceManager.GetObject("HidHideMSI", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        internal static byte[] ViGEmBusSetup_x64 {
-            get {
-                object obj = ResourceManager.GetObject("ViGEmBusSetup_x64", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        internal static byte[] windowsdesktop_runtime_5_0_12_win_x64 {
-            get {
-                object obj = ResourceManager.GetObject("windowsdesktop_runtime_5_0_12_win_x64", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }
