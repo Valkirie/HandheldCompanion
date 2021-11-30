@@ -65,8 +65,11 @@ namespace ControllerHelper
             }
 
             // failed to parse
-            if (profile == null)
+            if (profile == null || profile.name == null || profile.path == null)
+            {
+                logger.LogError("Could not parse {0}.", fileName);
                 return;
+            }
 
             if (File.Exists(fileName))
             {
@@ -121,7 +124,7 @@ namespace ControllerHelper
         public void SerializeProfile(Profile profile)
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
-            string jsonString = JsonSerializer.Serialize(this, options);
+            string jsonString = JsonSerializer.Serialize(profile, options);
 
             string settingsPath = Path.Combine(ControllerHelper.CurrentPathProfiles, $"{profile.name}.json");
             File.WriteAllText(settingsPath, jsonString);
