@@ -46,7 +46,10 @@ namespace ControllerHelper
 
         public ProfileManager ProfileManager;
         public ServiceManager ServiceManager;
-        private readonly string ServiceName, ServiceDescription;
+
+        private const string ServiceName = "Controller Service";
+        private const string ServiceDescription = "Provides gyroscope and accelerometer support to the AYA NEO 2020, 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled.";
+        private const string ServiceWelcome = "Dear handheld gamer,\n\nThe service you are about to use was made for free in order to bring the best possible gaming experience out of your device.\n\nIf you are enjoying it, please consider giving back to the author's efforts and show your appreciation through a donation.\n\nHave fun !";
 
         // TaskManager vars
         private static Task CurrentTask;
@@ -73,8 +76,6 @@ namespace ControllerHelper
 
             // settings
             IsElevated = Utils.IsAdministrator();
-            ServiceName = Properties.Settings.Default.ServiceName;
-            ServiceDescription = Properties.Settings.Default.ServiceDescription;
             FirstStart = Properties.Settings.Default.FirstStart;
 
             // initialize log
@@ -95,11 +96,27 @@ namespace ControllerHelper
             // initialize mouse hook
             m_Hook = new MouseHook(PipeClient, this, logger);
 
+            if (IsElevated)
+            {
+                // initialize Service Manager
+                ServiceManager = new ServiceManager("ControllerService", this, ServiceName, ServiceDescription, logger);
+
+                // initialize Task Manager
+                DefineTask();
+                UpdateTask();
+            }
+
+            // todo : feed me from service
             cB_HidMode.Items.Add(HideDS4);
             cB_HidMode.Items.Add(HideXBOX);
-
             HIDmodes.Add("DualShock4Controller", HideDS4);
             HIDmodes.Add("Xbox360Controller", HideXBOX);
+
+            // update UI
+            cB_RunAtStartup.Checked = RunAtStartup = Properties.Settings.Default.RunAtStartup;
+            cB_StartMinimized.Checked = StartMinimized = Properties.Settings.Default.StartMinimized;
+            cB_CloseMinimizes.Checked = CloseMinimises = Properties.Settings.Default.CloseMinimises;
+            cB_touchpad.Checked = HookMouse = Properties.Settings.Default.HookMouse;
 
             if (StartMinimized)
             {
@@ -109,7 +126,7 @@ namespace ControllerHelper
 
             if (FirstStart)
             {
-                DialogResult dr = MessageBox.Show("Dear handheld gamer,\n\nThe service you are about to use was made for free in order to bring the best possible gaming experience out of your device.\n\nIf you are enjoying it, please consider giving back to the author's efforts and show your appreciation through a donation.\n\nHave fun !", "Please, gives us a minute", MessageBoxButtons.YesNo);
+                DialogResult dr = MessageBox.Show(ServiceWelcome, "Please, gives us a minute", MessageBoxButtons.YesNo);
                 switch (dr)
                 {
                     case DialogResult.Yes:
@@ -158,14 +175,7 @@ namespace ControllerHelper
 
         private void ControllerHelper_Load(object sender, EventArgs e)
         {
-            // initialize GUI
-            cB_RunAtStartup.Checked = RunAtStartup = Properties.Settings.Default.RunAtStartup;
-            cB_StartMinimized.Checked = StartMinimized = Properties.Settings.Default.StartMinimized;
-            cB_CloseMinimizes.Checked = CloseMinimises = Properties.Settings.Default.CloseMinimises;
-            cB_touchpad.Checked = HookMouse = Properties.Settings.Default.HookMouse;
-
             // elevation check
-
             if (!IsElevated)
             {
                 // disable service control
@@ -178,15 +188,6 @@ namespace ControllerHelper
 
                 // disable run at startup button
                 cB_RunAtStartup.Enabled = false;
-            }
-            else
-            {
-                // initialize Service Manager
-                ServiceManager = new ServiceManager("ControllerService", this, ServiceName, ServiceDescription, logger);
-
-                // initialize Task Manager
-                DefineTask();
-                UpdateTask();
             }
 
             UpdateStatus(false);
