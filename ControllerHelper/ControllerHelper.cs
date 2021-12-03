@@ -188,6 +188,14 @@ namespace ControllerHelper
 
                 // disable run at startup button
                 cB_RunAtStartup.Enabled = false;
+                toolTip1.SetToolTip(cB_RunAtStartup, "Run this tool as Administrator to unlock these settings.");
+
+                // disable profile saving if rights are not enough
+                if (!Utils.IsDirectoryWritable(CurrentPathProfiles))
+                {
+                    b_ApplyProfile.Enabled = false;
+                    toolTip1.SetToolTip(b_ApplyProfile, "Run this tool as Administrator to unlock these settings.");
+                }
             }
 
             UpdateStatus(false);
@@ -596,6 +604,7 @@ namespace ControllerHelper
             profile.whitelisted = cB_Whitelist.Checked;
             profile.use_wrapper = cB_Wrapper.Checked;
 
+            ProfileManager.profiles[profile.name] = profile;
             ProfileManager.UpdateProfile(profile);
             ProfileManager.SerializeProfile(profile);
         }
@@ -606,6 +615,11 @@ namespace ControllerHelper
             {
                 cB_gyro.Text = cB_gyro.Checked ? "Gyrometer detected" : "No gyrometer detected";
             });
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ServiceManager.SetStartType((ServiceStartMode)comboBox1.SelectedIndex);
         }
 
         private void cB_accelero_CheckedChanged(object sender, EventArgs e)
@@ -649,13 +663,13 @@ namespace ControllerHelper
             });
         }
 
-        public void UpdateService(ServiceControllerStatus status)
+        public void UpdateService(ServiceController controller)
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
                 gb_SettingsService.SuspendLayout();
 
-                switch (status)
+                switch (controller.Status)
                 {
                     case ServiceControllerStatus.Paused:
                     case ServiceControllerStatus.Stopped:
@@ -663,21 +677,25 @@ namespace ControllerHelper
                         if (b_ServiceDelete.Enabled == false) b_ServiceDelete.Enabled = true;
                         if (b_ServiceStart.Enabled == false) b_ServiceStart.Enabled = true;
                         if (b_ServiceStop.Enabled == true) b_ServiceStop.Enabled = false;
+                        if (comboBox1.Enabled == false) comboBox1.Enabled = true;
                         break;
                     case ServiceControllerStatus.Running:
                         if (b_ServiceInstall.Enabled == true) b_ServiceInstall.Enabled = false;
                         if (b_ServiceDelete.Enabled == true) b_ServiceDelete.Enabled = false;
                         if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
                         if (b_ServiceStop.Enabled == false) b_ServiceStop.Enabled = true;
+                        if (comboBox1.Enabled == false) comboBox1.Enabled = true;
                         break;
                     default:
                         if (b_ServiceInstall.Enabled == false) b_ServiceInstall.Enabled = true;
                         if (b_ServiceDelete.Enabled == true) b_ServiceDelete.Enabled = false;
                         if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
                         if (b_ServiceStop.Enabled == true) b_ServiceStop.Enabled = false;
+                        if (comboBox1.Enabled == true) comboBox1.Enabled = false;
                         break;
                 }
 
+                comboBox1.SelectedIndex = (int)controller.StartType;
                 gb_SettingsService.ResumeLayout();
             });
         }
@@ -688,9 +706,8 @@ namespace ControllerHelper
             {
                 foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Enabled = false;
-
-                ServiceManager.CreateService(CurrentPathService);
             });
+            ServiceManager.CreateService(CurrentPathService);
         }
 
         private void b_ServiceDelete_Click(object sender, EventArgs e)
@@ -699,9 +716,8 @@ namespace ControllerHelper
             {
                 foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Enabled = false;
-
-                ServiceManager.DeleteService();
             });
+            ServiceManager.DeleteService();
         }
 
         private void b_ServiceStart_Click(object sender, EventArgs e)
@@ -710,9 +726,8 @@ namespace ControllerHelper
             {
                 foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Enabled = false;
-
-                ServiceManager.StartService();
             });
+            ServiceManager.StartService();
         }
 
         private void b_ServiceStop_Click(object sender, EventArgs e)
@@ -721,9 +736,8 @@ namespace ControllerHelper
             {
                 foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Enabled = false;
-
-                ServiceManager.StopService();
             });
+            ServiceManager.StopService();
         }
         #endregion
     }

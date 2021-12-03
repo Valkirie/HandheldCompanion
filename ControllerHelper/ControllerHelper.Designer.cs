@@ -83,17 +83,20 @@ namespace ControllerHelper
             this.b_CreateProfile = new System.Windows.Forms.Button();
             this.lB_Profiles = new System.Windows.Forms.ListBox();
             this.tabSettings = new System.Windows.Forms.TabPage();
-            this.gb_SettingsService = new System.Windows.Forms.GroupBox();
-            this.b_ServiceStop = new System.Windows.Forms.Button();
-            this.b_ServiceStart = new System.Windows.Forms.Button();
-            this.b_ServiceDelete = new System.Windows.Forms.Button();
-            this.b_ServiceInstall = new System.Windows.Forms.Button();
             this.gb_SettingsUDP = new System.Windows.Forms.GroupBox();
             this.b_UDPApply = new System.Windows.Forms.Button();
             this.tB_UDPPort = new System.Windows.Forms.NumericUpDown();
             this.lb_UDPport = new System.Windows.Forms.Label();
             this.tB_UDPIP = new System.Windows.Forms.TextBox();
             this.cB_UDPEnable = new System.Windows.Forms.CheckBox();
+            this.gb_SettingsService = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.b_ServiceStop = new System.Windows.Forms.Button();
+            this.b_ServiceStart = new System.Windows.Forms.Button();
+            this.b_ServiceDelete = new System.Windows.Forms.Button();
+            this.b_ServiceInstall = new System.Windows.Forms.Button();
             this.gb_SettingsInterface = new System.Windows.Forms.GroupBox();
             this.cB_RunAtStartup = new System.Windows.Forms.CheckBox();
             this.cB_CloseMinimizes = new System.Windows.Forms.CheckBox();
@@ -116,9 +119,9 @@ namespace ControllerHelper
             this.gB_ProfileDetails.SuspendLayout();
             this.gB_Profiles.SuspendLayout();
             this.tabSettings.SuspendLayout();
-            this.gb_SettingsService.SuspendLayout();
             this.gb_SettingsUDP.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tB_UDPPort)).BeginInit();
+            this.gb_SettingsService.SuspendLayout();
             this.gb_SettingsInterface.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -149,10 +152,11 @@ namespace ControllerHelper
             this.tabControl1.Controls.Add(this.tabDevices);
             this.tabControl1.Controls.Add(this.tabProfiles);
             this.tabControl1.Controls.Add(this.tabSettings);
-            this.tabControl1.Location = new System.Drawing.Point(12, 12);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(772, 592);
+            this.tabControl1.Size = new System.Drawing.Size(741, 561);
             this.tabControl1.TabIndex = 1;
             // 
             // tabDevices
@@ -164,7 +168,7 @@ namespace ControllerHelper
             this.tabDevices.Location = new System.Drawing.Point(4, 24);
             this.tabDevices.Name = "tabDevices";
             this.tabDevices.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDevices.Size = new System.Drawing.Size(764, 564);
+            this.tabDevices.Size = new System.Drawing.Size(733, 533);
             this.tabDevices.TabIndex = 0;
             this.tabDevices.Text = "Devices";
             this.tabDevices.UseVisualStyleBackColor = true;
@@ -177,9 +181,10 @@ namespace ControllerHelper
             this.gB_DeviceDetails.Controls.Add(this.cB_accelero);
             this.gB_DeviceDetails.Controls.Add(this.cB_gyro);
             this.gB_DeviceDetails.Controls.Add(this.lb_accelero);
-            this.gB_DeviceDetails.Location = new System.Drawing.Point(252, 162);
+            this.gB_DeviceDetails.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gB_DeviceDetails.Location = new System.Drawing.Point(243, 153);
             this.gB_DeviceDetails.Name = "gB_DeviceDetails";
-            this.gB_DeviceDetails.Size = new System.Drawing.Size(506, 117);
+            this.gB_DeviceDetails.Size = new System.Drawing.Size(487, 104);
             this.gB_DeviceDetails.TabIndex = 3;
             this.gB_DeviceDetails.TabStop = false;
             this.gB_DeviceDetails.Text = "Device Details";
@@ -254,33 +259,34 @@ namespace ControllerHelper
             this.gB_HIDDetails.Controls.Add(this.lb_PullRate);
             this.gB_HIDDetails.Controls.Add(this.lb_HidMode);
             this.gB_HIDDetails.Controls.Add(this.cB_HidMode);
-            this.gB_HIDDetails.Location = new System.Drawing.Point(252, 285);
+            this.gB_HIDDetails.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.gB_HIDDetails.Location = new System.Drawing.Point(243, 257);
             this.gB_HIDDetails.Name = "gB_HIDDetails";
-            this.gB_HIDDetails.Size = new System.Drawing.Size(506, 273);
+            this.gB_HIDDetails.Size = new System.Drawing.Size(487, 273);
             this.gB_HIDDetails.TabIndex = 2;
             this.gB_HIDDetails.TabStop = false;
             this.gB_HIDDetails.Text = "HID Details";
             // 
             // tB_VibrationStr
             // 
-            this.tB_VibrationStr.AutoSize = false;
+            this.tB_VibrationStr.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tB_VibrationStr.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
             this.tB_VibrationStr.LargeChange = 10;
-            this.tB_VibrationStr.Location = new System.Drawing.Point(156, 95);
+            this.tB_VibrationStr.Location = new System.Drawing.Point(156, 115);
             this.tB_VibrationStr.Maximum = 100;
-            this.tB_VibrationStr.Minimum = 1;
             this.tB_VibrationStr.Name = "tB_VibrationStr";
-            this.tB_VibrationStr.Size = new System.Drawing.Size(190, 25);
+            this.tB_VibrationStr.Size = new System.Drawing.Size(325, 45);
             this.tB_VibrationStr.SmallChange = 2;
             this.tB_VibrationStr.TabIndex = 7;
-            this.tB_VibrationStr.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.tB_VibrationStr.TickFrequency = 10;
             this.tB_VibrationStr.Value = 50;
             this.tB_VibrationStr.ValueChanged += new System.EventHandler(this.tB_VibrationStr_Scroll);
             // 
             // lb_VibrationStr
             // 
             this.lb_VibrationStr.AutoSize = true;
-            this.lb_VibrationStr.Location = new System.Drawing.Point(6, 95);
+            this.lb_VibrationStr.Location = new System.Drawing.Point(6, 115);
             this.lb_VibrationStr.Name = "lb_VibrationStr";
             this.lb_VibrationStr.Size = new System.Drawing.Size(105, 15);
             this.lb_VibrationStr.TabIndex = 6;
@@ -288,17 +294,18 @@ namespace ControllerHelper
             // 
             // tB_PullRate
             // 
-            this.tB_PullRate.AutoSize = false;
+            this.tB_PullRate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tB_PullRate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
             this.tB_PullRate.Location = new System.Drawing.Point(156, 64);
-            this.tB_PullRate.Maximum = 300;
+            this.tB_PullRate.Maximum = 150;
             this.tB_PullRate.Minimum = 5;
             this.tB_PullRate.Name = "tB_PullRate";
-            this.tB_PullRate.Size = new System.Drawing.Size(190, 25);
+            this.tB_PullRate.Size = new System.Drawing.Size(325, 45);
             this.tB_PullRate.SmallChange = 5;
             this.tB_PullRate.TabIndex = 5;
-            this.tB_PullRate.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.tB_PullRate.Value = 150;
+            this.tB_PullRate.TickFrequency = 5;
+            this.tB_PullRate.Value = 10;
             this.tB_PullRate.ValueChanged += new System.EventHandler(this.tB_PullRate_Scroll);
             // 
             // lb_PullRate
@@ -338,19 +345,22 @@ namespace ControllerHelper
             this.gB_XinputDetails.Controls.Add(this.lb_HidCloak);
             this.gB_XinputDetails.Controls.Add(this.tB_InstanceID);
             this.gB_XinputDetails.Controls.Add(this.lb_InstanceID);
-            this.gB_XinputDetails.Location = new System.Drawing.Point(252, 6);
+            this.gB_XinputDetails.Dock = System.Windows.Forms.DockStyle.Top;
+            this.gB_XinputDetails.Location = new System.Drawing.Point(243, 3);
             this.gB_XinputDetails.Name = "gB_XinputDetails";
-            this.gB_XinputDetails.Size = new System.Drawing.Size(506, 150);
+            this.gB_XinputDetails.Size = new System.Drawing.Size(487, 150);
             this.gB_XinputDetails.TabIndex = 1;
             this.gB_XinputDetails.TabStop = false;
             this.gB_XinputDetails.Text = "Xinput Details";
             // 
             // tB_ProductID
             // 
+            this.tB_ProductID.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tB_ProductID.Location = new System.Drawing.Point(156, 58);
             this.tB_ProductID.Name = "tB_ProductID";
             this.tB_ProductID.ReadOnly = true;
-            this.tB_ProductID.Size = new System.Drawing.Size(222, 23);
+            this.tB_ProductID.Size = new System.Drawing.Size(325, 23);
             this.tB_ProductID.TabIndex = 12;
             // 
             // lb_ProductID
@@ -382,7 +392,7 @@ namespace ControllerHelper
             "False"});
             this.cB_HIDcloak.Location = new System.Drawing.Point(156, 87);
             this.cB_HIDcloak.Name = "cB_HIDcloak";
-            this.cB_HIDcloak.Size = new System.Drawing.Size(81, 23);
+            this.cB_HIDcloak.Size = new System.Drawing.Size(116, 23);
             this.cB_HIDcloak.TabIndex = 5;
             this.cB_HIDcloak.SelectedIndexChanged += new System.EventHandler(this.cB_HIDcloak_SelectedIndexChanged);
             // 
@@ -397,10 +407,12 @@ namespace ControllerHelper
             // 
             // tB_InstanceID
             // 
+            this.tB_InstanceID.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tB_InstanceID.Location = new System.Drawing.Point(156, 29);
             this.tB_InstanceID.Name = "tB_InstanceID";
             this.tB_InstanceID.ReadOnly = true;
-            this.tB_InstanceID.Size = new System.Drawing.Size(222, 23);
+            this.tB_InstanceID.Size = new System.Drawing.Size(325, 23);
             this.tB_InstanceID.TabIndex = 1;
             // 
             // lb_InstanceID
@@ -415,20 +427,22 @@ namespace ControllerHelper
             // gB_XinputDevices
             // 
             this.gB_XinputDevices.Controls.Add(this.lB_Devices);
-            this.gB_XinputDevices.Location = new System.Drawing.Point(6, 6);
+            this.gB_XinputDevices.Dock = System.Windows.Forms.DockStyle.Left;
+            this.gB_XinputDevices.Location = new System.Drawing.Point(3, 3);
             this.gB_XinputDevices.Name = "gB_XinputDevices";
-            this.gB_XinputDevices.Size = new System.Drawing.Size(240, 552);
+            this.gB_XinputDevices.Size = new System.Drawing.Size(240, 527);
             this.gB_XinputDevices.TabIndex = 0;
             this.gB_XinputDevices.TabStop = false;
             this.gB_XinputDevices.Text = "Xinput Devices";
             // 
             // lB_Devices
             // 
+            this.lB_Devices.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lB_Devices.FormattingEnabled = true;
             this.lB_Devices.ItemHeight = 15;
-            this.lB_Devices.Location = new System.Drawing.Point(6, 32);
+            this.lB_Devices.Location = new System.Drawing.Point(3, 19);
             this.lB_Devices.Name = "lB_Devices";
-            this.lB_Devices.Size = new System.Drawing.Size(228, 514);
+            this.lB_Devices.Size = new System.Drawing.Size(234, 505);
             this.lB_Devices.TabIndex = 0;
             this.lB_Devices.SelectedIndexChanged += new System.EventHandler(this.lB_Devices_SelectedIndexChanged);
             // 
@@ -439,7 +453,8 @@ namespace ControllerHelper
             this.tabProfiles.Controls.Add(this.gB_Profiles);
             this.tabProfiles.Location = new System.Drawing.Point(4, 24);
             this.tabProfiles.Name = "tabProfiles";
-            this.tabProfiles.Size = new System.Drawing.Size(764, 564);
+            this.tabProfiles.Padding = new System.Windows.Forms.Padding(3);
+            this.tabProfiles.Size = new System.Drawing.Size(733, 533);
             this.tabProfiles.TabIndex = 2;
             this.tabProfiles.Text = "Profiles";
             this.tabProfiles.UseVisualStyleBackColor = true;
@@ -454,31 +469,34 @@ namespace ControllerHelper
             this.gB_ProfileOptions.Controls.Add(this.lb_Whitelist);
             this.gB_ProfileOptions.Controls.Add(this.cB_Wrapper);
             this.gB_ProfileOptions.Controls.Add(this.cB_Whitelist);
-            this.gB_ProfileOptions.Location = new System.Drawing.Point(252, 135);
+            this.gB_ProfileOptions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gB_ProfileOptions.Location = new System.Drawing.Point(243, 143);
             this.gB_ProfileOptions.Name = "gB_ProfileOptions";
-            this.gB_ProfileOptions.Size = new System.Drawing.Size(506, 423);
+            this.gB_ProfileOptions.Size = new System.Drawing.Size(487, 387);
             this.gB_ProfileOptions.TabIndex = 2;
             this.gB_ProfileOptions.TabStop = false;
             this.gB_ProfileOptions.Text = "Profile Options";
             // 
             // tb_ProfileAcceleroValue
             // 
-            this.tb_ProfileAcceleroValue.AutoSize = false;
+            this.tb_ProfileAcceleroValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tb_ProfileAcceleroValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
-            this.tb_ProfileAcceleroValue.Location = new System.Drawing.Point(156, 125);
-            this.tb_ProfileAcceleroValue.Maximum = 20;
+            this.tb_ProfileAcceleroValue.LargeChange = 2;
+            this.tb_ProfileAcceleroValue.Location = new System.Drawing.Point(156, 145);
+            this.tb_ProfileAcceleroValue.Maximum = 30;
             this.tb_ProfileAcceleroValue.Minimum = 1;
             this.tb_ProfileAcceleroValue.Name = "tb_ProfileAcceleroValue";
-            this.tb_ProfileAcceleroValue.Size = new System.Drawing.Size(243, 25);
+            this.tb_ProfileAcceleroValue.Size = new System.Drawing.Size(325, 45);
             this.tb_ProfileAcceleroValue.TabIndex = 15;
-            this.tb_ProfileAcceleroValue.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.tb_ProfileAcceleroValue.Value = 1;
+            this.tb_ProfileAcceleroValue.TickFrequency = 2;
+            this.tb_ProfileAcceleroValue.Value = 10;
             this.tb_ProfileAcceleroValue.ValueChanged += new System.EventHandler(this.tb_ProfileAcceleroValue_Scroll);
             // 
             // lb_ProfileAccelero
             // 
             this.lb_ProfileAccelero.AutoSize = true;
-            this.lb_ProfileAccelero.Location = new System.Drawing.Point(6, 125);
+            this.lb_ProfileAccelero.Location = new System.Drawing.Point(6, 145);
             this.lb_ProfileAccelero.Name = "lb_ProfileAccelero";
             this.lb_ProfileAccelero.Size = new System.Drawing.Size(141, 15);
             this.lb_ProfileAccelero.TabIndex = 14;
@@ -486,16 +504,18 @@ namespace ControllerHelper
             // 
             // tb_ProfileGyroValue
             // 
-            this.tb_ProfileGyroValue.AutoSize = false;
+            this.tb_ProfileGyroValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tb_ProfileGyroValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
+            this.tb_ProfileGyroValue.LargeChange = 2;
             this.tb_ProfileGyroValue.Location = new System.Drawing.Point(156, 94);
-            this.tb_ProfileGyroValue.Maximum = 20;
+            this.tb_ProfileGyroValue.Maximum = 30;
             this.tb_ProfileGyroValue.Minimum = 1;
             this.tb_ProfileGyroValue.Name = "tb_ProfileGyroValue";
-            this.tb_ProfileGyroValue.Size = new System.Drawing.Size(243, 25);
+            this.tb_ProfileGyroValue.Size = new System.Drawing.Size(325, 45);
             this.tb_ProfileGyroValue.TabIndex = 13;
-            this.tb_ProfileGyroValue.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.tb_ProfileGyroValue.Value = 1;
+            this.tb_ProfileGyroValue.TickFrequency = 2;
+            this.tb_ProfileGyroValue.Value = 10;
             this.tb_ProfileGyroValue.ValueChanged += new System.EventHandler(this.tb_ProfileGyroValue_Scroll);
             // 
             // lb_ProfileGyro
@@ -553,9 +573,10 @@ namespace ControllerHelper
             this.gB_ProfileDetails.Controls.Add(this.lb_ProfilePath);
             this.gB_ProfileDetails.Controls.Add(this.tB_ProfileName);
             this.gB_ProfileDetails.Controls.Add(this.lb_ProfileName);
-            this.gB_ProfileDetails.Location = new System.Drawing.Point(252, 6);
+            this.gB_ProfileDetails.Dock = System.Windows.Forms.DockStyle.Top;
+            this.gB_ProfileDetails.Location = new System.Drawing.Point(243, 3);
             this.gB_ProfileDetails.Name = "gB_ProfileDetails";
-            this.gB_ProfileDetails.Size = new System.Drawing.Size(506, 123);
+            this.gB_ProfileDetails.Size = new System.Drawing.Size(487, 140);
             this.gB_ProfileDetails.TabIndex = 1;
             this.gB_ProfileDetails.TabStop = false;
             this.gB_ProfileDetails.Text = "Profile Details";
@@ -564,7 +585,7 @@ namespace ControllerHelper
             // 
             this.b_ApplyProfile.Location = new System.Drawing.Point(266, 87);
             this.b_ApplyProfile.Name = "b_ApplyProfile";
-            this.b_ApplyProfile.Size = new System.Drawing.Size(75, 23);
+            this.b_ApplyProfile.Size = new System.Drawing.Size(75, 40);
             this.b_ApplyProfile.TabIndex = 7;
             this.b_ApplyProfile.Text = "Apply";
             this.b_ApplyProfile.UseVisualStyleBackColor = true;
@@ -574,7 +595,7 @@ namespace ControllerHelper
             // 
             this.b_DeleteProfile.Location = new System.Drawing.Point(156, 87);
             this.b_DeleteProfile.Name = "b_DeleteProfile";
-            this.b_DeleteProfile.Size = new System.Drawing.Size(104, 23);
+            this.b_DeleteProfile.Size = new System.Drawing.Size(104, 40);
             this.b_DeleteProfile.TabIndex = 6;
             this.b_DeleteProfile.Text = "Delete profile";
             this.b_DeleteProfile.UseVisualStyleBackColor = true;
@@ -582,10 +603,12 @@ namespace ControllerHelper
             // 
             // tB_ProfilePath
             // 
+            this.tB_ProfilePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tB_ProfilePath.Location = new System.Drawing.Point(156, 58);
             this.tB_ProfilePath.Name = "tB_ProfilePath";
             this.tB_ProfilePath.ReadOnly = true;
-            this.tB_ProfilePath.Size = new System.Drawing.Size(344, 23);
+            this.tB_ProfilePath.Size = new System.Drawing.Size(325, 23);
             this.tB_ProfilePath.TabIndex = 5;
             // 
             // lb_ProfilePath
@@ -599,10 +622,12 @@ namespace ControllerHelper
             // 
             // tB_ProfileName
             // 
+            this.tB_ProfileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tB_ProfileName.Location = new System.Drawing.Point(156, 29);
             this.tB_ProfileName.Name = "tB_ProfileName";
             this.tB_ProfileName.ReadOnly = true;
-            this.tB_ProfileName.Size = new System.Drawing.Size(222, 23);
+            this.tB_ProfileName.Size = new System.Drawing.Size(325, 23);
             this.tB_ProfileName.TabIndex = 3;
             // 
             // lb_ProfileName
@@ -618,18 +643,20 @@ namespace ControllerHelper
             // 
             this.gB_Profiles.Controls.Add(this.b_CreateProfile);
             this.gB_Profiles.Controls.Add(this.lB_Profiles);
-            this.gB_Profiles.Location = new System.Drawing.Point(6, 6);
+            this.gB_Profiles.Dock = System.Windows.Forms.DockStyle.Left;
+            this.gB_Profiles.Location = new System.Drawing.Point(3, 3);
             this.gB_Profiles.Name = "gB_Profiles";
-            this.gB_Profiles.Size = new System.Drawing.Size(240, 552);
+            this.gB_Profiles.Size = new System.Drawing.Size(240, 527);
             this.gB_Profiles.TabIndex = 0;
             this.gB_Profiles.TabStop = false;
             this.gB_Profiles.Text = "Profiles";
             // 
             // b_CreateProfile
             // 
-            this.b_CreateProfile.Location = new System.Drawing.Point(6, 522);
+            this.b_CreateProfile.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.b_CreateProfile.Location = new System.Drawing.Point(3, 501);
             this.b_CreateProfile.Name = "b_CreateProfile";
-            this.b_CreateProfile.Size = new System.Drawing.Size(228, 23);
+            this.b_CreateProfile.Size = new System.Drawing.Size(234, 23);
             this.b_CreateProfile.TabIndex = 1;
             this.b_CreateProfile.Text = "Create new profile";
             this.b_CreateProfile.UseVisualStyleBackColor = true;
@@ -637,83 +664,27 @@ namespace ControllerHelper
             // 
             // lB_Profiles
             // 
+            this.lB_Profiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lB_Profiles.FormattingEnabled = true;
             this.lB_Profiles.ItemHeight = 15;
-            this.lB_Profiles.Location = new System.Drawing.Point(6, 32);
+            this.lB_Profiles.Location = new System.Drawing.Point(3, 19);
             this.lB_Profiles.Name = "lB_Profiles";
-            this.lB_Profiles.Size = new System.Drawing.Size(228, 484);
+            this.lB_Profiles.Size = new System.Drawing.Size(234, 505);
             this.lB_Profiles.TabIndex = 0;
             this.lB_Profiles.SelectedIndexChanged += new System.EventHandler(this.lB_Profiles_SelectedIndexChanged);
             // 
             // tabSettings
             // 
-            this.tabSettings.Controls.Add(this.gb_SettingsService);
             this.tabSettings.Controls.Add(this.gb_SettingsUDP);
+            this.tabSettings.Controls.Add(this.gb_SettingsService);
             this.tabSettings.Controls.Add(this.gb_SettingsInterface);
             this.tabSettings.Location = new System.Drawing.Point(4, 24);
             this.tabSettings.Name = "tabSettings";
             this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSettings.Size = new System.Drawing.Size(764, 564);
+            this.tabSettings.Size = new System.Drawing.Size(733, 533);
             this.tabSettings.TabIndex = 1;
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
-            // 
-            // gb_SettingsService
-            // 
-            this.gb_SettingsService.Controls.Add(this.b_ServiceStop);
-            this.gb_SettingsService.Controls.Add(this.b_ServiceStart);
-            this.gb_SettingsService.Controls.Add(this.b_ServiceDelete);
-            this.gb_SettingsService.Controls.Add(this.b_ServiceInstall);
-            this.gb_SettingsService.Location = new System.Drawing.Point(6, 175);
-            this.gb_SettingsService.Name = "gb_SettingsService";
-            this.gb_SettingsService.Size = new System.Drawing.Size(752, 383);
-            this.gb_SettingsService.TabIndex = 5;
-            this.gb_SettingsService.TabStop = false;
-            this.gb_SettingsService.Text = "Controller Service";
-            // 
-            // b_ServiceStop
-            // 
-            this.b_ServiceStop.Enabled = false;
-            this.b_ServiceStop.Location = new System.Drawing.Point(383, 66);
-            this.b_ServiceStop.Name = "b_ServiceStop";
-            this.b_ServiceStop.Size = new System.Drawing.Size(363, 23);
-            this.b_ServiceStop.TabIndex = 4;
-            this.b_ServiceStop.Text = "Stop Controller Service";
-            this.b_ServiceStop.UseVisualStyleBackColor = true;
-            this.b_ServiceStop.Click += new System.EventHandler(this.b_ServiceStop_Click);
-            // 
-            // b_ServiceStart
-            // 
-            this.b_ServiceStart.Enabled = false;
-            this.b_ServiceStart.Location = new System.Drawing.Point(6, 66);
-            this.b_ServiceStart.Name = "b_ServiceStart";
-            this.b_ServiceStart.Size = new System.Drawing.Size(363, 23);
-            this.b_ServiceStart.TabIndex = 3;
-            this.b_ServiceStart.Text = "Start Controller Service";
-            this.b_ServiceStart.UseVisualStyleBackColor = true;
-            this.b_ServiceStart.Click += new System.EventHandler(this.b_ServiceStart_Click);
-            // 
-            // b_ServiceDelete
-            // 
-            this.b_ServiceDelete.Enabled = false;
-            this.b_ServiceDelete.Location = new System.Drawing.Point(383, 37);
-            this.b_ServiceDelete.Name = "b_ServiceDelete";
-            this.b_ServiceDelete.Size = new System.Drawing.Size(363, 23);
-            this.b_ServiceDelete.TabIndex = 2;
-            this.b_ServiceDelete.Text = "Delete Controller Service";
-            this.b_ServiceDelete.UseVisualStyleBackColor = true;
-            this.b_ServiceDelete.Click += new System.EventHandler(this.b_ServiceDelete_Click);
-            // 
-            // b_ServiceInstall
-            // 
-            this.b_ServiceInstall.Enabled = false;
-            this.b_ServiceInstall.Location = new System.Drawing.Point(6, 37);
-            this.b_ServiceInstall.Name = "b_ServiceInstall";
-            this.b_ServiceInstall.Size = new System.Drawing.Size(363, 23);
-            this.b_ServiceInstall.TabIndex = 1;
-            this.b_ServiceInstall.Text = "Install Controller Service";
-            this.b_ServiceInstall.UseVisualStyleBackColor = true;
-            this.b_ServiceInstall.Click += new System.EventHandler(this.b_ServiceInstall_Click);
             // 
             // gb_SettingsUDP
             // 
@@ -722,18 +693,20 @@ namespace ControllerHelper
             this.gb_SettingsUDP.Controls.Add(this.lb_UDPport);
             this.gb_SettingsUDP.Controls.Add(this.tB_UDPIP);
             this.gb_SettingsUDP.Controls.Add(this.cB_UDPEnable);
-            this.gb_SettingsUDP.Location = new System.Drawing.Point(6, 113);
+            this.gb_SettingsUDP.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gb_SettingsUDP.Location = new System.Drawing.Point(3, 104);
             this.gb_SettingsUDP.Name = "gb_SettingsUDP";
-            this.gb_SettingsUDP.Size = new System.Drawing.Size(752, 56);
+            this.gb_SettingsUDP.Size = new System.Drawing.Size(727, 73);
             this.gb_SettingsUDP.TabIndex = 4;
             this.gb_SettingsUDP.TabStop = false;
             this.gb_SettingsUDP.Text = "UDP Server";
             // 
             // b_UDPApply
             // 
-            this.b_UDPApply.Location = new System.Drawing.Point(671, 15);
+            this.b_UDPApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.b_UDPApply.Location = new System.Drawing.Point(646, 20);
             this.b_UDPApply.Name = "b_UDPApply";
-            this.b_UDPApply.Size = new System.Drawing.Size(75, 35);
+            this.b_UDPApply.Size = new System.Drawing.Size(75, 40);
             this.b_UDPApply.TabIndex = 4;
             this.b_UDPApply.Text = "Apply";
             this.b_UDPApply.UseVisualStyleBackColor = true;
@@ -741,7 +714,7 @@ namespace ControllerHelper
             // 
             // tB_UDPPort
             // 
-            this.tB_UDPPort.Location = new System.Drawing.Point(249, 21);
+            this.tB_UDPPort.Location = new System.Drawing.Point(249, 20);
             this.tB_UDPPort.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -776,21 +749,127 @@ namespace ControllerHelper
             // cB_UDPEnable
             // 
             this.cB_UDPEnable.AutoSize = true;
-            this.cB_UDPEnable.Location = new System.Drawing.Point(6, 22);
+            this.cB_UDPEnable.Location = new System.Drawing.Point(6, 23);
             this.cB_UDPEnable.Name = "cB_UDPEnable";
             this.cB_UDPEnable.Size = new System.Drawing.Size(96, 19);
             this.cB_UDPEnable.TabIndex = 0;
             this.cB_UDPEnable.Text = "Enable Server";
             this.cB_UDPEnable.UseVisualStyleBackColor = true;
             // 
+            // gb_SettingsService
+            // 
+            this.gb_SettingsService.Controls.Add(this.label2);
+            this.gb_SettingsService.Controls.Add(this.label1);
+            this.gb_SettingsService.Controls.Add(this.comboBox1);
+            this.gb_SettingsService.Controls.Add(this.b_ServiceStop);
+            this.gb_SettingsService.Controls.Add(this.b_ServiceStart);
+            this.gb_SettingsService.Controls.Add(this.b_ServiceDelete);
+            this.gb_SettingsService.Controls.Add(this.b_ServiceInstall);
+            this.gb_SettingsService.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.gb_SettingsService.Location = new System.Drawing.Point(3, 177);
+            this.gb_SettingsService.Name = "gb_SettingsService";
+            this.gb_SettingsService.Size = new System.Drawing.Size(727, 353);
+            this.gb_SettingsService.TabIndex = 5;
+            this.gb_SettingsService.TabStop = false;
+            this.gb_SettingsService.Text = "Controller Service";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 117);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(74, 15);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Startup type:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(6, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(115, 92);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Service status:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.Enabled = false;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Boot",
+            "System",
+            "Automatic",
+            "Manual",
+            "Disabled"});
+            this.comboBox1.Location = new System.Drawing.Point(127, 114);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(190, 23);
+            this.comboBox1.TabIndex = 7;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // b_ServiceStop
+            // 
+            this.b_ServiceStop.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.b_ServiceStop.Enabled = false;
+            this.b_ServiceStop.Location = new System.Drawing.Point(323, 68);
+            this.b_ServiceStop.Name = "b_ServiceStop";
+            this.b_ServiceStop.Size = new System.Drawing.Size(190, 40);
+            this.b_ServiceStop.TabIndex = 4;
+            this.b_ServiceStop.Text = "Stop Service";
+            this.b_ServiceStop.UseVisualStyleBackColor = true;
+            this.b_ServiceStop.Click += new System.EventHandler(this.b_ServiceStop_Click);
+            // 
+            // b_ServiceStart
+            // 
+            this.b_ServiceStart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.b_ServiceStart.Enabled = false;
+            this.b_ServiceStart.Location = new System.Drawing.Point(323, 22);
+            this.b_ServiceStart.Name = "b_ServiceStart";
+            this.b_ServiceStart.Size = new System.Drawing.Size(190, 40);
+            this.b_ServiceStart.TabIndex = 3;
+            this.b_ServiceStart.Text = "Start Service";
+            this.b_ServiceStart.UseVisualStyleBackColor = true;
+            this.b_ServiceStart.Click += new System.EventHandler(this.b_ServiceStart_Click);
+            // 
+            // b_ServiceDelete
+            // 
+            this.b_ServiceDelete.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.b_ServiceDelete.Enabled = false;
+            this.b_ServiceDelete.Location = new System.Drawing.Point(127, 68);
+            this.b_ServiceDelete.Name = "b_ServiceDelete";
+            this.b_ServiceDelete.Size = new System.Drawing.Size(190, 40);
+            this.b_ServiceDelete.TabIndex = 2;
+            this.b_ServiceDelete.Text = "Delete Service";
+            this.b_ServiceDelete.UseVisualStyleBackColor = true;
+            this.b_ServiceDelete.Click += new System.EventHandler(this.b_ServiceDelete_Click);
+            // 
+            // b_ServiceInstall
+            // 
+            this.b_ServiceInstall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.b_ServiceInstall.Enabled = false;
+            this.b_ServiceInstall.Location = new System.Drawing.Point(127, 22);
+            this.b_ServiceInstall.Name = "b_ServiceInstall";
+            this.b_ServiceInstall.Size = new System.Drawing.Size(190, 40);
+            this.b_ServiceInstall.TabIndex = 1;
+            this.b_ServiceInstall.Text = "Install Service";
+            this.b_ServiceInstall.UseVisualStyleBackColor = true;
+            this.b_ServiceInstall.Click += new System.EventHandler(this.b_ServiceInstall_Click);
+            // 
             // gb_SettingsInterface
             // 
             this.gb_SettingsInterface.Controls.Add(this.cB_RunAtStartup);
             this.gb_SettingsInterface.Controls.Add(this.cB_CloseMinimizes);
             this.gb_SettingsInterface.Controls.Add(this.cB_StartMinimized);
-            this.gb_SettingsInterface.Location = new System.Drawing.Point(6, 6);
+            this.gb_SettingsInterface.Dock = System.Windows.Forms.DockStyle.Top;
+            this.gb_SettingsInterface.Location = new System.Drawing.Point(3, 3);
             this.gb_SettingsInterface.Name = "gb_SettingsInterface";
-            this.gb_SettingsInterface.Size = new System.Drawing.Size(752, 101);
+            this.gb_SettingsInterface.Size = new System.Drawing.Size(727, 101);
             this.gb_SettingsInterface.TabIndex = 3;
             this.gb_SettingsInterface.TabStop = false;
             this.gb_SettingsInterface.Text = "Interface";
@@ -842,7 +921,7 @@ namespace ControllerHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(796, 616);
+            this.ClientSize = new System.Drawing.Size(741, 561);
             this.Controls.Add(this.tabControl1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -876,10 +955,11 @@ namespace ControllerHelper
             this.gB_ProfileDetails.PerformLayout();
             this.gB_Profiles.ResumeLayout(false);
             this.tabSettings.ResumeLayout(false);
-            this.gb_SettingsService.ResumeLayout(false);
             this.gb_SettingsUDP.ResumeLayout(false);
             this.gb_SettingsUDP.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tB_UDPPort)).EndInit();
+            this.gb_SettingsService.ResumeLayout(false);
+            this.gb_SettingsService.PerformLayout();
             this.gb_SettingsInterface.ResumeLayout(false);
             this.gb_SettingsInterface.PerformLayout();
             this.ResumeLayout(false);
@@ -955,6 +1035,9 @@ namespace ControllerHelper
         private System.Windows.Forms.Label lb_ProductID;
         private System.Windows.Forms.TrackBar tB_VibrationStr;
         private System.Windows.Forms.Label lb_VibrationStr;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label2;
     }
 }
 

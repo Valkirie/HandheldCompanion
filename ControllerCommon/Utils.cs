@@ -1,6 +1,7 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Management;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -123,6 +124,31 @@ namespace ControllerCommon
                 {
                     throw;
                 }
+            }
+        }
+
+
+        public static bool IsDirectoryWritable(string dirPath, bool throwIfFails = false)
+        {
+            try
+            {
+                using (FileStream fs = File.Create(
+                    Path.Combine(
+                        dirPath,
+                        Path.GetRandomFileName()
+                    ),
+                    1,
+                    FileOptions.DeleteOnClose)
+                )
+                { }
+                return true;
+            }
+            catch
+            {
+                if (throwIfFails)
+                    throw;
+                else
+                    return false;
             }
         }
     }

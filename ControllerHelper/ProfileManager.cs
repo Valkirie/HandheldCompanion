@@ -21,11 +21,13 @@ namespace ControllerHelper
 
         private readonly ControllerHelper helper;
         private readonly ILogger logger;
+        private string path;
 
         public ProfileManager(string path, ControllerHelper helper, ILogger logger)
         {
             this.helper = helper;
             this.logger = logger;
+            this.path = path;
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -71,14 +73,12 @@ namespace ControllerHelper
                 return;
             }
 
-            if (File.Exists(fileName))
-            {
-                string ProcessName = Path.GetFileName(profile.path);
-                profiles[ProcessName] = profile;
-                UpdateProfile(profile);
+            string ProcessName = Path.GetFileName(profile.path);
+            profiles[ProcessName] = profile;
+            UpdateProfile(profile);
 
-                helper.UpdateProfileList(profile);
-            }
+            // update GUI
+            helper.UpdateProfileList(profile);
         }
 
         private void ProfileChanged(object sender, FileSystemEventArgs e)
@@ -117,7 +117,7 @@ namespace ControllerHelper
 
         public void DeleteProfile(Profile profile)
         {
-            string settingsPath = Path.Combine(ControllerHelper.CurrentPathProfiles, $"{profile.name}.json");
+            string settingsPath = Path.Combine(path, $"{profile.name}.json");
             File.Delete(settingsPath);
         }
 
@@ -126,8 +126,9 @@ namespace ControllerHelper
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(profile, options);
 
-            string settingsPath = Path.Combine(ControllerHelper.CurrentPathProfiles, $"{profile.name}.json");
-            File.WriteAllText(settingsPath, jsonString);
+            string settingsPath = Path.Combine(path, $"{profile.name}.json");
+            if (IsDirectoryWritable(settingsPath))
+                File.WriteAllText(settingsPath, jsonString);
         }
 
         private ProfileErrorCode SanitizeProfile(Profile profile)
@@ -198,10 +199,14 @@ namespace ControllerHelper
             {
                 // no xinput1_3.dll : deploy wrapper
                 if (!wrapped)
-                    File.WriteAllBytes(dllpath, data);
+                {
+                    if (IsDirectoryWritable(dllpath))
+                        File.WriteAllBytes(dllpath, data);
+                }
 
                 string x360ce = Properties.Resources.x360ce;
-                File.WriteAllText(inipath, x360ce);
+                if (IsDirectoryWritable(inipath))
+                    File.WriteAllText(inipath, x360ce);
             }
             else if (!profile.use_wrapper && wrapped && is_x360ce)
             {

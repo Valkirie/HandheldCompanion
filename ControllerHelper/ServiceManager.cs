@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using ControllerCommon;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.ServiceProcess;
@@ -86,7 +87,7 @@ namespace ControllerHelper
 
                 if (prevStatus != (int)status)
                 {
-                    helper.UpdateService(status);
+                    helper.UpdateService(controller);
                     logger.LogInformation("Controller Service status has changed to: {0}", status.ToString());
                 }
 
@@ -118,20 +119,19 @@ namespace ControllerHelper
 
         public void StartService()
         {
-            process.StartInfo.Arguments = $"start {name}";
-            process.Start();
-            process.WaitForExit();
-
+            controller.Start();
             nextStatus = ServiceControllerStatus.Running;
         }
 
         public void StopService()
         {
-            process.StartInfo.Arguments = $"stop {name}";
-            process.Start();
-            process.WaitForExit();
-
+            controller.Stop();
             nextStatus = ServiceControllerStatus.Stopped;
+        }
+
+        internal void SetStartType(ServiceStartMode mode)
+        {
+            ServiceHelper.ChangeStartMode(controller, mode);
         }
     }
 }
