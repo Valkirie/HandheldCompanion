@@ -12,7 +12,7 @@
     <OutputPath>$(SolutionDir)bin\</OutputPath>
     <ApplicationIcon>gamepad.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>0.8.0.0</AssemblyVersion>
+    <AssemblyVersion>0.8.1.0</AssemblyVersion>
     <FileVersion>0.8.0.0</FileVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -89,6 +89,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="profiles\Yuzu.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="profiles\Dolphin.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">

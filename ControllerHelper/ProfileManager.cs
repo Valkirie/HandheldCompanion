@@ -32,7 +32,7 @@ namespace ControllerHelper
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            // monitor changes, deletions and creations of profiles
+            /* monitor changes, deletions and creations of profiles
             profileWatcher = new FileSystemWatcher()
             {
                 Path = path,
@@ -44,7 +44,7 @@ namespace ControllerHelper
 
             profileWatcher.Created += ProfileCreated;
             profileWatcher.Deleted += ProfileDeleted;
-            profileWatcher.Changed += ProfileChanged;
+            profileWatcher.Changed += ProfileChanged; */
 
             // process existing profiles
             string[] fileEntries = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
@@ -73,15 +73,10 @@ namespace ControllerHelper
                 return;
             }
 
-            string ProcessName = Path.GetFileName(profile.path);
-            profiles[ProcessName] = profile;
             UpdateProfile(profile);
-
-            // update GUI
-            helper.UpdateProfileList(profile);
         }
 
-        private void ProfileChanged(object sender, FileSystemEventArgs e)
+        /* private void ProfileChanged(object sender, FileSystemEventArgs e)
         {
             if (dateTimeDictionary.ContainsKey(e.FullPath) && File.GetLastWriteTime(e.FullPath) == dateTimeDictionary[e.FullPath])
                 return;
@@ -113,11 +108,21 @@ namespace ControllerHelper
 
             ProcessProfile(e.FullPath);
             logger.LogInformation("Created profile {0}", e.FullPath);
-        }
+        } */
 
         public void DeleteProfile(Profile profile)
         {
             string settingsPath = Path.Combine(path, $"{profile.name}.json");
+            
+            if (profiles.ContainsKey(profile.name))
+            {
+                UnregisterApplication(profile);
+                profiles.Remove(profile.name);
+
+                helper.DeleteProfile(profile);
+                logger.LogInformation("Deleted profile {0}", settingsPath);
+            }
+
             File.Delete(settingsPath);
         }
 
@@ -127,8 +132,11 @@ namespace ControllerHelper
             string jsonString = JsonSerializer.Serialize(profile, options);
 
             string settingsPath = Path.Combine(path, $"{profile.name}.json");
-            if (IsDirectoryWritable(settingsPath))
+            if (IsDirectoryWritable(path))
+            {
                 File.WriteAllText(settingsPath, jsonString);
+                UpdateProfile(profile);
+            }
         }
 
         private ProfileErrorCode SanitizeProfile(Profile profile)
@@ -145,7 +153,11 @@ namespace ControllerHelper
 
         public void UpdateProfile(Profile profile)
         {
+            profiles[profile.name] = profile;
             profile.error = SanitizeProfile(profile);
+
+            // update GUI
+            helper.UpdateProfileList(profile);
 
             if (profile.error != ProfileErrorCode.None)
             {
@@ -200,12 +212,12 @@ namespace ControllerHelper
                 // no xinput1_3.dll : deploy wrapper
                 if (!wrapped)
                 {
-                    if (IsDirectoryWritable(dllpath))
+                    if (IsDirectoryWritable(processpath))
                         File.WriteAllBytes(dllpath, data);
                 }
 
                 string x360ce = Properties.Resources.x360ce;
-                if (IsDirectoryWritable(inipath))
+                if (IsDirectoryWritable(processpath))
                     File.WriteAllText(inipath, x360ce);
             }
             else if (!profile.use_wrapper && wrapped && is_x360ce)

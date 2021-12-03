@@ -1,7 +1,7 @@
 {
-  "name": "HidHideCLI",
-  "path": "C:\\Program Files\\Nefarius Software Solutions e.U\\HidHideCLI\\HidHideCLI.exe",
-  "whitelisted": true,
+  "name": "Dolphin",
+  "path": "Dolphin.exe",
+  "whitelisted": false,
   "legacy": false,
   "use_wrapper": false,
   "gyrometer": 1,

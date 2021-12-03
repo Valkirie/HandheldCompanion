@@ -143,8 +143,9 @@ namespace ControllerCommon
                 { }
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 if (throwIfFails)
                     throw;
                 else

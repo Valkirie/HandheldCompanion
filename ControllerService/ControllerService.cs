@@ -128,12 +128,12 @@ namespace ControllerService
             }
 
             // default is 10ms rating
-            Gyrometer = new XInputGirometer(logger);
+            Gyrometer = new XInputGirometer(PhysicalController, logger);
             if (Gyrometer.sensor == null)
                 logger.LogWarning("No Gyrometer detected");
 
             // default is 10ms rating
-            Accelerometer = new XInputAccelerometer(logger);
+            Accelerometer = new XInputAccelerometer(PhysicalController, logger);
             if (Accelerometer.sensor == null)
                 logger.LogWarning("No Accelerometer detected");
 
@@ -221,9 +221,7 @@ namespace ControllerService
 
         internal void UpdateProfile(Profile profile)
         {
-            PhysicalController.muted = profile.whitelisted;
-            PhysicalController.gyrometer.multiplier = profile.gyrometer;
-            PhysicalController.accelerometer.multiplier = profile.accelerometer;
+            PhysicalController.profile = profile;
         }
 
         public void UpdateSettings(Dictionary<string, string> args)

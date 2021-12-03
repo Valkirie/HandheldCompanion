@@ -2,8 +2,11 @@
   "name": "Joyxoff",
   "path": "Joyxoff.exe",
   "whitelisted": true,
-  "use_wrapper": false,
   "legacy": false,
-  "gyrometer": 1.0,
-  "accelerometer": 1.0
+  "use_wrapper": false,
+  "gyrometer": 1,
+  "accelerometer": 1,
+  "steering": 0,
+  "inverthorizontal": false,
+  "invertvertical": false
 }

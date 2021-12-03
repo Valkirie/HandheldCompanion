@@ -64,14 +64,21 @@ namespace ControllerHelper
             this.lB_Devices = new System.Windows.Forms.ListBox();
             this.tabProfiles = new System.Windows.Forms.TabPage();
             this.gB_ProfileOptions = new System.Windows.Forms.GroupBox();
-            this.tb_ProfileAcceleroValue = new System.Windows.Forms.TrackBar();
-            this.lb_ProfileAccelero = new System.Windows.Forms.Label();
-            this.tb_ProfileGyroValue = new System.Windows.Forms.TrackBar();
-            this.lb_ProfileGyro = new System.Windows.Forms.Label();
             this.lb_Wrapper = new System.Windows.Forms.Label();
             this.lb_Whitelist = new System.Windows.Forms.Label();
             this.cB_Wrapper = new System.Windows.Forms.CheckBox();
             this.cB_Whitelist = new System.Windows.Forms.CheckBox();
+            this.gB_6axis = new System.Windows.Forms.GroupBox();
+            this.lB_InvertVAxis = new System.Windows.Forms.Label();
+            this.cB_InvertVAxis = new System.Windows.Forms.ComboBox();
+            this.lB_InvertHAxis = new System.Windows.Forms.Label();
+            this.cB_InvertHAxis = new System.Windows.Forms.ComboBox();
+            this.lB_GyroSteering = new System.Windows.Forms.Label();
+            this.cB_GyroSteering = new System.Windows.Forms.ComboBox();
+            this.tb_ProfileAcceleroValue = new System.Windows.Forms.TrackBar();
+            this.lb_ProfileGyro = new System.Windows.Forms.Label();
+            this.lb_ProfileAccelero = new System.Windows.Forms.Label();
+            this.tb_ProfileGyroValue = new System.Windows.Forms.TrackBar();
             this.gB_ProfileDetails = new System.Windows.Forms.GroupBox();
             this.b_ApplyProfile = new System.Windows.Forms.Button();
             this.b_DeleteProfile = new System.Windows.Forms.Button();
@@ -90,9 +97,9 @@ namespace ControllerHelper
             this.tB_UDPIP = new System.Windows.Forms.TextBox();
             this.cB_UDPEnable = new System.Windows.Forms.CheckBox();
             this.gb_SettingsService = new System.Windows.Forms.GroupBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.lB_ServiceStartup = new System.Windows.Forms.Label();
+            this.lB_ServiceStatus = new System.Windows.Forms.Label();
+            this.cB_ServiceStartup = new System.Windows.Forms.ComboBox();
             this.b_ServiceStop = new System.Windows.Forms.Button();
             this.b_ServiceStart = new System.Windows.Forms.Button();
             this.b_ServiceDelete = new System.Windows.Forms.Button();
@@ -114,6 +121,7 @@ namespace ControllerHelper
             this.gB_XinputDevices.SuspendLayout();
             this.tabProfiles.SuspendLayout();
             this.gB_ProfileOptions.SuspendLayout();
+            this.gB_6axis.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tb_ProfileAcceleroValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tb_ProfileGyroValue)).BeginInit();
             this.gB_ProfileDetails.SuspendLayout();
@@ -184,7 +192,7 @@ namespace ControllerHelper
             this.gB_DeviceDetails.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gB_DeviceDetails.Location = new System.Drawing.Point(243, 153);
             this.gB_DeviceDetails.Name = "gB_DeviceDetails";
-            this.gB_DeviceDetails.Size = new System.Drawing.Size(487, 104);
+            this.gB_DeviceDetails.Size = new System.Drawing.Size(487, 110);
             this.gB_DeviceDetails.TabIndex = 3;
             this.gB_DeviceDetails.TabStop = false;
             this.gB_DeviceDetails.Text = "Device Details";
@@ -260,9 +268,9 @@ namespace ControllerHelper
             this.gB_HIDDetails.Controls.Add(this.lb_HidMode);
             this.gB_HIDDetails.Controls.Add(this.cB_HidMode);
             this.gB_HIDDetails.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.gB_HIDDetails.Location = new System.Drawing.Point(243, 257);
+            this.gB_HIDDetails.Location = new System.Drawing.Point(243, 263);
             this.gB_HIDDetails.Name = "gB_HIDDetails";
-            this.gB_HIDDetails.Size = new System.Drawing.Size(487, 273);
+            this.gB_HIDDetails.Size = new System.Drawing.Size(487, 267);
             this.gB_HIDDetails.TabIndex = 2;
             this.gB_HIDDetails.TabStop = false;
             this.gB_HIDDetails.Text = "HID Details";
@@ -449,6 +457,7 @@ namespace ControllerHelper
             // tabProfiles
             // 
             this.tabProfiles.Controls.Add(this.gB_ProfileOptions);
+            this.tabProfiles.Controls.Add(this.gB_6axis);
             this.tabProfiles.Controls.Add(this.gB_ProfileDetails);
             this.tabProfiles.Controls.Add(this.gB_Profiles);
             this.tabProfiles.Location = new System.Drawing.Point(4, 24);
@@ -461,10 +470,6 @@ namespace ControllerHelper
             // 
             // gB_ProfileOptions
             // 
-            this.gB_ProfileOptions.Controls.Add(this.tb_ProfileAcceleroValue);
-            this.gB_ProfileOptions.Controls.Add(this.lb_ProfileAccelero);
-            this.gB_ProfileOptions.Controls.Add(this.tb_ProfileGyroValue);
-            this.gB_ProfileOptions.Controls.Add(this.lb_ProfileGyro);
             this.gB_ProfileOptions.Controls.Add(this.lb_Wrapper);
             this.gB_ProfileOptions.Controls.Add(this.lb_Whitelist);
             this.gB_ProfileOptions.Controls.Add(this.cB_Wrapper);
@@ -472,60 +477,10 @@ namespace ControllerHelper
             this.gB_ProfileOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gB_ProfileOptions.Location = new System.Drawing.Point(243, 143);
             this.gB_ProfileOptions.Name = "gB_ProfileOptions";
-            this.gB_ProfileOptions.Size = new System.Drawing.Size(487, 387);
+            this.gB_ProfileOptions.Size = new System.Drawing.Size(487, 85);
             this.gB_ProfileOptions.TabIndex = 2;
             this.gB_ProfileOptions.TabStop = false;
             this.gB_ProfileOptions.Text = "Profile Options";
-            // 
-            // tb_ProfileAcceleroValue
-            // 
-            this.tb_ProfileAcceleroValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tb_ProfileAcceleroValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
-            this.tb_ProfileAcceleroValue.LargeChange = 2;
-            this.tb_ProfileAcceleroValue.Location = new System.Drawing.Point(156, 145);
-            this.tb_ProfileAcceleroValue.Maximum = 30;
-            this.tb_ProfileAcceleroValue.Minimum = 1;
-            this.tb_ProfileAcceleroValue.Name = "tb_ProfileAcceleroValue";
-            this.tb_ProfileAcceleroValue.Size = new System.Drawing.Size(325, 45);
-            this.tb_ProfileAcceleroValue.TabIndex = 15;
-            this.tb_ProfileAcceleroValue.TickFrequency = 2;
-            this.tb_ProfileAcceleroValue.Value = 10;
-            this.tb_ProfileAcceleroValue.ValueChanged += new System.EventHandler(this.tb_ProfileAcceleroValue_Scroll);
-            // 
-            // lb_ProfileAccelero
-            // 
-            this.lb_ProfileAccelero.AutoSize = true;
-            this.lb_ProfileAccelero.Location = new System.Drawing.Point(6, 145);
-            this.lb_ProfileAccelero.Name = "lb_ProfileAccelero";
-            this.lb_ProfileAccelero.Size = new System.Drawing.Size(141, 15);
-            this.lb_ProfileAccelero.TabIndex = 14;
-            this.lb_ProfileAccelero.Text = "Accelerometer multiplier:";
-            // 
-            // tb_ProfileGyroValue
-            // 
-            this.tb_ProfileGyroValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tb_ProfileGyroValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
-            this.tb_ProfileGyroValue.LargeChange = 2;
-            this.tb_ProfileGyroValue.Location = new System.Drawing.Point(156, 94);
-            this.tb_ProfileGyroValue.Maximum = 30;
-            this.tb_ProfileGyroValue.Minimum = 1;
-            this.tb_ProfileGyroValue.Name = "tb_ProfileGyroValue";
-            this.tb_ProfileGyroValue.Size = new System.Drawing.Size(325, 45);
-            this.tb_ProfileGyroValue.TabIndex = 13;
-            this.tb_ProfileGyroValue.TickFrequency = 2;
-            this.tb_ProfileGyroValue.Value = 10;
-            this.tb_ProfileGyroValue.ValueChanged += new System.EventHandler(this.tb_ProfileGyroValue_Scroll);
-            // 
-            // lb_ProfileGyro
-            // 
-            this.lb_ProfileGyro.AutoSize = true;
-            this.lb_ProfileGyro.Location = new System.Drawing.Point(6, 94);
-            this.lb_ProfileGyro.Name = "lb_ProfileGyro";
-            this.lb_ProfileGyro.Size = new System.Drawing.Size(120, 15);
-            this.lb_ProfileGyro.TabIndex = 12;
-            this.lb_ProfileGyro.Text = "Gyrometer multiplier:";
             // 
             // lb_Wrapper
             // 
@@ -564,6 +519,142 @@ namespace ControllerHelper
             this.cB_Whitelist.TabIndex = 9;
             this.cB_Whitelist.Text = "Can access physical controller";
             this.cB_Whitelist.UseVisualStyleBackColor = true;
+            // 
+            // gB_6axis
+            // 
+            this.gB_6axis.Controls.Add(this.lB_InvertVAxis);
+            this.gB_6axis.Controls.Add(this.cB_InvertVAxis);
+            this.gB_6axis.Controls.Add(this.lB_InvertHAxis);
+            this.gB_6axis.Controls.Add(this.cB_InvertHAxis);
+            this.gB_6axis.Controls.Add(this.lB_GyroSteering);
+            this.gB_6axis.Controls.Add(this.cB_GyroSteering);
+            this.gB_6axis.Controls.Add(this.tb_ProfileAcceleroValue);
+            this.gB_6axis.Controls.Add(this.lb_ProfileGyro);
+            this.gB_6axis.Controls.Add(this.lb_ProfileAccelero);
+            this.gB_6axis.Controls.Add(this.tb_ProfileGyroValue);
+            this.gB_6axis.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.gB_6axis.Location = new System.Drawing.Point(243, 228);
+            this.gB_6axis.Name = "gB_6axis";
+            this.gB_6axis.Size = new System.Drawing.Size(487, 302);
+            this.gB_6axis.TabIndex = 3;
+            this.gB_6axis.TabStop = false;
+            this.gB_6axis.Text = "6-axis Options";
+            // 
+            // lB_InvertVAxis
+            // 
+            this.lB_InvertVAxis.AutoSize = true;
+            this.lB_InvertVAxis.Location = new System.Drawing.Point(6, 185);
+            this.lB_InvertVAxis.Name = "lB_InvertVAxis";
+            this.lB_InvertVAxis.Size = new System.Drawing.Size(106, 15);
+            this.lB_InvertVAxis.TabIndex = 21;
+            this.lB_InvertVAxis.Text = "Invert Vertical Axis:";
+            this.lB_InvertVAxis.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cB_InvertVAxis
+            // 
+            this.cB_InvertVAxis.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cB_InvertVAxis.FormattingEnabled = true;
+            this.cB_InvertVAxis.Items.AddRange(new object[] {
+            "Off",
+            "On"});
+            this.cB_InvertVAxis.Location = new System.Drawing.Point(156, 182);
+            this.cB_InvertVAxis.Name = "cB_InvertVAxis";
+            this.cB_InvertVAxis.Size = new System.Drawing.Size(104, 23);
+            this.cB_InvertVAxis.TabIndex = 20;
+            // 
+            // lB_InvertHAxis
+            // 
+            this.lB_InvertHAxis.AutoSize = true;
+            this.lB_InvertHAxis.Location = new System.Drawing.Point(6, 156);
+            this.lB_InvertHAxis.Name = "lB_InvertHAxis";
+            this.lB_InvertHAxis.Size = new System.Drawing.Size(123, 15);
+            this.lB_InvertHAxis.TabIndex = 19;
+            this.lB_InvertHAxis.Text = "Invert Horizontal Axis:";
+            this.lB_InvertHAxis.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cB_InvertHAxis
+            // 
+            this.cB_InvertHAxis.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cB_InvertHAxis.FormattingEnabled = true;
+            this.cB_InvertHAxis.Items.AddRange(new object[] {
+            "Off",
+            "On"});
+            this.cB_InvertHAxis.Location = new System.Drawing.Point(156, 153);
+            this.cB_InvertHAxis.Name = "cB_InvertHAxis";
+            this.cB_InvertHAxis.Size = new System.Drawing.Size(104, 23);
+            this.cB_InvertHAxis.TabIndex = 18;
+            // 
+            // lB_GyroSteering
+            // 
+            this.lB_GyroSteering.AutoSize = true;
+            this.lB_GyroSteering.Location = new System.Drawing.Point(6, 127);
+            this.lB_GyroSteering.Name = "lB_GyroSteering";
+            this.lB_GyroSteering.Size = new System.Drawing.Size(106, 15);
+            this.lB_GyroSteering.TabIndex = 17;
+            this.lB_GyroSteering.Text = "Gyro Steering Axis:";
+            this.lB_GyroSteering.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cB_GyroSteering
+            // 
+            this.cB_GyroSteering.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cB_GyroSteering.FormattingEnabled = true;
+            this.cB_GyroSteering.Items.AddRange(new object[] {
+            "Yaw",
+            "Roll"});
+            this.cB_GyroSteering.Location = new System.Drawing.Point(156, 124);
+            this.cB_GyroSteering.Name = "cB_GyroSteering";
+            this.cB_GyroSteering.Size = new System.Drawing.Size(190, 23);
+            this.cB_GyroSteering.TabIndex = 16;
+            // 
+            // tb_ProfileAcceleroValue
+            // 
+            this.tb_ProfileAcceleroValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tb_ProfileAcceleroValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
+            this.tb_ProfileAcceleroValue.LargeChange = 2;
+            this.tb_ProfileAcceleroValue.Location = new System.Drawing.Point(156, 73);
+            this.tb_ProfileAcceleroValue.Maximum = 30;
+            this.tb_ProfileAcceleroValue.Minimum = 1;
+            this.tb_ProfileAcceleroValue.Name = "tb_ProfileAcceleroValue";
+            this.tb_ProfileAcceleroValue.Size = new System.Drawing.Size(325, 45);
+            this.tb_ProfileAcceleroValue.TabIndex = 15;
+            this.tb_ProfileAcceleroValue.TickFrequency = 2;
+            this.tb_ProfileAcceleroValue.Value = 10;
+            this.tb_ProfileAcceleroValue.ValueChanged += new System.EventHandler(this.tb_ProfileAcceleroValue_Scroll);
+            // 
+            // lb_ProfileGyro
+            // 
+            this.lb_ProfileGyro.AutoSize = true;
+            this.lb_ProfileGyro.Location = new System.Drawing.Point(6, 22);
+            this.lb_ProfileGyro.Name = "lb_ProfileGyro";
+            this.lb_ProfileGyro.Size = new System.Drawing.Size(120, 15);
+            this.lb_ProfileGyro.TabIndex = 12;
+            this.lb_ProfileGyro.Text = "Gyrometer Multiplier:";
+            // 
+            // lb_ProfileAccelero
+            // 
+            this.lb_ProfileAccelero.AutoSize = true;
+            this.lb_ProfileAccelero.Location = new System.Drawing.Point(6, 73);
+            this.lb_ProfileAccelero.Name = "lb_ProfileAccelero";
+            this.lb_ProfileAccelero.Size = new System.Drawing.Size(141, 15);
+            this.lb_ProfileAccelero.TabIndex = 14;
+            this.lb_ProfileAccelero.Text = "Accelerometer Multiplier:";
+            // 
+            // tb_ProfileGyroValue
+            // 
+            this.tb_ProfileGyroValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tb_ProfileGyroValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
+            this.tb_ProfileGyroValue.LargeChange = 2;
+            this.tb_ProfileGyroValue.Location = new System.Drawing.Point(156, 22);
+            this.tb_ProfileGyroValue.Maximum = 30;
+            this.tb_ProfileGyroValue.Minimum = 1;
+            this.tb_ProfileGyroValue.Name = "tb_ProfileGyroValue";
+            this.tb_ProfileGyroValue.Size = new System.Drawing.Size(325, 45);
+            this.tb_ProfileGyroValue.TabIndex = 13;
+            this.tb_ProfileGyroValue.TickFrequency = 2;
+            this.tb_ProfileGyroValue.Value = 10;
+            this.tb_ProfileGyroValue.ValueChanged += new System.EventHandler(this.tb_ProfileGyroValue_Scroll);
             // 
             // gB_ProfileDetails
             // 
@@ -758,9 +849,9 @@ namespace ControllerHelper
             // 
             // gb_SettingsService
             // 
-            this.gb_SettingsService.Controls.Add(this.label2);
-            this.gb_SettingsService.Controls.Add(this.label1);
-            this.gb_SettingsService.Controls.Add(this.comboBox1);
+            this.gb_SettingsService.Controls.Add(this.lB_ServiceStartup);
+            this.gb_SettingsService.Controls.Add(this.lB_ServiceStatus);
+            this.gb_SettingsService.Controls.Add(this.cB_ServiceStartup);
             this.gb_SettingsService.Controls.Add(this.b_ServiceStop);
             this.gb_SettingsService.Controls.Add(this.b_ServiceStart);
             this.gb_SettingsService.Controls.Add(this.b_ServiceDelete);
@@ -773,41 +864,41 @@ namespace ControllerHelper
             this.gb_SettingsService.TabStop = false;
             this.gb_SettingsService.Text = "Controller Service";
             // 
-            // label2
+            // lB_ServiceStartup
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 117);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(74, 15);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "Startup type:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lB_ServiceStartup.AutoSize = true;
+            this.lB_ServiceStartup.Location = new System.Drawing.Point(6, 117);
+            this.lB_ServiceStartup.Name = "lB_ServiceStartup";
+            this.lB_ServiceStartup.Size = new System.Drawing.Size(74, 15);
+            this.lB_ServiceStartup.TabIndex = 8;
+            this.lB_ServiceStartup.Text = "Startup type:";
+            this.lB_ServiceStartup.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // label1
+            // lB_ServiceStatus
             // 
-            this.label1.Location = new System.Drawing.Point(6, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(115, 92);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Service status:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lB_ServiceStatus.Location = new System.Drawing.Point(6, 22);
+            this.lB_ServiceStatus.Name = "lB_ServiceStatus";
+            this.lB_ServiceStatus.Size = new System.Drawing.Size(115, 92);
+            this.lB_ServiceStatus.TabIndex = 6;
+            this.lB_ServiceStatus.Text = "Service status:";
+            this.lB_ServiceStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // comboBox1
+            // cB_ServiceStartup
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.Enabled = false;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.cB_ServiceStartup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cB_ServiceStartup.Enabled = false;
+            this.cB_ServiceStartup.FormattingEnabled = true;
+            this.cB_ServiceStartup.Items.AddRange(new object[] {
             "Boot",
             "System",
             "Automatic",
             "Manual",
             "Disabled"});
-            this.comboBox1.Location = new System.Drawing.Point(127, 114);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(190, 23);
-            this.comboBox1.TabIndex = 7;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.cB_ServiceStartup.Location = new System.Drawing.Point(127, 114);
+            this.cB_ServiceStartup.Name = "cB_ServiceStartup";
+            this.cB_ServiceStartup.Size = new System.Drawing.Size(190, 23);
+            this.cB_ServiceStartup.TabIndex = 7;
+            this.cB_ServiceStartup.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // b_ServiceStop
             // 
@@ -949,6 +1040,8 @@ namespace ControllerHelper
             this.tabProfiles.ResumeLayout(false);
             this.gB_ProfileOptions.ResumeLayout(false);
             this.gB_ProfileOptions.PerformLayout();
+            this.gB_6axis.ResumeLayout(false);
+            this.gB_6axis.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tb_ProfileAcceleroValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tb_ProfileGyroValue)).EndInit();
             this.gB_ProfileDetails.ResumeLayout(false);
@@ -1035,9 +1128,16 @@ namespace ControllerHelper
         private System.Windows.Forms.Label lb_ProductID;
         private System.Windows.Forms.TrackBar tB_VibrationStr;
         private System.Windows.Forms.Label lb_VibrationStr;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lB_ServiceStatus;
+        private System.Windows.Forms.ComboBox cB_ServiceStartup;
+        private System.Windows.Forms.Label lB_ServiceStartup;
+        private System.Windows.Forms.GroupBox gB_6axis;
+        private System.Windows.Forms.Label lB_GyroSteering;
+        private System.Windows.Forms.ComboBox cB_GyroSteering;
+        private System.Windows.Forms.Label lB_InvertHAxis;
+        private System.Windows.Forms.ComboBox cB_InvertHAxis;
+        private System.Windows.Forms.Label lB_InvertVAxis;
+        private System.Windows.Forms.ComboBox cB_InvertVAxis;
     }
 }
 

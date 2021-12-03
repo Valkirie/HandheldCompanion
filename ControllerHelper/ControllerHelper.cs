@@ -444,8 +444,6 @@ namespace ControllerHelper
                     var name = openFileDialog1.SafeFileName;
 
                     Profile profile = new Profile(name, path);
-
-                    ProfileManager.profiles[name] = profile;
                     ProfileManager.SerializeProfile(profile);
                 }
                 catch (Exception ex)
@@ -543,11 +541,13 @@ namespace ControllerHelper
                 {
                     gB_ProfileDetails.Enabled = false;
                     gB_ProfileOptions.Enabled = false;
+                    gB_6axis.Enabled = false;
                 }
                 else
                 {
                     gB_ProfileDetails.Enabled = true;
                     gB_ProfileOptions.Enabled = true;
+                    gB_6axis.Enabled = true;
 
                     tB_ProfileName.Text = profile.name;
                     tB_ProfilePath.Text = profile.path;
@@ -555,6 +555,11 @@ namespace ControllerHelper
 
                     cB_Whitelist.Checked = profile.whitelisted;
                     cB_Wrapper.Checked = profile.use_wrapper;
+
+                    cB_GyroSteering.SelectedIndex = profile.steering;
+
+                    cB_InvertHAxis.SelectedIndex = profile.inverthorizontal ? 1 : 0;
+                    cB_InvertVAxis.SelectedIndex = profile.invertvertical ? 1 : 0;
 
                     tb_ProfileGyroValue.Value = (int)(profile.gyrometer * 10.0f);
                     tb_ProfileAcceleroValue.Value = (int)(profile.accelerometer * 10.0f);
@@ -604,6 +609,11 @@ namespace ControllerHelper
             profile.whitelisted = cB_Whitelist.Checked;
             profile.use_wrapper = cB_Wrapper.Checked;
 
+            profile.steering = cB_GyroSteering.SelectedIndex;
+
+            profile.inverthorizontal = cB_InvertHAxis.SelectedIndex == 0 ? false : true;
+            profile.invertvertical = cB_InvertVAxis.SelectedIndex == 0 ? false : true;
+
             ProfileManager.profiles[profile.name] = profile;
             ProfileManager.UpdateProfile(profile);
             ProfileManager.SerializeProfile(profile);
@@ -619,7 +629,7 @@ namespace ControllerHelper
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ServiceManager.SetStartType((ServiceStartMode)comboBox1.SelectedIndex);
+            ServiceManager.SetStartType((ServiceStartMode)cB_ServiceStartup.SelectedIndex);
         }
 
         private void cB_accelero_CheckedChanged(object sender, EventArgs e)
@@ -677,25 +687,25 @@ namespace ControllerHelper
                         if (b_ServiceDelete.Enabled == false) b_ServiceDelete.Enabled = true;
                         if (b_ServiceStart.Enabled == false) b_ServiceStart.Enabled = true;
                         if (b_ServiceStop.Enabled == true) b_ServiceStop.Enabled = false;
-                        if (comboBox1.Enabled == false) comboBox1.Enabled = true;
+                        if (cB_ServiceStartup.Enabled == false) cB_ServiceStartup.Enabled = true;
                         break;
                     case ServiceControllerStatus.Running:
                         if (b_ServiceInstall.Enabled == true) b_ServiceInstall.Enabled = false;
                         if (b_ServiceDelete.Enabled == true) b_ServiceDelete.Enabled = false;
                         if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
                         if (b_ServiceStop.Enabled == false) b_ServiceStop.Enabled = true;
-                        if (comboBox1.Enabled == false) comboBox1.Enabled = true;
+                        if (cB_ServiceStartup.Enabled == false) cB_ServiceStartup.Enabled = true;
                         break;
                     default:
                         if (b_ServiceInstall.Enabled == false) b_ServiceInstall.Enabled = true;
                         if (b_ServiceDelete.Enabled == true) b_ServiceDelete.Enabled = false;
                         if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
                         if (b_ServiceStop.Enabled == true) b_ServiceStop.Enabled = false;
-                        if (comboBox1.Enabled == true) comboBox1.Enabled = false;
+                        if (cB_ServiceStartup.Enabled == true) cB_ServiceStartup.Enabled = false;
                         break;
                 }
 
-                comboBox1.SelectedIndex = (int)controller.StartType;
+                cB_ServiceStartup.SelectedIndex = (int)controller.StartType;
                 gb_SettingsService.ResumeLayout();
             });
         }

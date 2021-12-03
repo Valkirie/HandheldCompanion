@@ -18,16 +18,18 @@ namespace ControllerService
     public class XInputGirometer
     {
         public Gyrometer sensor;
-        public float multiplier = 1.0f;
 
         public event XInputGirometerReadingChangedEventHandler ReadingChanged;
         public delegate void XInputGirometerReadingChangedEventHandler(Object sender, XInputGirometerReadingChangedEventArgs e);
 
         private readonly ILogger logger;
+        private readonly XInputController controller;
 
-        public XInputGirometer(ILogger logger)
+        public XInputGirometer(XInputController controller, ILogger logger)
         {
             this.logger = logger;
+            this.controller = controller;
+
             sensor = Gyrometer.GetDefault();
             if (sensor != null)
             {
@@ -43,12 +45,19 @@ namespace ControllerService
         {
             GyrometerReading reading = args.Reading;
 
+            double AngularVelocityX = controller.profile.steering == 0 ? reading.AngularVelocityX : reading.AngularVelocityZ;   // gyroPitchFull
+            double AngularVelocityY = controller.profile.steering == 0 ? reading.AngularVelocityY : reading.AngularVelocityY;   // gyroYawFull
+            double AngularVelocityZ = controller.profile.steering == 0 ? reading.AngularVelocityZ : reading.AngularVelocityX;   // gyroRollFull
+
+            AngularVelocityX = (controller.profile.inverthorizontal ? -1 : 1) * AngularVelocityX;
+            AngularVelocityY = (controller.profile.invertvertical ? -1 : 1) * AngularVelocityY;
+
             // raise event
             XInputGirometerReadingChangedEventArgs newargs = new XInputGirometerReadingChangedEventArgs()
             {
-                AngularVelocityX = (float)reading.AngularVelocityX * multiplier,
-                AngularVelocityY = (float)reading.AngularVelocityY * multiplier,
-                AngularVelocityZ = (float)reading.AngularVelocityZ * multiplier
+                AngularVelocityX = (float)AngularVelocityX * controller.profile.gyrometer,
+                AngularVelocityY = (float)AngularVelocityY * controller.profile.gyrometer,
+                AngularVelocityZ = (float)AngularVelocityZ * controller.profile.gyrometer
             };
             ReadingChanged?.Invoke(this, newargs);
         }

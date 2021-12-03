@@ -59,7 +59,7 @@ namespace ControllerService
         private float strength;
 
         public UserIndex index;
-        public bool muted;
+        public Profile profile;
 
         public long microseconds;
         private Stopwatch stopwatch;
@@ -278,7 +278,7 @@ namespace ControllerService
                     outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
                 }
 
-                if (!muted)
+                if (!profile.whitelisted)
                 {
                     outDS4Report.wButtons = tempButtons;
                     outDS4Report.wButtons |= tempDPad.Value;
