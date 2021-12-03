@@ -673,13 +673,13 @@ namespace ControllerHelper
             });
         }
 
-        public void UpdateService(ServiceController controller)
+        public void UpdateService(ServiceControllerStatus status, ServiceStartMode starttype)
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
                 gb_SettingsService.SuspendLayout();
 
-                switch (controller.Status)
+                switch (status)
                 {
                     case ServiceControllerStatus.Paused:
                     case ServiceControllerStatus.Stopped:
@@ -705,7 +705,7 @@ namespace ControllerHelper
                         break;
                 }
 
-                cB_ServiceStartup.SelectedIndex = (int)controller.StartType;
+                cB_ServiceStartup.SelectedIndex = (int)starttype;
                 gb_SettingsService.ResumeLayout();
             });
         }

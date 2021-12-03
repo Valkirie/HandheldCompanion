@@ -45,19 +45,23 @@ namespace ControllerCommon
         {
             var scManagerHandle = OpenSCManager(null, null, SC_MANAGER_ALL_ACCESS);
             if (scManagerHandle == IntPtr.Zero)
-            {
-                throw new ExternalException("Open Service Manager Error");
-            }
+                return;
 
-            var serviceHandle = OpenService(
-                scManagerHandle,
-                svc.ServiceName,
-                SERVICE_QUERY_CONFIG | SERVICE_CHANGE_CONFIG);
+            IntPtr serviceHandle;
+            try
+            {
+                serviceHandle = OpenService(
+                    scManagerHandle,
+                    svc.ServiceName,
+                    SERVICE_QUERY_CONFIG | SERVICE_CHANGE_CONFIG);
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
 
             if (serviceHandle == IntPtr.Zero)
-            {
-                throw new ExternalException("Open Service Error");
-            }
+                return;
 
             var result = ChangeServiceConfig(
                 serviceHandle,
@@ -73,12 +77,7 @@ namespace ControllerCommon
                 null);
 
             if (result == false)
-            {
-                int nError = Marshal.GetLastWin32Error();
-                var win32Exception = new Win32Exception(nError);
-                throw new ExternalException("Could not change service start type: "
-                    + win32Exception.Message);
-            }
+                return;
 
             CloseServiceHandle(serviceHandle);
             CloseServiceHandle(scManagerHandle);

@@ -18,6 +18,7 @@ namespace ControllerHelper
         private ServiceControllerStatus status;
         private int prevStatus = -1;
         private ServiceControllerStatus nextStatus;
+        private ServiceStartMode starttype;
 
         private Process process;
 
@@ -65,10 +66,12 @@ namespace ControllerHelper
                 {
                     controller.Refresh();
                     status = controller.Status;
+                    starttype = controller.StartType;
                 }
                 catch (Exception)
                 {
                     status = 0;
+                    starttype = ServiceStartMode.Disabled;
                 }
 
                 if (nextStatus != 0)
@@ -87,7 +90,7 @@ namespace ControllerHelper
 
                 if (prevStatus != (int)status)
                 {
-                    helper.UpdateService(controller);
+                    helper.UpdateService(status, starttype);
                     logger.LogInformation("Controller Service status has changed to: {0}", status.ToString());
                 }
 
