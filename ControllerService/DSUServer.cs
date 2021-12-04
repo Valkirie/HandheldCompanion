@@ -101,6 +101,12 @@ namespace ControllerService
         public string ip;
         public int port;
 
+        public event StartedEventHandler Started;
+        public delegate void StartedEventHandler(Object sender);
+
+        public event StoppedEventHandler Stopped;
+        public delegate void StoppedEventHandler(Object sender);
+
         public DSUServer(string ipString, int port, ILogger logger)
         {
             this.logger = logger;
@@ -473,7 +479,7 @@ namespace ControllerService
             }
         }
 
-        public void Start()
+        public bool Start()
         {
             if (running)
                 Stop();
@@ -488,6 +494,11 @@ namespace ControllerService
             {
                 udpSock.Close();
                 udpSock = null;
+                running = false;
+
+                logger.LogCritical("DSU Server couldn't start. Port: {0} must be busy", port);
+                this.Stop();
+                return running;
             }
 
             byte[] randomBuf = new byte[4];
@@ -501,6 +512,9 @@ namespace ControllerService
             BatteryTimer.Start();
 
             logger.LogInformation("DSU Server has started. Listening to ip: {0} port: {1}", ip, port);
+            Started?.Invoke(this);
+
+            return running; 
         }
 
         public void Stop()
@@ -513,6 +527,7 @@ namespace ControllerService
             }
 
             logger.LogInformation($"DSU Server has stopped");
+            Stopped?.Invoke(this);
         }
 
         private bool ReportToBuffer(XInputController hidReport, byte[] outputData, long microseconds, ref int outIdx)

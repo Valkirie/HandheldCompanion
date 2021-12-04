@@ -139,12 +139,26 @@ namespace ControllerService
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
+            DSUServer.Started += OnDSUStarted;
+            DSUServer.Stopped += OnDSUStopped;
 
             // initialize PipeServer
             PipeServer = new PipeServer("ControllerService", logger);
             PipeServer.Connected += OnClientConnected;
             PipeServer.Disconnected += OnClientDisconnected;
             PipeServer.ClientMessage += OnClientMessage;
+        }
+
+        private void OnDSUStopped(object sender)
+        {
+            DSUEnabled = Properties.Settings.Default.DSUEnabled = false;
+            PipeServer.SendMessage(new PipeServerSettings() { settings = new Dictionary<string, string>() { { "DSUEnabled", DSUEnabled.ToString() } } });
+        }
+
+        private void OnDSUStarted(object sender)
+        {
+            DSUEnabled = Properties.Settings.Default.DSUEnabled = true;
+            PipeServer.SendMessage(new PipeServerSettings() { settings = new Dictionary<string, string>() { { "DSUEnabled", DSUEnabled.ToString() } } });
         }
 
         private void OnClientMessage(object sender, PipeMessage message)

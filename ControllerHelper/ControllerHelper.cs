@@ -398,8 +398,8 @@ namespace ControllerHelper
 
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                tB_InstanceID.Text = $"{con.InstanceGuid}";
-                tB_ProductID.Text = $"{con.ProductGuid}";
+                tB_InstanceID.Text = con.InstanceGuid.ToString();
+                tB_ProductID.Text = con.ProductGuid.ToString();
             });
 
         }
@@ -429,7 +429,7 @@ namespace ControllerHelper
             {
                 settings = new Dictionary<string, string>
                 {
-                    { "HIDrate", $"{tB_PullRate.Value}" }
+                    { "HIDrate", tB_PullRate.Value.ToString() }
                 }
             });
         }
@@ -445,7 +445,7 @@ namespace ControllerHelper
             {
                 settings = new Dictionary<string, string>
                 {
-                    { "HIDstrength", $"{tB_VibrationStr.Value}" }
+                    { "HIDstrength", tB_VibrationStr.Value.ToString() }
                 }
             });
         }
@@ -456,9 +456,9 @@ namespace ControllerHelper
             {
                 settings = new Dictionary<string, string>
                 {
-                    { "DSUip", $"{tB_UDPIP.Text}" },
-                    { "DSUport", $"{tB_UDPPort.Value}" },
-                    { "DSUEnabled", $"{cB_UDPEnable.Checked}" }
+                    { "DSUip", tB_UDPIP.Text },
+                    { "DSUport", tB_UDPPort.Value.ToString() },
+                    { "DSUEnabled", cB_UDPEnable.Checked.ToString() }
                 }
             });
         }
@@ -532,7 +532,7 @@ namespace ControllerHelper
             {
                 settings = new Dictionary<string, string>
                 {
-                    { "HIDuncloakonclose", $"{cB_uncloak.Checked}" }
+                    { "HIDuncloakonclose", cB_uncloak.Checked.ToString() }
                 }
             });
         }
