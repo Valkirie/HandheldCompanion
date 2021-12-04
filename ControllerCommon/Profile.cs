@@ -35,6 +35,10 @@ namespace ControllerCommon
         public event DisconnectedEventHandler Disconnected;
         public delegate void DisconnectedEventHandler(Object sender);
 
+        public Profile()
+        { 
+        }
+
         public Profile(string name, string path)
         {
             this.name = name;
