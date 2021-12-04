@@ -3,16 +3,37 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Core;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace ControllerService
 {
     internal static class Program
     {
+        private static Logger logger;
+
         public static void Main(string[] args)
         {
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+
+            var configuration = new ConfigurationBuilder()
+                        .AddJsonFile("servicesettings.json")
+                        .Build();
+
+            logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+
+            string proc = Process.GetCurrentProcess().ProcessName;
+            Process[] processes = Process.GetProcessesByName(proc);
+
+            if (processes.Length > 1)
+            {
+                logger.Fatal("{0} is already running. Exiting.", proc);
+                return;
+            }
 
             CreateHostBuilder(args).Build().Run();
         }
@@ -23,14 +44,6 @@ namespace ControllerService
                 .UseWindowsService()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    var configuration = new ConfigurationBuilder()
-                        .AddJsonFile("servicesettings.json")
-                        .Build();
-
-                    var logger = new LoggerConfiguration()
-                        .ReadFrom.Configuration(configuration)
-                        .CreateLogger();
-
                     services.AddLogging(builder =>
                     {
                         builder.SetMinimumLevel(LogLevel.Information);
