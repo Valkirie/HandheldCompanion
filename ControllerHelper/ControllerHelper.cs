@@ -341,16 +341,45 @@ namespace ControllerHelper
         {
             this.BeginInvoke((MethodInvoker)delegate ()
             {
-                cB_HidMode.SelectedItem = HIDmodes[args["HIDmode"]];
-                cB_HIDcloak.SelectedItem = args["HIDcloaked"];
-                cB_uncloak.Checked = bool.Parse(args["HIDuncloakonclose"]);
-                cB_gyro.Checked = bool.Parse(args["gyrometer"]);
-                cB_accelero.Checked = bool.Parse(args["accelerometer"]);
-                tB_PullRate.Value = int.Parse(args["HIDrate"]);
-                tB_VibrationStr.Value = int.Parse(args["HIDstrength"]);
-                cB_UDPEnable.Checked = bool.Parse(args["DSUEnabled"]);
-                tB_UDPIP.Text = args["DSUip"];
-                tB_UDPPort.Value = int.Parse(args["DSUport"]);
+                foreach (KeyValuePair<string, string> pair in args)
+                {
+                    string name = pair.Key;
+                    string property = pair.Value;
+
+                    switch(name)
+                    {
+                        case "HIDmode":
+                            cB_HidMode.SelectedItem = HIDmodes[args[name]];
+                            break;
+                        case "HIDcloaked":
+                            cB_HIDcloak.SelectedItem = args[name];
+                            break;
+                        case "HIDuncloakonclose":
+                            cB_uncloak.Checked = bool.Parse(args[name]);
+                            break;
+                        case "gyrometer":
+                            cB_gyro.Checked = bool.Parse(args[name]);
+                            break;
+                        case "accelerometer":
+                            cB_accelero.Checked = bool.Parse(args[name]);
+                            break;
+                        case "HIDrate":
+                            tB_PullRate.Value = int.Parse(args[name]);
+                            break;
+                        case "HIDstrength":
+                            tB_VibrationStr.Value = int.Parse(args[name]);
+                            break;
+                        case "DSUEnabled":
+                            cB_UDPEnable.Checked = bool.Parse(args[name]);
+                            break;
+                        case "DSUip":
+                            tB_UDPIP.Text = args[name];
+                            break;
+                        case "DSUport":
+                            tB_UDPPort.Value = int.Parse(args[name]);
+                            break;
+                    }
+                }
             });
         }
 
