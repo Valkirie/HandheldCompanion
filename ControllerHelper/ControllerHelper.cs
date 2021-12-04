@@ -705,6 +705,13 @@ namespace ControllerHelper
                         break;
                 }
 
+                switch(starttype)
+                {
+                    case ServiceStartMode.Disabled:
+                        if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
+                        break;
+                }
+
                 cB_ServiceStartup.SelectedIndex = (int)starttype;
                 gb_SettingsService.ResumeLayout();
             });

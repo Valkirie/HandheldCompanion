@@ -16,9 +16,9 @@ namespace ControllerHelper
 
         private ServiceController controller;
         private ServiceControllerStatus status;
-        private int prevStatus = -1;
+        private int prevStatus, prevType = -1;
         private ServiceControllerStatus nextStatus;
-        private ServiceStartMode starttype;
+        private ServiceStartMode type;
 
         private Process process;
 
@@ -66,12 +66,12 @@ namespace ControllerHelper
                 {
                     controller.Refresh();
                     status = controller.Status;
-                    starttype = controller.StartType;
+                    type = controller.StartType;
                 }
                 catch (Exception)
                 {
                     status = 0;
-                    starttype = ServiceStartMode.Disabled;
+                    type = ServiceStartMode.Disabled;
                 }
 
                 if (nextStatus != 0)
@@ -84,17 +84,19 @@ namespace ControllerHelper
                     {
                         nextStatus = 0;
                         prevStatus = 0;
+                        prevType = 0;
                         logger.LogError("{0} set to {1}", name, ex.Message);
                     }
                 }
 
-                if (prevStatus != (int)status)
+                if (prevStatus != (int)status || prevType != (int)type)
                 {
-                    helper.UpdateService(status, starttype);
+                    helper.UpdateService(status, type);
                     logger.LogInformation("Controller Service status has changed to: {0}", status.ToString());
                 }
 
                 prevStatus = (int)status;
+                prevType = (int)type;
             }
         }
 
@@ -122,7 +124,8 @@ namespace ControllerHelper
 
         public void StartService()
         {
-            controller.Start();
+            if (type != ServiceStartMode.Disabled)
+                controller.Start();
             nextStatus = ServiceControllerStatus.Running;
         }
 
@@ -132,7 +135,7 @@ namespace ControllerHelper
             nextStatus = ServiceControllerStatus.Stopped;
         }
 
-        internal void SetStartType(ServiceStartMode mode)
+        public void SetStartType(ServiceStartMode mode)
         {
             ServiceHelper.ChangeStartMode(controller, mode);
         }
