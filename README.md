@@ -16,7 +16,7 @@ Controller Service supports emulation of the following USB Gamepads:
 A few examples of the most common use cases for `Controller Service` are:
 - You want to add high-precision motion controls to your Windows game library through [Steam](https://store.steampowered.com/controller/update/dec15).
 - You want to play your Sony Playstation 4 library through [PlayStation Now](https://www.playstation.com/en-us/ps-now/) or [PS4 Remote Play](<https://remoteplay.dl.playstation.net/remoteplay/>).
-- You want to enjoy all your WiiU and Switch games with full motion controls.
+- You want to enjoy all your [Wii](https://dolphin-emu.org/), [WiiU](https://cemu.info/) and [Switch](https://yuzu-emu.org/) games with full motion controls through UDP motion control protocol. 
 
 ## Supported Systems
 The software is built for Windows 10/Windows 11 (x86 and amd64).
@@ -33,8 +33,8 @@ Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Disco
 If you would like to support this project, please consider making a donation to `BenjaminLSR` via [PayPal](https://www.paypal.com/paypalme/BenjaminLSR).
 
 ## Installation
-Pre-built production-signed binaries are [available as an all-in-one setup](../../releases/latest).
-When extracted, run the `install.cmd` as administrator and you'll be set!
+Installers are [available as an all-in-one setup](../../releases/latest).
+Run the `install.exe` as administrator and you'll be set!
 
 ## Credits & Libraries
 - ViGEmBus: [Nefarius](https://github.com/ViGEm/ViGEmBus)
