@@ -316,7 +316,7 @@ namespace ControllerService
                     outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(touch.TrackPadTouch1.Y >> 4);
                 }
 
-                var rate = 1.0 / stopwatch.ElapsedMilliseconds;
+                var rate = 1.0 / stopwatch.Elapsed.Milliseconds;
                 outDS4Report.wGyroX = (short)gyroFilter.axis1Filter.Filter(-AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC, rate); // gyroPitchFull
                 outDS4Report.wGyroY = (short)gyroFilter.axis1Filter.Filter(-AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC, rate); // gyroYawFull
                 outDS4Report.wGyroZ = (short)gyroFilter.axis1Filter.Filter(AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC, rate); // gyroRollFull
