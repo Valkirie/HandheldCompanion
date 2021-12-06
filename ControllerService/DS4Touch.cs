@@ -65,10 +65,7 @@ namespace ControllerService
             TrackPadTouch1.Y = TouchY;
 
             if (Button == 2097152) // MouseButtons.Right
-            {
                 OutputClickButton = false;
-                return;
-            }
 
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID + TOUCH_DISABLE;
             TrackPadTouch1.RawTrackingNum = TOUCH1_ID + TOUCH_DISABLE;
@@ -88,10 +85,7 @@ namespace ControllerService
             TrackPadTouch1.Y = TouchY;
 
             if (Button == 2097152) // MouseButtons.Right
-            {
                 OutputClickButton = true;
-                return;
-            }
 
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
             TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
