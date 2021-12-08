@@ -1,4 +1,7 @@
+using CommandLine;
+using ControllerCommon;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic.ApplicationServices;
 using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
@@ -9,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using static ControllerHelper.Options;
 
 namespace ControllerHelper
 {
@@ -47,39 +51,116 @@ namespace ControllerHelper
         static extern bool GetWindowPlacement(IntPtr hWnd, ref Windowplacement lpwndpl);
         #endregion
 
+        static ControllerHelper MainForm;
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(params string[] Arguments)
         {
             string proc = Process.GetCurrentProcess().ProcessName;
             Process[] processes = Process.GetProcessesByName(proc);
 
-            if (processes.Length > 1)
+            if (processes.Length > 1 && Arguments.Length == 0)
             {
-                // get our process
+                // an instance of helper is already running and no arguments were given
                 BringWindowToFront(proc);
-                // exit our process
                 return;
             }
+            else if (processes.Length > 1 && Arguments.Length != 0)
+            {
+                // an instance of helper is already running, pass arguments to it
+                MainForm = new ControllerHelper();
+                SingleInstanceApplication.Run(MainForm, NewInstanceHandler);
+            }
+            else
+            {
+                // no instance of helper is running
+                Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
-            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+                var configuration = new ConfigurationBuilder()
+                            .AddJsonFile("helpersettings.json")
+                            .Build();
 
-            var configuration = new ConfigurationBuilder()
-                        .AddJsonFile("helpersettings.json")
-                        .Build();
+                var serilogLogger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(configuration)
+                    .CreateLogger();
 
-            var serilogLogger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
+                var microsoftLogger = new SerilogLoggerFactory(serilogLogger).CreateLogger("ControllerHelper");
 
-            var microsoftLogger = new SerilogLoggerFactory(serilogLogger).CreateLogger("ControllerHelper");
+                Application.SetHighDpiMode(HighDpiMode.SystemAware);
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
 
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ControllerHelper(microsoftLogger));
+                MainForm = new ControllerHelper(microsoftLogger);
+                SingleInstanceApplication.Run(MainForm, NewInstanceHandler);
+            }
+        }
+
+        public static void NewInstanceHandler(object sender, StartupNextInstanceEventArgs e)
+        {
+            string[] args = new string[e.CommandLine.Count - 1];
+            Array.Copy(e.CommandLine.ToArray(), 1, args, 0, e.CommandLine.Count - 1);
+
+            Parser.Default.ParseArguments<ProfileOption>(args).MapResult(
+                (ProfileOption opts) => RunProfile(opts),
+                errs => RunError(errs)
+                );
+            e.BringToForeground = false;
+        }
+
+        private static bool RunError(IEnumerable<Error> errs)
+        {
+            // do something
+            return true;
+        }
+
+        private static bool RunProfile(ProfileOption opts)
+        {
+            if (!File.Exists(opts.exe))
+                return false;
+
+            string ProcessExec = Path.GetFileNameWithoutExtension(opts.exe);
+
+            Profile profile = new Profile(ProcessExec, opts.exe);
+            
+            if (MainForm.ProfileManager.profiles.ContainsKey(ProcessExec))
+                profile = MainForm.ProfileManager.profiles[ProcessExec];
+
+            profile.fullpath = opts.exe;
+
+            switch(opts.mode)
+            {
+                case "xinput":
+                    profile.whitelisted = true;
+                    break;
+                case "ds4":
+                    profile.whitelisted = false;
+                    break;
+                default:
+                    return false;
+            }
+
+            MainForm.ProfileManager.UpdateProfile(profile);
+            MainForm.ProfileManager.SerializeProfile(profile);
+            return true;
+        }
+
+        public class SingleInstanceApplication : WindowsFormsApplicationBase
+        {
+            private SingleInstanceApplication()
+            {
+                base.IsSingleInstance = true;
+            }
+
+            public static void Run(Form f, StartupNextInstanceEventHandler startupHandler)
+            {
+                SingleInstanceApplication app = new SingleInstanceApplication();
+                app.MainForm = f;
+                app.StartupNextInstance += startupHandler;
+                app.Run(Environment.GetCommandLineArgs());
+            }
         }
 
         private static void BringWindowToFront(string name)

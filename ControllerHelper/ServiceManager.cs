@@ -78,7 +78,7 @@ namespace ControllerHelper
                 {
                     try
                     {
-                        controller.WaitForStatus(nextStatus, TimeSpan.FromSeconds(5));
+                        controller.WaitForStatus(nextStatus, TimeSpan.FromSeconds(2));
                     }
                     catch (Exception ex)
                     {

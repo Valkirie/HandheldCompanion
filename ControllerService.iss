@@ -647,7 +647,7 @@ end;
 ;#define UseSql2019Express
 
 #define MyAppSetupName 'Controller Service'
-#define MyAppVersion '0.8.1.1'
+#define MyAppVersion '0.8.1.3'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/ControllerService'
@@ -679,6 +679,9 @@ ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
 Name: en; MessagesFile: "compiler:Default.isl"
+
+[Setup]
+AlwaysRestart = yes
 
 [Files]
 #ifdef UseNetCoreCheck

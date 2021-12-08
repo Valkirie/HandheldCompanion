@@ -56,6 +56,10 @@ namespace ControllerHelper
 
         private readonly ILogger logger;
 
+        public ControllerHelper()
+        {
+        }
+
         public ControllerHelper(ILogger logger)
         {
             InitializeComponent();
@@ -218,7 +222,7 @@ namespace ControllerHelper
         {
             try
             {
-                string ProcessExec = Path.GetFileName(ProcessPath);
+                string ProcessExec = Path.GetFileNameWithoutExtension(ProcessPath);
 
                 if (ProfileManager.profiles.ContainsKey(ProcessExec))
                 {
@@ -235,10 +239,6 @@ namespace ControllerHelper
                     PipeClient.SendMessage(new PipeClientProfile() { profile = new Profile("default", "") });
             }
             catch (Exception) { }
-        }
-
-        private void ControllerHelper_Shown(object sender, EventArgs e)
-        {
         }
 
         private void ControllerHelper_Resize(object sender, EventArgs e)

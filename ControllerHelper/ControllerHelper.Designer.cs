@@ -138,7 +138,6 @@ namespace ControllerHelper
             this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
             this.notifyIcon1.Text = "Controller Helper";
-            this.notifyIcon1.Visible = true;
             this.notifyIcon1.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
             // 
             // contextMenuStrip1
@@ -1001,6 +1000,7 @@ namespace ControllerHelper
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Filter = "Exe Files (.exe)|*.exe";
             // 
             // toolTip1
             // 
@@ -1023,7 +1023,6 @@ namespace ControllerHelper
             this.Text = "ControllerHelper";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ControllerHelper_Close);
             this.Load += new System.EventHandler(this.ControllerHelper_Load);
-            this.Shown += new System.EventHandler(this.ControllerHelper_Shown);
             this.Resize += new System.EventHandler(this.ControllerHelper_Resize);
             this.contextMenuStrip1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
