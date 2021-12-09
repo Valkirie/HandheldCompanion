@@ -56,10 +56,6 @@ namespace ControllerHelper
 
         private readonly ILogger logger;
 
-        public ControllerHelper()
-        {
-        }
-
         public ControllerHelper(ILogger logger)
         {
             InitializeComponent();

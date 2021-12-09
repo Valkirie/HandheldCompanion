@@ -36,6 +36,12 @@ namespace ControllerCommon
 
         CLIENT_SCREEN = 11,                 // Sent to server to update screen details
                                             // args: width, height
+
+        CLIENT_CONSOLE = 12,                // Sent from client to client to pass parameters
+                                            // args: string[] parameters
+
+        SERVER_SHUTDOWN = 13,               // Sent to client to halt process
+                                            // args: ...
     }
 
     public class PipeServer
@@ -57,10 +63,8 @@ namespace ControllerCommon
 
         public bool connected;
 
-        public PipeServer(string pipeName, ILogger logger)
+        public PipeServer(string pipeName)
         {
-            this.logger = logger;
-
             m_queue = new ConcurrentQueue<PipeMessage>();
 
             // monitors processes and settings
@@ -79,13 +83,18 @@ namespace ControllerCommon
             server.Error += OnError;
         }
 
+        public PipeServer(string pipeName, ILogger logger) : this(pipeName)
+        {
+            this.logger = logger;
+        }
+
         public void Start()
         {
             if (server == null)
                 return;
 
             server.Start();
-            logger.LogInformation($"Pipe Server has started");
+            logger?.LogInformation($"Pipe Server has started");
         }
 
         public void Stop()
@@ -94,12 +103,12 @@ namespace ControllerCommon
                 return;
 
             server = null;
-            logger.LogInformation($"Pipe Server has stopped");
+            logger?.LogInformation($"Pipe Server has stopped");
         }
 
         private void OnClientConnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
         {
-            logger.LogInformation("Client {0} is now connected!", connection.Id);
+            logger?.LogInformation("Client {0} is now connected!", connection.Id);
             Connected?.Invoke(this);
 
             connected = true;
@@ -110,7 +119,7 @@ namespace ControllerCommon
 
         private void OnClientDisconnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
         {
-            logger.LogInformation("Client {0} disconnected", connection.Id);
+            logger?.LogInformation("Client {0} disconnected", connection.Id);
             Disconnected?.Invoke(this);
 
             connected = false;
@@ -118,13 +127,13 @@ namespace ControllerCommon
 
         private void OnClientMessage(NamedPipeConnection<PipeMessage, PipeMessage> connection, PipeMessage message)
         {
-            logger.LogDebug("Client {0} opcode: {1} says: {2}", connection.Id, message.code, string.Join(" ", message.ToString()));
+            logger?.LogDebug("Client {0} opcode: {1} says: {2}", connection.Id, message.code, string.Join(" ", message.ToString()));
             ClientMessage?.Invoke(this, message);
         }
 
         private void OnError(Exception exception)
         {
-            logger.LogError("PipeServer failed. {0}", exception.Message);
+            logger?.LogError("PipeServer failed. {0}", exception.Message);
         }
 
         public void SendMessage(PipeMessage message)

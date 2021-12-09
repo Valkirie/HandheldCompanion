@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 using static ControllerHelper.Options;
 
@@ -18,40 +19,13 @@ namespace ControllerHelper
 {
     static class Program
     {
-        #region imports
-
-        private enum ShowWindowEnum
-        {
-            Hide = 0,
-            ShowNormal = 1, ShowMinimized = 2, ShowMaximized = 3,
-            Maximize = 3, ShowNormalNoActivate = 4, Show = 5,
-            Minimize = 6, ShowMinNoActivate = 7, ShowNoActivate = 8,
-            Restore = 9, ShowDefault = 10, ForceMinimized = 11
-        };
-
-        private struct Windowplacement
-        {
-            public int length;
-            public int flags;
-            public int showCmd;
-            public System.Drawing.Point ptMinPosition;
-            public System.Drawing.Point ptMaxPosition;
-            public System.Drawing.Rectangle rcNormalPosition;
-        }
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr FindWindow(string className, string windowTitle);
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool ShowWindow(IntPtr hWnd, ShowWindowEnum flags);
-        [DllImport("user32.dll")]
-        private static extern int SetForegroundWindow(IntPtr hwnd);
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetWindowPlacement(IntPtr hWnd, ref Windowplacement lpwndpl);
-        #endregion
-
         static ControllerHelper MainForm;
+        static PipeClient PipeClient;
+        static PipeServer PipeServer;
+        static string[] args;
+
+        static Mutex mutex = new Mutex(true, "1DDFB948-19F1-417C-903D-BE05335DB8A4");
+        static AutoResetEvent autoEvent = new AutoResetEvent(false);
 
         /// <summary>
         ///  The main entry point for the application.
@@ -59,55 +33,88 @@ namespace ControllerHelper
         [STAThread]
         static void Main(params string[] Arguments)
         {
-            string proc = Process.GetCurrentProcess().ProcessName;
-            Process[] processes = Process.GetProcessesByName(proc);
+            if (mutex.WaitOne(TimeSpan.Zero, true))
+            {
+                try
+                {
+                }
+                finally
+                {
+                    PipeServer = new PipeServer("ControllerHelper");
+                    PipeServer.ClientMessage += OnClientMessage;
+                    PipeServer.Start();
 
-            if (processes.Length > 1 && Arguments.Length == 0)
-            {
-                // an instance of helper is already running and no arguments were given
-                BringWindowToFront(proc);
-                return;
-            }
-            else if (processes.Length > 1 && Arguments.Length != 0)
-            {
-                // an instance of helper is already running, pass arguments to it
-                MainForm = new ControllerHelper();
-                SingleInstanceApplication.Run(MainForm, NewInstanceHandler);
+                    Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+
+                    var configuration = new ConfigurationBuilder()
+                                .AddJsonFile("helpersettings.json")
+                                .Build();
+
+                    var serilogLogger = new LoggerConfiguration()
+                        .ReadFrom.Configuration(configuration)
+                        .CreateLogger();
+
+                    var microsoftLogger = new SerilogLoggerFactory(serilogLogger).CreateLogger("ControllerHelper");
+
+                    Application.SetHighDpiMode(HighDpiMode.SystemAware);
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+
+                    MainForm = new ControllerHelper(microsoftLogger);
+                    Application.Run(MainForm);
+
+                    mutex.ReleaseMutex();
+                }
             }
             else
             {
-                // no instance of helper is running
-                Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+                args = Arguments;
 
-                var configuration = new ConfigurationBuilder()
-                            .AddJsonFile("helpersettings.json")
-                            .Build();
-
-                var serilogLogger = new LoggerConfiguration()
-                    .ReadFrom.Configuration(configuration)
-                    .CreateLogger();
-
-                var microsoftLogger = new SerilogLoggerFactory(serilogLogger).CreateLogger("ControllerHelper");
-
-                Application.SetHighDpiMode(HighDpiMode.SystemAware);
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-
-                MainForm = new ControllerHelper(microsoftLogger);
-                SingleInstanceApplication.Run(MainForm, NewInstanceHandler);
+                PipeClient = new PipeClient("ControllerHelper");
+                PipeClient.Connected += OnServerConnected;
+                PipeClient.ServerMessage += OnServerMessage;
+                PipeClient.Start();
+                
+                // Wait for work method to signal and kill after 4seconds
+                autoEvent.WaitOne(4000);
             }
         }
 
-        public static void NewInstanceHandler(object sender, StartupNextInstanceEventArgs e)
+        private static void OnServerMessage(object sender, PipeMessage e)
         {
-            string[] args = new string[e.CommandLine.Count - 1];
-            Array.Copy(e.CommandLine.ToArray(), 1, args, 0, e.CommandLine.Count - 1);
+            switch (e.code)
+            {
+                case PipeCode.SERVER_SHUTDOWN:
+                    autoEvent.Set();
+                    break;
+            }
+        }
 
-            Parser.Default.ParseArguments<ProfileOption>(args).MapResult(
-                (ProfileOption opts) => RunProfile(opts),
-                errs => RunError(errs)
-                );
-            e.BringToForeground = false;
+        private static void OnClientMessage(object sender, PipeMessage e)
+        {
+            PipeConsoleArgs console = (PipeConsoleArgs)e;
+
+            if (console.args.Length == 0)
+            {
+                MainForm.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    MainForm.WindowState = FormWindowState.Normal;
+                });
+            }
+            else
+            {
+                Parser.Default.ParseArguments<ProfileOption>(console.args).MapResult(
+                    (ProfileOption opts) => RunProfile(opts),
+                    errs => RunError(errs)
+                    );
+            }
+
+            PipeServer.SendMessage(new PipeServerShutdown());
+        }
+
+        private static void OnServerConnected(object sender)
+        {
+            PipeClient.SendMessage(new PipeConsoleArgs() { args = args });
         }
 
         private static bool RunError(IEnumerable<Error> errs)
@@ -142,41 +149,6 @@ namespace ControllerHelper
             MainForm.ProfileManager.UpdateProfile(profile);
             MainForm.ProfileManager.SerializeProfile(profile);
             return true;
-        }
-
-        public class SingleInstanceApplication : WindowsFormsApplicationBase
-        {
-            private SingleInstanceApplication()
-            {
-                base.IsSingleInstance = true;
-            }
-
-            public static void Run(Form f, StartupNextInstanceEventHandler startupHandler)
-            {
-                SingleInstanceApplication app = new SingleInstanceApplication();
-                app.MainForm = f;
-                app.StartupNextInstance += startupHandler;
-                app.Run(Environment.GetCommandLineArgs());
-            }
-        }
-
-        private static void BringWindowToFront(string name)
-        {
-            IntPtr wdwIntPtr = FindWindow(null, name);
-
-            //get the hWnd of the process
-            Windowplacement placement = new Windowplacement();
-            GetWindowPlacement(wdwIntPtr, ref placement);
-
-            // Check if window is minimized
-            if (placement.showCmd == 2)
-            {
-                //the window is hidden so we restore it
-                ShowWindow(wdwIntPtr, ShowWindowEnum.Restore);
-            }
-
-            //set user's focus to the window
-            SetForegroundWindow(wdwIntPtr);
         }
     }
 }

@@ -117,5 +117,25 @@ namespace ControllerCommon
             code = PipeCode.CLIENT_HIDDER;
         }
     }
+
+    [Serializable]
+    public class PipeConsoleArgs : PipeMessage
+    {
+        public string[] args;
+
+        public PipeConsoleArgs()
+        {
+            code = PipeCode.CLIENT_CONSOLE;
+        }
+    }
+
+    [Serializable]
+    public class PipeServerShutdown : PipeMessage
+    {
+        public PipeServerShutdown()
+        {
+            code = PipeCode.SERVER_SHUTDOWN;
+        }
+    }
     #endregion
 }
