@@ -118,9 +118,6 @@ namespace ControllerHelper
 
         private static bool RunProfile(ProfileOption opts)
         {
-            if (!File.Exists(opts.exe))
-                return false;
-
             string ProcessExec = Path.GetFileNameWithoutExtension(opts.exe);
 
             Profile profile = new Profile(ProcessExec, opts.exe);
