@@ -499,10 +499,10 @@ namespace ControllerHelper
             {
                 try
                 {
-                    var path = openFileDialog1.FileName;
-                    var name = openFileDialog1.SafeFileName;
+                    string ProcessExec = Path.GetFileNameWithoutExtension(openFileDialog1.SafeFileName);
+                    string ProcessPath = openFileDialog1.FileName;
 
-                    Profile profile = new Profile(name, path);
+                    Profile profile = new Profile(ProcessExec, ProcessPath);
                     ProfileManager.SerializeProfile(profile);
                 }
                 catch (Exception ex)

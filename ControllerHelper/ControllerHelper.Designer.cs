@@ -552,6 +552,7 @@ namespace ControllerHelper
             // cB_InvertVAxis
             // 
             this.cB_InvertVAxis.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cB_InvertVAxis.Enabled = false;
             this.cB_InvertVAxis.FormattingEnabled = true;
             this.cB_InvertVAxis.Items.AddRange(new object[] {
             "Off",
@@ -574,6 +575,7 @@ namespace ControllerHelper
             // cB_InvertHAxis
             // 
             this.cB_InvertHAxis.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cB_InvertHAxis.Enabled = false;
             this.cB_InvertHAxis.FormattingEnabled = true;
             this.cB_InvertHAxis.Items.AddRange(new object[] {
             "Off",
@@ -596,6 +598,7 @@ namespace ControllerHelper
             // cB_GyroSteering
             // 
             this.cB_GyroSteering.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cB_GyroSteering.Enabled = false;
             this.cB_GyroSteering.FormattingEnabled = true;
             this.cB_GyroSteering.Items.AddRange(new object[] {
             "Yaw",
