@@ -183,16 +183,12 @@ namespace ControllerService
 
         private void Accelerometer_ReadingChanged(object sender, XInputAccelerometerReadingChangedEventArgs e)
         {
-            Acceleration.X = e.AccelerationY;
-            Acceleration.Y = e.AccelerationZ;
-            Acceleration.Z = e.AccelerationX;
+            Acceleration = e.Acceleration;
         }
 
         private void Girometer_ReadingChanged(object sender, XInputGirometerReadingChangedEventArgs e)
         {
-            AngularVelocity.X = e.AngularVelocityY;
-            AngularVelocity.Y = e.AngularVelocityZ;
-            AngularVelocity.Z = e.AngularVelocityX;
+            AngularVelocity = e.AngularVelocity;
         }
 
         private unsafe void DS4_UpdateReport(object sender, ElapsedEventArgs e)
