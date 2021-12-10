@@ -647,11 +647,12 @@ end;
 ;#define UseSql2019Express
 
 #define MyAppSetupName 'Controller Service'
-#define MyAppVersion '0.8.1.4'
+#define MyAppVersion '0.8.1.5'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/ControllerService'
 #define MyAppExeName "ControllerHelper.exe"
+#define MySerExeName "ControllerService.exe"
 
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
@@ -681,7 +682,8 @@ ArchitecturesInstallIn64BitMode=x64
 Name: en; MessagesFile: "compiler:Default.isl"
 
 [Setup]
-AlwaysRestart = yes
+AlwaysRestart = no
+CloseApplications = yes
 
 [Files]
 #ifdef UseNetCoreCheck
@@ -703,7 +705,17 @@ Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Ta
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppSetupName}}"; Flags: nowait postinstall skipifsilent runascurrentuser
+// used to kill processes
+Filename: {sys}\taskkill.exe; Parameters: "/f /im steamservice.exe"; Flags: postinstall skipifdoesntexist runhidden; StatusMsg: "Stopping Steam Service"
+Filename: {sys}\taskkill.exe; Parameters: "/f /im steam.exe"; Flags: postinstall skipifdoesntexist runhidden; StatusMsg: "Stopping Steam Client"
+Filename: {sys}\taskkill.exe; Parameters: "/f /im steamwebhelper.exe"; Flags: postinstall skipifdoesntexist runhidden; StatusMsg: "Stopping Web Helper"
+
+Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""install"""; Description: "{cm:LaunchProgram,{#MyAppSetupName}}"; Flags: postinstall runascurrentuser
+
+[UninstallRun]
+Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""uninstall"""; RunOnceId: "UninstallService"; Flags: runascurrentuser runhidden
+Filename: {sys}\sc.exe; Parameters: "stop ControllerService" ; RunOnceId: "StopService"; Flags: runascurrentuser runhidden
+Filename: {sys}\sc.exe; Parameters: "delete ControllerService" ; RunOnceId: "DeleteService"; Flags: runascurrentuser runhidden
 
 [Registry]
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps"; Flags: uninsdeletekeyifempty
@@ -712,7 +724,7 @@ Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDum
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerHelper.exe"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerHelper.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{app}"
 
-[Code]
+[Code]  
 procedure InitializeWizard;
 begin
   Dependency_InitializeWizard;

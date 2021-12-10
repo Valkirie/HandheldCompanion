@@ -21,7 +21,6 @@ namespace ControllerHelper
     {
         static ControllerHelper MainForm;
         static PipeClient PipeClient;
-        static PipeServer PipeServer;
         static string[] args;
 
         static Mutex mutex = new Mutex(true, "1DDFB948-19F1-417C-903D-BE05335DB8A4");
@@ -35,36 +34,26 @@ namespace ControllerHelper
         {
             if (mutex.WaitOne(TimeSpan.Zero, true))
             {
-                try
-                {
-                }
-                finally
-                {
-                    PipeServer = new PipeServer("ControllerHelper");
-                    PipeServer.ClientMessage += OnClientMessage;
-                    PipeServer.Start();
+                Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
-                    Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+                var configuration = new ConfigurationBuilder()
+                            .AddJsonFile("helpersettings.json")
+                            .Build();
 
-                    var configuration = new ConfigurationBuilder()
-                                .AddJsonFile("helpersettings.json")
-                                .Build();
+                var serilogLogger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(configuration)
+                    .CreateLogger();
 
-                    var serilogLogger = new LoggerConfiguration()
-                        .ReadFrom.Configuration(configuration)
-                        .CreateLogger();
+                var microsoftLogger = new SerilogLoggerFactory(serilogLogger).CreateLogger("ControllerHelper");
 
-                    var microsoftLogger = new SerilogLoggerFactory(serilogLogger).CreateLogger("ControllerHelper");
+                Application.SetHighDpiMode(HighDpiMode.SystemAware);
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
 
-                    Application.SetHighDpiMode(HighDpiMode.SystemAware);
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault(false);
+                MainForm = new ControllerHelper(Arguments, microsoftLogger);
+                Application.Run(MainForm);
 
-                    MainForm = new ControllerHelper(microsoftLogger);
-                    Application.Run(MainForm);
-
-                    mutex.ReleaseMutex();
-                }
+                mutex.ReleaseMutex();
             }
             else
             {
@@ -84,71 +73,15 @@ namespace ControllerHelper
         {
             switch (e.code)
             {
-                case PipeCode.SERVER_SHUTDOWN:
+                case PipeCode.FORCE_SHUTDOWN:
                     autoEvent.Set();
                     break;
             }
         }
 
-        private static void OnClientMessage(object sender, PipeMessage e)
-        {
-            PipeConsoleArgs console = (PipeConsoleArgs)e;
-
-            if (console.args.Length == 0)
-            {
-                MainForm.BeginInvoke((MethodInvoker)delegate ()
-                {
-                    MainForm.WindowState = FormWindowState.Normal;
-                });
-            }
-            else
-            {
-                Parser.Default.ParseArguments<ProfileOption>(console.args).MapResult(
-                    (ProfileOption opts) => RunProfile(opts),
-                    errs => RunError(errs)
-                    );
-            }
-
-            PipeServer.SendMessage(new PipeServerShutdown());
-        }
-
         private static void OnServerConnected(object sender)
         {
             PipeClient.SendMessage(new PipeConsoleArgs() { args = args });
-        }
-
-        private static bool RunError(IEnumerable<Error> errs)
-        {
-            // do something
-            return true;
-        }
-
-        private static bool RunProfile(ProfileOption opts)
-        {
-            string ProcessExec = Path.GetFileNameWithoutExtension(opts.exe);
-
-            Profile profile = new Profile(ProcessExec, opts.exe);
-            
-            if (MainForm.ProfileManager.profiles.ContainsKey(ProcessExec))
-                profile = MainForm.ProfileManager.profiles[ProcessExec];
-
-            profile.fullpath = opts.exe;
-
-            switch(opts.mode)
-            {
-                case "xinput":
-                    profile.whitelisted = true;
-                    break;
-                case "ds4":
-                    profile.whitelisted = false;
-                    break;
-                default:
-                    return false;
-            }
-
-            MainForm.ProfileManager.UpdateProfile(profile);
-            MainForm.ProfileManager.SerializeProfile(profile);
-            return true;
         }
     }
 }

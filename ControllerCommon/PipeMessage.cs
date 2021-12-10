@@ -130,11 +130,11 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public class PipeServerShutdown : PipeMessage
+    public class PipeShutdown : PipeMessage
     {
-        public PipeServerShutdown()
+        public PipeShutdown()
         {
-            code = PipeCode.SERVER_SHUTDOWN;
+            code = PipeCode.FORCE_SHUTDOWN;
         }
     }
     #endregion

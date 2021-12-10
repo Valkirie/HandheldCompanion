@@ -1,4 +1,5 @@
-﻿using ControllerCommon;
+﻿using CommandLine;
+using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.TaskScheduler;
 using System;
@@ -11,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Timers;
 using System.Windows.Forms;
+using static ControllerHelper.Options;
 using Timer = System.Timers.Timer;
 
 namespace ControllerHelper
@@ -25,6 +27,10 @@ namespace ControllerHelper
         #endregion
 
         public static PipeClient PipeClient;
+        public static PipeServer PipeServer;
+        public static CmdParser CmdParser;
+        public string[] args;
+
         private Timer MonitorTimer;
         private IntPtr CurrentProcess;
 
@@ -39,7 +45,7 @@ namespace ControllerHelper
         private HIDmode HideXBOX = new HIDmode("Xbox360Controller", "Xbox 360 emulation");
         private Dictionary<string, HIDmode> HIDmodes = new();
 
-        public static string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
+        public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
 
         private bool RunAtStartup, StartMinimized, CloseMinimises, HookMouse;
         private bool IsElevated, FirstStart;
@@ -56,11 +62,12 @@ namespace ControllerHelper
 
         private readonly ILogger logger;
 
-        public ControllerHelper(ILogger logger)
+        public ControllerHelper(string[] args, ILogger logger)
         {
             InitializeComponent();
 
             this.logger = logger;
+            this.args = args;
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
@@ -93,14 +100,21 @@ namespace ControllerHelper
             PipeClient.Disconnected += OnClientDisconnected;
             PipeClient.ServerMessage += OnServerMessage;
 
+            // initialize pipe server
+            PipeServer = new PipeServer("ControllerHelper", logger);
+            PipeServer.ClientMessage += OnClientMessage;
+
+            // initialize command parser
+            CmdParser = new CmdParser(PipeClient, this, logger);
+
             // initialize mouse hook
             m_Hook = new MouseHook(PipeClient, this, logger);
 
+            // initialize Service Manager
+            ServiceManager = new ServiceManager("ControllerService", this, ServiceName, ServiceDescription, logger);
+
             if (IsElevated)
             {
-                // initialize Service Manager
-                ServiceManager = new ServiceManager("ControllerService", this, ServiceName, ServiceDescription, logger);
-
                 // initialize Task Manager
                 DefineTask();
                 UpdateTask();
@@ -141,12 +155,23 @@ namespace ControllerHelper
             }
         }
 
+        private void OnClientMessage(object sender, PipeMessage e)
+        {
+            PipeConsoleArgs console = (PipeConsoleArgs)e;
+
+            if (console.args.Length == 0)
+                BeginInvoke((MethodInvoker)delegate () { WindowState = FormWindowState.Normal; });
+            else
+                CmdParser.ParseArgs(console.args);
+
+            PipeServer.SendMessage(new PipeShutdown());
+        }
+
         private void OnServerMessage(object sender, PipeMessage message)
         {
             switch (message.code)
             {
                 case PipeCode.SERVER_PING:
-                    PipeServerPing ping = (PipeServerPing)message;
                     UpdateStatus(true);
                     UpdateScreen();
                     break;
@@ -200,8 +225,9 @@ namespace ControllerHelper
 
             UpdateStatus(false);
 
-            // start pipe client
+            // start pipe client and server
             PipeClient.Start();
+            PipeServer.Start();
 
             // initialize Profile Manager
             ProfileManager = new ProfileManager(CurrentPathProfiles, this, logger);
@@ -212,6 +238,9 @@ namespace ControllerHelper
             // monitor processes
             MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
             MonitorTimer.Elapsed += MonitorHelper;
+
+            // execute args
+            CmdParser.ParseArgs(args);
         }
 
         public void UpdateProcess(int ProcessId, string ProcessPath)
@@ -301,7 +330,7 @@ namespace ControllerHelper
 
         public void UpdateStatus(bool status)
         {
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 foreach (Control ctl in tabDevices.Controls)
                     ctl.Enabled = status;
@@ -322,7 +351,7 @@ namespace ControllerHelper
         {
             CurrentController = new Controller(ProductName, InstanceGuid, ProductGuid, ProductIndex);
 
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 lB_Devices.Items.Clear();
                 lB_Devices.Items.Add(CurrentController);
@@ -335,7 +364,7 @@ namespace ControllerHelper
 
         public void UpdateSettings(Dictionary<string, string> args)
         {
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 foreach (KeyValuePair<string, string> pair in args)
                 {
@@ -381,6 +410,11 @@ namespace ControllerHelper
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ForceExit();
+        }
+
+        public void ForceExit()
+        {
             Application.Exit();
         }
 
@@ -392,7 +426,7 @@ namespace ControllerHelper
             if (con == null)
                 return;
 
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 tB_InstanceID.Text = con.InstanceGuid.ToString();
                 tB_ProductID.Text = con.ProductGuid.ToString();
@@ -416,7 +450,7 @@ namespace ControllerHelper
             // update mouse hook delay based on controller pull rate
             m_Hook.SetInterval(tB_PullRate.Value);
 
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 toolTip1.SetToolTip(tB_PullRate, $"{tB_PullRate.Value} Miliseconds");
             });
@@ -432,7 +466,7 @@ namespace ControllerHelper
 
         private void tB_VibrationStr_Scroll(object sender, EventArgs e)
         {
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 toolTip1.SetToolTip(tB_VibrationStr, $"{tB_VibrationStr.Value}%");
             });
@@ -560,7 +594,7 @@ namespace ControllerHelper
         {
             Profile profile = (Profile)lB_Profiles.SelectedItem;
 
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 if (profile == null)
                 {
@@ -600,7 +634,7 @@ namespace ControllerHelper
 
             float value = tb_ProfileGyroValue.Value / 10.0f;
 
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 toolTip1.SetToolTip(tb_ProfileGyroValue, $"value: {value}");
             });
@@ -614,7 +648,7 @@ namespace ControllerHelper
 
             float value = tb_ProfileAcceleroValue.Value / 10.0f;
 
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 toolTip1.SetToolTip(tb_ProfileAcceleroValue, $"value: {value}");
             });
@@ -646,7 +680,7 @@ namespace ControllerHelper
 
         private void cB_gyro_CheckedChanged(object sender, EventArgs e)
         {
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 cB_gyro.Text = cB_gyro.Checked ? "Gyrometer detected" : "No gyrometer detected";
             });
@@ -659,7 +693,7 @@ namespace ControllerHelper
 
         private void cB_accelero_CheckedChanged(object sender, EventArgs e)
         {
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 cB_accelero.Text = cB_accelero.Checked ? "Accelerometer detected" : "No accelerometer detected";
             });
@@ -667,7 +701,7 @@ namespace ControllerHelper
 
         public void UpdateProfileList(Profile profile)
         {
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 int idx = lB_Profiles.Items.IndexOf(profile);
 
@@ -690,7 +724,7 @@ namespace ControllerHelper
 
         public void DeleteProfile(Profile profile)
         {
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 int idx = lB_Profiles.Items.IndexOf(profile);
                 if (idx != -1)
@@ -700,7 +734,7 @@ namespace ControllerHelper
 
         public void UpdateService(ServiceControllerStatus status, ServiceStartMode starttype)
         {
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 gb_SettingsService.SuspendLayout();
 
@@ -744,7 +778,7 @@ namespace ControllerHelper
 
         private void b_ServiceInstall_Click(object sender, EventArgs e)
         {
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Enabled = false;
@@ -754,7 +788,7 @@ namespace ControllerHelper
 
         private void b_ServiceDelete_Click(object sender, EventArgs e)
         {
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Enabled = false;
@@ -764,7 +798,7 @@ namespace ControllerHelper
 
         private void b_ServiceStart_Click(object sender, EventArgs e)
         {
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Enabled = false;
@@ -774,7 +808,7 @@ namespace ControllerHelper
 
         private void b_ServiceStop_Click(object sender, EventArgs e)
         {
-            this.BeginInvoke((MethodInvoker)delegate ()
+            BeginInvoke((MethodInvoker)delegate ()
             {
                 foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Enabled = false;

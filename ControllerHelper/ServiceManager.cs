@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.ServiceProcess;
+using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -28,6 +29,8 @@ namespace ControllerHelper
         private readonly ControllerHelper helper;
         private readonly ILogger logger;
 
+        private AutoResetEvent autoEvent;
+
         public ServiceManager(string name, ControllerHelper helper, string display, string description, ILogger logger)
         {
             this.helper = helper;
@@ -37,7 +40,8 @@ namespace ControllerHelper
             this.display = display;
             this.description = description;
 
-            this.controller = new ServiceController(name);
+            controller = new ServiceController(name);
+            autoEvent = new AutoResetEvent(false);
 
             process = new Process
             {
@@ -93,6 +97,7 @@ namespace ControllerHelper
                 {
                     helper.UpdateService(status, type);
                     logger.LogInformation("Controller Service status has changed to: {0}", status.ToString());
+                    autoEvent.Set();
                 }
 
                 prevStatus = (int)status;
@@ -102,19 +107,32 @@ namespace ControllerHelper
 
         public void CreateService(string path)
         {
-            process.StartInfo.Arguments = $"create {name} binpath= \"{path}\" start= \"auto\" DisplayName= \"{display}\"";
-            process.Start();
-            process.WaitForExit();
+            autoEvent.WaitOne(1000);
 
-            process.StartInfo.Arguments = $"description {name} \"{description}\"";
-            process.Start();
-            process.WaitForExit();
+            try
+            {
+                process.StartInfo.Arguments = $"create {name} binpath= \"{path}\" start= \"auto\" DisplayName= \"{display}\"";
+                process.Start();
+                process.WaitForExit();
 
-            nextStatus = ServiceControllerStatus.Stopped;
+                process.StartInfo.Arguments = $"description {name} \"{description}\"";
+                process.Start();
+                process.WaitForExit();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Service manager returned error: {0}", ex.Message);
+            }
+            finally
+            {
+                nextStatus = ServiceControllerStatus.Stopped;
+            }
         }
 
         public void DeleteService()
         {
+            autoEvent.WaitOne(1000);
+
             process.StartInfo.Arguments = $"delete {name}";
             process.Start();
             process.WaitForExit();
@@ -124,19 +142,46 @@ namespace ControllerHelper
 
         public void StartService()
         {
-            if (type != ServiceStartMode.Disabled)
-                controller.Start();
-            nextStatus = ServiceControllerStatus.Running;
+            autoEvent.WaitOne(1000);
+
+            try
+            {
+                if (type != ServiceStartMode.Disabled)
+                    controller.Start();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Service manager returned error: {0}", ex.Message);
+            }
+            finally
+            {
+                nextStatus = ServiceControllerStatus.Running;
+            }
         }
 
         public void StopService()
         {
-            controller.Stop();
-            nextStatus = ServiceControllerStatus.Stopped;
+            autoEvent.WaitOne(1000);
+
+            try
+            {
+                if (status == ServiceControllerStatus.Running)
+                    controller.Stop();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Service manager returned error: {0}", ex.Message);
+            }
+            finally
+            {
+                nextStatus = ServiceControllerStatus.Stopped;
+            }
         }
 
         public void SetStartType(ServiceStartMode mode)
         {
+            autoEvent.WaitOne(1000);
+
             ServiceHelper.ChangeStartMode(controller, mode);
         }
     }

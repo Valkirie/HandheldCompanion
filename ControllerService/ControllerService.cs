@@ -165,6 +165,10 @@ namespace ControllerService
         {
             switch (message.code)
             {
+                case PipeCode.FORCE_SHUTDOWN:
+                    Hidder?.SetCloaking(false);
+                    break;
+
                 case PipeCode.CLIENT_PROFILE:
                     PipeClientProfile profile = (PipeClientProfile)message;
                     UpdateProfile(profile.profile);
@@ -380,14 +384,9 @@ namespace ControllerService
             }
             catch (Exception) { }
 
-            if (DSUServer != null)
-                DSUServer.Stop();
-
-            if (Hidder != null && HIDuncloakonclose)
-                Hidder.SetCloaking(false);
-
-            if (PipeServer != null)
-                PipeServer.Stop();
+            DSUServer?.Stop();
+            Hidder?.SetCloaking(HIDuncloakonclose);
+            PipeServer?.Stop();
 
             return Task.CompletedTask;
         }

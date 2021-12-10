@@ -40,7 +40,7 @@ namespace ControllerCommon
         CLIENT_CONSOLE = 12,                // Sent from client to client to pass parameters
                                             // args: string[] parameters
 
-        SERVER_SHUTDOWN = 13,               // Sent to client to halt process
+        FORCE_SHUTDOWN = 13,                // Sent to server or client to halt process
                                             // args: ...
     }
 
