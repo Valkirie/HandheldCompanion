@@ -58,6 +58,10 @@ namespace ControllerHelper
 
             // monitor service
             MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
+        }
+
+        public void Start()
+        {
             MonitorTimer.Elapsed += MonitorHelper;
         }
 

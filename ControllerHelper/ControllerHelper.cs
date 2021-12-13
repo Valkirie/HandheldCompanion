@@ -60,12 +60,12 @@ namespace ControllerHelper
 
         private readonly ILogger logger;
 
-        public ControllerHelper(string[] args, ILogger logger)
+        public ControllerHelper(string[] Arguments, ILogger logger)
         {
             InitializeComponent();
 
             this.logger = logger;
-            this.args = args;
+            this.args = Arguments;
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
@@ -147,6 +147,9 @@ namespace ControllerHelper
                     case DialogResult.No:
                         break;
                 }
+
+                this.args = new string[] { "service", "--action=install" };
+
                 FirstStart = false;
                 Properties.Settings.Default.FirstStart = FirstStart;
                 Properties.Settings.Default.Save();
@@ -222,6 +225,9 @@ namespace ControllerHelper
             }
 
             UpdateStatus(false);
+
+            // start Service Manager
+            ServiceManager.Start();
 
             // start pipe client and server
             PipeClient.Start();
