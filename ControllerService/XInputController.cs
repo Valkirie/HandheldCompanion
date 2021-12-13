@@ -41,8 +41,8 @@ namespace ControllerService
         private const float F_ACC_RES_PER_G = 8192.0f;
         private const float F_GYRO_RES_IN_DEG_SEC = 16.0f;
 
-        private OneEuroFilter3D accelFilter = new OneEuroFilter3D();
-        private OneEuroFilter3D gyroFilter = new OneEuroFilter3D();
+        private readonly OneEuroFilter3D accelFilter = new();
+        private readonly OneEuroFilter3D gyroFilter = new();
 
         public Controller controller;
         public Gamepad gamepad;
@@ -59,16 +59,16 @@ namespace ControllerService
         public Vector3 AngularVelocity;
         public Vector3 Acceleration;
 
-        private Timer UpdateTimer;
+        private readonly Timer UpdateTimer;
         private float strength;
 
         public UserIndex index;
         public Profile profile;
 
         public long microseconds;
-        private Stopwatch stopwatch;
+        private readonly Stopwatch stopwatch;
 
-        private object updateLock = new();
+        private readonly object updateLock = new();
 
         private DS4_REPORT_EX outDS4Report;
 
@@ -155,7 +155,7 @@ namespace ControllerService
         {
             if (controller.IsConnected)
             {
-                Vibration inputMotor = new Vibration()
+                Vibration inputMotor = new()
                 {
                     LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * strength),
                     RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * strength),
@@ -316,7 +316,7 @@ namespace ControllerService
                 outDS4Report.wGyroX = (short)gyroFilter.axis1Filter.Filter(-AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC, rate); // gyroPitchFull
                 outDS4Report.wGyroY = (short)gyroFilter.axis1Filter.Filter(-AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC, rate); // gyroYawFull
                 outDS4Report.wGyroZ = (short)gyroFilter.axis1Filter.Filter(AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC, rate); // gyroRollFull
-                
+
                 outDS4Report.wAccelX = (short)accelFilter.axis1Filter.Filter(Acceleration.X * F_ACC_RES_PER_G, rate); // accelXFull
                 outDS4Report.wAccelY = (short)accelFilter.axis1Filter.Filter(-Acceleration.Y * F_ACC_RES_PER_G, rate); // accelYFull
                 outDS4Report.wAccelZ = (short)accelFilter.axis1Filter.Filter(Acceleration.Z * F_ACC_RES_PER_G, rate); // accelZFull

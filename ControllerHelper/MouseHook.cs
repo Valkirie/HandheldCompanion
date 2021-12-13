@@ -1,9 +1,10 @@
 ﻿using ControllerCommon;
-using Gma.System.MouseKeyHook;
 using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
+using WindowsHook;
+using MouseButtons = WindowsHook.MouseButtons;
 using Timer = System.Timers.Timer;
 
 namespace ControllerHelper

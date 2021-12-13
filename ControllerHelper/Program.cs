@@ -1,19 +1,11 @@
-using CommandLine;
 using ControllerCommon;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualBasic.ApplicationServices;
 using Serilog;
-using Serilog.Events;
 using Serilog.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using static ControllerHelper.Options;
 
 namespace ControllerHelper
 {
@@ -63,7 +55,7 @@ namespace ControllerHelper
                 PipeClient.Connected += OnServerConnected;
                 PipeClient.ServerMessage += OnServerMessage;
                 PipeClient.Start();
-                
+
                 // Wait for work method to signal and kill after 4seconds
                 autoEvent.WaitOne(4000);
             }

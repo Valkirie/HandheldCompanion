@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using CommandLine;
+﻿using CommandLine;
 using ControllerCommon;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using static ControllerHelper.Options;
 
 namespace ControllerHelper
@@ -30,7 +26,7 @@ namespace ControllerHelper
         {
             this.args = args;
 
-            if (args.Length == 0)  
+            if (args.Length == 0)
                 return;
 
             logger?.LogInformation("Parsing command: {0}", String.Join(' ', args));

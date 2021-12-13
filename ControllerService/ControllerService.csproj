@@ -20,14 +20,14 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="dependencies\**" />
     <Content Remove="dependencies\**" />
     <EmbeddedResource Remove="dependencies\**" />
     <None Remove="dependencies\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Remove="app.manifest" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="ControllerService.cs" />

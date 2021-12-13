@@ -29,14 +29,8 @@ namespace ControllerCommon
         [JsonIgnore] public ProfileErrorCode error;
         [JsonIgnore] public string fullpath { get; set; }
 
-        public event DeletedEventHandler Deleted;
-        public delegate void DeletedEventHandler(Object sender);
-
-        public event DisconnectedEventHandler Disconnected;
-        public delegate void DisconnectedEventHandler(Object sender);
-
         public Profile()
-        { 
+        {
         }
 
         public Profile(string name, string path)

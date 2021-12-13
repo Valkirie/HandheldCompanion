@@ -113,7 +113,7 @@ namespace ControllerHelper
         public void DeleteProfile(Profile profile)
         {
             string settingsPath = Path.Combine(path, $"{profile.name}.json");
-            
+
             if (profiles.ContainsKey(profile.name))
             {
                 UnregisterApplication(profile);

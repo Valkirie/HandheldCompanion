@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Numerics;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
@@ -514,7 +515,7 @@ namespace ControllerService
             logger.LogInformation("DSU Server has started. Listening to ip: {0} port: {1}", ip, port);
             Started?.Invoke(this);
 
-            return running; 
+            return running;
         }
 
         public void Stop()
@@ -609,7 +610,7 @@ namespace ControllerService
                 outIdx += 8;
 
                 //accelerometer
-                if (hidReport.Acceleration != null)
+                if (hidReport.Acceleration != new Vector3())
                 {
                     // accelXG
                     Array.Copy(BitConverter.GetBytes(-hidReport.Acceleration.X), 0, outputData, outIdx, 4);
@@ -628,7 +629,7 @@ namespace ControllerService
                 }
 
                 //gyroscope
-                if (hidReport.AngularVelocity != null)
+                if (hidReport.AngularVelocity != new Vector3())
                 {
                     // angVelPitch
                     Array.Copy(BitConverter.GetBytes(-hidReport.AngularVelocity.X), 0, outputData, outIdx, 4);

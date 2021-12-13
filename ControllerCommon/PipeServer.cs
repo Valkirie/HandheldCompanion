@@ -58,8 +58,8 @@ namespace ControllerCommon
         public event ClientMessageEventHandler ClientMessage;
         public delegate void ClientMessageEventHandler(Object sender, PipeMessage e);
 
-        private ConcurrentQueue<PipeMessage> m_queue;
-        private Timer m_timer;
+        private readonly ConcurrentQueue<PipeMessage> m_queue;
+        private readonly Timer m_timer;
 
         public bool connected;
 
@@ -71,9 +71,9 @@ namespace ControllerCommon
             m_timer = new Timer(1000) { Enabled = false, AutoReset = true };
             m_timer.Elapsed += SendMessageQueue;
 
-            PipeSecurity ps = new PipeSecurity();
-            System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.BuiltinUsersSid, null);
-            PipeAccessRule par = new PipeAccessRule(sid, PipeAccessRights.ReadWrite, System.Security.AccessControl.AccessControlType.Allow);
+            PipeSecurity ps = new();
+            System.Security.Principal.SecurityIdentifier sid = new(System.Security.Principal.WellKnownSidType.BuiltinUsersSid, null);
+            PipeAccessRule par = new(sid, PipeAccessRights.ReadWrite, System.Security.AccessControl.AccessControlType.Allow);
             ps.AddAccessRule(par);
 
             server = new NamedPipeServer<PipeMessage>(pipeName, ps);

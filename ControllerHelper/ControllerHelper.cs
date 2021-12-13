@@ -1,5 +1,4 @@
-﻿using CommandLine;
-using ControllerCommon;
+﻿using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.TaskScheduler;
 using System;
@@ -12,7 +11,6 @@ using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Timers;
 using System.Windows.Forms;
-using static ControllerHelper.Options;
 using Timer = System.Timers.Timer;
 
 namespace ControllerHelper
@@ -371,7 +369,7 @@ namespace ControllerHelper
                     string name = pair.Key;
                     string property = pair.Value;
 
-                    switch(name)
+                    switch (name)
                     {
                         case "HIDmode":
                             cB_HidMode.SelectedItem = HIDmodes[args[name]];
@@ -764,7 +762,7 @@ namespace ControllerHelper
                         break;
                 }
 
-                switch(starttype)
+                switch (starttype)
                 {
                     case ServiceStartMode.Disabled:
                         if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;

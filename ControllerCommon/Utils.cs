@@ -61,8 +61,7 @@ namespace ControllerCommon
 
         public static bool IsTextAValidIPAddress(string text)
         {
-            IPAddress test;
-            return IPAddress.TryParse(text, out test);
+            return IPAddress.TryParse(text, out _);
         }
 
         public static string GetPathToApp(Process process)
@@ -74,7 +73,7 @@ namespace ControllerCommon
             catch
             {
                 string query = "SELECT ExecutablePath, ProcessID FROM Win32_Process";
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
+                ManagementObjectSearcher searcher = new(query);
 
                 foreach (ManagementObject item in searcher.Get())
                 {
@@ -143,7 +142,7 @@ namespace ControllerCommon
                 { }
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 if (throwIfFails)
@@ -158,8 +157,8 @@ namespace ControllerCommon
             public const double DEFAULT_WHEEL_CUTOFF = 0.1;
             public const double DEFAULT_WHEEL_BETA = 0.1;
 
-            public OneEuroFilter axis1Filter = new OneEuroFilter(minCutoff: DEFAULT_WHEEL_CUTOFF, beta: DEFAULT_WHEEL_BETA);
-            public OneEuroFilter axis2Filter = new OneEuroFilter(minCutoff: DEFAULT_WHEEL_CUTOFF, beta: DEFAULT_WHEEL_BETA);
+            public OneEuroFilter axis1Filter = new(minCutoff: DEFAULT_WHEEL_CUTOFF, beta: DEFAULT_WHEEL_BETA);
+            public OneEuroFilter axis2Filter = new(minCutoff: DEFAULT_WHEEL_CUTOFF, beta: DEFAULT_WHEEL_BETA);
         }
 
         public class OneEuroFilter3D
@@ -167,9 +166,9 @@ namespace ControllerCommon
             public const double DEFAULT_WHEEL_CUTOFF = 0.4;
             public const double DEFAULT_WHEEL_BETA = 0.2;
 
-            public OneEuroFilter axis1Filter = new OneEuroFilter(minCutoff: DEFAULT_WHEEL_CUTOFF, beta: DEFAULT_WHEEL_BETA);
-            public OneEuroFilter axis2Filter = new OneEuroFilter(minCutoff: DEFAULT_WHEEL_CUTOFF, beta: DEFAULT_WHEEL_BETA);
-            public OneEuroFilter axis3Filter = new OneEuroFilter(minCutoff: DEFAULT_WHEEL_CUTOFF, beta: DEFAULT_WHEEL_BETA);
+            public OneEuroFilter axis1Filter = new(minCutoff: DEFAULT_WHEEL_CUTOFF, beta: DEFAULT_WHEEL_BETA);
+            public OneEuroFilter axis2Filter = new(minCutoff: DEFAULT_WHEEL_CUTOFF, beta: DEFAULT_WHEEL_BETA);
+            public OneEuroFilter axis3Filter = new(minCutoff: DEFAULT_WHEEL_CUTOFF, beta: DEFAULT_WHEEL_BETA);
 
             public void SetFilterAttrs(double minCutoff, double beta)
             {
