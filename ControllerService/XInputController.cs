@@ -86,24 +86,24 @@ namespace ControllerService
                 return;
 
             // initialize profile
-            profile = new Profile();
+            profile = new();
 
             // initialize vectors
-            AngularVelocity = new Vector3();
-            Acceleration = new Vector3();
+            AngularVelocity = new();
+            Acceleration = new();
 
             // initialize secret state
-            state_s = new XInputStateSecret();
+            state_s = new();
 
             // initialize stopwatch
-            stopwatch = new Stopwatch();
+            stopwatch = new();
             stopwatch.Start();
 
             // initialize timers
             UpdateTimer = new Timer(HIDrate) { Enabled = false, AutoReset = true };
 
             // initialize touch
-            touch = new DS4Touch();
+            touch = new();
         }
 
         public void SetPollRate(int HIDrate)
@@ -181,14 +181,14 @@ namespace ControllerService
             server = _server;
         }
 
-        private void Accelerometer_ReadingChanged(object sender, XInputAccelerometerReadingChangedEventArgs e)
+        private void Accelerometer_ReadingChanged(object sender, Vector3 acceleration)
         {
-            Acceleration = e.Acceleration;
+            Acceleration = acceleration;
         }
 
-        private void Girometer_ReadingChanged(object sender, XInputGirometerReadingChangedEventArgs e)
+        private void Girometer_ReadingChanged(object sender, Vector3 angularvelocity)
         {
-            AngularVelocity = e.AngularVelocity;
+            AngularVelocity = angularvelocity;
         }
 
         private unsafe void DS4_UpdateReport(object sender, ElapsedEventArgs e)
@@ -320,6 +320,10 @@ namespace ControllerService
                 outDS4Report.wAccelX = (short)accelFilter.axis1Filter.Filter(Acceleration.X * F_ACC_RES_PER_G, rate); // accelXFull
                 outDS4Report.wAccelY = (short)accelFilter.axis1Filter.Filter(-Acceleration.Y * F_ACC_RES_PER_G, rate); // accelYFull
                 outDS4Report.wAccelZ = (short)accelFilter.axis1Filter.Filter(Acceleration.Z * F_ACC_RES_PER_G, rate); // accelZFull
+
+                // digest previous value
+                AngularVelocity = new();
+                Acceleration = new();
 
                 outDS4Report.bBatteryLvlSpecial = 11;
 

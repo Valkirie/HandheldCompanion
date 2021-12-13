@@ -5,17 +5,12 @@ using Windows.Devices.Sensors;
 
 namespace ControllerService
 {
-    public class XInputGirometerReadingChangedEventArgs : EventArgs
-    {
-        public Vector3 AngularVelocity { get; set; }
-    }
-
     public class XInputGirometer
     {
         public Gyrometer sensor;
 
         public event XInputGirometerReadingChangedEventHandler ReadingChanged;
-        public delegate void XInputGirometerReadingChangedEventHandler(Object sender, XInputGirometerReadingChangedEventArgs e);
+        public delegate void XInputGirometerReadingChangedEventHandler(Object sender, Vector3 e);
 
         private readonly ILogger logger;
         private readonly XInputController controller;
@@ -36,18 +31,19 @@ namespace ControllerService
             }
         }
 
+        private Vector3 v_reading = new();
         void GyroReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
         {
             GyrometerReading reading = args.Reading;
-            Vector3 v_reading = new Vector3((float)reading.AngularVelocityX, (float)reading.AngularVelocityY, (float)reading.AngularVelocityZ);
+
+            v_reading.X = (float)-reading.AngularVelocityX;
+            v_reading.Y = (float)reading.AngularVelocityZ;
+            v_reading.Z = (float)reading.AngularVelocityY;
+
             v_reading *= controller.profile.gyrometer;
 
             // raise event
-            XInputGirometerReadingChangedEventArgs newargs = new XInputGirometerReadingChangedEventArgs()
-            {
-                AngularVelocity = v_reading
-            };
-            ReadingChanged?.Invoke(this, newargs);
+            ReadingChanged?.Invoke(this, v_reading);
         }
     }
 }

@@ -101,6 +101,7 @@ namespace ControllerService
         private readonly ILogger logger;
         public string ip;
         public int port;
+        private Vector3 empty = new();
 
         public event StartedEventHandler Started;
         public delegate void StartedEventHandler(Object sender);
@@ -187,7 +188,6 @@ namespace ControllerService
         };
 
         private const ushort MaxProtocolVersion = 1001;
-
         class ClientRequestTimes
         {
             DateTime allPads;
@@ -284,7 +284,9 @@ namespace ControllerService
                 sentAsync = udpSock.SendToAsync(args);
                 if (!sentAsync) CompletedSynchronousSocketEvent();
             }
-            catch (Exception /*e*/) { }
+            catch (Exception /*e*/)
+            {
+            }
             finally
             {
                 if (!sentAsync) CompletedSynchronousSocketEvent();
@@ -432,7 +434,9 @@ namespace ControllerService
                     }
                 }
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+            }
         }
 
         private void ReceiveCallback(IAsyncResult iar)
@@ -449,7 +453,9 @@ namespace ControllerService
                 localMsg = new byte[msgLen];
                 Array.Copy(recvBuffer, localMsg, msgLen);
             }
-            catch (Exception /*e*/) { }
+            catch (SocketException)
+            {
+            }
 
             //Start another receive as soon as we copied the data
             StartReceive();
@@ -610,7 +616,7 @@ namespace ControllerService
                 outIdx += 8;
 
                 //accelerometer
-                if (hidReport.Acceleration != new Vector3())
+                if (hidReport.Acceleration != empty)
                 {
                     // accelXG
                     Array.Copy(BitConverter.GetBytes(-hidReport.Acceleration.X), 0, outputData, outIdx, 4);
@@ -629,7 +635,7 @@ namespace ControllerService
                 }
 
                 //gyroscope
-                if (hidReport.AngularVelocity != new Vector3())
+                if (hidReport.AngularVelocity != empty)
                 {
                     // angVelPitch
                     Array.Copy(BitConverter.GetBytes(-hidReport.AngularVelocity.X), 0, outputData, outIdx, 4);
@@ -767,7 +773,9 @@ namespace ControllerService
                     {
                         sentAsync = udpSock.SendToAsync(args);
                     }
-                    catch (SocketException /*ex*/) { }
+                    catch (SocketException)
+                    {
+                    }
                     finally
                     {
                         if (!sentAsync) CompletedSynchronousSocketEvent();
