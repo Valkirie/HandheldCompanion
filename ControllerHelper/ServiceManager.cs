@@ -93,7 +93,7 @@ namespace ControllerHelper
                         nextStatus = 0;
                         prevStatus = 0;
                         prevType = 0;
-                        logger.LogError("{0} set to {1}", name, ex.Message);
+                        logger.LogError("Service manager returned error: {0}", ex.Message);
                     }
                 }
 

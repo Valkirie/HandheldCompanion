@@ -86,6 +86,7 @@ namespace ControllerHelper
                     break;
                 case ProfileServiceAction.install:
                     helper.ServiceManager.CreateService(helper.CurrentPathService);
+                    helper.ServiceManager.SetStartType(System.ServiceProcess.ServiceStartMode.Automatic);
                     helper.ServiceManager.StartService();
                     break;
                 case ProfileServiceAction.uninstall:

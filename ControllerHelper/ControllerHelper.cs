@@ -138,21 +138,28 @@ namespace ControllerHelper
 
             if (FirstStart)
             {
-                DialogResult dr = MessageBox.Show(ServiceWelcome, "Please, gives us a minute", MessageBoxButtons.YesNo);
-                switch (dr)
+                if (IsElevated)
                 {
-                    case DialogResult.Yes:
-                        Utils.OpenUrl("https://www.paypal.com/paypalme/BenjaminLSR");
-                        break;
-                    case DialogResult.No:
-                        break;
+                    DialogResult dr = MessageBox.Show(ServiceWelcome, "Please, gives us a minute", MessageBoxButtons.YesNo);
+                    switch (dr)
+                    {
+                        case DialogResult.Yes:
+                            Utils.OpenUrl("https://www.paypal.com/paypalme/BenjaminLSR");
+                            break;
+                        case DialogResult.No:
+                            break;
+                    }
+
+                    this.args = new string[] { "service", "--action=install" };
+
+                    FirstStart = false;
+                    Properties.Settings.Default.FirstStart = FirstStart;
+                    Properties.Settings.Default.Save();
                 }
-
-                this.args = new string[] { "service", "--action=install" };
-
-                FirstStart = false;
-                Properties.Settings.Default.FirstStart = FirstStart;
-                Properties.Settings.Default.Save();
+                else
+                {
+                    Utils.SendToast("Please, gives us a minute", "Run Controller Helper as Administrator to complete first initilization process.");
+                }
             }
         }
 
@@ -210,7 +217,8 @@ namespace ControllerHelper
 
                 // display warning message
                 toolTip1.SetToolTip(cB_RunAtStartup, "Run this tool as Administrator to unlock these settings.");
-                toolTip1.SetToolTip(gb_SettingsService, "Run this tool as Administrator to unlock these settings.");
+                toolTip1.SetToolTip(gb_SettingsService, "Run this tool as Administrator to unlock all settings.");
+                toolTip1.SetToolTip(gb_SettingsInterface, "Run this tool as Administrator to unlock all settings.");
 
                 // disable run at startup button
                 cB_RunAtStartup.Enabled = false;
@@ -220,7 +228,7 @@ namespace ControllerHelper
                 if (!Utils.IsDirectoryWritable(CurrentPathProfiles))
                 {
                     b_ApplyProfile.Enabled = false;
-                    toolTip1.SetToolTip(b_ApplyProfile, "Run this tool as Administrator to unlock these settings.");
+                    toolTip1.SetToolTip(gB_XinputDetails, "Run this tool as Administrator to unlock these settings.");
                 }
             }
 
@@ -760,7 +768,7 @@ namespace ControllerHelper
                         if (cB_ServiceStartup.Enabled == false) cB_ServiceStartup.Enabled = true;
                         break;
                     default:
-                        if (b_ServiceInstall.Enabled == false) b_ServiceInstall.Enabled = true;
+                        if (b_ServiceInstall.Enabled == false) b_ServiceInstall.Enabled = IsElevated;
                         if (b_ServiceDelete.Enabled == true) b_ServiceDelete.Enabled = false;
                         if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
                         if (b_ServiceStop.Enabled == true) b_ServiceStop.Enabled = false;
