@@ -385,7 +385,7 @@ namespace ControllerService
             catch (Exception) { }
 
             DSUServer?.Stop();
-            Hidder?.SetCloaking(HIDuncloakonclose);
+            Hidder?.SetCloaking(!HIDuncloakonclose);
             PipeServer?.Stop();
 
             return Task.CompletedTask;
