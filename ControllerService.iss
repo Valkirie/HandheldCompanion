@@ -647,7 +647,7 @@ end;
 ;#define UseSql2019Express
 
 #define MyAppSetupName 'Controller Service'
-#define MyAppVersion '0.8.1.5'
+#define MyAppVersion '0.8.1.6'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/ControllerService'
@@ -693,8 +693,8 @@ Source: "netcorecheck.exe"; Flags: dontcopy noencryption
 Source: "netcorecheck_x64.exe"; Flags: dontcopy noencryption
 #endif
 
-Source: "E:\GitHub\ControllerService\bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\GitHub\ControllerService\bin\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "D:\GitHub\ControllerService\bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\GitHub\ControllerService\bin\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"
@@ -705,11 +705,6 @@ Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Ta
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
 [Run]
-// used to kill processes
-Filename: {sys}\taskkill.exe; Parameters: "/f /im steamservice.exe"; Flags: postinstall skipifdoesntexist runhidden; StatusMsg: "Stopping Steam Service"
-Filename: {sys}\taskkill.exe; Parameters: "/f /im steam.exe"; Flags: postinstall skipifdoesntexist runhidden; StatusMsg: "Stopping Steam Client"
-Filename: {sys}\taskkill.exe; Parameters: "/f /im steamwebhelper.exe"; Flags: postinstall skipifdoesntexist runhidden; StatusMsg: "Stopping Web Helper"
-
 Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""install"""; Description: "{cm:LaunchProgram,{#MyAppSetupName}}"; Flags: postinstall runascurrentuser
 
 [UninstallRun]
@@ -719,10 +714,8 @@ Filename: {sys}\sc.exe; Parameters: "delete ControllerService" ; RunOnceId: "Del
 
 [Registry]
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps"; Flags: uninsdeletekeyifempty
-Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe"; Flags: uninsdeletekey
-Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{app}"
-Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerHelper.exe"; Flags: uninsdeletekey
-Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerHelper.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{app}"
+Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{app}"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerHelper.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{app}"; Flags: uninsdeletekey
 
 [Code]  
 procedure InitializeWizard;
