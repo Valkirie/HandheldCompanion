@@ -8,6 +8,7 @@ namespace ControllerService
     public class XInputGirometer
     {
         public Gyrometer sensor;
+        private Vector3 reading = new();
 
         public event XInputGirometerReadingChangedEventHandler ReadingChanged;
         public delegate void XInputGirometerReadingChangedEventHandler(Object sender, Vector3 e);
@@ -31,19 +32,18 @@ namespace ControllerService
             }
         }
 
-        private Vector3 v_reading = new();
         void GyroReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
         {
             GyrometerReading reading = args.Reading;
 
-            v_reading.X = (float)-reading.AngularVelocityX;
-            v_reading.Y = (float)reading.AngularVelocityZ;
-            v_reading.Z = (float)reading.AngularVelocityY;
+            this.reading.X = (float)-reading.AngularVelocityX;
+            this.reading.Y = (float)reading.AngularVelocityZ;
+            this.reading.Z = (float)reading.AngularVelocityY;
 
-            v_reading *= controller.profile.gyrometer;
+            this.reading *= controller.profile.gyrometer;
 
             // raise event
-            ReadingChanged?.Invoke(this, v_reading);
+            ReadingChanged?.Invoke(this, this.reading);
         }
     }
 }

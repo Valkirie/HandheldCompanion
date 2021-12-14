@@ -8,6 +8,7 @@ namespace ControllerService
     public class XInputAccelerometer
     {
         public Accelerometer sensor;
+        private Vector3 reading = new();
 
         public event XInputAccelerometerReadingChangedEventHandler ReadingChanged;
         public delegate void XInputAccelerometerReadingChangedEventHandler(Object sender, Vector3 e);
@@ -31,19 +32,18 @@ namespace ControllerService
             }
         }
 
-        private Vector3 v_reading = new();
         void AcceleroReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
             AccelerometerReading reading = args.Reading;
 
-            v_reading.X = (float)-reading.AccelerationX;
-            v_reading.Y = (float)reading.AccelerationZ;
-            v_reading.Z = (float)reading.AccelerationY;
+            this.reading.X = (float)-reading.AccelerationX;
+            this.reading.Y = (float)reading.AccelerationZ;
+            this.reading.Z = (float)reading.AccelerationY;
 
-            v_reading *= controller.profile.accelerometer;
+            this.reading *= controller.profile.accelerometer;
 
             // raise event
-            ReadingChanged?.Invoke(this, v_reading);
+            ReadingChanged?.Invoke(this, this.reading);
         }
     }
 }
