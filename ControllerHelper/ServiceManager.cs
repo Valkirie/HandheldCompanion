@@ -65,6 +65,12 @@ namespace ControllerHelper
             MonitorTimer.Elapsed += MonitorHelper;
         }
 
+        public void Stop()
+        {
+            MonitorTimer.Elapsed -= MonitorHelper;
+            MonitorTimer = null;
+        }
+
         private void MonitorHelper(object sender, ElapsedEventArgs e)
         {
             lock (updateLock)

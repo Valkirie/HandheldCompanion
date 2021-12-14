@@ -313,6 +313,9 @@ namespace ControllerHelper
 
         private void ControllerHelper_Closed(object sender, FormClosedEventArgs e)
         {
+            MonitorTimer.Elapsed -= MonitorHelper;
+
+            ServiceManager.Stop();
             PipeClient.Stop();
             m_Hook.Stop();
         }
