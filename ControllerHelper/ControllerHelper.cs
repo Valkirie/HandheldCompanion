@@ -4,6 +4,7 @@ using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -129,6 +130,11 @@ namespace ControllerHelper
             cB_StartMinimized.Checked = StartMinimized = Properties.Settings.Default.StartMinimized;
             cB_CloseMinimizes.Checked = CloseMinimises = Properties.Settings.Default.CloseMinimises;
             cB_touchpad.Checked = HookMouse = Properties.Settings.Default.HookMouse;
+
+            // update Position and Size
+            Size = new Size(Properties.Settings.Default.MainWindowWidth, Properties.Settings.Default.MainWindowHeight);
+            Location = new Point(Properties.Settings.Default.MainWindowX, Properties.Settings.Default.MainWindowY);
+            WindowState = (FormWindowState)Properties.Settings.Default.WindowState;
 
             if (StartMinimized)
             {
@@ -299,11 +305,20 @@ namespace ControllerHelper
 
         private void ControllerHelper_Close(object sender, FormClosingEventArgs e)
         {
+            // position and size settings
+            Properties.Settings.Default.MainWindowX = Location.X;
+            Properties.Settings.Default.MainWindowY = Location.Y;
+            Properties.Settings.Default.MainWindowWidth = Size.Width;
+            Properties.Settings.Default.MainWindowHeight = Size.Height;
+            Properties.Settings.Default.WindowState = (int)WindowState;
+
             if (CloseMinimises && e.CloseReason == CloseReason.UserClosing)
             {
                 e.Cancel = true;
                 WindowState = FormWindowState.Minimized;
             }
+
+            Properties.Settings.Default.Save();
         }
 
         private void notifyIcon1_DoubleClick(object sender, EventArgs e)

@@ -904,8 +904,6 @@ namespace ControllerHelper
             // 
             // b_ServiceStop
             // 
-            this.b_ServiceStop.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.b_ServiceStop.Enabled = false;
             this.b_ServiceStop.Location = new System.Drawing.Point(323, 68);
             this.b_ServiceStop.Name = "b_ServiceStop";
@@ -917,8 +915,6 @@ namespace ControllerHelper
             // 
             // b_ServiceStart
             // 
-            this.b_ServiceStart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.b_ServiceStart.Enabled = false;
             this.b_ServiceStart.Location = new System.Drawing.Point(323, 22);
             this.b_ServiceStart.Name = "b_ServiceStart";
@@ -930,8 +926,6 @@ namespace ControllerHelper
             // 
             // b_ServiceDelete
             // 
-            this.b_ServiceDelete.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.b_ServiceDelete.Enabled = false;
             this.b_ServiceDelete.Location = new System.Drawing.Point(127, 68);
             this.b_ServiceDelete.Name = "b_ServiceDelete";
@@ -943,8 +937,6 @@ namespace ControllerHelper
             // 
             // b_ServiceInstall
             // 
-            this.b_ServiceInstall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.b_ServiceInstall.Enabled = false;
             this.b_ServiceInstall.Location = new System.Drawing.Point(127, 22);
             this.b_ServiceInstall.Name = "b_ServiceInstall";
@@ -1013,16 +1005,17 @@ namespace ControllerHelper
             // 
             // ControllerHelper
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(741, 561);
             this.Controls.Add(this.tabControl1);
             this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(757, 600);
             this.Name = "ControllerHelper";
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "ControllerHelper";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ControllerHelper_Close);
             this.Load += new System.EventHandler(this.ControllerHelper_Load);
