@@ -10,6 +10,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
+using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using Timer = System.Timers.Timer;
@@ -52,10 +53,6 @@ namespace ControllerHelper
         public ProfileManager ProfileManager;
         public ServiceManager ServiceManager;
 
-        private const string ServiceName = "Controller Service";
-        private const string ServiceDescription = "Provides gyroscope and accelerometer support to the AYA NEO 2020, 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled.";
-        private const string ServiceWelcome = "Dear handheld gamer,\n\nThe service you are about to use was made for free in order to bring the best possible gaming experience out of your device.\n\nIf you are enjoying it, please consider giving back to the author's efforts and show your appreciation through a donation.\n\nHave fun !";
-
         // TaskManager vars
         private static Task CurrentTask;
 
@@ -70,8 +67,7 @@ namespace ControllerHelper
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
-            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
-            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
 
             // paths
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
@@ -110,7 +106,7 @@ namespace ControllerHelper
             m_Hook = new MouseHook(PipeClient, this, logger);
 
             // initialize Service Manager
-            ServiceManager = new ServiceManager("ControllerService", this, ServiceName, ServiceDescription, logger);
+            ServiceManager = new ServiceManager("ControllerService", this, strings.ServiceName, strings.ServiceDescription, logger);
 
             if (IsElevated)
             {
@@ -146,7 +142,7 @@ namespace ControllerHelper
             {
                 if (IsElevated)
                 {
-                    DialogResult dr = MessageBox.Show(ServiceWelcome, "Please, gives us a minute", MessageBoxButtons.YesNo);
+                    DialogResult dr = MessageBox.Show(strings.ServiceWelcome, strings.ToastTitle, MessageBoxButtons.YesNo);
                     switch (dr)
                     {
                         case DialogResult.Yes:
@@ -164,7 +160,7 @@ namespace ControllerHelper
                 }
                 else
                 {
-                    Utils.SendToast("Please, gives us a minute", "Run Controller Helper as Administrator to complete first initilization process.");
+                    Utils.SendToast(strings.ToastTitle, strings.ToastInitialization);
                 }
             }
         }
@@ -222,19 +218,19 @@ namespace ControllerHelper
                     ctrl.Enabled = false;
 
                 // display warning message
-                toolTip1.SetToolTip(cB_RunAtStartup, "Run this tool as Administrator to unlock these settings.");
-                toolTip1.SetToolTip(gb_SettingsService, "Run this tool as Administrator to unlock all settings.");
-                toolTip1.SetToolTip(gb_SettingsInterface, "Run this tool as Administrator to unlock all settings.");
+                toolTip1.SetToolTip(cB_RunAtStartup, strings.WarningElevated);
+                toolTip1.SetToolTip(gb_SettingsService, strings.WarningElevated);
+                toolTip1.SetToolTip(gb_SettingsInterface, strings.WarningElevated);
 
                 // disable run at startup button
                 cB_RunAtStartup.Enabled = false;
-                toolTip1.SetToolTip(cB_RunAtStartup, "Run this tool as Administrator to unlock these settings.");
+                toolTip1.SetToolTip(cB_RunAtStartup, strings.WarningElevated);
 
                 // disable profile saving if rights are not enough
                 if (!Utils.IsDirectoryWritable(CurrentPathProfiles))
                 {
                     b_ApplyProfile.Enabled = false;
-                    toolTip1.SetToolTip(gB_XinputDetails, "Run this tool as Administrator to unlock these settings.");
+                    toolTip1.SetToolTip(gB_XinputDetails, strings.WarningElevated);
                 }
             }
 
@@ -407,7 +403,7 @@ namespace ControllerHelper
                             cB_HidMode.SelectedItem = HIDmodes[args[name]];
                             break;
                         case "HIDcloaked":
-                            cB_HIDcloak.SelectedItem = args[name];
+                            cB_HIDcloak.Checked = bool.Parse(args[name]);
                             break;
                         case "HIDuncloakonclose":
                             cB_uncloak.Checked = bool.Parse(args[name]);
@@ -462,17 +458,6 @@ namespace ControllerHelper
                 tB_ProductID.Text = con.ProductGuid.ToString();
             });
 
-        }
-
-        private void cB_HIDcloak_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            PipeClient.SendMessage(new PipeClientSettings
-            {
-                settings = new Dictionary<string, string>
-                {
-                    { "HIDcloaked", cB_HIDcloak.Text }
-                }
-            });
         }
 
         private void tB_PullRate_Scroll(object sender, EventArgs e)
@@ -564,7 +549,7 @@ namespace ControllerHelper
         private void DefineTask()
         {
             TaskService TaskServ = new TaskService();
-            CurrentTask = TaskServ.FindTask(ServiceName);
+            CurrentTask = TaskServ.FindTask(strings.ServiceName);
 
             TaskDefinition td = TaskService.Instance.NewTask();
             td.Principal.RunLevel = TaskRunLevel.Highest;
@@ -575,7 +560,7 @@ namespace ControllerHelper
             td.Settings.Enabled = false;
             td.Triggers.Add(new LogonTrigger());
             td.Actions.Add(new ExecAction(CurrentExe));
-            CurrentTask = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, td);
+            CurrentTask = TaskService.Instance.RootFolder.RegisterTaskDefinition(strings.ServiceName, td);
         }
 
         public void UpdateTask()
@@ -708,24 +693,34 @@ namespace ControllerHelper
             ProfileManager.SerializeProfile(profile);
         }
 
-        private void cB_gyro_CheckedChanged(object sender, EventArgs e)
-        {
-            BeginInvoke((MethodInvoker)delegate ()
-            {
-                cB_gyro.Text = cB_gyro.Checked ? "Gyrometer detected" : "No gyrometer detected";
-            });
-        }
-
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ServiceManager.SetStartType((ServiceStartMode)cB_ServiceStartup.SelectedIndex);
+            ServiceStartMode mode;
+            switch (cB_ServiceStartup.SelectedIndex)
+            {
+                case 0:
+                    mode = ServiceStartMode.Automatic;
+                    break;
+                default:
+                case 1:
+                    mode = ServiceStartMode.Manual;
+                    break;
+                case 2:
+                    mode = ServiceStartMode.Disabled;
+                    break;
+            }
+
+            ServiceManager.SetStartType(mode);
         }
 
-        private void cB_accelero_CheckedChanged(object sender, EventArgs e)
+        private void cB_HIDcloak_CheckedChanged(object sender, EventArgs e)
         {
-            BeginInvoke((MethodInvoker)delegate ()
+            PipeClient.SendMessage(new PipeClientSettings
             {
-                cB_accelero.Text = cB_accelero.Checked ? "Accelerometer detected" : "No accelerometer detected";
+                settings = new Dictionary<string, string>
+                {
+                    { "HIDcloaked", cB_HIDcloak.Checked.ToString() }
+                }
             });
         }
 
@@ -798,10 +793,19 @@ namespace ControllerHelper
                 {
                     case ServiceStartMode.Disabled:
                         if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
+                        cB_ServiceStartup.SelectedIndex = 2;
+                        break;
+                    case ServiceStartMode.Automatic:
+                        if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
+                        cB_ServiceStartup.SelectedIndex = 0;
+                        break;
+                    default:
+                    case ServiceStartMode.Manual:
+                        if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
+                        cB_ServiceStartup.SelectedIndex = 1;
                         break;
                 }
 
-                cB_ServiceStartup.SelectedIndex = (int)starttype;
                 gb_SettingsService.ResumeLayout();
             });
         }

@@ -11,8 +11,8 @@
     <Copyright>Copyright ©  2021</Copyright>
     <OutputPath>$(SolutionDir)bin\</OutputPath>
     <ApplicationIcon>gamepad.ico</ApplicationIcon>
-    <AssemblyVersion>0.8.1.6</AssemblyVersion>
-    <FileVersion>0.8.1.6</FileVersion>
+    <AssemblyVersion>0.8.1.7</AssemblyVersion>
+    <FileVersion>0.8.1.7</FileVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -63,12 +63,21 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Update="strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>strings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="strings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 
