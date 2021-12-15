@@ -453,7 +453,7 @@ namespace ControllerService
                 localMsg = new byte[msgLen];
                 Array.Copy(recvBuffer, localMsg, msgLen);
             }
-            catch (SocketException)
+            catch (Exception)
             {
             }
 
