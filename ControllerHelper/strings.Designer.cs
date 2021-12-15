@@ -79,7 +79,11 @@ namespace ControllerHelper {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dear handheld gamer,\n\nThe service you are about to use was made for free in order to bring the best possible gaming experience out of your device.\n\nIf you are enjoying it, please consider giving back to the author&apos;s efforts and show your appreciation through a donation.\n\nHave fun !.
+        ///   Looks up a localized string similar to Dear handheld gamer !
+        ///
+        ///The service you are about to use was made for free in order to bring the best possible gaming experience out of your device.
+        ///
+        ///If you are enjoying it, please consider giving back to the author&apos;s efforts and show your appreciation through a donation. Have fun !.
         /// </summary>
         public static string ServiceWelcome {
             get {

@@ -124,7 +124,11 @@
     <value>Controller Service</value>
   </data>
   <data name="ServiceWelcome" xml:space="preserve">
-    <value>Cher joueur\n\nLe service que vous êtes sur le point d'utiliser a été créé gratuitement afin d'offrir la meilleure expérience de jeu possible sur votre console.\n\nSi vous l'appréciez, pensez à soutenir les efforts de l'auteur et montrez votre reconnaissance en faisant un don.\n\nAmusez-vous bien !</value>
+    <value>Cher joueur !
+
+Le service que vous êtes sur le point d'utiliser a été créé gratuitement afin d'offrir la meilleure expérience de jeu possible sur votre console.
+
+Si vous l'appréciez, pensez à soutenir les efforts de l'auteur et montrez votre reconnaissance en faisant un don. Amusez-vous bien !</value>
   </data>
   <data name="ToastInitialization" xml:space="preserve">
     <value>Exécutez Controller Helper en tant qu'administrateur pour terminer le premier processus d'initialisation.</value>
