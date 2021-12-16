@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using static ControllerCommon.Utils;
 
 namespace ControllerService
 {
@@ -9,6 +11,9 @@ namespace ControllerService
     {
         public Gyrometer sensor;
         private Vector3 reading = new();
+
+        private long prev_microseconds;
+        private readonly OneEuroFilter3D gyroFilter;
 
         public event XInputGirometerReadingChangedEventHandler ReadingChanged;
         public delegate void XInputGirometerReadingChangedEventHandler(Object sender, Vector3 e);
@@ -20,6 +25,8 @@ namespace ControllerService
         {
             this.logger = logger;
             this.controller = controller;
+
+            gyroFilter = new OneEuroFilter3D();
 
             sensor = Gyrometer.GetDefault();
             if (sensor != null)
@@ -36,9 +43,15 @@ namespace ControllerService
         {
             GyrometerReading reading = args.Reading;
 
-            this.reading.X = (float)-reading.AngularVelocityX;
-            this.reading.Y = (float)reading.AngularVelocityZ;
-            this.reading.Z = (float)reading.AngularVelocityY;
+            var microseconds = (long)(reading.Timestamp.Ticks / (Stopwatch.Frequency / (1000L * 1000L)));
+            var elapsedTime = 0.000001 * (microseconds - prev_microseconds);
+            var rate = elapsedTime;
+
+            prev_microseconds = microseconds;
+
+            this.reading.X = -(float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityX, rate);
+            this.reading.Y = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityZ, rate);
+            this.reading.Z = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityY, rate);
 
             this.reading *= controller.profile.gyrometer;
 

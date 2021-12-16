@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using static ControllerCommon.Utils;
 
 namespace ControllerService
 {
@@ -9,6 +11,9 @@ namespace ControllerService
     {
         public Accelerometer sensor;
         private Vector3 reading = new();
+
+        private long prev_microseconds;
+        private readonly OneEuroFilter3D accelFilter;
 
         public event XInputAccelerometerReadingChangedEventHandler ReadingChanged;
         public delegate void XInputAccelerometerReadingChangedEventHandler(Object sender, Vector3 e);
@@ -20,6 +25,8 @@ namespace ControllerService
         {
             this.logger = logger;
             this.controller = controller;
+
+            accelFilter = new OneEuroFilter3D();
 
             sensor = Accelerometer.GetDefault();
             if (sensor != null)
@@ -36,9 +43,15 @@ namespace ControllerService
         {
             AccelerometerReading reading = args.Reading;
 
-            this.reading.X = (float)-reading.AccelerationX;
-            this.reading.Y = (float)reading.AccelerationZ;
-            this.reading.Z = (float)reading.AccelerationY;
+            var microseconds = (long)(reading.Timestamp.Ticks / (Stopwatch.Frequency / (1000L * 1000L)));
+            var elapsedTime = 0.000001 * (microseconds - prev_microseconds);
+            var rate = elapsedTime;
+
+            prev_microseconds = microseconds;
+
+            this.reading.X = -(float)accelFilter.axis1Filter.Filter(reading.AccelerationX, rate);
+            this.reading.Y = (float)accelFilter.axis1Filter.Filter(reading.AccelerationZ, rate);
+            this.reading.Z = (float)accelFilter.axis1Filter.Filter(reading.AccelerationY, rate);
 
             this.reading *= controller.profile.accelerometer;
 

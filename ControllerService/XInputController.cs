@@ -41,9 +41,6 @@ namespace ControllerService
         private const float F_ACC_RES_PER_G = 8192.0f;
         private const float F_GYRO_RES_IN_DEG_SEC = 16.0f;
 
-        private readonly OneEuroFilter3D accelFilter = new();
-        private readonly OneEuroFilter3D gyroFilter = new();
-
         public Controller controller;
         public Gamepad gamepad;
         public XInputStateSecret state_s;
@@ -312,18 +309,17 @@ namespace ControllerService
                     outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(touch.TrackPadTouch1.Y >> 4);
                 }
 
-                var rate = stopwatch.Elapsed.Milliseconds;
-                outDS4Report.wGyroX = (short)gyroFilter.axis1Filter.Filter(-AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC, rate); // gyroPitchFull
-                outDS4Report.wGyroY = (short)gyroFilter.axis1Filter.Filter(-AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC, rate); // gyroYawFull
-                outDS4Report.wGyroZ = (short)gyroFilter.axis1Filter.Filter(AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC, rate); // gyroRollFull
+                outDS4Report.wGyroX = (short)(-AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
+                outDS4Report.wGyroY = (short)(-AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
+                outDS4Report.wGyroZ = (short)(AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
 
-                outDS4Report.wAccelX = (short)accelFilter.axis1Filter.Filter(Acceleration.X * F_ACC_RES_PER_G, rate); // accelXFull
-                outDS4Report.wAccelY = (short)accelFilter.axis1Filter.Filter(-Acceleration.Y * F_ACC_RES_PER_G, rate); // accelYFull
-                outDS4Report.wAccelZ = (short)accelFilter.axis1Filter.Filter(Acceleration.Z * F_ACC_RES_PER_G, rate); // accelZFull
+                outDS4Report.wAccelX = (short)(Acceleration.X * F_ACC_RES_PER_G); // accelXFull
+                outDS4Report.wAccelY = (short)(-Acceleration.Y * F_ACC_RES_PER_G); // accelYFull
+                outDS4Report.wAccelZ = (short)(Acceleration.Z * F_ACC_RES_PER_G); // accelZFull
 
                 // digest previous value
-                AngularVelocity = new();
-                Acceleration = new();
+                // AngularVelocity = new();
+                // Acceleration = new();
 
                 outDS4Report.bBatteryLvlSpecial = 11;
 
