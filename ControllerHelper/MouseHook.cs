@@ -41,9 +41,6 @@ namespace ControllerHelper
 
         public void Start()
         {
-            if (m_Hook != null)
-                return;
-
             m_Hook = new Thread(Subscribe) { IsBackground = true };
             m_Hook.Start();
 
