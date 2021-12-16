@@ -74,6 +74,9 @@ namespace ControllerHelper
 
         private void OnMouseDown(object sender, MouseEventExtArgs e)
         {
+            if (m_Events == null)
+                return;
+
             m_Events.MouseMoveExt += OnMouseMove;
             m_Timer.Stop();
 
@@ -103,6 +106,9 @@ namespace ControllerHelper
 
         private void OnMouseUp(object sender, MouseEventExtArgs e)
         {
+            if (m_Events == null)
+                return;
+
             m_Events.MouseMoveExt -= OnMouseMove;
 
             TouchPos = new TouchInput()
