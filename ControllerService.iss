@@ -647,7 +647,7 @@ end;
 ;#define UseSql2019Express
 
 #define MyAppSetupName 'Controller Service'
-#define MyAppVersion '0.8.1.6'
+#define MyAppVersion '0.8.1.7'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/ControllerService'
@@ -711,6 +711,11 @@ Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""install"""; D
 Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""uninstall"""; RunOnceId: "UninstallService"; Flags: runascurrentuser runhidden
 Filename: {sys}\sc.exe; Parameters: "stop ControllerService" ; RunOnceId: "StopService"; Flags: runascurrentuser runhidden
 Filename: {sys}\sc.exe; Parameters: "delete ControllerService" ; RunOnceId: "DeleteService"; Flags: runascurrentuser runhidden
+
+[UninstallDelete]
+Type: filesandordirs; Name: "{localappdata}\ControllerHelper\"
+Type: filesandordirs; Name: "{localappdata}\ControllerService\"
+
 
 [Registry]
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps"; Flags: uninsdeletekeyifempty
