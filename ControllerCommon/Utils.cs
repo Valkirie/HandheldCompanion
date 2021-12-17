@@ -59,6 +59,12 @@ namespace ControllerCommon
             return (byte)Math.Round(output);
         }
 
+        public static short ComputeInput(short value, float input, float sensivity, float curve)
+        {
+            float compute = (float)(Math.Sign(input) * Math.Pow(Math.Abs(input) / 25.0f, curve) * 25.0f);
+            return (short)Math.Max(-32767, Math.Min(32767, value + compute * sensivity));
+        }
+
         public static bool IsTextAValidIPAddress(string text)
         {
             return IPAddress.TryParse(text, out _);

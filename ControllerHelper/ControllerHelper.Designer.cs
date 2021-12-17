@@ -64,15 +64,17 @@ namespace ControllerHelper
             this.lB_Devices = new System.Windows.Forms.ListBox();
             this.tabProfiles = new System.Windows.Forms.TabPage();
             this.gB_ProfileOptions = new System.Windows.Forms.GroupBox();
+            this.cB_UniversalMC = new System.Windows.Forms.CheckBox();
             this.lb_Wrapper = new System.Windows.Forms.Label();
+            this.lb_UniversalMC = new System.Windows.Forms.Label();
             this.lb_Whitelist = new System.Windows.Forms.Label();
             this.cB_Wrapper = new System.Windows.Forms.CheckBox();
             this.cB_Whitelist = new System.Windows.Forms.CheckBox();
             this.gB_6axis = new System.Windows.Forms.GroupBox();
+            this.cB_InvertVAxis = new System.Windows.Forms.CheckBox();
+            this.cB_InvertHAxis = new System.Windows.Forms.CheckBox();
             this.lB_InvertVAxis = new System.Windows.Forms.Label();
-            this.cB_InvertVAxis = new System.Windows.Forms.ComboBox();
             this.lB_InvertHAxis = new System.Windows.Forms.Label();
-            this.cB_InvertHAxis = new System.Windows.Forms.ComboBox();
             this.lB_GyroSteering = new System.Windows.Forms.Label();
             this.cB_GyroSteering = new System.Windows.Forms.ComboBox();
             this.tb_ProfileAcceleroValue = new System.Windows.Forms.TrackBar();
@@ -89,6 +91,15 @@ namespace ControllerHelper
             this.gB_Profiles = new System.Windows.Forms.GroupBox();
             this.b_CreateProfile = new System.Windows.Forms.Button();
             this.lB_Profiles = new System.Windows.Forms.ListBox();
+            this.gB_ProfileGyro = new System.Windows.Forms.GroupBox();
+            this.cB_UMCInputButton = new System.Windows.Forms.ComboBox();
+            this.lb_UMCInputButton = new System.Windows.Forms.Label();
+            this.cB_UMCIntensity = new System.Windows.Forms.ComboBox();
+            this.lb_UMCIntensity = new System.Windows.Forms.Label();
+            this.tB_UMCSensivity = new System.Windows.Forms.TrackBar();
+            this.lb_UMCSensivity = new System.Windows.Forms.Label();
+            this.lb_UMCInputStyle = new System.Windows.Forms.Label();
+            this.cB_UMCInputStyle = new System.Windows.Forms.ComboBox();
             this.tabSettings = new System.Windows.Forms.TabPage();
             this.gb_SettingsUDP = new System.Windows.Forms.GroupBox();
             this.b_UDPApply = new System.Windows.Forms.Button();
@@ -126,6 +137,8 @@ namespace ControllerHelper
             ((System.ComponentModel.ISupportInitialize)(this.tb_ProfileGyroValue)).BeginInit();
             this.gB_ProfileDetails.SuspendLayout();
             this.gB_Profiles.SuspendLayout();
+            this.gB_ProfileGyro.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tB_UMCSensivity)).BeginInit();
             this.tabSettings.SuspendLayout();
             this.gb_SettingsUDP.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tB_UDPPort)).BeginInit();
@@ -349,13 +362,16 @@ namespace ControllerHelper
             this.tabProfiles.Controls.Add(this.gB_6axis);
             this.tabProfiles.Controls.Add(this.gB_ProfileDetails);
             this.tabProfiles.Controls.Add(this.gB_Profiles);
+            this.tabProfiles.Controls.Add(this.gB_ProfileGyro);
             resources.ApplyResources(this.tabProfiles, "tabProfiles");
             this.tabProfiles.Name = "tabProfiles";
             this.tabProfiles.UseVisualStyleBackColor = true;
             // 
             // gB_ProfileOptions
             // 
+            this.gB_ProfileOptions.Controls.Add(this.cB_UniversalMC);
             this.gB_ProfileOptions.Controls.Add(this.lb_Wrapper);
+            this.gB_ProfileOptions.Controls.Add(this.lb_UniversalMC);
             this.gB_ProfileOptions.Controls.Add(this.lb_Whitelist);
             this.gB_ProfileOptions.Controls.Add(this.cB_Wrapper);
             this.gB_ProfileOptions.Controls.Add(this.cB_Whitelist);
@@ -363,10 +379,22 @@ namespace ControllerHelper
             this.gB_ProfileOptions.Name = "gB_ProfileOptions";
             this.gB_ProfileOptions.TabStop = false;
             // 
+            // cB_UniversalMC
+            // 
+            resources.ApplyResources(this.cB_UniversalMC, "cB_UniversalMC");
+            this.cB_UniversalMC.Name = "cB_UniversalMC";
+            this.cB_UniversalMC.UseVisualStyleBackColor = true;
+            this.cB_UniversalMC.CheckedChanged += new System.EventHandler(this.cB_UniversalMC_CheckedChanged);
+            // 
             // lb_Wrapper
             // 
             resources.ApplyResources(this.lb_Wrapper, "lb_Wrapper");
             this.lb_Wrapper.Name = "lb_Wrapper";
+            // 
+            // lb_UniversalMC
+            // 
+            resources.ApplyResources(this.lb_UniversalMC, "lb_UniversalMC");
+            this.lb_UniversalMC.Name = "lb_UniversalMC";
             // 
             // lb_Whitelist
             // 
@@ -387,10 +415,10 @@ namespace ControllerHelper
             // 
             // gB_6axis
             // 
-            this.gB_6axis.Controls.Add(this.lB_InvertVAxis);
             this.gB_6axis.Controls.Add(this.cB_InvertVAxis);
-            this.gB_6axis.Controls.Add(this.lB_InvertHAxis);
             this.gB_6axis.Controls.Add(this.cB_InvertHAxis);
+            this.gB_6axis.Controls.Add(this.lB_InvertVAxis);
+            this.gB_6axis.Controls.Add(this.lB_InvertHAxis);
             this.gB_6axis.Controls.Add(this.lB_GyroSteering);
             this.gB_6axis.Controls.Add(this.cB_GyroSteering);
             this.gB_6axis.Controls.Add(this.tb_ProfileAcceleroValue);
@@ -401,35 +429,27 @@ namespace ControllerHelper
             this.gB_6axis.Name = "gB_6axis";
             this.gB_6axis.TabStop = false;
             // 
+            // cB_InvertVAxis
+            // 
+            resources.ApplyResources(this.cB_InvertVAxis, "cB_InvertVAxis");
+            this.cB_InvertVAxis.Name = "cB_InvertVAxis";
+            this.cB_InvertVAxis.UseVisualStyleBackColor = true;
+            // 
+            // cB_InvertHAxis
+            // 
+            resources.ApplyResources(this.cB_InvertHAxis, "cB_InvertHAxis");
+            this.cB_InvertHAxis.Name = "cB_InvertHAxis";
+            this.cB_InvertHAxis.UseVisualStyleBackColor = true;
+            // 
             // lB_InvertVAxis
             // 
             resources.ApplyResources(this.lB_InvertVAxis, "lB_InvertVAxis");
             this.lB_InvertVAxis.Name = "lB_InvertVAxis";
             // 
-            // cB_InvertVAxis
-            // 
-            this.cB_InvertVAxis.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            resources.ApplyResources(this.cB_InvertVAxis, "cB_InvertVAxis");
-            this.cB_InvertVAxis.FormattingEnabled = true;
-            this.cB_InvertVAxis.Items.AddRange(new object[] {
-            resources.GetString("cB_InvertVAxis.Items"),
-            resources.GetString("cB_InvertVAxis.Items1")});
-            this.cB_InvertVAxis.Name = "cB_InvertVAxis";
-            // 
             // lB_InvertHAxis
             // 
             resources.ApplyResources(this.lB_InvertHAxis, "lB_InvertHAxis");
             this.lB_InvertHAxis.Name = "lB_InvertHAxis";
-            // 
-            // cB_InvertHAxis
-            // 
-            this.cB_InvertHAxis.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            resources.ApplyResources(this.cB_InvertHAxis, "cB_InvertHAxis");
-            this.cB_InvertHAxis.FormattingEnabled = true;
-            this.cB_InvertHAxis.Items.AddRange(new object[] {
-            resources.GetString("cB_InvertHAxis.Items"),
-            resources.GetString("cB_InvertHAxis.Items1")});
-            this.cB_InvertHAxis.Name = "cB_InvertHAxis";
             // 
             // lB_GyroSteering
             // 
@@ -549,6 +569,83 @@ namespace ControllerHelper
             this.lB_Profiles.FormattingEnabled = true;
             this.lB_Profiles.Name = "lB_Profiles";
             this.lB_Profiles.SelectedIndexChanged += new System.EventHandler(this.lB_Profiles_SelectedIndexChanged);
+            // 
+            // gB_ProfileGyro
+            // 
+            this.gB_ProfileGyro.Controls.Add(this.cB_UMCInputButton);
+            this.gB_ProfileGyro.Controls.Add(this.lb_UMCInputButton);
+            this.gB_ProfileGyro.Controls.Add(this.cB_UMCIntensity);
+            this.gB_ProfileGyro.Controls.Add(this.lb_UMCIntensity);
+            this.gB_ProfileGyro.Controls.Add(this.tB_UMCSensivity);
+            this.gB_ProfileGyro.Controls.Add(this.lb_UMCSensivity);
+            this.gB_ProfileGyro.Controls.Add(this.lb_UMCInputStyle);
+            this.gB_ProfileGyro.Controls.Add(this.cB_UMCInputStyle);
+            resources.ApplyResources(this.gB_ProfileGyro, "gB_ProfileGyro");
+            this.gB_ProfileGyro.Name = "gB_ProfileGyro";
+            this.gB_ProfileGyro.TabStop = false;
+            // 
+            // cB_UMCInputButton
+            // 
+            this.cB_UMCInputButton.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cB_UMCInputButton.FormattingEnabled = true;
+            resources.ApplyResources(this.cB_UMCInputButton, "cB_UMCInputButton");
+            this.cB_UMCInputButton.Name = "cB_UMCInputButton";
+            // 
+            // lb_UMCInputButton
+            // 
+            resources.ApplyResources(this.lb_UMCInputButton, "lb_UMCInputButton");
+            this.lb_UMCInputButton.Name = "lb_UMCInputButton";
+            // 
+            // cB_UMCIntensity
+            // 
+            this.cB_UMCIntensity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cB_UMCIntensity.FormattingEnabled = true;
+            this.cB_UMCIntensity.Items.AddRange(new object[] {
+            resources.GetString("cB_UMCIntensity.Items"),
+            resources.GetString("cB_UMCIntensity.Items1"),
+            resources.GetString("cB_UMCIntensity.Items2"),
+            resources.GetString("cB_UMCIntensity.Items3")});
+            resources.ApplyResources(this.cB_UMCIntensity, "cB_UMCIntensity");
+            this.cB_UMCIntensity.Name = "cB_UMCIntensity";
+            // 
+            // lb_UMCIntensity
+            // 
+            resources.ApplyResources(this.lb_UMCIntensity, "lb_UMCIntensity");
+            this.lb_UMCIntensity.Name = "lb_UMCIntensity";
+            // 
+            // tB_UMCSensivity
+            // 
+            resources.ApplyResources(this.tB_UMCSensivity, "tB_UMCSensivity");
+            this.tB_UMCSensivity.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
+            this.tB_UMCSensivity.LargeChange = 100;
+            this.tB_UMCSensivity.Maximum = 1000;
+            this.tB_UMCSensivity.Minimum = 1;
+            this.tB_UMCSensivity.Name = "tB_UMCSensivity";
+            this.tB_UMCSensivity.TickFrequency = 100;
+            this.tB_UMCSensivity.Value = 500;
+            this.tB_UMCSensivity.Scroll += new System.EventHandler(this.tB_UMCSensivity_Scroll);
+            // 
+            // lb_UMCSensivity
+            // 
+            resources.ApplyResources(this.lb_UMCSensivity, "lb_UMCSensivity");
+            this.lb_UMCSensivity.Name = "lb_UMCSensivity";
+            // 
+            // lb_UMCInputStyle
+            // 
+            resources.ApplyResources(this.lb_UMCInputStyle, "lb_UMCInputStyle");
+            this.lb_UMCInputStyle.Name = "lb_UMCInputStyle";
+            // 
+            // cB_UMCInputStyle
+            // 
+            this.cB_UMCInputStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cB_UMCInputStyle.FormattingEnabled = true;
+            this.cB_UMCInputStyle.Items.AddRange(new object[] {
+            resources.GetString("cB_UMCInputStyle.Items"),
+            resources.GetString("cB_UMCInputStyle.Items1"),
+            resources.GetString("cB_UMCInputStyle.Items2"),
+            resources.GetString("cB_UMCInputStyle.Items3")});
+            resources.ApplyResources(this.cB_UMCInputStyle, "cB_UMCInputStyle");
+            this.cB_UMCInputStyle.Name = "cB_UMCInputStyle";
             // 
             // tabSettings
             // 
@@ -745,6 +842,9 @@ namespace ControllerHelper
             this.gB_ProfileDetails.ResumeLayout(false);
             this.gB_ProfileDetails.PerformLayout();
             this.gB_Profiles.ResumeLayout(false);
+            this.gB_ProfileGyro.ResumeLayout(false);
+            this.gB_ProfileGyro.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tB_UMCSensivity)).EndInit();
             this.tabSettings.ResumeLayout(false);
             this.gb_SettingsUDP.ResumeLayout(false);
             this.gb_SettingsUDP.PerformLayout();
@@ -832,10 +932,21 @@ namespace ControllerHelper
         private System.Windows.Forms.Label lB_GyroSteering;
         private System.Windows.Forms.ComboBox cB_GyroSteering;
         private System.Windows.Forms.Label lB_InvertHAxis;
-        private System.Windows.Forms.ComboBox cB_InvertHAxis;
         private System.Windows.Forms.Label lB_InvertVAxis;
-        private System.Windows.Forms.ComboBox cB_InvertVAxis;
         private System.Windows.Forms.CheckBox cB_HIDcloak;
+        private System.Windows.Forms.CheckBox cB_InvertVAxis;
+        private System.Windows.Forms.CheckBox cB_InvertHAxis;
+        private System.Windows.Forms.Label lb_UniversalMC;
+        private System.Windows.Forms.ComboBox cB_UMCInputStyle;
+        private System.Windows.Forms.GroupBox gB_ProfileGyro;
+        private System.Windows.Forms.CheckBox cB_UniversalMC;
+        private System.Windows.Forms.Label lb_UMCInputStyle;
+        private System.Windows.Forms.TrackBar tB_UMCSensivity;
+        private System.Windows.Forms.Label lb_UMCSensivity;
+        private System.Windows.Forms.ComboBox cB_UMCIntensity;
+        private System.Windows.Forms.Label lb_UMCIntensity;
+        private System.Windows.Forms.ComboBox cB_UMCInputButton;
+        private System.Windows.Forms.Label lb_UMCInputButton;
     }
 }
 

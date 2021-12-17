@@ -3645,10 +3645,10 @@
     <value>Fill</value>
   </data>
   <data name="gB_DeviceDetails.Location" type="System.Drawing.Point, System.Drawing">
-    <value>243, 153</value>
+    <value>203, 153</value>
   </data>
   <data name="gB_DeviceDetails.Size" type="System.Drawing.Size, System.Drawing">
-    <value>487, 110</value>
+    <value>770, 110</value>
   </data>
   <data name="gB_DeviceDetails.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -3675,7 +3675,7 @@
     <value>156, 115</value>
   </data>
   <data name="tB_VibrationStr.Size" type="System.Drawing.Size, System.Drawing">
-    <value>325, 45</value>
+    <value>608, 45</value>
   </data>
   <data name="tB_VibrationStr.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -3726,7 +3726,7 @@
     <value>156, 64</value>
   </data>
   <data name="tB_PullRate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>325, 45</value>
+    <value>608, 45</value>
   </data>
   <data name="tB_PullRate.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -3825,10 +3825,10 @@
     <value>Bottom</value>
   </data>
   <data name="gB_HIDDetails.Location" type="System.Drawing.Point, System.Drawing">
-    <value>243, 263</value>
+    <value>203, 263</value>
   </data>
   <data name="gB_HIDDetails.Size" type="System.Drawing.Size, System.Drawing">
-    <value>487, 267</value>
+    <value>770, 267</value>
   </data>
   <data name="gB_HIDDetails.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -3882,7 +3882,7 @@
     <value>156, 58</value>
   </data>
   <data name="tB_ProductID.Size" type="System.Drawing.Size, System.Drawing">
-    <value>325, 23</value>
+    <value>608, 23</value>
   </data>
   <data name="tB_ProductID.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -3987,7 +3987,7 @@
     <value>156, 29</value>
   </data>
   <data name="tB_InstanceID.Size" type="System.Drawing.Size, System.Drawing">
-    <value>325, 23</value>
+    <value>608, 23</value>
   </data>
   <data name="tB_InstanceID.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -4035,10 +4035,10 @@
     <value>Top</value>
   </data>
   <data name="gB_XinputDetails.Location" type="System.Drawing.Point, System.Drawing">
-    <value>243, 3</value>
+    <value>203, 3</value>
   </data>
   <data name="gB_XinputDetails.Size" type="System.Drawing.Size, System.Drawing">
-    <value>487, 150</value>
+    <value>770, 150</value>
   </data>
   <data name="gB_XinputDetails.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -4068,7 +4068,7 @@
     <value>3, 19</value>
   </data>
   <data name="lB_Devices.Size" type="System.Drawing.Size, System.Drawing">
-    <value>234, 505</value>
+    <value>194, 505</value>
   </data>
   <data name="lB_Devices.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -4092,7 +4092,7 @@
     <value>3, 3</value>
   </data>
   <data name="gB_XinputDevices.Size" type="System.Drawing.Size, System.Drawing">
-    <value>240, 527</value>
+    <value>200, 527</value>
   </data>
   <data name="gB_XinputDevices.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -4120,7 +4120,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabDevices.Size" type="System.Drawing.Size, System.Drawing">
-    <value>733, 533</value>
+    <value>976, 533</value>
   </data>
   <data name="tabDevices.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -4140,6 +4140,36 @@
   <data name="&gt;&gt;tabDevices.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="cB_UniversalMC.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cB_UniversalMC.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="cB_UniversalMC.Location" type="System.Drawing.Point, System.Drawing">
+    <value>156, 79</value>
+  </data>
+  <data name="cB_UniversalMC.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 19</value>
+  </data>
+  <data name="cB_UniversalMC.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="cB_UniversalMC.Text" xml:space="preserve">
+    <value>Translate Gyroscope to controls</value>
+  </data>
+  <data name="&gt;&gt;cB_UniversalMC.Name" xml:space="preserve">
+    <value>cB_UniversalMC</value>
+  </data>
+  <data name="&gt;&gt;cB_UniversalMC.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cB_UniversalMC.Parent" xml:space="preserve">
+    <value>gB_ProfileOptions</value>
+  </data>
+  <data name="&gt;&gt;cB_UniversalMC.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="lb_Wrapper.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -4147,13 +4177,13 @@
     <value>6, 55</value>
   </data>
   <data name="lb_Wrapper.Size" type="System.Drawing.Size, System.Drawing">
-    <value>77, 15</value>
+    <value>55, 15</value>
   </data>
   <data name="lb_Wrapper.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
   </data>
   <data name="lb_Wrapper.Text" xml:space="preserve">
-    <value>Use Wrapper:</value>
+    <value>Wrapper:</value>
   </data>
   <data name="&gt;&gt;lb_Wrapper.Name" xml:space="preserve">
     <value>lb_Wrapper</value>
@@ -4165,7 +4195,37 @@
     <value>gB_ProfileOptions</value>
   </data>
   <data name="&gt;&gt;lb_Wrapper.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
+  </data>
+  <data name="lb_UniversalMC.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lb_UniversalMC.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="lb_UniversalMC.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 80</value>
+  </data>
+  <data name="lb_UniversalMC.Size" type="System.Drawing.Size, System.Drawing">
+    <value>143, 15</value>
+  </data>
+  <data name="lb_UniversalMC.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="lb_UniversalMC.Text" xml:space="preserve">
+    <value>Universal Motion Control:</value>
+  </data>
+  <data name="&gt;&gt;lb_UniversalMC.Name" xml:space="preserve">
+    <value>lb_UniversalMC</value>
+  </data>
+  <data name="&gt;&gt;lb_UniversalMC.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lb_UniversalMC.Parent" xml:space="preserve">
+    <value>gB_ProfileOptions</value>
+  </data>
+  <data name="&gt;&gt;lb_UniversalMC.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="lb_Whitelist.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4174,13 +4234,13 @@
     <value>6, 30</value>
   </data>
   <data name="lb_Whitelist.Size" type="System.Drawing.Size, System.Drawing">
-    <value>69, 15</value>
+    <value>56, 15</value>
   </data>
   <data name="lb_Whitelist.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="lb_Whitelist.Text" xml:space="preserve">
-    <value>Whitelisted:</value>
+    <value>Whitelist:</value>
   </data>
   <data name="&gt;&gt;lb_Whitelist.Name" xml:space="preserve">
     <value>lb_Whitelist</value>
@@ -4192,7 +4252,7 @@
     <value>gB_ProfileOptions</value>
   </data>
   <data name="&gt;&gt;lb_Whitelist.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="cB_Wrapper.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4219,7 +4279,7 @@
     <value>gB_ProfileOptions</value>
   </data>
   <data name="&gt;&gt;cB_Wrapper.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="cB_Whitelist.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4246,16 +4306,16 @@
     <value>gB_ProfileOptions</value>
   </data>
   <data name="&gt;&gt;cB_Whitelist.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>5</value>
   </data>
   <data name="gB_ProfileOptions.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
   <data name="gB_ProfileOptions.Location" type="System.Drawing.Point, System.Drawing">
-    <value>243, 143</value>
+    <value>203, 143</value>
   </data>
   <data name="gB_ProfileOptions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>487, 85</value>
+    <value>470, 110</value>
   </data>
   <data name="gB_ProfileOptions.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -4275,6 +4335,60 @@
   <data name="&gt;&gt;gB_ProfileOptions.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="cB_InvertVAxis.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cB_InvertVAxis.Location" type="System.Drawing.Point, System.Drawing">
+    <value>156, 184</value>
+  </data>
+  <data name="cB_InvertVAxis.Size" type="System.Drawing.Size, System.Drawing">
+    <value>81, 19</value>
+  </data>
+  <data name="cB_InvertVAxis.TabIndex" type="System.Int32, mscorlib">
+    <value>23</value>
+  </data>
+  <data name="cB_InvertVAxis.Text" xml:space="preserve">
+    <value>Invert Axis</value>
+  </data>
+  <data name="&gt;&gt;cB_InvertVAxis.Name" xml:space="preserve">
+    <value>cB_InvertVAxis</value>
+  </data>
+  <data name="&gt;&gt;cB_InvertVAxis.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cB_InvertVAxis.Parent" xml:space="preserve">
+    <value>gB_6axis</value>
+  </data>
+  <data name="&gt;&gt;cB_InvertVAxis.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="cB_InvertHAxis.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cB_InvertHAxis.Location" type="System.Drawing.Point, System.Drawing">
+    <value>156, 155</value>
+  </data>
+  <data name="cB_InvertHAxis.Size" type="System.Drawing.Size, System.Drawing">
+    <value>81, 19</value>
+  </data>
+  <data name="cB_InvertHAxis.TabIndex" type="System.Int32, mscorlib">
+    <value>22</value>
+  </data>
+  <data name="cB_InvertHAxis.Text" xml:space="preserve">
+    <value>Invert Axis</value>
+  </data>
+  <data name="&gt;&gt;cB_InvertHAxis.Name" xml:space="preserve">
+    <value>cB_InvertHAxis</value>
+  </data>
+  <data name="&gt;&gt;cB_InvertHAxis.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cB_InvertHAxis.Parent" xml:space="preserve">
+    <value>gB_6axis</value>
+  </data>
+  <data name="&gt;&gt;cB_InvertHAxis.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="lB_InvertVAxis.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -4282,13 +4396,13 @@
     <value>6, 185</value>
   </data>
   <data name="lB_InvertVAxis.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 15</value>
+    <value>73, 15</value>
   </data>
   <data name="lB_InvertVAxis.TabIndex" type="System.Int32, mscorlib">
     <value>21</value>
   </data>
   <data name="lB_InvertVAxis.Text" xml:space="preserve">
-    <value>Invert Vertical Axis:</value>
+    <value>Vertical Axis:</value>
   </data>
   <data name="lB_InvertVAxis.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
@@ -4303,37 +4417,7 @@
     <value>gB_6axis</value>
   </data>
   <data name="&gt;&gt;lB_InvertVAxis.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="cB_InvertVAxis.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="cB_InvertVAxis.Items" xml:space="preserve">
-    <value>Off</value>
-  </data>
-  <data name="cB_InvertVAxis.Items1" xml:space="preserve">
-    <value>On</value>
-  </data>
-  <data name="cB_InvertVAxis.Location" type="System.Drawing.Point, System.Drawing">
-    <value>156, 182</value>
-  </data>
-  <data name="cB_InvertVAxis.Size" type="System.Drawing.Size, System.Drawing">
-    <value>104, 23</value>
-  </data>
-  <data name="cB_InvertVAxis.TabIndex" type="System.Int32, mscorlib">
-    <value>20</value>
-  </data>
-  <data name="&gt;&gt;cB_InvertVAxis.Name" xml:space="preserve">
-    <value>cB_InvertVAxis</value>
-  </data>
-  <data name="&gt;&gt;cB_InvertVAxis.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;cB_InvertVAxis.Parent" xml:space="preserve">
-    <value>gB_6axis</value>
-  </data>
-  <data name="&gt;&gt;cB_InvertVAxis.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="lB_InvertHAxis.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -4342,13 +4426,13 @@
     <value>6, 156</value>
   </data>
   <data name="lB_InvertHAxis.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 15</value>
+    <value>90, 15</value>
   </data>
   <data name="lB_InvertHAxis.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
   </data>
   <data name="lB_InvertHAxis.Text" xml:space="preserve">
-    <value>Invert Horizontal Axis:</value>
+    <value>Horizontal Axis:</value>
   </data>
   <data name="lB_InvertHAxis.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
@@ -4363,36 +4447,6 @@
     <value>gB_6axis</value>
   </data>
   <data name="&gt;&gt;lB_InvertHAxis.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="cB_InvertHAxis.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="cB_InvertHAxis.Items" xml:space="preserve">
-    <value>Off</value>
-  </data>
-  <data name="cB_InvertHAxis.Items1" xml:space="preserve">
-    <value>On</value>
-  </data>
-  <data name="cB_InvertHAxis.Location" type="System.Drawing.Point, System.Drawing">
-    <value>156, 153</value>
-  </data>
-  <data name="cB_InvertHAxis.Size" type="System.Drawing.Size, System.Drawing">
-    <value>104, 23</value>
-  </data>
-  <data name="cB_InvertHAxis.TabIndex" type="System.Int32, mscorlib">
-    <value>18</value>
-  </data>
-  <data name="&gt;&gt;cB_InvertHAxis.Name" xml:space="preserve">
-    <value>cB_InvertHAxis</value>
-  </data>
-  <data name="&gt;&gt;cB_InvertHAxis.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;cB_InvertHAxis.Parent" xml:space="preserve">
-    <value>gB_6axis</value>
-  </data>
-  <data name="&gt;&gt;cB_InvertHAxis.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
   <data name="lB_GyroSteering.AutoSize" type="System.Boolean, mscorlib">
@@ -4462,7 +4516,7 @@
     <value>156, 73</value>
   </data>
   <data name="tb_ProfileAcceleroValue.Size" type="System.Drawing.Size, System.Drawing">
-    <value>325, 45</value>
+    <value>308, 45</value>
   </data>
   <data name="tb_ProfileAcceleroValue.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
@@ -4540,7 +4594,7 @@
     <value>156, 22</value>
   </data>
   <data name="tb_ProfileGyroValue.Size" type="System.Drawing.Size, System.Drawing">
-    <value>325, 45</value>
+    <value>308, 45</value>
   </data>
   <data name="tb_ProfileGyroValue.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -4561,16 +4615,16 @@
     <value>Bottom</value>
   </data>
   <data name="gB_6axis.Location" type="System.Drawing.Point, System.Drawing">
-    <value>243, 228</value>
+    <value>203, 253</value>
   </data>
   <data name="gB_6axis.Size" type="System.Drawing.Size, System.Drawing">
-    <value>487, 302</value>
+    <value>470, 277</value>
   </data>
   <data name="gB_6axis.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
   <data name="gB_6axis.Text" xml:space="preserve">
-    <value>6-axis Options</value>
+    <value>Motion Control Options</value>
   </data>
   <data name="&gt;&gt;gB_6axis.Name" xml:space="preserve">
     <value>gB_6axis</value>
@@ -4639,7 +4693,7 @@
     <value>156, 58</value>
   </data>
   <data name="tB_ProfilePath.Size" type="System.Drawing.Size, System.Drawing">
-    <value>325, 23</value>
+    <value>308, 23</value>
   </data>
   <data name="tB_ProfilePath.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -4690,7 +4744,7 @@
     <value>156, 29</value>
   </data>
   <data name="tB_ProfileName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>325, 23</value>
+    <value>308, 23</value>
   </data>
   <data name="tB_ProfileName.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -4738,10 +4792,10 @@
     <value>Top</value>
   </data>
   <data name="gB_ProfileDetails.Location" type="System.Drawing.Point, System.Drawing">
-    <value>243, 3</value>
+    <value>203, 3</value>
   </data>
   <data name="gB_ProfileDetails.Size" type="System.Drawing.Size, System.Drawing">
-    <value>487, 140</value>
+    <value>470, 140</value>
   </data>
   <data name="gB_ProfileDetails.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -4768,7 +4822,7 @@
     <value>3, 501</value>
   </data>
   <data name="b_CreateProfile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>234, 23</value>
+    <value>194, 23</value>
   </data>
   <data name="b_CreateProfile.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -4798,7 +4852,7 @@
     <value>3, 19</value>
   </data>
   <data name="lB_Profiles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>234, 505</value>
+    <value>194, 505</value>
   </data>
   <data name="lB_Profiles.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -4822,7 +4876,7 @@
     <value>3, 3</value>
   </data>
   <data name="gB_Profiles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>240, 527</value>
+    <value>200, 527</value>
   </data>
   <data name="gB_Profiles.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -4842,6 +4896,270 @@
   <data name="&gt;&gt;gB_Profiles.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
+  <data name="cB_UMCInputButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>133, 58</value>
+  </data>
+  <data name="cB_UMCInputButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>161, 23</value>
+  </data>
+  <data name="cB_UMCInputButton.TabIndex" type="System.Int32, mscorlib">
+    <value>24</value>
+  </data>
+  <data name="&gt;&gt;cB_UMCInputButton.Name" xml:space="preserve">
+    <value>cB_UMCInputButton</value>
+  </data>
+  <data name="&gt;&gt;cB_UMCInputButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cB_UMCInputButton.Parent" xml:space="preserve">
+    <value>gB_ProfileGyro</value>
+  </data>
+  <data name="&gt;&gt;cB_UMCInputButton.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lb_UMCInputButton.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lb_UMCInputButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="lb_UMCInputButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 61</value>
+  </data>
+  <data name="lb_UMCInputButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>84, 15</value>
+  </data>
+  <data name="lb_UMCInputButton.TabIndex" type="System.Int32, mscorlib">
+    <value>23</value>
+  </data>
+  <data name="lb_UMCInputButton.Text" xml:space="preserve">
+    <value>Enable Button:</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCInputButton.Name" xml:space="preserve">
+    <value>lb_UMCInputButton</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCInputButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCInputButton.Parent" xml:space="preserve">
+    <value>gB_ProfileGyro</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCInputButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="cB_UMCIntensity.Items" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="cB_UMCIntensity.Items1" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="cB_UMCIntensity.Items2" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="cB_UMCIntensity.Items3" xml:space="preserve">
+    <value>Extreme</value>
+  </data>
+  <data name="cB_UMCIntensity.Location" type="System.Drawing.Point, System.Drawing">
+    <value>133, 141</value>
+  </data>
+  <data name="cB_UMCIntensity.Size" type="System.Drawing.Size, System.Drawing">
+    <value>161, 23</value>
+  </data>
+  <data name="cB_UMCIntensity.TabIndex" type="System.Int32, mscorlib">
+    <value>22</value>
+  </data>
+  <data name="&gt;&gt;cB_UMCIntensity.Name" xml:space="preserve">
+    <value>cB_UMCIntensity</value>
+  </data>
+  <data name="&gt;&gt;cB_UMCIntensity.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cB_UMCIntensity.Parent" xml:space="preserve">
+    <value>gB_ProfileGyro</value>
+  </data>
+  <data name="&gt;&gt;cB_UMCIntensity.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="lb_UMCIntensity.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lb_UMCIntensity.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="lb_UMCIntensity.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 144</value>
+  </data>
+  <data name="lb_UMCIntensity.Size" type="System.Drawing.Size, System.Drawing">
+    <value>55, 15</value>
+  </data>
+  <data name="lb_UMCIntensity.TabIndex" type="System.Int32, mscorlib">
+    <value>21</value>
+  </data>
+  <data name="lb_UMCIntensity.Text" xml:space="preserve">
+    <value>Intensity:</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCIntensity.Name" xml:space="preserve">
+    <value>lb_UMCIntensity</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCIntensity.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCIntensity.Parent" xml:space="preserve">
+    <value>gB_ProfileGyro</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCIntensity.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="tB_UMCSensivity.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="tB_UMCSensivity.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="tB_UMCSensivity.Location" type="System.Drawing.Point, System.Drawing">
+    <value>133, 95</value>
+  </data>
+  <data name="tB_UMCSensivity.Size" type="System.Drawing.Size, System.Drawing">
+    <value>161, 45</value>
+  </data>
+  <data name="tB_UMCSensivity.TabIndex" type="System.Int32, mscorlib">
+    <value>20</value>
+  </data>
+  <data name="&gt;&gt;tB_UMCSensivity.Name" xml:space="preserve">
+    <value>tB_UMCSensivity</value>
+  </data>
+  <data name="&gt;&gt;tB_UMCSensivity.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TrackBar, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tB_UMCSensivity.Parent" xml:space="preserve">
+    <value>gB_ProfileGyro</value>
+  </data>
+  <data name="&gt;&gt;tB_UMCSensivity.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="lb_UMCSensivity.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lb_UMCSensivity.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="lb_UMCSensivity.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 98</value>
+  </data>
+  <data name="lb_UMCSensivity.Size" type="System.Drawing.Size, System.Drawing">
+    <value>56, 15</value>
+  </data>
+  <data name="lb_UMCSensivity.TabIndex" type="System.Int32, mscorlib">
+    <value>19</value>
+  </data>
+  <data name="lb_UMCSensivity.Text" xml:space="preserve">
+    <value>Sensivity:</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCSensivity.Name" xml:space="preserve">
+    <value>lb_UMCSensivity</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCSensivity.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCSensivity.Parent" xml:space="preserve">
+    <value>gB_ProfileGyro</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCSensivity.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="lb_UMCInputStyle.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lb_UMCInputStyle.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="lb_UMCInputStyle.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 32</value>
+  </data>
+  <data name="lb_UMCInputStyle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>80, 15</value>
+  </data>
+  <data name="lb_UMCInputStyle.TabIndex" type="System.Int32, mscorlib">
+    <value>18</value>
+  </data>
+  <data name="lb_UMCInputStyle.Text" xml:space="preserve">
+    <value>Style of Input:</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCInputStyle.Name" xml:space="preserve">
+    <value>lb_UMCInputStyle</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCInputStyle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCInputStyle.Parent" xml:space="preserve">
+    <value>gB_ProfileGyro</value>
+  </data>
+  <data name="&gt;&gt;lb_UMCInputStyle.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="cB_UMCInputStyle.Items" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="cB_UMCInputStyle.Items1" xml:space="preserve">
+    <value>Right Stick</value>
+  </data>
+  <data name="cB_UMCInputStyle.Items2" xml:space="preserve">
+    <value>Left Stick</value>
+  </data>
+  <data name="cB_UMCInputStyle.Items3" xml:space="preserve">
+    <value>Mouse</value>
+  </data>
+  <data name="cB_UMCInputStyle.Location" type="System.Drawing.Point, System.Drawing">
+    <value>133, 29</value>
+  </data>
+  <data name="cB_UMCInputStyle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>161, 23</value>
+  </data>
+  <data name="cB_UMCInputStyle.TabIndex" type="System.Int32, mscorlib">
+    <value>17</value>
+  </data>
+  <data name="&gt;&gt;cB_UMCInputStyle.Name" xml:space="preserve">
+    <value>cB_UMCInputStyle</value>
+  </data>
+  <data name="&gt;&gt;cB_UMCInputStyle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cB_UMCInputStyle.Parent" xml:space="preserve">
+    <value>gB_ProfileGyro</value>
+  </data>
+  <data name="&gt;&gt;cB_UMCInputStyle.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="gB_ProfileGyro.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="gB_ProfileGyro.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="gB_ProfileGyro.Location" type="System.Drawing.Point, System.Drawing">
+    <value>673, 3</value>
+  </data>
+  <data name="gB_ProfileGyro.Size" type="System.Drawing.Size, System.Drawing">
+    <value>300, 527</value>
+  </data>
+  <data name="gB_ProfileGyro.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="gB_ProfileGyro.Text" xml:space="preserve">
+    <value>Universal Motion Control Options</value>
+  </data>
+  <data name="&gt;&gt;gB_ProfileGyro.Name" xml:space="preserve">
+    <value>gB_ProfileGyro</value>
+  </data>
+  <data name="&gt;&gt;gB_ProfileGyro.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gB_ProfileGyro.Parent" xml:space="preserve">
+    <value>tabProfiles</value>
+  </data>
+  <data name="&gt;&gt;gB_ProfileGyro.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
   <data name="tabProfiles.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 24</value>
   </data>
@@ -4849,7 +5167,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabProfiles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>733, 533</value>
+    <value>976, 533</value>
   </data>
   <data name="tabProfiles.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -4873,7 +5191,7 @@
     <value>Top, Right</value>
   </data>
   <data name="b_UDPApply.Location" type="System.Drawing.Point, System.Drawing">
-    <value>646, 20</value>
+    <value>889, 20</value>
   </data>
   <data name="b_UDPApply.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 40</value>
@@ -5002,7 +5320,7 @@
     <value>3, 104</value>
   </data>
   <data name="gb_SettingsUDP.Size" type="System.Drawing.Size, System.Drawing">
-    <value>727, 73</value>
+    <value>970, 73</value>
   </data>
   <data name="gb_SettingsUDP.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -5227,7 +5545,7 @@
     <value>3, 177</value>
   </data>
   <data name="gb_SettingsService.Size" type="System.Drawing.Size, System.Drawing">
-    <value>727, 353</value>
+    <value>970, 353</value>
   </data>
   <data name="gb_SettingsService.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -5335,7 +5653,7 @@
     <value>3, 3</value>
   </data>
   <data name="gb_SettingsInterface.Size" type="System.Drawing.Size, System.Drawing">
-    <value>727, 101</value>
+    <value>970, 101</value>
   </data>
   <data name="gb_SettingsInterface.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -5362,7 +5680,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tabSettings.Size" type="System.Drawing.Size, System.Drawing">
-    <value>733, 533</value>
+    <value>976, 533</value>
   </data>
   <data name="tabSettings.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -5389,7 +5707,7 @@
     <value>0, 0</value>
   </data>
   <data name="tabControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>741, 561</value>
+    <value>984, 561</value>
   </data>
   <data name="tabControl1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -5410,7 +5728,7 @@
     <value>440, 17</value>
   </metadata>
   <data name="openFileDialog1.Filter" xml:space="preserve">
-    <value>Exe Files (.exe)|*.exe</value>
+    <value>Exe Files (.exe)|*.exe|Microsoft Store Manifest (appxmanifest.xml)|appxmanifest.xml</value>
   </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>580, 17</value>
@@ -5425,7 +5743,7 @@
     <value>True</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>741, 561</value>
+    <value>984, 561</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -8817,7 +9135,7 @@
 </value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>757, 600</value>
+    <value>1000, 600</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>Manual</value>

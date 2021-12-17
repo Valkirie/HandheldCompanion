@@ -1,18 +1,23 @@
 ﻿using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.TaskScheduler;
+using Nefarius.ViGEm.Client.Targets.DualShock4;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security;
+using System.Security.Permissions;
 using System.ServiceProcess;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
+using System.Xml;
 using Timer = System.Timers.Timer;
 
 namespace ControllerHelper
@@ -120,6 +125,10 @@ namespace ControllerHelper
             cB_HidMode.Items.Add(HideXBOX);
             HIDmodes.Add("DualShock4Controller", HideDS4);
             HIDmodes.Add("Xbox360Controller", HideXBOX);
+
+            foreach (DualShock4Button button in Profile.ListTriggers())
+                cB_UMCInputButton.Items.Add(button);
+            cB_UMCInputButton.SelectedIndex = 0;
 
             // update UI
             cB_RunAtStartup.Checked = RunAtStartup = Properties.Settings.Default.RunAtStartup;
@@ -514,10 +523,57 @@ namespace ControllerHelper
             {
                 try
                 {
-                    string ProcessExec = Path.GetFileNameWithoutExtension(openFileDialog1.SafeFileName);
-                    string ProcessPath = openFileDialog1.FileName;
+                    var file = openFileDialog1.SafeFileName;
+                    var path = openFileDialog1.FileName;
+                    var folder = Path.GetDirectoryName(path);
+                    var ext = Path.GetExtension(file);
 
-                    Profile profile = new Profile(ProcessExec, ProcessPath);
+                    switch (ext)
+                    {
+                        default:
+                        case ".exe":
+                            break;
+                        case ".xml":
+                            try
+                            {
+                                XmlDocument doc = new XmlDocument();
+                                doc.Load(path);
+
+                                XmlNodeList Applications = doc.GetElementsByTagName("Applications");
+                                foreach (XmlNode node in Applications)
+                                {
+                                    foreach (XmlNode child in node.ChildNodes)
+                                    {
+                                        if (child.Name.Equals("Application"))
+                                        {
+                                            if (child.Attributes != null)
+                                            {
+                                                foreach (XmlAttribute attribute in child.Attributes)
+                                                {
+                                                    switch (attribute.Name)
+                                                    {
+                                                        case "Executable":
+                                                            path = Path.Combine(folder, attribute.InnerText);
+                                                            file = Path.GetFileName(path);
+                                                            break;
+                                                    }
+                                                    continue;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.LogError(ex.Message, true);
+                            }
+                            break;
+                    }
+
+                    var exe = Path.GetFileNameWithoutExtension(file);
+
+                    Profile profile = new Profile(exe, path);
                     ProfileManager.SerializeProfile(profile);
                 }
                 catch (Exception ex)
@@ -632,8 +688,14 @@ namespace ControllerHelper
 
                     cB_GyroSteering.SelectedIndex = profile.steering;
 
-                    cB_InvertHAxis.SelectedIndex = profile.inverthorizontal ? 1 : 0;
-                    cB_InvertVAxis.SelectedIndex = profile.invertvertical ? 1 : 0;
+                    cB_InvertHAxis.Checked = profile.inverthorizontal;
+                    cB_InvertVAxis.Checked = profile.invertvertical;
+
+                    cB_UniversalMC.Checked = profile.umc_enabled;
+                    cB_UMCInputStyle.SelectedIndex = (int)profile.umc_input;
+                    tB_UMCSensivity.Value = (int)profile.umc_sensivity;
+                    cB_UMCIntensity.SelectedIndex = (int)profile.umc_intensity;
+                    cB_UMCInputButton.SelectedItem = Profile.ListTriggers().Where(a => a.Value == profile.umc_trigger);
 
                     tb_ProfileGyroValue.Value = (int)(profile.gyrometer * 10.0f);
                     tb_ProfileAcceleroValue.Value = (int)(profile.accelerometer * 10.0f);
@@ -685,8 +747,14 @@ namespace ControllerHelper
 
             profile.steering = cB_GyroSteering.SelectedIndex;
 
-            profile.inverthorizontal = cB_InvertHAxis.SelectedIndex == 0 ? false : true;
-            profile.invertvertical = cB_InvertVAxis.SelectedIndex == 0 ? false : true;
+            profile.inverthorizontal = cB_InvertHAxis.Checked;
+            profile.invertvertical = cB_InvertVAxis.Checked;
+
+            profile.umc_enabled = cB_UniversalMC.Checked;
+            profile.umc_input = (InputStyle)cB_UMCInputStyle.SelectedIndex;
+            profile.umc_sensivity = tB_UMCSensivity.Value;
+            profile.umc_intensity = (HapticIntensity)cB_UMCIntensity.SelectedIndex;
+            profile.umc_trigger = ((DualShock4Button)cB_UMCInputButton.SelectedItem).Value;
 
             ProfileManager.profiles[profile.name] = profile;
             ProfileManager.UpdateProfile(profile);
@@ -711,6 +779,19 @@ namespace ControllerHelper
             }
 
             ServiceManager.SetStartType(mode);
+        }
+
+        private void cB_UniversalMC_CheckedChanged(object sender, EventArgs e)
+        {
+            gB_ProfileGyro.Enabled = cB_UniversalMC.Checked;
+        }
+
+        private void tB_UMCSensivity_Scroll(object sender, EventArgs e)
+        {
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                toolTip1.SetToolTip(tB_UMCSensivity, $"value: {tB_UMCSensivity.Value}");
+            });
         }
 
         private void cB_HIDcloak_CheckedChanged(object sender, EventArgs e)
@@ -792,16 +873,13 @@ namespace ControllerHelper
                 switch (starttype)
                 {
                     case ServiceStartMode.Disabled:
-                        if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
                         cB_ServiceStartup.SelectedIndex = 2;
                         break;
                     case ServiceStartMode.Automatic:
-                        if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
                         cB_ServiceStartup.SelectedIndex = 0;
                         break;
                     default:
                     case ServiceStartMode.Manual:
-                        if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
                         cB_ServiceStartup.SelectedIndex = 1;
                         break;
                 }

@@ -213,10 +213,15 @@ namespace ControllerService
                 ushort tempSpecial = 0;
                 DualShock4DPadDirection tempDPad = DualShock4DPadDirection.None;
 
-                outDS4Report.bThumbLX = 128;
-                outDS4Report.bThumbLY = 128;
-                outDS4Report.bThumbRX = 128;
-                outDS4Report.bThumbRY = 128;
+                outDS4Report.bThumbLX = 127;
+                outDS4Report.bThumbLY = 127;
+                outDS4Report.bThumbRX = 127;
+                outDS4Report.bThumbRY = 127;
+
+                short LeftThumbX = gamepad.LeftThumbX;
+                short LeftThumbY = gamepad.LeftThumbY;
+                short RightThumbX = gamepad.RightThumbX;
+                short RightThumbY = gamepad.RightThumbY;
 
                 unchecked
                 {
@@ -278,6 +283,25 @@ namespace ControllerService
                     outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
                 }
 
+                if (profile.umc_enabled && (tempButtons & profile.umc_trigger) == profile.umc_trigger)
+                {
+                    float intensity = profile.GetIntensity();
+                    float sensivity = profile.umc_sensivity;
+
+                    switch (profile.umc_input)
+                    {
+                        default:
+                        case InputStyle.RightStick:
+                            RightThumbX = ComputeInput(RightThumbX, AngularVelocity.Z, sensivity, intensity);
+                            RightThumbY = ComputeInput(RightThumbY, AngularVelocity.X, sensivity, intensity);
+                            break;
+                        case InputStyle.LeftStick:
+                            LeftThumbX = ComputeInput(LeftThumbX, AngularVelocity.Z, sensivity, intensity);
+                            LeftThumbY = ComputeInput(LeftThumbY, AngularVelocity.X, sensivity, intensity);
+                            break;
+                    }
+                }
+
                 if (!profile.whitelisted)
                 {
                     outDS4Report.wButtons = tempButtons;
@@ -286,10 +310,10 @@ namespace ControllerService
                     outDS4Report.bTriggerL = gamepad.LeftTrigger;
                     outDS4Report.bTriggerR = gamepad.RightTrigger;
 
-                    outDS4Report.bThumbLX = Utils.NormalizeInput(gamepad.LeftThumbX);
-                    outDS4Report.bThumbLY = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.LeftThumbY));
-                    outDS4Report.bThumbRX = Utils.NormalizeInput(gamepad.RightThumbX);
-                    outDS4Report.bThumbRY = (byte)(byte.MaxValue - Utils.NormalizeInput(gamepad.RightThumbY));
+                    outDS4Report.bThumbLX = NormalizeInput(LeftThumbX);
+                    outDS4Report.bThumbLY = (byte)(byte.MaxValue - NormalizeInput(LeftThumbY));
+                    outDS4Report.bThumbRX = NormalizeInput(RightThumbX);
+                    outDS4Report.bThumbRY = (byte)(byte.MaxValue - NormalizeInput(RightThumbY));
                 }
 
                 unchecked
