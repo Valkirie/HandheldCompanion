@@ -51,7 +51,6 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.2">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Nefarius.ViGEm.Client" Version="1.17.178" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
