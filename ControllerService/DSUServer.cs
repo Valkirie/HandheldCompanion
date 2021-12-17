@@ -619,7 +619,7 @@ namespace ControllerService
                 if (hidReport.Acceleration != empty)
                 {
                     // accelXG
-                    Array.Copy(BitConverter.GetBytes(-hidReport.Acceleration.X), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(hidReport.Acceleration.X), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // accelYG
                     Array.Copy(BitConverter.GetBytes(hidReport.Acceleration.Y), 0, outputData, outIdx, 4);
@@ -638,7 +638,7 @@ namespace ControllerService
                 if (hidReport.AngularVelocity != empty)
                 {
                     // angVelPitch
-                    Array.Copy(BitConverter.GetBytes(-hidReport.AngularVelocity.X), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(hidReport.AngularVelocity.X), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // angVelYaw
                     Array.Copy(BitConverter.GetBytes(hidReport.AngularVelocity.Y), 0, outputData, outIdx, 4);

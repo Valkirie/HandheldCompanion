@@ -10,6 +10,7 @@ namespace ControllerService
     public class XInputGirometer
     {
         public Gyrometer sensor;
+
         private Vector3 reading = new();
 
         private long prev_microseconds;
@@ -49,7 +50,7 @@ namespace ControllerService
 
             prev_microseconds = microseconds;
 
-            this.reading.X = -(float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityX, rate);
+            this.reading.X = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityX, rate);
             this.reading.Y = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityZ, rate);
             this.reading.Z = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityY, rate);
 

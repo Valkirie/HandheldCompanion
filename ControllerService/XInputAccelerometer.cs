@@ -49,7 +49,7 @@ namespace ControllerService
 
             prev_microseconds = microseconds;
 
-            this.reading.X = -(float)accelFilter.axis1Filter.Filter(reading.AccelerationX, rate);
+            this.reading.X = (float)accelFilter.axis1Filter.Filter(reading.AccelerationX, rate);
             this.reading.Y = (float)accelFilter.axis1Filter.Filter(reading.AccelerationZ, rate);
             this.reading.Z = (float)accelFilter.axis1Filter.Filter(reading.AccelerationY, rate);
 
