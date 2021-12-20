@@ -705,7 +705,7 @@ Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Ta
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""install"""; Description: "{cm:LaunchProgram,{#MyAppSetupName}}"; Flags: postinstall runascurrentuser
+Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""install"""; Description: "{cm:LaunchProgram,{#MyAppSetupName}}"; Flags: nowait postinstall runascurrentuser
 
 [UninstallRun]
 Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""uninstall"""; RunOnceId: "UninstallService"; Flags: runascurrentuser runhidden
