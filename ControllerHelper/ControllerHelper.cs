@@ -126,9 +126,8 @@ namespace ControllerHelper
             HIDmodes.Add("DualShock4Controller", HideDS4);
             HIDmodes.Add("Xbox360Controller", HideXBOX);
 
-            foreach (DualShock4Button button in Profile.ListTriggers())
+            foreach (DualShock4Button button in Profile.ListTriggers().Values)
                 cB_UMCInputButton.Items.Add(button);
-            cB_UMCInputButton.SelectedIndex = 0;
 
             // update UI
             cB_RunAtStartup.Checked = RunAtStartup = Properties.Settings.Default.RunAtStartup;
@@ -700,7 +699,7 @@ namespace ControllerHelper
                     cB_UMCInputStyle.SelectedIndex = (int)profile.umc_input;
                     tB_UMCSensivity.Value = (int)profile.umc_sensivity;
                     cB_UMCIntensity.SelectedIndex = (int)profile.umc_intensity;
-                    cB_UMCInputButton.SelectedItem = Profile.ListTriggers().Where(a => a.Value == profile.umc_trigger);
+                    cB_UMCInputButton.SelectedItem = Profile.ListTriggers()[profile.umc_trigger];
 
                     tb_ProfileGyroValue.Value = (int)(profile.gyrometer * 10.0f);
                     tb_ProfileAcceleroValue.Value = (int)(profile.accelerometer * 10.0f);
@@ -747,15 +746,15 @@ namespace ControllerHelper
 
             profile.gyrometer = gyro_value;
             profile.accelerometer = acce_value;
-            profile.whitelisted = cB_Whitelist.Checked;
-            profile.use_wrapper = cB_Wrapper.Checked;
+            profile.whitelisted = cB_Whitelist.Checked && cB_Whitelist.Enabled;
+            profile.use_wrapper = cB_Wrapper.Checked && cB_Wrapper.Enabled;
 
             profile.steering = cB_GyroSteering.SelectedIndex;
 
-            profile.inverthorizontal = cB_InvertHAxis.Checked;
-            profile.invertvertical = cB_InvertVAxis.Checked;
+            profile.inverthorizontal = cB_InvertHAxis.Checked && cB_InvertHAxis.Enabled;
+            profile.invertvertical = cB_InvertVAxis.Checked && cB_InvertVAxis.Enabled;
 
-            profile.umc_enabled = cB_UniversalMC.Checked;
+            profile.umc_enabled = cB_UniversalMC.Checked && cB_UniversalMC.Enabled;
             profile.umc_input = (InputStyle)cB_UMCInputStyle.SelectedIndex;
             profile.umc_sensivity = tB_UMCSensivity.Value;
             profile.umc_intensity = (HapticIntensity)cB_UMCIntensity.SelectedIndex;
@@ -789,6 +788,7 @@ namespace ControllerHelper
         private void cB_UniversalMC_CheckedChanged(object sender, EventArgs e)
         {
             gB_ProfileGyro.Enabled = cB_UniversalMC.Checked;
+            cB_Whitelist.Enabled = !cB_UniversalMC.Checked;
         }
 
         private void tB_UMCSensivity_Scroll(object sender, EventArgs e)
@@ -797,6 +797,16 @@ namespace ControllerHelper
             {
                 toolTip1.SetToolTip(tB_UMCSensivity, $"value: {tB_UMCSensivity.Value}");
             });
+        }
+
+        private void cB_Whitelist_CheckedChanged(object sender, EventArgs e)
+        {
+            cB_UniversalMC.Enabled = !cB_Whitelist.Checked;
+        }
+
+        private void cB_UMCInputStyle_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cB_UMCInputButton.Enabled = cB_UMCInputStyle.SelectedIndex != 0;
         }
 
         private void cB_HIDcloak_CheckedChanged(object sender, EventArgs e)

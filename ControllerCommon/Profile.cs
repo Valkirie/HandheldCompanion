@@ -94,16 +94,16 @@ namespace ControllerCommon
             return name;
         }
 
-        public static List<DualShock4Button> ListTriggers()
+        public static Dictionary<int, DualShock4Button> ListTriggers()
         {
-            return new List<DualShock4Button>() {
-                ProfileButton.AlwaysOn,
-                DualShock4Button.ShoulderLeft,
-                DualShock4Button.ShoulderRight,
-                DualShock4Button.TriggerLeft,
-                DualShock4Button.TriggerRight,
-                DualShock4Button.ThumbLeft,
-                DualShock4Button.ThumbRight
+            return new Dictionary<int, DualShock4Button>() {
+                { ProfileButton.AlwaysOn.Value, ProfileButton.AlwaysOn },
+                { DualShock4Button.ShoulderLeft.Value, DualShock4Button.ShoulderLeft },
+                { DualShock4Button.ShoulderRight.Value, DualShock4Button.ShoulderRight },
+                { DualShock4Button.TriggerLeft.Value, DualShock4Button.TriggerLeft },
+                { DualShock4Button.TriggerRight.Value, DualShock4Button.TriggerRight },
+                { DualShock4Button.ThumbLeft.Value, DualShock4Button.ThumbLeft },
+                { DualShock4Button.ThumbRight.Value, DualShock4Button.ThumbRight }
             };
         }
     }

@@ -57,10 +57,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="contextMenuStrip1.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="quitToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>118, 32</value>
+  </data>
+  <data name="contextMenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>119, 36</value>
+  </data>
   <data name="notifyIcon1.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAoAEBAAAAEAIABoBAAApgAAABgYAAABACAAiAkAAA4FAAAgIAAAAQAgAKgQAACWDgAAMDAAAAEA
@@ -3450,430 +3453,671 @@
         HA6Hw+FwOBwOh8PhcDgcY/P/A4HHvlHK3JOvAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="tabControl1.ToolTip" xml:space="preserve">
-    <value />
+  <data name="cB_touchpad.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 122</value>
   </data>
-  <data name="tabDevices.Text" xml:space="preserve">
-    <value>Périphériques</value>
-  </data>
-  <data name="tabDevices.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="gB_DeviceDetails.Text" xml:space="preserve">
-    <value>Détails du Périphérique</value>
-  </data>
-  <data name="gB_DeviceDetails.ToolTip" xml:space="preserve">
-    <value />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="cB_touchpad.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_touchpad.Size" type="System.Drawing.Size, System.Drawing">
-    <value>206, 19</value>
+    <value>309, 29</value>
   </data>
   <data name="cB_touchpad.Text" xml:space="preserve">
     <value>Envoyer les entrées du pavé tactile</value>
   </data>
-  <data name="cB_touchpad.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_touchpad.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 123</value>
+  </data>
+  <data name="lb_touchpad.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_touchpad.Size" type="System.Drawing.Size, System.Drawing">
-    <value>73, 15</value>
+    <value>108, 25</value>
   </data>
   <data name="lb_touchpad.Text" xml:space="preserve">
     <value>Pavé tactile :</value>
   </data>
-  <data name="lb_touchpad.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_gyro.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 48</value>
+  </data>
+  <data name="lb_gyro.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_gyro.Size" type="System.Drawing.Size, System.Drawing">
-    <value>69, 15</value>
+    <value>106, 25</value>
   </data>
   <data name="lb_gyro.Text" xml:space="preserve">
     <value>Gyroscope :</value>
   </data>
-  <data name="lb_gyro.ToolTip" xml:space="preserve">
-    <value />
+  <data name="cB_accelero.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 84</value>
+  </data>
+  <data name="cB_accelero.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_accelero.Size" type="System.Drawing.Size, System.Drawing">
-    <value>145, 19</value>
+    <value>214, 29</value>
   </data>
   <data name="cB_accelero.Text" xml:space="preserve">
     <value>Accéléromètre détecté</value>
   </data>
-  <data name="cB_accelero.ToolTip" xml:space="preserve">
-    <value />
+  <data name="cB_gyro.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 46</value>
+  </data>
+  <data name="cB_gyro.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_gyro.Size" type="System.Drawing.Size, System.Drawing">
-    <value>124, 19</value>
+    <value>186, 29</value>
   </data>
   <data name="cB_gyro.Text" xml:space="preserve">
     <value>Gyroscope détecté</value>
   </data>
-  <data name="cB_gyro.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_accelero.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 86</value>
+  </data>
+  <data name="lb_accelero.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_accelero.Size" type="System.Drawing.Size, System.Drawing">
-    <value>90, 15</value>
+    <value>134, 25</value>
   </data>
   <data name="lb_accelero.Text" xml:space="preserve">
     <value>Accéléromètre :</value>
   </data>
-  <data name="lb_accelero.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_DeviceDetails.Location" type="System.Drawing.Point, System.Drawing">
+    <value>304, 229</value>
   </data>
-  <data name="gB_HIDDetails.Text" xml:space="preserve">
-    <value>Détails du dispositif d'interface humaine</value>
+  <data name="gB_DeviceDetails.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
-  <data name="gB_HIDDetails.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_DeviceDetails.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
-  <data name="tB_VibrationStr.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_DeviceDetails.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1160, 171</value>
+  </data>
+  <data name="gB_DeviceDetails.Text" xml:space="preserve">
+    <value>Détails du Périphérique</value>
+  </data>
+  <data name="tB_VibrationStr.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 172</value>
+  </data>
+  <data name="tB_VibrationStr.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="tB_VibrationStr.Size" type="System.Drawing.Size, System.Drawing">
+    <value>917, 69</value>
+  </data>
+  <data name="lb_VibrationStr.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 172</value>
+  </data>
+  <data name="lb_VibrationStr.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_VibrationStr.Size" type="System.Drawing.Size, System.Drawing">
-    <value>134, 15</value>
+    <value>204, 25</value>
   </data>
   <data name="lb_VibrationStr.Text" xml:space="preserve">
     <value>Intensité des vibrations :</value>
   </data>
-  <data name="lb_VibrationStr.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tB_PullRate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 96</value>
   </data>
-  <data name="tB_PullRate.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tB_PullRate.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="tB_PullRate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>917, 69</value>
+  </data>
+  <data name="lb_PullRate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 96</value>
+  </data>
+  <data name="lb_PullRate.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_PullRate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 15</value>
+    <value>220, 25</value>
   </data>
   <data name="lb_PullRate.Text" xml:space="preserve">
     <value>Fréquence d'actualisation :</value>
   </data>
-  <data name="lb_PullRate.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_HidMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 48</value>
+  </data>
+  <data name="lb_HidMode.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_HidMode.Size" type="System.Drawing.Size, System.Drawing">
-    <value>137, 15</value>
+    <value>209, 25</value>
   </data>
   <data name="lb_HidMode.Text" xml:space="preserve">
     <value>Mode périphérique HID :</value>
   </data>
-  <data name="lb_HidMode.ToolTip" xml:space="preserve">
-    <value />
+  <data name="cB_HidMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 44</value>
   </data>
-  <data name="cB_HidMode.ToolTip" xml:space="preserve">
-    <value />
+  <data name="cB_HidMode.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
-  <data name="gB_XinputDetails.Text" xml:space="preserve">
-    <value>Détails du périphérique d'entrée Xinput</value>
+  <data name="cB_HidMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>283, 33</value>
   </data>
-  <data name="gB_XinputDetails.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_HIDDetails.Location" type="System.Drawing.Point, System.Drawing">
+    <value>304, 400</value>
+  </data>
+  <data name="gB_HIDDetails.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gB_HIDDetails.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gB_HIDDetails.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1160, 400</value>
+  </data>
+  <data name="gB_HIDDetails.Text" xml:space="preserve">
+    <value>Détails du dispositif d'interface humaine</value>
+  </data>
+  <data name="cB_HIDcloak.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 135</value>
+  </data>
+  <data name="cB_HIDcloak.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_HIDcloak.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 19</value>
+    <value>243, 29</value>
   </data>
   <data name="cB_HIDcloak.Text" xml:space="preserve">
     <value>Camoufler le périphérique</value>
   </data>
-  <data name="cB_HIDcloak.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tB_ProductID.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 87</value>
   </data>
-  <data name="tB_ProductID.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tB_ProductID.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="tB_ProductID.Size" type="System.Drawing.Size, System.Drawing">
+    <value>915, 31</value>
+  </data>
+  <data name="lb_ProductID.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 92</value>
+  </data>
+  <data name="lb_ProductID.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_ProductID.Size" type="System.Drawing.Size, System.Drawing">
-    <value>83, 15</value>
+    <value>129, 25</value>
   </data>
   <data name="lb_ProductID.Text" xml:space="preserve">
     <value>ID du produit :</value>
   </data>
-  <data name="lb_ProductID.ToolTip" xml:space="preserve">
-    <value />
+  <data name="cB_uncloak.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 172</value>
+  </data>
+  <data name="cB_uncloak.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_uncloak.Size" type="System.Drawing.Size, System.Drawing">
-    <value>307, 19</value>
+    <value>462, 29</value>
   </data>
   <data name="cB_uncloak.Text" xml:space="preserve">
     <value>Dévoiler le périphérique quand le programme s'arrête</value>
   </data>
-  <data name="cB_uncloak.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_HidCloak.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 135</value>
+  </data>
+  <data name="lb_HidCloak.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_HidCloak.Size" type="System.Drawing.Size, System.Drawing">
-    <value>78, 15</value>
+    <value>117, 25</value>
   </data>
   <data name="lb_HidCloak.Text" xml:space="preserve">
     <value>Camouflage :</value>
   </data>
-  <data name="lb_HidCloak.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tB_InstanceID.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 44</value>
   </data>
-  <data name="tB_InstanceID.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tB_InstanceID.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="tB_InstanceID.Size" type="System.Drawing.Size, System.Drawing">
+    <value>915, 31</value>
+  </data>
+  <data name="lb_InstanceID.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 48</value>
+  </data>
+  <data name="lb_InstanceID.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_InstanceID.Size" type="System.Drawing.Size, System.Drawing">
-    <value>93, 15</value>
+    <value>141, 25</value>
   </data>
   <data name="lb_InstanceID.Text" xml:space="preserve">
     <value>ID de l'instance :</value>
   </data>
-  <data name="lb_InstanceID.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_XinputDetails.Location" type="System.Drawing.Point, System.Drawing">
+    <value>304, 4</value>
+  </data>
+  <data name="gB_XinputDetails.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gB_XinputDetails.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gB_XinputDetails.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1160, 225</value>
+  </data>
+  <data name="gB_XinputDetails.Text" xml:space="preserve">
+    <value>Détails du périphérique d'entrée Xinput</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lB_Devices.ItemHeight" type="System.Int32, mscorlib">
+    <value>25</value>
+  </data>
+  <data name="lB_Devices.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 28</value>
+  </data>
+  <data name="lB_Devices.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="lB_Devices.Size" type="System.Drawing.Size, System.Drawing">
+    <value>292, 764</value>
+  </data>
+  <data name="gB_XinputDevices.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 4</value>
+  </data>
+  <data name="gB_XinputDevices.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gB_XinputDevices.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gB_XinputDevices.Size" type="System.Drawing.Size, System.Drawing">
+    <value>300, 796</value>
   </data>
   <data name="gB_XinputDevices.Text" xml:space="preserve">
     <value>Périphériques d'entrée Xinput</value>
   </data>
-  <data name="gB_XinputDevices.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tabDevices.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 34</value>
   </data>
-  <data name="lB_Devices.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tabDevices.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
-  <data name="tabProfiles.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tabDevices.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
-  <data name="gB_ProfileOptions.Text" xml:space="preserve">
-    <value>Options du profil</value>
+  <data name="tabDevices.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1468, 804</value>
   </data>
-  <data name="gB_ProfileOptions.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tabDevices.Text" xml:space="preserve">
+    <value>Périphériques</value>
+  </data>
+  <data name="cB_UniversalMC.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 118</value>
+  </data>
+  <data name="cB_UniversalMC.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_UniversalMC.Size" type="System.Drawing.Size, System.Drawing">
-    <value>237, 19</value>
+    <value>357, 29</value>
   </data>
   <data name="cB_UniversalMC.Text" xml:space="preserve">
     <value>Transposer le gyroscope en commandes</value>
   </data>
-  <data name="cB_UniversalMC.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_Wrapper.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 82</value>
+  </data>
+  <data name="lb_Wrapper.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_Wrapper.Size" type="System.Drawing.Size, System.Drawing">
-    <value>107, 15</value>
+    <value>162, 25</value>
   </data>
   <data name="lb_Wrapper.Text" xml:space="preserve">
     <value>Utilisez le masque :</value>
   </data>
-  <data name="lb_Wrapper.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_UniversalMC.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 120</value>
+  </data>
+  <data name="lb_UniversalMC.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_UniversalMC.Size" type="System.Drawing.Size, System.Drawing">
-    <value>140, 15</value>
+    <value>213, 25</value>
   </data>
   <data name="lb_UniversalMC.Text" xml:space="preserve">
     <value>Gyroscope vers manette :</value>
   </data>
-  <data name="lb_UniversalMC.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_Whitelist.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 45</value>
+  </data>
+  <data name="lb_Whitelist.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_Whitelist.Size" type="System.Drawing.Size, System.Drawing">
-    <value>82, 15</value>
+    <value>122, 25</value>
   </data>
   <data name="lb_Whitelist.Text" xml:space="preserve">
     <value>Liste blanche :</value>
   </data>
-  <data name="lb_Whitelist.ToolTip" xml:space="preserve">
-    <value />
+  <data name="cB_Wrapper.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 81</value>
+  </data>
+  <data name="cB_Wrapper.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_Wrapper.Size" type="System.Drawing.Size, System.Drawing">
-    <value>269, 19</value>
+    <value>406, 29</value>
   </data>
   <data name="cB_Wrapper.Text" xml:space="preserve">
     <value>Traduit les appels XInput en appels DirectInput</value>
   </data>
-  <data name="cB_Wrapper.ToolTip" xml:space="preserve">
-    <value />
+  <data name="cB_Whitelist.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 44</value>
+  </data>
+  <data name="cB_Whitelist.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_Whitelist.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 19</value>
+    <value>324, 29</value>
   </data>
   <data name="cB_Whitelist.Text" xml:space="preserve">
     <value>Peut accéder au contrôleur physique</value>
   </data>
-  <data name="cB_Whitelist.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_ProfileOptions.Location" type="System.Drawing.Point, System.Drawing">
+    <value>304, 214</value>
   </data>
-  <data name="gB_6axis.Text" xml:space="preserve">
-    <value>Options de contrôle du mouvement</value>
+  <data name="gB_ProfileOptions.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
-  <data name="gB_6axis.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_ProfileOptions.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="cB_InvertVAxis.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
+  <data name="gB_ProfileOptions.Size" type="System.Drawing.Size, System.Drawing">
+    <value>710, 170</value>
+  </data>
+  <data name="gB_ProfileOptions.Text" xml:space="preserve">
+    <value>Options du profil</value>
+  </data>
+  <data name="cB_InvertVAxis.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 276</value>
+  </data>
+  <data name="cB_InvertVAxis.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_InvertVAxis.Size" type="System.Drawing.Size, System.Drawing">
-    <value>94, 19</value>
+    <value>139, 29</value>
   </data>
   <data name="cB_InvertVAxis.Text" xml:space="preserve">
     <value>Inverser l'axe</value>
   </data>
   <data name="cB_InvertVAxis.ToolTip" xml:space="preserve">
-    <value />
+    <value>Cette fonctionnalité n'est que partiellement implémentée.</value>
   </data>
-  <data name="cB_InvertHAxis.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
+  <data name="cB_InvertHAxis.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 232</value>
+  </data>
+  <data name="cB_InvertHAxis.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_InvertHAxis.Size" type="System.Drawing.Size, System.Drawing">
-    <value>94, 19</value>
+    <value>139, 29</value>
   </data>
   <data name="cB_InvertHAxis.Text" xml:space="preserve">
     <value>Inverser l'axe</value>
   </data>
   <data name="cB_InvertHAxis.ToolTip" xml:space="preserve">
-    <value />
+    <value>Cette fonctionnalité n'est que partiellement implémentée.</value>
+  </data>
+  <data name="lB_InvertVAxis.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 278</value>
+  </data>
+  <data name="lB_InvertVAxis.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lB_InvertVAxis.Size" type="System.Drawing.Size, System.Drawing">
-    <value>74, 15</value>
+    <value>110, 25</value>
   </data>
   <data name="lB_InvertVAxis.Text" xml:space="preserve">
     <value>Axe vertical :</value>
   </data>
-  <data name="lB_InvertVAxis.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lB_InvertHAxis.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 234</value>
+  </data>
+  <data name="lB_InvertHAxis.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lB_InvertHAxis.Size" type="System.Drawing.Size, System.Drawing">
-    <value>89, 15</value>
+    <value>134, 25</value>
   </data>
   <data name="lB_InvertHAxis.Text" xml:space="preserve">
     <value>Axe horizontal :</value>
   </data>
-  <data name="lB_InvertHAxis.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lB_GyroSteering.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 190</value>
+  </data>
+  <data name="lB_GyroSteering.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lB_GyroSteering.Size" type="System.Drawing.Size, System.Drawing">
-    <value>127, 15</value>
+    <value>192, 25</value>
   </data>
   <data name="lB_GyroSteering.Text" xml:space="preserve">
     <value>Axe de direction Gyro :</value>
   </data>
-  <data name="lB_GyroSteering.ToolTip" xml:space="preserve">
-    <value />
+  <data name="cB_GyroSteering.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 186</value>
   </data>
-  <data name="cB_GyroSteering.ToolTip" xml:space="preserve">
-    <value />
+  <data name="cB_GyroSteering.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="cB_GyroSteering.Size" type="System.Drawing.Size, System.Drawing">
+    <value>283, 33</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="tb_ProfileAcceleroValue.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="tb_ProfileAcceleroValue.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 45</value>
+  <data name="tb_ProfileAcceleroValue.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 110</value>
   </data>
-  <data name="tb_ProfileAcceleroValue.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tb_ProfileAcceleroValue.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="tb_ProfileAcceleroValue.Size" type="System.Drawing.Size, System.Drawing">
+    <value>441, 69</value>
+  </data>
+  <data name="lb_ProfileGyro.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 33</value>
+  </data>
+  <data name="lb_ProfileGyro.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_ProfileGyro.Size" type="System.Drawing.Size, System.Drawing">
-    <value>115, 15</value>
+    <value>171, 25</value>
   </data>
   <data name="lb_ProfileGyro.Text" xml:space="preserve">
     <value>Multiplicateur Gyro :</value>
   </data>
-  <data name="lb_ProfileGyro.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_ProfileAccelero.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 110</value>
+  </data>
+  <data name="lb_ProfileAccelero.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_ProfileAccelero.Size" type="System.Drawing.Size, System.Drawing">
-    <value>136, 15</value>
+    <value>200, 25</value>
   </data>
   <data name="lb_ProfileAccelero.Text" xml:space="preserve">
     <value>Multiplicateur Accelero :</value>
   </data>
-  <data name="lb_ProfileAccelero.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="tb_ProfileGyroValue.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
+  <data name="tb_ProfileGyroValue.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 33</value>
+  </data>
+  <data name="tb_ProfileGyroValue.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
   <data name="tb_ProfileGyroValue.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 45</value>
+    <value>441, 69</value>
   </data>
-  <data name="tb_ProfileGyroValue.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_6axis.Location" type="System.Drawing.Point, System.Drawing">
+    <value>304, 384</value>
   </data>
-  <data name="gB_ProfileDetails.Text" xml:space="preserve">
-    <value>Détails du profil</value>
+  <data name="gB_6axis.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
-  <data name="gB_ProfileDetails.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_6axis.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gB_6axis.Size" type="System.Drawing.Size, System.Drawing">
+    <value>710, 416</value>
+  </data>
+  <data name="gB_6axis.Text" xml:space="preserve">
+    <value>Options de contrôle du mouvement</value>
   </data>
   <data name="b_ApplyProfile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>284, 87</value>
+    <value>426, 130</value>
+  </data>
+  <data name="b_ApplyProfile.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="b_ApplyProfile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>122, 40</value>
+    <value>183, 60</value>
   </data>
   <data name="b_ApplyProfile.Text" xml:space="preserve">
     <value>Appliquer le profil</value>
   </data>
-  <data name="b_ApplyProfile.ToolTip" xml:space="preserve">
-    <value />
+  <data name="b_DeleteProfile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 130</value>
+  </data>
+  <data name="b_DeleteProfile.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="b_DeleteProfile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>122, 40</value>
+    <value>183, 60</value>
   </data>
   <data name="b_DeleteProfile.Text" xml:space="preserve">
     <value>Supprimer le profil</value>
   </data>
-  <data name="b_DeleteProfile.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tB_ProfilePath.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 87</value>
   </data>
-  <data name="tB_ProfilePath.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tB_ProfilePath.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="tB_ProfilePath.Size" type="System.Drawing.Size, System.Drawing">
+    <value>465, 31</value>
+  </data>
+  <data name="lb_ProfilePath.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 92</value>
+  </data>
+  <data name="lb_ProfilePath.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_ProfilePath.Size" type="System.Drawing.Size, System.Drawing">
-    <value>97, 15</value>
+    <value>143, 25</value>
   </data>
   <data name="lb_ProfilePath.Text" xml:space="preserve">
     <value>Chemin d'accès :</value>
   </data>
-  <data name="lb_ProfilePath.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tB_ProfileName.Location" type="System.Drawing.Point, System.Drawing">
+    <value>234, 44</value>
   </data>
-  <data name="tB_ProfileName.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tB_ProfileName.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="tB_ProfileName.Size" type="System.Drawing.Size, System.Drawing">
+    <value>465, 31</value>
+  </data>
+  <data name="lb_ProfileName.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 48</value>
+  </data>
+  <data name="lb_ProfileName.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_ProfileName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>40, 15</value>
+    <value>61, 25</value>
   </data>
   <data name="lb_ProfileName.Text" xml:space="preserve">
     <value>Nom :</value>
   </data>
-  <data name="lb_ProfileName.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_ProfileDetails.Location" type="System.Drawing.Point, System.Drawing">
+    <value>304, 4</value>
   </data>
-  <data name="gB_Profiles.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_ProfileDetails.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gB_ProfileDetails.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gB_ProfileDetails.Size" type="System.Drawing.Size, System.Drawing">
+    <value>710, 210</value>
+  </data>
+  <data name="gB_ProfileDetails.Text" xml:space="preserve">
+    <value>Détails du profil</value>
+  </data>
+  <data name="b_CreateProfile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 758</value>
+  </data>
+  <data name="b_CreateProfile.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="b_CreateProfile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>292, 34</value>
   </data>
   <data name="b_CreateProfile.Text" xml:space="preserve">
     <value>Créer un nouveau profil</value>
   </data>
-  <data name="b_CreateProfile.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lB_Profiles.ItemHeight" type="System.Int32, mscorlib">
+    <value>25</value>
   </data>
-  <data name="lB_Profiles.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lB_Profiles.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 28</value>
   </data>
-  <data name="gB_ProfileGyro.Text" xml:space="preserve">
-    <value>Options du gyroscope vers manette</value>
+  <data name="lB_Profiles.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
-  <data name="gB_ProfileGyro.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lB_Profiles.Size" type="System.Drawing.Size, System.Drawing">
+    <value>292, 764</value>
+  </data>
+  <data name="gB_Profiles.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 4</value>
+  </data>
+  <data name="gB_Profiles.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gB_Profiles.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gB_Profiles.Size" type="System.Drawing.Size, System.Drawing">
+    <value>300, 796</value>
   </data>
   <data name="cB_UMCInputButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>133, 58</value>
+    <value>200, 87</value>
+  </data>
+  <data name="cB_UMCInputButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_UMCInputButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>161, 23</value>
+    <value>240, 33</value>
   </data>
-  <data name="cB_UMCInputButton.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_UMCInputButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 92</value>
+  </data>
+  <data name="lb_UMCInputButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_UMCInputButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>117, 15</value>
+    <value>175, 25</value>
   </data>
   <data name="lb_UMCInputButton.Text" xml:space="preserve">
     <value>Bouton d'activation :</value>
-  </data>
-  <data name="lb_UMCInputButton.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="cB_UMCIntensity.Items" xml:space="preserve">
     <value>Faible</value>
@@ -3888,49 +4132,58 @@
     <value>Extrême</value>
   </data>
   <data name="cB_UMCIntensity.Location" type="System.Drawing.Point, System.Drawing">
-    <value>133, 141</value>
+    <value>200, 212</value>
+  </data>
+  <data name="cB_UMCIntensity.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_UMCIntensity.Size" type="System.Drawing.Size, System.Drawing">
-    <value>161, 23</value>
+    <value>240, 33</value>
   </data>
-  <data name="cB_UMCIntensity.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_UMCIntensity.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 216</value>
+  </data>
+  <data name="lb_UMCIntensity.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_UMCIntensity.Size" type="System.Drawing.Size, System.Drawing">
-    <value>58, 15</value>
+    <value>88, 25</value>
   </data>
   <data name="lb_UMCIntensity.Text" xml:space="preserve">
     <value>Intensité :</value>
   </data>
-  <data name="lb_UMCIntensity.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="tB_UMCSensivity.Location" type="System.Drawing.Point, System.Drawing">
-    <value>133, 95</value>
+    <value>200, 142</value>
+  </data>
+  <data name="tB_UMCSensivity.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="tB_UMCSensivity.Size" type="System.Drawing.Size, System.Drawing">
-    <value>161, 45</value>
+    <value>242, 69</value>
   </data>
-  <data name="tB_UMCSensivity.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_UMCSensivity.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 147</value>
+  </data>
+  <data name="lb_UMCSensivity.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_UMCSensivity.Size" type="System.Drawing.Size, System.Drawing">
-    <value>66, 15</value>
+    <value>100, 25</value>
   </data>
   <data name="lb_UMCSensivity.Text" xml:space="preserve">
     <value>Sensibilité :</value>
   </data>
-  <data name="lb_UMCSensivity.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_UMCInputStyle.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 48</value>
+  </data>
+  <data name="lb_UMCInputStyle.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lb_UMCInputStyle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>83, 15</value>
+    <value>127, 25</value>
   </data>
   <data name="lb_UMCInputStyle.Text" xml:space="preserve">
     <value>Type d'entrée :</value>
-  </data>
-  <data name="lb_UMCInputStyle.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="cB_UMCInputStyle.Items" xml:space="preserve">
     <value>Aucun</value>
@@ -3945,67 +4198,130 @@
     <value>Souris</value>
   </data>
   <data name="cB_UMCInputStyle.Location" type="System.Drawing.Point, System.Drawing">
-    <value>133, 29</value>
+    <value>200, 44</value>
+  </data>
+  <data name="cB_UMCInputStyle.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_UMCInputStyle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>161, 23</value>
+    <value>240, 33</value>
   </data>
-  <data name="cB_UMCInputStyle.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_ProfileGyro.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1014, 4</value>
   </data>
-  <data name="tabSettings.Text" xml:space="preserve">
-    <value>Paramètres</value>
+  <data name="gB_ProfileGyro.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
-  <data name="tabSettings.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_ProfileGyro.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
-  <data name="gb_SettingsUDP.Text" xml:space="preserve">
-    <value>Serveur UDP</value>
+  <data name="gB_ProfileGyro.Size" type="System.Drawing.Size, System.Drawing">
+    <value>450, 796</value>
   </data>
-  <data name="gb_SettingsUDP.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_ProfileGyro.Text" xml:space="preserve">
+    <value>Options du gyroscope vers manette</value>
+  </data>
+  <data name="tabProfiles.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 34</value>
+  </data>
+  <data name="tabProfiles.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="tabProfiles.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="tabProfiles.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1468, 804</value>
+  </data>
+  <data name="b_UDPApply.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1339, 30</value>
+  </data>
+  <data name="b_UDPApply.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="b_UDPApply.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 60</value>
   </data>
   <data name="b_UDPApply.Text" xml:space="preserve">
     <value>Appliquer</value>
   </data>
-  <data name="b_UDPApply.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tB_UDPPort.Location" type="System.Drawing.Point, System.Drawing">
+    <value>374, 30</value>
   </data>
-  <data name="tB_UDPPort.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tB_UDPPort.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
-  <data name="lb_UDPport.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tB_UDPPort.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 31</value>
   </data>
-  <data name="tB_UDPIP.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lb_UDPport.Location" type="System.Drawing.Point, System.Drawing">
+    <value>321, 34</value>
+  </data>
+  <data name="lb_UDPport.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
+  </data>
+  <data name="lb_UDPport.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 25</value>
+  </data>
+  <data name="tB_UDPIP.Location" type="System.Drawing.Point, System.Drawing">
+    <value>162, 30</value>
+  </data>
+  <data name="tB_UDPIP.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="tB_UDPIP.Size" type="System.Drawing.Size, System.Drawing">
+    <value>148, 31</value>
+  </data>
+  <data name="cB_UDPEnable.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 34</value>
+  </data>
+  <data name="cB_UDPEnable.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_UDPEnable.Size" type="System.Drawing.Size, System.Drawing">
-    <value>63, 19</value>
+    <value>92, 29</value>
   </data>
   <data name="cB_UDPEnable.Text" xml:space="preserve">
     <value>Activer</value>
   </data>
-  <data name="cB_UDPEnable.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gb_SettingsUDP.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 156</value>
   </data>
-  <data name="gb_SettingsService.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gb_SettingsUDP.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gb_SettingsUDP.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gb_SettingsUDP.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1460, 114</value>
+  </data>
+  <data name="gb_SettingsUDP.Text" xml:space="preserve">
+    <value>Serveur UDP</value>
+  </data>
+  <data name="lB_ServiceStartup.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 176</value>
+  </data>
+  <data name="lB_ServiceStartup.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lB_ServiceStartup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>113, 15</value>
+    <value>174, 25</value>
   </data>
   <data name="lB_ServiceStartup.Text" xml:space="preserve">
     <value>Type de démarrage :</value>
   </data>
-  <data name="lB_ServiceStartup.ToolTip" xml:space="preserve">
-    <value />
+  <data name="lB_ServiceStatus.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 33</value>
+  </data>
+  <data name="lB_ServiceStatus.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
+  </data>
+  <data name="lB_ServiceStatus.Size" type="System.Drawing.Size, System.Drawing">
+    <value>172, 138</value>
   </data>
   <data name="lB_ServiceStatus.Text" xml:space="preserve">
     <value>État du service :</value>
-  </data>
-  <data name="lB_ServiceStatus.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="cB_ServiceStartup.Items" xml:space="preserve">
     <value>Automatique</value>
@@ -4016,62 +4332,149 @@
   <data name="cB_ServiceStartup.Items2" xml:space="preserve">
     <value>Désactivé</value>
   </data>
-  <data name="cB_ServiceStartup.ToolTip" xml:space="preserve">
-    <value />
+  <data name="cB_ServiceStartup.Location" type="System.Drawing.Point, System.Drawing">
+    <value>190, 171</value>
+  </data>
+  <data name="cB_ServiceStartup.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="cB_ServiceStartup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>283, 33</value>
+  </data>
+  <data name="b_ServiceStop.Location" type="System.Drawing.Point, System.Drawing">
+    <value>484, 102</value>
+  </data>
+  <data name="b_ServiceStop.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="b_ServiceStop.Size" type="System.Drawing.Size, System.Drawing">
+    <value>285, 60</value>
   </data>
   <data name="b_ServiceStop.Text" xml:space="preserve">
     <value>Arrêter le service</value>
   </data>
-  <data name="b_ServiceStop.ToolTip" xml:space="preserve">
-    <value />
+  <data name="b_ServiceStart.Location" type="System.Drawing.Point, System.Drawing">
+    <value>484, 33</value>
+  </data>
+  <data name="b_ServiceStart.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="b_ServiceStart.Size" type="System.Drawing.Size, System.Drawing">
+    <value>285, 60</value>
   </data>
   <data name="b_ServiceStart.Text" xml:space="preserve">
     <value>Démarrer le service</value>
   </data>
-  <data name="b_ServiceStart.ToolTip" xml:space="preserve">
-    <value />
+  <data name="b_ServiceDelete.Location" type="System.Drawing.Point, System.Drawing">
+    <value>190, 102</value>
+  </data>
+  <data name="b_ServiceDelete.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="b_ServiceDelete.Size" type="System.Drawing.Size, System.Drawing">
+    <value>285, 60</value>
   </data>
   <data name="b_ServiceDelete.Text" xml:space="preserve">
     <value>Supprimer le service</value>
   </data>
-  <data name="b_ServiceDelete.ToolTip" xml:space="preserve">
-    <value />
+  <data name="b_ServiceInstall.Location" type="System.Drawing.Point, System.Drawing">
+    <value>190, 33</value>
+  </data>
+  <data name="b_ServiceInstall.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="b_ServiceInstall.Size" type="System.Drawing.Size, System.Drawing">
+    <value>285, 60</value>
   </data>
   <data name="b_ServiceInstall.Text" xml:space="preserve">
     <value>Installer le service</value>
   </data>
-  <data name="b_ServiceInstall.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gb_SettingsService.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 270</value>
   </data>
-  <data name="gb_SettingsInterface.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gb_SettingsService.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gb_SettingsService.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gb_SettingsService.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1460, 530</value>
+  </data>
+  <data name="cB_RunAtStartup.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 33</value>
+  </data>
+  <data name="cB_RunAtStartup.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_RunAtStartup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>210, 19</value>
+    <value>314, 29</value>
   </data>
   <data name="cB_RunAtStartup.Text" xml:space="preserve">
     <value>Exécuter au démarrage du système</value>
   </data>
-  <data name="cB_RunAtStartup.ToolTip" xml:space="preserve">
-    <value />
+  <data name="cB_CloseMinimizes.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 108</value>
+  </data>
+  <data name="cB_CloseMinimizes.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_CloseMinimizes.Size" type="System.Drawing.Size, System.Drawing">
-    <value>202, 19</value>
+    <value>302, 29</value>
   </data>
   <data name="cB_CloseMinimizes.Text" xml:space="preserve">
     <value>Minimiser dans la barre de tâches</value>
   </data>
-  <data name="cB_CloseMinimizes.ToolTip" xml:space="preserve">
-    <value />
+  <data name="cB_StartMinimized.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 70</value>
+  </data>
+  <data name="cB_StartMinimized.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="cB_StartMinimized.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 19</value>
+    <value>231, 29</value>
   </data>
   <data name="cB_StartMinimized.Text" xml:space="preserve">
     <value>Démarrer en arrière-plan</value>
   </data>
-  <data name="cB_StartMinimized.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gb_SettingsInterface.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 4</value>
+  </data>
+  <data name="gb_SettingsInterface.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gb_SettingsInterface.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gb_SettingsInterface.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1460, 152</value>
+  </data>
+  <data name="tabSettings.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 34</value>
+  </data>
+  <data name="tabSettings.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="tabSettings.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="tabSettings.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1468, 804</value>
+  </data>
+  <data name="tabSettings.Text" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="tabControl1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="tabControl1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1476, 842</value>
+  </data>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>144, 144</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>1476, 842</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -7462,7 +7865,7 @@
         HA6Hw+FwOBwOh8PhcDgcY/P/A4HHvlHK3JOvAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="$this.ToolTip" xml:space="preserve">
-    <value />
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1489, 872</value>
   </data>
 </root>
