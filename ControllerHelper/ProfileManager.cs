@@ -180,53 +180,61 @@ namespace ControllerHelper
         public void UpdateProfileWrapper(Profile profile)
         {
             // deploy xinput wrapper
+            string x360ce = Properties.Resources.x360ce;
             string processpath = Path.GetDirectoryName(profile.fullpath);
-
-            string dllpath = Path.Combine(processpath, "xinput1_3.dll");
             string inipath = Path.Combine(processpath, "x360ce.ini");
-            bool wrapped = File.Exists(dllpath);
-            bool is_x360ce = false;
-            byte[] data;
-            uint CRC32;
+
+            if (!IsDirectoryWritable(processpath))
+                return;
+
+            if (profile.use_wrapper)
+                File.WriteAllText(inipath, x360ce);
 
             // get binary type (x64, x86)
             BinaryType bt; GetBinaryType(profile.fullpath, out bt);
 
-            // has dll, check if that's ours
-            if (wrapped)
+            for (int i = 1; i < 5; i++)
             {
-                data = File.ReadAllBytes(dllpath);
-                CRC32 = Crc32Algorithm.Compute(data);
-                is_x360ce = bt == BinaryType.SCS_64BIT_BINARY ? (CRC32 == CRC32_X64) : (CRC32 == CRC32_X86);
-            }
+                string dllpath = Path.Combine(processpath, $"xinput1_{i}.dll");
+                string backpath = Path.Combine(processpath, $"xinput1_{i}.back");
+                byte[] data = File.ReadAllBytes(dllpath);
 
-            // update data array to appropriate resource
-            data = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_3_64 : Properties.Resources.xinput1_3_86;
-
-            // has xinput1_3.dll but failed CRC check : create backup
-            if (profile.use_wrapper && wrapped && !is_x360ce)
-                File.Move(dllpath, $"{dllpath}.back");
-
-            if (profile.use_wrapper)
-            {
-                // no xinput1_3.dll : deploy wrapper
-                if (!wrapped)
+                switch (i)
                 {
-                    if (IsDirectoryWritable(processpath))
-                        File.WriteAllBytes(dllpath, data);
+                    case 1:
+                        data = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_1_64 : Properties.Resources.xinput1_1_86;
+                        break;
+                    case 2:
+                        data = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_2_64 : Properties.Resources.xinput1_2_86;
+                        break;
+                    case 3:
+                        data = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_3_64 : Properties.Resources.xinput1_3_86;
+                        break;
+                    case 4:
+                        data = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_4_64 : Properties.Resources.xinput1_4_86;
+                        break;
                 }
 
-                string x360ce = Properties.Resources.x360ce;
-                if (IsDirectoryWritable(processpath))
-                    File.WriteAllText(inipath, x360ce);
-            }
-            else if (!profile.use_wrapper && wrapped && is_x360ce)
-            {
-                // has wrapped : delete it
-                if (File.Exists(dllpath))
-                    File.Delete(dllpath);
-                if (File.Exists(inipath))
-                    File.Delete(inipath);
+                if (profile.use_wrapper)
+                {
+                    // create backup if does not exist
+                    if (!File.Exists(backpath))
+                        File.Move(dllpath, backpath);
+
+                    // deploy wrapper
+                    if (!File.Exists(dllpath))
+                        File.WriteAllBytes(dllpath, data);
+                }
+                else
+                {
+                    // delete wrapper if exists
+                    if (File.Exists(dllpath))
+                        File.Delete(dllpath);
+
+                    // restore backup is exists
+                    if (File.Exists(backpath))
+                        File.Move(backpath, dllpath);
+                }
             }
         }
 

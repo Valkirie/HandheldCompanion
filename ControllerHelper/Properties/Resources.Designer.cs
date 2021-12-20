@@ -19,7 +19,7 @@ namespace ControllerHelper.Properties {
     // à l'aide d'un outil, tel que ResGen ou Visual Studio.
     // Pour ajouter ou supprimer un membre, modifiez votre fichier .ResX, puis réexécutez ResGen
     // avec l'option /str ou régénérez votre projet VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -103,6 +103,46 @@ namespace ControllerHelper.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Byte[].
         /// </summary>
+        internal static byte[] xinput1_1_64 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_1_64", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput1_1_86 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_1_86", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput1_2_64 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_2_64", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput1_2_86 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_2_86", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
         internal static byte[] xinput1_3_64 {
             get {
                 object obj = ResourceManager.GetObject("xinput1_3_64", resourceCulture);
@@ -116,6 +156,26 @@ namespace ControllerHelper.Properties {
         internal static byte[] xinput1_3_86 {
             get {
                 object obj = ResourceManager.GetObject("xinput1_3_86", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput1_4_64 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_4_64", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput1_4_86 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_4_86", resourceCulture);
                 return ((byte[])(obj));
             }
         }
