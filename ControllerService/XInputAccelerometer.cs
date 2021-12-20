@@ -55,6 +55,9 @@ namespace ControllerService
 
             this.reading *= controller.profile.accelerometer;
 
+            this.reading.Z = (controller.profile.inverthorizontal ? -1.0f : 1.0f) * this.reading.Z;
+            this.reading.X = (controller.profile.invertvertical ? -1.0f : 1.0f) * this.reading.X;
+
             // raise event
             ReadingChanged?.Invoke(this, this.reading);
         }

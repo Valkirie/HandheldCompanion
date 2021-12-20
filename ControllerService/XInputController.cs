@@ -292,11 +292,11 @@ namespace ControllerService
                     {
                         default:
                         case InputStyle.RightStick:
-                            RightThumbX = ComputeInput(RightThumbX, AngularVelocity.Z, sensivity, intensity);
+                            RightThumbX = ComputeInput(RightThumbX, -AngularVelocity.Z, sensivity, intensity);
                             RightThumbY = ComputeInput(RightThumbY, AngularVelocity.X, sensivity, intensity);
                             break;
                         case InputStyle.LeftStick:
-                            LeftThumbX = ComputeInput(LeftThumbX, AngularVelocity.Z, sensivity, intensity);
+                            LeftThumbX = ComputeInput(LeftThumbX, -AngularVelocity.Z, sensivity, intensity);
                             LeftThumbY = ComputeInput(LeftThumbY, AngularVelocity.X, sensivity, intensity);
                             break;
                     }
