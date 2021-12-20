@@ -231,16 +231,25 @@ namespace ControllerHelper
                 toolTip1.SetToolTip(gb_SettingsService, strings.WarningElevated);
                 toolTip1.SetToolTip(gb_SettingsInterface, strings.WarningElevated);
 
+                b_ApplyProfile.Enabled = false;
+                toolTip1.SetToolTip(gB_ProfileDetails, strings.WarningElevated);
+
                 // disable run at startup button
                 cB_RunAtStartup.Enabled = false;
                 toolTip1.SetToolTip(cB_RunAtStartup, strings.WarningElevated);
+            }
+            else
+            {
+                // monitor processes
+                MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
+                MonitorTimer.Elapsed += MonitorHelper;
+            }
 
-                // disable profile saving if rights are not enough
-                if (!Utils.IsDirectoryWritable(CurrentPathProfiles))
-                {
-                    b_ApplyProfile.Enabled = false;
-                    toolTip1.SetToolTip(gB_XinputDetails, strings.WarningElevated);
-                }
+            // disable profile saving if rights are not enough
+            if (!Utils.IsDirectoryWritable(CurrentPathProfiles))
+            {
+                b_ApplyProfile.Enabled = false;
+                toolTip1.SetToolTip(gB_ProfileDetails, strings.WarningElevated);
             }
 
             UpdateStatus(false);
@@ -257,10 +266,6 @@ namespace ControllerHelper
 
             // start mouse hook
             if (HookMouse) m_Hook.Start();
-
-            // monitor processes
-            MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
-            MonitorTimer.Elapsed += MonitorHelper;
 
             // execute args
             CmdParser.ParseArgs(args);
