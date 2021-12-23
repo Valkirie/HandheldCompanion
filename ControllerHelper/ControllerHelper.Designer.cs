@@ -682,7 +682,7 @@ namespace ControllerHelper
             resources.ApplyResources(this.tB_UMCSensivity, "tB_UMCSensivity");
             this.tB_UMCSensivity.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
             this.tB_UMCSensivity.LargeChange = 500;
-            this.tB_UMCSensivity.Maximum = 4000;
+            this.tB_UMCSensivity.Maximum = 8000;
             this.tB_UMCSensivity.Minimum = 1;
             this.tB_UMCSensivity.Name = "tB_UMCSensivity";
             this.tB_UMCSensivity.SmallChange = 100;
