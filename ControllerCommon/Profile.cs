@@ -25,7 +25,8 @@ namespace ControllerCommon
         Low = 0,
         Medium = 1,
         High = 2,
-        Extreme = 3
+        Extreme = 3,
+        Insane = 4 // are you crazy !?
     }
 
     public class ProfileButton : DualShock4Button
@@ -86,6 +87,8 @@ namespace ControllerCommon
                     return 0.6f;
                 case HapticIntensity.Extreme:
                     return 0.4f;
+                case HapticIntensity.Insane:
+                    return 0.2f;
             }
         }
 
