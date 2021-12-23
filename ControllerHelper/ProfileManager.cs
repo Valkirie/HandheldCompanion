@@ -197,7 +197,7 @@ namespace ControllerHelper
             {
                 string dllpath = Path.Combine(processpath, $"xinput1_{i}.dll");
                 string backpath = Path.Combine(processpath, $"xinput1_{i}.back");
-                byte[] data = File.ReadAllBytes(dllpath);
+                byte[] data;
 
                 switch (i)
                 {
@@ -207,6 +207,7 @@ namespace ControllerHelper
                     case 2:
                         data = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_2_64 : Properties.Resources.xinput1_2_86;
                         break;
+                    default:
                     case 3:
                         data = bt == BinaryType.SCS_64BIT_BINARY ? Properties.Resources.xinput1_3_64 : Properties.Resources.xinput1_3_86;
                         break;
