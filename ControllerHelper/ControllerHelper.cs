@@ -687,6 +687,7 @@ namespace ControllerHelper
                     tB_ProfilePath.Text = profile.path;
                     toolTip1.SetToolTip(tB_ProfilePath, profile.error != ProfileErrorCode.None ? $"Can't reach: {profile.path}" : $"{profile.path}");
 
+
                     cB_Whitelist.Checked = profile.whitelisted;
                     cB_Wrapper.Checked = profile.use_wrapper;
 
@@ -699,7 +700,13 @@ namespace ControllerHelper
                     cB_UMCInputStyle.SelectedIndex = (int)profile.umc_input;
                     tB_UMCSensivity.Value = (int)profile.umc_sensivity;
                     cB_UMCIntensity.SelectedIndex = (int)profile.umc_intensity;
-                    cB_UMCInputButton.SelectedItem = Profile.ListTriggers()[profile.umc_trigger];
+
+                    for (int idx = 0; idx < cB_UMCInputButton.Items.Count; idx++)
+                    {
+                        DualShock4Button button = (DualShock4Button)cB_UMCInputButton.Items[idx];
+                        bool selected = (button.Value & profile.umc_trigger) != 0;
+                        cB_UMCInputButton.SetSelected(idx, selected);
+                    }
 
                     tb_ProfileGyroValue.Value = (int)(profile.gyrometer * 10.0f);
                     tb_ProfileAcceleroValue.Value = (int)(profile.accelerometer * 10.0f);
@@ -758,7 +765,10 @@ namespace ControllerHelper
             profile.umc_input = (InputStyle)cB_UMCInputStyle.SelectedIndex;
             profile.umc_sensivity = tB_UMCSensivity.Value;
             profile.umc_intensity = (HapticIntensity)cB_UMCIntensity.SelectedIndex;
-            profile.umc_trigger = ((DualShock4Button)cB_UMCInputButton.SelectedItem).Value;
+
+            profile.umc_trigger = 0;
+            foreach (DualShock4Button button in cB_UMCInputButton.SelectedItems)
+                profile.umc_trigger |= button.Value;
 
             ProfileManager.profiles[profile.name] = profile;
             ProfileManager.UpdateProfile(profile);

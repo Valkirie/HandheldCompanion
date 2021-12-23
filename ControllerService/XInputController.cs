@@ -283,7 +283,7 @@ namespace ControllerService
                     outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
                 }
 
-                if (profile.umc_enabled && (tempButtons & profile.umc_trigger) == profile.umc_trigger)
+                if (profile.umc_enabled && (tempButtons & profile.umc_trigger) != 0)
                 {
                     float intensity = profile.GetIntensity();
                     float sensivity = profile.umc_sensivity;
