@@ -61,7 +61,7 @@ namespace ControllerCommon
 
         public static short ComputeInput(short value, float input, float sensivity, float curve)
         {
-            float compute = (float)(Math.Sign(input) * Math.Pow(Math.Abs(input) / 25.0f, curve) * 25.0f);
+            float compute = (float)(Math.Sign(input) * Math.Pow(Math.Abs(input) / 20.0f, curve) * 20.0f);
             return (short)Math.Max(-32767, Math.Min(32767, value + compute * sensivity));
         }
 

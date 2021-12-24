@@ -288,7 +288,7 @@ namespace ControllerHelper
                     logger.LogInformation("Profile {0} applied", profile.name);
                 }
                 else
-                    PipeClient.SendMessage(new PipeClientProfile() { profile = new Profile("default", "") });
+                    PipeClient.SendMessage(new PipeClientProfile() { profile = ProfileManager.GetDefault() });
             }
             catch (Exception) { }
         }
@@ -679,6 +679,9 @@ namespace ControllerHelper
                 }
                 else
                 {
+                    // disable button if is default profile
+                    b_DeleteProfile.Enabled = !profile.IsDefault;
+
                     gB_ProfileDetails.Enabled = true;
                     gB_ProfileOptions.Enabled = true;
                     gB_6axis.Enabled = true;
@@ -699,7 +702,7 @@ namespace ControllerHelper
                     cB_UniversalMC.Checked = profile.umc_enabled;
                     cB_UMCInputStyle.SelectedIndex = (int)profile.umc_input;
                     tB_UMCSensivity.Value = (int)profile.umc_sensivity;
-                    cB_UMCIntensity.SelectedIndex = (int)profile.umc_intensity;
+                    tB_UMCIntensity.Value = (int)profile.umc_intensity;
 
                     for (int idx = 0; idx < cB_UMCInputButton.Items.Count; idx++)
                     {
@@ -764,7 +767,7 @@ namespace ControllerHelper
             profile.umc_enabled = cB_UniversalMC.Checked && cB_UniversalMC.Enabled;
             profile.umc_input = (InputStyle)cB_UMCInputStyle.SelectedIndex;
             profile.umc_sensivity = tB_UMCSensivity.Value;
-            profile.umc_intensity = (HapticIntensity)cB_UMCIntensity.SelectedIndex;
+            profile.umc_intensity = tB_UMCIntensity.Value;
 
             profile.umc_trigger = 0;
             foreach (DualShock4Button button in cB_UMCInputButton.SelectedItems)
@@ -817,6 +820,14 @@ namespace ControllerHelper
         private void cB_UMCInputStyle_SelectedIndexChanged(object sender, EventArgs e)
         {
             cB_UMCInputButton.Enabled = cB_UMCInputStyle.SelectedIndex != 0;
+        }
+
+        private void tB_UMCIntensity_Scroll(object sender, EventArgs e)
+        {
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                toolTip1.SetToolTip(tB_UMCIntensity, $"value: {tB_UMCIntensity.Value}");
+            });
         }
 
         private void cB_HIDcloak_CheckedChanged(object sender, EventArgs e)

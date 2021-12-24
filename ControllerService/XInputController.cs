@@ -283,20 +283,20 @@ namespace ControllerService
                     outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
                 }
 
-                if (profile.umc_enabled && (tempButtons & profile.umc_trigger) != 0)
+                if (profile.umc_enabled && ((tempButtons + ProfileButton.AlwaysOn.Value) & profile.umc_trigger) != 0)
                 {
                     float intensity = profile.GetIntensity();
-                    float sensivity = profile.umc_sensivity;
+                    float sensivity = profile.GetSensiviy();
 
                     switch (profile.umc_input)
                     {
                         default:
                         case InputStyle.RightStick:
-                            RightThumbX = ComputeInput(RightThumbX, -AngularVelocity.Z, sensivity, intensity);
+                            RightThumbX = ComputeInput(RightThumbX, -AngularVelocity.Z * 1.5f, sensivity, intensity);
                             RightThumbY = ComputeInput(RightThumbY, AngularVelocity.X, sensivity, intensity);
                             break;
                         case InputStyle.LeftStick:
-                            LeftThumbX = ComputeInput(LeftThumbX, -AngularVelocity.Z, sensivity, intensity);
+                            LeftThumbX = ComputeInput(LeftThumbX, -AngularVelocity.Z * 1.5f, sensivity, intensity);
                             LeftThumbY = ComputeInput(LeftThumbY, AngularVelocity.X, sensivity, intensity);
                             break;
                     }

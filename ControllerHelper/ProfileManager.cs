@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using static ControllerCommon.Utils;
 
@@ -13,9 +14,6 @@ namespace ControllerHelper
     {
         public Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
         public FileSystemWatcher profileWatcher { get; set; }
-
-        private const uint CRC32_X64 = 0x906f6806;
-        private const uint CRC32_X86 = 0x456b57cc;
 
         private Dictionary<string, DateTime> dateTimeDictionary = new Dictionary<string, DateTime>();
 
@@ -32,7 +30,7 @@ namespace ControllerHelper
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            /* monitor changes, deletions and creations of profiles
+            // monitor changes, deletions and creations of profiles
             profileWatcher = new FileSystemWatcher()
             {
                 Path = path,
@@ -42,14 +40,52 @@ namespace ControllerHelper
                 NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size
             };
 
-            profileWatcher.Created += ProfileCreated;
+            // profileWatcher.Created += ProfileCreated;
             profileWatcher.Deleted += ProfileDeleted;
-            profileWatcher.Changed += ProfileChanged; */
+            // profileWatcher.Changed += ProfileChanged;
 
             // process existing profiles
             string[] fileEntries = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
                 ProcessProfile(fileName);
+
+            // create default profile if missing
+            SetDefault();
+        }
+
+        private void ProfileChanged(object sender, FileSystemEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ProfileDeleted(object sender, FileSystemEventArgs e)
+        {
+            string ProfileName = e.Name.Replace(".json", "");
+
+            if (profiles.ContainsKey(ProfileName))
+            {
+                // you should not delete default profile, you fool !
+                Profile profile = profiles[ProfileName];
+                if (profile.IsDefault)
+                    SerializeProfile(profile);
+            }
+        }
+
+        private void ProfileCreated(object sender, FileSystemEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetDefault()
+        {
+            SerializeProfile(new Profile("Default", ""));
+        }
+
+        public Profile GetDefault()
+        {
+            if (profiles.ContainsKey("Default"))
+                return profiles["Default"];
+            return null;
         }
 
         private void ProcessProfile(string fileName)
@@ -72,6 +108,9 @@ namespace ControllerHelper
                 logger.LogError("Could not parse {0}.", fileName);
                 return;
             }
+
+            if (profile.name == "Default")
+                profile.IsDefault = true;
 
             UpdateProfile(profile);
         }

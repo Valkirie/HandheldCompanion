@@ -20,15 +20,6 @@ namespace ControllerCommon
         Mouse = 3
     }
 
-    public enum HapticIntensity
-    {
-        Low = 0,
-        Medium = 1,
-        High = 2,
-        Extreme = 3,
-        Insane = 4 // are you crazy !?
-    }
-
     public class ProfileButton : DualShock4Button
     {
         public ProfileButton(int id, string name, ushort value) : base(id, name, value)
@@ -55,13 +46,15 @@ namespace ControllerCommon
 
         public bool umc_enabled { get; set; } = false;
         public InputStyle umc_input { get; set; } = InputStyle.None;
-        public float umc_sensivity { get; set; } = 500.0f;
 
-        public HapticIntensity umc_intensity { get; set; } = HapticIntensity.Low;
+        public float umc_sensivity { get; set; } = 2.0f;
+        public float umc_intensity { get; set; } = 1.0f;
+
         public int umc_trigger { get; set; } = 0;
 
         [JsonIgnore] public ProfileErrorCode error;
         [JsonIgnore] public string fullpath { get; set; }
+        [JsonIgnore] public bool IsDefault { get; set; } = false;
 
         public Profile()
         {
@@ -74,22 +67,14 @@ namespace ControllerCommon
             this.fullpath = path;
         }
 
+        public float GetSensiviy()
+        {
+            return umc_sensivity * 500.0f;
+        }
+
         public float GetIntensity()
         {
-            switch (umc_intensity)
-            {
-                default:
-                case HapticIntensity.Low:
-                    return 1.0f;
-                case HapticIntensity.Medium:
-                    return 0.8f;
-                case HapticIntensity.High:
-                    return 0.6f;
-                case HapticIntensity.Extreme:
-                    return 0.4f;
-                case HapticIntensity.Insane:
-                    return 0.2f;
-            }
+            return 1.0f - (umc_intensity / 20.0f) + 0.1f;
         }
 
         public override string ToString()
