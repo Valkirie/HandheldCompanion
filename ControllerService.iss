@@ -647,7 +647,7 @@ end;
 ;#define UseSql2019Express
 
 #define MyAppSetupName 'Controller Service'
-#define MyAppVersion '0.8.2.0'
+#define MyAppVersion '0.8.2.2'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/ControllerService'
