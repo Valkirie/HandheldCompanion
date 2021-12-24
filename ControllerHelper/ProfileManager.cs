@@ -258,7 +258,7 @@ namespace ControllerHelper
                 if (profile.use_wrapper)
                 {
                     // create backup if does not exist
-                    if (!File.Exists(backpath))
+                    if (!File.Exists(backpath) && File.Exists(dllpath))
                         File.Move(dllpath, backpath);
 
                     // deploy wrapper
