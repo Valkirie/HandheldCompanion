@@ -97,6 +97,7 @@ namespace ControllerHelper
 
             // initialize pipe client
             PipeClient = new PipeClient("ControllerService", logger);
+            PipeClient.Connected += OnClientConnected;
             PipeClient.Disconnected += OnClientDisconnected;
             PipeClient.ServerMessage += OnServerMessage;
 
@@ -588,6 +589,7 @@ namespace ControllerHelper
                     var exe = Path.GetFileNameWithoutExtension(file);
 
                     Profile profile = new Profile(exe, path);
+                    ProfileManager.UpdateProfile(profile);
                     ProfileManager.SerializeProfile(profile);
                 }
                 catch (Exception ex)

@@ -171,11 +171,7 @@ namespace ControllerHelper
             string jsonString = JsonSerializer.Serialize(profile, options);
 
             string settingsPath = Path.Combine(path, $"{profile.name}.json");
-            if (IsDirectoryWritable(path))
-            {
-                File.WriteAllText(settingsPath, jsonString);
-                UpdateProfile(profile);
-            }
+            File.WriteAllText(settingsPath, jsonString);
         }
 
         private ProfileErrorCode SanitizeProfile(Profile profile)
