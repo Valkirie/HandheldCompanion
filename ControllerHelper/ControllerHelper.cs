@@ -173,6 +173,16 @@ namespace ControllerHelper
             }
         }
 
+        private void OnClientConnected(object sender)
+        {
+            // start mouse hook
+            if (HookMouse) m_Hook.Start();
+
+            // start processes monitor
+            MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
+            MonitorTimer.Elapsed += MonitorHelper;
+        }
+
         private void OnClientMessage(object sender, PipeMessage e)
         {
             PipeConsoleArgs console = (PipeConsoleArgs)e;
@@ -213,6 +223,13 @@ namespace ControllerHelper
 
         private void OnClientDisconnected(object sender)
         {
+            // stop mouse hook
+            if (m_Hook.hooked)
+                m_Hook.Stop();
+
+            // stop processes monitor
+            MonitorTimer.Elapsed -= MonitorHelper;
+
             UpdateStatus(false);
         }
 
@@ -237,12 +254,6 @@ namespace ControllerHelper
                 cB_RunAtStartup.Enabled = false;
                 toolTip1.SetToolTip(cB_RunAtStartup, strings.WarningElevated);
             }
-            else
-            {
-                // monitor processes
-                MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
-                MonitorTimer.Elapsed += MonitorHelper;
-            }
 
             // disable profile saving if rights are not enough
             if (!Utils.IsDirectoryWritable(CurrentPathProfiles))
@@ -262,9 +273,6 @@ namespace ControllerHelper
 
             // initialize Profile Manager
             ProfileManager = new ProfileManager(CurrentPathProfiles, this, logger);
-
-            // start mouse hook
-            if (HookMouse) m_Hook.Start();
 
             // execute args
             CmdParser.ParseArgs(args);
@@ -337,11 +345,13 @@ namespace ControllerHelper
 
         private void ControllerHelper_Closed(object sender, FormClosedEventArgs e)
         {
-            MonitorTimer.Elapsed -= MonitorHelper;
-
             ServiceManager.Stop();
-            PipeClient.Stop();
-            m_Hook.Stop();
+
+            if (PipeClient.connected)
+                PipeClient.Stop();
+
+            if (m_Hook.hooked)
+                m_Hook.Stop();
         }
 
         private void MonitorHelper(object sender, ElapsedEventArgs e)
@@ -648,7 +658,10 @@ namespace ControllerHelper
             Properties.Settings.Default.HookMouse = HookMouse;
             Properties.Settings.Default.Save();
 
-            if (HookMouse) m_Hook.Start(); else m_Hook.Stop();
+            if (HookMouse && PipeClient.connected)
+                m_Hook.Start();
+            else if (m_Hook.hooked)
+                m_Hook.Stop();
         }
 
         private void cB_StartMinimized_CheckedChanged(object sender, EventArgs e)

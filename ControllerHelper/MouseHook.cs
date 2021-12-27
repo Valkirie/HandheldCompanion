@@ -27,6 +27,7 @@ namespace ControllerHelper
         private readonly ILogger logger;
 
         private TouchInput TouchPos;
+        public bool hooked;
 
         public MouseHook(PipeClient client, ControllerHelper helper, ILogger logger)
         {
@@ -43,6 +44,7 @@ namespace ControllerHelper
         {
             m_Hook = new Thread(Subscribe) { IsBackground = true };
             m_Hook.Start();
+            hooked = true;
 
             logger.LogInformation("Mouse hook has started");
         }
@@ -124,10 +126,14 @@ namespace ControllerHelper
 
         internal void Stop()
         {
+            if (m_Events == null)
+                return;
+
             m_Events.MouseDownExt -= OnMouseDown;
             m_Events.MouseUpExt -= OnMouseUp;
             m_Events.Dispose();
             m_Events = null;
+            hooked = false;
 
             logger.LogInformation("Mouse hook has stopped");
         }
