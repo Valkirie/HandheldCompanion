@@ -268,12 +268,12 @@ namespace ControllerHelper
             // start Service Manager
             ServiceManager.Start();
 
+            // initialize Profile Manager
+            ProfileManager = new ProfileManager(CurrentPathProfiles, this, logger);
+
             // start pipe client and server
             PipeClient.Start();
             PipeServer.Start();
-
-            // initialize Profile Manager
-            ProfileManager = new ProfileManager(CurrentPathProfiles, this, logger);
 
             // execute args
             CmdParser.ParseArgs(args);
@@ -680,13 +680,14 @@ namespace ControllerHelper
             Properties.Settings.Default.Save();
         }
 
+        private Profile CurrentProfile;
         private void lB_Profiles_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Profile profile = (Profile)lB_Profiles.SelectedItem;
+            CurrentProfile = (Profile)lB_Profiles.SelectedItem;
 
             BeginInvoke((MethodInvoker)delegate ()
             {
-                if (profile == null)
+                if (CurrentProfile == null)
                 {
                     gB_ProfileDetails.Enabled = false;
                     gB_ProfileOptions.Enabled = false;
@@ -695,49 +696,47 @@ namespace ControllerHelper
                 else
                 {
                     // disable button if is default profile
-                    b_DeleteProfile.Enabled = !profile.IsDefault;
+                    b_DeleteProfile.Enabled = !CurrentProfile.IsDefault;
+                    cB_Whitelist.Enabled = !CurrentProfile.IsDefault;
+                    cB_Wrapper.Enabled = !CurrentProfile.IsDefault;
 
                     gB_ProfileDetails.Enabled = true;
                     gB_ProfileOptions.Enabled = true;
                     gB_6axis.Enabled = true;
 
-                    tB_ProfileName.Text = profile.name;
-                    tB_ProfilePath.Text = profile.path;
-                    toolTip1.SetToolTip(tB_ProfilePath, profile.error != ProfileErrorCode.None ? $"Can't reach: {profile.path}" : $"{profile.path}");
+                    tB_ProfileName.Text = CurrentProfile.name;
+                    tB_ProfilePath.Text = CurrentProfile.path;
+                    toolTip1.SetToolTip(tB_ProfilePath, CurrentProfile.error != ProfileErrorCode.None ? $"Can't reach: {CurrentProfile.path}" : $"{CurrentProfile.path}");
 
 
-                    cB_Whitelist.Checked = profile.whitelisted;
-                    cB_Wrapper.Checked = profile.use_wrapper;
+                    cB_Whitelist.Checked = CurrentProfile.whitelisted;
+                    cB_Wrapper.Checked = CurrentProfile.use_wrapper;
 
-                    cB_GyroSteering.SelectedIndex = profile.steering;
+                    cB_GyroSteering.SelectedIndex = CurrentProfile.steering;
 
-                    cB_InvertHAxis.Checked = profile.inverthorizontal;
-                    cB_InvertVAxis.Checked = profile.invertvertical;
+                    cB_InvertHAxis.Checked = CurrentProfile.inverthorizontal;
+                    cB_InvertVAxis.Checked = CurrentProfile.invertvertical;
 
-                    cB_UniversalMC.Checked = profile.umc_enabled;
-                    cB_UMCInputStyle.SelectedIndex = (int)profile.umc_input;
-                    tB_UMCSensivity.Value = (int)profile.umc_sensivity;
-                    tB_UMCIntensity.Value = (int)profile.umc_intensity;
+                    cB_UniversalMC.Checked = CurrentProfile.umc_enabled;
+                    cB_UMCInputStyle.SelectedIndex = (int)CurrentProfile.umc_input;
+                    tB_UMCSensivity.Value = (int)CurrentProfile.umc_sensivity;
+                    tB_UMCIntensity.Value = (int)CurrentProfile.umc_intensity;
 
                     for (int idx = 0; idx < cB_UMCInputButton.Items.Count; idx++)
                     {
                         DualShock4Button button = (DualShock4Button)cB_UMCInputButton.Items[idx];
-                        bool selected = (button.Value & profile.umc_trigger) != 0;
+                        bool selected = (button.Value & CurrentProfile.umc_trigger) != 0;
                         cB_UMCInputButton.SetSelected(idx, selected);
                     }
 
-                    tb_ProfileGyroValue.Value = (int)(profile.gyrometer * 10.0f);
-                    tb_ProfileAcceleroValue.Value = (int)(profile.accelerometer * 10.0f);
+                    tb_ProfileGyroValue.Value = (int)(CurrentProfile.gyrometer * 10.0f);
+                    tb_ProfileAcceleroValue.Value = (int)(CurrentProfile.accelerometer * 10.0f);
                 }
             });
         }
 
         private void tb_ProfileGyroValue_Scroll(object sender, EventArgs e)
         {
-            Profile profile = (Profile)lB_Profiles.SelectedItem;
-            if (profile == null)
-                return;
-
             float value = tb_ProfileGyroValue.Value / 10.0f;
 
             BeginInvoke((MethodInvoker)delegate ()
@@ -748,10 +747,6 @@ namespace ControllerHelper
 
         private void tb_ProfileAcceleroValue_Scroll(object sender, EventArgs e)
         {
-            Profile profile = (Profile)lB_Profiles.SelectedItem;
-            if (profile == null)
-                return;
-
             float value = tb_ProfileAcceleroValue.Value / 10.0f;
 
             BeginInvoke((MethodInvoker)delegate ()
@@ -762,35 +757,34 @@ namespace ControllerHelper
 
         private void b_ApplyProfile_Click(object sender, EventArgs e)
         {
-            Profile profile = (Profile)lB_Profiles.SelectedItem;
-            if (profile == null)
+            if (CurrentProfile == null)
                 return;
 
             float gyro_value = tb_ProfileGyroValue.Value / 10.0f;
             float acce_value = tb_ProfileAcceleroValue.Value / 10.0f;
 
-            profile.gyrometer = gyro_value;
-            profile.accelerometer = acce_value;
-            profile.whitelisted = cB_Whitelist.Checked && cB_Whitelist.Enabled;
-            profile.use_wrapper = cB_Wrapper.Checked && cB_Wrapper.Enabled;
+            CurrentProfile.gyrometer = gyro_value;
+            CurrentProfile.accelerometer = acce_value;
+            CurrentProfile.whitelisted = cB_Whitelist.Checked && cB_Whitelist.Enabled;
+            CurrentProfile.use_wrapper = cB_Wrapper.Checked && cB_Wrapper.Enabled;
 
-            profile.steering = cB_GyroSteering.SelectedIndex;
+            CurrentProfile.steering = cB_GyroSteering.SelectedIndex;
 
-            profile.inverthorizontal = cB_InvertHAxis.Checked && cB_InvertHAxis.Enabled;
-            profile.invertvertical = cB_InvertVAxis.Checked && cB_InvertVAxis.Enabled;
+            CurrentProfile.inverthorizontal = cB_InvertHAxis.Checked && cB_InvertHAxis.Enabled;
+            CurrentProfile.invertvertical = cB_InvertVAxis.Checked && cB_InvertVAxis.Enabled;
 
-            profile.umc_enabled = cB_UniversalMC.Checked && cB_UniversalMC.Enabled;
-            profile.umc_input = (InputStyle)cB_UMCInputStyle.SelectedIndex;
-            profile.umc_sensivity = tB_UMCSensivity.Value;
-            profile.umc_intensity = tB_UMCIntensity.Value;
+            CurrentProfile.umc_enabled = cB_UniversalMC.Checked && cB_UniversalMC.Enabled;
+            CurrentProfile.umc_input = (InputStyle)cB_UMCInputStyle.SelectedIndex;
+            CurrentProfile.umc_sensivity = tB_UMCSensivity.Value;
+            CurrentProfile.umc_intensity = tB_UMCIntensity.Value;
 
-            profile.umc_trigger = 0;
+            CurrentProfile.umc_trigger = 0;
             foreach (DualShock4Button button in cB_UMCInputButton.SelectedItems)
-                profile.umc_trigger |= button.Value;
+                CurrentProfile.umc_trigger |= button.Value;
 
-            ProfileManager.profiles[profile.name] = profile;
-            ProfileManager.UpdateProfile(profile);
-            ProfileManager.SerializeProfile(profile);
+            ProfileManager.profiles[CurrentProfile.name] = CurrentProfile;
+            ProfileManager.UpdateProfile(CurrentProfile);
+            ProfileManager.SerializeProfile(CurrentProfile);
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -816,7 +810,7 @@ namespace ControllerHelper
         private void cB_UniversalMC_CheckedChanged(object sender, EventArgs e)
         {
             gB_ProfileGyro.Enabled = cB_UniversalMC.Checked;
-            cB_Whitelist.Enabled = !cB_UniversalMC.Checked;
+            cB_Whitelist.Enabled = !cB_UniversalMC.Checked && !CurrentProfile.IsDefault;
         }
 
         private void tB_UMCSensivity_Scroll(object sender, EventArgs e)

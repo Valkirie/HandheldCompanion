@@ -194,7 +194,7 @@ namespace ControllerHelper
             // update GUI
             helper.UpdateProfileList(profile);
 
-            if (profile.error != ProfileErrorCode.None)
+            if (profile.error != ProfileErrorCode.None && !profile.IsDefault)
             {
                 logger.LogError("Profile {0} returned error code {1}", profile.name, profile.error);
                 return;
@@ -222,90 +222,107 @@ namespace ControllerHelper
         {
             // deploy xinput wrapper
             string x360ce = Properties.Resources.x360ce;
-            string processpath = Path.GetDirectoryName(profile.fullpath);
+            string[] fullpaths = new string[] { profile.fullpath };
 
-            string inipath = Path.Combine(processpath, "x360ce.ini");
-            bool iniexist = File.Exists(inipath);
-
-            if (!IsDirectoryWritable(processpath))
-                return;
-
-            // get binary type (x64, x86)
-            BinaryType bt; GetBinaryType(profile.fullpath, out bt);
-            bool x64 = bt == BinaryType.SCS_64BIT_BINARY;
-
-            if (profile.use_wrapper)
-                File.WriteAllText(inipath, x360ce);
-            else if (iniexist)
-                File.Delete(inipath);
-
-            for (int i = 0; i < 5; i++)
+            // for testing purposes, this should not happen!
+            if (profile.IsDefault)
             {
-                string dllpath = Path.Combine(processpath, $"xinput1_{i+1}.dll");
-                string backpath = Path.Combine(processpath, $"xinput1_{i+1}.back");
-
-                // dll has a different naming format
-                if (i == 4)
+                fullpaths = new string[]
                 {
-                    dllpath = Path.Combine(processpath, $"xinput9_1_0.dll");
-                    backpath = Path.Combine(processpath, $"xinput9_1_0.back");
-                }
+                    @"C:\Windows\System32\cmd.exe",
+                    @"C:\Windows\SysWOW64\cmd.exe"
+                };
+            }
 
-                bool dllexist = File.Exists(dllpath);
-                bool backexist = File.Exists(backpath);
+            foreach (string fullpath in fullpaths)
+            {
+                string processpath = Path.GetDirectoryName(fullpath);
+                string inipath = Path.Combine(processpath, "x360ce.ini");
+                bool iniexist = File.Exists(inipath);
 
-                byte[] data = new byte[] { 0 };
+                if (!IsDirectoryWritable(processpath))
+                    return;
 
-                // check CRC32
-                if (dllexist) data = File.ReadAllBytes(dllpath);
-                var crc = Crc32Algorithm.Compute(data);
-                bool is_x360ce = CRCs[x64][i] == crc;
-
-                switch (i)
-                {
-                    case 0:
-                        data = x64 ? Properties.Resources.xinput1_11 : Properties.Resources.xinput1_1;
-                        break;
-                    case 1:
-                        data = x64 ? Properties.Resources.xinput1_21 : Properties.Resources.xinput1_2;
-                        break;
-                    default:
-                    case 2:
-                        data = x64 ? Properties.Resources.xinput1_31 : Properties.Resources.xinput1_3;
-                        break;
-                    case 3:
-                        data = x64 ? Properties.Resources.xinput1_41 : Properties.Resources.xinput1_4;
-                        break;
-                    case 4:
-                        data = x64 ? Properties.Resources.xinput9_1_01 : Properties.Resources.xinput9_1_0;
-                        break;
-                }
+                // get binary type (x64, x86)
+                BinaryType bt; GetBinaryType(fullpath, out bt);
+                bool x64 = bt == BinaryType.SCS_64BIT_BINARY;
 
                 if (profile.use_wrapper)
+                    File.WriteAllText(inipath, x360ce);
+                else if (iniexist)
+                    File.Delete(inipath);
+
+                for (int i = 0; i < 5; i++)
                 {
-                    if (dllexist && is_x360ce)
-                        continue; // skip to next file
-                    else if (!dllexist)
-                        File.WriteAllBytes(dllpath, data);
-                    else if (dllexist && !is_x360ce)
+                    string dllpath = Path.Combine(processpath, $"xinput1_{i + 1}.dll");
+                    string backpath = Path.Combine(processpath, $"xinput1_{i + 1}.back");
+
+                    // dll has a different naming format
+                    if (i == 4)
                     {
-                        // create backup of current dll
-                        if (!backexist)
-                            File.Move(dllpath, backpath);
-
-                        // deploy wrapper
-                        File.WriteAllBytes(dllpath, data);
+                        dllpath = Path.Combine(processpath, $"xinput9_1_0.dll");
+                        backpath = Path.Combine(processpath, $"xinput9_1_0.back");
                     }
-                }
-                else
-                {
-                    // delete wrapper dll
-                    if (dllexist && is_x360ce)
-                        File.Delete(dllpath);
 
-                    // restore backup is exists
-                    if (backexist)
-                        File.Move(backpath, dllpath);
+                    if (!IsFileWritable(dllpath))
+                        SetFileWritable(dllpath);
+
+                    bool dllexist = File.Exists(dllpath);
+                    bool backexist = File.Exists(backpath);
+
+                    byte[] data = new byte[] { 0 };
+
+                    // check CRC32
+                    if (dllexist) data = File.ReadAllBytes(dllpath);
+                    var crc = Crc32Algorithm.Compute(data);
+                    bool is_x360ce = CRCs[x64][i] == crc;
+
+                    switch (i)
+                    {
+                        case 0:
+                            data = x64 ? Properties.Resources.xinput1_11 : Properties.Resources.xinput1_1;
+                            break;
+                        case 1:
+                            data = x64 ? Properties.Resources.xinput1_21 : Properties.Resources.xinput1_2;
+                            break;
+                        default:
+                        case 2:
+                            data = x64 ? Properties.Resources.xinput1_31 : Properties.Resources.xinput1_3;
+                            break;
+                        case 3:
+                            data = x64 ? Properties.Resources.xinput1_41 : Properties.Resources.xinput1_4;
+                            break;
+                        case 4:
+                            data = x64 ? Properties.Resources.xinput9_1_01 : Properties.Resources.xinput9_1_0;
+                            break;
+                    }
+
+                    if (profile.use_wrapper)
+                    {
+                        if (dllexist && is_x360ce)
+                            continue; // skip to next file
+                        else if (!dllexist)
+                            File.WriteAllBytes(dllpath, data);
+                        else if (dllexist && !is_x360ce)
+                        {
+                            // create backup of current dll
+                            if (!backexist)
+                                File.Move(dllpath, backpath);
+
+                            // deploy wrapper
+                            File.WriteAllBytes(dllpath, data);
+                        }
+                    }
+                    else
+                    {
+                        // delete wrapper dll
+                        if (dllexist && is_x360ce)
+                            File.Delete(dllpath);
+
+                        // restore backup is exists
+                        if (backexist)
+                            File.Move(backpath, dllpath);
+                    }
                 }
             }
         }
