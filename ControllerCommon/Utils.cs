@@ -5,6 +5,7 @@ using System.IO;
 using System.Management;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
 
@@ -132,29 +133,40 @@ namespace ControllerCommon
             }
         }
 
-
-        public static bool IsDirectoryWritable(string dirPath, bool throwIfFails = false)
+        public static bool IsFileWritable(string filePath)
         {
             try
             {
-                using (FileStream fs = File.Create(
-                    Path.Combine(
-                        dirPath,
-                        Path.GetRandomFileName()
-                    ),
-                    1,
-                    FileOptions.DeleteOnClose)
-                )
-                { }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                if (throwIfFails)
-                    throw;
+                if (File.Exists(filePath))
+                {
+                    using (var fs = new FileStream(filePath, FileMode.Open))
+                        return fs.CanWrite;
+                }
                 else
-                    return false;
+                {
+                    bool CanWrite = false;
+                    using (var fs = new FileStream(filePath, FileMode.Create))
+                        CanWrite = fs.CanWrite;
+                    File.Delete(filePath);
+                    return CanWrite;
+                }
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+        }
+
+        public static bool IsDirectoryWritable(string dirPath)
+        {
+            try
+            {
+                using (FileStream fs = File.Create(Path.Combine(dirPath,Path.GetRandomFileName()), 1, FileOptions.DeleteOnClose)          )
+                    return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
@@ -181,6 +193,64 @@ namespace ControllerCommon
                 axis1Filter.MinCutoff = axis2Filter.MinCutoff = axis3Filter.MinCutoff = minCutoff;
                 axis1Filter.Beta = axis2Filter.Beta = axis3Filter.Beta = beta;
             }
+        }
+
+        public static void SetDirectoryWritable(string processpath)
+        {
+            var rootDirectory = new DirectoryInfo(processpath);
+            var directorySecurity = rootDirectory.GetAccessControl();
+
+            SecurityIdentifier everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+            SecurityIdentifier adminitrators = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
+
+            directorySecurity.AddAccessRule(
+                new FileSystemAccessRule(
+                        everyone,
+                        FileSystemRights.FullControl,
+                        InheritanceFlags.None,
+                        PropagationFlags.NoPropagateInherit,
+                        AccessControlType.Allow));
+
+            directorySecurity.AddAccessRule(
+                new FileSystemAccessRule(
+                WindowsIdentity.GetCurrent().Name,
+                FileSystemRights.FullControl,
+                InheritanceFlags.None,
+                PropagationFlags.NoPropagateInherit,
+                AccessControlType.Allow));
+
+            directorySecurity.SetAccessRuleProtection(isProtected: true, preserveInheritance: false);
+
+            rootDirectory.SetAccessControl(directorySecurity);
+        }
+
+        public static void SetFileWritable(string processpath)
+        {
+            var rootFile = new FileInfo(processpath);
+            var fileSecurity = rootFile.GetAccessControl();
+
+            SecurityIdentifier everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+            SecurityIdentifier adminitrators = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
+
+            fileSecurity.AddAccessRule(
+                new FileSystemAccessRule(
+                        everyone,
+                        FileSystemRights.FullControl,
+                        InheritanceFlags.None,
+                        PropagationFlags.NoPropagateInherit,
+                        AccessControlType.Allow));
+
+            fileSecurity.AddAccessRule(
+                new FileSystemAccessRule(
+                WindowsIdentity.GetCurrent().Name,
+                FileSystemRights.FullControl,
+                InheritanceFlags.None,
+                PropagationFlags.NoPropagateInherit,
+                AccessControlType.Allow));
+
+            fileSecurity.SetAccessRuleProtection(isProtected: true, preserveInheritance: false);
+
+            rootFile.SetAccessControl(fileSecurity);
         }
     }
 }
