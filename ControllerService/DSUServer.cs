@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerService.Targets;
 using Force.Crc32;
 using Microsoft.Extensions.Logging;
 using SharpDX.XInput;
@@ -537,63 +538,63 @@ namespace ControllerService
             Stopped?.Invoke(this);
         }
 
-        private bool ReportToBuffer(XInputController hidReport, byte[] outputData, long microseconds, ref int outIdx)
+        private bool ReportToBuffer(ViGEmTarget hidReport, byte[] outputData, long microseconds, ref int outIdx)
         {
             unchecked
             {
                 outputData[outIdx] = 0;
 
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft)) outputData[outIdx] |= 0x80;
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown)) outputData[outIdx] |= 0x40;
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight)) outputData[outIdx] |= 0x20;
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp)) outputData[outIdx] |= 0x10;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft)) outputData[outIdx] |= 0x80;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown)) outputData[outIdx] |= 0x40;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight)) outputData[outIdx] |= 0x20;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp)) outputData[outIdx] |= 0x10;
 
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.Start)) outputData[outIdx] |= 0x08;
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb)) outputData[outIdx] |= 0x04;
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb)) outputData[outIdx] |= 0x02;
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.Back)) outputData[outIdx] |= 0x01;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.Start)) outputData[outIdx] |= 0x08;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb)) outputData[outIdx] |= 0x04;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb)) outputData[outIdx] |= 0x02;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back)) outputData[outIdx] |= 0x01;
 
                 outputData[++outIdx] = 0;
 
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.X)) outputData[outIdx] |= 0x80;
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.A)) outputData[outIdx] |= 0x40;
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.B)) outputData[outIdx] |= 0x20;
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.Y)) outputData[outIdx] |= 0x10;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.X)) outputData[outIdx] |= 0x80;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.A)) outputData[outIdx] |= 0x40;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.B)) outputData[outIdx] |= 0x20;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.Y)) outputData[outIdx] |= 0x10;
 
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder)) outputData[outIdx] |= 0x08;
-                if (hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder)) outputData[outIdx] |= 0x04;
-                if (hidReport.gamepad.RightTrigger == byte.MaxValue) outputData[outIdx] |= 0x02;
-                if (hidReport.gamepad.LeftTrigger == byte.MaxValue) outputData[outIdx] |= 0x01;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder)) outputData[outIdx] |= 0x08;
+                if (hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder)) outputData[outIdx] |= 0x04;
+                if (hidReport.Gamepad.RightTrigger == byte.MaxValue) outputData[outIdx] |= 0x02;
+                if (hidReport.Gamepad.LeftTrigger == byte.MaxValue) outputData[outIdx] |= 0x01;
 
                 outputData[++outIdx] = (byte)0; // (hidReport.PS) ? (byte)1 : 
                 outputData[++outIdx] = (byte)0; // (hidReport.TouchButton) ? (byte)1 : 
 
                 //Left stick
-                outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.LeftThumbX);
-                outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.LeftThumbY);
+                outputData[++outIdx] = Utils.NormalizeInput(hidReport.Gamepad.LeftThumbX);
+                outputData[++outIdx] = Utils.NormalizeInput(hidReport.Gamepad.LeftThumbY);
                 outputData[outIdx] = (byte)(byte.MaxValue - outputData[outIdx]); //invert Y by convention
 
                 //Right stick
-                outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.RightThumbX);
-                outputData[++outIdx] = Utils.NormalizeInput(hidReport.gamepad.RightThumbY);
+                outputData[++outIdx] = Utils.NormalizeInput(hidReport.Gamepad.RightThumbX);
+                outputData[++outIdx] = Utils.NormalizeInput(hidReport.Gamepad.RightThumbY);
                 outputData[outIdx] = (byte)(byte.MaxValue - outputData[outIdx]); //invert Y by convention
 
                 //we don't have analog buttons on DS4 :(
-                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) ? (byte)0xFF : (byte)0x00;
 
-                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.X) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.A) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.B) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.Y) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.X) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.A) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.B) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.Y) ? (byte)0xFF : (byte)0x00;
 
-                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = hidReport.gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = hidReport.Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder) ? (byte)0xFF : (byte)0x00;
 
-                outputData[++outIdx] = hidReport.gamepad.RightTrigger;
-                outputData[++outIdx] = hidReport.gamepad.LeftTrigger;
+                outputData[++outIdx] = hidReport.Gamepad.RightTrigger;
+                outputData[++outIdx] = hidReport.Gamepad.LeftTrigger;
 
                 outIdx++;
 
@@ -657,13 +658,13 @@ namespace ControllerService
             return true;
         }
 
-        public void NewReportIncoming(XInputController hidReport, long microseconds)
+        public void NewReportIncoming(ViGEmTarget hidReport)
         {
             if (!running)
                 return;
 
             // update status
-            padMeta.IsActive = hidReport.controller.IsConnected;
+            padMeta.IsActive = hidReport.Controller.IsConnected;
 
             var clientsList = new List<IPEndPoint>();
             var now = DateTime.UtcNow;
@@ -750,7 +751,7 @@ namespace ControllerService
                 Array.Copy(BitConverter.GetBytes((uint)udpPacketCount++), 0, outputData, outIdx, 4);
                 outIdx += 4;
 
-                if (!ReportToBuffer(hidReport, outputData, microseconds, ref outIdx))
+                if (!ReportToBuffer(hidReport, outputData, hidReport.microseconds, ref outIdx))
                     return;
                 else
                     FinishPacket(outputData);

@@ -116,7 +116,7 @@ namespace ControllerService
             process.WaitForExit();
             process.StandardOutput.ReadToEnd();
 
-            logger.LogInformation("{0} cloak status set to {1}", service.PhysicalController.instance.ProductName, status);
+            logger.LogInformation("{0} cloak status set to {1}", service.XInputController.instance.ProductName, status);
         }
 
         public void RegisterDevice(string deviceInstancePath)

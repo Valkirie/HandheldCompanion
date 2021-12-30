@@ -54,10 +54,13 @@ namespace ControllerService
             this.reading.Y = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityZ, rate);
             this.reading.Z = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityY, rate);
 
-            this.reading *= controller.profile.gyrometer;
+            if (controller.target != null)
+            {
+                this.reading *= controller.target.profile.gyrometer;
 
-            this.reading.Z = (controller.profile.inverthorizontal ? -1.0f : 1.0f) * this.reading.Z;
-            this.reading.X = (controller.profile.invertvertical ? -1.0f : 1.0f) * this.reading.X;
+                this.reading.Z = (controller.target.profile.inverthorizontal ? -1.0f : 1.0f) * this.reading.Z;
+                this.reading.X = (controller.target.profile.invertvertical ? -1.0f : 1.0f) * this.reading.X;
+            }
 
             // raise event
             ReadingChanged?.Invoke(this, this.reading);

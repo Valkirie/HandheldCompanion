@@ -1,8 +1,10 @@
 ﻿using ControllerCommon;
+using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
+using Nefarius.ViGEm.Client.Targets.Xbox360;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
@@ -10,109 +12,56 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Timers;
 using static ControllerCommon.Utils;
-using Timer = System.Timers.Timer;
 
 namespace ControllerService
 {
     public class XInputController
     {
-        #region imports
-        [StructLayout(LayoutKind.Sequential)]
-        public struct XInputStateSecret
-        {
-            public uint eventCount;
-            public ushort wButtons;
-            public byte bLeftTrigger;
-            public byte bRightTrigger;
-            public short sThumbLX;
-            public short sThumbLY;
-            public short sThumbRX;
-            public short sThumbRY;
-        }
+        public Controller Controller;
+        public ViGEmTarget target;
 
-        [DllImport("xinput1_3.dll", EntryPoint = "#100")]
-        private static extern int XInputGetStateSecret13(int playerIndex, out XInputStateSecret struc);
-        [DllImport("xinput1_4.dll", EntryPoint = "#100")]
-        private static extern int XInputGetStateSecret14(int playerIndex, out XInputStateSecret struc);
-        #endregion
-
-        private const float F_ACC_RES_PER_G = 8192.0f;
-        private const float F_GYRO_RES_IN_DEG_SEC = 16.0f;
-
-        public Controller controller;
-        public Gamepad gamepad;
-        public XInputStateSecret state_s;
         public DeviceInstance instance;
 
         private DSUServer server;
-        private IVirtualGamepad vcontroller;
 
         public XInputGirometer gyrometer;
         public XInputAccelerometer accelerometer;
-        public DS4Touch touch;
-
-        public Vector3 AngularVelocity;
-        public Vector3 Acceleration;
 
         private readonly Timer UpdateTimer;
         private float strength;
 
         public UserIndex index;
-        public Profile profile;
-
-        public long microseconds;
-        private readonly Stopwatch stopwatch;
-
-        private readonly object updateLock = new();
-
-        private DS4_REPORT_EX outDS4Report;
+        private object updateLock = new();
 
         private readonly ILogger logger;
+        private readonly string HIDmode;
 
-        public XInputController(UserIndex _idx, int HIDrate, ILogger logger)
+        public XInputController(Controller controller, UserIndex index, int HIDrate, string HIDmode, ILogger logger)
         {
             this.logger = logger;
+            this.HIDmode = HIDmode;
 
             // initilize controller
-            controller = new Controller(_idx);
-            index = _idx;
-
-            if (!controller.IsConnected)
-                return;
-
-            // initialize profile
-            profile = new();
-
-            // initialize vectors
-            AngularVelocity = new();
-            Acceleration = new();
-
-            // initialize secret state
-            state_s = new();
-
-            // initialize stopwatch
-            stopwatch = new();
-            stopwatch.Start();
+            this.Controller = controller;
+            this.index = index;
 
             // initialize timers
             UpdateTimer = new Timer(HIDrate) { Enabled = false, AutoReset = true };
-
-            // initialize touch
-            touch = new();
         }
 
         public void SetPollRate(int HIDrate)
         {
             UpdateTimer.Interval = HIDrate;
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", vcontroller.GetType().Name, UpdateTimer.Interval);
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", target.GetType().Name, UpdateTimer.Interval);
         }
 
         public void SetVibrationStrength(float strength)
         {
             this.strength = strength / 100.0f;
-            logger.LogInformation("Virtual {0} vibration strength set to {1}%", vcontroller.GetType().Name, strength);
+            logger.LogInformation("Virtual {0} vibration strength set to {1}%", target.GetType().Name, strength);
         }
 
         public Dictionary<string, string> ToArgs()
@@ -125,40 +74,30 @@ namespace ControllerService
             };
         }
 
-        public void SetVirtualController(IVirtualGamepad _controller)
+        private void XBOX_FeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)
         {
-            vcontroller = _controller;
-            vcontroller.AutoSubmitReport = false;
+            if (!Controller.IsConnected)
+                return;
 
-            switch (vcontroller.GetType().FullName)
+            Vibration inputMotor = new()
             {
-                case "Nefarius.ViGEm.Client.Targets.DualShock4Controller":
-                    UpdateTimer.Elapsed += DS4_UpdateReport;
-                    ((IDualShock4Controller)vcontroller).FeedbackReceived += DS4_FeedbackReceived;
-                    break;
-                case "Nefarius.ViGEm.Client.Targets.Xbox360Controller":
-                    throw new NotImplementedException();
-                    break;
-            }
-
-            UpdateTimer.Enabled = true;
-            UpdateTimer.Start();
-
-            logger.LogInformation("Virtual {0} attached to {1} on slot {2}", vcontroller.GetType().Name, instance.InstanceName, index);
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", vcontroller.GetType().Name, UpdateTimer.Interval);
+                LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * strength),
+                RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * strength),
+            };
+            Controller.SetVibration(inputMotor);
         }
 
         private void DS4_FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)
         {
-            if (controller.IsConnected)
+            if (!Controller.IsConnected)
+                return;
+
+            Vibration inputMotor = new()
             {
-                Vibration inputMotor = new()
-                {
-                    LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * strength),
-                    RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * strength),
-                };
-                controller.SetVibration(inputMotor);
-            }
+                LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * strength),
+                RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * strength),
+            };
+            Controller.SetVibration(inputMotor);
         }
 
         public void SetGyroscope(XInputGirometer _gyrometer)
@@ -180,178 +119,61 @@ namespace ControllerService
 
         private void Accelerometer_ReadingChanged(object sender, Vector3 acceleration)
         {
-            Acceleration = acceleration;
+            target.Acceleration = acceleration;
         }
 
         private void Girometer_ReadingChanged(object sender, Vector3 angularvelocity)
         {
-            AngularVelocity = angularvelocity;
+            target.AngularVelocity = angularvelocity;
         }
 
-        private unsafe void DS4_UpdateReport(object sender, ElapsedEventArgs e)
+        public void SetTarget(ViGEmClient client)
         {
-            if (!controller.IsConnected)
-                return;
+            switch (HIDmode)
+            {
+                default:
+                case "DualShock4Controller":
+                    target = new DualShock4Target(client, Controller, (int)index);
+                    break;
+                case "Xbox360Controller":
+                    target = new Xbox360Target(client, Controller, (int)index);
+                    break;
+            }
 
+            if (target == null)
+            {
+                logger.LogCritical("No Virtual controller detected. Application will stop");
+                throw new InvalidOperationException();
+            }
+
+            UpdateTimer.Elapsed += async (sender, e) => await UpdateReport();
+            UpdateTimer.Enabled = true;
+            UpdateTimer.Start();
+
+            logger.LogInformation("Virtual {0} connected", target.GetType().Name);
+            logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target.GetType().Name, instance.InstanceName, index);
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", target.GetType().Name, UpdateTimer.Interval);
+        }
+
+        private Task UpdateReport()
+        {
             lock (updateLock)
             {
-                // update timestamp
-                microseconds = (long)(stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L)));
-
-                // get current gamepad state
-                State state = controller.GetState();
-                gamepad = state.Gamepad;
-
-                XInputGetStateSecret13((int)index, out state_s);
-
-                // send report to server
-                server?.NewReportIncoming(this, microseconds);
-
-                // reset vars
-                byte[] rawOutReportEx = new byte[63];
-                ushort tempButtons = 0;
-                ushort tempSpecial = 0;
-                DualShock4DPadDirection tempDPad = DualShock4DPadDirection.None;
-
-                outDS4Report.bThumbLX = 127;
-                outDS4Report.bThumbLY = 127;
-                outDS4Report.bThumbRX = 127;
-                outDS4Report.bThumbRY = 127;
-
-                short LeftThumbX = gamepad.LeftThumbX;
-                short LeftThumbY = gamepad.LeftThumbY;
-                short RightThumbX = gamepad.RightThumbX;
-                short RightThumbY = gamepad.RightThumbY;
-
-                unchecked
+                // that suxx !
+                switch (HIDmode)
                 {
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.A))
-                        tempButtons |= DualShock4Button.Cross.Value;
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.B))
-                        tempButtons |= DualShock4Button.Circle.Value;
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.X))
-                        tempButtons |= DualShock4Button.Square.Value;
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Y))
-                        tempButtons |= DualShock4Button.Triangle.Value;
-
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Start))
-                        tempButtons |= DualShock4Button.Options.Value;
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Back))
-                        tempButtons |= DualShock4Button.Share.Value;
-
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb))
-                        tempButtons |= DualShock4Button.ThumbRight.Value;
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb))
-                        tempButtons |= DualShock4Button.ThumbLeft.Value;
-
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder))
-                        tempButtons |= DualShock4Button.ShoulderRight.Value;
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder))
-                        tempButtons |= DualShock4Button.ShoulderLeft.Value;
-
-                    if (gamepad.LeftTrigger > 0)
-                        tempButtons |= DualShock4Button.TriggerLeft.Value;
-                    if (gamepad.RightTrigger > 0)
-                        tempButtons |= DualShock4Button.TriggerRight.Value;
-
-                    if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) &&
-                        gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
-                        tempDPad = DualShock4DPadDirection.Northeast;
-                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) &&
-                             gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
-                        tempDPad = DualShock4DPadDirection.Northwest;
-                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp))
-                        tempDPad = DualShock4DPadDirection.North;
-                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight) &&
-                             gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
-                        tempDPad = DualShock4DPadDirection.Southeast;
-                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
-                        tempDPad = DualShock4DPadDirection.East;
-                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown) &&
-                             gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
-                        tempDPad = DualShock4DPadDirection.Southwest;
-                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
-                        tempDPad = DualShock4DPadDirection.South;
-                    else if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
-                        tempDPad = DualShock4DPadDirection.West;
-
-                    if ((state_s.wButtons & 0x0400) == 0x0400)
-                        tempSpecial |= DualShock4SpecialButton.Ps.Value;
-                    if (touch.OutputClickButton)
-                        tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
-
-                    outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
+                    default:
+                    case "DualShock4Controller":
+                        ((DualShock4Target)target)?.UpdateReport();
+                        break;
+                    case "Xbox360Controller":
+                        ((Xbox360Target)target)?.UpdateReport();
+                        break;
                 }
-
-                if (profile.umc_enabled && ((tempButtons + ProfileButton.AlwaysOn.Value) & profile.umc_trigger) != 0)
-                {
-                    float intensity = profile.GetIntensity();
-                    float sensivity = profile.GetSensiviy();
-
-                    switch (profile.umc_input)
-                    {
-                        default:
-                        case InputStyle.RightStick:
-                            RightThumbX = ComputeInput(RightThumbX, -AngularVelocity.Z * 1.5f, sensivity, intensity);
-                            RightThumbY = ComputeInput(RightThumbY, AngularVelocity.X, sensivity, intensity);
-                            break;
-                        case InputStyle.LeftStick:
-                            LeftThumbX = ComputeInput(LeftThumbX, -AngularVelocity.Z * 1.5f, sensivity, intensity);
-                            LeftThumbY = ComputeInput(LeftThumbY, AngularVelocity.X, sensivity, intensity);
-                            break;
-                    }
-                }
-
-                if (!profile.whitelisted)
-                {
-                    outDS4Report.wButtons = tempButtons;
-                    outDS4Report.wButtons |= tempDPad.Value;
-
-                    outDS4Report.bTriggerL = gamepad.LeftTrigger;
-                    outDS4Report.bTriggerR = gamepad.RightTrigger;
-
-                    outDS4Report.bThumbLX = NormalizeInput(LeftThumbX);
-                    outDS4Report.bThumbLY = (byte)(byte.MaxValue - NormalizeInput(LeftThumbY));
-                    outDS4Report.bThumbRX = NormalizeInput(RightThumbX);
-                    outDS4Report.bThumbRY = (byte)(byte.MaxValue - NormalizeInput(RightThumbY));
-                }
-
-                unchecked
-                {
-                    outDS4Report.bTouchPacketsN = 0x01;
-                    outDS4Report.sCurrentTouch.bPacketCounter = touch.TouchPacketCounter;
-                    outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = touch.TrackPadTouch0.RawTrackingNum;
-                    outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(touch.TrackPadTouch0.X & 0xFF);
-                    outDS4Report.sCurrentTouch.bTouchData1[1] =
-                        (byte)(((touch.TrackPadTouch0.X >> 8) & 0x0F) | ((touch.TrackPadTouch0.Y << 4) & 0xF0));
-                    outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(touch.TrackPadTouch0.Y >> 4);
-
-                    outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = touch.TrackPadTouch1.RawTrackingNum;
-                    outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(touch.TrackPadTouch1.X & 0xFF);
-                    outDS4Report.sCurrentTouch.bTouchData2[1] =
-                        (byte)(((touch.TrackPadTouch1.X >> 8) & 0x0F) | ((touch.TrackPadTouch1.Y << 4) & 0xF0));
-                    outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(touch.TrackPadTouch1.Y >> 4);
-                }
-
-                outDS4Report.wGyroX = (short)(AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
-                outDS4Report.wGyroY = (short)(-AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
-                outDS4Report.wGyroZ = (short)(AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
-
-                outDS4Report.wAccelX = (short)(-Acceleration.X * F_ACC_RES_PER_G); // accelXFull
-                outDS4Report.wAccelY = (short)(-Acceleration.Y * F_ACC_RES_PER_G); // accelYFull
-                outDS4Report.wAccelZ = (short)(Acceleration.Z * F_ACC_RES_PER_G); // accelZFull
-
-                // digest previous value
-                // AngularVelocity = new();
-                // Acceleration = new();
-
-                outDS4Report.bBatteryLvlSpecial = 11;
-
-                outDS4Report.wTimestamp = (ushort)(microseconds / 5.33f);
-
-                DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
-                ((IDualShock4Controller)vcontroller).SubmitRawReport(rawOutReportEx);
+                server?.NewReportIncoming(target);
             }
+
+            return Task.CompletedTask;
         }
     }
 }

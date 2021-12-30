@@ -53,10 +53,13 @@ namespace ControllerService
             this.reading.Y = (float)accelFilter.axis1Filter.Filter(reading.AccelerationZ, rate);
             this.reading.Z = (float)accelFilter.axis1Filter.Filter(reading.AccelerationY, rate);
 
-            this.reading *= controller.profile.accelerometer;
+            if (controller.target != null)
+            {
+                this.reading *= controller.target.profile.accelerometer;
 
-            this.reading.Z = (controller.profile.inverthorizontal ? -1.0f : 1.0f) * this.reading.Z;
-            this.reading.X = (controller.profile.invertvertical ? -1.0f : 1.0f) * this.reading.X;
+                this.reading.Z = (controller.target.profile.inverthorizontal ? -1.0f : 1.0f) * this.reading.Z;
+                this.reading.X = (controller.target.profile.invertvertical ? -1.0f : 1.0f) * this.reading.X;
+            }
 
             // raise event
             ReadingChanged?.Invoke(this, this.reading);

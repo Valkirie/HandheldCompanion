@@ -19,11 +19,10 @@ namespace ControllerService
     public class ControllerService : IHostedService
     {
         // controllers vars
-        public XInputController PhysicalController;
-        private IVirtualGamepad VirtualController;
+        private ViGEmClient VirtualClient;
+        public XInputController XInputController;
         private XInputGirometer Gyrometer;
         private XInputAccelerometer Accelerometer;
-        private ViGEmClient VirtualClient;
 
         private PipeServer PipeServer;
         private DSUServer DSUServer;
@@ -87,53 +86,34 @@ namespace ControllerService
             Hidder = new HidHide(CurrentPathCli, logger, this);
             Hidder.RegisterApplication(CurrentExe);
 
-            // initialize controller
-            switch (HIDmode)
-            {
-                default:
-                case "DualShock4Controller":
-                    VirtualController = VirtualClient.CreateDualShock4Controller();
-                    break;
-                case "Xbox360Controller":
-                    VirtualController = VirtualClient.CreateXbox360Controller();
-                    break;
-            }
-
-            if (VirtualController == null)
-            {
-                logger.LogCritical("No Virtual controller detected. Application will stop");
-                throw new InvalidOperationException();
-            }
-
             // prepare physical controller
             DirectInput dinput = new DirectInput();
             IList<DeviceInstance> dinstances = dinput.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly);
 
-            for (int i = (int)UserIndex.One; i <= (int)UserIndex.Three; i++)
+            foreach (UserIndex idx in (UserIndex[])Enum.GetValues(typeof(UserIndex)))
             {
-                XInputController tmpController = new XInputController((UserIndex)i, HIDrate, logger);
+                Controller controller = new Controller(idx);
+                if (!controller.IsConnected)
+                    continue;
 
-                if (tmpController.controller.IsConnected)
-                {
-                    PhysicalController = tmpController;
-                    PhysicalController.instance = dinstances[i];
-                    break;
-                }
+                XInputController = new XInputController(controller, idx, HIDrate, HIDmode, logger);
+                XInputController.instance = dinstances[(int)idx];
+                break;
             }
 
-            if (PhysicalController == null)
+            if (XInputController == null)
             {
                 logger.LogCritical("No physical controller detected. Application will stop");
                 throw new InvalidOperationException();
             }
 
             // default is 10ms rating
-            Gyrometer = new XInputGirometer(PhysicalController, logger);
+            Gyrometer = new XInputGirometer(XInputController, logger);
             if (Gyrometer.sensor == null)
                 logger.LogWarning("No Gyrometer detected");
 
             // default is 10ms rating
-            Accelerometer = new XInputAccelerometer(PhysicalController, logger);
+            Accelerometer = new XInputAccelerometer(XInputController, logger);
             if (Accelerometer.sensor == null)
                 logger.LogWarning("No Accelerometer detected");
 
@@ -180,20 +160,20 @@ namespace ControllerService
                     switch (cursor.action)
                     {
                         case 0: // up
-                            PhysicalController.touch.OnMouseUp((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.target.touch.OnMouseUp((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
                         case 1: // down
-                            PhysicalController.touch.OnMouseDown((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.target.touch.OnMouseDown((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
                         case 2: // move
-                            PhysicalController.touch.OnMouseMove((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.target.touch.OnMouseMove((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
                     }
                     break;
 
                 case PipeCode.CLIENT_SCREEN:
                     PipeClientScreen screen = (PipeClientScreen)message;
-                    PhysicalController.touch.UpdateRatio(screen.width, screen.height);
+                    XInputController.target.touch.UpdateRatio(screen.width, screen.height);
                     break;
 
                 case PipeCode.CLIENT_SETTINGS:
@@ -219,7 +199,7 @@ namespace ControllerService
 
         private void OnClientDisconnected(object sender)
         {
-            PhysicalController.touch.OnMouseUp(-1, -1, 1048576 /* MouseButtons.Left */);
+            XInputController.target.touch.OnMouseUp(-1, -1, 1048576 /* MouseButtons.Left */);
         }
 
         private void OnClientConnected(object sender)
@@ -227,10 +207,10 @@ namespace ControllerService
             // send controller details
             PipeServer.SendMessage(new PipeServerController()
             {
-                ProductName = PhysicalController.instance.ProductName,
-                InstanceGuid = PhysicalController.instance.InstanceGuid,
-                ProductGuid = PhysicalController.instance.ProductGuid,
-                ProductIndex = (int)PhysicalController.index
+                ProductName = XInputController.instance.ProductName,
+                InstanceGuid = XInputController.instance.InstanceGuid,
+                ProductGuid = XInputController.instance.ProductGuid,
+                ProductIndex = (int)XInputController.index
             });
 
             // send server settings
@@ -239,7 +219,7 @@ namespace ControllerService
 
         internal void UpdateProfile(Profile profile)
         {
-            PhysicalController.profile = profile;
+            XInputController.target.profile = profile;
         }
 
         public void UpdateSettings(Dictionary<string, string> args)
@@ -312,10 +292,10 @@ namespace ControllerService
                         // todo
                         break;
                     case "HIDrate":
-                        PhysicalController.SetPollRate((int)value);
+                        XInputController.SetPollRate((int)value);
                         break;
                     case "HIDstrength":
-                        PhysicalController.SetVibrationStrength((int)value);
+                        XInputController.SetVibrationStrength((int)value);
                         break;
                     case "DSUEnabled":
                         switch ((bool)value)
@@ -343,14 +323,12 @@ namespace ControllerService
             // turn on the cloaking
             Hidder.SetCloaking(HIDcloaked);
 
-            VirtualController.Connect();
-            logger.LogInformation("Virtual {0} connected", VirtualController.GetType().Name);
-
-            PhysicalController.SetDSUServer(DSUServer);
-            PhysicalController.SetVirtualController(VirtualController);
-            PhysicalController.SetGyroscope(Gyrometer);
-            PhysicalController.SetAccelerometer(Accelerometer);
-            PhysicalController.SetVibrationStrength(HIDstrength);
+            // initialize virtual controller
+            XInputController.SetTarget(VirtualClient);
+            XInputController.SetDSUServer(DSUServer);
+            XInputController.SetGyroscope(Gyrometer);
+            XInputController.SetAccelerometer(Accelerometer);
+            XInputController.SetVibrationStrength(HIDstrength);
 
             // start the Pipe Server
             PipeServer.Start();
@@ -358,7 +336,7 @@ namespace ControllerService
             // send notification
             PipeServer.SendMessage(new PipeServerToast
             {
-                title = $"{VirtualController.GetType().Name}",
+                title = $"{XInputController.target.GetType().Name}",
                 content = "Virtual device is now connected"
             });
 
@@ -369,15 +347,15 @@ namespace ControllerService
         {
             try
             {
-                if (VirtualController != null)
+                if (XInputController.target != null)
                 {
-                    VirtualController.Disconnect();
-                    logger.LogInformation("Virtual {0} disconnected", VirtualController.GetType().Name);
+                    XInputController.target.Disconnect();
+                    logger.LogInformation("Virtual {0} disconnected", XInputController.target.GetType().Name);
 
                     // send notification
                     PipeServer.SendMessage(new PipeServerToast
                     {
-                        title = $"{VirtualController.GetType().Name}",
+                        title = $"{XInputController.target.GetType().Name}",
                         content = "Virtual device is now disconnected"
                     });
                 }
@@ -398,8 +376,8 @@ namespace ControllerService
             foreach (SettingsProperty s in Properties.Settings.Default.Properties)
                 settings.Add(s.Name, Properties.Settings.Default[s.Name].ToString());
 
-            settings.Add("gyrometer", $"{PhysicalController.gyrometer.sensor != null}");
-            settings.Add("accelerometer", $"{PhysicalController.accelerometer.sensor != null}");
+            settings.Add("gyrometer", $"{XInputController.gyrometer.sensor != null}");
+            settings.Add("accelerometer", $"{XInputController.accelerometer.sensor != null}");
 
             return settings;
         }
