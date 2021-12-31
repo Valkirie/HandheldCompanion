@@ -35,7 +35,7 @@ namespace ControllerService.Targets
         public Controller Controller;
         public Gamepad Gamepad;
         public DS4Touch Touch;
-        public HIDmode HID = HIDmode.NoController;
+        public HIDmode HID = HIDmode.None;
         protected readonly ILogger logger;
 
         public Vector3 AngularVelocity;
@@ -121,7 +121,7 @@ namespace ControllerService.Targets
             RightThumbX = Gamepad.RightThumbX;
             RightThumbY = Gamepad.RightThumbY;
 
-            if (Profile.umc_enabled && (buttons & Profile.umc_trigger) == Profile.umc_trigger)
+            if (Profile.umc_enabled && ((Profile.umc_trigger & buttons) != 0 || (Profile.umc_trigger & (uint)Utils.GamepadButtonFlags.AlwaysOn) != 0))
             {
                 float intensity = Profile.GetIntensity();
                 float sensivity = Profile.GetSensiviy();
