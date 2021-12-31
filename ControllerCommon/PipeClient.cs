@@ -9,7 +9,7 @@ namespace ControllerCommon
 {
     public class PipeClient
     {
-        public readonly NamedPipeClient<PipeMessage> client;
+        public NamedPipeClient<PipeMessage> client;
         private readonly ILogger logger;
 
         public event ConnectedEventHandler Connected;
@@ -62,20 +62,15 @@ namespace ControllerCommon
 
         public void Start()
         {
-            if (client == null)
-                return;
-
-            client.Start();
+            client?.Start();
             logger?.LogInformation("{0} has started" , this.ToString());
         }
 
         public void Stop()
         {
-            if (client == null)
-                return;
-
-            client.Stop();
+            client?.Stop();
             logger?.LogInformation("{0} has stopped", this.ToString());
+            client = null;
         }
 
         private void OnServerMessage(NamedPipeConnection<PipeMessage, PipeMessage> connection, PipeMessage message)

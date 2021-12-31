@@ -95,20 +95,15 @@ namespace ControllerCommon
 
         public void Start()
         {
-            if (server == null)
-                return;
-
-            server.Start();
+            server?.Start();
             logger?.LogInformation("{0} has started", this.ToString());
         }
 
         public void Stop()
         {
-            if (server == null)
-                return;
-
-            server = null;
+            server?.Stop();
             logger?.LogInformation("{0} has stopped", this.ToString());
+            server = null;
         }
 
         private void OnClientConnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
