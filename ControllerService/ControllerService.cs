@@ -378,7 +378,7 @@ namespace ControllerService
             // send notification
             PipeServer.SendMessage(new PipeServerToast
             {
-                title = $"{XInputController.Target.GetType().Name}",
+                title = $"{XInputController.Target.HID}",
                 content = "Virtual device is now connected"
             });
 
@@ -392,12 +392,12 @@ namespace ControllerService
                 if (XInputController.Target != null)
                 {
                     XInputController.Target.Disconnect();
-                    logger.LogInformation("Virtual {0} disconnected", XInputController.Target.GetType().Name);
+                    logger.LogInformation("Virtual {0} disconnected", XInputController.Target.HID);
 
                     // send notification
                     PipeServer.SendMessage(new PipeServerToast
                     {
-                        title = $"{XInputController.Target.GetType().Name}",
+                        title = $"{XInputController.Target.HID}",
                         content = "Virtual device is now disconnected"
                     });
                 }
