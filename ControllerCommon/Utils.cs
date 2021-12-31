@@ -1,7 +1,5 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
-using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
@@ -175,7 +173,7 @@ namespace ControllerCommon
                     return CanWrite;
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -185,7 +183,7 @@ namespace ControllerCommon
         {
             try
             {
-                using (FileStream fs = File.Create(Path.Combine(dirPath,Path.GetRandomFileName()), 1, FileOptions.DeleteOnClose)          )
+                using (FileStream fs = File.Create(Path.Combine(dirPath, Path.GetRandomFileName()), 1, FileOptions.DeleteOnClose))
                     return true;
             }
             catch (Exception)

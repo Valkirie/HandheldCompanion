@@ -1,6 +1,4 @@
-﻿using Nefarius.ViGEm.Client.Targets.DualShock4;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Text.Json.Serialization;
 
 namespace ControllerCommon

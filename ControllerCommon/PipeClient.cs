@@ -63,7 +63,7 @@ namespace ControllerCommon
         public void Start()
         {
             client?.Start();
-            logger?.LogInformation("{0} has started" , this.ToString());
+            logger?.LogInformation("{0} has started", this.ToString());
         }
 
         public void Stop()

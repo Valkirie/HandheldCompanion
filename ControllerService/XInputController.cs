@@ -1,20 +1,12 @@
 ﻿using ControllerCommon;
 using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
-using Nefarius.ViGEm.Client;
-using Nefarius.ViGEm.Client.Targets;
-using Nefarius.ViGEm.Client.Targets.DualShock4;
-using Nefarius.ViGEm.Client.Targets.Xbox360;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Timers;
-using static ControllerCommon.Utils;
 
 namespace ControllerService
 {
@@ -124,7 +116,7 @@ namespace ControllerService
         {
             lock (updateLock)
             {
-                switch(Target.HID)
+                switch (Target.HID)
                 {
                     case HIDmode.Xbox360Controller:
                         ((Xbox360Target)Target)?.UpdateReport();
