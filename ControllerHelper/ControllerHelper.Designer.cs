@@ -286,9 +286,10 @@ namespace ControllerHelper
             // cB_HidMode
             // 
             this.cB_HidMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            resources.ApplyResources(this.cB_HidMode, "cB_HidMode");
             this.cB_HidMode.FormattingEnabled = true;
+            resources.ApplyResources(this.cB_HidMode, "cB_HidMode");
             this.cB_HidMode.Name = "cB_HidMode";
+            this.cB_HidMode.SelectedIndexChanged += new System.EventHandler(this.cB_HidMode_SelectedIndexChanged);
             // 
             // gB_XinputDetails
             // 
@@ -606,6 +607,7 @@ namespace ControllerHelper
             resources.ApplyResources(this.cB_UMCInputButton, "cB_UMCInputButton");
             this.cB_UMCInputButton.Name = "cB_UMCInputButton";
             this.cB_UMCInputButton.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.cB_UMCInputButton.Sorted = true;
             // 
             // lb_UMCInputButton
             // 

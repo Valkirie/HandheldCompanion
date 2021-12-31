@@ -264,9 +264,6 @@ namespace ControllerHelper
                         backpath = Path.Combine(processpath, $"xinput9_1_0.back");
                     }
 
-                    if (!IsFileWritable(dllpath))
-                        SetFileWritable(dllpath);
-
                     bool dllexist = File.Exists(dllpath);
                     bool backexist = File.Exists(backpath);
 
@@ -299,6 +296,9 @@ namespace ControllerHelper
 
                     if (profile.use_wrapper)
                     {
+                        if (!IsFileWritable(dllpath))
+                            SetFileWritable(dllpath);
+
                         if (dllexist && is_x360ce)
                             continue; // skip to next file
                         else if (!dllexist)

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
+using SharpDX.XInput;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
@@ -30,6 +32,28 @@ namespace ControllerCommon
         [DllImport("Kernel32.dll")]
         static extern uint QueryFullProcessImageName(IntPtr hProcess, uint flags, StringBuilder text, out uint size);
         #endregion
+
+        [Flags]
+        public enum GamepadButtonFlags : uint
+        {
+            DPadUp = 1,
+            DPadDown = 2,
+            DPadLeft = 4,
+            DPadRight = 8,
+            Start = 16,
+            Back = 32,
+            LeftThumb = 64,
+            RightThumb = 128,
+            LeftShoulder = 256,
+            RightShoulder = 512,
+            LeftTrigger = 1024,
+            RightTrigger = 2048,
+            A = 4096,
+            B = 8192,
+            X = 16384,
+            Y = 32768,
+            AlwaysOn = 65536
+        }
 
         public static void SendToast(string title, string content)
         {

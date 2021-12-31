@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CA1416: Valider la compatibilité de la plateforme
+dotnet_diagnostic.CA1416.severity = none

@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
@@ -54,18 +55,39 @@ namespace ControllerService.Targets
 
         private new IDualShock4Controller vcontroller;
 
-        public DualShock4Target(ViGEmClient client, Controller controller, int index) : base(client, controller, index)
+        public DualShock4Target(ViGEmClient client, Controller controller, int index, ILogger logger) : base(client, controller, index, logger)
         {
             // initialize controller
+            HID = HIDmode.DualShock4Controller;
+
             vcontroller = client.CreateDualShock4Controller();
             vcontroller.AutoSubmitReport = false;
+            vcontroller.FeedbackReceived += FeedbackReceived;
+        }
 
+        public void FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)
+        {
+            if (!Controller.IsConnected)
+                return;
+
+            Vibration inputMotor = new()
+            {
+                LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * strength),
+                RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * strength),
+            };
+            Controller.SetVibration(inputMotor);
+        }
+
+        public new void Connect()
+        {
             vcontroller.Connect();
+            base.Connect();
         }
 
         public new void Disconnect()
         {
             vcontroller.Disconnect();
+            base.Disconnect();
         }
 
         public new unsafe void UpdateReport()
@@ -140,13 +162,13 @@ namespace ControllerService.Targets
 
                 if ((state_s.wButtons & 0x0400) == 0x0400)
                     tempSpecial |= DualShock4SpecialButton.Ps.Value;
-                if (touch.OutputClickButton)
+                if (Touch.OutputClickButton)
                     tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
 
                 outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
             }
 
-            if (!profile.whitelisted)
+            if (!Profile.whitelisted)
             {
                 outDS4Report.wButtons = tempButtons;
                 outDS4Report.wButtons |= tempDPad.Value;
@@ -163,18 +185,18 @@ namespace ControllerService.Targets
             unchecked
             {
                 outDS4Report.bTouchPacketsN = 0x01;
-                outDS4Report.sCurrentTouch.bPacketCounter = touch.TouchPacketCounter;
-                outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = touch.TrackPadTouch0.RawTrackingNum;
-                outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(touch.TrackPadTouch0.X & 0xFF);
+                outDS4Report.sCurrentTouch.bPacketCounter = Touch.TouchPacketCounter;
+                outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = Touch.TrackPadTouch0.RawTrackingNum;
+                outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(Touch.TrackPadTouch0.X & 0xFF);
                 outDS4Report.sCurrentTouch.bTouchData1[1] =
-                    (byte)(((touch.TrackPadTouch0.X >> 8) & 0x0F) | ((touch.TrackPadTouch0.Y << 4) & 0xF0));
-                outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(touch.TrackPadTouch0.Y >> 4);
+                    (byte)(((Touch.TrackPadTouch0.X >> 8) & 0x0F) | ((Touch.TrackPadTouch0.Y << 4) & 0xF0));
+                outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(Touch.TrackPadTouch0.Y >> 4);
 
-                outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = touch.TrackPadTouch1.RawTrackingNum;
-                outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(touch.TrackPadTouch1.X & 0xFF);
+                outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = Touch.TrackPadTouch1.RawTrackingNum;
+                outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(Touch.TrackPadTouch1.X & 0xFF);
                 outDS4Report.sCurrentTouch.bTouchData2[1] =
-                    (byte)(((touch.TrackPadTouch1.X >> 8) & 0x0F) | ((touch.TrackPadTouch1.Y << 4) & 0xF0));
-                outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(touch.TrackPadTouch1.Y >> 4);
+                    (byte)(((Touch.TrackPadTouch1.X >> 8) & 0x0F) | ((Touch.TrackPadTouch1.Y << 4) & 0xF0));
+                outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(Touch.TrackPadTouch1.Y >> 4);
             }
 
             outDS4Report.wGyroX = (short)(AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull

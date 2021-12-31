@@ -147,6 +147,11 @@ namespace ControllerService
             BatteryTimer.Elapsed += UpdateBattery;
         }
 
+        public override string ToString()
+        {
+            return this.GetType().Name;
+        }
+
         private void UpdateBattery(object sender, ElapsedEventArgs e)
         {
             if (!running)
@@ -504,7 +509,7 @@ namespace ControllerService
                 udpSock = null;
                 running = false;
 
-                logger.LogCritical("DSU Server couldn't start. Port: {0} must be busy", port);
+                logger.LogCritical("{0} couldn't start. Port: {0} must be busy", this.ToString(), port);
                 this.Stop();
                 return running;
             }
@@ -519,7 +524,7 @@ namespace ControllerService
             BatteryTimer.Enabled = true;
             BatteryTimer.Start();
 
-            logger.LogInformation("DSU Server has started. Listening to ip: {0} port: {1}", ip, port);
+            logger.LogInformation("{0} has started. Listening to ip: {1} port: {2}", this.ToString(), ip, port);
             Started?.Invoke(this);
 
             return running;
@@ -534,7 +539,7 @@ namespace ControllerService
                 udpSock = null;
             }
 
-            logger.LogInformation($"DSU Server has stopped");
+            logger.LogInformation($"{0} has stopped", this.ToString());
             Stopped?.Invoke(this);
         }
 
@@ -601,7 +606,7 @@ namespace ControllerService
                 //DS4 only: touchpad points
                 for (int i = 0; i < 2; i++)
                 {
-                    var tpad = (i == 0) ? hidReport.touch.TrackPadTouch0 : hidReport.touch.TrackPadTouch1;
+                    var tpad = (i == 0) ? hidReport.Touch.TrackPadTouch0 : hidReport.Touch.TrackPadTouch1;
 
                     outputData[outIdx++] = tpad.IsActive ? (byte)1 : (byte)0;
                     outputData[outIdx++] = (byte)tpad.RawTrackingNum;

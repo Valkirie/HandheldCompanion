@@ -84,7 +84,7 @@ namespace ControllerCommon
     [Serializable]
     public class PipeClientSettings : PipeMessage
     {
-        public Dictionary<string, string> settings = new();
+        public Dictionary<string, object> settings = new();
 
         public PipeClientSettings()
         {

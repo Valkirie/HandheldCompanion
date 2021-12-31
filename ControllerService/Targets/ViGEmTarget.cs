@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using SharpDX.XInput;
@@ -36,10 +37,12 @@ namespace ControllerService.Targets
         protected static extern int XInputGetStateSecret14(int playerIndex, out XInputStateSecret struc);
         #endregion
 
-        public Profile profile;
+        public Profile Profile;
         public Controller Controller;
         public Gamepad Gamepad;
-        public DS4Touch touch;
+        public DS4Touch Touch;
+        public HIDmode HID = HIDmode.NoController;
+        protected readonly ILogger logger;
 
         public Vector3 AngularVelocity;
         public Vector3 Acceleration;
@@ -50,29 +53,58 @@ namespace ControllerService.Targets
         protected XInputStateSecret state_s;
 
         public long microseconds;
-        protected readonly Stopwatch stopwatch;
-        protected int index;
+        public float strength; // rename me
 
-        protected ViGEmTarget(ViGEmClient client, Controller controller, int index)
+        protected readonly Stopwatch stopwatch;
+        protected int UserIndex;
+
+        protected short LeftThumbX, LeftThumbY, RightThumbX, RightThumbY;
+
+        protected ViGEmTarget(ViGEmClient client, Controller controller, int index, ILogger logger)
         {
+            this.logger = logger;
+
             // initialize vectors
             AngularVelocity = new();
             Acceleration = new();
 
             // initialize profile
-            profile = new();
-            touch = new();
+            Profile = new();
+            Touch = new();
 
             // initialize secret state
             state_s = new();
 
+            // initialize controller
             Client = client;
             Controller = controller;
 
+            // initialize stopwatch
             stopwatch = new Stopwatch();
         }
 
-        protected short LeftThumbX, LeftThumbY, RightThumbX, RightThumbY;
+        protected void FeedbackReceived(object sender, EventArgs e)
+        {
+        }
+
+        public override string ToString()
+        {
+            return this.GetType().Name;
+        }
+
+        public void Connect()
+        {
+            stopwatch.Start();
+
+            logger.LogInformation("Virtual {0} connected", HID);
+        }
+
+        public void Disconnect()
+        {
+            stopwatch.Stop();
+
+            logger.LogInformation("Virtual {0} disconnected", HID);
+        }
 
         public void UpdateReport()
         {
@@ -80,14 +112,14 @@ namespace ControllerService.Targets
             microseconds = (long)(stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L)));
 
             // get current gamepad state
-            XInputGetStateSecret13(index, out state_s);
+            XInputGetStateSecret13(UserIndex, out state_s);
             State state = Controller.GetState();
             Gamepad = state.Gamepad;
 
             // get buttons values
-            ushort buttons = (ushort)Gamepad.Buttons;
-            buttons |= (Gamepad.LeftTrigger > 0 ? (ushort)1024 : (ushort)0);
-            buttons |= (Gamepad.RightTrigger > 0 ? (ushort)2048 : (ushort)0);
+            uint buttons = (ushort)Gamepad.Buttons;
+            buttons |= (Gamepad.LeftTrigger > 0 ? (uint)Utils.GamepadButtonFlags.LeftTrigger : 0);
+            buttons |= (Gamepad.RightTrigger > 0 ? (uint)Utils.GamepadButtonFlags.RightTrigger : 0);
 
             // get sticks values
             LeftThumbX = Gamepad.LeftThumbX;
@@ -95,12 +127,12 @@ namespace ControllerService.Targets
             RightThumbX = Gamepad.RightThumbX;
             RightThumbY = Gamepad.RightThumbY;
 
-            if (profile.umc_enabled && ((buttons + ProfileButton.AlwaysOn.Value) & profile.umc_trigger) != 0)
+            if (Profile.umc_enabled && (buttons & Profile.umc_trigger) == Profile.umc_trigger)
             {
-                float intensity = profile.GetIntensity();
-                float sensivity = profile.GetSensiviy();
+                float intensity = Profile.GetIntensity();
+                float sensivity = Profile.GetSensiviy();
 
-                switch (profile.umc_input)
+                switch (Profile.umc_input)
                 {
                     default:
                     case InputStyle.RightStick:
@@ -113,11 +145,6 @@ namespace ControllerService.Targets
                         break;
                 }
             }
-        }
-
-        internal void Disconnect()
-        {
-            throw new NotImplementedException();
         }
     }
 }

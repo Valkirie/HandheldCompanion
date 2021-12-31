@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.TaskScheduler;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
+using Nefarius.ViGEm.Client.Targets.Xbox360;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -45,10 +47,6 @@ namespace ControllerHelper
 
         private FormWindowState CurrentWindowState;
         private object updateLock = new();
-
-        private HIDmode HideDS4 = new HIDmode("DualShock4Controller", "DualShock 4 emulation");
-        private HIDmode HideXBOX = new HIDmode("Xbox360Controller", "Xbox 360 emulation");
-        private Dictionary<string, HIDmode> HIDmodes = new();
 
         public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
 
@@ -121,13 +119,14 @@ namespace ControllerHelper
                 UpdateTask();
             }
 
-            // todo : feed me from service
-            cB_HidMode.Items.Add(HideDS4);
-            cB_HidMode.Items.Add(HideXBOX);
-            HIDmodes.Add("DualShock4Controller", HideDS4);
-            HIDmodes.Add("Xbox360Controller", HideXBOX);
+            foreach (HIDmode mode in (HIDmode[])Enum.GetValues(typeof(HIDmode)))
+            {
+                if (mode == HIDmode.NoController)
+                    continue;
+                cB_HidMode.Items.Add(mode);
+            }
 
-            foreach (DualShock4Button button in Profile.ListTriggers().Values)
+            foreach (Utils.GamepadButtonFlags button in (Utils.GamepadButtonFlags[])Enum.GetValues(typeof(Utils.GamepadButtonFlags)))
                 cB_UMCInputButton.Items.Add(button);
 
             // update UI
@@ -424,7 +423,7 @@ namespace ControllerHelper
                     switch (name)
                     {
                         case "HIDmode":
-                            cB_HidMode.SelectedItem = HIDmodes[args[name]];
+                            cB_HidMode.SelectedIndex = int.Parse(args[name]);
                             break;
                         case "HIDcloaked":
                             cB_HIDcloak.Checked = bool.Parse(args[name]);
@@ -496,9 +495,9 @@ namespace ControllerHelper
 
             PipeClient.SendMessage(new PipeClientSettings
             {
-                settings = new Dictionary<string, string>
+                settings = new Dictionary<string, object>
                 {
-                    { "HIDrate", tB_PullRate.Value.ToString() }
+                    { "HIDrate", tB_PullRate.Value }
                 }
             });
         }
@@ -512,9 +511,9 @@ namespace ControllerHelper
 
             PipeClient.SendMessage(new PipeClientSettings
             {
-                settings = new Dictionary<string, string>
+                settings = new Dictionary<string, object>
                 {
-                    { "HIDstrength", tB_VibrationStr.Value.ToString() }
+                    { "HIDstrength", tB_VibrationStr.Value }
                 }
             });
         }
@@ -523,11 +522,11 @@ namespace ControllerHelper
         {
             PipeClient.SendMessage(new PipeClientSettings
             {
-                settings = new Dictionary<string, string>
+                settings = new Dictionary<string, object>
                 {
                     { "DSUip", tB_UDPIP.Text },
-                    { "DSUport", tB_UDPPort.Value.ToString() },
-                    { "DSUEnabled", cB_UDPEnable.Checked.ToString() }
+                    { "DSUport", tB_UDPPort.Value },
+                    { "DSUEnabled", cB_UDPEnable.Checked }
                 }
             });
         }
@@ -647,9 +646,9 @@ namespace ControllerHelper
         {
             PipeClient.SendMessage(new PipeClientSettings
             {
-                settings = new Dictionary<string, string>
+                settings = new Dictionary<string, object>
                 {
-                    { "HIDuncloakonclose", cB_uncloak.Checked.ToString() }
+                    { "HIDuncloakonclose", cB_uncloak.Checked }
                 }
             });
         }
@@ -724,8 +723,8 @@ namespace ControllerHelper
 
                     for (int idx = 0; idx < cB_UMCInputButton.Items.Count; idx++)
                     {
-                        DualShock4Button button = (DualShock4Button)cB_UMCInputButton.Items[idx];
-                        bool selected = (button.Value & CurrentProfile.umc_trigger) != 0;
+                        uint button = (uint)(Utils.GamepadButtonFlags)cB_UMCInputButton.Items[idx];
+                        bool selected = (button & CurrentProfile.umc_trigger) == button;
                         cB_UMCInputButton.SetSelected(idx, selected);
                     }
 
@@ -779,8 +778,8 @@ namespace ControllerHelper
             CurrentProfile.umc_intensity = tB_UMCIntensity.Value;
 
             CurrentProfile.umc_trigger = 0;
-            foreach (DualShock4Button button in cB_UMCInputButton.SelectedItems)
-                CurrentProfile.umc_trigger |= button.Value;
+            foreach (Utils.GamepadButtonFlags button in cB_UMCInputButton.SelectedItems)
+                CurrentProfile.umc_trigger |= (uint)button;
 
             ProfileManager.profiles[CurrentProfile.name] = CurrentProfile;
             ProfileManager.UpdateProfile(CurrentProfile);
@@ -839,13 +838,24 @@ namespace ControllerHelper
             });
         }
 
+        private void cB_HidMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            PipeClient.SendMessage(new PipeClientSettings
+            {
+                settings = new Dictionary<string, object>
+                {
+                    { "HIDmode", cB_HidMode.SelectedItem }
+                }
+            });
+        }
+
         private void cB_HIDcloak_CheckedChanged(object sender, EventArgs e)
         {
             PipeClient.SendMessage(new PipeClientSettings
             {
-                settings = new Dictionary<string, string>
+                settings = new Dictionary<string, object>
                 {
-                    { "HIDcloaked", cB_HIDcloak.Checked.ToString() }
+                    { "HIDcloaked", cB_HIDcloak.Checked }
                 }
             });
         }

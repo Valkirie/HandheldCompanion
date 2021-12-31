@@ -20,15 +20,6 @@ namespace ControllerCommon
         Mouse = 3
     }
 
-    public class ProfileButton : DualShock4Button
-    {
-        public ProfileButton(int id, string name, ushort value) : base(id, name, value)
-        {
-        }
-
-        public static ProfileButton AlwaysOn = new ProfileButton(12, "Always On", 8);
-    }
-
     [Serializable]
     public class Profile
     {
@@ -50,7 +41,7 @@ namespace ControllerCommon
         public float umc_sensivity { get; set; } = 2.0f;
         public float umc_intensity { get; set; } = 1.0f;
 
-        public int umc_trigger { get; set; } = 0;
+        public uint umc_trigger { get; set; } = 0;
 
         [JsonIgnore] public ProfileErrorCode error;
         [JsonIgnore] public string fullpath { get; set; }
@@ -80,30 +71,6 @@ namespace ControllerCommon
         public override string ToString()
         {
             return name;
-        }
-
-        public static Dictionary<int, DualShock4Button> ListTriggers()
-        {
-            return new Dictionary<int, DualShock4Button>() {
-                { ProfileButton.AlwaysOn.Value, ProfileButton.AlwaysOn },
-
-                { DualShock4Button.ThumbRight.Value, DualShock4Button.ThumbRight },
-                { DualShock4Button.ThumbLeft.Value, DualShock4Button.ThumbLeft },
-
-                { DualShock4Button.Options.Value, DualShock4Button.Options },
-                { DualShock4Button.Share.Value, DualShock4Button.Share },
-
-                { DualShock4Button.TriggerRight.Value, DualShock4Button.TriggerRight },
-                { DualShock4Button.TriggerLeft.Value, DualShock4Button.TriggerLeft },
-
-                { DualShock4Button.ShoulderRight.Value, DualShock4Button.ShoulderRight },
-                { DualShock4Button.ShoulderLeft.Value, DualShock4Button.ShoulderLeft },
-
-                { DualShock4Button.Triangle.Value, DualShock4Button.Triangle },
-                { DualShock4Button.Circle.Value, DualShock4Button.Circle },
-                { DualShock4Button.Cross.Value, DualShock4Button.Cross },
-                { DualShock4Button.Square.Value, DualShock4Button.Square },
-            };
         }
     }
 }

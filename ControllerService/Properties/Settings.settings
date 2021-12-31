@@ -5,8 +5,8 @@
     <Setting Name="HIDcloaked" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="HIDmode" Type="System.String" Scope="User">
-      <Value Profile="(Default)">DualShock4Controller</Value>
+    <Setting Name="HIDmode" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="DSUEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>

@@ -3797,9 +3797,6 @@
   <data name="&gt;&gt;lb_HidMode.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="cB_HidMode.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="cB_HidMode.Location" type="System.Drawing.Point, System.Drawing">
     <value>156, 29</value>
   </data>

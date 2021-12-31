@@ -1,4 +1,6 @@
-﻿using Nefarius.ViGEm.Client;
+﻿using ControllerCommon;
+using Microsoft.Extensions.Logging;
+using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using SharpDX.XInput;
@@ -49,18 +51,39 @@ namespace ControllerService.Targets
 
         private new IXbox360Controller vcontroller;
 
-        public Xbox360Target(ViGEmClient client, Controller controller, int index) : base(client, controller, index)
+        public Xbox360Target(ViGEmClient client, Controller controller, int index, ILogger logger) : base(client, controller, index, logger)
         {
             // initialize controller
+            HID = HIDmode.Xbox360Controller;
+
             vcontroller = client.CreateXbox360Controller();
             vcontroller.AutoSubmitReport = false;
+            vcontroller.FeedbackReceived += FeedbackReceived;
+        }
 
+        public new void Connect()
+        {
             vcontroller.Connect();
+            base.Connect();
         }
 
         public new void Disconnect()
         {
             vcontroller.Disconnect();
+            base.Disconnect();
+        }
+
+        public void FeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)
+        {
+            if (!Controller.IsConnected)
+                return;
+
+            Vibration inputMotor = new()
+            {
+                LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * strength),
+                RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * strength),
+            };
+            Controller.SetVibration(inputMotor);
         }
 
         public new unsafe void UpdateReport()
@@ -75,7 +98,7 @@ namespace ControllerService.Targets
             vcontroller.SetAxisValue(Xbox360Axis.RightThumbX, RightThumbX);
             vcontroller.SetAxisValue(Xbox360Axis.RightThumbY, RightThumbY);
 
-            foreach (Xbox360Button button in (Xbox360Button[])Enum.GetValues(typeof(Xbox360Button)))
+            foreach (Xbox360Button button in ButtonMap)
             {
                 GamepadButtonFlags value = (GamepadButtonFlags)button.Value;
                 vcontroller.SetButtonState(button, Gamepad.Buttons.HasFlag(value));
@@ -84,7 +107,7 @@ namespace ControllerService.Targets
             vcontroller.SetSliderValue(Xbox360Slider.LeftTrigger, Gamepad.LeftTrigger);
             vcontroller.SetSliderValue(Xbox360Slider.RightTrigger, Gamepad.RightTrigger);
 
-            if (!profile.whitelisted)
+            if (!Profile.whitelisted)
                 vcontroller.SubmitReport();
         }
     }

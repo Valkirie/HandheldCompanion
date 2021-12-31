@@ -33,11 +33,15 @@ namespace ControllerService
             if (sensor != null)
             {
                 sensor.ReportInterval = sensor.MinimumReportInterval;
-                logger.LogInformation("Gyrometer initialised");
-                logger.LogInformation("Gyrometer report interval set to {0}ms", sensor.ReportInterval);
+                logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
                 sensor.ReadingChanged += GyroReadingChanged;
             }
+        }
+
+        public override string ToString()
+        {
+            return this.GetType().Name;
         }
 
         void GyroReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
@@ -54,12 +58,12 @@ namespace ControllerService
             this.reading.Y = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityZ, rate);
             this.reading.Z = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityY, rate);
 
-            if (controller.target != null)
+            if (controller.Target != null)
             {
-                this.reading *= controller.target.profile.gyrometer;
+                this.reading *= controller.Target.Profile.gyrometer;
 
-                this.reading.Z = (controller.target.profile.inverthorizontal ? -1.0f : 1.0f) * this.reading.Z;
-                this.reading.X = (controller.target.profile.invertvertical ? -1.0f : 1.0f) * this.reading.X;
+                this.reading.Z = (controller.Target.Profile.inverthorizontal ? -1.0f : 1.0f) * this.reading.Z;
+                this.reading.X = (controller.Target.Profile.invertvertical ? -1.0f : 1.0f) * this.reading.X;
             }
 
             // raise event

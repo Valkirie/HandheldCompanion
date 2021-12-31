@@ -83,6 +83,11 @@ namespace ControllerCommon
             server.Error += OnError;
         }
 
+        public override string ToString()
+        {
+            return this.GetType().Name;
+        }
+
         public PipeServer(string pipeName, ILogger logger) : this(pipeName)
         {
             this.logger = logger;
@@ -94,7 +99,7 @@ namespace ControllerCommon
                 return;
 
             server.Start();
-            logger?.LogInformation($"Pipe Server has started");
+            logger?.LogInformation("{0} has started", this.ToString());
         }
 
         public void Stop()
@@ -103,7 +108,7 @@ namespace ControllerCommon
                 return;
 
             server = null;
-            logger?.LogInformation($"Pipe Server has stopped");
+            logger?.LogInformation("{0} has stopped", this.ToString());
         }
 
         private void OnClientConnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
@@ -133,7 +138,7 @@ namespace ControllerCommon
 
         private void OnError(Exception exception)
         {
-            logger?.LogError("PipeServer failed. {0}", exception.Message);
+            logger?.LogError("{0} failed. {1}", this.ToString(), exception.Message);
         }
 
         public void SendMessage(PipeMessage message)

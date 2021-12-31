@@ -21,32 +21,29 @@ namespace ControllerService
     public class XInputController
     {
         public Controller Controller;
-        public ViGEmTarget target;
+        public ViGEmTarget Target;
 
-        public DeviceInstance instance;
+        public DeviceInstance Instance;
 
-        private DSUServer server;
+        private DSUServer DSUServer;
 
         public XInputGirometer gyrometer;
         public XInputAccelerometer accelerometer;
 
         private readonly Timer UpdateTimer;
-        private float strength;
 
-        public UserIndex index;
+        public UserIndex UserIndex;
         private object updateLock = new();
 
         private readonly ILogger logger;
-        private readonly string HIDmode;
 
-        public XInputController(Controller controller, UserIndex index, int HIDrate, string HIDmode, ILogger logger)
+        public XInputController(Controller controller, UserIndex index, int HIDrate, ILogger logger)
         {
             this.logger = logger;
-            this.HIDmode = HIDmode;
 
             // initilize controller
             this.Controller = controller;
-            this.index = index;
+            this.UserIndex = index;
 
             // initialize timers
             UpdateTimer = new Timer(HIDrate) { Enabled = false, AutoReset = true };
@@ -55,49 +52,23 @@ namespace ControllerService
         public void SetPollRate(int HIDrate)
         {
             UpdateTimer.Interval = HIDrate;
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", target.GetType().Name, UpdateTimer.Interval);
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", Target.GetType().Name, UpdateTimer.Interval);
         }
 
         public void SetVibrationStrength(float strength)
         {
-            this.strength = strength / 100.0f;
-            logger.LogInformation("Virtual {0} vibration strength set to {1}%", target.GetType().Name, strength);
+            this.Target.strength = strength / 100.0f;
+            logger.LogInformation("Virtual {0} vibration strength set to {1}%", Target.GetType().Name, strength);
         }
 
         public Dictionary<string, string> ToArgs()
         {
             return new Dictionary<string, string>() {
-                { "ProductName", instance.ProductName },
-                { "InstanceGuid", $"{instance.InstanceGuid}" },
-                { "ProductGuid", $"{instance.ProductGuid}" },
-                { "ProductIndex", $"{(int)index}" }
+                { "ProductName", Instance.ProductName },
+                { "InstanceGuid", $"{Instance.InstanceGuid}" },
+                { "ProductGuid", $"{Instance.ProductGuid}" },
+                { "ProductIndex", $"{(int)UserIndex}" }
             };
-        }
-
-        private void XBOX_FeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)
-        {
-            if (!Controller.IsConnected)
-                return;
-
-            Vibration inputMotor = new()
-            {
-                LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * strength),
-                RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * strength),
-            };
-            Controller.SetVibration(inputMotor);
-        }
-
-        private void DS4_FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)
-        {
-            if (!Controller.IsConnected)
-                return;
-
-            Vibration inputMotor = new()
-            {
-                LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * strength),
-                RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * strength),
-            };
-            Controller.SetVibration(inputMotor);
         }
 
         public void SetGyroscope(XInputGirometer _gyrometer)
@@ -114,63 +85,56 @@ namespace ControllerService
 
         public void SetDSUServer(DSUServer _server)
         {
-            server = _server;
+            DSUServer = _server;
         }
 
         private void Accelerometer_ReadingChanged(object sender, Vector3 acceleration)
         {
-            target.Acceleration = acceleration;
+            Target.Acceleration = acceleration;
         }
 
         private void Girometer_ReadingChanged(object sender, Vector3 angularvelocity)
         {
-            target.AngularVelocity = angularvelocity;
+            Target.AngularVelocity = angularvelocity;
         }
 
-        public void SetTarget(ViGEmClient client)
+        public void SetTarget(ViGEmTarget target)
         {
-            switch (HIDmode)
-            {
-                default:
-                case "DualShock4Controller":
-                    target = new DualShock4Target(client, Controller, (int)index);
-                    break;
-                case "Xbox360Controller":
-                    target = new Xbox360Target(client, Controller, (int)index);
-                    break;
-            }
+            this.Target = target;
 
-            if (target == null)
+            logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target.HID, Instance.InstanceName, UserIndex);
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", target.HID, UpdateTimer.Interval);
+
+            switch (Target.HID)
             {
-                logger.LogCritical("No Virtual controller detected. Application will stop");
-                throw new InvalidOperationException();
+                case HIDmode.Xbox360Controller:
+                    ((Xbox360Target)Target)?.Connect();
+                    break;
+                case HIDmode.DualShock4Controller:
+                    ((DualShock4Target)Target)?.Connect();
+                    break;
             }
 
             UpdateTimer.Elapsed += async (sender, e) => await UpdateReport();
             UpdateTimer.Enabled = true;
             UpdateTimer.Start();
-
-            logger.LogInformation("Virtual {0} connected", target.GetType().Name);
-            logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target.GetType().Name, instance.InstanceName, index);
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", target.GetType().Name, UpdateTimer.Interval);
         }
 
         private Task UpdateReport()
         {
             lock (updateLock)
             {
-                // that suxx !
-                switch (HIDmode)
+                switch(Target.HID)
                 {
-                    default:
-                    case "DualShock4Controller":
-                        ((DualShock4Target)target)?.UpdateReport();
+                    case HIDmode.Xbox360Controller:
+                        ((Xbox360Target)Target)?.UpdateReport();
                         break;
-                    case "Xbox360Controller":
-                        ((Xbox360Target)target)?.UpdateReport();
+                    case HIDmode.DualShock4Controller:
+                        ((DualShock4Target)Target)?.UpdateReport();
                         break;
                 }
-                server?.NewReportIncoming(target);
+
+                DSUServer?.NewReportIncoming(Target);
             }
 
             return Task.CompletedTask;

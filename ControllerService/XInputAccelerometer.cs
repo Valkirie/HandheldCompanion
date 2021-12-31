@@ -32,11 +32,15 @@ namespace ControllerService
             if (sensor != null)
             {
                 sensor.ReportInterval = sensor.MinimumReportInterval;
-                logger.LogInformation("Accelerometer initialised");
-                logger.LogInformation("Accelerometer report interval set to {0}ms", sensor.ReportInterval);
+                logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
                 sensor.ReadingChanged += AcceleroReadingChanged;
             }
+        }
+
+        public override string ToString()
+        {
+            return this.GetType().Name;
         }
 
         void AcceleroReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
@@ -53,12 +57,12 @@ namespace ControllerService
             this.reading.Y = (float)accelFilter.axis1Filter.Filter(reading.AccelerationZ, rate);
             this.reading.Z = (float)accelFilter.axis1Filter.Filter(reading.AccelerationY, rate);
 
-            if (controller.target != null)
+            if (controller.Target != null)
             {
-                this.reading *= controller.target.profile.accelerometer;
+                this.reading *= controller.Target.Profile.accelerometer;
 
-                this.reading.Z = (controller.target.profile.inverthorizontal ? -1.0f : 1.0f) * this.reading.Z;
-                this.reading.X = (controller.target.profile.invertvertical ? -1.0f : 1.0f) * this.reading.X;
+                this.reading.Z = (controller.Target.Profile.inverthorizontal ? -1.0f : 1.0f) * this.reading.Z;
+                this.reading.X = (controller.Target.Profile.invertvertical ? -1.0f : 1.0f) * this.reading.X;
             }
 
             // raise event

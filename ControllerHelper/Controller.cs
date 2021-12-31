@@ -22,21 +22,4 @@ namespace ControllerHelper
             return this.ProductName;
         }
     }
-
-    class HIDmode
-    {
-        public string mode;
-        public string name;
-
-        public HIDmode(string mode, string name)
-        {
-            this.mode = mode;
-            this.name = name;
-        }
-
-        public override string ToString()
-        {
-            return this.name;
-        }
-    }
 }

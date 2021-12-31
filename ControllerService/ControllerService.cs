@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
@@ -20,6 +21,8 @@ namespace ControllerService
     {
         // controllers vars
         private ViGEmClient VirtualClient;
+        private ViGEmTarget VirtualTarget;
+
         public XInputController XInputController;
         private XInputGirometer Gyrometer;
         private XInputAccelerometer Accelerometer;
@@ -30,9 +33,11 @@ namespace ControllerService
 
         public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathDep;
 
-        private string DSUip, HIDmode;
+        private string DSUip;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
         private int DSUport, HIDrate, HIDstrength;
+
+        private HIDmode HIDmode;
 
         private readonly ILogger<ControllerService> logger;
 
@@ -54,7 +59,7 @@ namespace ControllerService
             // settings
             HIDcloaked = Properties.Settings.Default.HIDcloaked;
             HIDuncloakonclose = Properties.Settings.Default.HIDuncloakonclose;
-            HIDmode = Properties.Settings.Default.HIDmode;
+            HIDmode = (HIDmode)Properties.Settings.Default.HIDmode;
             DSUEnabled = Properties.Settings.Default.DSUEnabled;
             DSUip = Properties.Settings.Default.DSUip;
             DSUport = Properties.Settings.Default.DSUport;
@@ -96,8 +101,8 @@ namespace ControllerService
                 if (!controller.IsConnected)
                     continue;
 
-                XInputController = new XInputController(controller, idx, HIDrate, HIDmode, logger);
-                XInputController.instance = dinstances[(int)idx];
+                XInputController = new XInputController(controller, idx, HIDrate, logger);
+                XInputController.Instance = dinstances[(int)idx];
                 break;
             }
 
@@ -117,6 +122,9 @@ namespace ControllerService
             if (Accelerometer.sensor == null)
                 logger.LogWarning("No Accelerometer detected");
 
+            // initialize virtual controller
+            UpdateVirtualController(HIDmode);
+
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
             DSUServer.Started += OnDSUStarted;
@@ -127,6 +135,41 @@ namespace ControllerService
             PipeServer.Connected += OnClientConnected;
             PipeServer.Disconnected += OnClientDisconnected;
             PipeServer.ClientMessage += OnClientMessage;
+        }
+
+        private void UpdateVirtualController(HIDmode mode)
+        {
+            if (VirtualTarget != null)
+            {
+                switch (VirtualTarget.HID)
+                {
+                    case HIDmode.Xbox360Controller:
+                        ((Xbox360Target)VirtualTarget)?.Disconnect();
+                        break;
+                    case HIDmode.DualShock4Controller:
+                        ((DualShock4Target)VirtualTarget)?.Disconnect();
+                        break;
+                }
+            }
+
+            switch (mode)
+            {
+                default:
+                case HIDmode.DualShock4Controller:
+                    VirtualTarget = new DualShock4Target(VirtualClient, XInputController.Controller, (int)XInputController.UserIndex, logger);
+                    break;
+                case HIDmode.Xbox360Controller:
+                    VirtualTarget = new Xbox360Target(VirtualClient, XInputController.Controller, (int)XInputController.UserIndex, logger);
+                    break;
+            }
+
+            if (VirtualTarget == null)
+            {
+                logger.LogCritical("Virtual controller initialization failed. Application will stop");
+                throw new InvalidOperationException();
+            }
+
+            XInputController.SetTarget(VirtualTarget);
         }
 
         private void OnDSUStopped(object sender)
@@ -160,20 +203,20 @@ namespace ControllerService
                     switch (cursor.action)
                     {
                         case 0: // up
-                            XInputController.target.touch.OnMouseUp((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.Target.Touch.OnMouseUp((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
                         case 1: // down
-                            XInputController.target.touch.OnMouseDown((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.Target.Touch.OnMouseDown((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
                         case 2: // move
-                            XInputController.target.touch.OnMouseMove((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.Target.Touch.OnMouseMove((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
                     }
                     break;
 
                 case PipeCode.CLIENT_SCREEN:
                     PipeClientScreen screen = (PipeClientScreen)message;
-                    XInputController.target.touch.UpdateRatio(screen.width, screen.height);
+                    XInputController.Target.Touch.UpdateRatio(screen.width, screen.height);
                     break;
 
                 case PipeCode.CLIENT_SETTINGS:
@@ -199,7 +242,7 @@ namespace ControllerService
 
         private void OnClientDisconnected(object sender)
         {
-            XInputController.target.touch.OnMouseUp(-1, -1, 1048576 /* MouseButtons.Left */);
+            XInputController.Target.Touch.OnMouseUp(-1, -1, 1048576 /* MouseButtons.Left */);
         }
 
         private void OnClientConnected(object sender)
@@ -207,10 +250,10 @@ namespace ControllerService
             // send controller details
             PipeServer.SendMessage(new PipeServerController()
             {
-                ProductName = XInputController.instance.ProductName,
-                InstanceGuid = XInputController.instance.InstanceGuid,
-                ProductGuid = XInputController.instance.ProductGuid,
-                ProductIndex = (int)XInputController.index
+                ProductName = XInputController.Instance.ProductName,
+                InstanceGuid = XInputController.Instance.InstanceGuid,
+                ProductGuid = XInputController.Instance.ProductGuid,
+                ProductIndex = (int)XInputController.UserIndex
             });
 
             // send server settings
@@ -219,54 +262,56 @@ namespace ControllerService
 
         internal void UpdateProfile(Profile profile)
         {
-            XInputController.target.profile = profile;
+            XInputController.Target.Profile = profile;
         }
 
-        public void UpdateSettings(Dictionary<string, string> args)
+        public void UpdateSettings(Dictionary<string, object> args)
         {
-            foreach (KeyValuePair<string, string> pair in args)
+            foreach (KeyValuePair<string, object> pair in args)
             {
                 string name = pair.Key;
-                string property = pair.Value;
+                object property = pair.Value;
 
                 SettingsProperty setting = Properties.Settings.Default.Properties[name];
                 if (setting != null)
                 {
-                    object prev_value = Properties.Settings.Default[name].ToString();
-                    object value;
+                    object prev_value = Properties.Settings.Default[name];
+                    object value = property;
 
                     TypeCode typeCode = Type.GetTypeCode(setting.PropertyType);
                     switch (typeCode)
                     {
                         case TypeCode.Boolean:
-                            value = bool.Parse(property);
-                            prev_value = bool.Parse((string)prev_value);
+                            value = (bool)value;
+                            prev_value = (bool)prev_value;
                             break;
                         case TypeCode.Single:
                         case TypeCode.Decimal:
-                            value = float.Parse(property);
-                            prev_value = float.Parse((string)prev_value);
+                            value = (float)value;
+                            prev_value = (float)prev_value;
                             break;
                         case TypeCode.Int16:
                         case TypeCode.Int32:
                         case TypeCode.Int64:
-                            value = int.Parse(property);
-                            prev_value = int.Parse((string)prev_value);
+                            value = (int)value;
+                            prev_value = (int)prev_value;
                             break;
                         case TypeCode.UInt16:
                         case TypeCode.UInt32:
                         case TypeCode.UInt64:
-                            value = uint.Parse(property);
-                            prev_value = uint.Parse((string)prev_value);
+                            value = (uint)value;
+                            prev_value = (uint)prev_value;
                             break;
                         default:
-                            value = property;
+                            value = (string)value;
                             prev_value = (string)prev_value;
                             break;
                     }
 
                     Properties.Settings.Default[name] = value;
                     ApplySetting(name, prev_value, value);
+
+                    logger.LogInformation("{0} set to {1}", name, property.ToString());
                 }
             }
 
@@ -277,8 +322,6 @@ namespace ControllerService
         {
             if (prev_value.ToString() != value.ToString())
             {
-                logger.LogInformation("{0} set to {1}", name, value.ToString());
-
                 switch (name)
                 {
                     case "HIDcloaked":
@@ -289,7 +332,7 @@ namespace ControllerService
                         HIDuncloakonclose = (bool)value;
                         break;
                     case "HIDmode":
-                        // todo
+                        UpdateVirtualController((HIDmode)value);
                         break;
                     case "HIDrate":
                         XInputController.SetPollRate((int)value);
@@ -324,7 +367,6 @@ namespace ControllerService
             Hidder.SetCloaking(HIDcloaked);
 
             // initialize virtual controller
-            XInputController.SetTarget(VirtualClient);
             XInputController.SetDSUServer(DSUServer);
             XInputController.SetGyroscope(Gyrometer);
             XInputController.SetAccelerometer(Accelerometer);
@@ -336,7 +378,7 @@ namespace ControllerService
             // send notification
             PipeServer.SendMessage(new PipeServerToast
             {
-                title = $"{XInputController.target.GetType().Name}",
+                title = $"{XInputController.Target.GetType().Name}",
                 content = "Virtual device is now connected"
             });
 
@@ -347,15 +389,15 @@ namespace ControllerService
         {
             try
             {
-                if (XInputController.target != null)
+                if (XInputController.Target != null)
                 {
-                    XInputController.target.Disconnect();
-                    logger.LogInformation("Virtual {0} disconnected", XInputController.target.GetType().Name);
+                    XInputController.Target.Disconnect();
+                    logger.LogInformation("Virtual {0} disconnected", XInputController.Target.GetType().Name);
 
                     // send notification
                     PipeServer.SendMessage(new PipeServerToast
                     {
-                        title = $"{XInputController.target.GetType().Name}",
+                        title = $"{XInputController.Target.GetType().Name}",
                         content = "Virtual device is now disconnected"
                     });
                 }
