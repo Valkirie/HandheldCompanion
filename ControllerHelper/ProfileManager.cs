@@ -220,7 +220,18 @@ namespace ControllerHelper
         public void UpdateProfileWrapper(Profile profile)
         {
             // deploy xinput wrapper
-            string x360ce = Properties.Resources.x360ce;
+            string x360ce = "";
+
+            switch(helper.HIDmode)
+            {
+                case HIDmode.Xbox360Controller:
+                    x360ce = Properties.Resources.Xbox360;
+                    break;
+                case HIDmode.DualShock4Controller:
+                    x360ce = Properties.Resources.DualShock4;
+                    break;
+            }
+
             string[] fullpaths = new string[] { profile.fullpath };
 
             // for testing purposes, this should not happen!

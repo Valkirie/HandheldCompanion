@@ -48,6 +48,8 @@ namespace ControllerHelper
         private bool IsElevated, FirstStart;
 
         public ProfileManager ProfileManager;
+        public HIDmode HIDmode;
+
         public ServiceManager ServiceManager;
 
         // TaskManager vars
@@ -115,7 +117,7 @@ namespace ControllerHelper
 
             foreach (HIDmode mode in (HIDmode[])Enum.GetValues(typeof(HIDmode)))
             {
-                if (mode == HIDmode.NoController)
+                if (mode == HIDmode.None)
                     continue;
                 cB_HidMode.Items.Add(mode);
             }
@@ -701,7 +703,6 @@ namespace ControllerHelper
                     tB_ProfilePath.Text = CurrentProfile.path;
                     toolTip1.SetToolTip(tB_ProfilePath, CurrentProfile.error != ProfileErrorCode.None ? $"Can't reach: {CurrentProfile.path}" : $"{CurrentProfile.path}");
 
-
                     cB_Whitelist.Checked = CurrentProfile.whitelisted;
                     cB_Wrapper.Checked = CurrentProfile.use_wrapper;
 
@@ -834,11 +835,12 @@ namespace ControllerHelper
 
         private void cB_HidMode_SelectedIndexChanged(object sender, EventArgs e)
         {
+            HIDmode = (HIDmode)cB_HidMode.SelectedItem;
             PipeClient.SendMessage(new PipeClientSettings
             {
                 settings = new Dictionary<string, object>
                 {
-                    { "HIDmode", cB_HidMode.SelectedItem }
+                    { "HIDmode", HIDmode }
                 }
             });
         }
