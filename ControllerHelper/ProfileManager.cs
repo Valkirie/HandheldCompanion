@@ -181,6 +181,8 @@ namespace ControllerHelper
                 return ProfileErrorCode.MissingPath;
             else if (!File.Exists(profile.fullpath))
                 return ProfileErrorCode.MissingExecutable;
+            else if (!IsDirectoryWritable(processpath))
+                return ProfileErrorCode.MissingPermission;
 
             return ProfileErrorCode.None;
         }
@@ -193,13 +195,15 @@ namespace ControllerHelper
             // update GUI
             helper.UpdateProfileList(profile);
 
+            // update profile
+            UpdateProfileCloaking(profile);
+
             if (profile.error != ProfileErrorCode.None && !profile.IsDefault)
             {
                 logger.LogError("Profile {0} returned error code {1}", profile.name, profile.error);
                 return;
             }
 
-            UpdateProfileCloaking(profile);
             UpdateProfileWrapper(profile);
         }
 
@@ -249,9 +253,6 @@ namespace ControllerHelper
                 string processpath = Path.GetDirectoryName(fullpath);
                 string inipath = Path.Combine(processpath, "x360ce.ini");
                 bool iniexist = File.Exists(inipath);
-
-                if (!IsDirectoryWritable(processpath))
-                    return;
 
                 // get binary type (x64, x86)
                 BinaryType bt; GetBinaryType(fullpath, out bt);

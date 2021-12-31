@@ -693,7 +693,7 @@ namespace ControllerHelper
                     // disable button if is default profile
                     b_DeleteProfile.Enabled = !CurrentProfile.IsDefault;
                     cB_Whitelist.Enabled = !CurrentProfile.IsDefault;
-                    cB_Wrapper.Enabled = !CurrentProfile.IsDefault;
+                    cB_Wrapper.Enabled = !CurrentProfile.IsDefault && CurrentProfile.error == ProfileErrorCode.None;
 
                     gB_ProfileDetails.Enabled = true;
                     gB_ProfileOptions.Enabled = true;

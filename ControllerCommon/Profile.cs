@@ -7,7 +7,8 @@ namespace ControllerCommon
     {
         None = 0,
         MissingExecutable = 1,
-        MissingPath = 2
+        MissingPath = 2,
+        MissingPermission
     }
 
     public enum InputStyle
