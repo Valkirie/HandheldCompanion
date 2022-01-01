@@ -253,13 +253,6 @@ namespace ControllerHelper
                 toolTip1.SetToolTip(cB_RunAtStartup, strings.WarningElevated);
             }
 
-            // disable profile saving if rights are not enough
-            if (!Utils.IsDirectoryWritable(CurrentPathProfiles))
-            {
-                b_ApplyProfile.Enabled = false;
-                toolTip1.SetToolTip(gB_ProfileDetails, strings.WarningElevated);
-            }
-
             UpdateStatus(false);
 
             // start Service Manager
@@ -708,7 +701,13 @@ namespace ControllerHelper
                     // disable button if is default profile
                     b_DeleteProfile.Enabled = !CurrentProfile.IsDefault;
                     cB_Whitelist.Enabled = !CurrentProfile.IsDefault;
-                    cB_Wrapper.Enabled = !CurrentProfile.IsDefault && CurrentProfile.error == ProfileErrorCode.None;
+                    cB_Wrapper.Enabled = !CurrentProfile.IsDefault;
+
+                    // disable specific settings if profile has issue(s)
+                    if (CurrentProfile.error != ProfileErrorCode.None)
+                    {
+                        cB_Wrapper.Enabled = false;
+                    }
 
                     gB_ProfileDetails.Enabled = true;
                     gB_ProfileOptions.Enabled = true;
