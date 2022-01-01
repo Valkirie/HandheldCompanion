@@ -102,7 +102,7 @@ namespace ControllerCommon
                 return;
             }
 
-            client.PushMessage(message);
+            client?.PushMessage(message);
         }
 
         private void SendMessageQueue(object sender, ElapsedEventArgs e)
@@ -111,7 +111,7 @@ namespace ControllerCommon
                 return;
 
             foreach (PipeMessage m in m_queue)
-                client.PushMessage(m);
+                client?.PushMessage(m);
 
             m_queue.Clear();
             m_timer.Stop();
