@@ -101,7 +101,7 @@ namespace ControllerService
                 if (!controller.IsConnected)
                     continue;
 
-                XInputController = new XInputController(controller, idx, HIDrate, logger);
+                XInputController = new XInputController(controller, idx, logger);
                 XInputController.Instance = dinstances[(int)idx];
                 break;
             }
@@ -156,10 +156,10 @@ namespace ControllerService
             {
                 default:
                 case HIDmode.DualShock4Controller:
-                    VirtualTarget = new DualShock4Target(VirtualClient, XInputController.Controller, (int)XInputController.UserIndex, logger);
+                    VirtualTarget = new DualShock4Target(VirtualClient, XInputController.Controller, (int)XInputController.UserIndex, HIDrate, logger);
                     break;
                 case HIDmode.Xbox360Controller:
-                    VirtualTarget = new Xbox360Target(VirtualClient, XInputController.Controller, (int)XInputController.UserIndex, logger);
+                    VirtualTarget = new Xbox360Target(VirtualClient, XInputController.Controller, (int)XInputController.UserIndex, HIDrate, logger);
                     break;
             }
 

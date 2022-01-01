@@ -5,6 +5,7 @@ using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using SharpDX.XInput;
 using System.Collections.Generic;
+using System.Timers;
 
 namespace ControllerService.Targets
 {
@@ -49,7 +50,7 @@ namespace ControllerService.Targets
 
         private new IDualShock4Controller vcontroller;
 
-        public DualShock4Target(ViGEmClient client, Controller controller, int index, ILogger logger) : base(client, controller, index, logger)
+        public DualShock4Target(ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger) : base(client, controller, index, HIDrate, logger)
         {
             // initialize controller
             HID = HIDmode.DualShock4Controller;
@@ -57,6 +58,23 @@ namespace ControllerService.Targets
             vcontroller = client.CreateDualShock4Controller();
             vcontroller.AutoSubmitReport = false;
             vcontroller.FeedbackReceived += FeedbackReceived;
+
+            // initialize timers
+            UpdateTimer.Elapsed += UpdateReport;
+
+            Connect();
+        }
+
+        public new void Connect()
+        {
+            vcontroller.Connect();
+            base.Connect();
+        }
+
+        public new void Disconnect()
+        {
+            vcontroller.Disconnect();
+            base.Disconnect();
         }
 
         public void FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)
@@ -72,145 +90,134 @@ namespace ControllerService.Targets
             Controller.SetVibration(inputMotor);
         }
 
-        public new void Connect()
+        public new unsafe void UpdateReport(object sender, ElapsedEventArgs e)
         {
-            vcontroller.Connect();
-            base.Connect();
-        }
-
-        public new void Disconnect()
-        {
-            vcontroller.Disconnect();
-            base.Disconnect();
-        }
-
-        public new unsafe void UpdateReport()
-        {
-            if (!Controller.IsConnected)
-                return;
-
-            base.UpdateReport();
-
-            // reset vars
-            byte[] rawOutReportEx = new byte[63];
-            ushort tempButtons = 0;
-            ushort tempSpecial = 0;
-            DualShock4DPadDirection tempDPad = DualShock4DPadDirection.None;
-
-            outDS4Report.bThumbLX = 127;
-            outDS4Report.bThumbLY = 127;
-            outDS4Report.bThumbRX = 127;
-            outDS4Report.bThumbRY = 127;
-
-            unchecked
+            lock (updateLock)
             {
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.A))
-                    tempButtons |= DualShock4Button.Cross.Value;
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.B))
-                    tempButtons |= DualShock4Button.Circle.Value;
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.X))
-                    tempButtons |= DualShock4Button.Square.Value;
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.Y))
-                    tempButtons |= DualShock4Button.Triangle.Value;
+                if (!Controller.IsConnected)
+                    return;
 
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.Start))
-                    tempButtons |= DualShock4Button.Options.Value;
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back))
-                    tempButtons |= DualShock4Button.Share.Value;
+                base.UpdateReport(sender, e);
 
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb))
-                    tempButtons |= DualShock4Button.ThumbRight.Value;
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb))
-                    tempButtons |= DualShock4Button.ThumbLeft.Value;
+                // reset vars
+                byte[] rawOutReportEx = new byte[63];
+                ushort tempButtons = 0;
+                ushort tempSpecial = 0;
+                DualShock4DPadDirection tempDPad = DualShock4DPadDirection.None;
 
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder))
-                    tempButtons |= DualShock4Button.ShoulderRight.Value;
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder))
-                    tempButtons |= DualShock4Button.ShoulderLeft.Value;
+                outDS4Report.bThumbLX = 127;
+                outDS4Report.bThumbLY = 127;
+                outDS4Report.bThumbRX = 127;
+                outDS4Report.bThumbRY = 127;
 
-                if (Gamepad.LeftTrigger > 0)
-                    tempButtons |= DualShock4Button.TriggerLeft.Value;
-                if (Gamepad.RightTrigger > 0)
-                    tempButtons |= DualShock4Button.TriggerRight.Value;
+                unchecked
+                {
+                    if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.A))
+                        tempButtons |= DualShock4Button.Cross.Value;
+                    if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.B))
+                        tempButtons |= DualShock4Button.Circle.Value;
+                    if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.X))
+                        tempButtons |= DualShock4Button.Square.Value;
+                    if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.Y))
+                        tempButtons |= DualShock4Button.Triangle.Value;
 
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) &&
-                    Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
-                    tempDPad = DualShock4DPadDirection.Northeast;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) &&
-                         Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
-                    tempDPad = DualShock4DPadDirection.Northwest;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp))
-                    tempDPad = DualShock4DPadDirection.North;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight) &&
-                         Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
-                    tempDPad = DualShock4DPadDirection.Southeast;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
-                    tempDPad = DualShock4DPadDirection.East;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown) &&
-                         Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
-                    tempDPad = DualShock4DPadDirection.Southwest;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
-                    tempDPad = DualShock4DPadDirection.South;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
-                    tempDPad = DualShock4DPadDirection.West;
+                    if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.Start))
+                        tempButtons |= DualShock4Button.Options.Value;
+                    if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back))
+                        tempButtons |= DualShock4Button.Share.Value;
 
-                if ((state_s.wButtons & 0x0400) == 0x0400)
-                    tempSpecial |= DualShock4SpecialButton.Ps.Value;
-                if (Touch.OutputClickButton)
-                    tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
+                    if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb))
+                        tempButtons |= DualShock4Button.ThumbRight.Value;
+                    if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb))
+                        tempButtons |= DualShock4Button.ThumbLeft.Value;
 
-                outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
+                    if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder))
+                        tempButtons |= DualShock4Button.ShoulderRight.Value;
+                    if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder))
+                        tempButtons |= DualShock4Button.ShoulderLeft.Value;
+
+                    if (Gamepad.LeftTrigger > 0)
+                        tempButtons |= DualShock4Button.TriggerLeft.Value;
+                    if (Gamepad.RightTrigger > 0)
+                        tempButtons |= DualShock4Button.TriggerRight.Value;
+
+                    if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) &&
+                        Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
+                        tempDPad = DualShock4DPadDirection.Northeast;
+                    else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) &&
+                             Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
+                        tempDPad = DualShock4DPadDirection.Northwest;
+                    else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp))
+                        tempDPad = DualShock4DPadDirection.North;
+                    else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight) &&
+                             Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
+                        tempDPad = DualShock4DPadDirection.Southeast;
+                    else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
+                        tempDPad = DualShock4DPadDirection.East;
+                    else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown) &&
+                             Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
+                        tempDPad = DualShock4DPadDirection.Southwest;
+                    else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
+                        tempDPad = DualShock4DPadDirection.South;
+                    else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
+                        tempDPad = DualShock4DPadDirection.West;
+
+                    if ((state_s.wButtons & 0x0400) == 0x0400)
+                        tempSpecial |= DualShock4SpecialButton.Ps.Value;
+                    if (Touch.OutputClickButton)
+                        tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
+
+                    outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
+                }
+
+                if (!Profile.whitelisted)
+                {
+                    outDS4Report.wButtons = tempButtons;
+                    outDS4Report.wButtons |= tempDPad.Value;
+
+                    outDS4Report.bTriggerL = Gamepad.LeftTrigger;
+                    outDS4Report.bTriggerR = Gamepad.RightTrigger;
+
+                    outDS4Report.bThumbLX = Utils.NormalizeInput(LeftThumbX);
+                    outDS4Report.bThumbLY = (byte)(byte.MaxValue - Utils.NormalizeInput(LeftThumbY));
+                    outDS4Report.bThumbRX = Utils.NormalizeInput(RightThumbX);
+                    outDS4Report.bThumbRY = (byte)(byte.MaxValue - Utils.NormalizeInput(RightThumbY));
+                }
+
+                unchecked
+                {
+                    outDS4Report.bTouchPacketsN = 0x01;
+                    outDS4Report.sCurrentTouch.bPacketCounter = Touch.TouchPacketCounter;
+                    outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = Touch.TrackPadTouch0.RawTrackingNum;
+                    outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(Touch.TrackPadTouch0.X & 0xFF);
+                    outDS4Report.sCurrentTouch.bTouchData1[1] =
+                        (byte)(((Touch.TrackPadTouch0.X >> 8) & 0x0F) | ((Touch.TrackPadTouch0.Y << 4) & 0xF0));
+                    outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(Touch.TrackPadTouch0.Y >> 4);
+
+                    outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = Touch.TrackPadTouch1.RawTrackingNum;
+                    outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(Touch.TrackPadTouch1.X & 0xFF);
+                    outDS4Report.sCurrentTouch.bTouchData2[1] =
+                        (byte)(((Touch.TrackPadTouch1.X >> 8) & 0x0F) | ((Touch.TrackPadTouch1.Y << 4) & 0xF0));
+                    outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(Touch.TrackPadTouch1.Y >> 4);
+                }
+
+                outDS4Report.wGyroX = (short)(AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
+                outDS4Report.wGyroY = (short)(-AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
+                outDS4Report.wGyroZ = (short)(AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
+
+                outDS4Report.wAccelX = (short)(-Acceleration.X * F_ACC_RES_PER_G); // accelXFull
+                outDS4Report.wAccelY = (short)(-Acceleration.Y * F_ACC_RES_PER_G); // accelYFull
+                outDS4Report.wAccelZ = (short)(Acceleration.Z * F_ACC_RES_PER_G); // accelZFull
+
+                outDS4Report.bBatteryLvlSpecial = 11;
+
+                outDS4Report.wTimestamp = (ushort)(microseconds / 5.33f);
+
+                DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
+                vcontroller.SubmitRawReport(rawOutReportEx);
+
+                base.SubmitReport();
             }
-
-            if (!Profile.whitelisted)
-            {
-                outDS4Report.wButtons = tempButtons;
-                outDS4Report.wButtons |= tempDPad.Value;
-
-                outDS4Report.bTriggerL = Gamepad.LeftTrigger;
-                outDS4Report.bTriggerR = Gamepad.RightTrigger;
-
-                outDS4Report.bThumbLX = Utils.NormalizeInput(LeftThumbX);
-                outDS4Report.bThumbLY = (byte)(byte.MaxValue - Utils.NormalizeInput(LeftThumbY));
-                outDS4Report.bThumbRX = Utils.NormalizeInput(RightThumbX);
-                outDS4Report.bThumbRY = (byte)(byte.MaxValue - Utils.NormalizeInput(RightThumbY));
-            }
-
-            unchecked
-            {
-                outDS4Report.bTouchPacketsN = 0x01;
-                outDS4Report.sCurrentTouch.bPacketCounter = Touch.TouchPacketCounter;
-                outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = Touch.TrackPadTouch0.RawTrackingNum;
-                outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(Touch.TrackPadTouch0.X & 0xFF);
-                outDS4Report.sCurrentTouch.bTouchData1[1] =
-                    (byte)(((Touch.TrackPadTouch0.X >> 8) & 0x0F) | ((Touch.TrackPadTouch0.Y << 4) & 0xF0));
-                outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(Touch.TrackPadTouch0.Y >> 4);
-
-                outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = Touch.TrackPadTouch1.RawTrackingNum;
-                outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(Touch.TrackPadTouch1.X & 0xFF);
-                outDS4Report.sCurrentTouch.bTouchData2[1] =
-                    (byte)(((Touch.TrackPadTouch1.X >> 8) & 0x0F) | ((Touch.TrackPadTouch1.Y << 4) & 0xF0));
-                outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(Touch.TrackPadTouch1.Y >> 4);
-            }
-
-            outDS4Report.wGyroX = (short)(AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
-            outDS4Report.wGyroY = (short)(-AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
-            outDS4Report.wGyroZ = (short)(AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
-
-            outDS4Report.wAccelX = (short)(-Acceleration.X * F_ACC_RES_PER_G); // accelXFull
-            outDS4Report.wAccelY = (short)(-Acceleration.Y * F_ACC_RES_PER_G); // accelYFull
-            outDS4Report.wAccelZ = (short)(Acceleration.Z * F_ACC_RES_PER_G); // accelZFull
-
-            // digest previous value
-            // AngularVelocity = new();
-            // Acceleration = new();
-
-            outDS4Report.bBatteryLvlSpecial = 11;
-
-            outDS4Report.wTimestamp = (ushort)(microseconds / 5.33f);
-
-            DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
-            vcontroller.SubmitRawReport(rawOutReportEx);
         }
     }
 }

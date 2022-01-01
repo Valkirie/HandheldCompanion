@@ -663,7 +663,7 @@ namespace ControllerService
             return true;
         }
 
-        public void NewReportIncoming(ViGEmTarget hidReport)
+        public void SubmitReport(ViGEmTarget hidReport)
         {
             if (!running)
                 return;

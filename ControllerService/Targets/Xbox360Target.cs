@@ -5,6 +5,7 @@ using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using SharpDX.XInput;
 using System.Collections.Generic;
+using System.Timers;
 
 namespace ControllerService.Targets
 {
@@ -45,7 +46,7 @@ namespace ControllerService.Targets
 
         private new IXbox360Controller vcontroller;
 
-        public Xbox360Target(ViGEmClient client, Controller controller, int index, ILogger logger) : base(client, controller, index, logger)
+        public Xbox360Target(ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger) : base(client, controller, index, HIDrate, logger)
         {
             // initialize controller
             HID = HIDmode.Xbox360Controller;
@@ -53,6 +54,11 @@ namespace ControllerService.Targets
             vcontroller = client.CreateXbox360Controller();
             vcontroller.AutoSubmitReport = false;
             vcontroller.FeedbackReceived += FeedbackReceived;
+
+            // initialize timers
+            UpdateTimer.Elapsed += UpdateReport;
+
+            Connect();
         }
 
         public new void Connect()
@@ -80,29 +86,34 @@ namespace ControllerService.Targets
             Controller.SetVibration(inputMotor);
         }
 
-        public new unsafe void UpdateReport()
+        public new unsafe void UpdateReport(object sender, ElapsedEventArgs e)
         {
-            if (!Controller.IsConnected)
-                return;
-
-            base.UpdateReport();
-
-            vcontroller.SetAxisValue(Xbox360Axis.LeftThumbX, LeftThumbX);
-            vcontroller.SetAxisValue(Xbox360Axis.LeftThumbY, LeftThumbY);
-            vcontroller.SetAxisValue(Xbox360Axis.RightThumbX, RightThumbX);
-            vcontroller.SetAxisValue(Xbox360Axis.RightThumbY, RightThumbY);
-
-            foreach (Xbox360Button button in ButtonMap)
+            lock (updateLock)
             {
-                GamepadButtonFlags value = (GamepadButtonFlags)button.Value;
-                vcontroller.SetButtonState(button, Gamepad.Buttons.HasFlag(value));
+                if (!Controller.IsConnected)
+                    return;
+
+                base.UpdateReport(sender, e);
+
+                vcontroller.SetAxisValue(Xbox360Axis.LeftThumbX, LeftThumbX);
+                vcontroller.SetAxisValue(Xbox360Axis.LeftThumbY, LeftThumbY);
+                vcontroller.SetAxisValue(Xbox360Axis.RightThumbX, RightThumbX);
+                vcontroller.SetAxisValue(Xbox360Axis.RightThumbY, RightThumbY);
+
+                foreach (Xbox360Button button in ButtonMap)
+                {
+                    GamepadButtonFlags value = (GamepadButtonFlags)button.Value;
+                    vcontroller.SetButtonState(button, Gamepad.Buttons.HasFlag(value));
+                }
+
+                vcontroller.SetSliderValue(Xbox360Slider.LeftTrigger, Gamepad.LeftTrigger);
+                vcontroller.SetSliderValue(Xbox360Slider.RightTrigger, Gamepad.RightTrigger);
+
+                if (!Profile.whitelisted)
+                    vcontroller.SubmitReport();
+
+                base.SubmitReport();
             }
-
-            vcontroller.SetSliderValue(Xbox360Slider.LeftTrigger, Gamepad.LeftTrigger);
-            vcontroller.SetSliderValue(Xbox360Slider.RightTrigger, Gamepad.RightTrigger);
-
-            if (!Profile.whitelisted)
-                vcontroller.SubmitReport();
         }
     }
 }

@@ -1,12 +1,9 @@
-﻿using ControllerCommon;
-using ControllerService.Targets;
+﻿using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Threading.Tasks;
-using System.Timers;
 
 namespace ControllerService
 {
@@ -25,32 +22,28 @@ namespace ControllerService
         private readonly Timer UpdateTimer;
 
         public UserIndex UserIndex;
-        private object updateLock = new();
 
         private readonly ILogger logger;
 
-        public XInputController(Controller controller, UserIndex index, int HIDrate, ILogger logger)
+        public XInputController(Controller controller, UserIndex index, ILogger logger)
         {
             this.logger = logger;
 
             // initilize controller
             this.Controller = controller;
             this.UserIndex = index;
-
-            // initialize timers
-            UpdateTimer = new Timer(HIDrate) { Enabled = false, AutoReset = true };
         }
 
         public void SetPollRate(int HIDrate)
         {
-            UpdateTimer.Interval = HIDrate;
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", Target, UpdateTimer.Interval);
+            this.Target.UpdateTimer.Interval = HIDrate;
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", this.Target, this.Target.UpdateTimer.Interval);
         }
 
         public void SetVibrationStrength(float strength)
         {
             this.Target.strength = strength / 100.0f;
-            logger.LogInformation("Virtual {0} vibration strength set to {1}%", Target, strength);
+            logger.LogInformation("Virtual {0} vibration strength set to {1}%", this.Target, strength);
         }
 
         public Dictionary<string, string> ToArgs()
@@ -93,43 +86,15 @@ namespace ControllerService
         public void SetTarget(ViGEmTarget target)
         {
             this.Target = target;
+            Target.Submited += SubmitReport;
 
             logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, Instance.InstanceName, UserIndex);
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", target, UpdateTimer.Interval);
-
-            switch (Target.HID)
-            {
-                case HIDmode.Xbox360Controller:
-                    ((Xbox360Target)Target)?.Connect();
-                    break;
-                case HIDmode.DualShock4Controller:
-                    ((DualShock4Target)Target)?.Connect();
-                    break;
-            }
-
-            UpdateTimer.Elapsed += async (sender, e) => await UpdateReport();
-            UpdateTimer.Enabled = true;
-            UpdateTimer.Start();
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", target, this.Target.UpdateTimer.Interval);
         }
 
-        private Task UpdateReport()
+        private void SubmitReport(object sender)
         {
-            lock (updateLock)
-            {
-                switch (Target.HID)
-                {
-                    case HIDmode.Xbox360Controller:
-                        ((Xbox360Target)Target)?.UpdateReport();
-                        break;
-                    case HIDmode.DualShock4Controller:
-                        ((DualShock4Target)Target)?.UpdateReport();
-                        break;
-                }
-
-                DSUServer?.NewReportIncoming(Target);
-            }
-
-            return Task.CompletedTask;
+            DSUServer?.SubmitReport(Target);
         }
     }
 }
