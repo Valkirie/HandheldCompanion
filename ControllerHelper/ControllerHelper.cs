@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
@@ -14,6 +15,7 @@ using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
+using Windows.System.Diagnostics;
 using Timer = System.Timers.Timer;
 
 namespace ControllerHelper
@@ -33,7 +35,7 @@ namespace ControllerHelper
         public string[] args;
 
         private Timer MonitorTimer;
-        private IntPtr CurrentProcess;
+        private uint CurrentProcess;
 
         public static Controller CurrentController;
 
@@ -274,7 +276,7 @@ namespace ControllerHelper
             CmdParser.ParseArgs(args);
         }
 
-        public void UpdateProcess(int ProcessId, string ProcessPath)
+        public void UpdateProcess(int ProcessId, string ProcessPath, string ProcessName)
         {
             try
             {
@@ -354,19 +356,32 @@ namespace ControllerHelper
         {
             lock (updateLock)
             {
-                // refresh current process
-                IntPtr hWnd = GetForegroundWindow();
-                IntPtr processId;
+                uint processId;
+                string name = string.Empty;
+                string exec = string.Empty;
+                string path = string.Empty;
 
-                if (GetWindowThreadProcessId(hWnd, out processId) == 0)
-                    return;
+                ProcessDiagnosticInfo process = new FindHostedProcess().Process;
+                processId = process.ProcessId;
 
                 if (processId != CurrentProcess)
                 {
                     Process proc = Process.GetProcessById((int)processId);
-                    string path = Utils.GetPathToApp(proc);
+                    path = Utils.GetPathToApp(proc);
+                    exec = process.ExecutableFileName;
 
-                    UpdateProcess((int)processId, path);
+                    if (process.IsPackaged)
+                    {
+                        var apps = process.GetAppDiagnosticInfos();
+                        if (apps.Count > 0)
+                            name = apps.First().AppInfo.DisplayInfo.DisplayName;
+                        else
+                            name = Path.GetFileNameWithoutExtension(process.ExecutableFileName);
+                    }
+                    else
+                        name = Path.GetFileNameWithoutExtension(process.ExecutableFileName);
+
+                    UpdateProcess((int)processId, path, name);
 
                     CurrentProcess = processId;
                 }

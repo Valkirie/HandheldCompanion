@@ -10,9 +10,63 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
+using Windows.System.Diagnostics;
 
 namespace ControllerCommon
 {
+    public class WinAPIFunctions
+    {
+        //Used to get Handle for Foreground Window
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr GetForegroundWindow();
+
+        //Used to get ID of any Window
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
+        public delegate bool WindowEnumProc(IntPtr hwnd, IntPtr lparam);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool EnumChildWindows(IntPtr hwnd, WindowEnumProc callback, IntPtr lParam);
+
+        public static int GetWindowProcessId(IntPtr hwnd)
+        {
+            int pid;
+            GetWindowThreadProcessId(hwnd, out pid);
+            return pid;
+        }
+
+        public static IntPtr GetforegroundWindow()
+        {
+            return GetForegroundWindow();
+        }
+    }
+
+    public class FindHostedProcess
+    {
+        public ProcessDiagnosticInfo Process { get; private set; }
+
+        public FindHostedProcess()
+        {
+            var foregroundProcessID = WinAPIFunctions.GetforegroundWindow();
+            Process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPIFunctions.GetWindowProcessId(foregroundProcessID));
+
+            // Get real process
+            if (Process.ExecutableFileName == "ApplicationFrameHost.exe")
+                WinAPIFunctions.EnumChildWindows(foregroundProcessID, ChildWindowCallback, IntPtr.Zero);
+        }
+
+        private bool ChildWindowCallback(IntPtr hwnd, IntPtr lparam)
+        {
+            var process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPIFunctions.GetWindowProcessId(hwnd));
+
+            if (process.ExecutableFileName != "ApplicationFrameHost.exe")
+                Process = process;
+
+            return true;
+        }
+    }
+
     public static class Utils
     {
         #region imports
