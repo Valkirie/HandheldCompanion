@@ -81,6 +81,9 @@ namespace ControllerHelper
             IsElevated = Utils.IsAdministrator();
             FirstStart = Properties.Settings.Default.FirstStart;
 
+            // form
+            this.Text += $" ({strings.Administrator})";
+
             // initialize log
             logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
 
@@ -703,10 +706,26 @@ namespace ControllerHelper
                     cB_Whitelist.Enabled = !CurrentProfile.IsDefault;
                     cB_Wrapper.Enabled = !CurrentProfile.IsDefault;
 
-                    // disable specific settings if profile has issue(s)
-                    if (CurrentProfile.error != ProfileErrorCode.None)
+                    // error code specific behavior
+                    switch(CurrentProfile.error)
                     {
-                        cB_Wrapper.Enabled = false;
+                        case ProfileErrorCode.None:
+                            lb_ErrorCode.Visible = false;
+                            break;
+                        case ProfileErrorCode.MissingExecutable:
+                            lb_ErrorCode.Visible = true;
+                            lb_ErrorCode.Text = strings.ErrorCodeMissingExecutable;
+                            break;
+                        case ProfileErrorCode.MissingPath:
+                            cB_Wrapper.Enabled = false;
+                            lb_ErrorCode.Visible = true;
+                            lb_ErrorCode.Text = strings.ErrorCodeMissingPath;
+                            break;
+                        case ProfileErrorCode.MissingPermission:
+                            cB_Wrapper.Enabled = false;
+                            lb_ErrorCode.Visible = true;
+                            lb_ErrorCode.Text = strings.ErrorCodeMissingPermission;
+                            break;
                     }
 
                     gB_ProfileDetails.Enabled = true;
@@ -715,7 +734,7 @@ namespace ControllerHelper
 
                     tB_ProfileName.Text = CurrentProfile.name;
                     tB_ProfilePath.Text = CurrentProfile.path;
-                    toolTip1.SetToolTip(tB_ProfilePath, CurrentProfile.error != ProfileErrorCode.None ? $"Can't reach: {CurrentProfile.path}" : $"{CurrentProfile.path}");
+                    toolTip1.SetToolTip(tB_ProfilePath, CurrentProfile.path);
 
                     cB_Whitelist.Checked = CurrentProfile.whitelisted;
                     cB_Wrapper.Checked = CurrentProfile.use_wrapper;

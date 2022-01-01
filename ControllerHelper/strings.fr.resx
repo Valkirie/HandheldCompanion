@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Administrator" xml:space="preserve">
+    <value>Administrateur</value>
+  </data>
+  <data name="ErrorCodeMissingExecutable" xml:space="preserve">
+    <value>Le profil a un exécutable inaccessible ou manquant.</value>
+  </data>
+  <data name="ErrorCodeMissingPath" xml:space="preserve">
+    <value>Le profil a un chemin inaccessible ou manquant.</value>
+  </data>
+  <data name="ErrorCodeMissingPermission" xml:space="preserve">
+    <value>Le profil n'a pas les permissions suffisantes pour accéder au chemin.</value>
+  </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>Fournit un support pour le gyroscope et l'accéléromètre aux modèles AYA NEO 2020, 2021 par le biais d'un contrôleur virtuel DualShock 4. Si le service est activé, le contrôleur intégré sera masqué pour les applications en dehors de la liste blanche. Si le service est désactivé, le contrôleur embarqué sera dévoilé et le contrôleur DualShock 4 virtuel désactivé.</value>
   </data>
