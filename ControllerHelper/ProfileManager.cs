@@ -49,7 +49,8 @@ namespace ControllerHelper
                 ProcessProfile(fileName);
 
             // create default profile if missing
-            SetDefault();
+            if (GetDefault() == null)
+                SetDefault();
         }
 
         private void ProfileChanged(object sender, FileSystemEventArgs e)
