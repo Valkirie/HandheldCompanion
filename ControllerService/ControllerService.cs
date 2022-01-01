@@ -418,8 +418,8 @@ namespace ControllerService
             foreach (SettingsProperty s in Properties.Settings.Default.Properties)
                 settings.Add(s.Name, Properties.Settings.Default[s.Name].ToString());
 
-            settings.Add("gyrometer", $"{XInputController.gyrometer.sensor != null}");
-            settings.Add("accelerometer", $"{XInputController.accelerometer.sensor != null}");
+            settings.Add("gyrometer", $"{XInputController.Gyrometer.sensor != null}");
+            settings.Add("accelerometer", $"{XInputController.Accelerometer.sensor != null}");
 
             return settings;
         }

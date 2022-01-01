@@ -226,7 +226,7 @@ namespace ControllerHelper
             // deploy xinput wrapper
             string x360ce = "";
 
-            switch(helper.HIDmode)
+            switch (helper.HIDmode)
             {
                 case HIDmode.Xbox360Controller:
                     x360ce = Properties.Resources.Xbox360;

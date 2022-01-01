@@ -16,10 +16,8 @@ namespace ControllerService
 
         private DSUServer DSUServer;
 
-        public XInputGirometer gyrometer;
-        public XInputAccelerometer accelerometer;
-
-        private readonly Timer UpdateTimer;
+        public XInputGirometer Gyrometer;
+        public XInputAccelerometer Accelerometer;
 
         public UserIndex UserIndex;
 
@@ -58,14 +56,14 @@ namespace ControllerService
 
         public void SetGyroscope(XInputGirometer _gyrometer)
         {
-            gyrometer = _gyrometer;
-            gyrometer.ReadingChanged += Girometer_ReadingChanged;
+            Gyrometer = _gyrometer;
+            Gyrometer.ReadingChanged += Girometer_ReadingChanged;
         }
 
         public void SetAccelerometer(XInputAccelerometer _accelerometer)
         {
-            accelerometer = _accelerometer;
-            accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
+            Accelerometer = _accelerometer;
+            Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
         }
 
         public void SetDSUServer(DSUServer _server)
