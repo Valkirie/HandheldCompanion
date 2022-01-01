@@ -146,6 +146,15 @@ namespace ControllerHelper {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à User.
+        /// </summary>
+        public static string User {
+            get {
+                return ResourceManager.GetString("User", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Run this tool as Administrator to unlock these settings..
         /// </summary>
         public static string WarningElevated {

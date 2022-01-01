@@ -82,7 +82,7 @@ namespace ControllerHelper
             FirstStart = Properties.Settings.Default.FirstStart;
 
             // form
-            this.Text += $" ({strings.Administrator})";
+            this.Text += $" ({(IsElevated ? strings.Administrator : strings.User)})";
 
             // initialize log
             logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);

@@ -148,6 +148,9 @@ If you are enjoying it, please consider giving back to the author's efforts and 
   <data name="ToastTitle" xml:space="preserve">
     <value>Please, gives us a minute</value>
   </data>
+  <data name="User" xml:space="preserve">
+    <value>User</value>
+  </data>
   <data name="WarningElevated" xml:space="preserve">
     <value>Run this tool as Administrator to unlock these settings.</value>
   </data>

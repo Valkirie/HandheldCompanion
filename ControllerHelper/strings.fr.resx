@@ -148,6 +148,9 @@ Si vous l'appréciez, pensez à soutenir les efforts de l'auteur et montrez votr
   <data name="ToastTitle" xml:space="preserve">
     <value>S'il vous plaît, accordez-nous une minute</value>
   </data>
+  <data name="User" xml:space="preserve">
+    <value>Utilisateur</value>
+  </data>
   <data name="WarningElevated" xml:space="preserve">
     <value>Exécutez cet outil en tant qu'administrateur pour déverrouiller ces paramètres.</value>
   </data>
