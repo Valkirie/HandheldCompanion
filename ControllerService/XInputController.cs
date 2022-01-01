@@ -44,13 +44,13 @@ namespace ControllerService
         public void SetPollRate(int HIDrate)
         {
             UpdateTimer.Interval = HIDrate;
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", Target.HID, UpdateTimer.Interval);
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", Target, UpdateTimer.Interval);
         }
 
         public void SetVibrationStrength(float strength)
         {
             this.Target.strength = strength / 100.0f;
-            logger.LogInformation("Virtual {0} vibration strength set to {1}%", Target.HID, strength);
+            logger.LogInformation("Virtual {0} vibration strength set to {1}%", Target, strength);
         }
 
         public Dictionary<string, string> ToArgs()
@@ -94,8 +94,8 @@ namespace ControllerService
         {
             this.Target = target;
 
-            logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target.HID, Instance.InstanceName, UserIndex);
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", target.HID, UpdateTimer.Interval);
+            logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, Instance.InstanceName, UserIndex);
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", target, UpdateTimer.Interval);
 
             switch (Target.HID)
             {

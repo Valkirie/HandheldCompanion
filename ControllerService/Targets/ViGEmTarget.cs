@@ -83,21 +83,21 @@ namespace ControllerService.Targets
 
         public override string ToString()
         {
-            return this.GetType().Name;
+            return Utils.GetDescription(this.HID);
         }
 
         public void Connect()
         {
             stopwatch.Start();
 
-            logger.LogInformation("Virtual {0} connected", HID);
+            logger.LogInformation("Virtual {0} connected", ToString());
         }
 
         public void Disconnect()
         {
             stopwatch.Stop();
 
-            logger.LogInformation("Virtual {0} disconnected", HID);
+            logger.LogInformation("Virtual {0} disconnected", ToString());
         }
 
         public void UpdateReport()

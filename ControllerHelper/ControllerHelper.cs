@@ -119,7 +119,7 @@ namespace ControllerHelper
             {
                 if (mode == HIDmode.None)
                     continue;
-                cB_HidMode.Items.Add(mode);
+                cB_HidMode.Items.Add(Utils.GetDescription(mode));
             }
 
             foreach (Utils.GamepadButtonFlags button in (Utils.GamepadButtonFlags[])Enum.GetValues(typeof(Utils.GamepadButtonFlags)))
@@ -835,7 +835,7 @@ namespace ControllerHelper
 
         private void cB_HidMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            HIDmode = (HIDmode)cB_HidMode.SelectedItem;
+            HIDmode = (HIDmode)cB_HidMode.SelectedIndex;
             PipeClient.SendMessage(new PipeClientSettings
             {
                 settings = new Dictionary<string, object>
