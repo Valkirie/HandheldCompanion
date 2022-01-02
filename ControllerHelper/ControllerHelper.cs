@@ -138,8 +138,8 @@ namespace ControllerHelper
             cB_touchpad.Checked = HookMouse = Properties.Settings.Default.HookMouse;
 
             // update Position and Size
-            Size = new Size(Properties.Settings.Default.MainWindowWidth, Properties.Settings.Default.MainWindowHeight);
-            Location = new Point(Properties.Settings.Default.MainWindowX, Properties.Settings.Default.MainWindowY);
+            Size = new Size(Math.Max(this.MinimumSize.Width, Properties.Settings.Default.MainWindowWidth), Math.Max(this.MinimumSize.Width, Properties.Settings.Default.MainWindowHeight));
+            Location = new Point(Math.Max(0, Properties.Settings.Default.MainWindowX), Math.Max(0, Properties.Settings.Default.MainWindowY));
             WindowState = (FormWindowState)Properties.Settings.Default.WindowState;
 
             if (StartMinimized)
