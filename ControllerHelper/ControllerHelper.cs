@@ -83,9 +83,10 @@ namespace ControllerHelper
 
             // form
             this.Text += $" ({(IsElevated ? strings.Administrator : strings.User)})";
+            this.Text += $" ({fileVersionInfo.FileVersion})";
 
             // initialize log
-            logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
+            logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
             // verifying HidHide is installed
             if (!File.Exists(CurrentPathService))
