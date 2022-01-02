@@ -85,6 +85,8 @@ namespace ControllerHelper
             this.Text += $" ({(IsElevated ? strings.Administrator : strings.User)})";
             this.Text += $" ({fileVersionInfo.FileVersion})";
 
+            lb_AboutVersion.Text = String.Format(strings.Build, fileVersionInfo.FileVersion);
+
             // initialize log
             logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
@@ -359,6 +361,9 @@ namespace ControllerHelper
                 string path = string.Empty;
 
                 ProcessDiagnosticInfo process = new FindHostedProcess().Process;
+                if (process == null)
+                    return;
+
                 processId = process.ProcessId;
 
                 if (processId != CurrentProcess)
@@ -877,6 +882,29 @@ namespace ControllerHelper
                     { "HIDmode", HIDmode }
                 }
             });
+
+            // update UI icon to match HIDmode
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                Icon myIcon = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.ds4 : Properties.Resources.xbox;
+                this.notifyIcon1.Icon = myIcon;
+                this.Icon = myIcon;
+            });
+        }
+
+        private void IL_AboutSource_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Utils.OpenUrl("https://github.com/Valkirie/ControllerService");
+        }
+
+        private void IL_AboutWiki_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Utils.OpenUrl("https://github.com/Valkirie/ControllerService/wiki");
+        }
+
+        private void IL_AboutDonate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Utils.OpenUrl("https://www.paypal.com/paypalme/BenjaminLSR");
         }
 
         private void cB_HIDcloak_CheckedChanged(object sender, EventArgs e)

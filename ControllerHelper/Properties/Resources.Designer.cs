@@ -61,42 +61,22 @@ namespace ControllerHelper.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à [Options]
-        ///UseInitBeep=1
-        ///Log=0
-        ///Console=0
-        ///DebugMode=0
-        ///InternetDatabaseUrl=http://www.x360ce.com/webservices/x360ce.asmx
-        ///InternetFeatures=1
-        ///InternetAutoload=1
-        ///AllowOnlyOneCopy=1
-        ///ProgramScanLocations=C:\Program Files,C:\Program Files (x86)
-        ///Version=2
-        ///CombineEnabled=0
-        ///ExcludeSupplementalDevices=0
-        ///ExcludeVirtualDevices=0
-        ///
-        ///[InputHook]
-        ///HookMode=1
-        ///
-        ///[Mappings]
-        ///PAD1=VirtualDS4
-        ///PAD2=
-        ///PAD3=
-        ///PAD4=
-        ///
-        ///[PAD1]
-        ///[PAD2]
-        ///[PAD3]
-        ///[PAD4]
-        ///
-        ///[VirtualDS4]
-        ///ProductName=Wireless Controller
-        ///ProductGuid=05c4054c [le reste de la chaîne a été tronqué]&quot;;.
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static string DualShock4 {
+        internal static System.Drawing.Bitmap donate {
             get {
-                return ResourceManager.GetString("DualShock4", resourceCulture);
+                object obj = ResourceManager.GetObject("donate", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
+        /// </summary>
+        internal static System.Drawing.Icon ds4 {
+            get {
+                object obj = ResourceManager.GetObject("ds4", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -120,7 +100,7 @@ namespace ControllerHelper.Properties {
         ///HookMode=1
         ///
         ///[Mappings]
-        ///PAD1=VirtualDS4
+        ///PAD1=DualShock4Controller
         ///PAD2=
         ///PAD3=
         ///PAD4=
@@ -130,9 +110,78 @@ namespace ControllerHelper.Properties {
         ///[PAD3]
         ///[PAD4]
         ///
-        ///[VirtualDS4]
+        ///[DualShock4Controller]
         ///ProductName=Wireless Controller
-        ///ProductGuid=05c4054c [le reste de la chaîne a été tronqué]&quot;;.
+        /// [le reste de la chaîne a été tronqué]&quot;;.
+        /// </summary>
+        internal static string DualShock4 {
+            get {
+                return ResourceManager.GetString("DualShock4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap game_controller {
+            get {
+                object obj = ResourceManager.GetObject("game-controller", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap game_controller2 {
+            get {
+                object obj = ResourceManager.GetObject("game-controller2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
+        /// </summary>
+        internal static System.Drawing.Icon xbox {
+            get {
+                object obj = ResourceManager.GetObject("xbox", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à [Options]
+        ///UseInitBeep=1
+        ///Log=0
+        ///Console=0
+        ///DebugMode=0
+        ///InternetDatabaseUrl=http://www.x360ce.com/webservices/x360ce.asmx
+        ///InternetFeatures=1
+        ///InternetAutoload=1
+        ///AllowOnlyOneCopy=1
+        ///ProgramScanLocations=C:\Program Files,C:\Program Files (x86)
+        ///Version=2
+        ///CombineEnabled=0
+        ///ExcludeSupplementalDevices=0
+        ///ExcludeVirtualDevices=0
+        ///
+        ///[InputHook]
+        ///HookMode=1
+        ///
+        ///[Mappings]
+        ///PAD1=Xbox360Controller
+        ///PAD2=
+        ///PAD3=
+        ///PAD4=
+        ///
+        ///[PAD1]
+        ///[PAD2]
+        ///[PAD3]
+        ///[PAD4]
+        ///
+        ///[Xbox360Controller]
+        ///ProductName=Controller (XBOX 360 For Wi [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
         internal static string Xbox360 {
             get {

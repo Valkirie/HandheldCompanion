@@ -120,6 +120,9 @@
   <data name="Administrator" xml:space="preserve">
     <value>Administrateur</value>
   </data>
+  <data name="Build" xml:space="preserve">
+    <value>Version : {0}</value>
+  </data>
   <data name="ErrorCodeMissingExecutable" xml:space="preserve">
     <value>Le profil a un exécutable inaccessible ou manquant.</value>
   </data>

@@ -70,6 +70,15 @@ namespace ControllerHelper {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Build: {0}.
+        /// </summary>
+        public static string Build {
+            get {
+                return ResourceManager.GetString("Build", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Profile has unreachable or missing executable..
         /// </summary>
         public static string ErrorCodeMissingExecutable {
