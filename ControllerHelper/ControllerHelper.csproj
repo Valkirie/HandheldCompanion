@@ -10,8 +10,8 @@
     <Product>ControllerHelper</Product>
     <Copyright>Copyright ©  2021</Copyright>
     <OutputPath>$(SolutionDir)bin\</OutputPath>
-    <AssemblyVersion>0.8.3.2</AssemblyVersion>
-    <FileVersion>0.8.3.2</FileVersion>
+    <AssemblyVersion>0.8.3.3</AssemblyVersion>
+    <FileVersion>0.8.3.3</FileVersion>
     <ApplicationIcon>ds4.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -29,6 +29,7 @@
     <None Remove="helpersettings.json" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ds4.ico" />
     <Content Include="helpersettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
