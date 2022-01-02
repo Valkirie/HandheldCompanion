@@ -138,8 +138,8 @@ namespace ControllerHelper
             cB_touchpad.Checked = HookMouse = Properties.Settings.Default.HookMouse;
 
             // update Position and Size
-            Size = new Size(Math.Max(this.MinimumSize.Width, Properties.Settings.Default.MainWindowWidth), Math.Max(this.MinimumSize.Width, Properties.Settings.Default.MainWindowHeight));
-            Location = new Point(Math.Max(0, Properties.Settings.Default.MainWindowX), Math.Max(0, Properties.Settings.Default.MainWindowY));
+            Size = new Size((int)Math.Max(this.MinimumSize.Width, Properties.Settings.Default.MainWindowWidth), (int)Math.Max(this.MinimumSize.Width, Properties.Settings.Default.MainWindowHeight));
+            Location = new Point((int)Math.Max(0, Properties.Settings.Default.MainWindowX), (int)Math.Max(0, Properties.Settings.Default.MainWindowY));
             WindowState = (FormWindowState)Properties.Settings.Default.WindowState;
 
             if (StartMinimized)
@@ -318,10 +318,10 @@ namespace ControllerHelper
         private void ControllerHelper_Close(object sender, FormClosingEventArgs e)
         {
             // position and size settings
-            Properties.Settings.Default.MainWindowX = Location.X;
-            Properties.Settings.Default.MainWindowY = Location.Y;
-            Properties.Settings.Default.MainWindowWidth = Size.Width;
-            Properties.Settings.Default.MainWindowHeight = Size.Height;
+            Properties.Settings.Default.MainWindowX = (uint)Location.X;
+            Properties.Settings.Default.MainWindowY = (uint)Location.Y;
+            Properties.Settings.Default.MainWindowWidth = (uint)Size.Width;
+            Properties.Settings.Default.MainWindowHeight = (uint)Size.Height;
             Properties.Settings.Default.WindowState = (int)WindowState;
 
             if (CloseMinimises && e.CloseReason == CloseReason.UserClosing)

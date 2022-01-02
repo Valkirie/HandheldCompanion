@@ -20,17 +20,17 @@
     <Setting Name="FirstStart" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="MainWindowX" Type="System.Int32" Scope="User">
+    <Setting Name="MainWindowX" Type="System.UInt32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="MainWindowY" Type="System.Int32" Scope="User">
+    <Setting Name="MainWindowY" Type="System.UInt32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="MainWindowWidth" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+    <Setting Name="MainWindowWidth" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">1000</Value>
     </Setting>
-    <Setting Name="MainWindowHeight" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+    <Setting Name="MainWindowHeight" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">600</Value>
     </Setting>
     <Setting Name="WindowState" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
