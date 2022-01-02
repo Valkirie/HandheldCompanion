@@ -48,12 +48,19 @@ namespace ControllerCommon
 
         public FindHostedProcess()
         {
-            var foregroundProcessID = WinAPIFunctions.GetforegroundWindow();
-            Process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPIFunctions.GetWindowProcessId(foregroundProcessID));
+            try
+            {
+                var foregroundProcessID = WinAPIFunctions.GetforegroundWindow();
+                Process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPIFunctions.GetWindowProcessId(foregroundProcessID));
 
-            // Get real process
-            if (Process.ExecutableFileName == "ApplicationFrameHost.exe")
-                WinAPIFunctions.EnumChildWindows(foregroundProcessID, ChildWindowCallback, IntPtr.Zero);
+                // Get real process
+                if (Process.ExecutableFileName == "ApplicationFrameHost.exe")
+                    WinAPIFunctions.EnumChildWindows(foregroundProcessID, ChildWindowCallback, IntPtr.Zero);
+            }
+            catch(Exception)
+            {
+                Process = null;
+            }
         }
 
         private bool ChildWindowCallback(IntPtr hwnd, IntPtr lparam)
