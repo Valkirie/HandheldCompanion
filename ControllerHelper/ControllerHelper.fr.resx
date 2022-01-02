@@ -7332,6 +7332,63 @@
         gAHA0sZQFgIIIIAAAiYF/h80QBa5q50XvwAAAABJRU5ErkJggg==
 </value>
   </data>
+  <data name="tabDevices.Text" xml:space="preserve">
+    <value>Périphériques</value>
+  </data>
+  <data name="gB_ProfileOptions.Text" xml:space="preserve">
+    <value>Options du profil</value>
+  </data>
+  <data name="gB_6axis.Text" xml:space="preserve">
+    <value>Options de contrôle du mouvement</value>
+  </data>
+  <data name="lb_ErrorCode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 145</value>
+  </data>
+  <data name="lb_ErrorCode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>464, 15</value>
+  </data>
+  <data name="b_ApplyProfile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>284, 87</value>
+  </data>
+  <data name="b_ApplyProfile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>122, 40</value>
+  </data>
+  <data name="b_ApplyProfile.Text" xml:space="preserve">
+    <value>Appliquer le profil</value>
+  </data>
+  <data name="b_DeleteProfile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>122, 40</value>
+  </data>
+  <data name="b_DeleteProfile.Text" xml:space="preserve">
+    <value>Supprimer le profil</value>
+  </data>
+  <data name="lb_ProfilePath.Size" type="System.Drawing.Size, System.Drawing">
+    <value>97, 15</value>
+  </data>
+  <data name="lb_ProfilePath.Text" xml:space="preserve">
+    <value>Chemin d'accès :</value>
+  </data>
+  <data name="lb_ProfileName.Size" type="System.Drawing.Size, System.Drawing">
+    <value>40, 15</value>
+  </data>
+  <data name="lb_ProfileName.Text" xml:space="preserve">
+    <value>Nom :</value>
+  </data>
+  <data name="gB_ProfileDetails.Text" xml:space="preserve">
+    <value>Détails du profil</value>
+  </data>
+  <data name="gB_ProfileGyro.Text" xml:space="preserve">
+    <value>Options du gyroscope vers manette</value>
+  </data>
+  <data name="tabSettings.Text" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="tabAbout.Text" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  <data name="gB_DeviceDetails.Text" xml:space="preserve">
+    <value>Détails du Périphérique</value>
+  </data>
   <data name="cB_touchpad.Size" type="System.Drawing.Size, System.Drawing">
     <value>206, 19</value>
   </data>
@@ -7368,8 +7425,8 @@
   <data name="lb_accelero.Text" xml:space="preserve">
     <value>Accéléromètre :</value>
   </data>
-  <data name="gB_DeviceDetails.Text" xml:space="preserve">
-    <value>Détails du Périphérique</value>
+  <data name="gB_HIDDetails.Text" xml:space="preserve">
+    <value>Détails du dispositif d'interface humaine</value>
   </data>
   <data name="lb_VibrationStr.Size" type="System.Drawing.Size, System.Drawing">
     <value>134, 15</value>
@@ -7389,8 +7446,8 @@
   <data name="lb_HidMode.Text" xml:space="preserve">
     <value>Mode périphérique HID :</value>
   </data>
-  <data name="gB_HIDDetails.Text" xml:space="preserve">
-    <value>Détails du dispositif d'interface humaine</value>
+  <data name="gB_XinputDetails.Text" xml:space="preserve">
+    <value>Détails du périphérique d'entrée Xinput</value>
   </data>
   <data name="cB_HIDcloak.Size" type="System.Drawing.Size, System.Drawing">
     <value>164, 19</value>
@@ -7422,14 +7479,8 @@
   <data name="lb_InstanceID.Text" xml:space="preserve">
     <value>ID de l'instance :</value>
   </data>
-  <data name="gB_XinputDetails.Text" xml:space="preserve">
-    <value>Détails du périphérique d'entrée Xinput</value>
-  </data>
   <data name="gB_XinputDevices.Text" xml:space="preserve">
     <value>Périphériques d'entrée Xinput</value>
-  </data>
-  <data name="tabDevices.Text" xml:space="preserve">
-    <value>Périphériques</value>
   </data>
   <data name="cB_UniversalMC.Size" type="System.Drawing.Size, System.Drawing">
     <value>237, 19</value>
@@ -7466,15 +7517,6 @@
   </data>
   <data name="cB_Whitelist.Text" xml:space="preserve">
     <value>Peut accéder au contrôleur physique</value>
-  </data>
-  <data name="gB_ProfileOptions.Location" type="System.Drawing.Point, System.Drawing">
-    <value>203, 154</value>
-  </data>
-  <data name="gB_ProfileOptions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>470, 116</value>
-  </data>
-  <data name="gB_ProfileOptions.Text" xml:space="preserve">
-    <value>Options du profil</value>
   </data>
   <data name="cB_InvertVAxis.Size" type="System.Drawing.Size, System.Drawing">
     <value>94, 19</value>
@@ -7537,67 +7579,6 @@
   <data name="tb_ProfileGyroValue.Size" type="System.Drawing.Size, System.Drawing">
     <value>291, 45</value>
   </data>
-  <data name="gB_6axis.Location" type="System.Drawing.Point, System.Drawing">
-    <value>203, 270</value>
-  </data>
-  <data name="gB_6axis.Size" type="System.Drawing.Size, System.Drawing">
-    <value>470, 260</value>
-  </data>
-  <data name="gB_6axis.Text" xml:space="preserve">
-    <value>Options de contrôle du mouvement</value>
-  </data>
-  <data name="lb_ErrorCode.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Bottom</value>
-  </data>
-  <data name="lb_ErrorCode.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="lb_ErrorCode.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 133</value>
-  </data>
-  <data name="lb_ErrorCode.Size" type="System.Drawing.Size, System.Drawing">
-    <value>464, 15</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="lb_ErrorCode.TabIndex" type="System.Int32, mscorlib">
-    <value>25</value>
-  </data>
-  <data name="lb_ErrorCode.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
-  </data>
-  <data name="b_ApplyProfile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>284, 87</value>
-  </data>
-  <data name="b_ApplyProfile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>122, 40</value>
-  </data>
-  <data name="b_ApplyProfile.Text" xml:space="preserve">
-    <value>Appliquer le profil</value>
-  </data>
-  <data name="b_DeleteProfile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>122, 40</value>
-  </data>
-  <data name="b_DeleteProfile.Text" xml:space="preserve">
-    <value>Supprimer le profil</value>
-  </data>
-  <data name="lb_ProfilePath.Size" type="System.Drawing.Size, System.Drawing">
-    <value>97, 15</value>
-  </data>
-  <data name="lb_ProfilePath.Text" xml:space="preserve">
-    <value>Chemin d'accès :</value>
-  </data>
-  <data name="lb_ProfileName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>40, 15</value>
-  </data>
-  <data name="lb_ProfileName.Text" xml:space="preserve">
-    <value>Nom :</value>
-  </data>
-  <data name="gB_ProfileDetails.Size" type="System.Drawing.Size, System.Drawing">
-    <value>470, 151</value>
-  </data>
-  <data name="gB_ProfileDetails.Text" xml:space="preserve">
-    <value>Détails du profil</value>
-  </data>
   <data name="b_CreateProfile.Text" xml:space="preserve">
     <value>Créer un nouveau profil</value>
   </data>
@@ -7643,8 +7624,8 @@
   <data name="cB_UMCInputStyle.Items3" xml:space="preserve">
     <value>Souris</value>
   </data>
-  <data name="gB_ProfileGyro.Text" xml:space="preserve">
-    <value>Options du gyroscope vers manette</value>
+  <data name="gb_SettingsUDP.Text" xml:space="preserve">
+    <value>Serveur UDP</value>
   </data>
   <data name="b_UDPApply.Location" type="System.Drawing.Point, System.Drawing">
     <value>890, 20</value>
@@ -7657,9 +7638,6 @@
   </data>
   <data name="cB_UDPEnable.Text" xml:space="preserve">
     <value>Activer</value>
-  </data>
-  <data name="gb_SettingsUDP.Text" xml:space="preserve">
-    <value>Serveur UDP</value>
   </data>
   <data name="lB_ServiceStartup.Size" type="System.Drawing.Size, System.Drawing">
     <value>113, 15</value>
@@ -7709,9 +7687,6 @@
   <data name="cB_StartMinimized.Text" xml:space="preserve">
     <value>Démarrer en arrière-plan</value>
   </data>
-  <data name="tabSettings.Text" xml:space="preserve">
-    <value>Paramètres</value>
-  </data>
   <data name="lL_AboutDonate.Location" type="System.Drawing.Point, System.Drawing">
     <value>258, 122</value>
   </data>
@@ -7744,9 +7719,6 @@
   </data>
   <data name="lb_AboutVersion.Text" xml:space="preserve">
     <value>Version : 0.8.3.0</value>
-  </data>
-  <data name="tabAbout.Text" xml:space="preserve">
-    <value>À propos</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
