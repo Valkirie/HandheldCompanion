@@ -610,7 +610,7 @@ namespace ControllerHelper
             Profile profile = (Profile)lB_Profiles.SelectedItem;
             ProfileManager.DeleteProfile(profile);
 
-            lB_Profiles.SelectedIndex = -1;
+            lB_Profiles.SelectedIndex = 0;
         }
 
         private void cB_RunAtStartup_CheckedChanged(object sender, EventArgs e)
