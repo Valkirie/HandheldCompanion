@@ -82,6 +82,7 @@ namespace ControllerHelper
             this.lb_ProfileAccelero = new System.Windows.Forms.Label();
             this.tb_ProfileGyroValue = new System.Windows.Forms.TrackBar();
             this.gB_ProfileDetails = new System.Windows.Forms.GroupBox();
+            this.lb_ErrorCode = new System.Windows.Forms.Label();
             this.b_ApplyProfile = new System.Windows.Forms.Button();
             this.b_DeleteProfile = new System.Windows.Forms.Button();
             this.tB_ProfilePath = new System.Windows.Forms.TextBox();
@@ -121,7 +122,6 @@ namespace ControllerHelper
             this.cB_StartMinimized = new System.Windows.Forms.CheckBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.lb_ErrorCode = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabDevices.SuspendLayout();
@@ -456,7 +456,6 @@ namespace ControllerHelper
             // gB_6axis
             // 
             resources.ApplyResources(this.gB_6axis, "gB_6axis");
-            this.gB_6axis.Controls.Add(this.lb_ErrorCode);
             this.gB_6axis.Controls.Add(this.cB_InvertVAxis);
             this.gB_6axis.Controls.Add(this.cB_InvertHAxis);
             this.gB_6axis.Controls.Add(this.lB_InvertVAxis);
@@ -555,6 +554,7 @@ namespace ControllerHelper
             // gB_ProfileDetails
             // 
             resources.ApplyResources(this.gB_ProfileDetails, "gB_ProfileDetails");
+            this.gB_ProfileDetails.Controls.Add(this.lb_ErrorCode);
             this.gB_ProfileDetails.Controls.Add(this.b_ApplyProfile);
             this.gB_ProfileDetails.Controls.Add(this.b_DeleteProfile);
             this.gB_ProfileDetails.Controls.Add(this.tB_ProfilePath);
@@ -564,6 +564,13 @@ namespace ControllerHelper
             this.gB_ProfileDetails.Name = "gB_ProfileDetails";
             this.gB_ProfileDetails.TabStop = false;
             this.toolTip1.SetToolTip(this.gB_ProfileDetails, resources.GetString("gB_ProfileDetails.ToolTip"));
+            // 
+            // lb_ErrorCode
+            // 
+            resources.ApplyResources(this.lb_ErrorCode, "lb_ErrorCode");
+            this.lb_ErrorCode.ForeColor = System.Drawing.Color.Brown;
+            this.lb_ErrorCode.Name = "lb_ErrorCode";
+            this.toolTip1.SetToolTip(this.lb_ErrorCode, resources.GetString("lb_ErrorCode.ToolTip"));
             // 
             // b_ApplyProfile
             // 
@@ -898,12 +905,6 @@ namespace ControllerHelper
             this.toolTip1.AutoPopDelay = 5000;
             this.toolTip1.InitialDelay = 100;
             this.toolTip1.ReshowDelay = 100;
-            // 
-            // lb_ErrorCode
-            // 
-            resources.ApplyResources(this.lb_ErrorCode, "lb_ErrorCode");
-            this.lb_ErrorCode.Name = "lb_ErrorCode";
-            this.toolTip1.SetToolTip(this.lb_ErrorCode, resources.GetString("lb_ErrorCode.ToolTip"));
             // 
             // ControllerHelper
             // 
