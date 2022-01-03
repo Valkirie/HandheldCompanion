@@ -50,12 +50,12 @@ namespace ControllerCommon
             };
         }
 
-        public void Start()
+        public void Start(string filter = "*.json")
         {
             profileWatcher.Deleted += ProfileDeleted;
 
             // process existing profiles
-            string[] fileEntries = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+            string[] fileEntries = Directory.GetFiles(path, filter, SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
                 ProcessProfile(fileName);
 

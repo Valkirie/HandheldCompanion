@@ -31,7 +31,7 @@ namespace ControllerService
         private DSUServer DSUServer;
         public HidHide Hidder;
 
-        public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathDep;
+        public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathDep, CurrentPathProfiles;
 
         private string DSUip;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
@@ -53,6 +53,7 @@ namespace ControllerService
             // paths
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
+            CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
             CurrentPathCli = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
             CurrentPathDep = Path.Combine(CurrentPath, "dependencies");
 
@@ -135,6 +136,12 @@ namespace ControllerService
             PipeServer.Connected += OnClientConnected;
             PipeServer.Disconnected += OnClientDisconnected;
             PipeServer.ClientMessage += OnClientMessage;
+
+            // initialize Profile Manager
+            ProfileManager ProfileManager = new ProfileManager(CurrentPathProfiles, logger);
+            ProfileManager.Updated += ProfileUpdated;
+            ProfileManager.Start("Default.json");
+            ProfileManager.Stop();
         }
 
         private void UpdateVirtualController(HIDmode mode)
@@ -194,7 +201,7 @@ namespace ControllerService
 
                 case PipeCode.CLIENT_PROFILE:
                     PipeClientProfile profile = (PipeClientProfile)message;
-                    UpdateProfile(profile.profile);
+                    ProfileUpdated(profile.profile);
                     break;
 
                 case PipeCode.CLIENT_CURSOR:
@@ -260,7 +267,7 @@ namespace ControllerService
             PipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
         }
 
-        internal void UpdateProfile(Profile profile)
+        internal void ProfileUpdated(Profile profile)
         {
             if (profile == null)
             {
@@ -271,6 +278,7 @@ namespace ControllerService
             {
                 // updated default profile
                 XInputController.Target.DefaultProfile = profile;
+                XInputController.Target.Profile = XInputController.Target.DefaultProfile;
                 logger.LogInformation("{0} profile updated.", profile.name);
             }
             else
