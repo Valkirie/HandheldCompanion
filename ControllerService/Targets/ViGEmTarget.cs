@@ -33,7 +33,7 @@ namespace ControllerService.Targets
         #endregion
 
         public Profile Profile;
-        public Profile DefaultProfile;
+        private Profile DefaultProfile;
 
         public Controller Controller;
         public Gamepad Gamepad;
@@ -120,6 +120,24 @@ namespace ControllerService.Targets
             UpdateTimer.Stop();
 
             logger.LogInformation("Virtual {0} disconnected", ToString());
+        }
+
+        public void ProfileUpdated(Profile profile)
+        {
+            if (profile == null)
+            {
+                // restore default profile
+                Profile = DefaultProfile;
+            }
+            else if (profile.IsDefault)
+            {
+                // update default profile
+                DefaultProfile = profile;
+                Profile = DefaultProfile;
+                logger.LogInformation("Virtual {0} default profile updated.", ToString());
+            }
+            else
+                Profile = profile;
         }
 
         public unsafe void UpdateReport(object sender, ElapsedEventArgs e)

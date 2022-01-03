@@ -269,20 +269,7 @@ namespace ControllerService
 
         internal void ProfileUpdated(Profile profile)
         {
-            if (profile == null)
-            {
-                // unknown process, use default profile instead
-                XInputController.Target.Profile = XInputController.Target.DefaultProfile;
-            }
-            else if (profile.IsDefault)
-            {
-                // updated default profile
-                XInputController.Target.DefaultProfile = profile;
-                XInputController.Target.Profile = XInputController.Target.DefaultProfile;
-                logger.LogInformation("{0} profile updated.", profile.name);
-            }
-            else
-                XInputController.Target.Profile = profile;
+            XInputController.Target.ProfileUpdated(profile);
         }
 
         public void UpdateSettings(Dictionary<string, object> args)
