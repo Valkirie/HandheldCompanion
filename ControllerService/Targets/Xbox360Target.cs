@@ -93,6 +93,9 @@ namespace ControllerService.Targets
                 if (!Controller.IsConnected)
                     return;
 
+                if (Profile.whitelisted)
+                    return;
+
                 base.UpdateReport(sender, e);
 
                 vcontroller.SetAxisValue(Xbox360Axis.LeftThumbX, LeftThumbX);
@@ -109,8 +112,7 @@ namespace ControllerService.Targets
                 vcontroller.SetSliderValue(Xbox360Slider.LeftTrigger, Gamepad.LeftTrigger);
                 vcontroller.SetSliderValue(Xbox360Slider.RightTrigger, Gamepad.RightTrigger);
 
-                if (!Profile.whitelisted)
-                    vcontroller.SubmitReport();
+                vcontroller.SubmitReport();
 
                 base.SubmitReport();
             }
