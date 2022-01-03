@@ -46,6 +46,7 @@ namespace ControllerHelper
             this.cB_gyro = new System.Windows.Forms.CheckBox();
             this.lb_accelero = new System.Windows.Forms.Label();
             this.gB_HIDDetails = new System.Windows.Forms.GroupBox();
+            this.pB_HidMode = new System.Windows.Forms.PictureBox();
             this.tB_VibrationStr = new System.Windows.Forms.TrackBar();
             this.lb_VibrationStr = new System.Windows.Forms.Label();
             this.tB_PullRate = new System.Windows.Forms.TrackBar();
@@ -128,7 +129,7 @@ namespace ControllerHelper
             this.lb_AboutAuthor = new System.Windows.Forms.Label();
             this.lb_AboutVersion = new System.Windows.Forms.Label();
             this.lb_AboutTitle = new System.Windows.Forms.Label();
-            this.pB_AboutPicture = new System.Windows.Forms.PictureBox();
+            this.pB_About = new System.Windows.Forms.PictureBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip1.SuspendLayout();
@@ -136,6 +137,7 @@ namespace ControllerHelper
             this.tabDevices.SuspendLayout();
             this.gB_DeviceDetails.SuspendLayout();
             this.gB_HIDDetails.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pB_HidMode)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tB_VibrationStr)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tB_PullRate)).BeginInit();
             this.gB_XinputDetails.SuspendLayout();
@@ -156,7 +158,7 @@ namespace ControllerHelper
             this.gb_SettingsService.SuspendLayout();
             this.gb_SettingsInterface.SuspendLayout();
             this.tabAbout.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pB_AboutPicture)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pB_About)).BeginInit();
             this.SuspendLayout();
             // 
             // notifyIcon1
@@ -258,6 +260,7 @@ namespace ControllerHelper
             // gB_HIDDetails
             // 
             resources.ApplyResources(this.gB_HIDDetails, "gB_HIDDetails");
+            this.gB_HIDDetails.Controls.Add(this.pB_HidMode);
             this.gB_HIDDetails.Controls.Add(this.tB_VibrationStr);
             this.gB_HIDDetails.Controls.Add(this.lb_VibrationStr);
             this.gB_HIDDetails.Controls.Add(this.tB_PullRate);
@@ -267,6 +270,13 @@ namespace ControllerHelper
             this.gB_HIDDetails.Name = "gB_HIDDetails";
             this.gB_HIDDetails.TabStop = false;
             this.toolTip1.SetToolTip(this.gB_HIDDetails, resources.GetString("gB_HIDDetails.ToolTip"));
+            // 
+            // pB_HidMode
+            // 
+            resources.ApplyResources(this.pB_HidMode, "pB_HidMode");
+            this.pB_HidMode.Name = "pB_HidMode";
+            this.pB_HidMode.TabStop = false;
+            this.toolTip1.SetToolTip(this.pB_HidMode, resources.GetString("pB_HidMode.ToolTip"));
             // 
             // tB_VibrationStr
             // 
@@ -917,7 +927,7 @@ namespace ControllerHelper
             this.tabAbout.Controls.Add(this.lb_AboutAuthor);
             this.tabAbout.Controls.Add(this.lb_AboutVersion);
             this.tabAbout.Controls.Add(this.lb_AboutTitle);
-            this.tabAbout.Controls.Add(this.pB_AboutPicture);
+            this.tabAbout.Controls.Add(this.pB_About);
             this.tabAbout.Name = "tabAbout";
             this.toolTip1.SetToolTip(this.tabAbout, resources.GetString("tabAbout.ToolTip"));
             this.tabAbout.UseVisualStyleBackColor = true;
@@ -972,11 +982,11 @@ namespace ControllerHelper
             // 
             // pB_AboutPicture
             // 
-            resources.ApplyResources(this.pB_AboutPicture, "pB_AboutPicture");
-            this.pB_AboutPicture.BackgroundImage = global::ControllerHelper.Properties.Resources.game_controller2;
-            this.pB_AboutPicture.Name = "pB_AboutPicture";
-            this.pB_AboutPicture.TabStop = false;
-            this.toolTip1.SetToolTip(this.pB_AboutPicture, resources.GetString("pB_AboutPicture.ToolTip"));
+            resources.ApplyResources(this.pB_About, "pB_AboutPicture");
+            this.pB_About.BackgroundImage = global::ControllerHelper.Properties.Resources.logo_playstation1;
+            this.pB_About.Name = "pB_AboutPicture";
+            this.pB_About.TabStop = false;
+            this.toolTip1.SetToolTip(this.pB_About, resources.GetString("pB_AboutPicture.ToolTip"));
             // 
             // openFileDialog1
             // 
@@ -1008,6 +1018,7 @@ namespace ControllerHelper
             this.gB_DeviceDetails.PerformLayout();
             this.gB_HIDDetails.ResumeLayout(false);
             this.gB_HIDDetails.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pB_HidMode)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tB_VibrationStr)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tB_PullRate)).EndInit();
             this.gB_XinputDetails.ResumeLayout(false);
@@ -1037,7 +1048,7 @@ namespace ControllerHelper
             this.gb_SettingsInterface.PerformLayout();
             this.tabAbout.ResumeLayout(false);
             this.tabAbout.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pB_AboutPicture)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pB_About)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1133,7 +1144,7 @@ namespace ControllerHelper
         private System.Windows.Forms.ListBox cB_UMCInputButton;
         private System.Windows.Forms.TrackBar tB_UMCIntensity;
         private System.Windows.Forms.TabPage tabAbout;
-        private System.Windows.Forms.PictureBox pB_AboutPicture;
+        private System.Windows.Forms.PictureBox pB_About;
         private System.Windows.Forms.Label lb_AboutTitle;
         private System.Windows.Forms.Label lb_AboutVersion;
         private System.Windows.Forms.Label lb_AboutAuthor;
@@ -1142,6 +1153,7 @@ namespace ControllerHelper
         private System.Windows.Forms.LinkLabel lL_AboutDonate;
         private System.Windows.Forms.LinkLabel lL_AboutWiki;
         private System.Windows.Forms.Label lb_ErrorCode;
+        private System.Windows.Forms.PictureBox pB_HidMode;
     }
 }
 

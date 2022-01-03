@@ -143,15 +143,7 @@ namespace ControllerHelper
             {
                 if (IsElevated)
                 {
-                    DialogResult dr = MessageBox.Show(strings.ServiceWelcome, strings.ToastTitle, MessageBoxButtons.YesNo);
-                    switch (dr)
-                    {
-                        case DialogResult.Yes:
-                            Utils.OpenUrl("https://www.paypal.com/paypalme/BenjaminLSR");
-                            break;
-                        case DialogResult.No:
-                            break;
-                    }
+                    MessageBox.Show(strings.ServiceWelcome, strings.ToastTitle);
 
                     this.args = new string[] { "service", "--action=install" };
 
@@ -888,9 +880,12 @@ namespace ControllerHelper
             // update UI icon to match HIDmode
             BeginInvoke((MethodInvoker)delegate ()
             {
-                Icon myIcon = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.ds4 : Properties.Resources.xbox;
+                Icon myIcon = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.logo_playstation : Properties.Resources.logo_xbox;
+                Bitmap myImage = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.logo_playstation1 : Properties.Resources.logo_xbox1;
                 this.notifyIcon1.Icon = myIcon;
                 this.Icon = myIcon;
+                this.pB_HidMode.BackgroundImage = myImage;
+                this.pB_About.BackgroundImage = myImage;
             });
         }
 

@@ -61,26 +61,6 @@ namespace ControllerHelper.Properties {
         }
         
         /// <summary>
-        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap donate {
-            get {
-                object obj = ResourceManager.GetObject("donate", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
-        /// </summary>
-        internal static System.Drawing.Icon ds4 {
-            get {
-                object obj = ResourceManager.GetObject("ds4", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à [Options]
         ///UseInitBeep=1
         ///Log=0
@@ -121,21 +101,21 @@ namespace ControllerHelper.Properties {
         }
         
         /// <summary>
-        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        ///   Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
         /// </summary>
-        internal static System.Drawing.Bitmap game_controller {
+        internal static System.Drawing.Icon logo_playstation {
             get {
-                object obj = ResourceManager.GetObject("game-controller", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("logo_playstation", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap game_controller2 {
+        internal static System.Drawing.Bitmap logo_playstation1 {
             get {
-                object obj = ResourceManager.GetObject("game-controller2", resourceCulture);
+                object obj = ResourceManager.GetObject("logo_playstation1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -143,10 +123,20 @@ namespace ControllerHelper.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
         /// </summary>
-        internal static System.Drawing.Icon xbox {
+        internal static System.Drawing.Icon logo_xbox {
             get {
-                object obj = ResourceManager.GetObject("xbox", resourceCulture);
+                object obj = ResourceManager.GetObject("logo_xbox", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap logo_xbox1 {
+            get {
+                object obj = ResourceManager.GetObject("logo_xbox1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
