@@ -181,7 +181,7 @@ namespace ControllerHelper
             PipeConsoleArgs console = (PipeConsoleArgs)e;
 
             if (console.args.Length == 0)
-                BeginInvoke((MethodInvoker)delegate () { WindowState = FormWindowState.Normal; });
+                BeginInvoke((MethodInvoker)delegate () { WindowState = prevWindowState; });
             else
                 CmdParser.ParseArgs(console.args);
 
@@ -392,6 +392,21 @@ namespace ControllerHelper
             }
         }
 
+        public void UpdateScreen()
+        {
+            PipeClient.SendMessage(new PipeClientScreen
+            {
+                width = Screen.PrimaryScreen.Bounds.Width,
+                height = Screen.PrimaryScreen.Bounds.Height
+            });
+        }
+
+        public void ForceExit()
+        {
+            Application.Exit();
+        }
+
+        #region GUI
         public void UpdateStatus(bool status)
         {
             BeginInvoke((MethodInvoker)delegate ()
@@ -399,15 +414,6 @@ namespace ControllerHelper
                 foreach (Control ctl in tabDevices.Controls)
                     ctl.Enabled = status;
                 gb_SettingsUDP.Enabled = status;
-            });
-        }
-
-        public void UpdateScreen()
-        {
-            PipeClient.SendMessage(new PipeClientScreen
-            {
-                width = Screen.PrimaryScreen.Bounds.Width,
-                height = Screen.PrimaryScreen.Bounds.Height
             });
         }
 
@@ -477,12 +483,6 @@ namespace ControllerHelper
             this.Close();
         }
 
-        public void ForceExit()
-        {
-            Application.Exit();
-        }
-
-        #region GUI
         private void lB_Devices_SelectedIndexChanged(object sender, EventArgs e)
         {
             Controller con = (Controller)lB_Devices.SelectedItem;
