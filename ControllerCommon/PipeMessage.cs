@@ -107,9 +107,16 @@ namespace ControllerCommon
     }
 
     [Serializable]
+    public enum HidderAction
+    {
+        Register = 0,
+        Unregister = 1
+    }
+
+    [Serializable]
     public class PipeClientHidder : PipeMessage
     {
-        public int action; // 0 = reg, 1 = unreg
+        public HidderAction action;
         public string path;
 
         public PipeClientHidder()

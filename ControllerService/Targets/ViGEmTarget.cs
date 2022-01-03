@@ -33,6 +33,8 @@ namespace ControllerService.Targets
         #endregion
 
         public Profile Profile;
+        public Profile DefaultProfile;
+
         public Controller Controller;
         public Gamepad Gamepad;
         public DS4Touch Touch;
@@ -70,6 +72,7 @@ namespace ControllerService.Targets
 
             // initialize profile
             Profile = new();
+            DefaultProfile = new();
             Touch = new();
 
             // initialize secret state

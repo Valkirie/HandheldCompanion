@@ -229,10 +229,10 @@ namespace ControllerService
 
                     switch (hidder.action)
                     {
-                        case 0: // reg
+                        case HidderAction.Register:
                             Hidder.RegisterApplication(hidder.path);
                             break;
-                        case 1: // unreg
+                        case HidderAction.Unregister:
                             Hidder.UnregisterApplication(hidder.path);
                             break;
                     }
@@ -262,7 +262,19 @@ namespace ControllerService
 
         internal void UpdateProfile(Profile profile)
         {
-            XInputController.Target.Profile = profile;
+            if (profile == null)
+            {
+                // unknown process, use default profile instead
+                XInputController.Target.Profile = XInputController.Target.DefaultProfile;
+            }
+            else if (profile.IsDefault)
+            {
+                // updated default profile
+                XInputController.Target.DefaultProfile = profile;
+                logger.LogInformation("{0} profile updated.", profile.name);
+            }
+            else
+                XInputController.Target.Profile = profile;
         }
 
         public void UpdateSettings(Dictionary<string, object> args)

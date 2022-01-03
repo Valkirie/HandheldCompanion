@@ -1,5 +1,4 @@
-﻿using ControllerCommon;
-using Force.Crc32;
+﻿using Force.Crc32;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -7,29 +6,40 @@ using System.IO;
 using System.Text.Json;
 using static ControllerCommon.Utils;
 
-namespace ControllerHelper
+namespace ControllerCommon
 {
     public class ProfileManager
     {
+        private Dictionary<bool, uint[]> CRCs = new Dictionary<bool, uint[]>()
+        {
+            { false, new uint[]{ 0x456b57cc, 0x456b57cc, 0x456b57cc, 0x456b57cc, 0x456b57cc } },
+            { true, new uint[]{ 0x906f6806, 0x906f6806, 0x906f6806, 0x906f6806, 0x906f6806 } },
+        };
+
         public Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
         public FileSystemWatcher profileWatcher { get; set; }
 
-        private Dictionary<string, DateTime> dateTimeDictionary = new Dictionary<string, DateTime>();
+        public event DeletedEventHandler Deleted;
+        public delegate void DeletedEventHandler(Profile profile);
+        public event UpdatedEventHandler Updated;
+        public delegate void UpdatedEventHandler(Profile profile);
 
-        private readonly ControllerHelper helper;
+        public HIDmode HIDmode;
+        public PipeClient PipeClient;
+
         private readonly ILogger logger;
         private string path;
 
-        public ProfileManager(string path, ControllerHelper helper, ILogger logger)
+        public ProfileManager(string path, ILogger logger, PipeClient PipeClient = null)
         {
-            this.helper = helper;
             this.logger = logger;
             this.path = path;
+            this.PipeClient = PipeClient;
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            // monitor changes, deletions and creations of profiles
+            // monitor profile file deletions
             profileWatcher = new FileSystemWatcher()
             {
                 Path = path,
@@ -38,10 +48,11 @@ namespace ControllerHelper
                 Filter = "*.json",
                 NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size
             };
+        }
 
-            // profileWatcher.Created += ProfileCreated;
+        public void Start()
+        {
             profileWatcher.Deleted += ProfileDeleted;
-            // profileWatcher.Changed += ProfileChanged;
 
             // process existing profiles
             string[] fileEntries = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
@@ -53,32 +64,42 @@ namespace ControllerHelper
                 SetDefault();
         }
 
-        private void ProfileChanged(object sender, FileSystemEventArgs e)
+        public void Stop()
         {
-            throw new NotImplementedException();
+            profileWatcher.Deleted -= ProfileDeleted;
+            profileWatcher.Dispose();
+        }
+
+        public void UpdateHID(HIDmode HIDmode)
+        {
+            this.HIDmode = HIDmode;
         }
 
         private void ProfileDeleted(object sender, FileSystemEventArgs e)
         {
             string ProfileName = e.Name.Replace(".json", "");
 
-            if (profiles.ContainsKey(ProfileName))
-            {
-                // you should not delete default profile, you fool !
-                Profile profile = profiles[ProfileName];
-                if (profile.IsDefault)
-                    SerializeProfile(profile);
-            }
-        }
+            if (!profiles.ContainsKey(ProfileName))
+                return;
 
-        private void ProfileCreated(object sender, FileSystemEventArgs e)
-        {
-            throw new NotImplementedException();
+            switch (ProfileName)
+            {
+                // prevent default profile from being deleted
+                case "Default":
+                    SetDefault();
+                    break;
+                default:
+                    Profile profile = profiles[ProfileName];
+                    DeleteProfile(profile);
+                    break;
+            }
         }
 
         public void SetDefault()
         {
-            SerializeProfile(new Profile("Default", ""));
+            Profile def = new Profile("Default", "");
+            profiles["Default"] = def;
+            SerializeProfile(def);
         }
 
         public Profile GetDefault()
@@ -115,40 +136,6 @@ namespace ControllerHelper
             UpdateProfile(profile);
         }
 
-        /* private void ProfileChanged(object sender, FileSystemEventArgs e)
-        {
-            if (dateTimeDictionary.ContainsKey(e.FullPath) && File.GetLastWriteTime(e.FullPath) == dateTimeDictionary[e.FullPath])
-                return;
-
-            dateTimeDictionary[e.FullPath] = File.GetLastWriteTime(e.FullPath);
-
-            ProcessProfile(e.FullPath);
-            logger.LogInformation("Updated profile {0}", e.FullPath);
-        }
-
-        private void ProfileDeleted(object sender, FileSystemEventArgs e)
-        {
-            string ProfileName = e.Name.Replace(".json", "");
-
-            if (profiles.ContainsKey(ProfileName))
-            {
-                Profile profile = profiles[ProfileName];
-                UnregisterApplication(profile);
-                profiles.Remove(ProfileName);
-
-                helper.DeleteProfile(profile);
-                logger.LogInformation("Deleted profile {0}", e.FullPath);
-            }
-        }
-
-        private void ProfileCreated(object sender, FileSystemEventArgs e)
-        {
-            dateTimeDictionary[e.FullPath] = File.GetLastWriteTime(e.FullPath);
-
-            ProcessProfile(e.FullPath);
-            logger.LogInformation("Created profile {0}", e.FullPath);
-        } */
-
         public void DeleteProfile(Profile profile)
         {
             string settingsPath = Path.Combine(path, $"{profile.name}.json");
@@ -157,8 +144,7 @@ namespace ControllerHelper
             {
                 UnregisterApplication(profile);
                 profiles.Remove(profile.name);
-
-                helper.DeleteProfile(profile);
+                Deleted?.Invoke(profile);
                 logger.LogInformation("Deleted profile {0}", settingsPath);
             }
 
@@ -182,7 +168,7 @@ namespace ControllerHelper
                 return ProfileErrorCode.MissingPath;
             else if (!File.Exists(profile.fullpath))
                 return ProfileErrorCode.MissingExecutable;
-            else if (!IsDirectoryWritable(processpath))
+            else if (!Utils.IsDirectoryWritable(processpath))
                 return ProfileErrorCode.MissingPermission;
 
             return ProfileErrorCode.None;
@@ -190,14 +176,17 @@ namespace ControllerHelper
 
         public void UpdateProfile(Profile profile)
         {
+            // update database
             profiles[profile.name] = profile;
+
+            // refresh error code
             profile.error = SanitizeProfile(profile);
 
-            // update GUI
-            helper.UpdateProfileList(profile);
-
-            // update profile
+            // update cloaking
             UpdateProfileCloaking(profile);
+
+            // warn owner
+            Updated?.Invoke(profile);
 
             if (profile.error != ProfileErrorCode.None && !profile.IsDefault)
             {
@@ -205,6 +194,7 @@ namespace ControllerHelper
                 return;
             }
 
+            // update wrapper
             UpdateProfileWrapper(profile);
         }
 
@@ -216,22 +206,17 @@ namespace ControllerHelper
                 UnregisterApplication(profile);
         }
 
-        private Dictionary<bool, uint[]> CRCs = new Dictionary<bool, uint[]>()
-        {
-            { false, new uint[]{ 0x456b57cc, 0x456b57cc, 0x456b57cc, 0x456b57cc, 0x456b57cc } },
-            { true, new uint[]{ 0x906f6806, 0x906f6806, 0x906f6806, 0x906f6806, 0x906f6806 } },
-        };
-
         public void UpdateProfileWrapper(Profile profile)
         {
             // deploy xinput wrapper
             string x360ce = "";
 
-            switch (helper.HIDmode)
+            switch (HIDmode)
             {
                 case HIDmode.Xbox360Controller:
                     x360ce = Properties.Resources.Xbox360;
                     break;
+                default:
                 case HIDmode.DualShock4Controller:
                     x360ce = Properties.Resources.DualShock4;
                     break;
@@ -341,18 +326,18 @@ namespace ControllerHelper
 
         public void UnregisterApplication(Profile profile)
         {
-            ControllerHelper.PipeClient.SendMessage(new PipeClientHidder
+            PipeClient?.SendMessage(new PipeClientHidder
             {
-                action = 1,
+                action = HidderAction.Unregister,
                 path = profile.fullpath
             });
         }
 
         public void RegisterApplication(Profile profile)
         {
-            ControllerHelper.PipeClient.SendMessage(new PipeClientHidder
+            PipeClient?.SendMessage(new PipeClientHidder
             {
-                action = 0,
+                action = HidderAction.Register,
                 path = profile.fullpath
             });
         }

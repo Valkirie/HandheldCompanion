@@ -19,7 +19,7 @@ namespace ControllerCommon.Properties {
     // à l'aide d'un outil, tel que ResGen ou Visual Studio.
     // Pour ajouter ou supprimer un membre, modifiez votre fichier .ResX, puis réexécutez ResGen
     // avec l'option /str ou régénérez votre projet VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -57,6 +57,185 @@ namespace ControllerCommon.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à [Options]
+        ///UseInitBeep=1
+        ///Log=0
+        ///Console=0
+        ///DebugMode=0
+        ///InternetDatabaseUrl=http://www.x360ce.com/webservices/x360ce.asmx
+        ///InternetFeatures=1
+        ///InternetAutoload=1
+        ///AllowOnlyOneCopy=1
+        ///ProgramScanLocations=C:\Program Files,C:\Program Files (x86)
+        ///Version=2
+        ///CombineEnabled=0
+        ///ExcludeSupplementalDevices=0
+        ///ExcludeVirtualDevices=0
+        ///
+        ///[InputHook]
+        ///HookMode=1
+        ///
+        ///[Mappings]
+        ///PAD1=DualShock4Controller
+        ///PAD2=
+        ///PAD3=
+        ///PAD4=
+        ///
+        ///[PAD1]
+        ///[PAD2]
+        ///[PAD3]
+        ///[PAD4]
+        ///
+        ///[DualShock4Controller]
+        ///ProductName=Wireless Controller
+        /// [le reste de la chaîne a été tronqué]&quot;;.
+        /// </summary>
+        internal static string DualShock4 {
+            get {
+                return ResourceManager.GetString("DualShock4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à [Options]
+        ///UseInitBeep=1
+        ///Log=0
+        ///Console=0
+        ///DebugMode=0
+        ///InternetDatabaseUrl=http://www.x360ce.com/webservices/x360ce.asmx
+        ///InternetFeatures=1
+        ///InternetAutoload=1
+        ///AllowOnlyOneCopy=1
+        ///ProgramScanLocations=C:\Program Files,C:\Program Files (x86)
+        ///Version=2
+        ///CombineEnabled=0
+        ///ExcludeSupplementalDevices=0
+        ///ExcludeVirtualDevices=0
+        ///
+        ///[InputHook]
+        ///HookMode=1
+        ///
+        ///[Mappings]
+        ///PAD1=Xbox360Controller
+        ///PAD2=
+        ///PAD3=
+        ///PAD4=
+        ///
+        ///[PAD1]
+        ///[PAD2]
+        ///[PAD3]
+        ///[PAD4]
+        ///
+        ///[Xbox360Controller]
+        ///ProductName=Controller (XBOX 360 For Wi [le reste de la chaîne a été tronqué]&quot;;.
+        /// </summary>
+        internal static string Xbox360 {
+            get {
+                return ResourceManager.GetString("Xbox360", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput1_1 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput1_11 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_11", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput1_2 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput1_21 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_21", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput1_3 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput1_31 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_31", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput1_4 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_4", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput1_41 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_41", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput9_1_0 {
+            get {
+                object obj = ResourceManager.GetObject("xinput9_1_0", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] xinput9_1_01 {
+            get {
+                object obj = ResourceManager.GetObject("xinput9_1_01", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

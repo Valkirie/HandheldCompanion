@@ -107,6 +107,11 @@ namespace ControllerHelper
             PipeServer = new PipeServer("ControllerHelper", logger);
             PipeServer.ClientMessage += OnClientMessage;
 
+            // initialize Profile Manager
+            ProfileManager = new ProfileManager(CurrentPathProfiles, logger, PipeClient);
+            ProfileManager.Deleted += ProfileDeleted;
+            ProfileManager.Updated += ProfileUpdated;
+
             // initialize command parser
             CmdParser = new CmdParser(PipeClient, this, logger);
 
@@ -162,6 +167,9 @@ namespace ControllerHelper
         {
             // start mouse hook
             if (HookMouse) m_Hook.Start();
+
+            // send default profile to Service
+            PipeClient.SendMessage(new PipeClientProfile() { profile = ProfileManager.GetDefault() });
 
             // start processes monitor
             MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
@@ -250,12 +258,12 @@ namespace ControllerHelper
             // start Service Manager
             ServiceManager.Start();
 
-            // initialize Profile Manager
-            ProfileManager = new ProfileManager(CurrentPathProfiles, this, logger);
-
             // start pipe client and server
             PipeClient.Start();
             PipeServer.Start();
+
+            // start Profile Manager
+            ProfileManager.Start();
 
             // execute args
             CmdParser.ParseArgs(args);
@@ -279,7 +287,7 @@ namespace ControllerHelper
                     logger.LogInformation("Profile {0} applied", profile.name);
                 }
                 else
-                    PipeClient.SendMessage(new PipeClientProfile() { profile = ProfileManager.GetDefault() });
+                    PipeClient.SendMessage(new PipeClientProfile());
             }
             catch (Exception) { }
         }
@@ -307,7 +315,6 @@ namespace ControllerHelper
         private void ControllerHelper_Close(object sender, FormClosingEventArgs e)
         {
             // position and size settings
-
             switch (WindowState)
             {
                 case FormWindowState.Normal:
@@ -340,6 +347,11 @@ namespace ControllerHelper
 
             if (PipeClient.connected)
                 PipeClient.Stop();
+
+            if (PipeServer.connected)
+                PipeServer.Stop();
+
+            ProfileManager.Stop();
 
             if (m_Hook.hooked)
                 m_Hook.Stop();
@@ -869,6 +881,8 @@ namespace ControllerHelper
         private void cB_HidMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             HIDmode = (HIDmode)cB_HidMode.SelectedIndex;
+
+            ProfileManager.UpdateHID(HIDmode);
             PipeClient.SendMessage(new PipeClientSettings
             {
                 settings = new Dictionary<string, object>
@@ -915,8 +929,12 @@ namespace ControllerHelper
             });
         }
 
-        public void UpdateProfileList(Profile profile)
+        public void ProfileUpdated(Profile profile)
         {
+            // inform Service we have a new default profile
+            if (profile.IsDefault)
+                PipeClient.SendMessage(new PipeClientProfile() { profile = profile });
+
             BeginInvoke((MethodInvoker)delegate ()
             {
                 int idx = lB_Profiles.Items.IndexOf(profile);
@@ -938,7 +956,7 @@ namespace ControllerHelper
             });
         }
 
-        public void DeleteProfile(Profile profile)
+        public void ProfileDeleted(Profile profile)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
