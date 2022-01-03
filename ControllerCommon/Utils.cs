@@ -57,7 +57,7 @@ namespace ControllerCommon
                 if (Process.ExecutableFileName == "ApplicationFrameHost.exe")
                     WinAPIFunctions.EnumChildWindows(foregroundProcessID, ChildWindowCallback, IntPtr.Zero);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 Process = null;
             }

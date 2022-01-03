@@ -41,7 +41,7 @@ namespace ControllerHelper
 
         private MouseHook m_Hook;
 
-        private FormWindowState CurrentWindowState;
+        private FormWindowState prevWindowState = FormWindowState.Normal;
         private object updateLock = new();
 
         public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
@@ -139,17 +139,6 @@ namespace ControllerHelper
             cB_CloseMinimizes.Checked = CloseMinimises = Properties.Settings.Default.CloseMinimises;
             cB_touchpad.Checked = HookMouse = Properties.Settings.Default.HookMouse;
 
-            // update Position and Size
-            Size = new Size((int)Math.Max(this.MinimumSize.Width, Properties.Settings.Default.MainWindowWidth), (int)Math.Max(this.MinimumSize.Height, Properties.Settings.Default.MainWindowHeight));
-            Location = new Point((int)Math.Max(0, Properties.Settings.Default.MainWindowX), (int)Math.Max(0, Properties.Settings.Default.MainWindowY));
-            WindowState = (FormWindowState)Properties.Settings.Default.WindowState;
-
-            if (StartMinimized)
-            {
-                WindowState = FormWindowState.Minimized;
-                ShowInTaskbar = false;
-            }
-
             if (FirstStart)
             {
                 if (IsElevated)
@@ -239,6 +228,11 @@ namespace ControllerHelper
 
         private void ControllerHelper_Load(object sender, EventArgs e)
         {
+            // update Position and Size
+            Size = new Size((int)Math.Max(this.MinimumSize.Width, Properties.Settings.Default.MainWindowWidth), (int)Math.Max(this.MinimumSize.Height, Properties.Settings.Default.MainWindowHeight));
+            Location = new Point((int)Math.Max(0, Properties.Settings.Default.MainWindowX), (int)Math.Max(0, Properties.Settings.Default.MainWindowY));
+            WindowState = (FormWindowState)Properties.Settings.Default.WindowState;
+
             // elevation check
             if (!IsElevated)
             {
@@ -300,30 +294,38 @@ namespace ControllerHelper
 
         private void ControllerHelper_Resize(object sender, EventArgs e)
         {
-            if (CurrentWindowState == WindowState)
+            if (prevWindowState == WindowState)
                 return;
 
-            if (WindowState == FormWindowState.Minimized)
+            switch (WindowState)
             {
-                notifyIcon1.Visible = true;
-                ShowInTaskbar = false;
+                case FormWindowState.Minimized:
+                    notifyIcon1.Visible = true;
+                    ShowInTaskbar = false;
+                    break;
+                case FormWindowState.Normal:
+                case FormWindowState.Maximized:
+                    notifyIcon1.Visible = false;
+                    ShowInTaskbar = true;
+                    prevWindowState = WindowState;
+                    break;
             }
-            else if (WindowState == FormWindowState.Normal)
-            {
-                notifyIcon1.Visible = false;
-                ShowInTaskbar = true;
-            }
-
-            CurrentWindowState = WindowState;
         }
 
         private void ControllerHelper_Close(object sender, FormClosingEventArgs e)
         {
             // position and size settings
-            Properties.Settings.Default.MainWindowX = (uint)Location.X;
-            Properties.Settings.Default.MainWindowY = (uint)Location.Y;
-            Properties.Settings.Default.MainWindowWidth = (uint)Size.Width;
-            Properties.Settings.Default.MainWindowHeight = (uint)Size.Height;
+
+            switch (WindowState)
+            {
+                case FormWindowState.Normal:
+                    Properties.Settings.Default.MainWindowX = (uint)Location.X;
+                    Properties.Settings.Default.MainWindowY = (uint)Location.Y;
+
+                    Properties.Settings.Default.MainWindowWidth = (uint)Size.Width;
+                    Properties.Settings.Default.MainWindowHeight = (uint)Size.Height;
+                    break;
+            }
             Properties.Settings.Default.WindowState = (int)WindowState;
 
             if (CloseMinimises && e.CloseReason == CloseReason.UserClosing)
@@ -337,7 +339,7 @@ namespace ControllerHelper
 
         private void notifyIcon1_DoubleClick(object sender, EventArgs e)
         {
-            WindowState = FormWindowState.Normal;
+            WindowState = prevWindowState;
         }
 
         private void ControllerHelper_Closed(object sender, FormClosedEventArgs e)
@@ -472,7 +474,7 @@ namespace ControllerHelper
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ForceExit();
+            this.Close();
         }
 
         public void ForceExit()
@@ -713,7 +715,7 @@ namespace ControllerHelper
                     cB_Wrapper.Enabled = !CurrentProfile.IsDefault;
 
                     // error code specific behavior
-                    switch(CurrentProfile.error)
+                    switch (CurrentProfile.error)
                     {
                         case ProfileErrorCode.None:
                             lb_ErrorCode.Visible = false;
