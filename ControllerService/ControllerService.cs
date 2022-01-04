@@ -421,16 +421,9 @@ namespace ControllerService
             {
                 if (XInputController.Target != null)
                 {
+                    XInputController.Target.Disconnected += OnTargetDisconnected;
                     XInputController.Target.Disconnect();
                     logger.LogInformation("Virtual {0} disconnected", XInputController.Target);
-
-                    // send notification
-                    pipeServer.SendMessage(new PipeServerToast
-                    {
-                        title = $"{XInputController.Target}",
-                        content = "Virtual device is now disconnected",
-                        image = $"{(XInputController.Target.HID == HIDmode.DualShock4Controller ? "logo_playstation" : "logo_xbox")}"
-                    });
                 }
             }
             catch (Exception) { }
