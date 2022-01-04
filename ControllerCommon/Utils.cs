@@ -1,5 +1,6 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -74,6 +75,44 @@ namespace ControllerCommon
         }
     }
 
+    public enum GamepadButtonFlags : uint
+    {
+        [Description("DPad Up")]
+        DPadUp = 1,
+        [Description("DPad Down")]
+        DPadDown = 2,
+        [Description("DPad Left")]
+        DPadLeft = 4,
+        [Description("DPad Right")]
+        DPadRight = 8,
+        [Description("Start")]
+        Start = 16,
+        [Description("Back")]
+        Back = 32,
+        [Description("Left Thumb")]
+        LeftThumb = 64,
+        [Description("Right Thumb")]
+        RightThumb = 128,
+        [Description("Left Shoulder")]
+        LeftShoulder = 256,
+        [Description("Right Shoulder")]
+        RightShoulder = 512,
+        [Description("Left Trigger")]
+        LeftTrigger = 1024,     // specific
+        [Description("Right Trigger")]
+        RightTrigger = 2048,    // specific
+        [Description("A")]
+        A = 4096,
+        [Description("B")]
+        B = 8192,
+        [Description("X")]
+        X = 16384,
+        [Description("Y")]
+        Y = 32768,
+        [Description("Always On")]
+        AlwaysOn = 65536        // specific
+    }
+
     public static class Utils
     {
         #region imports
@@ -94,41 +133,28 @@ namespace ControllerCommon
         static extern uint QueryFullProcessImageName(IntPtr hProcess, uint flags, StringBuilder text, out uint size);
         #endregion
 
-        [Flags]
-        public enum GamepadButtonFlags : uint
+        public static string GetDescriptionFromEnumValue(Enum value)
         {
-            DPadUp = 1,
-            DPadDown = 2,
-            DPadLeft = 4,
-            DPadRight = 8,
-            Start = 16,
-            Back = 32,
-            LeftThumb = 64,
-            RightThumb = 128,
-            LeftShoulder = 256,
-            RightShoulder = 512,
-            LeftTrigger = 1024,
-            RightTrigger = 2048,
-            A = 4096,
-            B = 8192,
-            X = 16384,
-            Y = 32768,
-            AlwaysOn = 65536
+            DescriptionAttribute attribute = value.GetType()
+                .GetField(value.ToString())
+                .GetCustomAttributes(typeof(DescriptionAttribute), false)
+                .SingleOrDefault() as DescriptionAttribute;
+            return attribute == null ? value.ToString() : attribute.Description;
         }
 
-        public static string GetDescription(this Enum GenericEnum)
+        public static T GetEnumValueFromDescription<T>(string description)
         {
-            Type genericEnumType = GenericEnum.GetType();
-            MemberInfo[] memberInfo = genericEnumType.GetMember(GenericEnum.ToString());
-            if ((memberInfo != null && memberInfo.Length > 0))
-            {
-                var _Attribs = memberInfo[0].GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
-                if ((_Attribs != null && _Attribs.Count() > 0))
-                {
-                    return ((System.ComponentModel.DescriptionAttribute)_Attribs.ElementAt(0)).Description;
-                }
-            }
-            return GenericEnum.ToString();
+            var type = typeof(T);
+            if (!type.IsEnum)
+                throw new ArgumentException();
+            FieldInfo[] fields = type.GetFields();
+            var field = fields
+                            .SelectMany(f => f.GetCustomAttributes(
+                                typeof(DescriptionAttribute), false), (
+                                    f, a) => new { Field = f, Att = a })
+                            .Where(a => ((DescriptionAttribute)a.Att)
+                                .Description == description).SingleOrDefault();
+            return field == null ? default(T) : (T)field.Field.GetRawConstantValue();
         }
 
         public static void SendToast(string title, string content)

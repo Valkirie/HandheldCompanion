@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Timers;
+using GamepadButtonFlags = ControllerCommon.GamepadButtonFlags;
 
 namespace ControllerService.Targets
 {
@@ -99,7 +100,7 @@ namespace ControllerService.Targets
 
         public override string ToString()
         {
-            return Utils.GetDescription(this.HID);
+            return Utils.GetDescriptionFromEnumValue(this.HID);
         }
 
         public void Connect()
@@ -154,8 +155,8 @@ namespace ControllerService.Targets
 
                 // get buttons values
                 uint buttons = (ushort)Gamepad.Buttons;
-                buttons |= (Gamepad.LeftTrigger > 0 ? (uint)Utils.GamepadButtonFlags.LeftTrigger : 0);
-                buttons |= (Gamepad.RightTrigger > 0 ? (uint)Utils.GamepadButtonFlags.RightTrigger : 0);
+                buttons |= (Gamepad.LeftTrigger > 0 ? (uint)GamepadButtonFlags.LeftTrigger : 0);
+                buttons |= (Gamepad.RightTrigger > 0 ? (uint)GamepadButtonFlags.RightTrigger : 0);
 
                 // get sticks values
                 LeftThumbX = Gamepad.LeftThumbX;
@@ -163,7 +164,7 @@ namespace ControllerService.Targets
                 RightThumbX = Gamepad.RightThumbX;
                 RightThumbY = Gamepad.RightThumbY;
 
-                if (Profile.umc_enabled && ((Profile.umc_trigger & buttons) != 0 || (Profile.umc_trigger & (uint)Utils.GamepadButtonFlags.AlwaysOn) != 0))
+                if (Profile.umc_enabled && ((Profile.umc_trigger & buttons) != 0 || (Profile.umc_trigger & (uint)GamepadButtonFlags.AlwaysOn) != 0))
                 {
                     float intensity = Profile.GetIntensity();
                     float sensivity = Profile.GetSensiviy();

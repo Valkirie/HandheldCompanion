@@ -132,11 +132,11 @@ namespace ControllerHelper
             {
                 if (mode == HIDmode.None)
                     continue;
-                cB_HidMode.Items.Add(Utils.GetDescription(mode));
+                cB_HidMode.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
             }
 
-            foreach (Utils.GamepadButtonFlags button in (Utils.GamepadButtonFlags[])Enum.GetValues(typeof(Utils.GamepadButtonFlags)))
-                cB_UMCInputButton.Items.Add(button);
+            foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
+                cB_UMCInputButton.Items.Add(Utils.GetDescriptionFromEnumValue(button));
 
             // update UI
             cB_RunAtStartup.Checked = RunAtStartup = Properties.Settings.Default.RunAtStartup;
@@ -763,7 +763,8 @@ namespace ControllerHelper
 
                     for (int idx = 0; idx < cB_UMCInputButton.Items.Count; idx++)
                     {
-                        uint button = (uint)(Utils.GamepadButtonFlags)cB_UMCInputButton.Items[idx];
+                        string value = (string)cB_UMCInputButton.Items[idx];
+                        uint button = (uint)Utils.GetEnumValueFromDescription<GamepadButtonFlags>(value);
                         bool selected = (button & CurrentProfile.umc_trigger) == button;
                         cB_UMCInputButton.SetSelected(idx, selected);
                     }
@@ -818,8 +819,12 @@ namespace ControllerHelper
             CurrentProfile.umc_intensity = tB_UMCIntensity.Value;
 
             CurrentProfile.umc_trigger = 0;
-            foreach (Utils.GamepadButtonFlags button in cB_UMCInputButton.SelectedItems)
+
+            foreach (string item in cB_UMCInputButton.SelectedItems)
+            {
+                var button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(item);
                 CurrentProfile.umc_trigger |= (uint)button;
+            }
 
             ProfileManager.profiles[CurrentProfile.name] = CurrentProfile;
             ProfileManager.UpdateProfile(CurrentProfile);
