@@ -118,16 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="logo_playstation" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\logo_playstation.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="HIDicon0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HIDicon0.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="logo_playstation1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\logo_playstation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="HIDicon1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HIDicon1.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="logo_xbox" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\logo_xbox.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="HIDmode0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HIDmode0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="logo_xbox1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\logo_xbox.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="HIDmode1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HIDmode1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

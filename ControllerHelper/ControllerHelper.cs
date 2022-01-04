@@ -199,7 +199,7 @@ namespace ControllerHelper
 
                 case PipeCode.SERVER_TOAST:
                     PipeServerToast toast = (PipeServerToast)message;
-                    Utils.SendToast(toast.title, toast.content);
+                    Utils.SendToast(toast.title, toast.content, toast.image);
                     break;
 
                 case PipeCode.SERVER_CONTROLLER:
@@ -896,8 +896,8 @@ namespace ControllerHelper
             // update UI icon to match HIDmode
             BeginInvoke((MethodInvoker)delegate ()
             {
-                Icon myIcon = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.logo_playstation : Properties.Resources.logo_xbox;
-                Bitmap myImage = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.logo_playstation1 : Properties.Resources.logo_xbox1;
+                Icon myIcon = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.HIDicon0 : Properties.Resources.HIDicon1;
+                Bitmap myImage = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.HIDmode0 : Properties.Resources.HIDmode1;
                 this.notifyIcon1.Icon = myIcon;
                 this.Icon = myIcon;
                 this.pB_HidMode.BackgroundImage = myImage;

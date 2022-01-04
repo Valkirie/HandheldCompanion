@@ -13,6 +13,7 @@ using System.Numerics;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
+using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
 using Timer = System.Timers.Timer;
 
 namespace ControllerService
@@ -105,10 +106,10 @@ namespace ControllerService
         private Vector3 empty = new();
 
         public event StartedEventHandler Started;
-        public delegate void StartedEventHandler(Object sender);
+        public delegate void StartedEventHandler(DSUServer server);
 
         public event StoppedEventHandler Stopped;
-        public delegate void StoppedEventHandler(Object sender);
+        public delegate void StoppedEventHandler(DSUServer server);
 
         public DSUServer(string ipString, int port, ILogger logger)
         {

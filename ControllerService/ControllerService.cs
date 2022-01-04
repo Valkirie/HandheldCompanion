@@ -27,7 +27,8 @@ namespace ControllerService
         private XInputGirometer Gyrometer;
         private XInputAccelerometer Accelerometer;
 
-        private PipeServer PipeServer;
+        private PipeServer pipeServer;
+        private ProfileManager profileManager;
         private DSUServer DSUServer;
         public HidHide Hidder;
 
@@ -123,25 +124,20 @@ namespace ControllerService
             if (Accelerometer.sensor == null)
                 logger.LogWarning("No Accelerometer detected");
 
-            // initialize virtual controller
-            UpdateVirtualController(HIDmode);
-
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
             DSUServer.Started += OnDSUStarted;
             DSUServer.Stopped += OnDSUStopped;
 
             // initialize PipeServer
-            PipeServer = new PipeServer("ControllerService", logger);
-            PipeServer.Connected += OnClientConnected;
-            PipeServer.Disconnected += OnClientDisconnected;
-            PipeServer.ClientMessage += OnClientMessage;
+            pipeServer = new PipeServer("ControllerService", logger);
+            pipeServer.Connected += OnClientConnected;
+            pipeServer.Disconnected += OnClientDisconnected;
+            pipeServer.ClientMessage += OnClientMessage;
 
             // initialize Profile Manager
-            ProfileManager ProfileManager = new ProfileManager(CurrentPathProfiles, logger);
-            ProfileManager.Updated += ProfileUpdated;
-            ProfileManager.Start("Default.json");
-            ProfileManager.Stop();
+            profileManager = new ProfileManager(CurrentPathProfiles, logger);
+            profileManager.Updated += ProfileUpdated;
         }
 
         private void UpdateVirtualController(HIDmode mode)
@@ -176,19 +172,50 @@ namespace ControllerService
                 throw new InvalidOperationException();
             }
 
+            VirtualTarget.Submited += OnTargetSubmited;
+            VirtualTarget.Connected += OnTargetConnected;
+            // VirtualTarget.Disconnected += OnTargetDisconnected;
+
             XInputController.SetTarget(VirtualTarget);
         }
 
-        private void OnDSUStopped(object sender)
+        private void OnTargetDisconnected(ViGEmTarget target)
         {
-            DSUEnabled = Properties.Settings.Default.DSUEnabled = false;
-            PipeServer.SendMessage(new PipeServerSettings() { settings = new Dictionary<string, string>() { { "DSUEnabled", DSUEnabled.ToString() } } });
+            // send notification
+            pipeServer?.SendMessage(new PipeServerToast
+            {
+                title = $"{target}",
+                content = "Virtual device is now disconnected",
+                image = $"HIDmode{(uint)target.HID}"
+            });
         }
 
-        private void OnDSUStarted(object sender)
+        private void OnTargetConnected(ViGEmTarget target)
+        {
+            // send notification
+            pipeServer?.SendMessage(new PipeServerToast
+            {
+                title = $"{target}",
+                content = "Virtual device is now connected",
+                image = $"HIDmode{(uint)target.HID}"
+            });
+        }
+
+        private void OnTargetSubmited(ViGEmTarget target)
+        {
+            DSUServer?.SubmitReport(target);
+        }
+
+        private void OnDSUStopped(DSUServer server)
+        {
+            DSUEnabled = Properties.Settings.Default.DSUEnabled = false;
+            pipeServer.SendMessage(new PipeServerSettings() { settings = new Dictionary<string, string>() { { "DSUEnabled", DSUEnabled.ToString() } } });
+        }
+
+        private void OnDSUStarted(DSUServer server)
         {
             DSUEnabled = Properties.Settings.Default.DSUEnabled = true;
-            PipeServer.SendMessage(new PipeServerSettings() { settings = new Dictionary<string, string>() { { "DSUEnabled", DSUEnabled.ToString() } } });
+            pipeServer.SendMessage(new PipeServerSettings() { settings = new Dictionary<string, string>() { { "DSUEnabled", DSUEnabled.ToString() } } });
         }
 
         private void OnClientMessage(object sender, PipeMessage message)
@@ -255,7 +282,7 @@ namespace ControllerService
         private void OnClientConnected(object sender)
         {
             // send controller details
-            PipeServer.SendMessage(new PipeServerController()
+            pipeServer.SendMessage(new PipeServerController()
             {
                 ProductName = XInputController.Instance.ProductName,
                 InstanceGuid = XInputController.Instance.InstanceGuid,
@@ -264,7 +291,7 @@ namespace ControllerService
             });
 
             // send server settings
-            PipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
+            pipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
         }
 
         internal void ProfileUpdated(Profile profile)
@@ -367,27 +394,23 @@ namespace ControllerService
         public Task StartAsync(CancellationToken cancellationToken)
         {
             // start the DSUClient
-            if (DSUEnabled)
-                DSUServer.Start();
+            if (DSUEnabled) DSUServer.Start();
 
             // turn on the cloaking
             Hidder.SetCloaking(HIDcloaked);
 
             // initialize virtual controller
-            XInputController.SetDSUServer(DSUServer);
+            UpdateVirtualController(HIDmode);
             XInputController.SetGyroscope(Gyrometer);
             XInputController.SetAccelerometer(Accelerometer);
             XInputController.SetVibrationStrength(HIDstrength);
 
             // start the Pipe Server
-            PipeServer.Start();
+            pipeServer.Start();
 
-            // send notification
-            PipeServer.SendMessage(new PipeServerToast
-            {
-                title = $"{XInputController.Target}",
-                content = "Virtual device is now connected"
-            });
+            // start and stop Profile Manager
+            profileManager.Start("Default.json");
+            profileManager.Stop();
 
             return Task.CompletedTask;
         }
@@ -402,10 +425,11 @@ namespace ControllerService
                     logger.LogInformation("Virtual {0} disconnected", XInputController.Target);
 
                     // send notification
-                    PipeServer.SendMessage(new PipeServerToast
+                    pipeServer.SendMessage(new PipeServerToast
                     {
                         title = $"{XInputController.Target}",
-                        content = "Virtual device is now disconnected"
+                        content = "Virtual device is now disconnected",
+                        image = $"{(XInputController.Target.HID == HIDmode.DualShock4Controller ? "logo_playstation" : "logo_xbox")}"
                     });
                 }
             }
@@ -413,7 +437,7 @@ namespace ControllerService
 
             DSUServer?.Stop();
             Hidder?.SetCloaking(!HIDuncloakonclose);
-            PipeServer?.Stop();
+            pipeServer?.Stop();
 
             return Task.CompletedTask;
         }

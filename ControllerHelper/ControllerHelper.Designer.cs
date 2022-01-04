@@ -983,7 +983,7 @@ namespace ControllerHelper
             // pB_AboutPicture
             // 
             resources.ApplyResources(this.pB_About, "pB_AboutPicture");
-            this.pB_About.BackgroundImage = global::ControllerHelper.Properties.Resources.logo_playstation1;
+            this.pB_About.BackgroundImage = global::ControllerHelper.Properties.Resources.HIDmode0;
             this.pB_About.Name = "pB_AboutPicture";
             this.pB_About.TabStop = false;
             this.toolTip1.SetToolTip(this.pB_About, resources.GetString("pB_AboutPicture.ToolTip"));

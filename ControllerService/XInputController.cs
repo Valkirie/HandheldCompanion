@@ -1,7 +1,9 @@
-﻿using ControllerService.Targets;
+﻿using ControllerCommon;
+using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -14,13 +16,10 @@ namespace ControllerService
 
         public DeviceInstance Instance;
 
-        private DSUServer DSUServer;
-
         public XInputGirometer Gyrometer;
         public XInputAccelerometer Accelerometer;
 
         public UserIndex UserIndex;
-
         private readonly ILogger logger;
 
         public XInputController(Controller controller, UserIndex index, ILogger logger)
@@ -66,11 +65,6 @@ namespace ControllerService
             Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
         }
 
-        public void SetDSUServer(DSUServer _server)
-        {
-            DSUServer = _server;
-        }
-
         private void Accelerometer_ReadingChanged(object sender, Vector3 acceleration)
         {
             Target.Acceleration = acceleration;
@@ -84,15 +78,20 @@ namespace ControllerService
         public void SetTarget(ViGEmTarget target)
         {
             this.Target = target;
-            Target.Submited += SubmitReport;
+
+            switch (Target.HID)
+            {
+                default:
+                case HIDmode.DualShock4Controller:
+                    ((DualShock4Target)Target).Connect();
+                    break;
+                case HIDmode.Xbox360Controller:
+                    ((Xbox360Target)Target).Connect();
+                    break;
+            }
 
             logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, Instance.InstanceName, UserIndex);
             logger.LogInformation("Virtual {0} report interval set to {1}ms", target, this.Target.UpdateTimer.Interval);
-        }
-
-        private void SubmitReport(object sender)
-        {
-            DSUServer?.SubmitReport(Target);
         }
     }
 }

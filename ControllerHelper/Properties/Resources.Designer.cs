@@ -63,9 +63,9 @@ namespace ControllerHelper.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
         /// </summary>
-        internal static System.Drawing.Icon logo_playstation {
+        internal static System.Drawing.Icon HIDicon0 {
             get {
-                object obj = ResourceManager.GetObject("logo_playstation", resourceCulture);
+                object obj = ResourceManager.GetObject("HIDicon0", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace ControllerHelper.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap logo_playstation1 {
+        internal static System.Drawing.Bitmap HIDmode0 {
             get {
-                object obj = ResourceManager.GetObject("logo_playstation1", resourceCulture);
+                object obj = ResourceManager.GetObject("HIDmode0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace ControllerHelper.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Icon semblable à (Icône).
         /// </summary>
-        internal static System.Drawing.Icon logo_xbox {
+        internal static System.Drawing.Icon HIDicon1 {
             get {
-                object obj = ResourceManager.GetObject("logo_xbox", resourceCulture);
+                object obj = ResourceManager.GetObject("HIDicon1", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace ControllerHelper.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap logo_xbox1 {
+        internal static System.Drawing.Bitmap HIDmode1 {
             get {
-                object obj = ResourceManager.GetObject("logo_xbox1", resourceCulture);
+                object obj = ResourceManager.GetObject("HIDmode1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

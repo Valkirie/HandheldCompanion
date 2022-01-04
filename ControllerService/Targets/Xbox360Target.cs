@@ -6,6 +6,7 @@ using Nefarius.ViGEm.Client.Targets.Xbox360;
 using SharpDX.XInput;
 using System.Collections.Generic;
 using System.Timers;
+using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
 
 namespace ControllerService.Targets
 {
@@ -57,8 +58,6 @@ namespace ControllerService.Targets
 
             // initialize timers
             UpdateTimer.Elapsed += UpdateReport;
-
-            Connect();
         }
 
         public new void Connect()

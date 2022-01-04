@@ -60,7 +60,14 @@ namespace ControllerService.Targets
         public Timer UpdateTimer;
 
         public event SubmitedEventHandler Submited;
-        public delegate void SubmitedEventHandler(Object sender);
+        public delegate void SubmitedEventHandler(ViGEmTarget target);
+
+        public event ConnectedEventHandler Connected;
+        public delegate void ConnectedEventHandler(ViGEmTarget target);
+
+        public event DisconnectedEventHandler Disconnected;
+        public delegate void DisconnectedEventHandler(ViGEmTarget target);
+
         protected object updateLock = new();
 
         protected ViGEmTarget(ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger)
@@ -110,6 +117,7 @@ namespace ControllerService.Targets
             UpdateTimer.Enabled = true;
             UpdateTimer.Start();
 
+            Connected?.Invoke(this);
             logger.LogInformation("Virtual {0} connected", ToString());
         }
 
@@ -120,6 +128,7 @@ namespace ControllerService.Targets
             UpdateTimer.Enabled = false;
             UpdateTimer.Stop();
 
+            Disconnected?.Invoke(this);
             logger.LogInformation("Virtual {0} disconnected", ToString());
         }
 

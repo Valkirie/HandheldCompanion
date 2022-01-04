@@ -157,9 +157,9 @@ namespace ControllerCommon
             return field == null ? default(T) : (T)field.Field.GetRawConstantValue();
         }
 
-        public static void SendToast(string title, string content)
+        public static void SendToast(string title, string content, string img = "Toast")
         {
-            string url = "file:///" + AppDomain.CurrentDomain.BaseDirectory + "Toast.png";
+            string url = $"file:///{AppDomain.CurrentDomain.BaseDirectory}Resources\\{img}.png";
             var uri = new Uri(url);
 
             new ToastContentBuilder()
