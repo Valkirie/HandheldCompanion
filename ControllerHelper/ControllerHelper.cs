@@ -41,7 +41,7 @@ namespace ControllerHelper
 
         private MouseHook m_Hook;
 
-        private FormWindowState prevWindowState = FormWindowState.Normal;
+        private FormWindowState prevWindowState;
         private object updateLock = new();
 
         public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
@@ -294,9 +294,6 @@ namespace ControllerHelper
 
         private void ControllerHelper_Resize(object sender, EventArgs e)
         {
-            if (prevWindowState == WindowState)
-                return;
-
             switch (WindowState)
             {
                 case FormWindowState.Minimized:
