@@ -852,6 +852,10 @@ namespace ControllerHelper
         {
             gB_ProfileGyro.Enabled = cB_UniversalMC.Checked;
             cB_Whitelist.Enabled = !cB_UniversalMC.Checked && !CurrentProfile.IsDefault;
+
+            cB_GyroSteering.Enabled = cB_UniversalMC.Checked;
+            cB_InvertHAxis.Enabled = cB_UniversalMC.Checked;
+            cB_InvertVAxis.Enabled = cB_UniversalMC.Checked;
         }
 
         private void tB_UMCSensivity_Scroll(object sender, EventArgs e)
