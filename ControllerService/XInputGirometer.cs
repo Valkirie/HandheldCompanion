@@ -62,12 +62,12 @@ namespace ControllerService
             {
                 this.reading *= controller.Target.Profile.gyrometer;
 
-                this.reading.Z = (controller.Target.Profile.inverthorizontal ? -1.0f : 1.0f) * this.reading.Z;
-                this.reading.X = (controller.Target.Profile.invertvertical ? -1.0f : 1.0f) * this.reading.X;
-
                 this.reading.Z = controller.Target.Profile.steering == 0 ? this.reading.Z : this.reading.Y;
                 this.reading.Y = controller.Target.Profile.steering == 0 ? this.reading.Y : this.reading.Z;
                 this.reading.X = controller.Target.Profile.steering == 0 ? this.reading.X : this.reading.X;
+                
+                this.reading.Z = (controller.Target.Profile.inverthorizontal ? -1.0f : 1.0f) * this.reading.Z;
+                this.reading.X = (controller.Target.Profile.invertvertical ? -1.0f : 1.0f) * this.reading.X;
             }
 
             // raise event
