@@ -44,6 +44,7 @@ namespace ControllerService.Targets
 
         public Vector3 AngularVelocity;
         public Vector3 Acceleration;
+        public MadgwickAHRS madgwick;
 
         protected ViGEmClient Client { get; }
         protected IVirtualGamepad vcontroller;
@@ -77,6 +78,7 @@ namespace ControllerService.Targets
             // initialize vectors
             AngularVelocity = new();
             Acceleration = new();
+            madgwick = new(1f / 14f, 0.1f);
 
             // initialize profile
             Profile = new();
@@ -173,6 +175,8 @@ namespace ControllerService.Targets
                 RightThumbX = Gamepad.RightThumbX;
                 RightThumbY = Gamepad.RightThumbY;
 
+                madgwick.Update(Utils.deg2rad(-AngularVelocity.Z), Utils.deg2rad(AngularVelocity.Y), Utils.deg2rad(AngularVelocity.X), Acceleration.X, Acceleration.Z, Acceleration.Y);
+                
                 if (Profile.umc_enabled && ((Profile.umc_trigger & buttons) != 0 || (Profile.umc_trigger & (uint)GamepadButtonFlags.AlwaysOn) != 0))
                 {
                     float intensity = Profile.GetIntensity();
