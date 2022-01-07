@@ -188,6 +188,7 @@ namespace ControllerService.Targets
                 GamepadButtonFlags buttons = (GamepadButtonFlags)Gamepad.Buttons;
                 buttons |= (Gamepad.LeftTrigger > 0 ? GamepadButtonFlags.LeftTrigger : 0);
                 buttons |= (Gamepad.RightTrigger > 0 ? GamepadButtonFlags.RightTrigger : 0);
+                buttons |= Profile.umc_trigger.HasFlag(GamepadButtonFlags.AlwaysOn) ? GamepadButtonFlags.AlwaysOn : 0;
 
                 // get sticks values
                 LeftThumbX = Gamepad.LeftThumbX;
@@ -195,7 +196,10 @@ namespace ControllerService.Targets
                 RightThumbX = Gamepad.RightThumbX;
                 RightThumbY = Gamepad.RightThumbY;
 
-                if (Profile.umc_enabled && ((Profile.umc_trigger & buttons) != 0 || (Profile.umc_trigger & GamepadButtonFlags.AlwaysOn) != 0))
+                if (buttons == 0)
+                    return;
+
+                if (Profile.umc_enabled && Profile.umc_trigger.HasFlag(buttons))
                 {
                     float intensity = Profile.GetIntensity();
                     float sensivity = Profile.GetSensiviy();
@@ -204,11 +208,11 @@ namespace ControllerService.Targets
                     {
                         default:
                         case InputStyle.RightStick:
-                            RightThumbX = Utils.ComputeInput(RightThumbX, -AngularVelocity.Z * 1.5f, sensivity, intensity);
+                            RightThumbX = Utils.ComputeInput(RightThumbX, -AngularVelocity.Z * 1.25f, sensivity, intensity);
                             RightThumbY = Utils.ComputeInput(RightThumbY, AngularVelocity.X, sensivity, intensity);
                             break;
                         case InputStyle.LeftStick:
-                            LeftThumbX = Utils.ComputeInput(LeftThumbX, -AngularVelocity.Z * 1.5f, sensivity, intensity);
+                            LeftThumbX = Utils.ComputeInput(LeftThumbX, -AngularVelocity.Z * 1.25f, sensivity, intensity);
                             LeftThumbY = Utils.ComputeInput(LeftThumbY, AngularVelocity.X, sensivity, intensity);
                             break;
                     }
