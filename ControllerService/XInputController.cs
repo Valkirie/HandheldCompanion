@@ -44,23 +44,13 @@ namespace ControllerService
         public void SetGyroscope(XInputGirometer _gyrometer)
         {
             Gyrometer = _gyrometer;
-            Gyrometer.ReadingChanged += Girometer_ReadingChanged;
+            Gyrometer.ReadingChanged += Target.Girometer_ReadingChanged;
         }
 
         public void SetAccelerometer(XInputAccelerometer _accelerometer)
         {
             Accelerometer = _accelerometer;
-            Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
-        }
-
-        private void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 acceleration)
-        {
-            Target.Acceleration = acceleration;
-        }
-
-        private void Girometer_ReadingChanged(XInputGirometer sender, Vector3 angularvelocity)
-        {
-            Target.AngularVelocity = angularvelocity;
+            Accelerometer.ReadingChanged += Target.Accelerometer_ReadingChanged;
         }
 
         public void SetTarget(ViGEmTarget target)

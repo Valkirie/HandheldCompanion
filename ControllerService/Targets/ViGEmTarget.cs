@@ -40,10 +40,20 @@ namespace ControllerService.Targets
         public Gamepad Gamepad;
         public DS4Touch Touch;
         public HIDmode HID = HIDmode.None;
+
         protected readonly ILogger logger;
 
-        public Vector3 AngularVelocity;
         public Vector3 Acceleration;
+        public void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 e)
+        {
+            Acceleration = e;
+        }
+
+        public Vector3 AngularVelocity;
+        public void Girometer_ReadingChanged(XInputGirometer sender, Vector3 e)
+        {
+            AngularVelocity = e;
+        }
 
         protected ViGEmClient Client { get; }
         protected IVirtualGamepad vcontroller;
