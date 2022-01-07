@@ -12,8 +12,8 @@ namespace ControllerCommon
     {
         private Dictionary<bool, uint[]> CRCs = new Dictionary<bool, uint[]>()
         {
-            { false, new uint[]{ 0x456b57cc, 0x456b57cc, 0x456b57cc, 0x456b57cc, 0x456b57cc } },
-            { true, new uint[]{ 0x906f6806, 0x906f6806, 0x906f6806, 0x906f6806, 0x906f6806 } },
+            { false, new uint[]{ 0xcd4906cc, 0xcd4906cc, 0xcd4906cc, 0xcd4906cc, 0xcd4906cc } },
+            { true, new uint[]{ 0x1e9df650, 0x1e9df650, 0x1e9df650, 0x1e9df650, 0x1e9df650 } },
         };
 
         public Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
@@ -209,18 +209,7 @@ namespace ControllerCommon
         public void UpdateProfileWrapper(Profile profile)
         {
             // deploy xinput wrapper
-            string x360ce = "";
-
-            switch (HIDmode)
-            {
-                case HIDmode.Xbox360Controller:
-                    x360ce = Properties.Resources.Xbox360;
-                    break;
-                default:
-                case HIDmode.DualShock4Controller:
-                    x360ce = Properties.Resources.DualShock4;
-                    break;
-            }
+            string XinputPlus = Properties.Resources.XInputPlus;
 
             string[] fullpaths = new string[] { profile.fullpath };
 
@@ -237,7 +226,7 @@ namespace ControllerCommon
             foreach (string fullpath in fullpaths)
             {
                 string processpath = Path.GetDirectoryName(fullpath);
-                string inipath = Path.Combine(processpath, "x360ce.ini");
+                string inipath = Path.Combine(processpath, "XInputPlus.ini");
                 bool iniexist = File.Exists(inipath);
 
                 // get binary type (x64, x86)
@@ -245,7 +234,7 @@ namespace ControllerCommon
                 bool x64 = bt == BinaryType.SCS_64BIT_BINARY;
 
                 if (profile.use_wrapper)
-                    File.WriteAllText(inipath, x360ce);
+                    File.WriteAllText(inipath, XinputPlus);
                 else if (iniexist)
                     File.Delete(inipath);
 
