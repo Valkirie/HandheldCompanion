@@ -390,9 +390,10 @@ namespace ControllerService
             Hidder.SetCloaking(HIDcloaked);
 
             // initialize virtual controller
-            UpdateVirtualController(HIDmode);
             XInputController.SetGyroscope(Gyrometer);
             XInputController.SetAccelerometer(Accelerometer);
+
+            UpdateVirtualController(HIDmode);
             XInputController.Target?.SetVibrationStrength(HIDstrength);
 
             // start the Pipe Server

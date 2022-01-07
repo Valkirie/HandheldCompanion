@@ -44,18 +44,20 @@ namespace ControllerService
         public void SetGyroscope(XInputGirometer _gyrometer)
         {
             Gyrometer = _gyrometer;
-            Gyrometer.ReadingChanged += Target.Girometer_ReadingChanged;
         }
 
         public void SetAccelerometer(XInputAccelerometer _accelerometer)
         {
             Accelerometer = _accelerometer;
-            Accelerometer.ReadingChanged += Target.Accelerometer_ReadingChanged;
         }
 
         public void SetTarget(ViGEmTarget target)
         {
             this.Target = target;
+
+            Gyrometer.ReadingChanged += Target.Girometer_ReadingChanged;
+            Accelerometer.ReadingChanged += Target.Accelerometer_ReadingChanged;
+
             logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, Instance.InstanceName, UserIndex);
             logger.LogInformation("Virtual {0} report interval set to {1}ms", target, Target.UpdateTimer.Interval);
         }
