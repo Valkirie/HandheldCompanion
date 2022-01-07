@@ -14,6 +14,7 @@
 *.suo
 # Include dlls if they’re in the NuGet packages directory
 !/packages/*/lib/*.dll
+!/*/Resources/*.dll
 !/*/Resources/*/*.dll
 # Include dlls if they're in the CommonReferences directory
 !*CommonReferences/*.dll

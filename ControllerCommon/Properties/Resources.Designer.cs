@@ -63,9 +63,9 @@ namespace ControllerCommon.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Byte[].
         /// </summary>
-        public static byte[] xinput1_1 {
+        public static byte[] xinput1_x64 {
             get {
-                object obj = ResourceManager.GetObject("xinput1_1", resourceCulture);
+                object obj = ResourceManager.GetObject("xinput1_x64", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -73,89 +73,9 @@ namespace ControllerCommon.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Byte[].
         /// </summary>
-        public static byte[] xinput1_11 {
+        public static byte[] xinput1_x86 {
             get {
-                object obj = ResourceManager.GetObject("xinput1_11", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        public static byte[] xinput1_2 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_2", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        public static byte[] xinput1_21 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_21", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        public static byte[] xinput1_3 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_3", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        public static byte[] xinput1_31 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_31", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        public static byte[] xinput1_4 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_4", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        public static byte[] xinput1_41 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_41", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        public static byte[] xinput9_1_0 {
-            get {
-                object obj = ResourceManager.GetObject("xinput9_1_0", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        public static byte[] xinput9_1_01 {
-            get {
-                object obj = ResourceManager.GetObject("xinput9_1_01", resourceCulture);
+                object obj = ResourceManager.GetObject("xinput1_x86", resourceCulture);
                 return ((byte[])(obj));
             }
         }
