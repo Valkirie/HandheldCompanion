@@ -487,11 +487,11 @@ namespace ControllerHelper
             // cB_GyroSteering
             // 
             this.cB_GyroSteering.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            resources.ApplyResources(this.cB_GyroSteering, "cB_GyroSteering");
             this.cB_GyroSteering.FormattingEnabled = true;
             this.cB_GyroSteering.Items.AddRange(new object[] {
             resources.GetString("cB_GyroSteering.Items"),
             resources.GetString("cB_GyroSteering.Items1")});
+            resources.ApplyResources(this.cB_GyroSteering, "cB_GyroSteering");
             this.cB_GyroSteering.Name = "cB_GyroSteering";
             this.toolTip1.SetToolTip(this.cB_GyroSteering, resources.GetString("cB_GyroSteering.ToolTip"));
             // 

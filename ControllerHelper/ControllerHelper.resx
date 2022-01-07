@@ -1972,9 +1972,6 @@
   <data name="cB_InvertVAxis.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="cB_InvertVAxis.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="cB_InvertVAxis.Location" type="System.Drawing.Point, System.Drawing">
     <value>156, 184</value>
   </data>
@@ -2007,9 +2004,6 @@
   </data>
   <data name="cB_InvertHAxis.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
-  </data>
-  <data name="cB_InvertHAxis.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
   </data>
   <data name="cB_InvertHAxis.Location" type="System.Drawing.Point, System.Drawing">
     <value>156, 155</value>
@@ -2127,9 +2121,6 @@
   </data>
   <data name="&gt;&gt;lB_GyroSteering.ZOrder" xml:space="preserve">
     <value>4</value>
-  </data>
-  <data name="cB_GyroSteering.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
   </data>
   <data name="cB_GyroSteering.Items" xml:space="preserve">
     <value>Yaw</value>
@@ -3658,9 +3649,6 @@
   <data name="openFileDialog1.Filter" xml:space="preserve">
     <value>Exe Files (.exe)|*.exe|Microsoft Store Manifest (appxmanifest.xml)|appxmanifest.xml</value>
   </data>
-  <metadata name="$this.Language" type="System.Globalization.CultureInfo, System.Private.CoreLib, Culture=neutral, PublicKeyToken=7cec85d7bea7798e">
-    <value>fr</value>
-  </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
