@@ -53,21 +53,21 @@ namespace ControllerService
 
             prev_microseconds = microseconds;
 
-            this.reading.X = (float)accelFilter.axis1Filter.Filter(reading.AccelerationX, rate);
-            this.reading.Y = (float)accelFilter.axis1Filter.Filter(reading.AccelerationZ, rate);
-            this.reading.Z = (float)accelFilter.axis1Filter.Filter(reading.AccelerationY, rate);
+            float readingX = this.reading.X = (float)accelFilter.axis1Filter.Filter(reading.AccelerationX, rate);
+            float readingY = this.reading.Y = (float)accelFilter.axis1Filter.Filter(reading.AccelerationZ, rate);
+            float readingZ = this.reading.Z = (float)accelFilter.axis1Filter.Filter(reading.AccelerationY, rate);
 
             if (controller.Target != null)
             {
                 this.reading *= controller.Target.Profile.accelerometer;
                 if (controller.Target.Profile.umc_enabled)
                 {
-                    this.reading.Z = controller.Target.Profile.steering == 0 ? this.reading.Z : this.reading.Y;
-                    this.reading.Y = controller.Target.Profile.steering == 0 ? this.reading.Y : this.reading.Z;
-                    this.reading.X = controller.Target.Profile.steering == 0 ? this.reading.X : this.reading.X;
+                    this.reading.Z = controller.Target.Profile.steering == 0 ? readingZ : readingY;
+                    this.reading.Y = controller.Target.Profile.steering == 0 ? readingY : readingZ;
+                    this.reading.X = controller.Target.Profile.steering == 0 ? readingX : readingX;
 
-                    this.reading.Z = (controller.Target.Profile.inverthorizontal ? -1.0f : 1.0f) * this.reading.Z;
-                    this.reading.X = (controller.Target.Profile.invertvertical ? -1.0f : 1.0f) * this.reading.X;
+                    this.reading.Z *= (controller.Target.Profile.inverthorizontal ? -1.0f : 1.0f);
+                    this.reading.X *= (controller.Target.Profile.invertvertical ? -1.0f : 1.0f);
                 }
             }
 
