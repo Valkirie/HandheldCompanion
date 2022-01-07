@@ -105,6 +105,18 @@ namespace ControllerService.Targets
         {
         }
 
+        public void SetPollRate(int HIDrate)
+        {
+            UpdateTimer.Interval = HIDrate;
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", this, UpdateTimer.Interval);
+        }
+
+        public void SetVibrationStrength(float strength)
+        {
+            strength = strength / 100.0f;
+            logger.LogInformation("Virtual {0} vibration strength set to {1}%", this, strength);
+        }
+
         public override string ToString()
         {
             return Utils.GetDescriptionFromEnumValue(this.HID);

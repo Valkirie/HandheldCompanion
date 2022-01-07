@@ -17,7 +17,7 @@ namespace ControllerService
         private readonly OneEuroFilter3D gyroFilter;
 
         public event XInputGirometerReadingChangedEventHandler ReadingChanged;
-        public delegate void XInputGirometerReadingChangedEventHandler(Object sender, Vector3 e);
+        public delegate void XInputGirometerReadingChangedEventHandler(XInputGirometer sender, Vector3 e);
 
         private readonly ILogger logger;
         private readonly XInputController controller;

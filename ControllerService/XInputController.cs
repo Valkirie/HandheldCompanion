@@ -31,18 +31,6 @@ namespace ControllerService
             this.UserIndex = index;
         }
 
-        public void SetPollRate(int HIDrate)
-        {
-            this.Target.UpdateTimer.Interval = HIDrate;
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", this.Target, this.Target.UpdateTimer.Interval);
-        }
-
-        public void SetVibrationStrength(float strength)
-        {
-            this.Target.strength = strength / 100.0f;
-            logger.LogInformation("Virtual {0} vibration strength set to {1}%", this.Target, strength);
-        }
-
         public Dictionary<string, string> ToArgs()
         {
             return new Dictionary<string, string>() {
@@ -65,12 +53,12 @@ namespace ControllerService
             Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
         }
 
-        private void Accelerometer_ReadingChanged(object sender, Vector3 acceleration)
+        private void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 acceleration)
         {
             Target.Acceleration = acceleration;
         }
 
-        private void Girometer_ReadingChanged(object sender, Vector3 angularvelocity)
+        private void Girometer_ReadingChanged(XInputGirometer sender, Vector3 angularvelocity)
         {
             Target.AngularVelocity = angularvelocity;
         }
@@ -91,7 +79,7 @@ namespace ControllerService
             }
 
             logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, Instance.InstanceName, UserIndex);
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", target, this.Target.UpdateTimer.Interval);
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", target, Target.UpdateTimer.Interval);
         }
     }
 }

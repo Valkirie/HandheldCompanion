@@ -369,10 +369,10 @@ namespace ControllerService
                         UpdateVirtualController((HIDmode)value);
                         break;
                     case "HIDrate":
-                        XInputController.SetPollRate((int)value);
+                        XInputController.Target?.SetPollRate((int)value);
                         break;
                     case "HIDstrength":
-                        XInputController.SetVibrationStrength((int)value);
+                        XInputController.Target?.SetVibrationStrength((int)value);
                         break;
                     case "DSUEnabled":
                         switch ((bool)value)
@@ -403,7 +403,7 @@ namespace ControllerService
             UpdateVirtualController(HIDmode);
             XInputController.SetGyroscope(Gyrometer);
             XInputController.SetAccelerometer(Accelerometer);
-            XInputController.SetVibrationStrength(HIDstrength);
+            XInputController.Target?.SetVibrationStrength(HIDstrength);
 
             // start the Pipe Server
             pipeServer.Start();

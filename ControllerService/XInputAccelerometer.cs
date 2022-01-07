@@ -16,7 +16,7 @@ namespace ControllerService
         private readonly OneEuroFilter3D accelFilter;
 
         public event XInputAccelerometerReadingChangedEventHandler ReadingChanged;
-        public delegate void XInputAccelerometerReadingChangedEventHandler(Object sender, Vector3 e);
+        public delegate void XInputAccelerometerReadingChangedEventHandler(XInputAccelerometer sender, Vector3 e);
 
         private readonly ILogger logger;
         private readonly XInputController controller;
