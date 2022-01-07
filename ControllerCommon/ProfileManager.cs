@@ -10,10 +10,10 @@ namespace ControllerCommon
 {
     public class ProfileManager
     {
-        private Dictionary<bool, uint[]> CRCs = new Dictionary<bool, uint[]>()
-        {
-            { false, new uint[]{ 0xcd4906cc, 0xcd4906cc, 0xcd4906cc, 0xcd4906cc, 0xcd4906cc } },
-            { true, new uint[]{ 0x1e9df650, 0x1e9df650, 0x1e9df650, 0x1e9df650, 0x1e9df650 } },
+        private Dictionary<bool, uint> CRCs = new Dictionary<bool, uint>()
+        {            
+            { false, 0xcd4906cc },
+            { true, 0x1e9df650 },
         };
 
         public Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
@@ -258,7 +258,7 @@ namespace ControllerCommon
                     // check CRC32
                     if (dllexist) data = File.ReadAllBytes(dllpath);
                     var crc = Crc32Algorithm.Compute(data);
-                    bool is_x360ce = CRCs[x64][i] == crc;
+                    bool is_x360ce = CRCs[x64] == crc;
 
                     // pull data from dll
                     data = x64 ? Properties.Resources.xinput1_x64 : Properties.Resources.xinput1_x86;
