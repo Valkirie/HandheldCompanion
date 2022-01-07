@@ -56,18 +56,6 @@ namespace ControllerService
         public void SetTarget(ViGEmTarget target)
         {
             this.Target = target;
-
-            switch (Target.HID)
-            {
-                default:
-                case HIDmode.DualShock4Controller:
-                    ((DualShock4Target)Target).Connect();
-                    break;
-                case HIDmode.Xbox360Controller:
-                    ((Xbox360Target)Target).Connect();
-                    break;
-            }
-
             logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, Instance.InstanceName, UserIndex);
             logger.LogInformation("Virtual {0} report interval set to {1}ms", target, Target.UpdateTimer.Interval);
         }

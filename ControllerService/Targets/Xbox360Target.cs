@@ -60,13 +60,13 @@ namespace ControllerService.Targets
             UpdateTimer.Elapsed += UpdateReport;
         }
 
-        public new void Connect()
+        public override void Connect()
         {
             vcontroller.Connect();
             base.Connect();
         }
 
-        public new void Disconnect()
+        public override void Disconnect()
         {
             vcontroller.Disconnect();
             base.Disconnect();
@@ -85,7 +85,7 @@ namespace ControllerService.Targets
             Controller.SetVibration(inputMotor);
         }
 
-        public new unsafe void UpdateReport(object sender, ElapsedEventArgs e)
+        public override unsafe void UpdateReport(object sender, ElapsedEventArgs e)
         {
             lock (updateLock)
             {

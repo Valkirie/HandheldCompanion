@@ -132,7 +132,7 @@ namespace ControllerService.Targets
             return Utils.GetDescriptionFromEnumValue(this.HID);
         }
 
-        public void Connect()
+        public virtual void Connect()
         {
             stopwatch.Start();
 
@@ -143,7 +143,7 @@ namespace ControllerService.Targets
             logger.LogInformation("Virtual {0} connected", ToString());
         }
 
-        public void Disconnect()
+        public virtual void Disconnect()
         {
             stopwatch.Stop();
 
@@ -172,7 +172,7 @@ namespace ControllerService.Targets
                 Profile = profile;
         }
 
-        public unsafe void UpdateReport(object sender, ElapsedEventArgs e)
+        public virtual unsafe void UpdateReport(object sender, ElapsedEventArgs e)
         {
             lock (updateLock)
             {

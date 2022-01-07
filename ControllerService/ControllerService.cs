@@ -142,18 +142,7 @@ namespace ControllerService
 
         private void UpdateVirtualController(HIDmode mode)
         {
-            if (VirtualTarget != null)
-            {
-                switch (VirtualTarget.HID)
-                {
-                    case HIDmode.Xbox360Controller:
-                        ((Xbox360Target)VirtualTarget)?.Disconnect();
-                        break;
-                    case HIDmode.DualShock4Controller:
-                        ((DualShock4Target)VirtualTarget)?.Disconnect();
-                        break;
-                }
-            }
+            VirtualTarget?.Disconnect();
 
             switch (mode)
             {
@@ -177,6 +166,7 @@ namespace ControllerService
             // VirtualTarget.Disconnected += OnTargetDisconnected;
 
             XInputController.SetTarget(VirtualTarget);
+            XInputController.Target?.Connect();
         }
 
         private void OnTargetDisconnected(ViGEmTarget target)
