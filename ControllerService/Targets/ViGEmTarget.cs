@@ -46,13 +46,17 @@ namespace ControllerService.Targets
         public Vector3 Acceleration;
         public void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 e)
         {
-            Acceleration = e;
+            Acceleration.X = e.X;
+            Acceleration.Y = e.Y;
+            Acceleration.Z = e.Z;
         }
 
         public Vector3 AngularVelocity;
         public void Girometer_ReadingChanged(XInputGirometer sender, Vector3 e)
         {
-            AngularVelocity = e;
+            AngularVelocity.X = e.X;
+            AngularVelocity.Y = e.Y;
+            AngularVelocity.Z = e.Z;
         }
 
         protected ViGEmClient Client { get; }
@@ -188,6 +192,8 @@ namespace ControllerService.Targets
                 GamepadButtonFlags buttons = (GamepadButtonFlags)Gamepad.Buttons;
                 buttons |= (Gamepad.LeftTrigger > 0 ? GamepadButtonFlags.LeftTrigger : 0);
                 buttons |= (Gamepad.RightTrigger > 0 ? GamepadButtonFlags.RightTrigger : 0);
+
+                // get custom buttons values
                 buttons |= Profile.umc_trigger.HasFlag(GamepadButtonFlags.AlwaysOn) ? GamepadButtonFlags.AlwaysOn : 0;
 
                 // get sticks values
@@ -196,10 +202,7 @@ namespace ControllerService.Targets
                 RightThumbX = Gamepad.RightThumbX;
                 RightThumbY = Gamepad.RightThumbY;
 
-                if (buttons == 0)
-                    return;
-
-                if (Profile.umc_enabled && Profile.umc_trigger.HasFlag(buttons))
+                if (Profile.umc_enabled && ((Profile.umc_trigger & buttons) != 0 || (Profile.umc_trigger & GamepadButtonFlags.AlwaysOn) != 0))
                 {
                     float intensity = Profile.GetIntensity();
                     float sensivity = Profile.GetSensiviy();
