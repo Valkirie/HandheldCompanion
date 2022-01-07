@@ -451,21 +451,24 @@ namespace ControllerService
             byte[] localMsg = null;
             EndPoint clientEP = new IPEndPoint(IPAddress.Any, 0);
 
-            //Get the received message.
-            Socket recvSock = (Socket)iar.AsyncState;
             try
             {
-                int msgLen = recvSock.EndReceiveFrom(iar, ref clientEP);
-
-                localMsg = new byte[msgLen];
-                Array.Copy(recvBuffer, localMsg, msgLen);
+                if (running)
+                {
+                    //Get the received message.
+                    Socket recvSock = (Socket)iar.AsyncState;
+                    
+                    int msgLen = recvSock.EndReceiveFrom(iar, ref clientEP);
+                    localMsg = new byte[msgLen];
+                    Array.Copy(recvBuffer, localMsg, msgLen);
+                }
             }
             catch (Exception)
             {
                 uint IOC_IN = 0x80000000;
                 uint IOC_VENDOR = 0x18000000;
                 uint SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12;
-                udpSock.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
+                udpSock?.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
             }
 
             //Start another receive as soon as we copied the data
@@ -483,7 +486,7 @@ namespace ControllerService
                 {
                     //Start listening for a new message.
                     EndPoint newClientEP = new IPEndPoint(IPAddress.Any, 0);
-                    udpSock.BeginReceiveFrom(recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ref newClientEP, ReceiveCallback, udpSock);
+                    udpSock?.BeginReceiveFrom(recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ref newClientEP, ReceiveCallback, udpSock);
                 }
             }
             catch (Exception)
@@ -491,7 +494,7 @@ namespace ControllerService
                 uint IOC_IN = 0x80000000;
                 uint IOC_VENDOR = 0x18000000;
                 uint SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12;
-                udpSock.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
+                udpSock?.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
 
                 StartReceive();
             }
