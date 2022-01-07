@@ -761,8 +761,8 @@ namespace ControllerHelper
                     for (int idx = 0; idx < cB_UMCInputButton.Items.Count; idx++)
                     {
                         string value = (string)cB_UMCInputButton.Items[idx];
-                        uint button = (uint)Utils.GetEnumValueFromDescription<GamepadButtonFlags>(value);
-                        bool selected = (button & CurrentProfile.umc_trigger) == button;
+                        GamepadButtonFlags button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(value);
+                        bool selected = CurrentProfile.umc_trigger.HasFlag(button);
                         cB_UMCInputButton.SetSelected(idx, selected);
                     }
 
@@ -819,8 +819,8 @@ namespace ControllerHelper
 
             foreach (string item in cB_UMCInputButton.SelectedItems)
             {
-                var button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(item);
-                CurrentProfile.umc_trigger |= (uint)button;
+                GamepadButtonFlags button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(item);
+                CurrentProfile.umc_trigger |= button;
             }
 
             ProfileManager.profiles[CurrentProfile.name] = CurrentProfile;

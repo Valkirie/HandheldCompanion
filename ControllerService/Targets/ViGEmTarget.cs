@@ -185,9 +185,9 @@ namespace ControllerService.Targets
                 Gamepad = state.Gamepad;
 
                 // get buttons values
-                uint buttons = (ushort)Gamepad.Buttons;
-                buttons |= (Gamepad.LeftTrigger > 0 ? (uint)GamepadButtonFlags.LeftTrigger : 0);
-                buttons |= (Gamepad.RightTrigger > 0 ? (uint)GamepadButtonFlags.RightTrigger : 0);
+                GamepadButtonFlags buttons = (GamepadButtonFlags)Gamepad.Buttons;
+                buttons |= (Gamepad.LeftTrigger > 0 ? GamepadButtonFlags.LeftTrigger : 0);
+                buttons |= (Gamepad.RightTrigger > 0 ? GamepadButtonFlags.RightTrigger : 0);
 
                 // get sticks values
                 LeftThumbX = Gamepad.LeftThumbX;
@@ -195,7 +195,7 @@ namespace ControllerService.Targets
                 RightThumbX = Gamepad.RightThumbX;
                 RightThumbY = Gamepad.RightThumbY;
 
-                if (Profile.umc_enabled && ((Profile.umc_trigger & buttons) != 0 || (Profile.umc_trigger & (uint)GamepadButtonFlags.AlwaysOn) != 0))
+                if (Profile.umc_enabled && ((Profile.umc_trigger & buttons) != 0 || (Profile.umc_trigger & GamepadButtonFlags.AlwaysOn) != 0))
                 {
                     float intensity = Profile.GetIntensity();
                     float sensivity = Profile.GetSensiviy();
