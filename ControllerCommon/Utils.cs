@@ -181,7 +181,7 @@ namespace ControllerCommon
 
         public static byte NormalizeInput(short input)
         {
-            input = (short)Math.Max(short.MinValue, Math.Min(short.MaxValue, input));
+            input = Math.Clamp(input, short.MinValue, short.MaxValue);
             float output = (float)input / (float)ushort.MaxValue * (float)byte.MaxValue + (float)(byte.MaxValue / 2.0f);
             return (byte)Math.Round(output);
         }
@@ -189,7 +189,7 @@ namespace ControllerCommon
         public static short ComputeInput(short value, float input, float sensivity, float curve)
         {
             float compute = (float)(Math.Sign(input) * Math.Pow(Math.Abs(input) / 20.0f, curve) * 20.0f);
-            return (short)Math.Max(-32767, Math.Min(32767, value + compute * sensivity));
+            return (short)Math.Clamp(value + compute * sensivity, short.MinValue, short.MaxValue);
         }
 
         public static bool IsTextAValidIPAddress(string text)
