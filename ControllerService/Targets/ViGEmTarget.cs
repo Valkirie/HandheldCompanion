@@ -202,7 +202,7 @@ namespace ControllerService.Targets
                 RightThumbX = Gamepad.RightThumbX;
                 RightThumbY = Gamepad.RightThumbY;
 
-                if (Profile.umc_enabled && ((Profile.umc_trigger & buttons) != 0 || (Profile.umc_trigger & GamepadButtonFlags.AlwaysOn) != 0))
+                if (Profile.umc_enabled && (Profile.umc_trigger & buttons) != 0)
                 {
                     float intensity = Profile.GetIntensity();
                     float sensivity = Profile.GetSensiviy();

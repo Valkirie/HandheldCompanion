@@ -60,23 +60,21 @@ namespace ControllerService
             if (controller.Target != null)
             {
                 this.reading *= controller.Target.Profile.accelerometer;
-                if (controller.Target.Profile.umc_enabled)
+
+                this.reading.Z = controller.Target.Profile.steering == 0 ? readingZ : readingY;
+                this.reading.Y = controller.Target.Profile.steering == 0 ? readingY : -readingZ;
+                this.reading.X = controller.Target.Profile.steering == 0 ? readingX : readingX;
+
+                if (controller.Target.Profile.inverthorizontal)
                 {
-                    this.reading.Z = controller.Target.Profile.steering == 0 ? readingZ : readingY;
-                    this.reading.Y = controller.Target.Profile.steering == 0 ? readingY : -readingZ;
-                    this.reading.X = controller.Target.Profile.steering == 0 ? readingX : readingX;
+                    this.reading.Y *= -1.0f;
+                    this.reading.Z *= -1.0f;
+                }
 
-                    if (controller.Target.Profile.inverthorizontal)
-                    {
-                        this.reading.Y *= -1.0f;
-                        this.reading.Z *= -1.0f;
-                    }
-
-                    if (controller.Target.Profile.invertvertical)
-                    {
-                        this.reading.Y *= -1.0f;
-                        this.reading.X *= -1.0f;
-                    }
+                if (controller.Target.Profile.invertvertical)
+                {
+                    this.reading.Y *= -1.0f;
+                    this.reading.X *= -1.0f;
                 }
             }
 
