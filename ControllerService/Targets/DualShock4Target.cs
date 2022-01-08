@@ -51,7 +51,7 @@ namespace ControllerService.Targets
 
         private new IDualShock4Controller vcontroller;
 
-        public DualShock4Target(ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger) : base(client, controller, index, HIDrate, logger)
+        public DualShock4Target(XInputController xinput, ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger) : base(xinput, client, controller, index, HIDrate, logger)
         {
             // initialize controller
             HID = HIDmode.DualShock4Controller;
@@ -169,7 +169,7 @@ namespace ControllerService.Targets
                     outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
                 }
 
-                if (!Profile.whitelisted)
+                if (!xinput.Profile.whitelisted)
                 {
                     outDS4Report.wButtons = tempButtons;
                     outDS4Report.wButtons |= tempDPad.Value;
