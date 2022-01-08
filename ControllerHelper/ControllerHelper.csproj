@@ -34,7 +34,7 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="Resources\logo_application.ico" />
+    <Content Include="logo_application.ico" />
   </ItemGroup>
 
   <ItemGroup>
