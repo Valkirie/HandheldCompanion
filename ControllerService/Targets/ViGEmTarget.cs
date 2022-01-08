@@ -206,6 +206,10 @@ namespace ControllerService.Targets
         internal void SubmitReport()
         {
             Submited?.Invoke(this);
+
+            // force null position to avoid drifting ?
+            AngularVelocity = new();
+            Acceleration = new();
         }
     }
 }
