@@ -265,9 +265,6 @@ namespace ControllerCommon
 
                     if (profile.use_wrapper)
                     {
-                        if (!IsFileWritable(dllpath))
-                            SetFileWritable(dllpath);
-
                         if (dllexist && is_x360ce)
                             continue; // skip to next file
                         else if (!dllexist)
