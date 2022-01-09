@@ -33,8 +33,8 @@ namespace ControllerService.Targets
         protected static extern int XInputGetStateSecret14(int playerIndex, out XInputStateSecret struc);
         #endregion
 
-        public Controller Controller;
-        public XInputController xinput;
+        public Controller physicalController;
+        public XInputController xinputController;
 
         public Gamepad Gamepad;
         public DS4Touch Touch;
@@ -58,8 +58,8 @@ namespace ControllerService.Targets
             AngularVelocity.Z = e.Z;
         }
 
-        protected ViGEmClient Client { get; }
-        protected IVirtualGamepad vcontroller;
+        protected ViGEmClient client { get; }
+        protected IVirtualGamepad virtualController;
 
         protected XInputStateSecret state_s;
 
@@ -86,7 +86,7 @@ namespace ControllerService.Targets
         protected ViGEmTarget(XInputController xinput, ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger)
         {
             this.logger = logger;
-            this.xinput = xinput;
+            this.xinputController = xinput;
 
             // initialize vectors
             AngularVelocity = new();
@@ -99,8 +99,8 @@ namespace ControllerService.Targets
             state_s = new();
 
             // initialize controller
-            Client = client;
-            Controller = controller;
+            this.client = client;
+            this.physicalController = controller;
 
             // initialize stopwatch
             stopwatch = new Stopwatch();
@@ -165,7 +165,7 @@ namespace ControllerService.Targets
 
                 // get current gamepad state
                 XInputGetStateSecret13(UserIndex, out state_s);
-                State state = Controller.GetState();
+                State state = physicalController.GetState();
                 Gamepad = state.Gamepad;
 
                 // get buttons values
@@ -174,7 +174,7 @@ namespace ControllerService.Targets
                 buttons |= (Gamepad.RightTrigger > 0 ? GamepadButtonFlags.RightTrigger : 0);
 
                 // get custom buttons values
-                buttons |= xinput.profile.umc_trigger.HasFlag(GamepadButtonFlags.AlwaysOn) ? GamepadButtonFlags.AlwaysOn : 0;
+                buttons |= xinputController.profile.umc_trigger.HasFlag(GamepadButtonFlags.AlwaysOn) ? GamepadButtonFlags.AlwaysOn : 0;
 
                 // get sticks values
                 LeftThumbX = Gamepad.LeftThumbX;
@@ -182,12 +182,12 @@ namespace ControllerService.Targets
                 RightThumbX = Gamepad.RightThumbX;
                 RightThumbY = Gamepad.RightThumbY;
 
-                if (xinput.profile.umc_enabled && (xinput.profile.umc_trigger & buttons) != 0)
+                if (xinputController.profile.umc_enabled && (xinputController.profile.umc_trigger & buttons) != 0)
                 {
-                    float intensity = xinput.profile.GetIntensity();
-                    float sensivity = xinput.profile.GetSensiviy();
+                    float intensity = xinputController.profile.GetIntensity();
+                    float sensivity = xinputController.profile.GetSensiviy();
 
-                    switch (xinput.profile.umc_input)
+                    switch (xinputController.profile.umc_input)
                     {
                         default:
                         case InputStyle.RightStick:

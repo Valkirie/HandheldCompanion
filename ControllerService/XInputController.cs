@@ -15,7 +15,7 @@ namespace ControllerService
         public ViGEmTarget Target;
 
         public Profile profile;
-        public Profile defaultProfile;
+        private Profile defaultProfile;
 
         public DeviceInstance Instance;
 

@@ -49,16 +49,16 @@ namespace ControllerService.Targets
         private const float F_ACC_RES_PER_G = 8192.0f;
         private const float F_GYRO_RES_IN_DEG_SEC = 16.0f;
 
-        private new IDualShock4Controller vcontroller;
+        private new IDualShock4Controller virtualController;
 
         public DualShock4Target(XInputController xinput, ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger) : base(xinput, client, controller, index, HIDrate, logger)
         {
             // initialize controller
             HID = HIDmode.DualShock4Controller;
 
-            vcontroller = client.CreateDualShock4Controller();
-            vcontroller.AutoSubmitReport = false;
-            vcontroller.FeedbackReceived += FeedbackReceived;
+            virtualController = client.CreateDualShock4Controller();
+            virtualController.AutoSubmitReport = false;
+            virtualController.FeedbackReceived += FeedbackReceived;
 
             // initialize timers
             UpdateTimer.Elapsed += UpdateReport;
@@ -66,19 +66,19 @@ namespace ControllerService.Targets
 
         public override void Connect()
         {
-            vcontroller.Connect();
+            virtualController.Connect();
             base.Connect();
         }
 
         public override void Disconnect()
         {
-            vcontroller.Disconnect();
+            virtualController.Disconnect();
             base.Disconnect();
         }
 
         public void FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)
         {
-            if (!Controller.IsConnected)
+            if (!physicalController.IsConnected)
                 return;
 
             Vibration inputMotor = new()
@@ -86,14 +86,14 @@ namespace ControllerService.Targets
                 LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * strength),
                 RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * strength),
             };
-            Controller.SetVibration(inputMotor);
+            physicalController.SetVibration(inputMotor);
         }
 
         public override unsafe void UpdateReport(object sender, ElapsedEventArgs e)
         {
             lock (updateLock)
             {
-                if (!Controller.IsConnected)
+                if (!physicalController.IsConnected)
                     return;
 
                 base.UpdateReport(sender, e);
@@ -169,7 +169,7 @@ namespace ControllerService.Targets
                     outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
                 }
 
-                if (!xinput.profile.whitelisted)
+                if (!xinputController.profile.whitelisted)
                 {
                     outDS4Report.wButtons = tempButtons;
                     outDS4Report.wButtons |= tempDPad.Value;
@@ -213,7 +213,7 @@ namespace ControllerService.Targets
                 outDS4Report.wTimestamp = (ushort)(microseconds / 5.33f);
 
                 DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
-                vcontroller.SubmitRawReport(rawOutReportEx);
+                virtualController.SubmitRawReport(rawOutReportEx);
 
                 base.SubmitReport();
             }
