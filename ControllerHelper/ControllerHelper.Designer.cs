@@ -983,7 +983,7 @@ namespace ControllerHelper
             // pB_About
             // 
             resources.ApplyResources(this.pB_About, "pB_About");
-            this.pB_About.BackgroundImage = global::ControllerHelper.Properties.Resources.HIDmode0;
+            this.pB_About.BackgroundImage = global::ControllerHelper.Properties.Resources.LogoApplicationImg;
             this.pB_About.Name = "pB_About";
             this.pB_About.TabStop = false;
             this.toolTip1.SetToolTip(this.pB_About, resources.GetString("pB_About.ToolTip"));

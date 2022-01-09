@@ -898,10 +898,9 @@ namespace ControllerHelper
             {
                 Icon myIcon = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.HIDicon0 : Properties.Resources.HIDicon1;
                 Bitmap myImage = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.HIDmode0 : Properties.Resources.HIDmode1;
-                this.notifyIcon1.Icon = myIcon;
-                this.Icon = myIcon;
                 this.pB_HidMode.BackgroundImage = myImage;
-                this.pB_About.BackgroundImage = myImage;
+
+                UpdateIcon();
             });
         }
 
@@ -972,6 +971,9 @@ namespace ControllerHelper
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
+
+                UpdateIcon();
+
                 gb_SettingsService.SuspendLayout();
 
                 switch (status)
@@ -1015,8 +1017,35 @@ namespace ControllerHelper
                 }
 
                 gb_SettingsService.ResumeLayout();
+
             });
         }
+
+        private void UpdateIcon()
+        {
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+
+                Icon myIcon;
+
+                switch (HIDmode)
+                {
+                    case HIDmode.DualShock4Controller:
+                        myIcon = ServiceManager.status == ServiceControllerStatus.Running ? Properties.Resources.HID0StatusIconOn : Properties.Resources.HID0StatusIconOff;
+                        break;
+                    case HIDmode.Xbox360Controller:
+                        myIcon = ServiceManager.status == ServiceControllerStatus.Running ? Properties.Resources.HID1StatusIconOn : Properties.Resources.HID1StatusIconOff;
+                        break;
+                    default:
+                        myIcon = Properties.Resources.LogoApplicationIcon;
+                        break;
+                }
+
+                this.Icon = myIcon;
+                this.notifyIcon1.Icon = myIcon;
+            });
+        }
+
 
         private void b_ServiceInstall_Click(object sender, EventArgs e)
         {
