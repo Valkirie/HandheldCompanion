@@ -16,8 +16,8 @@ namespace ControllerService
         private long prev_microseconds;
         private readonly OneEuroFilter3D gyroFilter;
 
-        public event XInputGirometerReadingChangedEventHandler ReadingChanged;
-        public delegate void XInputGirometerReadingChangedEventHandler(XInputGirometer sender, Vector3 e);
+        public event ReadingChangedEventHandler ReadingChanged;
+        public delegate void ReadingChangedEventHandler(XInputGirometer sender, Vector3 e);
 
         private readonly ILogger logger;
         private readonly XInputController xinput;
@@ -35,7 +35,7 @@ namespace ControllerService
                 sensor.ReportInterval = sensor.MinimumReportInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
-                sensor.ReadingChanged += GyroReadingChanged;
+                sensor.ReadingChanged += ReadingHasChanged;
             }
         }
 
@@ -44,7 +44,7 @@ namespace ControllerService
             return this.GetType().Name;
         }
 
-        void GyroReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
+        private void ReadingHasChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
         {
             GyrometerReading reading = args.Reading;
 

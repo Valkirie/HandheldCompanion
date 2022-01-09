@@ -24,8 +24,6 @@ namespace ControllerService
         private ViGEmTarget VirtualTarget;
 
         public XInputController XInputController;
-        private XInputGirometer Gyrometer;
-        private XInputAccelerometer Accelerometer;
 
         private PipeServer pipeServer;
         private ProfileManager profileManager;
@@ -114,15 +112,20 @@ namespace ControllerService
                 throw new InvalidOperationException();
             }
 
-            // default is 10ms rating
-            Gyrometer = new XInputGirometer(XInputController, logger);
+            var Gyrometer = new XInputGirometer(XInputController, logger);
             if (Gyrometer.sensor == null)
                 logger.LogWarning("No Gyrometer detected");
+            XInputController.SetGyroscope(Gyrometer);
 
-            // default is 10ms rating
-            Accelerometer = new XInputAccelerometer(XInputController, logger);
+            var Accelerometer = new XInputAccelerometer(XInputController, logger);
             if (Accelerometer.sensor == null)
                 logger.LogWarning("No Accelerometer detected");
+            XInputController.SetAccelerometer(Accelerometer);
+
+            var Inclinometer = new XInputInclinometer(XInputController, logger);
+            if (Inclinometer.sensor == null)
+                logger.LogWarning("No Inclinometer detected");
+            XInputController.SetInclinometer(Inclinometer);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
@@ -388,10 +391,6 @@ namespace ControllerService
 
             // turn on the cloaking
             Hidder.SetCloaking(HIDcloaked);
-
-            // initialize virtual controller
-            XInputController.SetGyroscope(Gyrometer);
-            XInputController.SetAccelerometer(Accelerometer);
 
             UpdateVirtualController(HIDmode);
             XInputController.virtualTarget?.SetVibrationStrength(HIDstrength);

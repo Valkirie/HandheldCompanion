@@ -15,8 +15,8 @@ namespace ControllerService
         private long prev_microseconds;
         private readonly OneEuroFilter3D accelFilter;
 
-        public event XInputAccelerometerReadingChangedEventHandler ReadingChanged;
-        public delegate void XInputAccelerometerReadingChangedEventHandler(XInputAccelerometer sender, Vector3 e);
+        public event ReadingChangedEventHandler ReadingHasChanged;
+        public delegate void ReadingChangedEventHandler(XInputAccelerometer sender, Vector3 e);
 
         private readonly ILogger logger;
         private readonly XInputController xinput;
@@ -34,8 +34,15 @@ namespace ControllerService
                 sensor.ReportInterval = sensor.MinimumReportInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
-                sensor.ReadingChanged += AcceleroReadingChanged;
+                sensor.ReadingChanged += ReadingChanged;
+                sensor.Shaken += Shaken;
             }
+        }
+
+        private void Shaken(Accelerometer sender, AccelerometerShakenEventArgs args)
+        {
+            return; // implement me
+            throw new NotImplementedException();
         }
 
         public override string ToString()
@@ -43,7 +50,7 @@ namespace ControllerService
             return this.GetType().Name;
         }
 
-        void AcceleroReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
+        private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
             AccelerometerReading reading = args.Reading;
 
@@ -57,7 +64,7 @@ namespace ControllerService
             float readingY = this.reading.Y = (float)accelFilter.axis1Filter.Filter(reading.AccelerationZ, rate);
             float readingZ = this.reading.Z = (float)accelFilter.axis1Filter.Filter(reading.AccelerationY, rate);
 
-            if (xinput.Target != null)
+            if (xinput.virtualTarget != null)
             {
                 this.reading *= xinput.profile.accelerometer;
 
@@ -79,7 +86,7 @@ namespace ControllerService
             }
 
             // raise event
-            ReadingChanged?.Invoke(this, this.reading);
+            ReadingHasChanged?.Invoke(this, this.reading);
         }
     }
 }
