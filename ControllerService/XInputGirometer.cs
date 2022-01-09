@@ -20,12 +20,12 @@ namespace ControllerService
         public delegate void XInputGirometerReadingChangedEventHandler(XInputGirometer sender, Vector3 e);
 
         private readonly ILogger logger;
-        private readonly XInputController controller;
+        private readonly XInputController xinput;
 
         public XInputGirometer(XInputController controller, ILogger logger)
         {
             this.logger = logger;
-            this.controller = controller;
+            this.xinput = controller;
 
             gyroFilter = new OneEuroFilter3D();
 
@@ -58,26 +58,24 @@ namespace ControllerService
             float readingY = this.reading.Y = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityZ, rate);
             float readingZ = this.reading.Z = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityY, rate);
 
-            if (controller.Target != null)
+            if (xinput.Target != null)
             {
-                this.reading *= controller.Target.Profile.gyrometer;
-                if (controller.Target.Profile.umc_enabled)
+                this.reading *= xinput.Profile.gyrometer;
+
+                this.reading.Z = xinput.Profile.steering == 0 ? readingZ : readingY;
+                this.reading.Y = xinput.Profile.steering == 0 ? readingY : readingZ;
+                this.reading.X = xinput.Profile.steering == 0 ? readingX : readingX;
+
+                if (xinput.Profile.inverthorizontal)
                 {
-                    this.reading.Z = controller.Target.Profile.steering == 0 ? readingZ : readingY;
-                    this.reading.Y = controller.Target.Profile.steering == 0 ? readingY : readingZ;
-                    this.reading.X = controller.Target.Profile.steering == 0 ? readingX : readingX;
+                    this.reading.Y *= -1.0f;
+                    this.reading.Z *= -1.0f;
+                }
 
-                    if (controller.Target.Profile.inverthorizontal)
-                    {
-                        this.reading.Y *= -1.0f;
-                        this.reading.Z *= -1.0f;
-                    }
-
-                    if (controller.Target.Profile.invertvertical)
-                    {
-                        this.reading.Y *= -1.0f;
-                        this.reading.X *= -1.0f;
-                    }
+                if (xinput.Profile.invertvertical)
+                {
+                    this.reading.Y *= -1.0f;
+                    this.reading.X *= -1.0f;
                 }
             }
 

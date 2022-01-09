@@ -14,6 +14,9 @@ namespace ControllerService
         public Controller Controller;
         public ViGEmTarget Target;
 
+        public Profile Profile;
+        public Profile DefaultProfile;
+
         public DeviceInstance Instance;
 
         public XInputGirometer Gyrometer;
@@ -29,6 +32,10 @@ namespace ControllerService
             // initilize controller
             this.Controller = controller;
             this.UserIndex = index;
+
+            // initialize profile(s)
+            Profile = new();
+            DefaultProfile = new();
         }
 
         public Dictionary<string, string> ToArgs()
@@ -39,6 +46,25 @@ namespace ControllerService
                 { "ProductGuid", $"{Instance.ProductGuid}" },
                 { "ProductIndex", $"{(int)UserIndex}" }
             };
+        }
+
+        public void SetProfile(Profile profile)
+        {
+            if (profile == null)
+            {
+                // restore default profile
+                Profile = DefaultProfile;
+            }
+            else if (profile.IsDefault)
+            {
+                // update default profile
+                DefaultProfile = profile;
+                Profile = profile;
+            }
+            else
+                Profile = profile;
+
+            logger.LogInformation("Profile {0} updated.", profile.name);
         }
 
         public void SetGyroscope(XInputGirometer _gyrometer)
