@@ -58,6 +58,8 @@ namespace ControllerService.Targets
             AngularVelocity.Z = e.Z;
         }
 
+        public MadgwickAHRS madgwick;
+
         protected ViGEmClient client { get; }
         protected IVirtualGamepad virtualController;
 
@@ -91,6 +93,7 @@ namespace ControllerService.Targets
             // initialize vectors
             AngularVelocity = new();
             Acceleration = new();
+            madgwick = new(1f / 14f, 0.1f);
 
             // initialize touch
             Touch = new();
