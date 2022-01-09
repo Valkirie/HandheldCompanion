@@ -58,7 +58,7 @@ namespace ControllerService
             float readingY = this.reading.Y = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityZ, rate);
             float readingZ = this.reading.Z = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityY, rate);
 
-            if (xinput.Target != null)
+            if (xinput.virtualTarget != null)
             {
                 this.reading *= xinput.profile.gyrometer;
 
