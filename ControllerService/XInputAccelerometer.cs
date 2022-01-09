@@ -59,19 +59,19 @@ namespace ControllerService
 
             if (xinput.Target != null)
             {
-                this.reading *= xinput.Profile.accelerometer;
+                this.reading *= xinput.profile.accelerometer;
 
-                this.reading.Z = xinput.Profile.steering == 0 ? readingZ : readingY;
-                this.reading.Y = xinput.Profile.steering == 0 ? readingY : -readingZ;
-                this.reading.X = xinput.Profile.steering == 0 ? readingX : readingX;
+                this.reading.Z = xinput.profile.steering == 0 ? readingZ : readingY;
+                this.reading.Y = xinput.profile.steering == 0 ? readingY : -readingZ;
+                this.reading.X = xinput.profile.steering == 0 ? readingX : readingX;
 
-                if (xinput.Profile.inverthorizontal)
+                if (xinput.profile.inverthorizontal)
                 {
                     this.reading.Y *= -1.0f;
                     this.reading.Z *= -1.0f;
                 }
 
-                if (xinput.Profile.invertvertical)
+                if (xinput.profile.invertvertical)
                 {
                     this.reading.Y *= -1.0f;
                     this.reading.X *= -1.0f;

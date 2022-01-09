@@ -1,12 +1,5 @@
 {
   "name": "Default",
   "path": "",
-  "whitelisted": false,
-  "legacy": false,
-  "use_wrapper": false,
-  "gyrometer": 1,
-  "accelerometer": 1,
-  "steering": 0,
-  "inverthorizontal": false,
-  "invertvertical": false
+  "whitelisted": false
 }

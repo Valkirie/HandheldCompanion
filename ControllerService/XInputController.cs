@@ -14,8 +14,8 @@ namespace ControllerService
         public Controller Controller;
         public ViGEmTarget Target;
 
-        public Profile Profile;
-        public Profile DefaultProfile;
+        public Profile profile;
+        public Profile defaultProfile;
 
         public DeviceInstance Instance;
 
@@ -34,8 +34,8 @@ namespace ControllerService
             this.UserIndex = index;
 
             // initialize profile(s)
-            Profile = new();
-            DefaultProfile = new();
+            profile = new();
+            defaultProfile = new();
         }
 
         public Dictionary<string, string> ToArgs()
@@ -50,21 +50,21 @@ namespace ControllerService
 
         public void SetProfile(Profile profile)
         {
-            if (profile == null)
-            {
-                // restore default profile
-                Profile = DefaultProfile;
-            }
-            else if (profile.IsDefault)
-            {
-                // update default profile
-                DefaultProfile = profile;
-                Profile = profile;
-            }
-            else
-                Profile = profile;
+            // skip if current profile
+            if (profile == this.profile)
+                return;
 
-            logger.LogInformation("Profile {0} updated.", profile.name);
+            // restore default profile
+            if (profile == null)
+                profile = defaultProfile;
+
+            this.profile = profile;
+
+            // update default profile
+            if (profile.IsDefault)
+                defaultProfile = profile;
+            else
+                logger.LogInformation("Profile {0} applied.", profile.name);
         }
 
         public void SetGyroscope(XInputGirometer _gyrometer)

@@ -92,7 +92,7 @@ namespace ControllerService.Targets
                 if (!Controller.IsConnected)
                     return;
 
-                if (xinput.Profile.whitelisted)
+                if (xinput.profile.whitelisted)
                     return;
 
                 base.UpdateReport(sender, e);

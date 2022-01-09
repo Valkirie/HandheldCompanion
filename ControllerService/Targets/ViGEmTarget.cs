@@ -174,7 +174,7 @@ namespace ControllerService.Targets
                 buttons |= (Gamepad.RightTrigger > 0 ? GamepadButtonFlags.RightTrigger : 0);
 
                 // get custom buttons values
-                buttons |= xinput.Profile.umc_trigger.HasFlag(GamepadButtonFlags.AlwaysOn) ? GamepadButtonFlags.AlwaysOn : 0;
+                buttons |= xinput.profile.umc_trigger.HasFlag(GamepadButtonFlags.AlwaysOn) ? GamepadButtonFlags.AlwaysOn : 0;
 
                 // get sticks values
                 LeftThumbX = Gamepad.LeftThumbX;
@@ -182,12 +182,12 @@ namespace ControllerService.Targets
                 RightThumbX = Gamepad.RightThumbX;
                 RightThumbY = Gamepad.RightThumbY;
 
-                if (xinput.Profile.umc_enabled && (xinput.Profile.umc_trigger & buttons) != 0)
+                if (xinput.profile.umc_enabled && (xinput.profile.umc_trigger & buttons) != 0)
                 {
-                    float intensity = xinput.Profile.GetIntensity();
-                    float sensivity = xinput.Profile.GetSensiviy();
+                    float intensity = xinput.profile.GetIntensity();
+                    float sensivity = xinput.profile.GetSensiviy();
 
-                    switch (xinput.Profile.umc_input)
+                    switch (xinput.profile.umc_input)
                     {
                         default:
                         case InputStyle.RightStick:
