@@ -47,7 +47,7 @@ namespace ControllerService.Targets
 
         private new IXbox360Controller vcontroller;
 
-        public Xbox360Target(ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger) : base(client, controller, index, HIDrate, logger)
+        public Xbox360Target(XInputController xinput, ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger) : base(xinput, client, controller, index, HIDrate, logger)
         {
             // initialize controller
             HID = HIDmode.Xbox360Controller;
@@ -92,7 +92,7 @@ namespace ControllerService.Targets
                 if (!Controller.IsConnected)
                     return;
 
-                if (Profile.whitelisted)
+                if (xinput.Profile.whitelisted)
                     return;
 
                 base.UpdateReport(sender, e);

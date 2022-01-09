@@ -33,10 +33,9 @@ namespace ControllerService.Targets
         protected static extern int XInputGetStateSecret14(int playerIndex, out XInputStateSecret struc);
         #endregion
 
-        public Profile Profile;
-        private Profile DefaultProfile;
-
         public Controller Controller;
+        public XInputController xinput;
+
         public Gamepad Gamepad;
         public DS4Touch Touch;
         public HIDmode HID = HIDmode.None;
@@ -84,17 +83,16 @@ namespace ControllerService.Targets
 
         protected object updateLock = new();
 
-        protected ViGEmTarget(ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger)
+        protected ViGEmTarget(XInputController xinput, ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger)
         {
             this.logger = logger;
+            this.xinput = xinput;
 
             // initialize vectors
             AngularVelocity = new();
             Acceleration = new();
 
-            // initialize profile
-            Profile = new();
-            DefaultProfile = new();
+            // initialize touch
             Touch = new();
 
             // initialize secret state
@@ -158,24 +156,6 @@ namespace ControllerService.Targets
             logger.LogInformation("Virtual {0} disconnected", ToString());
         }
 
-        public void ProfileUpdated(Profile profile)
-        {
-            if (profile == null)
-            {
-                // restore default profile
-                Profile = DefaultProfile;
-            }
-            else if (profile.IsDefault)
-            {
-                // update default profile
-                DefaultProfile = profile;
-                Profile = DefaultProfile;
-                logger.LogInformation("Virtual {0} default profile updated.", ToString());
-            }
-            else
-                Profile = profile;
-        }
-
         public virtual unsafe void UpdateReport(object sender, ElapsedEventArgs e)
         {
             lock (updateLock)
@@ -194,7 +174,7 @@ namespace ControllerService.Targets
                 buttons |= (Gamepad.RightTrigger > 0 ? GamepadButtonFlags.RightTrigger : 0);
 
                 // get custom buttons values
-                buttons |= Profile.umc_trigger.HasFlag(GamepadButtonFlags.AlwaysOn) ? GamepadButtonFlags.AlwaysOn : 0;
+                buttons |= xinput.Profile.umc_trigger.HasFlag(GamepadButtonFlags.AlwaysOn) ? GamepadButtonFlags.AlwaysOn : 0;
 
                 // get sticks values
                 LeftThumbX = Gamepad.LeftThumbX;
@@ -202,12 +182,12 @@ namespace ControllerService.Targets
                 RightThumbX = Gamepad.RightThumbX;
                 RightThumbY = Gamepad.RightThumbY;
 
-                if (Profile.umc_enabled && ((Profile.umc_trigger & buttons) != 0 || (Profile.umc_trigger & GamepadButtonFlags.AlwaysOn) != 0))
+                if (xinput.Profile.umc_enabled && (xinput.Profile.umc_trigger & buttons) != 0)
                 {
-                    float intensity = Profile.GetIntensity();
-                    float sensivity = Profile.GetSensiviy();
+                    float intensity = xinput.Profile.GetIntensity();
+                    float sensivity = xinput.Profile.GetSensiviy();
 
-                    switch (Profile.umc_input)
+                    switch (xinput.Profile.umc_input)
                     {
                         default:
                         case InputStyle.RightStick:
@@ -226,6 +206,10 @@ namespace ControllerService.Targets
         internal void SubmitReport()
         {
             Submited?.Invoke(this);
+
+            // force null position to avoid drifting ?
+            AngularVelocity = new();
+            Acceleration = new();
         }
     }
 }

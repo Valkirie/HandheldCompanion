@@ -148,10 +148,10 @@ namespace ControllerService
             {
                 default:
                 case HIDmode.DualShock4Controller:
-                    VirtualTarget = new DualShock4Target(VirtualClient, XInputController.Controller, (int)XInputController.UserIndex, HIDrate, logger);
+                    VirtualTarget = new DualShock4Target(XInputController, VirtualClient, XInputController.Controller, (int)XInputController.UserIndex, HIDrate, logger);
                     break;
                 case HIDmode.Xbox360Controller:
-                    VirtualTarget = new Xbox360Target(VirtualClient, XInputController.Controller, (int)XInputController.UserIndex, HIDrate, logger);
+                    VirtualTarget = new Xbox360Target(XInputController, VirtualClient, XInputController.Controller, (int)XInputController.UserIndex, HIDrate, logger);
                     break;
             }
 
@@ -286,7 +286,7 @@ namespace ControllerService
 
         internal void ProfileUpdated(Profile profile)
         {
-            XInputController.Target.ProfileUpdated(profile);
+            XInputController.SetProfile(profile);
         }
 
         public void UpdateSettings(Dictionary<string, object> args)
