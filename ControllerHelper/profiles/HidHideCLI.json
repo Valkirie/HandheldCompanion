@@ -1,12 +1,5 @@
 {
   "name": "HidHideCLI",
   "path": "C:\\Program Files\\Nefarius Software Solutions e.U\\HidHideCLI\\HidHideCLI.exe",
-  "whitelisted": true,
-  "legacy": false,
-  "use_wrapper": false,
-  "gyrometer": 1,
-  "accelerometer": 1,
-  "steering": 0,
-  "inverthorizontal": false,
-  "invertvertical": false
+  "whitelisted": true
 }

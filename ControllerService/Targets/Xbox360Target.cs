@@ -45,16 +45,16 @@ namespace ControllerService.Targets
             Xbox360Slider.RightTrigger
         };
 
-        private new IXbox360Controller vcontroller;
+        private new IXbox360Controller virtualController;
 
         public Xbox360Target(XInputController xinput, ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger) : base(xinput, client, controller, index, HIDrate, logger)
         {
             // initialize controller
             HID = HIDmode.Xbox360Controller;
 
-            vcontroller = client.CreateXbox360Controller();
-            vcontroller.AutoSubmitReport = false;
-            vcontroller.FeedbackReceived += FeedbackReceived;
+            virtualController = client.CreateXbox360Controller();
+            virtualController.AutoSubmitReport = false;
+            virtualController.FeedbackReceived += FeedbackReceived;
 
             // initialize timers
             UpdateTimer.Elapsed += UpdateReport;
@@ -62,19 +62,19 @@ namespace ControllerService.Targets
 
         public override void Connect()
         {
-            vcontroller.Connect();
+            virtualController.Connect();
             base.Connect();
         }
 
         public override void Disconnect()
         {
-            vcontroller.Disconnect();
+            virtualController.Disconnect();
             base.Disconnect();
         }
 
         public void FeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)
         {
-            if (!Controller.IsConnected)
+            if (!physicalController.IsConnected)
                 return;
 
             Vibration inputMotor = new()
@@ -82,36 +82,36 @@ namespace ControllerService.Targets
                 LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * strength),
                 RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * strength),
             };
-            Controller.SetVibration(inputMotor);
+            physicalController.SetVibration(inputMotor);
         }
 
         public override unsafe void UpdateReport(object sender, ElapsedEventArgs e)
         {
             lock (updateLock)
             {
-                if (!Controller.IsConnected)
+                if (!physicalController.IsConnected)
                     return;
 
-                if (xinput.Profile.whitelisted)
+                if (xinputController.profile.whitelisted)
                     return;
 
                 base.UpdateReport(sender, e);
 
-                vcontroller.SetAxisValue(Xbox360Axis.LeftThumbX, LeftThumbX);
-                vcontroller.SetAxisValue(Xbox360Axis.LeftThumbY, LeftThumbY);
-                vcontroller.SetAxisValue(Xbox360Axis.RightThumbX, RightThumbX);
-                vcontroller.SetAxisValue(Xbox360Axis.RightThumbY, RightThumbY);
+                virtualController.SetAxisValue(Xbox360Axis.LeftThumbX, LeftThumbX);
+                virtualController.SetAxisValue(Xbox360Axis.LeftThumbY, LeftThumbY);
+                virtualController.SetAxisValue(Xbox360Axis.RightThumbX, RightThumbX);
+                virtualController.SetAxisValue(Xbox360Axis.RightThumbY, RightThumbY);
 
                 foreach (Xbox360Button button in ButtonMap)
                 {
                     GamepadButtonFlags value = (GamepadButtonFlags)button.Value;
-                    vcontroller.SetButtonState(button, Gamepad.Buttons.HasFlag(value));
+                    virtualController.SetButtonState(button, Gamepad.Buttons.HasFlag(value));
                 }
 
-                vcontroller.SetSliderValue(Xbox360Slider.LeftTrigger, Gamepad.LeftTrigger);
-                vcontroller.SetSliderValue(Xbox360Slider.RightTrigger, Gamepad.RightTrigger);
+                virtualController.SetSliderValue(Xbox360Slider.LeftTrigger, Gamepad.LeftTrigger);
+                virtualController.SetSliderValue(Xbox360Slider.RightTrigger, Gamepad.RightTrigger);
 
-                vcontroller.SubmitReport();
+                virtualController.SubmitReport();
 
                 base.SubmitReport();
             }

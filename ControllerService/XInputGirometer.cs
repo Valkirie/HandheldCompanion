@@ -58,21 +58,21 @@ namespace ControllerService
             float readingY = this.reading.Y = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityZ, rate);
             float readingZ = this.reading.Z = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityY, rate);
 
-            if (xinput.Target != null)
+            if (xinput.virtualTarget != null)
             {
-                this.reading *= xinput.Profile.gyrometer;
+                this.reading *= xinput.profile.gyrometer;
 
-                this.reading.Z = xinput.Profile.steering == 0 ? readingZ : readingY;
-                this.reading.Y = xinput.Profile.steering == 0 ? readingY : readingZ;
-                this.reading.X = xinput.Profile.steering == 0 ? readingX : readingX;
+                this.reading.Z = xinput.profile.steering == 0 ? readingZ : readingY;
+                this.reading.Y = xinput.profile.steering == 0 ? readingY : readingZ;
+                this.reading.X = xinput.profile.steering == 0 ? readingX : readingX;
 
-                if (xinput.Profile.inverthorizontal)
+                if (xinput.profile.inverthorizontal)
                 {
                     this.reading.Y *= -1.0f;
                     this.reading.Z *= -1.0f;
                 }
 
-                if (xinput.Profile.invertvertical)
+                if (xinput.profile.invertvertical)
                 {
                     this.reading.Y *= -1.0f;
                     this.reading.X *= -1.0f;
