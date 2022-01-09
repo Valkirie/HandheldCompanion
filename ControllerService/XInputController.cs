@@ -11,11 +11,11 @@ namespace ControllerService
 {
     public class XInputController
     {
-        public Controller Controller;
-        public ViGEmTarget Target;
+        public Controller physicalController;
+        public ViGEmTarget virtualTarget;
 
-        public Profile Profile;
-        public Profile DefaultProfile;
+        public Profile profile;
+        private Profile defaultProfile;
 
         public DeviceInstance Instance;
 
@@ -30,12 +30,12 @@ namespace ControllerService
             this.logger = logger;
 
             // initilize controller
-            this.Controller = controller;
+            this.physicalController = controller;
             this.UserIndex = index;
 
             // initialize profile(s)
-            Profile = new();
-            DefaultProfile = new();
+            profile = new();
+            defaultProfile = new();
         }
 
         public Dictionary<string, string> ToArgs()
@@ -50,21 +50,21 @@ namespace ControllerService
 
         public void SetProfile(Profile profile)
         {
-            if (profile == null)
-            {
-                // restore default profile
-                Profile = DefaultProfile;
-            }
-            else if (profile.IsDefault)
-            {
-                // update default profile
-                DefaultProfile = profile;
-                Profile = profile;
-            }
-            else
-                Profile = profile;
+            // skip if current profile
+            if (profile == this.profile)
+                return;
 
-            logger.LogInformation("Profile {0} updated.", profile.name);
+            // restore default profile
+            if (profile == null)
+                profile = defaultProfile;
+
+            this.profile = profile;
+
+            // update default profile
+            if (profile.IsDefault)
+                defaultProfile = profile;
+            else
+                logger.LogInformation("Profile {0} applied.", profile.name);
         }
 
         public void SetGyroscope(XInputGirometer _gyrometer)
@@ -79,13 +79,13 @@ namespace ControllerService
 
         public void SetTarget(ViGEmTarget target)
         {
-            this.Target = target;
+            this.virtualTarget = target;
 
-            Gyrometer.ReadingChanged += Target.Girometer_ReadingChanged;
-            Accelerometer.ReadingChanged += Target.Accelerometer_ReadingChanged;
+            Gyrometer.ReadingChanged += virtualTarget.Girometer_ReadingChanged;
+            Accelerometer.ReadingChanged += virtualTarget.Accelerometer_ReadingChanged;
 
             logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, Instance.InstanceName, UserIndex);
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", target, Target.UpdateTimer.Interval);
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", target, virtualTarget.UpdateTimer.Interval);
         }
     }
 }
