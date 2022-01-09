@@ -10,10 +10,10 @@ namespace ControllerCommon
 {
     public class ProfileManager
     {
-        private Dictionary<bool, uint[]> CRCs = new Dictionary<bool, uint[]>()
-        {
-            { false, new uint[]{ 0x456b57cc, 0x456b57cc, 0x456b57cc, 0x456b57cc, 0x456b57cc } },
-            { true, new uint[]{ 0x906f6806, 0x906f6806, 0x906f6806, 0x906f6806, 0x906f6806 } },
+        private Dictionary<bool, uint> CRCs = new Dictionary<bool, uint>()
+        {            
+            { false, 0xcd4906cc },
+            { true, 0x1e9df650 },
         };
 
         public Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
@@ -209,18 +209,7 @@ namespace ControllerCommon
         public void UpdateProfileWrapper(Profile profile)
         {
             // deploy xinput wrapper
-            string x360ce = "";
-
-            switch (HIDmode)
-            {
-                case HIDmode.Xbox360Controller:
-                    x360ce = Properties.Resources.Xbox360;
-                    break;
-                default:
-                case HIDmode.DualShock4Controller:
-                    x360ce = Properties.Resources.DualShock4;
-                    break;
-            }
+            string XinputPlus = Properties.Resources.XInputPlus;
 
             string[] fullpaths = new string[] { profile.fullpath };
 
@@ -237,7 +226,7 @@ namespace ControllerCommon
             foreach (string fullpath in fullpaths)
             {
                 string processpath = Path.GetDirectoryName(fullpath);
-                string inipath = Path.Combine(processpath, "x360ce.ini");
+                string inipath = Path.Combine(processpath, "XInputPlus.ini");
                 bool iniexist = File.Exists(inipath);
 
                 // get binary type (x64, x86)
@@ -245,7 +234,7 @@ namespace ControllerCommon
                 bool x64 = bt == BinaryType.SCS_64BIT_BINARY;
 
                 if (profile.use_wrapper)
-                    File.WriteAllText(inipath, x360ce);
+                    File.WriteAllText(inipath, XinputPlus);
                 else if (iniexist)
                     File.Delete(inipath);
 
@@ -269,33 +258,13 @@ namespace ControllerCommon
                     // check CRC32
                     if (dllexist) data = File.ReadAllBytes(dllpath);
                     var crc = Crc32Algorithm.Compute(data);
-                    bool is_x360ce = CRCs[x64][i] == crc;
+                    bool is_x360ce = CRCs[x64] == crc;
 
-                    switch (i)
-                    {
-                        case 0:
-                            data = x64 ? Properties.Resources.xinput1_11 : Properties.Resources.xinput1_1;
-                            break;
-                        case 1:
-                            data = x64 ? Properties.Resources.xinput1_21 : Properties.Resources.xinput1_2;
-                            break;
-                        default:
-                        case 2:
-                            data = x64 ? Properties.Resources.xinput1_31 : Properties.Resources.xinput1_3;
-                            break;
-                        case 3:
-                            data = x64 ? Properties.Resources.xinput1_41 : Properties.Resources.xinput1_4;
-                            break;
-                        case 4:
-                            data = x64 ? Properties.Resources.xinput9_1_01 : Properties.Resources.xinput9_1_0;
-                            break;
-                    }
+                    // pull data from dll
+                    data = x64 ? Properties.Resources.xinput1_x64 : Properties.Resources.xinput1_x86;
 
                     if (profile.use_wrapper)
                     {
-                        if (!IsFileWritable(dllpath))
-                            SetFileWritable(dllpath);
-
                         if (dllexist && is_x360ce)
                             continue; // skip to next file
                         else if (!dllexist)

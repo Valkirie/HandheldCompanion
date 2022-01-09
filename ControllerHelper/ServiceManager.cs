@@ -16,7 +16,7 @@ namespace ControllerHelper
         private string description;
 
         private ServiceController controller;
-        private ServiceControllerStatus status;
+        public ServiceControllerStatus status;
         private int prevStatus, prevType = -1;
         private ServiceControllerStatus nextStatus;
         private ServiceStartMode type;

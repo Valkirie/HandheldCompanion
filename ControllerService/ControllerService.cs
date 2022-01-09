@@ -24,8 +24,6 @@ namespace ControllerService
         private ViGEmTarget VirtualTarget;
 
         public XInputController XInputController;
-        private XInputGirometer Gyrometer;
-        private XInputAccelerometer Accelerometer;
 
         private PipeServer pipeServer;
         private ProfileManager profileManager;
@@ -114,15 +112,20 @@ namespace ControllerService
                 throw new InvalidOperationException();
             }
 
-            // default is 10ms rating
-            Gyrometer = new XInputGirometer(XInputController, logger);
+            var Gyrometer = new XInputGirometer(XInputController, logger);
             if (Gyrometer.sensor == null)
                 logger.LogWarning("No Gyrometer detected");
+            XInputController.SetGyroscope(Gyrometer);
 
-            // default is 10ms rating
-            Accelerometer = new XInputAccelerometer(XInputController, logger);
+            var Accelerometer = new XInputAccelerometer(XInputController, logger);
             if (Accelerometer.sensor == null)
                 logger.LogWarning("No Accelerometer detected");
+            XInputController.SetAccelerometer(Accelerometer);
+
+            var Inclinometer = new XInputInclinometer(XInputController, logger);
+            if (Inclinometer.sensor == null)
+                logger.LogWarning("No Inclinometer detected");
+            XInputController.SetInclinometer(Inclinometer);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
@@ -142,27 +145,16 @@ namespace ControllerService
 
         private void UpdateVirtualController(HIDmode mode)
         {
-            if (VirtualTarget != null)
-            {
-                switch (VirtualTarget.HID)
-                {
-                    case HIDmode.Xbox360Controller:
-                        ((Xbox360Target)VirtualTarget)?.Disconnect();
-                        break;
-                    case HIDmode.DualShock4Controller:
-                        ((DualShock4Target)VirtualTarget)?.Disconnect();
-                        break;
-                }
-            }
+            VirtualTarget?.Disconnect();
 
             switch (mode)
             {
                 default:
                 case HIDmode.DualShock4Controller:
-                    VirtualTarget = new DualShock4Target(VirtualClient, XInputController.Controller, (int)XInputController.UserIndex, HIDrate, logger);
+                    VirtualTarget = new DualShock4Target(XInputController, VirtualClient, XInputController.physicalController, (int)XInputController.UserIndex, HIDrate, logger);
                     break;
                 case HIDmode.Xbox360Controller:
-                    VirtualTarget = new Xbox360Target(VirtualClient, XInputController.Controller, (int)XInputController.UserIndex, HIDrate, logger);
+                    VirtualTarget = new Xbox360Target(XInputController, VirtualClient, XInputController.physicalController, (int)XInputController.UserIndex, HIDrate, logger);
                     break;
             }
 
@@ -177,6 +169,7 @@ namespace ControllerService
             // VirtualTarget.Disconnected += OnTargetDisconnected;
 
             XInputController.SetTarget(VirtualTarget);
+            XInputController.virtualTarget?.Connect();
         }
 
         private void OnTargetDisconnected(ViGEmTarget target)
@@ -237,20 +230,20 @@ namespace ControllerService
                     switch (cursor.action)
                     {
                         case 0: // up
-                            XInputController.Target.Touch.OnMouseUp((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.virtualTarget.Touch.OnMouseUp((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
                         case 1: // down
-                            XInputController.Target.Touch.OnMouseDown((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.virtualTarget.Touch.OnMouseDown((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
                         case 2: // move
-                            XInputController.Target.Touch.OnMouseMove((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.virtualTarget.Touch.OnMouseMove((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
                     }
                     break;
 
                 case PipeCode.CLIENT_SCREEN:
                     PipeClientScreen screen = (PipeClientScreen)message;
-                    XInputController.Target.Touch.UpdateRatio(screen.width, screen.height);
+                    XInputController.virtualTarget.Touch.UpdateRatio(screen.width, screen.height);
                     break;
 
                 case PipeCode.CLIENT_SETTINGS:
@@ -276,7 +269,7 @@ namespace ControllerService
 
         private void OnClientDisconnected(object sender)
         {
-            XInputController.Target.Touch.OnMouseUp(-1, -1, 1048576 /* MouseButtons.Left */);
+            XInputController.virtualTarget.Touch.OnMouseUp(-1, -1, 1048576 /* MouseButtons.Left */);
         }
 
         private void OnClientConnected(object sender)
@@ -296,7 +289,7 @@ namespace ControllerService
 
         internal void ProfileUpdated(Profile profile)
         {
-            XInputController.Target.ProfileUpdated(profile);
+            XInputController.SetProfile(profile);
         }
 
         public void UpdateSettings(Dictionary<string, object> args)
@@ -369,10 +362,10 @@ namespace ControllerService
                         UpdateVirtualController((HIDmode)value);
                         break;
                     case "HIDrate":
-                        XInputController.SetPollRate((int)value);
+                        XInputController.virtualTarget?.SetPollRate((int)value);
                         break;
                     case "HIDstrength":
-                        XInputController.SetVibrationStrength((int)value);
+                        XInputController.virtualTarget?.SetVibrationStrength((int)value);
                         break;
                     case "DSUEnabled":
                         switch ((bool)value)
@@ -399,11 +392,8 @@ namespace ControllerService
             // turn on the cloaking
             Hidder.SetCloaking(HIDcloaked);
 
-            // initialize virtual controller
             UpdateVirtualController(HIDmode);
-            XInputController.SetGyroscope(Gyrometer);
-            XInputController.SetAccelerometer(Accelerometer);
-            XInputController.SetVibrationStrength(HIDstrength);
+            XInputController.virtualTarget?.SetVibrationStrength(HIDstrength);
 
             // start the Pipe Server
             pipeServer.Start();
@@ -419,11 +409,11 @@ namespace ControllerService
         {
             try
             {
-                if (XInputController.Target != null)
+                if (XInputController.virtualTarget != null)
                 {
-                    XInputController.Target.Disconnected += OnTargetDisconnected;
-                    XInputController.Target.Disconnect();
-                    logger.LogInformation("Virtual {0} disconnected", XInputController.Target);
+                    XInputController.virtualTarget.Disconnected += OnTargetDisconnected;
+                    XInputController.virtualTarget.Disconnect();
+                    logger.LogInformation("Virtual {0} disconnected", XInputController.virtualTarget);
                 }
             }
             catch (Exception) { }

@@ -33,21 +33,35 @@ namespace ControllerService.Targets
         protected static extern int XInputGetStateSecret14(int playerIndex, out XInputStateSecret struc);
         #endregion
 
-        public Profile Profile;
-        private Profile DefaultProfile;
+        public Controller physicalController;
+        public XInputController xinputController;
 
-        public Controller Controller;
         public Gamepad Gamepad;
         public DS4Touch Touch;
         public HIDmode HID = HIDmode.None;
+
         protected readonly ILogger logger;
 
-        public Vector3 AngularVelocity;
         public Vector3 Acceleration;
+        public void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 e)
+        {
+            Acceleration.X = e.X;
+            Acceleration.Y = e.Y;
+            Acceleration.Z = e.Z;
+        }
+
+        public Vector3 AngularVelocity;
+        public void Girometer_ReadingChanged(XInputGirometer sender, Vector3 e)
+        {
+            AngularVelocity.X = e.X;
+            AngularVelocity.Y = e.Y;
+            AngularVelocity.Z = e.Z;
+        }
+
         public MadgwickAHRS madgwick;
 
-        protected ViGEmClient Client { get; }
-        protected IVirtualGamepad vcontroller;
+        protected ViGEmClient client { get; }
+        protected IVirtualGamepad virtualController;
 
         protected XInputStateSecret state_s;
 
@@ -71,26 +85,25 @@ namespace ControllerService.Targets
 
         protected object updateLock = new();
 
-        protected ViGEmTarget(ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger)
+        protected ViGEmTarget(XInputController xinput, ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger)
         {
             this.logger = logger;
+            this.xinputController = xinput;
 
             // initialize vectors
             AngularVelocity = new();
             Acceleration = new();
             madgwick = new(1f / 14f, 0.1f);
 
-            // initialize profile
-            Profile = new();
-            DefaultProfile = new();
+            // initialize touch
             Touch = new();
 
             // initialize secret state
             state_s = new();
 
             // initialize controller
-            Client = client;
-            Controller = controller;
+            this.client = client;
+            this.physicalController = controller;
 
             // initialize stopwatch
             stopwatch = new Stopwatch();
@@ -107,12 +120,24 @@ namespace ControllerService.Targets
         {
         }
 
+        public void SetPollRate(int HIDrate)
+        {
+            UpdateTimer.Interval = HIDrate;
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", this, UpdateTimer.Interval);
+        }
+
+        public void SetVibrationStrength(float strength)
+        {
+            strength = strength / 100.0f;
+            logger.LogInformation("Virtual {0} vibration strength set to {1}%", this, strength);
+        }
+
         public override string ToString()
         {
             return Utils.GetDescriptionFromEnumValue(this.HID);
         }
 
-        public void Connect()
+        public virtual void Connect()
         {
             stopwatch.Start();
 
@@ -123,7 +148,7 @@ namespace ControllerService.Targets
             logger.LogInformation("Virtual {0} connected", ToString());
         }
 
-        public void Disconnect()
+        public virtual void Disconnect()
         {
             stopwatch.Stop();
 
@@ -134,25 +159,7 @@ namespace ControllerService.Targets
             logger.LogInformation("Virtual {0} disconnected", ToString());
         }
 
-        public void ProfileUpdated(Profile profile)
-        {
-            if (profile == null)
-            {
-                // restore default profile
-                Profile = DefaultProfile;
-            }
-            else if (profile.IsDefault)
-            {
-                // update default profile
-                DefaultProfile = profile;
-                Profile = DefaultProfile;
-                logger.LogInformation("Virtual {0} default profile updated.", ToString());
-            }
-            else
-                Profile = profile;
-        }
-
-        public unsafe void UpdateReport(object sender, ElapsedEventArgs e)
+        public virtual unsafe void UpdateReport(object sender, ElapsedEventArgs e)
         {
             lock (updateLock)
             {
@@ -161,13 +168,16 @@ namespace ControllerService.Targets
 
                 // get current gamepad state
                 XInputGetStateSecret13(UserIndex, out state_s);
-                State state = Controller.GetState();
+                State state = physicalController.GetState();
                 Gamepad = state.Gamepad;
 
                 // get buttons values
-                uint buttons = (ushort)Gamepad.Buttons;
-                buttons |= (Gamepad.LeftTrigger > 0 ? (uint)GamepadButtonFlags.LeftTrigger : 0);
-                buttons |= (Gamepad.RightTrigger > 0 ? (uint)GamepadButtonFlags.RightTrigger : 0);
+                GamepadButtonFlags buttons = (GamepadButtonFlags)Gamepad.Buttons;
+                buttons |= (Gamepad.LeftTrigger > 0 ? GamepadButtonFlags.LeftTrigger : 0);
+                buttons |= (Gamepad.RightTrigger > 0 ? GamepadButtonFlags.RightTrigger : 0);
+
+                // get custom buttons values
+                buttons |= xinputController.profile.umc_trigger.HasFlag(GamepadButtonFlags.AlwaysOn) ? GamepadButtonFlags.AlwaysOn : 0;
 
                 // get sticks values
                 LeftThumbX = Gamepad.LeftThumbX;
@@ -175,22 +185,20 @@ namespace ControllerService.Targets
                 RightThumbX = Gamepad.RightThumbX;
                 RightThumbY = Gamepad.RightThumbY;
 
-                madgwick.Update(Utils.deg2rad(-AngularVelocity.Z), Utils.deg2rad(AngularVelocity.Y), Utils.deg2rad(AngularVelocity.X), Acceleration.X, Acceleration.Z, Acceleration.Y);
-                
-                if (Profile.umc_enabled && ((Profile.umc_trigger & buttons) != 0 || (Profile.umc_trigger & (uint)GamepadButtonFlags.AlwaysOn) != 0))
+                if (xinputController.profile.umc_enabled && (xinputController.profile.umc_trigger & buttons) != 0)
                 {
-                    float intensity = Profile.GetIntensity();
-                    float sensivity = Profile.GetSensiviy();
+                    float intensity = xinputController.profile.GetIntensity();
+                    float sensivity = xinputController.profile.GetSensiviy();
 
-                    switch (Profile.umc_input)
+                    switch (xinputController.profile.umc_input)
                     {
                         default:
                         case InputStyle.RightStick:
-                            RightThumbX = Utils.ComputeInput(RightThumbX, -AngularVelocity.Z * 1.5f, sensivity, intensity);
+                            RightThumbX = Utils.ComputeInput(RightThumbX, -AngularVelocity.Z * 1.25f, sensivity, intensity);
                             RightThumbY = Utils.ComputeInput(RightThumbY, AngularVelocity.X, sensivity, intensity);
                             break;
                         case InputStyle.LeftStick:
-                            LeftThumbX = Utils.ComputeInput(LeftThumbX, -AngularVelocity.Z * 1.5f, sensivity, intensity);
+                            LeftThumbX = Utils.ComputeInput(LeftThumbX, -AngularVelocity.Z * 1.25f, sensivity, intensity);
                             LeftThumbY = Utils.ComputeInput(LeftThumbY, AngularVelocity.X, sensivity, intensity);
                             break;
                     }
@@ -201,6 +209,10 @@ namespace ControllerService.Targets
         internal void SubmitReport()
         {
             Submited?.Invoke(this);
+
+            // force null position to avoid drifting ?
+            AngularVelocity = new();
+            Acceleration = new();
         }
     }
 }

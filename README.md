@@ -10,6 +10,7 @@ Controller Service relies on `ViGEmBus` driver and `ViGEmClient` libraries as we
 
 ### Emulated devices
 Controller Service supports emulation of the following USB Gamepads:
+- [Microsoft Xbox 360 Controller](https://en.wikipedia.org/wiki/Xbox_360_controller)
 - [Sony DualShock 4 Controller](https://en.wikipedia.org/wiki/DualShock#DualShock_4)
 
 ## Use cases

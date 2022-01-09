@@ -22,7 +22,7 @@ namespace ControllerCommon.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace ControllerCommon.Properties {
         ///   Retourne l'instance ResourceManager mise en cache utilisée par cette classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ControllerCommon.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace ControllerCommon.Properties {
         ///   les recherches de ressources à l'aide de cette classe de ressource fortement typée.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,90 +61,11 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à [Options]
-        ///UseInitBeep=1
-        ///Log=0
-        ///Console=0
-        ///DebugMode=0
-        ///InternetDatabaseUrl=http://www.x360ce.com/webservices/x360ce.asmx
-        ///InternetFeatures=1
-        ///InternetAutoload=1
-        ///AllowOnlyOneCopy=1
-        ///ProgramScanLocations=C:\Program Files,C:\Program Files (x86)
-        ///Version=2
-        ///CombineEnabled=0
-        ///ExcludeSupplementalDevices=0
-        ///ExcludeVirtualDevices=0
-        ///
-        ///[InputHook]
-        ///HookMode=1
-        ///
-        ///[Mappings]
-        ///PAD1=DualShock4Controller
-        ///PAD2=
-        ///PAD3=
-        ///PAD4=
-        ///
-        ///[PAD1]
-        ///[PAD2]
-        ///[PAD3]
-        ///[PAD4]
-        ///
-        ///[DualShock4Controller]
-        ///ProductName=Wireless Controller
-        /// [le reste de la chaîne a été tronqué]&quot;;.
-        /// </summary>
-        internal static string DualShock4 {
-            get {
-                return ResourceManager.GetString("DualShock4", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à [Options]
-        ///UseInitBeep=1
-        ///Log=0
-        ///Console=0
-        ///DebugMode=0
-        ///InternetDatabaseUrl=http://www.x360ce.com/webservices/x360ce.asmx
-        ///InternetFeatures=1
-        ///InternetAutoload=1
-        ///AllowOnlyOneCopy=1
-        ///ProgramScanLocations=C:\Program Files,C:\Program Files (x86)
-        ///Version=2
-        ///CombineEnabled=0
-        ///ExcludeSupplementalDevices=0
-        ///ExcludeVirtualDevices=0
-        ///
-        ///[InputHook]
-        ///HookMode=1
-        ///
-        ///[Mappings]
-        ///PAD1=Xbox360Controller
-        ///PAD2=
-        ///PAD3=
-        ///PAD4=
-        ///
-        ///[PAD1]
-        ///[PAD2]
-        ///[PAD3]
-        ///[PAD4]
-        ///
-        ///[Xbox360Controller]
-        ///ProductName=Controller (XBOX 360 For Wi [le reste de la chaîne a été tronqué]&quot;;.
-        /// </summary>
-        internal static string Xbox360 {
-            get {
-                return ResourceManager.GetString("Xbox360", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une ressource localisée de type System.Byte[].
         /// </summary>
-        internal static byte[] xinput1_1 {
+        public static byte[] xinput1_x64 {
             get {
-                object obj = ResourceManager.GetObject("xinput1_1", resourceCulture);
+                object obj = ResourceManager.GetObject("xinput1_x64", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -152,90 +73,58 @@ namespace ControllerCommon.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Byte[].
         /// </summary>
-        internal static byte[] xinput1_11 {
+        public static byte[] xinput1_x86 {
             get {
-                object obj = ResourceManager.GetObject("xinput1_11", resourceCulture);
+                object obj = ResourceManager.GetObject("xinput1_x86", resourceCulture);
                 return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
+        ///   Recherche une chaîne localisée semblable à [General]
+        ///iniFileVersion=4150
+        ///[KeyAssign]
+        ///LS=LS
+        ///RS=RS
+        ///LT=LT
+        ///RT=RT
+        ///DPAD_UP=DPAD_UP
+        ///DPAD_DOWN=DPAD_DOWN
+        ///DPAD_LEFT=DPAD_LEFT
+        ///DPAD_RIGHT=DPAD_RIGHT
+        ///A=A
+        ///B=B
+        ///X=X
+        ///Y=Y
+        ///LB=LB
+        ///RB=RB
+        ///LSB=LSB
+        ///RSB=RSB
+        ///BACK=BACK
+        ///START=START
+        ///GUIDE=GUIDE
+        ///ThresholdA2D=40
+        ///DPAD4Direction=False
+        ///[LeftStick]
+        ///DeadZone=0
+        ///Saturation=32767
+        ///Linearity=1
+        ///Response=32767
+        ///RectCorrection=0
+        ///Scale=1
+        ///CenterOffsetX=0
+        ///CenterOffsetY=0
+        ///InvertX=False
+        ///InvertY=False
+        ///DisableX=False
+        ///DisableY=False
+        ///[RightStick]
+        ///DeadZone=0
+        ///Saturati [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
-        internal static byte[] xinput1_2 {
+        public static string XInputPlus {
             get {
-                object obj = ResourceManager.GetObject("xinput1_2", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        internal static byte[] xinput1_21 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_21", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        internal static byte[] xinput1_3 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_3", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        internal static byte[] xinput1_31 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_31", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        internal static byte[] xinput1_4 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_4", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        internal static byte[] xinput1_41 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_41", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        internal static byte[] xinput9_1_0 {
-            get {
-                object obj = ResourceManager.GetObject("xinput9_1_0", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une ressource localisée de type System.Byte[].
-        /// </summary>
-        internal static byte[] xinput9_1_01 {
-            get {
-                object obj = ResourceManager.GetObject("xinput9_1_01", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("XInputPlus", resourceCulture);
             }
         }
     }

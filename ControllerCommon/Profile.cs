@@ -38,9 +38,9 @@ namespace ControllerCommon
         public InputStyle umc_input { get; set; } = InputStyle.None;
 
         public float umc_sensivity { get; set; } = 2.0f;
-        public float umc_intensity { get; set; } = 1.0f;
+        public float umc_intensity { get; set; } = 2.0f;
 
-        public uint umc_trigger { get; set; } = 0;
+        public GamepadButtonFlags umc_trigger { get; set; } = 0;
 
         [JsonIgnore] public ProfileErrorCode error;
         [JsonIgnore] public string fullpath { get; set; }

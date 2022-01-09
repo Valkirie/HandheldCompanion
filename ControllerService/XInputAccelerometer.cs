@@ -15,16 +15,16 @@ namespace ControllerService
         private long prev_microseconds;
         private readonly OneEuroFilter3D accelFilter;
 
-        public event XInputAccelerometerReadingChangedEventHandler ReadingChanged;
-        public delegate void XInputAccelerometerReadingChangedEventHandler(Object sender, Vector3 e);
+        public event ReadingChangedEventHandler ReadingHasChanged;
+        public delegate void ReadingChangedEventHandler(XInputAccelerometer sender, Vector3 e);
 
         private readonly ILogger logger;
-        private readonly XInputController controller;
+        private readonly XInputController xinput;
 
         public XInputAccelerometer(XInputController controller, ILogger logger)
         {
             this.logger = logger;
-            this.controller = controller;
+            this.xinput = controller;
 
             accelFilter = new OneEuroFilter3D();
 
@@ -34,8 +34,15 @@ namespace ControllerService
                 sensor.ReportInterval = sensor.MinimumReportInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
-                sensor.ReadingChanged += AcceleroReadingChanged;
+                sensor.ReadingChanged += ReadingChanged;
+                sensor.Shaken += Shaken;
             }
+        }
+
+        private void Shaken(Accelerometer sender, AccelerometerShakenEventArgs args)
+        {
+            return; // implement me
+            throw new NotImplementedException();
         }
 
         public override string ToString()
@@ -43,7 +50,7 @@ namespace ControllerService
             return this.GetType().Name;
         }
 
-        void AcceleroReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
+        private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
             AccelerometerReading reading = args.Reading;
 
@@ -53,24 +60,33 @@ namespace ControllerService
 
             prev_microseconds = microseconds;
 
-            this.reading.X = (float)accelFilter.axis1Filter.Filter(reading.AccelerationX, rate);
-            this.reading.Y = (float)accelFilter.axis1Filter.Filter(reading.AccelerationZ, rate);
-            this.reading.Z = (float)accelFilter.axis1Filter.Filter(reading.AccelerationY, rate);
+            float readingX = this.reading.X = (float)accelFilter.axis1Filter.Filter(reading.AccelerationX, rate);
+            float readingY = this.reading.Y = (float)accelFilter.axis1Filter.Filter(reading.AccelerationZ, rate);
+            float readingZ = this.reading.Z = (float)accelFilter.axis1Filter.Filter(reading.AccelerationY, rate);
 
-            if (controller.Target != null)
+            if (xinput.virtualTarget != null)
             {
-                this.reading *= controller.Target.Profile.accelerometer;
+                this.reading *= xinput.profile.accelerometer;
 
-                this.reading.Z = controller.Target.Profile.steering == 0 ? this.reading.Z : this.reading.Y;
-                this.reading.Y = controller.Target.Profile.steering == 0 ? this.reading.Y : this.reading.Z;
-                this.reading.X = controller.Target.Profile.steering == 0 ? this.reading.X : this.reading.X;
-                
-                this.reading.Z = (controller.Target.Profile.inverthorizontal ? -1.0f : 1.0f) * this.reading.Z;
-                this.reading.X = (controller.Target.Profile.invertvertical ? -1.0f : 1.0f) * this.reading.X;
+                this.reading.Z = xinput.profile.steering == 0 ? readingZ : readingY;
+                this.reading.Y = xinput.profile.steering == 0 ? readingY : -readingZ;
+                this.reading.X = xinput.profile.steering == 0 ? readingX : readingX;
+
+                if (xinput.profile.inverthorizontal)
+                {
+                    this.reading.Y *= -1.0f;
+                    this.reading.Z *= -1.0f;
+                }
+
+                if (xinput.profile.invertvertical)
+                {
+                    this.reading.Y *= -1.0f;
+                    this.reading.X *= -1.0f;
+                }
             }
 
             // raise event
-            ReadingChanged?.Invoke(this, this.reading);
+            ReadingHasChanged?.Invoke(this, this.reading);
         }
     }
 }

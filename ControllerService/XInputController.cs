@@ -11,13 +11,17 @@ namespace ControllerService
 {
     public class XInputController
     {
-        public Controller Controller;
-        public ViGEmTarget Target;
+        public Controller physicalController;
+        public ViGEmTarget virtualTarget;
+
+        public Profile profile;
+        private Profile defaultProfile;
 
         public DeviceInstance Instance;
 
         public XInputGirometer Gyrometer;
         public XInputAccelerometer Accelerometer;
+        public XInputInclinometer Inclinometer;
 
         public UserIndex UserIndex;
         private readonly ILogger logger;
@@ -27,20 +31,12 @@ namespace ControllerService
             this.logger = logger;
 
             // initilize controller
-            this.Controller = controller;
+            this.physicalController = controller;
             this.UserIndex = index;
-        }
 
-        public void SetPollRate(int HIDrate)
-        {
-            this.Target.UpdateTimer.Interval = HIDrate;
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", this.Target, this.Target.UpdateTimer.Interval);
-        }
-
-        public void SetVibrationStrength(float strength)
-        {
-            this.Target.strength = strength / 100.0f;
-            logger.LogInformation("Virtual {0} vibration strength set to {1}%", this.Target, strength);
+            // initialize profile(s)
+            profile = new();
+            defaultProfile = new();
         }
 
         public Dictionary<string, string> ToArgs()
@@ -53,45 +49,49 @@ namespace ControllerService
             };
         }
 
-        public void SetGyroscope(XInputGirometer _gyrometer)
+        public void SetProfile(Profile profile)
         {
-            Gyrometer = _gyrometer;
-            Gyrometer.ReadingChanged += Girometer_ReadingChanged;
+            // skip if current profile
+            if (profile == this.profile)
+                return;
+
+            // restore default profile
+            if (profile == null)
+                profile = defaultProfile;
+
+            this.profile = profile;
+
+            // update default profile
+            if (profile.IsDefault)
+                defaultProfile = profile;
+            else
+                logger.LogInformation("Profile {0} applied.", profile.name);
         }
 
-        public void SetAccelerometer(XInputAccelerometer _accelerometer)
+        public void SetGyroscope(XInputGirometer gyrometer)
         {
-            Accelerometer = _accelerometer;
-            Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
+            Gyrometer = gyrometer;
         }
 
-        private void Accelerometer_ReadingChanged(object sender, Vector3 acceleration)
+        public void SetAccelerometer(XInputAccelerometer accelerometer)
         {
-            Target.Acceleration = acceleration;
+            Accelerometer = accelerometer;
         }
 
-        private void Girometer_ReadingChanged(object sender, Vector3 angularvelocity)
+        public void SetInclinometer(XInputInclinometer inclinometer)
         {
-            Target.AngularVelocity = angularvelocity;
+            Inclinometer = inclinometer;
         }
 
         public void SetTarget(ViGEmTarget target)
         {
-            this.Target = target;
+            this.virtualTarget = target;
 
-            switch (Target.HID)
-            {
-                default:
-                case HIDmode.DualShock4Controller:
-                    ((DualShock4Target)Target).Connect();
-                    break;
-                case HIDmode.Xbox360Controller:
-                    ((Xbox360Target)Target).Connect();
-                    break;
-            }
+            Gyrometer.ReadingChanged += virtualTarget.Girometer_ReadingChanged;
+            Accelerometer.ReadingHasChanged += virtualTarget.Accelerometer_ReadingChanged;
 
             logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, Instance.InstanceName, UserIndex);
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", target, this.Target.UpdateTimer.Interval);
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", target, virtualTarget.UpdateTimer.Interval);
         }
     }
 }

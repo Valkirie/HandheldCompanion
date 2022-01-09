@@ -453,15 +453,22 @@ namespace ControllerService
 
             try
             {
-                //Get the received message.
-                Socket recvSock = (Socket)iar.AsyncState;
-                int msgLen = recvSock.EndReceiveFrom(iar, ref clientEP);
-
-                localMsg = new byte[msgLen];
-                Array.Copy(recvBuffer, localMsg, msgLen);
+                if (running)
+                {
+                    //Get the received message.
+                    Socket recvSock = (Socket)iar.AsyncState;
+                    
+                    int msgLen = recvSock.EndReceiveFrom(iar, ref clientEP);
+                    localMsg = new byte[msgLen];
+                    Array.Copy(recvBuffer, localMsg, msgLen);
+                }
             }
             catch (Exception)
             {
+                uint IOC_IN = 0x80000000;
+                uint IOC_VENDOR = 0x18000000;
+                uint SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12;
+                udpSock?.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
             }
 
             //Start another receive as soon as we copied the data
@@ -479,15 +486,15 @@ namespace ControllerService
                 {
                     //Start listening for a new message.
                     EndPoint newClientEP = new IPEndPoint(IPAddress.Any, 0);
-                    udpSock.BeginReceiveFrom(recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ref newClientEP, ReceiveCallback, udpSock);
+                    udpSock?.BeginReceiveFrom(recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ref newClientEP, ReceiveCallback, udpSock);
                 }
             }
-            catch (SocketException)
+            catch (Exception)
             {
                 uint IOC_IN = 0x80000000;
                 uint IOC_VENDOR = 0x18000000;
                 uint SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12;
-                udpSock.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
+                udpSock?.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
 
                 StartReceive();
             }
@@ -506,11 +513,7 @@ namespace ControllerService
             }
             catch (SocketException)
             {
-                udpSock.Close();
-                udpSock = null;
-                running = false;
-
-                logger.LogCritical("{0} couldn't start. Port: {0} must be busy", this.ToString(), port);
+                logger.LogCritical("{0} couldn't listen to ip: {1} port: {2}", this.ToString(), ip, port);
                 this.Stop();
                 return running;
             }
@@ -533,12 +536,9 @@ namespace ControllerService
 
         public void Stop()
         {
+            udpSock.Close();
+            udpSock = null;
             running = false;
-            if (udpSock != null)
-            {
-                udpSock.Close();
-                udpSock = null;
-            }
 
             logger.LogInformation($"{0} has stopped", this.ToString());
             Stopped?.Invoke(this);
@@ -670,7 +670,7 @@ namespace ControllerService
                 return;
 
             // update status
-            padMeta.IsActive = hidReport.Controller.IsConnected;
+            padMeta.IsActive = hidReport.physicalController.IsConnected;
 
             var clientsList = new List<IPEndPoint>();
             var now = DateTime.UtcNow;

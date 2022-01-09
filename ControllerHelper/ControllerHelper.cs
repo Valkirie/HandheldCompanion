@@ -761,8 +761,8 @@ namespace ControllerHelper
                     for (int idx = 0; idx < cB_UMCInputButton.Items.Count; idx++)
                     {
                         string value = (string)cB_UMCInputButton.Items[idx];
-                        uint button = (uint)Utils.GetEnumValueFromDescription<GamepadButtonFlags>(value);
-                        bool selected = (button & CurrentProfile.umc_trigger) == button;
+                        GamepadButtonFlags button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(value);
+                        bool selected = CurrentProfile.umc_trigger.HasFlag(button);
                         cB_UMCInputButton.SetSelected(idx, selected);
                     }
 
@@ -819,8 +819,8 @@ namespace ControllerHelper
 
             foreach (string item in cB_UMCInputButton.SelectedItems)
             {
-                var button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(item);
-                CurrentProfile.umc_trigger |= (uint)button;
+                GamepadButtonFlags button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(item);
+                CurrentProfile.umc_trigger |= button;
             }
 
             ProfileManager.profiles[CurrentProfile.name] = CurrentProfile;
@@ -852,10 +852,6 @@ namespace ControllerHelper
         {
             gB_ProfileGyro.Enabled = cB_UniversalMC.Checked;
             cB_Whitelist.Enabled = !cB_UniversalMC.Checked && !CurrentProfile.IsDefault;
-
-            cB_GyroSteering.Enabled = cB_UniversalMC.Checked;
-            cB_InvertHAxis.Enabled = cB_UniversalMC.Checked;
-            cB_InvertVAxis.Enabled = cB_UniversalMC.Checked;
         }
 
         private void tB_UMCSensivity_Scroll(object sender, EventArgs e)
@@ -902,10 +898,9 @@ namespace ControllerHelper
             {
                 Icon myIcon = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.HIDicon0 : Properties.Resources.HIDicon1;
                 Bitmap myImage = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.HIDmode0 : Properties.Resources.HIDmode1;
-                this.notifyIcon1.Icon = myIcon;
-                this.Icon = myIcon;
                 this.pB_HidMode.BackgroundImage = myImage;
-                this.pB_About.BackgroundImage = myImage;
+
+                UpdateIcon();
             });
         }
 
@@ -976,6 +971,9 @@ namespace ControllerHelper
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
+
+                UpdateIcon();
+
                 gb_SettingsService.SuspendLayout();
 
                 switch (status)
@@ -1019,8 +1017,35 @@ namespace ControllerHelper
                 }
 
                 gb_SettingsService.ResumeLayout();
+
             });
         }
+
+        private void UpdateIcon()
+        {
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+
+                Icon myIcon;
+
+                switch (HIDmode)
+                {
+                    case HIDmode.DualShock4Controller:
+                        myIcon = ServiceManager.status == ServiceControllerStatus.Running ? Properties.Resources.HID0StatusIconOn : Properties.Resources.HID0StatusIconOff;
+                        break;
+                    case HIDmode.Xbox360Controller:
+                        myIcon = ServiceManager.status == ServiceControllerStatus.Running ? Properties.Resources.HID1StatusIconOn : Properties.Resources.HID1StatusIconOff;
+                        break;
+                    default:
+                        myIcon = Properties.Resources.LogoApplicationIcon;
+                        break;
+                }
+
+                this.Icon = myIcon;
+                this.notifyIcon1.Icon = myIcon;
+            });
+        }
+
 
         private void b_ServiceInstall_Click(object sender, EventArgs e)
         {
