@@ -164,7 +164,7 @@ namespace ControllerService
                 throw new InvalidOperationException();
             }
 
-            VirtualTarget.Submited += OnTargetSubmited;
+            VirtualTarget.Updated += OnTargetSubmited;
             VirtualTarget.Connected += OnTargetConnected;
             // VirtualTarget.Disconnected += OnTargetDisconnected;
 

@@ -74,7 +74,7 @@ namespace ControllerService.Targets
         protected short LeftThumbX, LeftThumbY, RightThumbX, RightThumbY;
         public Timer UpdateTimer;
 
-        public event SubmitedEventHandler Submited;
+        public event SubmitedEventHandler Updated;
         public delegate void SubmitedEventHandler(ViGEmTarget target);
 
         public event ConnectedEventHandler Connected;
@@ -161,6 +161,8 @@ namespace ControllerService.Targets
 
         public virtual unsafe void UpdateReport(object sender, ElapsedEventArgs e)
         {
+            Updated?.Invoke(this);
+
             lock (updateLock)
             {
                 // update timestamp
@@ -208,7 +210,6 @@ namespace ControllerService.Targets
 
         internal void SubmitReport()
         {
-            Submited?.Invoke(this);
 
             // force null position to avoid drifting ?
             AngularVelocity = new();
