@@ -119,7 +119,8 @@ namespace ControllerHelper
             m_Hook = new MouseHook(PipeClient, this, logger);
 
             // initialize Service Manager
-            ServiceManager = new ServiceManager("ControllerService", this, strings.ServiceName, strings.ServiceDescription, logger);
+            ServiceManager = new ServiceManager("ControllerService", strings.ServiceName, strings.ServiceDescription, logger);
+            ServiceManager.Updated += UpdateService;
 
             if (IsElevated)
             {

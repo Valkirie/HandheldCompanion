@@ -3,9 +3,7 @@ using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
-using System;
 using System.Collections.Generic;
-using System.Numerics;
 
 namespace ControllerService
 {

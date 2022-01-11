@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
 using System.Diagnostics;
 using System.Numerics;
 using Windows.Devices.Sensors;

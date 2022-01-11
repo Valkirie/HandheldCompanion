@@ -74,8 +74,8 @@ namespace ControllerService.Targets
         protected short LeftThumbX, LeftThumbY, RightThumbX, RightThumbY;
         public Timer UpdateTimer;
 
-        public event SubmitedEventHandler Updated;
-        public delegate void SubmitedEventHandler(ViGEmTarget target);
+        public event UpdatedEventHandler Updated;
+        public delegate void UpdatedEventHandler(ViGEmTarget target);
 
         public event ConnectedEventHandler Connected;
         public delegate void ConnectedEventHandler(ViGEmTarget target);

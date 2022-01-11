@@ -1,5 +1,4 @@
-﻿using ControllerCommon;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.ServiceProcess;
@@ -7,7 +6,7 @@ using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
-namespace ControllerHelper
+namespace ControllerCommon
 {
     public class ServiceManager
     {

@@ -11,7 +11,7 @@ namespace ControllerCommon
     public class ProfileManager
     {
         private Dictionary<bool, uint> CRCs = new Dictionary<bool, uint>()
-        {            
+        {
             { false, 0xcd4906cc },
             { true, 0x1e9df650 },
         };
