@@ -994,6 +994,14 @@ namespace ControllerHelper
                         if (b_ServiceStop.Enabled == false) b_ServiceStop.Enabled = true;
                         if (cB_ServiceStartup.Enabled == false) cB_ServiceStartup.Enabled = true;
                         break;
+                    case ServiceControllerStatus.StartPending:
+                    case ServiceControllerStatus.StopPending:
+                        if (b_ServiceInstall.Enabled == true) b_ServiceInstall.Enabled = false;
+                        if (b_ServiceDelete.Enabled == true) b_ServiceDelete.Enabled = false;
+                        if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
+                        if (b_ServiceStop.Enabled == false) b_ServiceStop.Enabled = false;
+                        if (cB_ServiceStartup.Enabled == false) cB_ServiceStartup.Enabled = false;
+                        break;
                     default:
                         if (b_ServiceInstall.Enabled == false) b_ServiceInstall.Enabled = IsElevated;
                         if (b_ServiceDelete.Enabled == true) b_ServiceDelete.Enabled = false;
