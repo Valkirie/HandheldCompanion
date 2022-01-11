@@ -179,6 +179,11 @@ namespace ControllerCommon
             return FinalString;
         }
 
+        public static float deg2rad(float degrees)
+        {
+            return (float)((Math.PI / 180) * degrees);
+        }
+
         public static byte NormalizeInput(short input)
         {
             input = Math.Clamp(input, short.MinValue, short.MaxValue);

@@ -2,7 +2,6 @@
 using ControllerService.Targets;
 using Force.Crc32;
 using Microsoft.Extensions.Logging;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -457,7 +456,7 @@ namespace ControllerService
                 {
                     //Get the received message.
                     Socket recvSock = (Socket)iar.AsyncState;
-                    
+
                     int msgLen = recvSock.EndReceiveFrom(iar, ref clientEP);
                     localMsg = new byte[msgLen];
                     Array.Copy(recvBuffer, localMsg, msgLen);

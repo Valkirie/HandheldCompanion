@@ -58,6 +58,8 @@ namespace ControllerService.Targets
             AngularVelocity.Z = e.Z;
         }
 
+        public MadgwickAHRS madgwick;
+
         protected ViGEmClient client { get; }
         protected IVirtualGamepad virtualController;
 
@@ -72,8 +74,8 @@ namespace ControllerService.Targets
         protected short LeftThumbX, LeftThumbY, RightThumbX, RightThumbY;
         public Timer UpdateTimer;
 
-        public event SubmitedEventHandler Submited;
-        public delegate void SubmitedEventHandler(ViGEmTarget target);
+        public event UpdatedEventHandler Updated;
+        public delegate void UpdatedEventHandler(ViGEmTarget target);
 
         public event ConnectedEventHandler Connected;
         public delegate void ConnectedEventHandler(ViGEmTarget target);
@@ -91,6 +93,7 @@ namespace ControllerService.Targets
             // initialize vectors
             AngularVelocity = new();
             Acceleration = new();
+            madgwick = new(1f / 14f, 0.1f);
 
             // initialize touch
             Touch = new();
@@ -158,6 +161,8 @@ namespace ControllerService.Targets
 
         public virtual unsafe void UpdateReport(object sender, ElapsedEventArgs e)
         {
+            Updated?.Invoke(this);
+
             lock (updateLock)
             {
                 // update timestamp
@@ -205,7 +210,6 @@ namespace ControllerService.Targets
 
         internal void SubmitReport()
         {
-            Submited?.Invoke(this);
 
             // force null position to avoid drifting ?
             AngularVelocity = new();

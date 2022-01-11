@@ -214,9 +214,9 @@ namespace ControllerService.Targets
 
                 DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
                 virtualController.SubmitRawReport(rawOutReportEx);
-
-                base.SubmitReport();
             }
+
+            base.SubmitReport();
         }
     }
 }

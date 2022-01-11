@@ -3,9 +3,7 @@ using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
-using System;
 using System.Collections.Generic;
-using System.Numerics;
 
 namespace ControllerService
 {
@@ -21,6 +19,7 @@ namespace ControllerService
 
         public XInputGirometer Gyrometer;
         public XInputAccelerometer Accelerometer;
+        public XInputInclinometer Inclinometer;
 
         public UserIndex UserIndex;
         private readonly ILogger logger;
@@ -67,14 +66,19 @@ namespace ControllerService
                 logger.LogInformation("Profile {0} applied.", profile.name);
         }
 
-        public void SetGyroscope(XInputGirometer _gyrometer)
+        public void SetGyroscope(XInputGirometer gyrometer)
         {
-            Gyrometer = _gyrometer;
+            Gyrometer = gyrometer;
         }
 
-        public void SetAccelerometer(XInputAccelerometer _accelerometer)
+        public void SetAccelerometer(XInputAccelerometer accelerometer)
         {
-            Accelerometer = _accelerometer;
+            Accelerometer = accelerometer;
+        }
+
+        public void SetInclinometer(XInputInclinometer inclinometer)
+        {
+            Inclinometer = inclinometer;
         }
 
         public void SetTarget(ViGEmTarget target)
@@ -82,7 +86,7 @@ namespace ControllerService
             this.virtualTarget = target;
 
             Gyrometer.ReadingChanged += virtualTarget.Girometer_ReadingChanged;
-            Accelerometer.ReadingChanged += virtualTarget.Accelerometer_ReadingChanged;
+            Accelerometer.ReadingHasChanged += virtualTarget.Accelerometer_ReadingChanged;
 
             logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, Instance.InstanceName, UserIndex);
             logger.LogInformation("Virtual {0} report interval set to {1}ms", target, virtualTarget.UpdateTimer.Interval);

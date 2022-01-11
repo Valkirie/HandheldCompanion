@@ -47,7 +47,7 @@ namespace ControllerHelper
         public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
 
         private bool RunAtStartup, StartMinimized, CloseMinimises, HookMouse;
-        private bool IsElevated, FirstStart;
+        private bool IsElevated, FirstStart, appClosing;
 
         public ProfileManager ProfileManager;
         public HIDmode HIDmode;
@@ -119,7 +119,8 @@ namespace ControllerHelper
             m_Hook = new MouseHook(PipeClient, this, logger);
 
             // initialize Service Manager
-            ServiceManager = new ServiceManager("ControllerService", this, strings.ServiceName, strings.ServiceDescription, logger);
+            ServiceManager = new ServiceManager("ControllerService", strings.ServiceName, strings.ServiceDescription, logger);
+            ServiceManager.Updated += UpdateService;
 
             if (IsElevated)
             {
@@ -324,7 +325,7 @@ namespace ControllerHelper
             }
             Properties.Settings.Default.WindowState = (int)WindowState;
 
-            if (CloseMinimises && e.CloseReason == CloseReason.UserClosing)
+            if (CloseMinimises && e.CloseReason == CloseReason.UserClosing && !appClosing)
             {
                 e.Cancel = true;
                 WindowState = FormWindowState.Minimized;
@@ -481,6 +482,7 @@ namespace ControllerHelper
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            appClosing = true;
             this.Close();
         }
 
@@ -992,6 +994,14 @@ namespace ControllerHelper
                         if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
                         if (b_ServiceStop.Enabled == false) b_ServiceStop.Enabled = true;
                         if (cB_ServiceStartup.Enabled == false) cB_ServiceStartup.Enabled = true;
+                        break;
+                    case ServiceControllerStatus.StartPending:
+                    case ServiceControllerStatus.StopPending:
+                        if (b_ServiceInstall.Enabled == true) b_ServiceInstall.Enabled = false;
+                        if (b_ServiceDelete.Enabled == true) b_ServiceDelete.Enabled = false;
+                        if (b_ServiceStart.Enabled == true) b_ServiceStart.Enabled = false;
+                        if (b_ServiceStop.Enabled == false) b_ServiceStop.Enabled = false;
+                        if (cB_ServiceStartup.Enabled == false) cB_ServiceStartup.Enabled = false;
                         break;
                     default:
                         if (b_ServiceInstall.Enabled == false) b_ServiceInstall.Enabled = IsElevated;

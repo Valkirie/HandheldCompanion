@@ -112,9 +112,9 @@ namespace ControllerService.Targets
                 virtualController.SetSliderValue(Xbox360Slider.RightTrigger, Gamepad.RightTrigger);
 
                 virtualController.SubmitReport();
-
-                base.SubmitReport();
             }
+
+            base.SubmitReport();
         }
     }
 }
