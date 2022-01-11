@@ -47,7 +47,7 @@ namespace ControllerHelper
         public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
 
         private bool RunAtStartup, StartMinimized, CloseMinimises, HookMouse;
-        private bool IsElevated, FirstStart;
+        private bool IsElevated, FirstStart, appClosing;
 
         public ProfileManager ProfileManager;
         public HIDmode HIDmode;
@@ -325,7 +325,7 @@ namespace ControllerHelper
             }
             Properties.Settings.Default.WindowState = (int)WindowState;
 
-            if (CloseMinimises && e.CloseReason == CloseReason.UserClosing)
+            if (CloseMinimises && e.CloseReason == CloseReason.UserClosing && !appClosing)
             {
                 e.Cancel = true;
                 WindowState = FormWindowState.Minimized;
@@ -482,6 +482,7 @@ namespace ControllerHelper
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            appClosing = true;
             this.Close();
         }
 
