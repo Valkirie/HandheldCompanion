@@ -26,10 +26,10 @@
     <AdditionalFiles Remove="app.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="helpersettings.json" />
+    <None Remove="ControllerHelper.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="helpersettings.json">
+    <Content Include="ControllerHelper.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

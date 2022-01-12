@@ -19,7 +19,7 @@ namespace ControllerService
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
             var configuration = new ConfigurationBuilder()
-                        .AddJsonFile("servicesettings.json")
+                        .AddJsonFile("ControllerService.json")
                         .Build();
 
             logger = new LoggerConfiguration()
