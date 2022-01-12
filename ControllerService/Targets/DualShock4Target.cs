@@ -51,7 +51,7 @@ namespace ControllerService.Targets
 
         private new IDualShock4Controller virtualController;
 
-        public DualShock4Target(XInputController xinput, ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger) : base(xinput, client, controller, index, HIDrate, logger)
+        public DualShock4Target(XInputController xinput, ViGEmClient client, Controller controller, int index, ILogger logger) : base(xinput, client, controller, index, logger)
         {
             // initialize controller
             HID = HIDmode.DualShock4Controller;
@@ -83,8 +83,8 @@ namespace ControllerService.Targets
 
             Vibration inputMotor = new()
             {
-                LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * strength),
-                RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * strength),
+                LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * vibrationStrength),
+                RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * vibrationStrength),
             };
             physicalController.SetVibration(inputMotor);
         }

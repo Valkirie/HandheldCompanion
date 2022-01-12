@@ -66,7 +66,7 @@ namespace ControllerService.Targets
         protected XInputStateSecret state_s;
 
         public long microseconds;
-        public float strength; // rename me
+        protected float vibrationStrength;
 
         protected readonly Stopwatch stopwatch;
         protected int UserIndex;
@@ -85,7 +85,7 @@ namespace ControllerService.Targets
 
         protected object updateLock = new();
 
-        protected ViGEmTarget(XInputController xinput, ViGEmClient client, Controller controller, int index, int HIDrate, ILogger logger)
+        protected ViGEmTarget(XInputController xinput, ViGEmClient client, Controller controller, int index, ILogger logger)
         {
             this.logger = logger;
             this.xinputController = xinput;
@@ -109,7 +109,7 @@ namespace ControllerService.Targets
             stopwatch = new Stopwatch();
 
             // initialize timers
-            UpdateTimer = new Timer(HIDrate)
+            UpdateTimer = new Timer()
             {
                 Enabled = false,
                 AutoReset = true
@@ -123,12 +123,12 @@ namespace ControllerService.Targets
         public void SetPollRate(int HIDrate)
         {
             UpdateTimer.Interval = HIDrate;
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", this, UpdateTimer.Interval);
+            logger.LogInformation("Virtual {0} report interval set to {1}ms", this, HIDrate);
         }
 
         public void SetVibrationStrength(float strength)
         {
-            strength = strength / 100.0f;
+            vibrationStrength = strength / 100.0f;
             logger.LogInformation("Virtual {0} vibration strength set to {1}%", this, strength);
         }
 
@@ -210,7 +210,6 @@ namespace ControllerService.Targets
 
         internal void SubmitReport()
         {
-
             // force null position to avoid drifting ?
             AngularVelocity = new();
             Acceleration = new();

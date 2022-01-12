@@ -15,6 +15,9 @@ namespace ControllerService
         public Profile profile;
         private Profile defaultProfile;
 
+        public float vibrationStrength = 100.0f;
+        public int updateInterval = 10;
+
         public DeviceInstance Instance;
 
         public XInputGirometer Gyrometer;
@@ -81,15 +84,28 @@ namespace ControllerService
             Inclinometer = inclinometer;
         }
 
-        public void SetTarget(ViGEmTarget target)
+        public void SetPollRate(int HIDrate)
+        {
+            updateInterval = HIDrate;
+            this.virtualTarget?.SetPollRate(updateInterval);
+        }
+
+        public void SetVibrationStrength(float strength)
+        {
+            vibrationStrength = strength;
+            this.virtualTarget?.SetVibrationStrength(vibrationStrength);
+        }
+
+        public void SetViGEmTarget(ViGEmTarget target)
         {
             this.virtualTarget = target;
+            Gyrometer.ReadingChanged += this.virtualTarget.Girometer_ReadingChanged;
+            Accelerometer.ReadingHasChanged += this.virtualTarget.Accelerometer_ReadingChanged;
 
-            Gyrometer.ReadingChanged += virtualTarget.Girometer_ReadingChanged;
-            Accelerometer.ReadingHasChanged += virtualTarget.Accelerometer_ReadingChanged;
+            SetPollRate(updateInterval);
+            SetVibrationStrength(vibrationStrength);
 
             logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, Instance.InstanceName, UserIndex);
-            logger.LogInformation("Virtual {0} report interval set to {1}ms", target, virtualTarget.UpdateTimer.Interval);
         }
     }
 }

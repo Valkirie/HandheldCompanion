@@ -127,6 +127,10 @@ namespace ControllerService
                 logger.LogWarning("No Inclinometer detected");
             XInputController.SetInclinometer(Inclinometer);
 
+            // XInputController settings
+            XInputController.SetVibrationStrength(HIDstrength);
+            XInputController.SetPollRate(HIDrate);
+
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
             DSUServer.Started += OnDSUStarted;
@@ -151,10 +155,10 @@ namespace ControllerService
             {
                 default:
                 case HIDmode.DualShock4Controller:
-                    VirtualTarget = new DualShock4Target(XInputController, VirtualClient, XInputController.physicalController, (int)XInputController.UserIndex, HIDrate, logger);
+                    VirtualTarget = new DualShock4Target(XInputController, VirtualClient, XInputController.physicalController, (int)XInputController.UserIndex, logger);
                     break;
                 case HIDmode.Xbox360Controller:
-                    VirtualTarget = new Xbox360Target(XInputController, VirtualClient, XInputController.physicalController, (int)XInputController.UserIndex, HIDrate, logger);
+                    VirtualTarget = new Xbox360Target(XInputController, VirtualClient, XInputController.physicalController, (int)XInputController.UserIndex, logger);
                     break;
             }
 
@@ -168,7 +172,7 @@ namespace ControllerService
             VirtualTarget.Connected += OnTargetConnected;
             // VirtualTarget.Disconnected += OnTargetDisconnected;
 
-            XInputController.SetTarget(VirtualTarget);
+            XInputController.SetViGEmTarget(VirtualTarget);
             XInputController.virtualTarget?.Connect();
         }
 
@@ -338,7 +342,7 @@ namespace ControllerService
                     Properties.Settings.Default[name] = value;
                     ApplySetting(name, prev_value, value);
 
-                    logger.LogInformation("{0} set to {1}", name, property.ToString());
+                    logger.LogDebug("{0} set to {1}", name, property.ToString());
                 }
             }
 
@@ -362,10 +366,10 @@ namespace ControllerService
                         UpdateVirtualController((HIDmode)value);
                         break;
                     case "HIDrate":
-                        XInputController.virtualTarget?.SetPollRate((int)value);
+                        XInputController.SetPollRate((int)value);
                         break;
                     case "HIDstrength":
-                        XInputController.virtualTarget?.SetVibrationStrength((int)value);
+                        XInputController.SetVibrationStrength((int)value);
                         break;
                     case "DSUEnabled":
                         switch ((bool)value)
@@ -392,8 +396,8 @@ namespace ControllerService
             // turn on the cloaking
             Hidder.SetCloaking(HIDcloaked);
 
+            // update virtual controller
             UpdateVirtualController(HIDmode);
-            XInputController.virtualTarget?.SetVibrationStrength(HIDstrength);
 
             // start the Pipe Server
             pipeServer.Start();
