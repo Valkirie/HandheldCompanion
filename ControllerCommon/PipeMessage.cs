@@ -91,6 +91,11 @@ namespace ControllerCommon
         {
             code = PipeCode.CLIENT_SETTINGS;
         }
+
+        public PipeClientSettings(string key, object value)
+        {
+            this.settings.Add(key, value);
+        }
     }
 
     [Serializable]

@@ -24,7 +24,6 @@ namespace ControllerCommon
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(Profile profile);
 
-        public HIDmode HIDmode;
         public PipeClient PipeClient;
 
         private readonly ILogger logger;
@@ -68,11 +67,6 @@ namespace ControllerCommon
         {
             profileWatcher.Deleted -= ProfileDeleted;
             profileWatcher.Dispose();
-        }
-
-        public void UpdateHID(HIDmode HIDmode)
-        {
-            this.HIDmode = HIDmode;
         }
 
         private void ProfileDeleted(object sender, FileSystemEventArgs e)

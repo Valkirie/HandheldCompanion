@@ -511,13 +511,8 @@ namespace ControllerHelper
                 toolTip1.SetToolTip(tB_PullRate, $"{tB_PullRate.Value} Miliseconds");
             });
 
-            PipeClient.SendMessage(new PipeClientSettings
-            {
-                settings = new Dictionary<string, object>
-                {
-                    { "HIDrate", tB_PullRate.Value }
-                }
-            });
+            PipeClientSettings settings = new PipeClientSettings("HIDrate", tB_PullRate.Value);
+            PipeClient.SendMessage(settings);
         }
 
         private void tB_VibrationStr_Scroll(object sender, EventArgs e)
@@ -527,26 +522,18 @@ namespace ControllerHelper
                 toolTip1.SetToolTip(tB_VibrationStr, $"{tB_VibrationStr.Value}%");
             });
 
-            PipeClient.SendMessage(new PipeClientSettings
-            {
-                settings = new Dictionary<string, object>
-                {
-                    { "HIDstrength", tB_VibrationStr.Value }
-                }
-            });
+            PipeClientSettings settings = new PipeClientSettings("HIDstrength", tB_VibrationStr.Value);
+            PipeClient.SendMessage(settings);
         }
 
         private void b_UDPApply_Click(object sender, EventArgs e)
         {
-            PipeClient.SendMessage(new PipeClientSettings
-            {
-                settings = new Dictionary<string, object>
-                {
-                    { "DSUip", tB_UDPIP.Text },
-                    { "DSUport", tB_UDPPort.Value },
-                    { "DSUEnabled", cB_UDPEnable.Checked }
-                }
-            });
+            PipeClientSettings settings = new PipeClientSettings();
+            settings.settings.Add("DSUip", tB_UDPIP.Text);
+            settings.settings.Add("DSUport", tB_UDPPort.Value);
+            settings.settings.Add("DSUEnabled", cB_UDPEnable.Checked);
+
+            PipeClient.SendMessage(settings);
         }
 
         private void b_CreateProfile_Click(object sender, EventArgs e)
@@ -662,13 +649,8 @@ namespace ControllerHelper
 
         private void cB_uncloak_CheckedChanged(object sender, EventArgs e)
         {
-            PipeClient.SendMessage(new PipeClientSettings
-            {
-                settings = new Dictionary<string, object>
-                {
-                    { "HIDuncloakonclose", cB_uncloak.Checked }
-                }
-            });
+            PipeClientSettings settings = new PipeClientSettings("HIDuncloakonclose", cB_uncloak.Checked);
+            PipeClient.SendMessage(settings);
         }
 
         private void cB_touchpad_CheckedChanged(object sender, EventArgs e)
@@ -885,15 +867,13 @@ namespace ControllerHelper
         private void cB_HidMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             HIDmode = (HIDmode)cB_HidMode.SelectedIndex;
+            UpdateHID(HIDmode);
+        }
 
-            ProfileManager.UpdateHID(HIDmode);
-            PipeClient.SendMessage(new PipeClientSettings
-            {
-                settings = new Dictionary<string, object>
-                {
-                    { "HIDmode", HIDmode }
-                }
-            });
+        public void UpdateHID(HIDmode mode)
+        {
+            PipeClientSettings settings = new PipeClientSettings("HIDmode", HIDmode);
+            PipeClient.SendMessage(settings);
 
             // update UI icon to match HIDmode
             BeginInvoke((MethodInvoker)delegate ()
@@ -923,13 +903,8 @@ namespace ControllerHelper
 
         private void cB_HIDcloak_CheckedChanged(object sender, EventArgs e)
         {
-            PipeClient.SendMessage(new PipeClientSettings
-            {
-                settings = new Dictionary<string, object>
-                {
-                    { "HIDcloaked", cB_HIDcloak.Checked }
-                }
-            });
+            PipeClientSettings settings = new PipeClientSettings("HIDcloaked", cB_HIDcloak.Checked);
+            PipeClient.SendMessage(settings);
         }
 
         public void ProfileUpdated(Profile profile)
