@@ -98,6 +98,8 @@ namespace ControllerService.Targets
 
                 base.UpdateReport(sender, e);
 
+                var Touch = xinputController.Touch;
+
                 // reset vars
                 byte[] rawOutReportEx = new byte[63];
                 ushort tempButtons = 0;
@@ -200,17 +202,17 @@ namespace ControllerService.Targets
                     outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(Touch.TrackPadTouch1.Y >> 4);
                 }
 
-                outDS4Report.wGyroX = (short)(AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
-                outDS4Report.wGyroY = (short)(-AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
-                outDS4Report.wGyroZ = (short)(AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
+                outDS4Report.wGyroX = (short)(xinputController.AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
+                outDS4Report.wGyroY = (short)(-xinputController.AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
+                outDS4Report.wGyroZ = (short)(xinputController.AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
 
-                outDS4Report.wAccelX = (short)(-Acceleration.X * F_ACC_RES_PER_G); // accelXFull
-                outDS4Report.wAccelY = (short)(-Acceleration.Y * F_ACC_RES_PER_G); // accelYFull
-                outDS4Report.wAccelZ = (short)(Acceleration.Z * F_ACC_RES_PER_G); // accelZFull
+                outDS4Report.wAccelX = (short)(-xinputController.Acceleration.X * F_ACC_RES_PER_G); // accelXFull
+                outDS4Report.wAccelY = (short)(-xinputController.Acceleration.Y * F_ACC_RES_PER_G); // accelYFull
+                outDS4Report.wAccelZ = (short)(xinputController.Acceleration.Z * F_ACC_RES_PER_G); // accelZFull
 
                 outDS4Report.bBatteryLvlSpecial = 11;
 
-                outDS4Report.wTimestamp = (ushort)(microseconds / 5.33f);
+                outDS4Report.wTimestamp = (ushort)(xinputController.microseconds / 5.33f);
 
                 DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
                 virtualController.SubmitRawReport(rawOutReportEx);

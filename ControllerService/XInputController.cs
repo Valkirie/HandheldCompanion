@@ -4,6 +4,9 @@ using Microsoft.Extensions.Logging;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Numerics;
+using System.Timers;
 
 namespace ControllerService
 {
@@ -11,10 +14,21 @@ namespace ControllerService
     {
         public Controller physicalController;
         public ViGEmTarget virtualTarget;
-
+        
+        public Gamepad Gamepad;
+        
         public Profile profile;
         private Profile defaultProfile;
 
+        private Vector3 prevAcceleration;
+        public Vector3 Acceleration;
+        public Timer AccelerationTimer;
+
+        private Vector3 prevAngularVelocity;
+        public Vector3 AngularVelocity;
+        public Timer AngularVelocityTimer;
+
+        public Timer UpdateTimer;
         public float vibrationStrength = 100.0f;
         public int updateInterval = 10;
 
@@ -24,6 +38,15 @@ namespace ControllerService
         public XInputAccelerometer Accelerometer;
         public XInputInclinometer Inclinometer;
 
+        protected readonly Stopwatch stopwatch;
+        public long microseconds;
+
+        public DS4Touch Touch;
+
+        public event UpdatedEventHandler Updated;
+        public delegate void UpdatedEventHandler(XInputController controller);
+        
+        protected object updateLock = new();
         public UserIndex UserIndex;
         private readonly ILogger logger;
 
@@ -35,9 +58,45 @@ namespace ControllerService
             this.physicalController = controller;
             this.UserIndex = index;
 
+            // initialize vectors
+            AngularVelocity = new();
+            Acceleration = new();
+
+            AccelerationTimer = new Timer() { Enabled = false, AutoReset = false };
+            AccelerationTimer.Elapsed += AccelerationTimer_Elapsed;
+
+            AngularVelocityTimer = new Timer() { Enabled = false, AutoReset = false };
+            AngularVelocityTimer.Elapsed += AngularVelocityTimer_Elapsed;
+
             // initialize profile(s)
             profile = new();
             defaultProfile = new();
+
+            // initialize touch
+            Touch = new();
+
+            // initialize stopwatch
+            stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            // initialize timers
+            UpdateTimer = new Timer() { Enabled = true, AutoReset = true };
+            UpdateTimer.Elapsed += UpdateTimer_Elapsed;
+        }
+
+        private void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            lock (updateLock)
+            {
+                // get current gamepad state
+                State state = physicalController.GetState();
+                Gamepad = state.Gamepad;
+
+                // update timestamp
+                microseconds = (long)(stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L)));
+
+                Updated?.Invoke(this);
+            }
         }
 
         public Dictionary<string, string> ToArgs()
@@ -72,11 +131,39 @@ namespace ControllerService
         public void SetGyroscope(XInputGirometer gyrometer)
         {
             Gyrometer = gyrometer;
+            Gyrometer.ReadingChanged += Girometer_ReadingChanged;
         }
 
         public void SetAccelerometer(XInputAccelerometer accelerometer)
         {
             Accelerometer = accelerometer;
+            Accelerometer.ReadingHasChanged += Accelerometer_ReadingChanged;
+        }
+
+        public void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 Acceleration)
+        {
+            this.Acceleration = Acceleration;
+
+            AccelerationTimer?.Stop();
+            AccelerationTimer?.Start();
+        }
+
+        private void AccelerationTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Acceleration = new();
+        }
+
+        public void Girometer_ReadingChanged(XInputGirometer sender, Vector3 AngularVelocity)
+        {
+            this.AngularVelocity = AngularVelocity;
+
+            AngularVelocityTimer?.Stop();
+            AngularVelocityTimer?.Start();
+        }
+
+        private void AngularVelocityTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            AngularVelocity = new();
         }
 
         public void SetInclinometer(XInputInclinometer inclinometer)
@@ -87,6 +174,11 @@ namespace ControllerService
         public void SetPollRate(int HIDrate)
         {
             updateInterval = HIDrate;
+
+            UpdateTimer.Interval = HIDrate;
+            AccelerationTimer.Interval = HIDrate * 4;
+            AngularVelocityTimer.Interval = HIDrate * 4;
+
             this.virtualTarget?.SetPollRate(updateInterval);
         }
 
@@ -99,8 +191,6 @@ namespace ControllerService
         public void SetViGEmTarget(ViGEmTarget target)
         {
             this.virtualTarget = target;
-            Gyrometer.ReadingChanged += this.virtualTarget.Girometer_ReadingChanged;
-            Accelerometer.ReadingHasChanged += this.virtualTarget.Accelerometer_ReadingChanged;
 
             SetPollRate(updateInterval);
             SetVibrationStrength(vibrationStrength);

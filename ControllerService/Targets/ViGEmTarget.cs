@@ -37,32 +37,9 @@ namespace ControllerService.Targets
         public XInputController xinputController;
 
         public Gamepad Gamepad;
-        public DS4Touch Touch;
         public HIDmode HID = HIDmode.None;
 
         protected readonly ILogger logger;
-
-        private Vector3 prevAcceleration;
-        public Vector3 Acceleration;
-        public Timer AccelerationTimer;
-        public void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 Acceleration)
-        {
-            this.Acceleration = Acceleration;
-
-            AccelerationTimer?.Stop();
-            AccelerationTimer?.Start();
-        }
-
-        private Vector3 prevAngularVelocity;
-        public Vector3 AngularVelocity;
-        public Timer AngularVelocityTimer;
-        public void Girometer_ReadingChanged(XInputGirometer sender, Vector3 AngularVelocity)
-        {
-            this.AngularVelocity = AngularVelocity;
-
-            AngularVelocityTimer?.Stop();
-            AngularVelocityTimer?.Start();
-        }
 
         public MadgwickAHRS madgwick;
 
@@ -71,17 +48,12 @@ namespace ControllerService.Targets
 
         protected XInputStateSecret state_s;
 
-        public long microseconds;
         protected float vibrationStrength;
 
-        protected readonly Stopwatch stopwatch;
         protected int UserIndex;
 
         protected short LeftThumbX, LeftThumbY, RightThumbX, RightThumbY;
         public Timer UpdateTimer;
-
-        public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(ViGEmTarget target);
 
         public event ConnectedEventHandler Connected;
         public delegate void ConnectedEventHandler(ViGEmTarget target);
@@ -96,13 +68,8 @@ namespace ControllerService.Targets
             this.logger = logger;
             this.xinputController = xinput;
 
-            // initialize vectors
-            AngularVelocity = new();
-            Acceleration = new();
+            // initialize madgwick
             madgwick = new(1f / 14f, 0.1f);
-
-            // initialize touch
-            Touch = new();
 
             // initialize secret state
             state_s = new();
@@ -111,17 +78,8 @@ namespace ControllerService.Targets
             this.client = client;
             this.physicalController = controller;
 
-            // initialize stopwatch
-            stopwatch = new Stopwatch();
-
             // initialize timers
             UpdateTimer = new Timer() { Enabled = false, AutoReset = true };
-
-            AccelerationTimer = new Timer() { Enabled = false, AutoReset = false };
-            AccelerationTimer.Elapsed += AccelerationTimer_Elapsed;
-
-            AngularVelocityTimer = new Timer() { Enabled = false, AutoReset = false };
-            AngularVelocityTimer.Elapsed += AngularVelocityTimer_Elapsed;
         }
 
         protected void FeedbackReceived(object sender, EventArgs e)
@@ -131,8 +89,6 @@ namespace ControllerService.Targets
         public void SetPollRate(int HIDrate)
         {
             UpdateTimer.Interval = HIDrate;
-            AccelerationTimer.Interval = HIDrate * 4;
-            AngularVelocityTimer.Interval = HIDrate * 4;
             logger.LogInformation("Virtual {0} report interval set to {1}ms", this, HIDrate);
         }
 
@@ -149,8 +105,6 @@ namespace ControllerService.Targets
 
         public virtual void Connect()
         {
-            stopwatch.Start();
-
             UpdateTimer.Enabled = true;
             UpdateTimer.Start();
 
@@ -160,8 +114,6 @@ namespace ControllerService.Targets
 
         public virtual void Disconnect()
         {
-            stopwatch.Stop();
-
             UpdateTimer.Enabled = false;
             UpdateTimer.Stop();
 
@@ -171,13 +123,8 @@ namespace ControllerService.Targets
 
         public virtual unsafe void UpdateReport(object sender, ElapsedEventArgs e)
         {
-            Updated?.Invoke(this);
-
             lock (updateLock)
             {
-                // update timestamp
-                microseconds = (long)(stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L)));
-
                 // get current gamepad state
                 XInputGetStateSecret13(UserIndex, out state_s);
                 State state = physicalController.GetState();
@@ -206,12 +153,12 @@ namespace ControllerService.Targets
                     {
                         default:
                         case InputStyle.RightStick:
-                            RightThumbX = Utils.ComputeInput(RightThumbX, -AngularVelocity.Z * 1.25f, sensivity, intensity);
-                            RightThumbY = Utils.ComputeInput(RightThumbY, AngularVelocity.X, sensivity, intensity);
+                            RightThumbX = Utils.ComputeInput(RightThumbX, -xinputController.AngularVelocity.Z * 1.25f, sensivity, intensity);
+                            RightThumbY = Utils.ComputeInput(RightThumbY, xinputController.AngularVelocity.X, sensivity, intensity);
                             break;
                         case InputStyle.LeftStick:
-                            LeftThumbX = Utils.ComputeInput(LeftThumbX, -AngularVelocity.Z * 1.25f, sensivity, intensity);
-                            LeftThumbY = Utils.ComputeInput(LeftThumbY, AngularVelocity.X, sensivity, intensity);
+                            LeftThumbX = Utils.ComputeInput(LeftThumbX, -xinputController.AngularVelocity.Z * 1.25f, sensivity, intensity);
+                            LeftThumbY = Utils.ComputeInput(LeftThumbY, xinputController.AngularVelocity.X, sensivity, intensity);
                             break;
                     }
                 }
@@ -221,16 +168,6 @@ namespace ControllerService.Targets
         internal void SubmitReport()
         {
             // do something
-        }
-
-        private void AccelerationTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            Acceleration = new();
-        }
-
-        private void AngularVelocityTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            AngularVelocity = new();
         }
     }
 }

@@ -29,9 +29,9 @@ namespace ControllerHelper
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out IntPtr lpdwProcessId);
         #endregion
 
-        public static PipeClient PipeClient;
-        public static PipeServer PipeServer;
-        public static CmdParser CmdParser;
+        public static PipeClient pipeClient;
+        public static PipeServer pipeServer;
+        public static CmdParser cmdParser;
         public string[] args;
 
         private Timer MonitorTimer;
@@ -98,25 +98,25 @@ namespace ControllerHelper
             }
 
             // initialize pipe client
-            PipeClient = new PipeClient("ControllerService", logger);
-            PipeClient.Connected += OnClientConnected;
-            PipeClient.Disconnected += OnClientDisconnected;
-            PipeClient.ServerMessage += OnServerMessage;
+            pipeClient = new PipeClient("ControllerService", logger);
+            pipeClient.Connected += OnClientConnected;
+            pipeClient.Disconnected += OnClientDisconnected;
+            pipeClient.ServerMessage += OnServerMessage;
 
             // initialize pipe server
-            PipeServer = new PipeServer("ControllerHelper", logger);
-            PipeServer.ClientMessage += OnClientMessage;
+            pipeServer = new PipeServer("ControllerHelper", logger);
+            pipeServer.ClientMessage += OnClientMessage;
 
             // initialize Profile Manager
-            ProfileManager = new ProfileManager(CurrentPathProfiles, logger, PipeClient);
+            ProfileManager = new ProfileManager(CurrentPathProfiles, logger, pipeClient);
             ProfileManager.Deleted += ProfileDeleted;
             ProfileManager.Updated += ProfileUpdated;
 
             // initialize command parser
-            CmdParser = new CmdParser(PipeClient, this, logger);
+            cmdParser = new CmdParser(pipeClient, this, logger);
 
             // initialize mouse hook
-            m_Hook = new MouseHook(PipeClient, this, logger);
+            m_Hook = new MouseHook(pipeClient, this, logger);
 
             // initialize Service Manager
             ServiceManager = new ServiceManager("ControllerService", strings.ServiceName, strings.ServiceDescription, logger);
@@ -166,7 +166,7 @@ namespace ControllerHelper
             if (HookMouse) m_Hook.Start();
 
             // send default profile to Service
-            PipeClient.SendMessage(new PipeClientProfile() { profile = ProfileManager.GetDefault() });
+            pipeClient.SendMessage(new PipeClientProfile() { profile = ProfileManager.GetDefault() });
 
             // start processes monitor
             MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
@@ -180,9 +180,9 @@ namespace ControllerHelper
             if (console.args.Length == 0)
                 BeginInvoke((MethodInvoker)delegate () { WindowState = prevWindowState; });
             else
-                CmdParser.ParseArgs(console.args);
+                cmdParser.ParseArgs(console.args);
 
-            PipeServer.SendMessage(new PipeShutdown());
+            pipeServer.SendMessage(new PipeShutdown());
         }
 
         private void OnServerMessage(object sender, PipeMessage message)
@@ -256,14 +256,14 @@ namespace ControllerHelper
             ServiceManager.Start();
 
             // start pipe client and server
-            PipeClient.Start();
-            PipeServer.Start();
+            pipeClient.Start();
+            pipeServer.Start();
 
             // start Profile Manager
             ProfileManager.Start();
 
             // execute args
-            CmdParser.ParseArgs(args);
+            cmdParser.ParseArgs(args);
         }
 
         public void UpdateProcess(int ProcessId, string ProcessPath, string ProcessName)
@@ -279,12 +279,12 @@ namespace ControllerHelper
 
                     ProfileManager.UpdateProfile(profile);
 
-                    PipeClient.SendMessage(new PipeClientProfile { profile = profile });
+                    pipeClient.SendMessage(new PipeClientProfile { profile = profile });
 
                     logger.LogInformation("Profile {0} applied", profile.name);
                 }
                 else
-                    PipeClient.SendMessage(new PipeClientProfile());
+                    pipeClient.SendMessage(new PipeClientProfile());
             }
             catch (Exception) { }
         }
@@ -339,11 +339,11 @@ namespace ControllerHelper
         {
             ServiceManager.Stop();
 
-            if (PipeClient.connected)
-                PipeClient.Stop();
+            if (pipeClient.connected)
+                pipeClient.Stop();
 
-            if (PipeServer.connected)
-                PipeServer.Stop();
+            if (pipeServer.connected)
+                pipeServer.Stop();
 
             ProfileManager.Stop();
 
@@ -392,7 +392,7 @@ namespace ControllerHelper
 
         public void UpdateScreen()
         {
-            PipeClient.SendMessage(new PipeClientScreen
+            pipeClient.SendMessage(new PipeClientScreen
             {
                 width = Screen.PrimaryScreen.Bounds.Width,
                 height = Screen.PrimaryScreen.Bounds.Height
@@ -508,7 +508,7 @@ namespace ControllerHelper
             });
 
             PipeClientSettings settings = new PipeClientSettings("HIDrate", tB_PullRate.Value);
-            PipeClient.SendMessage(settings);
+            pipeClient.SendMessage(settings);
         }
 
         private void tB_VibrationStr_Scroll(object sender, EventArgs e)
@@ -519,7 +519,7 @@ namespace ControllerHelper
             });
 
             PipeClientSettings settings = new PipeClientSettings("HIDstrength", tB_VibrationStr.Value);
-            PipeClient.SendMessage(settings);
+            pipeClient.SendMessage(settings);
         }
 
         private void b_UDPApply_Click(object sender, EventArgs e)
@@ -529,7 +529,7 @@ namespace ControllerHelper
             settings.settings.Add("DSUport", tB_UDPPort.Value);
             settings.settings.Add("DSUEnabled", cB_UDPEnable.Checked);
 
-            PipeClient.SendMessage(settings);
+            pipeClient.SendMessage(settings);
         }
 
         private void b_CreateProfile_Click(object sender, EventArgs e)
@@ -646,7 +646,7 @@ namespace ControllerHelper
         private void cB_uncloak_CheckedChanged(object sender, EventArgs e)
         {
             PipeClientSettings settings = new PipeClientSettings("HIDuncloakonclose", cB_uncloak.Checked);
-            PipeClient.SendMessage(settings);
+            pipeClient.SendMessage(settings);
         }
 
         private void cB_touchpad_CheckedChanged(object sender, EventArgs e)
@@ -655,7 +655,7 @@ namespace ControllerHelper
             Properties.Settings.Default.HookMouse = HookMouse;
             Properties.Settings.Default.Save();
 
-            if (HookMouse && PipeClient.connected)
+            if (HookMouse && pipeClient.connected)
                 m_Hook.Start();
             else if (m_Hook.hooked)
                 m_Hook.Stop();
@@ -865,7 +865,7 @@ namespace ControllerHelper
             HIDmode = (HIDmode)cB_HidMode.SelectedIndex;
 
             PipeClientSettings settings = new PipeClientSettings("HIDmode", HIDmode);
-            PipeClient.SendMessage(settings);
+            pipeClient.SendMessage(settings);
 
             // update UI icon to match HIDmode
             BeginInvoke((MethodInvoker)delegate ()
@@ -918,14 +918,14 @@ namespace ControllerHelper
         private void cB_HIDcloak_CheckedChanged(object sender, EventArgs e)
         {
             PipeClientSettings settings = new PipeClientSettings("HIDcloaked", cB_HIDcloak.Checked);
-            PipeClient.SendMessage(settings);
+            pipeClient.SendMessage(settings);
         }
 
         public void ProfileUpdated(Profile profile)
         {
             // inform Service we have a new default profile
             if (profile.IsDefault)
-                PipeClient.SendMessage(new PipeClientProfile() { profile = profile });
+                pipeClient.SendMessage(new PipeClientProfile() { profile = profile });
 
             BeginInvoke((MethodInvoker)delegate ()
             {

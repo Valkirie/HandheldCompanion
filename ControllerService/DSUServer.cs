@@ -543,7 +543,7 @@ namespace ControllerService
             Stopped?.Invoke(this);
         }
 
-        private bool ReportToBuffer(ViGEmTarget hidReport, byte[] outputData, long microseconds, ref int outIdx)
+        private bool ReportToBuffer(XInputController hidReport, byte[] outputData, long microseconds, ref int outIdx)
         {
             unchecked
             {
@@ -663,7 +663,7 @@ namespace ControllerService
             return true;
         }
 
-        public void SubmitReport(ViGEmTarget hidReport)
+        public void SubmitReport(XInputController hidReport)
         {
             if (!running)
                 return;

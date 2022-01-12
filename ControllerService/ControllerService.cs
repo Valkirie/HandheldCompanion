@@ -130,6 +130,7 @@ namespace ControllerService
             // XInputController settings
             XInputController.SetVibrationStrength(HIDstrength);
             XInputController.SetPollRate(HIDrate);
+            XInputController.Updated += OnTargetSubmited;
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
@@ -170,7 +171,6 @@ namespace ControllerService
                 return;
             }
 
-            VirtualTarget.Updated += OnTargetSubmited;
             VirtualTarget.Connected += OnTargetConnected;
             // VirtualTarget.Disconnected += OnTargetDisconnected;
 
@@ -200,9 +200,9 @@ namespace ControllerService
             });
         }
 
-        private void OnTargetSubmited(ViGEmTarget target)
+        private void OnTargetSubmited(XInputController controller)
         {
-            DSUServer?.SubmitReport(target);
+            DSUServer?.SubmitReport(controller);
         }
 
         private void OnDSUStopped(DSUServer server)
@@ -240,20 +240,20 @@ namespace ControllerService
                     switch (cursor.action)
                     {
                         case 0: // up
-                            XInputController.virtualTarget.Touch.OnMouseUp((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.Touch.OnMouseUp((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
                         case 1: // down
-                            XInputController.virtualTarget.Touch.OnMouseDown((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.Touch.OnMouseDown((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
                         case 2: // move
-                            XInputController.virtualTarget.Touch.OnMouseMove((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.Touch.OnMouseMove((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
                     }
                     break;
 
                 case PipeCode.CLIENT_SCREEN:
                     PipeClientScreen screen = (PipeClientScreen)message;
-                    XInputController.virtualTarget.Touch.UpdateRatio(screen.width, screen.height);
+                    XInputController.Touch.UpdateRatio(screen.width, screen.height);
                     break;
 
                 case PipeCode.CLIENT_SETTINGS:
@@ -279,7 +279,7 @@ namespace ControllerService
 
         private void OnClientDisconnected(object sender)
         {
-            XInputController.virtualTarget.Touch.OnMouseUp(-1, -1, 1048576 /* MouseButtons.Left */);
+            XInputController.Touch.OnMouseUp(-1, -1, 1048576 /* MouseButtons.Left */);
         }
 
         private void OnClientConnected(object sender)
