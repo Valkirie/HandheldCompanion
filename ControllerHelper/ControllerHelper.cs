@@ -382,10 +382,10 @@ namespace ControllerHelper
                         if (apps.Count > 0)
                             name = apps.First().AppInfo.DisplayInfo.DisplayName;
                         else
-                            name = Path.GetFileNameWithoutExtension(process.ExecutableFileName);
+                            name = Path.GetFileNameWithoutExtension(exec);
                     }
                     else
-                        name = Path.GetFileNameWithoutExtension(process.ExecutableFileName);
+                        name = Path.GetFileNameWithoutExtension(exec);
 
                     UpdateProcess((int)processId, path, name);
 
