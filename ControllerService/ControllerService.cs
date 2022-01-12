@@ -206,13 +206,17 @@ namespace ControllerService
         private void OnDSUStopped(DSUServer server)
         {
             DSUEnabled = Properties.Settings.Default.DSUEnabled = false;
-            pipeServer.SendMessage(new PipeServerSettings() { settings = new Dictionary<string, string>() { { "DSUEnabled", DSUEnabled.ToString() } } });
+
+            PipeServerSettings settings = new PipeServerSettings("DSUEnabled", DSUEnabled.ToString());
+            pipeServer.SendMessage(settings);
         }
 
         private void OnDSUStarted(DSUServer server)
         {
             DSUEnabled = Properties.Settings.Default.DSUEnabled = true;
-            pipeServer.SendMessage(new PipeServerSettings() { settings = new Dictionary<string, string>() { { "DSUEnabled", DSUEnabled.ToString() } } });
+
+            PipeServerSettings settings = new PipeServerSettings("DSUEnabled", DSUEnabled.ToString());
+            pipeServer.SendMessage(settings);
         }
 
         private void OnClientMessage(object sender, PipeMessage message)

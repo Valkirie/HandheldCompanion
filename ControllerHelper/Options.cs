@@ -7,10 +7,12 @@ namespace ControllerHelper
     {
         public enum ProfileOptionMode
         {
-            [Description("xinput")]
-            xinput,
+            [Description("neo")]
+            neo,
             [Description("ds4")]
-            ds4
+            ds4,
+            [Description("xbox")]
+            xbox
         }
 
         [Verb("profile", false, HelpText = "create or update profile for specified app")]

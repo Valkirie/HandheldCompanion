@@ -11,7 +11,7 @@ namespace ControllerCommon
 
     #region serverpipe
     [Serializable]
-    public class PipeServerToast : PipeMessage
+    public partial class PipeServerToast : PipeMessage
     {
         public string title;
         public string content;
@@ -24,7 +24,7 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public class PipeServerPing : PipeMessage
+    public partial class PipeServerPing : PipeMessage
     {
         public PipeServerPing()
         {
@@ -33,7 +33,7 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public class PipeServerController : PipeMessage
+    public partial class PipeServerController : PipeMessage
     {
         public string ProductName;
         public Guid InstanceGuid;
@@ -47,7 +47,7 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public class PipeServerSettings : PipeMessage
+    public partial class PipeServerSettings : PipeMessage
     {
         public Dictionary<string, string> settings = new();
 
@@ -55,12 +55,17 @@ namespace ControllerCommon
         {
             code = PipeCode.SERVER_SETTINGS;
         }
+
+        public PipeServerSettings(string key, string value) : this()
+        {
+            this.settings.Add(key, value);
+        }
     }
     #endregion
 
     #region clientpipe
     [Serializable]
-    public class PipeClientProfile : PipeMessage
+    public partial class PipeClientProfile : PipeMessage
     {
         public Profile profile;
 
@@ -71,7 +76,7 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public class PipeClientScreen : PipeMessage
+    public partial class PipeClientScreen : PipeMessage
     {
         public int width;
         public int height;
@@ -83,7 +88,7 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public class PipeClientSettings : PipeMessage
+    public partial class PipeClientSettings : PipeMessage
     {
         public Dictionary<string, object> settings = new();
 
@@ -92,14 +97,14 @@ namespace ControllerCommon
             code = PipeCode.CLIENT_SETTINGS;
         }
 
-        public PipeClientSettings(string key, object value)
+        public PipeClientSettings(string key, object value) : this()
         {
             this.settings.Add(key, value);
         }
     }
 
     [Serializable]
-    public class PipeClientCursor : PipeMessage
+    public partial class PipeClientCursor : PipeMessage
     {
         public int action; // 0 = up, 1 = down, 2 = move
         public float x;
@@ -120,7 +125,7 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public class PipeClientHidder : PipeMessage
+    public partial class PipeClientHidder : PipeMessage
     {
         public HidderAction action;
         public string path;
@@ -132,7 +137,7 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public class PipeConsoleArgs : PipeMessage
+    public partial class PipeConsoleArgs : PipeMessage
     {
         public string[] args;
 
@@ -143,7 +148,7 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public class PipeShutdown : PipeMessage
+    public partial class PipeShutdown : PipeMessage
     {
         public PipeShutdown()
         {

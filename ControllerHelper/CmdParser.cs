@@ -53,11 +53,16 @@ namespace ControllerHelper
 
             switch (option.mode)
             {
-                case ProfileOptionMode.xinput:
+                case ProfileOptionMode.neo:
                     profile.whitelisted = true;
                     break;
                 case ProfileOptionMode.ds4:
                     profile.whitelisted = false;
+                    helper.UpdateHID(HIDmode.DualShock4Controller);
+                    break;
+                case ProfileOptionMode.xbox:
+                    profile.whitelisted = false;
+                    helper.UpdateHID(HIDmode.Xbox360Controller);
                     break;
                 default:
                     return false;

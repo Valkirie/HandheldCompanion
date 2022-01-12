@@ -867,11 +867,7 @@ namespace ControllerHelper
         private void cB_HidMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             HIDmode = (HIDmode)cB_HidMode.SelectedIndex;
-            UpdateHID(HIDmode);
-        }
 
-        public void UpdateHID(HIDmode mode)
-        {
             PipeClientSettings settings = new PipeClientSettings("HIDmode", HIDmode);
             PipeClient.SendMessage(settings);
 
@@ -883,6 +879,14 @@ namespace ControllerHelper
                 this.pB_HidMode.BackgroundImage = myImage;
 
                 UpdateIcon();
+            });
+        }
+
+        public void UpdateHID(HIDmode mode)
+        {
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                cB_HidMode.SelectedIndex = (int)mode;
             });
         }
 
