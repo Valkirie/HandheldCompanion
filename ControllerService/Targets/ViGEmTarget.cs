@@ -42,20 +42,24 @@ namespace ControllerService.Targets
 
         protected readonly ILogger logger;
 
+        private Vector3 prevAcceleration;
         public Vector3 Acceleration;
-        public void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 e)
+        public void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 Acceleration)
         {
-            Acceleration.X = e.X;
-            Acceleration.Y = e.Y;
-            Acceleration.Z = e.Z;
+            this.Acceleration = Acceleration;
+
+            ResetTimer?.Stop();
+            ResetTimer?.Start();
         }
 
+        private Vector3 prevAngularVelocity;
         public Vector3 AngularVelocity;
-        public void Girometer_ReadingChanged(XInputGirometer sender, Vector3 e)
+        public void Girometer_ReadingChanged(XInputGirometer sender, Vector3 AngularVelocity)
         {
-            AngularVelocity.X = e.X;
-            AngularVelocity.Y = e.Y;
-            AngularVelocity.Z = e.Z;
+            this.AngularVelocity = AngularVelocity;
+
+            ResetTimer?.Stop();
+            ResetTimer?.Start();
         }
 
         public MadgwickAHRS madgwick;
@@ -73,6 +77,7 @@ namespace ControllerService.Targets
 
         protected short LeftThumbX, LeftThumbY, RightThumbX, RightThumbY;
         public Timer UpdateTimer;
+        public Timer ResetTimer;
 
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(ViGEmTarget target);
@@ -109,11 +114,9 @@ namespace ControllerService.Targets
             stopwatch = new Stopwatch();
 
             // initialize timers
-            UpdateTimer = new Timer()
-            {
-                Enabled = false,
-                AutoReset = true
-            };
+            UpdateTimer = new Timer() { Enabled = false, AutoReset = true };
+            ResetTimer = new Timer() { Enabled = false, AutoReset = false };
+            ResetTimer.Elapsed += ResetTimer_Elapsed;
         }
 
         protected void FeedbackReceived(object sender, EventArgs e)
@@ -123,6 +126,7 @@ namespace ControllerService.Targets
         public void SetPollRate(int HIDrate)
         {
             UpdateTimer.Interval = HIDrate;
+            ResetTimer.Interval = HIDrate * 4;
             logger.LogInformation("Virtual {0} report interval set to {1}ms", this, HIDrate);
         }
 
@@ -210,9 +214,13 @@ namespace ControllerService.Targets
 
         internal void SubmitReport()
         {
-            // force null position to avoid drifting ?
-            AngularVelocity = new();
+            // do something
+        }
+
+        private void ResetTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
             Acceleration = new();
+            AngularVelocity = new();
         }
     }
 }
