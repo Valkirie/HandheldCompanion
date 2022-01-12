@@ -44,22 +44,24 @@ namespace ControllerService.Targets
 
         private Vector3 prevAcceleration;
         public Vector3 Acceleration;
+        public Timer AccelerationTimer;
         public void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 Acceleration)
         {
             this.Acceleration = Acceleration;
 
-            ResetTimer?.Stop();
-            ResetTimer?.Start();
+            AccelerationTimer?.Stop();
+            AccelerationTimer?.Start();
         }
 
         private Vector3 prevAngularVelocity;
         public Vector3 AngularVelocity;
+        public Timer AngularVelocityTimer;
         public void Girometer_ReadingChanged(XInputGirometer sender, Vector3 AngularVelocity)
         {
             this.AngularVelocity = AngularVelocity;
 
-            ResetTimer?.Stop();
-            ResetTimer?.Start();
+            AngularVelocityTimer?.Stop();
+            AngularVelocityTimer?.Start();
         }
 
         public MadgwickAHRS madgwick;
@@ -77,7 +79,6 @@ namespace ControllerService.Targets
 
         protected short LeftThumbX, LeftThumbY, RightThumbX, RightThumbY;
         public Timer UpdateTimer;
-        public Timer ResetTimer;
 
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(ViGEmTarget target);
@@ -115,8 +116,12 @@ namespace ControllerService.Targets
 
             // initialize timers
             UpdateTimer = new Timer() { Enabled = false, AutoReset = true };
-            ResetTimer = new Timer() { Enabled = false, AutoReset = false };
-            ResetTimer.Elapsed += ResetTimer_Elapsed;
+
+            AccelerationTimer = new Timer() { Enabled = false, AutoReset = false };
+            AccelerationTimer.Elapsed += AccelerationTimer_Elapsed;
+
+            AngularVelocityTimer = new Timer() { Enabled = false, AutoReset = false };
+            AngularVelocityTimer.Elapsed += AngularVelocityTimer_Elapsed;
         }
 
         protected void FeedbackReceived(object sender, EventArgs e)
@@ -126,7 +131,8 @@ namespace ControllerService.Targets
         public void SetPollRate(int HIDrate)
         {
             UpdateTimer.Interval = HIDrate;
-            ResetTimer.Interval = HIDrate * 4;
+            AccelerationTimer.Interval = HIDrate * 4;
+            AngularVelocityTimer.Interval = HIDrate * 4;
             logger.LogInformation("Virtual {0} report interval set to {1}ms", this, HIDrate);
         }
 
@@ -217,9 +223,13 @@ namespace ControllerService.Targets
             // do something
         }
 
-        private void ResetTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private void AccelerationTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             Acceleration = new();
+        }
+
+        private void AngularVelocityTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
             AngularVelocity = new();
         }
     }
