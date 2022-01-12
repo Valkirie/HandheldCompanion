@@ -29,7 +29,7 @@ namespace ControllerHelper
                 Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
                 var configuration = new ConfigurationBuilder()
-                            .AddJsonFile("helpersettings.json")
+                            .AddJsonFile("ControllerHelper.json")
                             .Build();
 
                 var serilogLogger = new LoggerConfiguration()
