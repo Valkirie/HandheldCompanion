@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace ControllerCommon
@@ -13,9 +14,13 @@ namespace ControllerCommon
 
     public enum InputStyle
     {
+        [Description("None")]
         None = 0,
+        [Description("RightStick")]
         RightStick = 1,
+        [Description("LeftStick")]
         LeftStick = 2,
+        [Description("Mouse")]
         Mouse = 3
     }
 

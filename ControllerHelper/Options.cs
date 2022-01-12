@@ -1,28 +1,28 @@
 ﻿using CommandLine;
+using ControllerCommon;
 using System.ComponentModel;
 
 namespace ControllerHelper
 {
     public class Options
     {
-        public enum ProfileOptionMode
-        {
-            [Description("neo")]
-            neo,
-            [Description("ds4")]
-            ds4,
-            [Description("xbox")]
-            xbox
-        }
-
         [Verb("profile", false, HelpText = "create or update profile for specified app")]
         public class ProfileOption
         {
-            [Option('m', "mode", Required = true)]
-            public ProfileOptionMode mode { get; set; }
+            [Option("mode", Required = true)]
+            public HIDmode mode { get; set; }
 
-            [Option('e', "exe", Required = true)]
+            [Option("exe", Required = true)]
             public string exe { get; set; }
+
+            [Option("umc", Required = false)]
+            public bool umc { get; set; }
+
+            [Option("input", Required = false)]
+            public int input { get; set; }
+
+            [Option("trigger", Required = false)]
+            public int trigger { get; set; }
         }
 
         public enum ProfileServiceAction
@@ -44,7 +44,7 @@ namespace ControllerHelper
         [Verb("service", false, HelpText = "create, update or delete the service")]
         public class ProfileService
         {
-            [Option('a', "action", Required = true)]
+            [Option("action", Required = true)]
             public ProfileServiceAction action { get; set; }
         }
     }

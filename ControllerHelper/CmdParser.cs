@@ -50,26 +50,30 @@ namespace ControllerHelper
                 profile = helper.ProfileManager.profiles[ProcessExec];
 
             profile.fullpath = option.exe;
+            profile.umc_enabled = option.umc;
+            profile.umc_trigger = (GamepadButtonFlags)option.trigger;
+            profile.umc_input = (InputStyle)option.input;
 
             switch (option.mode)
             {
-                case ProfileOptionMode.neo:
+                case HIDmode.DualShock4Controller:
+                    profile.whitelisted = false;
+                    break;
+                case HIDmode.Xbox360Controller:
+                    profile.whitelisted = false;
+                    break;
+                case HIDmode.None:
                     profile.whitelisted = true;
-                    break;
-                case ProfileOptionMode.ds4:
-                    profile.whitelisted = false;
-                    helper.UpdateHID(HIDmode.DualShock4Controller);
-                    break;
-                case ProfileOptionMode.xbox:
-                    profile.whitelisted = false;
-                    helper.UpdateHID(HIDmode.Xbox360Controller);
                     break;
                 default:
                     return false;
             }
 
+            helper.UpdateHID(option.mode);
+
             helper.ProfileManager.UpdateProfile(profile);
             helper.ProfileManager.SerializeProfile(profile);
+
             return true;
         }
 
