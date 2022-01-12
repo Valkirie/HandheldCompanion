@@ -153,7 +153,9 @@ namespace ControllerService
 
             switch (mode)
             {
-                default:
+                case HIDmode.None:
+                    VirtualTarget = null;
+                    break;
                 case HIDmode.DualShock4Controller:
                     VirtualTarget = new DualShock4Target(XInputController, VirtualClient, XInputController.physicalController, (int)XInputController.UserIndex, logger);
                     break;
@@ -164,8 +166,8 @@ namespace ControllerService
 
             if (VirtualTarget == null)
             {
-                logger.LogCritical("Virtual controller initialization failed. Application will stop");
-                throw new InvalidOperationException();
+                logger.LogDebug("No virtual controller selected.");
+                return;
             }
 
             VirtualTarget.Updated += OnTargetSubmited;

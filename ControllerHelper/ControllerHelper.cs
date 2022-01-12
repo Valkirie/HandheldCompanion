@@ -130,11 +130,7 @@ namespace ControllerHelper
             }
 
             foreach (HIDmode mode in (HIDmode[])Enum.GetValues(typeof(HIDmode)))
-            {
-                if (mode == HIDmode.None)
-                    continue;
                 cB_HidMode.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
-            }
 
             foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
                 cB_UMCInputButton.Items.Add(Utils.GetDescriptionFromEnumValue(button));
@@ -882,8 +878,22 @@ namespace ControllerHelper
             });
         }
 
+        public void UpdateCloak(bool cloak)
+        {
+            if (!pipeClient.connected)
+                return;
+
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                cB_HIDcloak.Checked = cloak;
+            });
+        }
+
         public void UpdateHID(HIDmode mode)
         {
+            if (!pipeClient.connected)
+                return;
+
             BeginInvoke((MethodInvoker)delegate ()
             {
                 cB_HidMode.SelectedIndex = (int)mode;
@@ -1014,8 +1024,7 @@ namespace ControllerHelper
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
-
-                Icon myIcon;
+                Icon myIcon = Properties.Resources.LogoApplicationIcon;
 
                 switch (HIDmode)
                 {
@@ -1025,7 +1034,7 @@ namespace ControllerHelper
                     case HIDmode.Xbox360Controller:
                         myIcon = ServiceManager.status == ServiceControllerStatus.Running ? Properties.Resources.HID1StatusIconOn : Properties.Resources.HID1StatusIconOff;
                         break;
-                    default:
+                    case HIDmode.None:
                         myIcon = Properties.Resources.LogoApplicationIcon;
                         break;
                 }

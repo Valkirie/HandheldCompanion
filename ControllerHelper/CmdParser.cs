@@ -31,14 +31,22 @@ namespace ControllerHelper
 
             logger?.LogInformation("Parsing command: {0}", String.Join(' ', args));
 
-            Parser.Default.ParseArguments<ProfileOption, ProfileService>(args)
+            Parser.Default.ParseArguments<ProfileOption, ProfileService, DeviceOption>(args)
                 .MapResult(
                     (ProfileOption option) => CmdProfile(option),
                     (ProfileService option) => CmdService(option),
+                    (DeviceOption option) => CmdDevice(option),
                     errors => CmdError(errors));
         }
 
         #region cmd
+
+        private bool CmdDevice(DeviceOption option)
+        {
+            helper.UpdateHID(option.mode);
+            helper.UpdateCloak(option.cloak);
+            return true;
+        }
 
         private bool CmdProfile(ProfileOption option)
         {
@@ -52,25 +60,9 @@ namespace ControllerHelper
             profile.fullpath = option.exe;
             profile.umc_enabled = option.umc;
             profile.use_wrapper = option.wrapper;
+            profile.whitelisted = option.whitelist;
             profile.umc_trigger = (GamepadButtonFlags)option.trigger;
             profile.umc_input = (InputStyle)option.input;
-
-            switch (option.mode)
-            {
-                case HIDmode.DualShock4Controller:
-                    profile.whitelisted = false;
-                    break;
-                case HIDmode.Xbox360Controller:
-                    profile.whitelisted = false;
-                    break;
-                case HIDmode.None:
-                    profile.whitelisted = true;
-                    break;
-                default:
-                    return false;
-            }
-
-            helper.UpdateHID(option.mode);
 
             helper.ProfileManager.UpdateProfile(profile);
             helper.ProfileManager.SerializeProfile(profile);

@@ -6,11 +6,21 @@ namespace ControllerHelper
 {
     public class Options
     {
-        [Verb("profile", false, HelpText = "create or update profile for specified app")]
-        public class ProfileOption
+        [Verb("device", false, HelpText = "Update emulation mode and cloak status")]
+        public class DeviceOption
         {
+            [Option("cloak", Required = false)]
+            public bool cloak { get; set; }
+
             [Option("mode", Required = true)]
             public HIDmode mode { get; set; }
+        }
+
+        [Verb("profile", false, HelpText = "Create or update profile for specified app")]
+        public class ProfileOption
+        {
+            [Option("whitelist", Required = false)]
+            public bool whitelist { get; set; }
 
             [Option("exe", Required = true)]
             public string exe { get; set; }
@@ -44,7 +54,7 @@ namespace ControllerHelper
             stop
         }
 
-        [Verb("service", false, HelpText = "create, update or delete the service")]
+        [Verb("service", false, HelpText = "Create, update or delete the service")]
         public class ProfileService
         {
             [Option("action", Required = true)]
