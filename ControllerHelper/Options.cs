@@ -15,6 +15,9 @@ namespace ControllerHelper
             [Option("exe", Required = true)]
             public string exe { get; set; }
 
+            [Option("wrapper", Required = false)]
+            public bool wrapper { get; set; }
+
             [Option("umc", Required = false)]
             public bool umc { get; set; }
 

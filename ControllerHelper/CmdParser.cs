@@ -51,6 +51,7 @@ namespace ControllerHelper
 
             profile.fullpath = option.exe;
             profile.umc_enabled = option.umc;
+            profile.use_wrapper = option.wrapper;
             profile.umc_trigger = (GamepadButtonFlags)option.trigger;
             profile.umc_input = (InputStyle)option.input;
 
