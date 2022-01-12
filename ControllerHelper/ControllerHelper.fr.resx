@@ -57,9 +57,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="contextMenuStrip1.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="notifyIcon1.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -1063,14 +1060,17 @@
         eLgNAiAAAiAgNwEIALnjD+9BAARAAAQkJfD/y+gWxpRHwXoAAAAASUVORK5CYII=
 </value>
   </data>
+  <data name="tabDevices.Text" xml:space="preserve">
+    <value>Périphériques</value>
+  </data>
+  <data name="gB_DeviceDetails.Text" xml:space="preserve">
+    <value>Détails du Périphérique</value>
+  </data>
   <data name="cB_touchpad.Size" type="System.Drawing.Size, System.Drawing">
     <value>206, 19</value>
   </data>
   <data name="cB_touchpad.Text" xml:space="preserve">
     <value>Envoyer les entrées du pavé tactile</value>
-  </data>
-  <data name="cB_touchpad.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="lb_touchpad.Size" type="System.Drawing.Size, System.Drawing">
     <value>73, 15</value>
@@ -1078,17 +1078,11 @@
   <data name="lb_touchpad.Text" xml:space="preserve">
     <value>Pavé tactile :</value>
   </data>
-  <data name="lb_touchpad.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lb_gyro.Size" type="System.Drawing.Size, System.Drawing">
     <value>69, 15</value>
   </data>
   <data name="lb_gyro.Text" xml:space="preserve">
     <value>Gyroscope :</value>
-  </data>
-  <data name="lb_gyro.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="cB_accelero.Size" type="System.Drawing.Size, System.Drawing">
     <value>145, 19</value>
@@ -1096,17 +1090,11 @@
   <data name="cB_accelero.Text" xml:space="preserve">
     <value>Accéléromètre détecté</value>
   </data>
-  <data name="cB_accelero.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="cB_gyro.Size" type="System.Drawing.Size, System.Drawing">
     <value>124, 19</value>
   </data>
   <data name="cB_gyro.Text" xml:space="preserve">
     <value>Gyroscope détecté</value>
-  </data>
-  <data name="cB_gyro.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="lb_accelero.Size" type="System.Drawing.Size, System.Drawing">
     <value>90, 15</value>
@@ -1114,20 +1102,8 @@
   <data name="lb_accelero.Text" xml:space="preserve">
     <value>Accéléromètre :</value>
   </data>
-  <data name="lb_accelero.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="gB_DeviceDetails.Text" xml:space="preserve">
-    <value>Détails du Périphérique</value>
-  </data>
-  <data name="gB_DeviceDetails.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="pB_HidMode.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tB_VibrationStr.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_HIDDetails.Text" xml:space="preserve">
+    <value>Détails du dispositif d'interface humaine</value>
   </data>
   <data name="lb_VibrationStr.Size" type="System.Drawing.Size, System.Drawing">
     <value>134, 15</value>
@@ -1135,20 +1111,11 @@
   <data name="lb_VibrationStr.Text" xml:space="preserve">
     <value>Intensité des vibrations :</value>
   </data>
-  <data name="lb_VibrationStr.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tB_PullRate.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lb_PullRate.Size" type="System.Drawing.Size, System.Drawing">
     <value>148, 15</value>
   </data>
   <data name="lb_PullRate.Text" xml:space="preserve">
     <value>Fréquence d'actualisation :</value>
-  </data>
-  <data name="lb_PullRate.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="lb_HidMode.Size" type="System.Drawing.Size, System.Drawing">
     <value>137, 15</value>
@@ -1156,17 +1123,8 @@
   <data name="lb_HidMode.Text" xml:space="preserve">
     <value>Mode périphérique HID :</value>
   </data>
-  <data name="lb_HidMode.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="cB_HidMode.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="gB_HIDDetails.Text" xml:space="preserve">
-    <value>Détails du dispositif d'interface humaine</value>
-  </data>
-  <data name="gB_HIDDetails.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_XinputDetails.Text" xml:space="preserve">
+    <value>Détails du périphérique d'entrée Xinput</value>
   </data>
   <data name="cB_HIDcloak.Size" type="System.Drawing.Size, System.Drawing">
     <value>164, 19</value>
@@ -1174,20 +1132,11 @@
   <data name="cB_HIDcloak.Text" xml:space="preserve">
     <value>Camoufler le périphérique</value>
   </data>
-  <data name="cB_HIDcloak.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tB_ProductID.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lb_ProductID.Size" type="System.Drawing.Size, System.Drawing">
     <value>83, 15</value>
   </data>
   <data name="lb_ProductID.Text" xml:space="preserve">
     <value>ID du produit :</value>
-  </data>
-  <data name="lb_ProductID.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="cB_uncloak.Size" type="System.Drawing.Size, System.Drawing">
     <value>307, 19</value>
@@ -1195,20 +1144,11 @@
   <data name="cB_uncloak.Text" xml:space="preserve">
     <value>Dévoiler le périphérique quand le programme s'arrête</value>
   </data>
-  <data name="cB_uncloak.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lb_HidCloak.Size" type="System.Drawing.Size, System.Drawing">
     <value>78, 15</value>
   </data>
   <data name="lb_HidCloak.Text" xml:space="preserve">
     <value>Camouflage :</value>
-  </data>
-  <data name="lb_HidCloak.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tB_InstanceID.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="lb_InstanceID.Size" type="System.Drawing.Size, System.Drawing">
     <value>93, 15</value>
@@ -1216,29 +1156,11 @@
   <data name="lb_InstanceID.Text" xml:space="preserve">
     <value>ID de l'instance :</value>
   </data>
-  <data name="lb_InstanceID.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="gB_XinputDetails.Text" xml:space="preserve">
-    <value>Détails du périphérique d'entrée Xinput</value>
-  </data>
-  <data name="gB_XinputDetails.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="lB_Devices.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="gB_XinputDevices.Text" xml:space="preserve">
     <value>Périphériques d'entrée Xinput</value>
   </data>
-  <data name="gB_XinputDevices.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tabDevices.Text" xml:space="preserve">
-    <value>Périphériques</value>
-  </data>
-  <data name="tabDevices.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_ProfileOptions.Text" xml:space="preserve">
+    <value>Options du profil</value>
   </data>
   <data name="cB_UniversalMC.Size" type="System.Drawing.Size, System.Drawing">
     <value>237, 19</value>
@@ -1246,17 +1168,11 @@
   <data name="cB_UniversalMC.Text" xml:space="preserve">
     <value>Transposer le gyroscope en commandes</value>
   </data>
-  <data name="cB_UniversalMC.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lb_Wrapper.Size" type="System.Drawing.Size, System.Drawing">
     <value>107, 15</value>
   </data>
   <data name="lb_Wrapper.Text" xml:space="preserve">
     <value>Utilisez le masque :</value>
-  </data>
-  <data name="lb_Wrapper.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="lb_UniversalMC.Size" type="System.Drawing.Size, System.Drawing">
     <value>140, 15</value>
@@ -1264,17 +1180,11 @@
   <data name="lb_UniversalMC.Text" xml:space="preserve">
     <value>Gyroscope vers manette :</value>
   </data>
-  <data name="lb_UniversalMC.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lb_Whitelist.Size" type="System.Drawing.Size, System.Drawing">
     <value>91, 15</value>
   </data>
   <data name="lb_Whitelist.Text" xml:space="preserve">
     <value>Lecture directe :</value>
-  </data>
-  <data name="lb_Whitelist.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="cB_Wrapper.Size" type="System.Drawing.Size, System.Drawing">
     <value>269, 19</value>
@@ -1282,23 +1192,14 @@
   <data name="cB_Wrapper.Text" xml:space="preserve">
     <value>Traduit les appels DirectInput en appels XInput</value>
   </data>
-  <data name="cB_Wrapper.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="cB_Whitelist.Size" type="System.Drawing.Size, System.Drawing">
     <value>219, 19</value>
   </data>
   <data name="cB_Whitelist.Text" xml:space="preserve">
     <value>Peut accéder au contrôleur physique</value>
   </data>
-  <data name="cB_Whitelist.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="gB_ProfileOptions.Text" xml:space="preserve">
-    <value>Options du profil</value>
-  </data>
-  <data name="gB_ProfileOptions.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_6axis.Text" xml:space="preserve">
+    <value>Options de contrôle du mouvement</value>
   </data>
   <data name="cB_InvertVAxis.Size" type="System.Drawing.Size, System.Drawing">
     <value>94, 19</value>
@@ -1324,26 +1225,17 @@
   <data name="lB_InvertVAxis.Text" xml:space="preserve">
     <value>Axe vertical :</value>
   </data>
-  <data name="lB_InvertVAxis.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lB_InvertHAxis.Size" type="System.Drawing.Size, System.Drawing">
     <value>89, 15</value>
   </data>
   <data name="lB_InvertHAxis.Text" xml:space="preserve">
     <value>Axe horizontal :</value>
   </data>
-  <data name="lB_InvertHAxis.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lB_GyroSteering.Size" type="System.Drawing.Size, System.Drawing">
     <value>127, 15</value>
   </data>
   <data name="lB_GyroSteering.Text" xml:space="preserve">
     <value>Axe de direction Gyro :</value>
-  </data>
-  <data name="lB_GyroSteering.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="cB_GyroSteering.ToolTip" xml:space="preserve">
     <value>Cette fonctionnalité n'est que partiellement implémentée.</value>
@@ -1355,17 +1247,11 @@
   <data name="tb_ProfileAcceleroValue.Size" type="System.Drawing.Size, System.Drawing">
     <value>291, 45</value>
   </data>
-  <data name="tb_ProfileAcceleroValue.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lb_ProfileGyro.Size" type="System.Drawing.Size, System.Drawing">
     <value>115, 15</value>
   </data>
   <data name="lb_ProfileGyro.Text" xml:space="preserve">
     <value>Multiplicateur Gyro :</value>
-  </data>
-  <data name="lb_ProfileGyro.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="lb_ProfileAccelero.Size" type="System.Drawing.Size, System.Drawing">
     <value>136, 15</value>
@@ -1373,32 +1259,20 @@
   <data name="lb_ProfileAccelero.Text" xml:space="preserve">
     <value>Multiplicateur Accelero :</value>
   </data>
-  <data name="lb_ProfileAccelero.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="tb_ProfileGyroValue.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="tb_ProfileGyroValue.Size" type="System.Drawing.Size, System.Drawing">
     <value>291, 45</value>
   </data>
-  <data name="tb_ProfileGyroValue.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="gB_6axis.Text" xml:space="preserve">
-    <value>Options de contrôle du mouvement</value>
-  </data>
-  <data name="gB_6axis.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_ProfileDetails.Text" xml:space="preserve">
+    <value>Détails du profil</value>
   </data>
   <data name="lb_ErrorCode.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 145</value>
   </data>
   <data name="lb_ErrorCode.Size" type="System.Drawing.Size, System.Drawing">
     <value>464, 15</value>
-  </data>
-  <data name="lb_ErrorCode.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="b_ApplyProfile.Location" type="System.Drawing.Point, System.Drawing">
     <value>284, 87</value>
@@ -1409,20 +1283,11 @@
   <data name="b_ApplyProfile.Text" xml:space="preserve">
     <value>Appliquer le profil</value>
   </data>
-  <data name="b_ApplyProfile.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="b_DeleteProfile.Size" type="System.Drawing.Size, System.Drawing">
     <value>122, 40</value>
   </data>
   <data name="b_DeleteProfile.Text" xml:space="preserve">
     <value>Supprimer le profil</value>
-  </data>
-  <data name="b_DeleteProfile.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tB_ProfilePath.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="lb_ProfilePath.Size" type="System.Drawing.Size, System.Drawing">
     <value>97, 15</value>
@@ -1430,38 +1295,17 @@
   <data name="lb_ProfilePath.Text" xml:space="preserve">
     <value>Chemin d'accès :</value>
   </data>
-  <data name="lb_ProfilePath.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tB_ProfileName.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lb_ProfileName.Size" type="System.Drawing.Size, System.Drawing">
     <value>40, 15</value>
   </data>
   <data name="lb_ProfileName.Text" xml:space="preserve">
     <value>Nom :</value>
   </data>
-  <data name="lb_ProfileName.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="gB_ProfileDetails.Text" xml:space="preserve">
-    <value>Détails du profil</value>
-  </data>
-  <data name="gB_ProfileDetails.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="b_CreateProfile.Text" xml:space="preserve">
     <value>Créer un nouveau profil</value>
   </data>
-  <data name="b_CreateProfile.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="lB_Profiles.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="gB_Profiles.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gB_ProfileGyro.Text" xml:space="preserve">
+    <value>Options du gyroscope vers manette</value>
   </data>
   <data name="tB_UMCIntensity.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -1469,20 +1313,11 @@
   <data name="tB_UMCIntensity.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="tB_UMCIntensity.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="cB_UMCInputButton.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lb_UMCInputButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>117, 15</value>
   </data>
   <data name="lb_UMCInputButton.Text" xml:space="preserve">
     <value>Bouton d'activation :</value>
-  </data>
-  <data name="lb_UMCInputButton.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="lb_UMCIntensity.Size" type="System.Drawing.Size, System.Drawing">
     <value>58, 15</value>
@@ -1490,29 +1325,17 @@
   <data name="lb_UMCIntensity.Text" xml:space="preserve">
     <value>Intensité :</value>
   </data>
-  <data name="lb_UMCIntensity.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tB_UMCSensivity.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lb_UMCSensivity.Size" type="System.Drawing.Size, System.Drawing">
     <value>66, 15</value>
   </data>
   <data name="lb_UMCSensivity.Text" xml:space="preserve">
     <value>Sensibilité :</value>
   </data>
-  <data name="lb_UMCSensivity.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lb_UMCInputStyle.Size" type="System.Drawing.Size, System.Drawing">
     <value>83, 15</value>
   </data>
   <data name="lb_UMCInputStyle.Text" xml:space="preserve">
     <value>Type d'entrée :</value>
-  </data>
-  <data name="lb_UMCInputStyle.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="cB_UMCInputStyle.Items" xml:space="preserve">
     <value>Aucun</value>
@@ -1526,17 +1349,11 @@
   <data name="cB_UMCInputStyle.Items3" xml:space="preserve">
     <value>Souris</value>
   </data>
-  <data name="cB_UMCInputStyle.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tabSettings.Text" xml:space="preserve">
+    <value>Paramètres</value>
   </data>
-  <data name="gB_ProfileGyro.Text" xml:space="preserve">
-    <value>Options du gyroscope vers manette</value>
-  </data>
-  <data name="gB_ProfileGyro.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tabProfiles.ToolTip" xml:space="preserve">
-    <value />
+  <data name="gb_SettingsUDP.Text" xml:space="preserve">
+    <value>Serveur UDP</value>
   </data>
   <data name="b_UDPApply.Location" type="System.Drawing.Point, System.Drawing">
     <value>890, 20</value>
@@ -1544,32 +1361,11 @@
   <data name="b_UDPApply.Text" xml:space="preserve">
     <value>Appliquer</value>
   </data>
-  <data name="b_UDPApply.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tB_UDPPort.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="lb_UDPport.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tB_UDPIP.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="cB_UDPEnable.Size" type="System.Drawing.Size, System.Drawing">
     <value>63, 19</value>
   </data>
   <data name="cB_UDPEnable.Text" xml:space="preserve">
     <value>Activer</value>
-  </data>
-  <data name="cB_UDPEnable.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="gb_SettingsUDP.Text" xml:space="preserve">
-    <value>Serveur UDP</value>
-  </data>
-  <data name="gb_SettingsUDP.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="lB_ServiceStartup.Size" type="System.Drawing.Size, System.Drawing">
     <value>113, 15</value>
@@ -1577,14 +1373,8 @@
   <data name="lB_ServiceStartup.Text" xml:space="preserve">
     <value>Type de démarrage :</value>
   </data>
-  <data name="lB_ServiceStartup.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lB_ServiceStatus.Text" xml:space="preserve">
     <value>État du service :</value>
-  </data>
-  <data name="lB_ServiceStatus.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="cB_ServiceStartup.Items" xml:space="preserve">
     <value>Automatique</value>
@@ -1595,35 +1385,17 @@
   <data name="cB_ServiceStartup.Items2" xml:space="preserve">
     <value>Désactivé</value>
   </data>
-  <data name="cB_ServiceStartup.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="b_ServiceStop.Text" xml:space="preserve">
     <value>Arrêter le service</value>
-  </data>
-  <data name="b_ServiceStop.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="b_ServiceStart.Text" xml:space="preserve">
     <value>Démarrer le service</value>
   </data>
-  <data name="b_ServiceStart.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="b_ServiceDelete.Text" xml:space="preserve">
     <value>Supprimer le service</value>
   </data>
-  <data name="b_ServiceDelete.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="b_ServiceInstall.Text" xml:space="preserve">
     <value>Installer le service</value>
-  </data>
-  <data name="b_ServiceInstall.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="gb_SettingsService.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="cB_RunAtStartup.Size" type="System.Drawing.Size, System.Drawing">
     <value>210, 19</value>
@@ -1631,17 +1403,11 @@
   <data name="cB_RunAtStartup.Text" xml:space="preserve">
     <value>Exécuter au démarrage du système</value>
   </data>
-  <data name="cB_RunAtStartup.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="cB_CloseMinimizes.Size" type="System.Drawing.Size, System.Drawing">
     <value>202, 19</value>
   </data>
   <data name="cB_CloseMinimizes.Text" xml:space="preserve">
     <value>Minimiser dans la barre de tâches</value>
-  </data>
-  <data name="cB_CloseMinimizes.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="cB_StartMinimized.Size" type="System.Drawing.Size, System.Drawing">
     <value>155, 19</value>
@@ -1649,17 +1415,8 @@
   <data name="cB_StartMinimized.Text" xml:space="preserve">
     <value>Démarrer en arrière-plan</value>
   </data>
-  <data name="cB_StartMinimized.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="gb_SettingsInterface.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tabSettings.Text" xml:space="preserve">
-    <value>Paramètres</value>
-  </data>
-  <data name="tabSettings.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tabAbout.Text" xml:space="preserve">
+    <value>À propos</value>
   </data>
   <data name="lL_AboutDonate.Location" type="System.Drawing.Point, System.Drawing">
     <value>258, 122</value>
@@ -1670,14 +1427,8 @@
   <data name="lL_AboutDonate.Text" xml:space="preserve">
     <value>Donation</value>
   </data>
-  <data name="lL_AboutDonate.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lL_AboutWiki.Location" type="System.Drawing.Point, System.Drawing">
     <value>222, 122</value>
-  </data>
-  <data name="lL_AboutWiki.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="lL_AboutSource.Size" type="System.Drawing.Size, System.Drawing">
     <value>73, 15</value>
@@ -1685,14 +1436,8 @@
   <data name="lL_AboutSource.Text" xml:space="preserve">
     <value>Code source</value>
   </data>
-  <data name="lL_AboutSource.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lb_AboutDescription.Text" xml:space="preserve">
     <value>Le service de contrôleur fournit une prise en charge du gyroscope et de l'accéléromètre aux modèles AYA NEO 2020 et 2021 par le biais d'un contrôleur virtuel DualShock 4 ou Xbox 360. Si le service est activé, le contrôleur intégré sera masqué pour les applications en dehors de la liste blanche. Si le service est désactivé, le contrôleur embarqué ne sera plus caché et le contrôleur virtuel sera désactivé. Le service de contrôleur repose sur le pilote ViGEmBus et les bibliothèques ViGEmClient ainsi que sur le pilote de filtre en mode noyau HidHide.</value>
-  </data>
-  <data name="lb_AboutDescription.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="lb_AboutAuthor.Size" type="System.Drawing.Size, System.Drawing">
     <value>121, 15</value>
@@ -1700,32 +1445,11 @@
   <data name="lb_AboutAuthor.Text" xml:space="preserve">
     <value>Auteur : BenjaminLSR</value>
   </data>
-  <data name="lb_AboutAuthor.ToolTip" xml:space="preserve">
-    <value />
-  </data>
   <data name="lb_AboutVersion.Size" type="System.Drawing.Size, System.Drawing">
     <value>87, 15</value>
   </data>
   <data name="lb_AboutVersion.Text" xml:space="preserve">
     <value>Version : 0.8.3.0</value>
-  </data>
-  <data name="lb_AboutVersion.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="lb_AboutTitle.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="pB_About.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tabAbout.Text" xml:space="preserve">
-    <value>À propos</value>
-  </data>
-  <data name="tabAbout.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="tabControl1.ToolTip" xml:space="preserve">
-    <value />
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -2731,8 +2455,5 @@
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
     <value>998, 594</value>
-  </data>
-  <data name="$this.ToolTip" xml:space="preserve">
-    <value />
   </data>
 </root>

@@ -14,9 +14,9 @@ namespace ControllerService
     {
         public Controller physicalController;
         public ViGEmTarget virtualTarget;
-        
+
         public Gamepad Gamepad;
-        
+
         public Profile profile;
         private Profile defaultProfile;
 
@@ -45,7 +45,7 @@ namespace ControllerService
 
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(XInputController controller);
-        
+
         protected object updateLock = new();
         public UserIndex UserIndex;
         private readonly ILogger logger;

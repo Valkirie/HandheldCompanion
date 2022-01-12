@@ -3,8 +3,6 @@ using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
 using System;
-using System.Diagnostics;
-using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Timers;
 using GamepadButtonFlags = ControllerCommon.GamepadButtonFlags;

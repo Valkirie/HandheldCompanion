@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Numerics;
 using Windows.Devices.Sensors;
-using static ControllerCommon.Utils;
 
 namespace ControllerService
 {
