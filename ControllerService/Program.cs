@@ -53,7 +53,7 @@ namespace ControllerService
                     services.AddSingleton(new LoggerFactory().AddSerilog(logger));
 
                     services.AddHostedService<ControllerService>();
-                }).UseConsoleLifetime();
+                });
         }
     }
 }
