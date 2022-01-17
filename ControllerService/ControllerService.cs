@@ -39,10 +39,12 @@ namespace ControllerService
         private HIDmode HIDmode;
 
         private readonly ILogger<ControllerService> logger;
+        private readonly IHostApplicationLifetime lifetime;
 
-        public ControllerService(ILogger<ControllerService> logger)
+        public ControllerService(ILogger<ControllerService> logger, IHostApplicationLifetime lifetime)
         {
             this.logger = logger;
+            this.lifetime = lifetime;
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
@@ -396,16 +398,20 @@ namespace ControllerService
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            // start the DSUClient
-            if (DSUEnabled) DSUServer.Start();
+            lifetime.ApplicationStarted.Register(OnStarted);
+            lifetime.ApplicationStopping.Register(OnStopping);
+            lifetime.ApplicationStopped.Register(OnStopped);
 
-            // turn on the cloaking
+            // turn on cloaking
             Hidder.SetCloaking(HIDcloaked);
+
+            // start DSUClient
+            if (DSUEnabled) DSUServer.Start();
 
             // update virtual controller
             UpdateVirtualController(HIDmode);
 
-            // start the Pipe Server
+            // start Pipe Server
             pipeServer.Start();
 
             // start and stop Profile Manager
@@ -417,10 +423,14 @@ namespace ControllerService
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            // turn off cloaking
+            Hidder?.SetCloaking(!HIDuncloakonclose);
+
             try
             {
                 if (XInputController.virtualTarget != null)
                 {
+                    // disconnect virtual controller
                     XInputController.virtualTarget.Disconnected += OnTargetDisconnected;
                     XInputController.virtualTarget.Disconnect();
                     logger.LogInformation("Virtual {0} disconnected", XInputController.virtualTarget);
@@ -428,11 +438,28 @@ namespace ControllerService
             }
             catch (Exception) { }
 
+            // stop DSUClient
             DSUServer?.Stop();
-            Hidder?.SetCloaking(!HIDuncloakonclose);
+
+            // stop Pipe Server
             pipeServer?.Stop();
 
             return Task.CompletedTask;
+        }
+
+        private void OnStarted()
+        {
+            // Perform post-startup activities here
+        }
+
+        private void OnStopping()
+        {
+            // Perform on-stopping activities here
+        }
+
+        private void OnStopped()
+        {
+            // Perform post-stopped activities here
         }
 
         public Dictionary<string, string> GetSettings()

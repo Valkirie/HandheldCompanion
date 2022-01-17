@@ -19,5 +19,8 @@
       },
       { "Name": "Console" }
     ]
+  },
+  "HostOptions": {
+    "ShutdownTimeout": "00:00:15"
   }
 }
