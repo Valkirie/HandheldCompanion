@@ -1,4 +1,64 @@
-﻿<root>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -1066,37 +1126,38 @@
   <data name="gB_DeviceDetails.Text" xml:space="preserve">
     <value>Détails du Périphérique</value>
   </data>
-  <data name="cB_touchpad.Size" type="System.Drawing.Size, System.Drawing">
+  <assembly alias="System.Drawing.Primitives" name="System.Drawing.Primitives, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="cB_touchpad.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>206, 19</value>
   </data>
   <data name="cB_touchpad.Text" xml:space="preserve">
     <value>Envoyer les entrées du pavé tactile</value>
   </data>
-  <data name="lb_touchpad.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_touchpad.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>73, 15</value>
   </data>
   <data name="lb_touchpad.Text" xml:space="preserve">
     <value>Pavé tactile :</value>
   </data>
-  <data name="lb_gyro.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_gyro.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>69, 15</value>
   </data>
   <data name="lb_gyro.Text" xml:space="preserve">
     <value>Gyroscope :</value>
   </data>
-  <data name="cB_accelero.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="cB_accelero.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>145, 19</value>
   </data>
   <data name="cB_accelero.Text" xml:space="preserve">
     <value>Accéléromètre détecté</value>
   </data>
-  <data name="cB_gyro.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="cB_gyro.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>124, 19</value>
   </data>
   <data name="cB_gyro.Text" xml:space="preserve">
     <value>Gyroscope détecté</value>
   </data>
-  <data name="lb_accelero.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_accelero.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>90, 15</value>
   </data>
   <data name="lb_accelero.Text" xml:space="preserve">
@@ -1105,19 +1166,19 @@
   <data name="gB_HIDDetails.Text" xml:space="preserve">
     <value>Détails du dispositif d'interface humaine</value>
   </data>
-  <data name="lb_VibrationStr.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_VibrationStr.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>134, 15</value>
   </data>
   <data name="lb_VibrationStr.Text" xml:space="preserve">
     <value>Intensité des vibrations :</value>
   </data>
-  <data name="lb_PullRate.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_PullRate.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>148, 15</value>
   </data>
   <data name="lb_PullRate.Text" xml:space="preserve">
     <value>Fréquence d'actualisation :</value>
   </data>
-  <data name="lb_HidMode.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_HidMode.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>137, 15</value>
   </data>
   <data name="lb_HidMode.Text" xml:space="preserve">
@@ -1126,31 +1187,31 @@
   <data name="gB_XinputDetails.Text" xml:space="preserve">
     <value>Détails du périphérique d'entrée Xinput</value>
   </data>
-  <data name="cB_HIDcloak.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="cB_HIDcloak.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>164, 19</value>
   </data>
   <data name="cB_HIDcloak.Text" xml:space="preserve">
     <value>Camoufler le périphérique</value>
   </data>
-  <data name="lb_ProductID.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_ProductID.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>83, 15</value>
   </data>
   <data name="lb_ProductID.Text" xml:space="preserve">
     <value>ID du produit :</value>
   </data>
-  <data name="cB_uncloak.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="cB_uncloak.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>307, 19</value>
   </data>
   <data name="cB_uncloak.Text" xml:space="preserve">
     <value>Dévoiler le périphérique quand le programme s'arrête</value>
   </data>
-  <data name="lb_HidCloak.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_HidCloak.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>78, 15</value>
   </data>
   <data name="lb_HidCloak.Text" xml:space="preserve">
     <value>Camouflage :</value>
   </data>
-  <data name="lb_InstanceID.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_InstanceID.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>93, 15</value>
   </data>
   <data name="lb_InstanceID.Text" xml:space="preserve">
@@ -1162,37 +1223,37 @@
   <data name="gB_ProfileOptions.Text" xml:space="preserve">
     <value>Options du profil</value>
   </data>
-  <data name="cB_UniversalMC.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="cB_UniversalMC.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>237, 19</value>
   </data>
   <data name="cB_UniversalMC.Text" xml:space="preserve">
     <value>Transposer le gyroscope en commandes</value>
   </data>
-  <data name="lb_Wrapper.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_Wrapper.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>107, 15</value>
   </data>
   <data name="lb_Wrapper.Text" xml:space="preserve">
     <value>Utilisez le masque :</value>
   </data>
-  <data name="lb_UniversalMC.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_UniversalMC.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>140, 15</value>
   </data>
   <data name="lb_UniversalMC.Text" xml:space="preserve">
     <value>Gyroscope vers manette :</value>
   </data>
-  <data name="lb_Whitelist.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_Whitelist.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>91, 15</value>
   </data>
   <data name="lb_Whitelist.Text" xml:space="preserve">
     <value>Lecture directe :</value>
   </data>
-  <data name="cB_Wrapper.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="cB_Wrapper.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>269, 19</value>
   </data>
   <data name="cB_Wrapper.Text" xml:space="preserve">
     <value>Traduit les appels DirectInput en appels XInput</value>
   </data>
-  <data name="cB_Whitelist.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="cB_Whitelist.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>219, 19</value>
   </data>
   <data name="cB_Whitelist.Text" xml:space="preserve">
@@ -1201,7 +1262,7 @@
   <data name="gB_6axis.Text" xml:space="preserve">
     <value>Options de contrôle du mouvement</value>
   </data>
-  <data name="cB_InvertVAxis.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="cB_InvertVAxis.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>94, 19</value>
   </data>
   <data name="cB_InvertVAxis.Text" xml:space="preserve">
@@ -1210,7 +1271,7 @@
   <data name="cB_InvertVAxis.ToolTip" xml:space="preserve">
     <value>Cette fonctionnalité n'est que partiellement implémentée.</value>
   </data>
-  <data name="cB_InvertHAxis.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="cB_InvertHAxis.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>94, 19</value>
   </data>
   <data name="cB_InvertHAxis.Text" xml:space="preserve">
@@ -1219,19 +1280,19 @@
   <data name="cB_InvertHAxis.ToolTip" xml:space="preserve">
     <value>Cette fonctionnalité n'est que partiellement implémentée.</value>
   </data>
-  <data name="lB_InvertVAxis.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lB_InvertVAxis.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>74, 15</value>
   </data>
   <data name="lB_InvertVAxis.Text" xml:space="preserve">
     <value>Axe vertical :</value>
   </data>
-  <data name="lB_InvertHAxis.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lB_InvertHAxis.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>89, 15</value>
   </data>
   <data name="lB_InvertHAxis.Text" xml:space="preserve">
     <value>Axe horizontal :</value>
   </data>
-  <data name="lB_GyroSteering.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lB_GyroSteering.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>127, 15</value>
   </data>
   <data name="lB_GyroSteering.Text" xml:space="preserve">
@@ -1240,20 +1301,20 @@
   <data name="cB_GyroSteering.ToolTip" xml:space="preserve">
     <value>Cette fonctionnalité n'est que partiellement implémentée.</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="tb_ProfileAcceleroValue.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="tb_ProfileAcceleroValue.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="tb_ProfileAcceleroValue.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>291, 45</value>
   </data>
-  <data name="lb_ProfileGyro.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_ProfileGyro.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>115, 15</value>
   </data>
   <data name="lb_ProfileGyro.Text" xml:space="preserve">
     <value>Multiplicateur Gyro :</value>
   </data>
-  <data name="lb_ProfileAccelero.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_ProfileAccelero.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>136, 15</value>
   </data>
   <data name="lb_ProfileAccelero.Text" xml:space="preserve">
@@ -1262,40 +1323,40 @@
   <data name="tb_ProfileGyroValue.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="tb_ProfileGyroValue.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="tb_ProfileGyroValue.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>291, 45</value>
   </data>
   <data name="gB_ProfileDetails.Text" xml:space="preserve">
     <value>Détails du profil</value>
   </data>
-  <data name="lb_ErrorCode.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="lb_ErrorCode.Location" type="System.Drawing.Point, System.Drawing.Primitives">
     <value>3, 145</value>
   </data>
-  <data name="lb_ErrorCode.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_ErrorCode.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>464, 15</value>
   </data>
-  <data name="b_ApplyProfile.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="b_ApplyProfile.Location" type="System.Drawing.Point, System.Drawing.Primitives">
     <value>284, 87</value>
   </data>
-  <data name="b_ApplyProfile.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="b_ApplyProfile.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>122, 40</value>
   </data>
   <data name="b_ApplyProfile.Text" xml:space="preserve">
     <value>Appliquer le profil</value>
   </data>
-  <data name="b_DeleteProfile.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="b_DeleteProfile.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>122, 40</value>
   </data>
   <data name="b_DeleteProfile.Text" xml:space="preserve">
     <value>Supprimer le profil</value>
   </data>
-  <data name="lb_ProfilePath.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_ProfilePath.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>97, 15</value>
   </data>
   <data name="lb_ProfilePath.Text" xml:space="preserve">
     <value>Chemin d'accès :</value>
   </data>
-  <data name="lb_ProfileName.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_ProfileName.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>40, 15</value>
   </data>
   <data name="lb_ProfileName.Text" xml:space="preserve">
@@ -1313,25 +1374,25 @@
   <data name="tB_UMCIntensity.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="lb_UMCInputButton.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_UMCInputButton.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>117, 15</value>
   </data>
   <data name="lb_UMCInputButton.Text" xml:space="preserve">
     <value>Bouton d'activation :</value>
   </data>
-  <data name="lb_UMCIntensity.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_UMCIntensity.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>58, 15</value>
   </data>
   <data name="lb_UMCIntensity.Text" xml:space="preserve">
     <value>Intensité :</value>
   </data>
-  <data name="lb_UMCSensivity.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_UMCSensivity.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>66, 15</value>
   </data>
   <data name="lb_UMCSensivity.Text" xml:space="preserve">
     <value>Sensibilité :</value>
   </data>
-  <data name="lb_UMCInputStyle.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_UMCInputStyle.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>83, 15</value>
   </data>
   <data name="lb_UMCInputStyle.Text" xml:space="preserve">
@@ -1355,19 +1416,19 @@
   <data name="gb_SettingsUDP.Text" xml:space="preserve">
     <value>Serveur UDP</value>
   </data>
-  <data name="b_UDPApply.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="b_UDPApply.Location" type="System.Drawing.Point, System.Drawing.Primitives">
     <value>890, 20</value>
   </data>
   <data name="b_UDPApply.Text" xml:space="preserve">
     <value>Appliquer</value>
   </data>
-  <data name="cB_UDPEnable.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="cB_UDPEnable.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>63, 19</value>
   </data>
   <data name="cB_UDPEnable.Text" xml:space="preserve">
     <value>Activer</value>
   </data>
-  <data name="lB_ServiceStartup.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lB_ServiceStartup.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>113, 15</value>
   </data>
   <data name="lB_ServiceStartup.Text" xml:space="preserve">
@@ -1397,19 +1458,19 @@
   <data name="b_ServiceInstall.Text" xml:space="preserve">
     <value>Installer le service</value>
   </data>
-  <data name="cB_RunAtStartup.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="cB_RunAtStartup.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>210, 19</value>
   </data>
   <data name="cB_RunAtStartup.Text" xml:space="preserve">
     <value>Exécuter au démarrage du système</value>
   </data>
-  <data name="cB_CloseMinimizes.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="cB_CloseMinimizes.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>202, 19</value>
   </data>
   <data name="cB_CloseMinimizes.Text" xml:space="preserve">
     <value>Minimiser dans la barre de tâches</value>
   </data>
-  <data name="cB_StartMinimized.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="cB_StartMinimized.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>155, 19</value>
   </data>
   <data name="cB_StartMinimized.Text" xml:space="preserve">
@@ -1418,19 +1479,19 @@
   <data name="tabAbout.Text" xml:space="preserve">
     <value>À propos</value>
   </data>
-  <data name="lL_AboutDonate.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="lL_AboutDonate.Location" type="System.Drawing.Point, System.Drawing.Primitives">
     <value>258, 122</value>
   </data>
-  <data name="lL_AboutDonate.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lL_AboutDonate.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>56, 15</value>
   </data>
   <data name="lL_AboutDonate.Text" xml:space="preserve">
     <value>Donation</value>
   </data>
-  <data name="lL_AboutWiki.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="lL_AboutWiki.Location" type="System.Drawing.Point, System.Drawing.Primitives">
     <value>222, 122</value>
   </data>
-  <data name="lL_AboutSource.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lL_AboutSource.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>73, 15</value>
   </data>
   <data name="lL_AboutSource.Text" xml:space="preserve">
@@ -1439,13 +1500,13 @@
   <data name="lb_AboutDescription.Text" xml:space="preserve">
     <value>Le service de contrôleur fournit une prise en charge du gyroscope et de l'accéléromètre aux modèles AYA NEO 2020 et 2021 par le biais d'un contrôleur virtuel DualShock 4 ou Xbox 360. Si le service est activé, le contrôleur intégré sera masqué pour les applications en dehors de la liste blanche. Si le service est désactivé, le contrôleur embarqué ne sera plus caché et le contrôleur virtuel sera désactivé. Le service de contrôleur repose sur le pilote ViGEmBus et les bibliothèques ViGEmClient ainsi que sur le pilote de filtre en mode noyau HidHide.</value>
   </data>
-  <data name="lb_AboutAuthor.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_AboutAuthor.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>121, 15</value>
   </data>
   <data name="lb_AboutAuthor.Text" xml:space="preserve">
     <value>Auteur : BenjaminLSR</value>
   </data>
-  <data name="lb_AboutVersion.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lb_AboutVersion.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>87, 15</value>
   </data>
   <data name="lb_AboutVersion.Text" xml:space="preserve">
@@ -2453,7 +2514,7 @@
         eLgNAiAAAiAgNwEIALnjD+9BAARAAAQkJfD/y+gWxpRHwXoAAAAASUVORK5CYII=
 </value>
   </data>
-  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>998, 594</value>
   </data>
 </root>
