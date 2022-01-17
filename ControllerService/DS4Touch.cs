@@ -59,16 +59,16 @@ namespace ControllerService
             if (Y != -1) TouchY = (short)(Y * RatioHeight);
 
             TrackPadTouch0.X = TouchX;
-            TrackPadTouch1.X = TouchX;
+            //TrackPadTouch1.X = TouchX;
 
             TrackPadTouch0.Y = TouchY;
-            TrackPadTouch1.Y = TouchY;
+            //TrackPadTouch1.Y = TouchY;
 
             if (Button == 2097152) // MouseButtons.Right
                 OutputClickButton = false;
 
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID + TOUCH_DISABLE;
-            TrackPadTouch1.RawTrackingNum = TOUCH1_ID + TOUCH_DISABLE;
+            //TrackPadTouch1.RawTrackingNum = TOUCH1_ID + TOUCH_DISABLE;
 
             TouchPacketCounter++;
         }
@@ -79,16 +79,16 @@ namespace ControllerService
             TouchY = (short)(Y * RatioHeight);
 
             TrackPadTouch0.X = TouchX;
-            TrackPadTouch1.X = TouchX;
+            //TrackPadTouch1.X = TouchX;
 
             TrackPadTouch0.Y = TouchY;
-            TrackPadTouch1.Y = TouchY;
+            //TrackPadTouch1.Y = TouchY;
 
             if (Button == 2097152) // MouseButtons.Right
                 OutputClickButton = true;
 
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
-            TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
+            //TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
         }
 
         public void OnMouseMove(short X, short Y, int Button)
@@ -96,7 +96,10 @@ namespace ControllerService
             TouchX = (short)(X * RatioWidth);
             TouchY = (short)(Y * RatioHeight);
 
-            switch (TouchPacketCounter % 2)
+            TrackPadTouch0.X = TouchX;
+            TrackPadTouch0.Y = TouchY;
+
+            /* switch (TouchPacketCounter % 2)
             {
                 case 0:
                     TrackPadTouch0.X = TouchX;
@@ -106,7 +109,7 @@ namespace ControllerService
                     TrackPadTouch1.X = TouchX;
                     TrackPadTouch1.Y = TouchY;
                     break;
-            }
+            } */
 
             TouchPacketCounter++;
         }
