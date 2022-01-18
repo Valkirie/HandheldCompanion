@@ -716,6 +716,7 @@ Filename: "C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCL
 [UninstallDelete]
 Type: filesandordirs; Name: "{localappdata}\ControllerHelper"
 Type: filesandordirs; Name: "{localappdata}\ControllerService"
+Type: filesandordirs; Name: "{app}"
 
 [Registry]
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps"; Flags: uninsdeletekeyifempty
