@@ -103,9 +103,19 @@ namespace ControllerHelper.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon HIDicon0 {
+        internal static System.Drawing.Icon HID2StatusIconOff {
             get {
-                object obj = ResourceManager.GetObject("HIDicon0", resourceCulture);
+                object obj = ResourceManager.GetObject("HID2StatusIconOff", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon HID2StatusIconOn {
+            get {
+                object obj = ResourceManager.GetObject("HID2StatusIconOn", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -121,12 +131,12 @@ namespace ControllerHelper.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap HIDmode0 {
+        internal static System.Drawing.Icon HIDicon2 {
             get {
-                object obj = ResourceManager.GetObject("HIDmode0", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("HIDicon2", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -136,6 +146,16 @@ namespace ControllerHelper.Properties {
         internal static System.Drawing.Bitmap HIDmode1 {
             get {
                 object obj = ResourceManager.GetObject("HIDmode1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap HIDmode2 {
+            get {
+                object obj = ResourceManager.GetObject("HIDmode2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

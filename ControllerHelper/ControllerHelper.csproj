@@ -123,6 +123,9 @@
     <None Update="Resources\HIDmode1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\HIDmode2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Toast.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

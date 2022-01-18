@@ -870,8 +870,21 @@ namespace ControllerHelper
             // update UI icon to match HIDmode
             BeginInvoke((MethodInvoker)delegate ()
             {
-                Icon myIcon = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.HIDicon0 : Properties.Resources.HIDicon1;
-                Bitmap myImage = HIDmode == HIDmode.DualShock4Controller ? Properties.Resources.HIDmode0 : Properties.Resources.HIDmode1;
+                Bitmap myImage = new(1,1);
+
+                switch (HIDmode)
+                {
+                    case HIDmode.DualShock4Controller:
+                        myImage = Properties.Resources.HIDmode1;
+                        break;
+                    case HIDmode.Xbox360Controller:
+                        myImage = Properties.Resources.HIDmode2;
+                        break;
+                    case HIDmode.None:
+                        break;
+                }
+                
+                // Update image next to dropdown selection
                 this.pB_HidMode.BackgroundImage = myImage;
 
                 UpdateIcon();
@@ -1028,18 +1041,20 @@ namespace ControllerHelper
 
                 switch (HIDmode)
                 {
-                    case HIDmode.DualShock4Controller:
+                    case HIDmode.None:
                         myIcon = ServiceManager.status == ServiceControllerStatus.Running ? Properties.Resources.HID0StatusIconOn : Properties.Resources.HID0StatusIconOff;
                         break;
-                    case HIDmode.Xbox360Controller:
+                    case HIDmode.DualShock4Controller:
                         myIcon = ServiceManager.status == ServiceControllerStatus.Running ? Properties.Resources.HID1StatusIconOn : Properties.Resources.HID1StatusIconOff;
                         break;
-                    case HIDmode.None:
-                        myIcon = Properties.Resources.LogoApplicationIcon;
+                    case HIDmode.Xbox360Controller:
+                        myIcon = ServiceManager.status == ServiceControllerStatus.Running ? Properties.Resources.HID2StatusIconOn : Properties.Resources.HID2StatusIconOff;
                         break;
                 }
 
+                // Application icon, indicates controller and service status
                 this.Icon = myIcon;
+                // Tray icon, indicates controller and service status
                 this.notifyIcon1.Icon = myIcon;
             });
         }
