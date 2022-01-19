@@ -870,7 +870,7 @@ namespace ControllerHelper
             // update UI icon to match HIDmode
             BeginInvoke((MethodInvoker)delegate ()
             {
-                Bitmap myImage = new(1,1);
+                Bitmap myImage = new(1, 1);
 
                 switch (HIDmode)
                 {
@@ -883,7 +883,7 @@ namespace ControllerHelper
                     case HIDmode.None:
                         break;
                 }
-                
+
                 // Update image next to dropdown selection
                 this.pB_HidMode.BackgroundImage = myImage;
 
