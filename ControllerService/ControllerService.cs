@@ -2,6 +2,7 @@
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 using Nefarius.ViGEm.Client;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
@@ -115,20 +116,8 @@ namespace ControllerService
                 throw new InvalidOperationException();
             }
 
-            var Gyrometer = new XInputGirometer(XInputController, logger);
-            if (Gyrometer.sensor == null)
-                logger.LogWarning("No Gyrometer detected");
-            XInputController.SetGyroscope(Gyrometer);
-
-            var Accelerometer = new XInputAccelerometer(XInputController, logger);
-            if (Accelerometer.sensor == null)
-                logger.LogWarning("No Accelerometer detected");
-            XInputController.SetAccelerometer(Accelerometer);
-
-            var Inclinometer = new XInputInclinometer(XInputController, logger);
-            if (Inclinometer.sensor == null)
-                logger.LogWarning("No Inclinometer detected");
-            XInputController.SetInclinometer(Inclinometer);
+            // initialize sensors
+            UpdateSensors();
 
             // XInputController settings
             XInputController.SetVibrationStrength(HIDstrength);
@@ -151,12 +140,31 @@ namespace ControllerService
             profileManager.Updated += ProfileUpdated;
         }
 
-        private void UpdateVirtualController(HIDmode mode)
+        private void UpdateSensors()
+        {
+            var Gyrometer = new XInputGirometer(XInputController, logger);
+            if (Gyrometer.sensor == null)
+                logger.LogWarning("No Gyrometer detected");
+            XInputController.SetGyroscope(Gyrometer);
+
+            var Accelerometer = new XInputAccelerometer(XInputController, logger);
+            if (Accelerometer.sensor == null)
+                logger.LogWarning("No Accelerometer detected");
+            XInputController.SetAccelerometer(Accelerometer);
+
+            var Inclinometer = new XInputInclinometer(XInputController, logger);
+            if (Inclinometer.sensor == null)
+                logger.LogWarning("No Inclinometer detected");
+            XInputController.SetInclinometer(Inclinometer);
+        }
+
+        private void OnVirtualControllerChange(HIDmode mode)
         {
             VirtualTarget?.Disconnect();
 
             switch (mode)
             {
+                default:
                 case HIDmode.None:
                     VirtualTarget = null;
                     break;
@@ -175,10 +183,10 @@ namespace ControllerService
             }
 
             VirtualTarget.Connected += OnTargetConnected;
-            // VirtualTarget.Disconnected += OnTargetDisconnected;
+            VirtualTarget.Disconnected += OnTargetDisconnected;
 
             XInputController.SetViGEmTarget(VirtualTarget);
-            XInputController.virtualTarget?.Connect();
+            VirtualTarget?.Connect();
         }
 
         private void OnTargetDisconnected(ViGEmTarget target)
@@ -372,7 +380,7 @@ namespace ControllerService
                         HIDuncloakonclose = (bool)value;
                         break;
                     case "HIDmode":
-                        UpdateVirtualController((HIDmode)value);
+                        OnVirtualControllerChange((HIDmode)value);
                         break;
                     case "HIDrate":
                         XInputController.SetPollRate((int)value);
@@ -410,7 +418,7 @@ namespace ControllerService
             if (DSUEnabled) DSUServer.Start();
 
             // update virtual controller
-            UpdateVirtualController(HIDmode);
+            OnVirtualControllerChange(HIDmode);
 
             // start Pipe Server
             pipeServer.Start();
@@ -427,17 +435,11 @@ namespace ControllerService
             // turn off cloaking
             Hidder?.SetCloaking(!HIDuncloakonclose);
 
-            try
-            {
-                if (XInputController.virtualTarget != null)
-                {
-                    // disconnect virtual controller
-                    XInputController.virtualTarget.Disconnected += OnTargetDisconnected;
-                    XInputController.virtualTarget.Disconnect();
-                    logger.LogInformation("Virtual {0} disconnected", XInputController.virtualTarget);
-                }
-            }
-            catch (Exception) { }
+            // update virtual controller
+            OnVirtualControllerChange(HIDmode.None);
+
+            // stop listening to system events
+            SystemEvents.PowerModeChanged -= OnPowerChange;
 
             // stop DSUClient
             DSUServer?.Stop();
@@ -446,6 +448,19 @@ namespace ControllerService
             pipeServer?.Stop();
 
             return Task.CompletedTask;
+        }
+
+        private void OnPowerChange(object s, PowerModeChangedEventArgs e)
+        {
+            switch (e.Mode)
+            {
+                case PowerModes.Resume:
+                    // (re)initialize sensors
+                    UpdateSensors();
+                    break;
+                case PowerModes.Suspend:
+                    break;
+            }
         }
 
         private void OnStarted()
