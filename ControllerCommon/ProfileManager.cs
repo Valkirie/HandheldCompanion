@@ -194,8 +194,7 @@ namespace ControllerCommon
 
         public void UpdateProfileCloaking(Profile profile)
         {
-            string directory = Path.GetDirectoryName(profile.fullpath);
-            if (!Directory.Exists(directory))
+            if (profile.error == ProfileErrorCode.MissingExecutable || profile.error == ProfileErrorCode.MissingPath)
                 return;
 
             if (profile.whitelisted)
