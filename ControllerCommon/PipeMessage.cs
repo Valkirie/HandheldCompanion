@@ -107,8 +107,8 @@ namespace ControllerCommon
     [Serializable]
     public enum CursorAction
     {
-        CursorDown = 0,
-        CursorUp = 1,
+        CursorUp = 0,
+        CursorDown = 1,
         CursorMove = 2
     }
 

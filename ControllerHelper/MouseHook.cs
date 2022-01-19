@@ -69,7 +69,7 @@ namespace ControllerHelper
         {
             client.SendMessage(new PipeClientCursor
             {
-                action = 0, // up
+                action = CursorAction.CursorUp,
                 x = m_MouseUp.X,
                 y = m_MouseUp.Y,
                 button = m_MouseUp.Button
