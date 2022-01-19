@@ -90,9 +90,9 @@ namespace ControllerHelper
             {
                 if (diff < SystemInformation.DoubleClickTime && dist < SystemInformation.DoubleClickSize.Width * 5)
                     isDoubleClick = true;
+                else
+                    m_Events.MouseMoveExt += OnMouseMove;
             }
-            else
-                m_Events.MouseMoveExt += OnMouseMove;
 
             client.SendMessage(new PipeClientCursor
             {
