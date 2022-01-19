@@ -16,7 +16,7 @@ namespace ControllerCommon
             { true, 0x1e9df650 },
         };
 
-        public Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
+        public Dictionary<string, Profile> profiles = new Dictionary<string, Profile>(StringComparer.InvariantCultureIgnoreCase);
         public FileSystemWatcher profileWatcher { get; set; }
 
         public event DeletedEventHandler Deleted;
