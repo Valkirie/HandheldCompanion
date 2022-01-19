@@ -427,6 +427,9 @@ namespace ControllerService
             profileManager.Start("Default.json");
             profileManager.Stop();
 
+            // listen to system events
+            SystemEvents.PowerModeChanged += OnPowerChange;
+
             return Task.CompletedTask;
         }
 
