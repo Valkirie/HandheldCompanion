@@ -52,6 +52,10 @@ namespace ControllerCommon
             try
             {
                 var foregroundProcessID = WinAPIFunctions.GetforegroundWindow();
+
+                if (foregroundProcessID == IntPtr.Zero)
+                    return;
+
                 Process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPIFunctions.GetWindowProcessId(foregroundProcessID));
 
                 // Get real process
