@@ -14,6 +14,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using WindowsHook;
 
 namespace ControllerService
 {
@@ -241,13 +242,13 @@ namespace ControllerService
 
                     switch (cursor.action)
                     {
-                        case 0: // up
+                        case CursorAction.CursorUp:
                             XInputController.Touch.OnMouseUp((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
-                        case 1: // down
+                        case CursorAction.CursorDown:
                             XInputController.Touch.OnMouseDown((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
-                        case 2: // move
+                        case CursorAction.CursorMove:
                             XInputController.Touch.OnMouseMove((short)cursor.x, (short)cursor.y, cursor.button);
                             break;
                     }
@@ -281,7 +282,7 @@ namespace ControllerService
 
         private void OnClientDisconnected(object sender)
         {
-            XInputController.Touch.OnMouseUp(-1, -1, 1048576 /* MouseButtons.Left */);
+            XInputController.Touch.OnMouseUp(-1, -1, MouseButtons.Left);
         }
 
         private void OnClientConnected(object sender)

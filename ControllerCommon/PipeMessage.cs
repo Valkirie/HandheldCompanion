@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using WindowsHook;
 
 namespace ControllerCommon
 {
@@ -104,12 +105,20 @@ namespace ControllerCommon
     }
 
     [Serializable]
+    public enum CursorAction
+    {
+        CursorDown = 0,
+        CursorUp = 1,
+        CursorMove = 2
+    }
+
+    [Serializable]
     public partial class PipeClientCursor : PipeMessage
     {
-        public int action; // 0 = up, 1 = down, 2 = move
+        public CursorAction action;
         public float x;
         public float y;
-        public int button;
+        public MouseButtons button;
 
         public PipeClientCursor()
         {

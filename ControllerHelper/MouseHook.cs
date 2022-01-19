@@ -1,5 +1,6 @@
 ﻿using ControllerCommon;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
@@ -16,27 +17,28 @@ namespace ControllerHelper
             public float X;
             public float Y;
             public MouseButtons Button;
+            public int Timestamp;
         }
 
         private IKeyboardMouseEvents m_Events;
         private Thread m_Hook;
         private Timer m_Timer;
+        private bool isDoubleClick;
 
         private readonly PipeClient client;
-        private readonly ControllerHelper helper;
         private readonly ILogger logger;
 
-        private TouchInput TouchPos;
+        private TouchInput m_MouseUp;
+
         public bool hooked;
 
-        public MouseHook(PipeClient client, ControllerHelper helper, ILogger logger)
+        public MouseHook(PipeClient client, ILogger logger)
         {
             this.client = client;
-            this.helper = helper;
             this.logger = logger;
 
-            // send MouseUp after default interval (40ms)
-            m_Timer = new Timer() { Enabled = false, Interval = 40, AutoReset = false };
+            // send MouseUp after default interval (20ms)
+            m_Timer = new Timer() { Enabled = false, Interval = 20, AutoReset = false };
             m_Timer.Elapsed += SendMouseUp;
         }
 
@@ -68,9 +70,9 @@ namespace ControllerHelper
             client.SendMessage(new PipeClientCursor
             {
                 action = 0, // up
-                x = TouchPos.X,
-                y = TouchPos.Y,
-                button = (int)TouchPos.Button
+                x = m_MouseUp.X,
+                y = m_MouseUp.Y,
+                button = m_MouseUp.Button
             });
         }
 
@@ -79,15 +81,25 @@ namespace ControllerHelper
             if (m_Events == null)
                 return;
 
-            m_Events.MouseMoveExt += OnMouseMove;
             m_Timer.Stop();
+
+            var dist = Math.Abs(e.X - m_MouseUp.X);
+            var diff = e.Timestamp - m_MouseUp.Timestamp;
+
+            if (m_MouseUp.Button == e.Button)
+            {
+                if (diff < SystemInformation.DoubleClickTime && dist < SystemInformation.DoubleClickSize.Width * 5)
+                    isDoubleClick = true;
+            }
+            else
+                m_Events.MouseMoveExt += OnMouseMove;
 
             client.SendMessage(new PipeClientCursor
             {
-                action = 1, // down
+                action = CursorAction.CursorDown,
                 x = e.X,
                 y = e.Y,
-                button = (int)e.Button
+                button = isDoubleClick ? MouseButtons.Right : e.Button
             });
 
             logger.LogDebug("OnMouseDown x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
@@ -97,10 +109,10 @@ namespace ControllerHelper
         {
             client.SendMessage(new PipeClientCursor
             {
-                action = 2, // move
+                action = CursorAction.CursorMove,
                 x = e.X,
                 y = e.Y,
-                button = (int)e.Button
+                button = e.Button
             });
 
             logger.LogDebug("OnMouseMove x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
@@ -113,15 +125,18 @@ namespace ControllerHelper
 
             m_Events.MouseMoveExt -= OnMouseMove;
 
-            TouchPos = new TouchInput()
+            m_MouseUp = new TouchInput()
             {
                 X = e.X,
                 Y = e.Y,
-                Button = e.Button
+                Button = isDoubleClick ? MouseButtons.Right : e.Button,
+                Timestamp = e.Timestamp
             };
             logger.LogDebug("OnMouseUp x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
 
             m_Timer.Start();
+
+            isDoubleClick = false;
         }
 
         internal void Stop()

@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using MouseButtons = WindowsHook.MouseButtons;
 
 namespace ControllerService
 {
@@ -53,7 +54,7 @@ namespace ControllerService
             RatioHeight = (float)TOUCHPAD_HEIGHT / BoundsHeight;
         }
 
-        public void OnMouseUp(short X, short Y, int Button)
+        public void OnMouseUp(short X, short Y, MouseButtons Button)
         {
             if (X != -1) TouchX = (short)(X * RatioWidth);
             if (Y != -1) TouchY = (short)(Y * RatioHeight);
@@ -64,7 +65,7 @@ namespace ControllerService
             TrackPadTouch0.Y = TouchY;
             //TrackPadTouch1.Y = TouchY;
 
-            if (Button == 2097152) // MouseButtons.Right
+            if (Button == MouseButtons.Right)
                 OutputClickButton = false;
 
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID + TOUCH_DISABLE;
@@ -73,7 +74,7 @@ namespace ControllerService
             TouchPacketCounter++;
         }
 
-        public void OnMouseDown(short X, short Y, int Button)
+        public void OnMouseDown(short X, short Y, MouseButtons Button)
         {
             TouchX = (short)(X * RatioWidth);
             TouchY = (short)(Y * RatioHeight);
@@ -84,14 +85,14 @@ namespace ControllerService
             TrackPadTouch0.Y = TouchY;
             //TrackPadTouch1.Y = TouchY;
 
-            if (Button == 2097152) // MouseButtons.Right
+            if (Button == MouseButtons.Right)
                 OutputClickButton = true;
 
             TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
             //TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
         }
 
-        public void OnMouseMove(short X, short Y, int Button)
+        public void OnMouseMove(short X, short Y, MouseButtons Button)
         {
             TouchX = (short)(X * RatioWidth);
             TouchY = (short)(Y * RatioHeight);

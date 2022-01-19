@@ -116,7 +116,7 @@ namespace ControllerHelper
             cmdParser = new CmdParser(pipeClient, this, logger);
 
             // initialize mouse hook
-            m_Hook = new MouseHook(pipeClient, this, logger);
+            m_Hook = new MouseHook(pipeClient, logger);
 
             // initialize Service Manager
             ServiceManager = new ServiceManager("ControllerService", strings.ServiceName, strings.ServiceDescription, logger);
