@@ -29,6 +29,7 @@ namespace ControllerHelper
         private readonly ILogger logger;
 
         private TouchInput m_MouseUp;
+        private ushort m_MouseMove;
 
         public bool hooked;
 
@@ -107,6 +108,12 @@ namespace ControllerHelper
 
         private void OnMouseMove(object sender, MouseEventExtArgs e)
         {
+            m_MouseMove++;
+
+            // reduce CPU usage by moving pointer every 10 px
+            if (m_MouseMove % 10 != 0)
+                return;
+
             client.SendMessage(new PipeClientCursor
             {
                 action = CursorAction.CursorMove,
