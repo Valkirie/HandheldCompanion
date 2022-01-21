@@ -36,6 +36,15 @@ namespace ControllerHelper
 
             [Option("trigger", Required = false)]
             public int trigger { get; set; }
+
+            [Option("steering", Required = false)]
+            public int steering { get; set; }                   // 0 = Roll, 1 = Yaw          
+
+            [Option("inverthorizontal", Required = false)]
+            public bool inverthorizontal { get; set; }          // if true, invert horizontal axis
+
+            [Option("invertvertical", Required = false)]
+            public bool invertvertical { get; set; }            // if false, invert vertical axis
         }
 
         public enum ProfileServiceAction
