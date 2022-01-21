@@ -151,11 +151,11 @@ namespace ControllerService.Targets
                     {
                         default:
                         case InputStyle.RightStick:
-                            RightThumbX = Utils.ComputeInput(RightThumbX, -xinputController.AngularVelocity.Z * 1.25f, sensivity, intensity);
+                            RightThumbX = Utils.ComputeInput(RightThumbX, -xinputController.AngularVelocity.Z, sensivity, intensity);
                             RightThumbY = Utils.ComputeInput(RightThumbY, xinputController.AngularVelocity.X, sensivity, intensity);
                             break;
                         case InputStyle.LeftStick:
-                            LeftThumbX = Utils.ComputeInput(LeftThumbX, -xinputController.AngularVelocity.Z * 1.25f, sensivity, intensity);
+                            LeftThumbX = Utils.ComputeInput(LeftThumbX, -xinputController.AngularVelocity.Z, sensivity, intensity);
                             LeftThumbY = Utils.ComputeInput(LeftThumbY, xinputController.AngularVelocity.X, sensivity, intensity);
                             break;
                     }
