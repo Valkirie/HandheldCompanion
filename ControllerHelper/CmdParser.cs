@@ -63,6 +63,9 @@ namespace ControllerHelper
             profile.whitelisted = option.whitelist;
             profile.umc_trigger = (GamepadButtonFlags)option.trigger;
             profile.umc_input = (InputStyle)option.input;
+            profile.steering = option.steering;
+            profile.inverthorizontal = option.inverthorizontal;
+            profile.invertvertical = option.invertvertical;
 
             helper.ProfileManager.UpdateProfile(profile);
             helper.ProfileManager.SerializeProfile(profile);
