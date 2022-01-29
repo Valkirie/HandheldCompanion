@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
 using SharpDX.DirectInput;
@@ -29,6 +29,7 @@ namespace ControllerService
         public Timer AngularVelocityTimer;
 
         public Timer UpdateTimer;
+        public float WidhtHeightRatio = 2.5f;
         public float vibrationStrength = 100.0f;
         public int updateInterval = 10;
 
