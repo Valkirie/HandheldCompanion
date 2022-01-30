@@ -1,4 +1,4 @@
-using ControllerCommon;
+﻿using ControllerCommon;
 using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
 using SharpDX.DirectInput;
@@ -170,6 +170,11 @@ namespace ControllerService
         public void SetInclinometer(XInputInclinometer inclinometer)
         {
             Inclinometer = inclinometer;
+        }
+        public void SetWidthHeightRatio(int ratio)
+        {
+            WidhtHeightRatio = ((float) ratio) / 10;
+            logger.LogInformation("Device width height ratio set to {0}", WidhtHeightRatio);
         }
 
         public void SetPollRate(int HIDrate)
