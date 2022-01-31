@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.TaskScheduler;
 using System;
@@ -461,6 +461,9 @@ namespace ControllerHelper
                         case "accelerometer":
                             cB_accelero.Checked = bool.Parse(args[name]);
                             break;
+                        case "DeviceWidthHeightRatio":
+                            tB_DeviceWidthHeightRatio.Value = int.Parse(args[name]);
+                            break;
                         case "HIDrate":
                             tB_PullRate.Value = int.Parse(args[name]);
                             break;
@@ -503,6 +506,19 @@ namespace ControllerHelper
                 tB_InstanceID.Text = con.InstanceGuid.ToString();
                 tB_ProductID.Text = con.ProductGuid.ToString();
             });
+        }
+
+        private void tB_DeviceWidthHeightRatio_Scroll(object sender, EventArgs e)
+        {
+            float value = tB_DeviceWidthHeightRatio.Value / 10.0f;
+
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                toolTip1.SetToolTip(tB_DeviceWidthHeightRatio, $"Ratio: {value}");
+            });
+
+            PipeClientSettings settings = new PipeClientSettings("DeviceWidthHeightRatio", tB_DeviceWidthHeightRatio.Value);
+            pipeClient.SendMessage(settings);
         }
 
         private void tB_DeviceWidthHeightRatio_Scroll(object sender, EventArgs e)

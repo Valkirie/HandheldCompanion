@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Numerics;
 using Windows.Devices.Sensors;
@@ -60,6 +60,8 @@ namespace ControllerService
             if (xinput.virtualTarget != null)
             {
                 this.reading *= xinput.profile.gyrometer;
+
+                this.reading.Y *= xinput.WidhtHeightRatio;
 
                 this.reading.Z = xinput.profile.steering == 0 ? readingZ : readingY;
                 this.reading.Y = xinput.profile.steering == 0 ? readingY : readingZ;
