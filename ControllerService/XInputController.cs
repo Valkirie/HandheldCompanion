@@ -173,7 +173,7 @@ namespace ControllerService
         }
         public void SetWidthHeightRatio(int ratio)
         {
-            WidhtHeightRatio = ((float) ratio) / 10;
+            WidhtHeightRatio = ((float)ratio) / 10;
             logger.LogInformation("Device width height ratio set to {0}", WidhtHeightRatio);
         }
 

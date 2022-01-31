@@ -39,6 +39,8 @@ namespace ControllerHelper
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabDevices = new System.Windows.Forms.TabPage();
             this.gB_DeviceDetails = new System.Windows.Forms.GroupBox();
+            this.lb_DeviceWidthHeightRatio = new System.Windows.Forms.Label();
+            this.tB_DeviceWidthHeightRatio = new System.Windows.Forms.TrackBar();
             this.cB_touchpad = new System.Windows.Forms.CheckBox();
             this.lb_touchpad = new System.Windows.Forms.Label();
             this.lb_gyro = new System.Windows.Forms.Label();
@@ -132,12 +134,11 @@ namespace ControllerHelper
             this.pB_About = new System.Windows.Forms.PictureBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.tB_DeviceWidthHeightRatio = new System.Windows.Forms.TrackBar();
-            this.lb_DeviceWidthHeightRatio = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabDevices.SuspendLayout();
             this.gB_DeviceDetails.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tB_DeviceWidthHeightRatio)).BeginInit();
             this.gB_HIDDetails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pB_HidMode)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tB_VibrationStr)).BeginInit();
@@ -161,7 +162,6 @@ namespace ControllerHelper
             this.gb_SettingsInterface.SuspendLayout();
             this.tabAbout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pB_About)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tB_DeviceWidthHeightRatio)).BeginInit();
             this.SuspendLayout();
             // 
             // notifyIcon1
@@ -217,6 +217,22 @@ namespace ControllerHelper
             resources.ApplyResources(this.gB_DeviceDetails, "gB_DeviceDetails");
             this.gB_DeviceDetails.Name = "gB_DeviceDetails";
             this.gB_DeviceDetails.TabStop = false;
+            // 
+            // lb_DeviceWidthHeightRatio
+            // 
+            resources.ApplyResources(this.lb_DeviceWidthHeightRatio, "lb_DeviceWidthHeightRatio");
+            this.lb_DeviceWidthHeightRatio.Name = "lb_DeviceWidthHeightRatio";
+            // 
+            // tB_DeviceWidthHeightRatio
+            // 
+            resources.ApplyResources(this.tB_DeviceWidthHeightRatio, "tB_DeviceWidthHeightRatio");
+            this.tB_DeviceWidthHeightRatio.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
+            this.tB_DeviceWidthHeightRatio.Maximum = 40;
+            this.tB_DeviceWidthHeightRatio.Minimum = 1;
+            this.tB_DeviceWidthHeightRatio.Name = "tB_DeviceWidthHeightRatio";
+            this.tB_DeviceWidthHeightRatio.TickFrequency = 2;
+            this.tB_DeviceWidthHeightRatio.Value = 25;
+            this.tB_DeviceWidthHeightRatio.ValueChanged += new System.EventHandler(this.tB_DeviceWidthHeightRatio_Scroll);
             // 
             // cB_touchpad
             // 
@@ -912,22 +928,6 @@ namespace ControllerHelper
             this.toolTip1.InitialDelay = 100;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // tB_DeviceWidthHeightRatio
-            // 
-            resources.ApplyResources(this.tB_DeviceWidthHeightRatio, "tB_DeviceWidthHeightRatio");
-            this.tB_DeviceWidthHeightRatio.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
-            this.tB_DeviceWidthHeightRatio.Maximum = 40;
-            this.tB_DeviceWidthHeightRatio.Minimum = 1;
-            this.tB_DeviceWidthHeightRatio.Name = "tB_DeviceWidthHeightRatio";
-            this.tB_DeviceWidthHeightRatio.TickFrequency = 2;
-            this.tB_DeviceWidthHeightRatio.Value = 25;
-            this.tB_UMCSensivity.Scroll += new System.EventHandler(this.tB_DeviceWidthHeightRatio_Scroll);
-            // 
-            // lb_DeviceWidthHeightRatio
-            // 
-            resources.ApplyResources(this.lb_DeviceWidthHeightRatio, "lb_DeviceWidthHeightRatio");
-            this.lb_DeviceWidthHeightRatio.Name = "lb_DeviceWidthHeightRatio";
-            // 
             // ControllerHelper
             // 
             resources.ApplyResources(this, "$this");
@@ -944,6 +944,7 @@ namespace ControllerHelper
             this.tabDevices.ResumeLayout(false);
             this.gB_DeviceDetails.ResumeLayout(false);
             this.gB_DeviceDetails.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tB_DeviceWidthHeightRatio)).EndInit();
             this.gB_HIDDetails.ResumeLayout(false);
             this.gB_HIDDetails.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pB_HidMode)).EndInit();
@@ -977,7 +978,6 @@ namespace ControllerHelper
             this.tabAbout.ResumeLayout(false);
             this.tabAbout.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pB_About)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tB_DeviceWidthHeightRatio)).EndInit();
             this.ResumeLayout(false);
 
         }
