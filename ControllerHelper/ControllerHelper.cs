@@ -239,8 +239,10 @@ namespace ControllerHelper
             if (!IsElevated)
             {
                 // disable service control
+                gb_SettingsService.SuspendLayout();
                 foreach (Control ctrl in gb_SettingsService.Controls)
                     ctrl.Enabled = false;
+                gb_SettingsService.ResumeLayout();
 
                 // display warning message
                 toolTip1.SetToolTip(cB_RunAtStartup, strings.WarningElevated);
@@ -716,7 +718,7 @@ namespace ControllerHelper
                 {
                     // disable button if is default profile
                     b_DeleteProfile.Enabled = !CurrentProfile.IsDefault;
-                    cB_Whitelist.Enabled = !CurrentProfile.IsDefault;
+                    cB_Whitelist.Enabled = !cB_UniversalMC.Checked && !CurrentProfile.IsDefault; // can't be ticked is UMC is ticked
                     cB_Wrapper.Enabled = !CurrentProfile.IsDefault;
 
                     // error code specific behavior
@@ -757,7 +759,7 @@ namespace ControllerHelper
                     cB_InvertHAxis.Checked = CurrentProfile.inverthorizontal;
                     cB_InvertVAxis.Checked = CurrentProfile.invertvertical;
 
-                    cB_UniversalMC.Checked = CurrentProfile.umc_enabled;
+                    cB_UniversalMC.Checked = CurrentProfile.umc_enabled && !cB_Whitelist.Checked; // can't be ticked is passthrough is ticked
                     cB_UMCInputStyle.SelectedIndex = (int)CurrentProfile.umc_input;
                     tB_UMCSensivity.Value = (int)CurrentProfile.umc_sensivity;
                     tB_UMCIntensity.Value = (int)CurrentProfile.umc_intensity;
@@ -1012,6 +1014,9 @@ namespace ControllerHelper
                 UpdateIcon();
 
                 gb_SettingsService.SuspendLayout();
+
+                // disable service control if not elevated
+                status = IsElevated ? status : ServiceControllerStatus.ContinuePending;
 
                 switch (status)
                 {
