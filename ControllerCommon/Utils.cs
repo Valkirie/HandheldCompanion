@@ -13,7 +13,6 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using Windows.System.Diagnostics;
-using Timer = System.Timers.Timer;
 
 namespace ControllerCommon
 {
@@ -121,7 +120,9 @@ namespace ControllerCommon
 
     public class ToastManager
     {
-        private Thread m_Thread;
+        private const int m_Interval = 5000;
+        private int m_Timer;
+
         private string m_Group;
         public bool Enabled;
 
@@ -145,23 +146,27 @@ namespace ControllerCommon
                 .AddText(content)
                 .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
                 .SetToastScenario(ToastScenario.Default)
-                .Schedule(DeliveryTime, toast =>
+                .Show(toast =>
                 {
                     toast.Tag = title;
                     toast.Group = m_Group;
                 });
 
-            m_Thread = new Thread(ClearHistory);
-            m_Thread.Start(new string[] { title, m_Group });
+            m_Timer += m_Interval; // remove toast after 5 seconds (incremental)
+
+            var thread = new Thread(ClearHistory);
+            thread.Start(new string[] { title, m_Group });
         }
 
         private void ClearHistory(object obj)
         {
-            Thread.Sleep(5000); // remove toast after 5 seconds
+            Thread.Sleep(m_Timer);
             string[] array = (string[])obj;
             string tag = array[0];
             string group = array[1];
             ToastNotificationManagerCompat.History.Remove(tag, group);
+
+            m_Timer -= m_Interval;
         }
     }
 
