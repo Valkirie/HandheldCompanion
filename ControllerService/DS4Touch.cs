@@ -11,8 +11,8 @@ namespace ControllerService
         private const int TOUCHPAD_WIDTH = 1920;
         private const int TOUCHPAD_HEIGHT = 943;
 
-        private const int TOUCH0_ID = 126;
-        private const int TOUCH1_ID = 127;
+        private const int TOUCH0_ID = 1;
+        private const int TOUCH1_ID = 2;
         private const int TOUCH_DISABLE = 128;
 
         public struct TrackPadTouch
@@ -21,7 +21,7 @@ namespace ControllerService
             public byte Id;
             public short X;
             public short Y;
-            public byte RawTrackingNum;
+            public int RawTrackingNum;
         }
 
         public TrackPadTouch TrackPadTouch0;
@@ -39,10 +39,8 @@ namespace ControllerService
             UpdateRatio(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
             // default values
-            TrackPadTouch0.RawTrackingNum = TOUCH0_ID + TOUCH_DISABLE;
-            TrackPadTouch1.RawTrackingNum = TOUCH1_ID + TOUCH_DISABLE;
-
-            TouchPacketCounter++;
+            TrackPadTouch0.RawTrackingNum |= TOUCH0_ID + TOUCH_DISABLE;
+            TrackPadTouch1.RawTrackingNum |= TOUCH1_ID + TOUCH_DISABLE;
         }
 
         public void UpdateRatio(float w, float h)
@@ -56,22 +54,20 @@ namespace ControllerService
 
         public void OnMouseUp(short X, short Y, MouseButtons Button)
         {
-            if (X != -1) TouchX = (short)(X * RatioWidth);
-            if (Y != -1) TouchY = (short)(Y * RatioHeight);
+            TouchX = (short)(X * RatioWidth);
+            TouchY = (short)(Y * RatioHeight);
 
             TrackPadTouch0.X = TouchX;
-            //TrackPadTouch1.X = TouchX;
-
             TrackPadTouch0.Y = TouchY;
-            //TrackPadTouch1.Y = TouchY;
+
+            // TrackPadTouch1.X = TouchX;
+            // TrackPadTouch1.Y = TouchY;
 
             if (Button == MouseButtons.Right)
                 OutputClickButton = false;
 
-            TrackPadTouch0.RawTrackingNum = TOUCH0_ID + TOUCH_DISABLE;
-            //TrackPadTouch1.RawTrackingNum = TOUCH1_ID + TOUCH_DISABLE;
-
-            TouchPacketCounter++;
+            TrackPadTouch0.RawTrackingNum |= TOUCH_DISABLE;
+            // TrackPadTouch1.RawTrackingNum |= TOUCH_DISABLE;
         }
 
         public void OnMouseDown(short X, short Y, MouseButtons Button)
@@ -80,16 +76,18 @@ namespace ControllerService
             TouchY = (short)(Y * RatioHeight);
 
             TrackPadTouch0.X = TouchX;
-            //TrackPadTouch1.X = TouchX;
-
             TrackPadTouch0.Y = TouchY;
-            //TrackPadTouch1.Y = TouchY;
+
+            // TrackPadTouch1.X = TouchX;
+            // TrackPadTouch1.Y = TouchY;
 
             if (Button == MouseButtons.Right)
                 OutputClickButton = true;
 
-            TrackPadTouch0.RawTrackingNum = TOUCH0_ID;
-            //TrackPadTouch1.RawTrackingNum = TOUCH1_ID;
+            TrackPadTouch0.RawTrackingNum &= ~TOUCH_DISABLE;
+            // TrackPadTouch1.RawTrackingNum &= ~TOUCH_DISABLE;
+
+            TouchPacketCounter++;
         }
 
         public void OnMouseMove(short X, short Y, MouseButtons Button)
@@ -99,6 +97,9 @@ namespace ControllerService
 
             TrackPadTouch0.X = TouchX;
             TrackPadTouch0.Y = TouchY;
+
+            // TrackPadTouch1.X = TouchX;
+            // TrackPadTouch1.Y = TouchY;
 
             /* switch (TouchPacketCounter % 2)
             {
@@ -111,8 +112,6 @@ namespace ControllerService
                     TrackPadTouch1.Y = TouchY;
                     break;
             } */
-
-            TouchPacketCounter++;
         }
     }
 }

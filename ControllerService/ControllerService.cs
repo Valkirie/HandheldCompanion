@@ -292,7 +292,8 @@ namespace ControllerService
 
         private void OnClientDisconnected(object sender)
         {
-            XInputController.Touch.OnMouseUp(-1, -1, MouseButtons.Left);
+            XInputController.Touch.OnMouseUp(0, 0, MouseButtons.Left);
+            XInputController.Touch.OnMouseUp(0, 0, MouseButtons.Right);
         }
 
         private void OnClientConnected(object sender)

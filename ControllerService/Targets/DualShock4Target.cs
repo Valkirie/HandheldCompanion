@@ -189,13 +189,13 @@ namespace ControllerService.Targets
                 {
                     outDS4Report.bTouchPacketsN = 0x01;
                     outDS4Report.sCurrentTouch.bPacketCounter = Touch.TouchPacketCounter;
-                    outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = Touch.TrackPadTouch0.RawTrackingNum;
+                    outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = (byte)Touch.TrackPadTouch0.RawTrackingNum;
                     outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(Touch.TrackPadTouch0.X & 0xFF);
                     outDS4Report.sCurrentTouch.bTouchData1[1] =
                         (byte)(((Touch.TrackPadTouch0.X >> 8) & 0x0F) | ((Touch.TrackPadTouch0.Y << 4) & 0xF0));
                     outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(Touch.TrackPadTouch0.Y >> 4);
 
-                    outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = Touch.TrackPadTouch1.RawTrackingNum;
+                    outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = (byte)Touch.TrackPadTouch1.RawTrackingNum;
                     outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(Touch.TrackPadTouch1.X & 0xFF);
                     outDS4Report.sCurrentTouch.bTouchData2[1] =
                         (byte)(((Touch.TrackPadTouch1.X >> 8) & 0x0F) | ((Touch.TrackPadTouch1.Y << 4) & 0xF0));
