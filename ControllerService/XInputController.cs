@@ -29,6 +29,7 @@ namespace ControllerService
         public Timer AngularVelocityTimer;
 
         public Timer UpdateTimer;
+        public float WidhtHeightRatio = 2.5f;
         public float vibrationStrength = 100.0f;
         public int updateInterval = 10;
 
@@ -169,6 +170,11 @@ namespace ControllerService
         public void SetInclinometer(XInputInclinometer inclinometer)
         {
             Inclinometer = inclinometer;
+        }
+        public void SetWidthHeightRatio(int ratio)
+        {
+            WidhtHeightRatio = ((float)ratio) / 10;
+            logger.LogInformation("Device width height ratio set to {0}", WidhtHeightRatio);
         }
 
         public void SetPollRate(int HIDrate)
