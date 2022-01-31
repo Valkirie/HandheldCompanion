@@ -40,6 +40,7 @@ namespace ControllerHelper
         public static Controller CurrentController;
 
         private MouseHook m_Hook;
+        private ToastManager m_ToastManager;
 
         private FormWindowState prevWindowState;
         private object updateLock = new();
@@ -118,6 +119,9 @@ namespace ControllerHelper
             // initialize mouse hook
             m_Hook = new MouseHook(pipeClient, logger);
 
+            // initialize toast manager
+            m_ToastManager = new ToastManager("ControllerService");
+
             // initialize Service Manager
             ServiceManager = new ServiceManager("ControllerService", strings.ServiceName, strings.ServiceDescription, logger);
             ServiceManager.Updated += UpdateService;
@@ -155,7 +159,7 @@ namespace ControllerHelper
                 }
                 else
                 {
-                    Utils.SendToast(strings.ToastTitle, strings.ToastInitialization);
+                    m_ToastManager.SendToast(strings.ToastTitle, strings.ToastInitialization);
                 }
             }
         }
@@ -196,7 +200,7 @@ namespace ControllerHelper
 
                 case PipeCode.SERVER_TOAST:
                     PipeServerToast toast = (PipeServerToast)message;
-                    Utils.SendToast(toast.title, toast.content, toast.image);
+                    m_ToastManager.SendToast(toast.title, toast.content, toast.image);
                     break;
 
                 case PipeCode.SERVER_CONTROLLER:

@@ -11,7 +11,9 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using Windows.System.Diagnostics;
+using Timer = System.Timers.Timer;
 
 namespace ControllerCommon
 {
@@ -117,6 +119,50 @@ namespace ControllerCommon
         AlwaysOn = 65536        // specific
     }
 
+    public class ToastManager
+    {
+        private Timer m_Timer;
+        private string m_Group;
+        public bool Enabled;
+
+        public ToastManager(string group)
+        {
+            m_Group = group;
+
+            // clear after 10 seconds
+            m_Timer = new Timer() { Enabled = false, Interval = 10000, AutoReset = false };
+            m_Timer.Elapsed += ClearHistory;
+        }
+
+        private void ClearHistory(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            m_Timer.Interval = 5000;
+            ToastNotificationManagerCompat.History.RemoveGroup(m_Group);
+        }
+
+        public void SendToast(string title, string content, string img = "Toast")
+        {
+            if (!Enabled)
+                return;
+
+            string url = $"file:///{AppDomain.CurrentDomain.BaseDirectory}Resources\\{img}.png";
+            var uri = new Uri(url);
+
+            new ToastContentBuilder()
+                .AddText(title)
+                .AddText(content)
+                .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
+                .SetToastScenario(ToastScenario.Default)
+                .Schedule(DateTime.Now.AddMilliseconds(100), toast =>
+                {
+                    toast.Tag = title;
+                    toast.Group = m_Group;
+                });
+
+            m_Timer.Start();
+        }
+    }
+
     public static class Utils
     {
         #region imports
@@ -159,19 +205,6 @@ namespace ControllerCommon
                             .Where(a => ((DescriptionAttribute)a.Att)
                                 .Description == description).SingleOrDefault();
             return field == null ? default(T) : (T)field.Field.GetRawConstantValue();
-        }
-
-        public static void SendToast(string title, string content, string img = "Toast")
-        {
-            string url = $"file:///{AppDomain.CurrentDomain.BaseDirectory}Resources\\{img}.png";
-            var uri = new Uri(url);
-
-            new ToastContentBuilder()
-                .AddText(title)
-                .AddText(content)
-                .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
-                .SetToastDuration(ToastDuration.Short)
-                .Show();
         }
 
         public static string Between(string STR, string FirstString, string LastString)
