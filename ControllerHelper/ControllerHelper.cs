@@ -40,6 +40,7 @@ namespace ControllerHelper
         public static Controller CurrentController;
 
         private MouseHook m_Hook;
+        private ToastManager m_ToastManager;
 
         private FormWindowState prevWindowState;
         private object updateLock = new();
@@ -47,7 +48,7 @@ namespace ControllerHelper
         public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
 
         private bool RunAtStartup, StartMinimized, CloseMinimises, HookMouse;
-        private bool IsElevated, FirstStart, appClosing;
+        private bool IsElevated, FirstStart, appClosing, ToastEnable;
 
         public ProfileManager ProfileManager;
         public HIDmode HIDmode;
@@ -118,6 +119,9 @@ namespace ControllerHelper
             // initialize mouse hook
             m_Hook = new MouseHook(pipeClient, logger);
 
+            // initialize toast manager
+            m_ToastManager = new ToastManager("ControllerService");
+
             // initialize Service Manager
             ServiceManager = new ServiceManager("ControllerService", strings.ServiceName, strings.ServiceDescription, logger);
             ServiceManager.Updated += UpdateService;
@@ -140,6 +144,7 @@ namespace ControllerHelper
             cB_StartMinimized.Checked = StartMinimized = Properties.Settings.Default.StartMinimized;
             cB_CloseMinimizes.Checked = CloseMinimises = Properties.Settings.Default.CloseMinimises;
             cB_touchpad.Checked = HookMouse = Properties.Settings.Default.HookMouse;
+            cB_ToastEnable.Checked = ToastEnable = Properties.Settings.Default.ToastEnable;
 
             if (FirstStart)
             {
@@ -155,7 +160,7 @@ namespace ControllerHelper
                 }
                 else
                 {
-                    Utils.SendToast(strings.ToastTitle, strings.ToastInitialization);
+                    m_ToastManager.SendToast(strings.ToastTitle, strings.ToastInitialization);
                 }
             }
         }
@@ -196,7 +201,7 @@ namespace ControllerHelper
 
                 case PipeCode.SERVER_TOAST:
                     PipeServerToast toast = (PipeServerToast)message;
-                    Utils.SendToast(toast.title, toast.content, toast.image);
+                    m_ToastManager.SendToast(toast.title, toast.content, toast.image);
                     break;
 
                 case PipeCode.SERVER_CONTROLLER:
@@ -474,6 +479,10 @@ namespace ControllerHelper
                         case "DSUport":
                             tB_UDPPort.Value = int.Parse(args[name]);
                             break;
+                        case "ToastEnable":
+                            m_ToastManager.Enabled = bool.Parse(args[name]);
+                            cB_ToastEnable.Checked = bool.Parse(args[name]);
+                            break;
                     }
                 }
             });
@@ -497,7 +506,19 @@ namespace ControllerHelper
                 tB_InstanceID.Text = con.InstanceGuid.ToString();
                 tB_ProductID.Text = con.ProductGuid.ToString();
             });
+        }
 
+        private void tB_DeviceWidthHeightRatio_Scroll(object sender, EventArgs e)
+        {
+            float value = tB_DeviceWidthHeightRatio.Value / 10.0f;
+
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                toolTip1.SetToolTip(tB_DeviceWidthHeightRatio, $"Ratio: {value}");
+            });
+
+            PipeClientSettings settings = new PipeClientSettings("DeviceWidthHeightRatio", tB_DeviceWidthHeightRatio.Value);
+            pipeClient.SendMessage(settings);
         }
 
         private void tB_DeviceWidthHeightRatio_Scroll(object sender, EventArgs e)
@@ -942,6 +963,15 @@ namespace ControllerHelper
         private void IL_AboutDonate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Utils.OpenUrl("https://www.paypal.com/paypalme/BenjaminLSR");
+        }
+
+        private void cB_ToastEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            ToastEnable = cB_ToastEnable.Checked;
+            Properties.Settings.Default.ToastEnable = ToastEnable;
+            Properties.Settings.Default.Save();
+
+            m_ToastManager.Enabled = cB_ToastEnable.Checked;
         }
 
         private void cB_HIDcloak_CheckedChanged(object sender, EventArgs e)

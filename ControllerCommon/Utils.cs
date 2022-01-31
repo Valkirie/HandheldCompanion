@@ -11,7 +11,9 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using Windows.System.Diagnostics;
+using Timer = System.Timers.Timer;
 
 namespace ControllerCommon
 {
@@ -117,6 +119,52 @@ namespace ControllerCommon
         AlwaysOn = 65536        // specific
     }
 
+    public class ToastManager
+    {
+        private Thread m_Thread;
+        private string m_Group;
+        public bool Enabled;
+
+        public ToastManager(string group)
+        {
+            m_Group = group;
+        }
+
+        public void SendToast(string title, string content, string img = "Toast")
+        {
+            if (!Enabled)
+                return;
+
+            string url = $"file:///{AppDomain.CurrentDomain.BaseDirectory}Resources\\{img}.png";
+            var uri = new Uri(url);
+
+            DateTimeOffset DeliveryTime = new DateTimeOffset(DateTime.Now.AddMilliseconds(100));
+
+            new ToastContentBuilder()
+                .AddText(title)
+                .AddText(content)
+                .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
+                .SetToastScenario(ToastScenario.Default)
+                .Schedule(DeliveryTime, toast =>
+                {
+                    toast.Tag = title;
+                    toast.Group = m_Group;
+                });
+
+            m_Thread = new Thread(ClearHistory);
+            m_Thread.Start(new string[] { title, m_Group });
+        }
+
+        private void ClearHistory(object obj)
+        {
+            Thread.Sleep(5000); // remove toast after 5 seconds
+            string[] array = (string[])obj;
+            string tag = array[0];
+            string group = array[1];
+            ToastNotificationManagerCompat.History.Remove(tag, group);
+        }
+    }
+
     public static class Utils
     {
         #region imports
@@ -159,19 +207,6 @@ namespace ControllerCommon
                             .Where(a => ((DescriptionAttribute)a.Att)
                                 .Description == description).SingleOrDefault();
             return field == null ? default(T) : (T)field.Field.GetRawConstantValue();
-        }
-
-        public static void SendToast(string title, string content, string img = "Toast")
-        {
-            string url = $"file:///{AppDomain.CurrentDomain.BaseDirectory}Resources\\{img}.png";
-            var uri = new Uri(url);
-
-            new ToastContentBuilder()
-                .AddText(title)
-                .AddText(content)
-                .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
-                .SetToastDuration(ToastDuration.Short)
-                .Show();
         }
 
         public static string Between(string STR, string FirstString, string LastString)
