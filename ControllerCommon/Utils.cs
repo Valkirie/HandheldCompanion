@@ -121,23 +121,13 @@ namespace ControllerCommon
 
     public class ToastManager
     {
-        private Timer m_Timer;
+        private Thread m_Thread;
         private string m_Group;
         public bool Enabled;
 
         public ToastManager(string group)
         {
             m_Group = group;
-
-            // clear after 10 seconds
-            m_Timer = new Timer() { Enabled = false, Interval = 10000, AutoReset = false };
-            m_Timer.Elapsed += ClearHistory;
-        }
-
-        private void ClearHistory(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            m_Timer.Interval = 5000;
-            ToastNotificationManagerCompat.History.RemoveGroup(m_Group);
         }
 
         public void SendToast(string title, string content, string img = "Toast")
@@ -159,7 +149,17 @@ namespace ControllerCommon
                     toast.Group = m_Group;
                 });
 
-            m_Timer.Start();
+            m_Thread = new Thread(ClearHistory);
+            m_Thread.Start(new string[] { title, m_Group });
+        }
+
+        private void ClearHistory(object obj)
+        {
+            Thread.Sleep(8000); // remove toast after 8 seconds
+            string[] array = (string[])obj;
+            string tag = array[0];
+            string group = array[1];
+            ToastNotificationManagerCompat.History.Remove(tag, group);
         }
     }
 

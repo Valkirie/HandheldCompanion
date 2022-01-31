@@ -475,6 +475,9 @@ namespace ControllerHelper
                         case "DSUport":
                             tB_UDPPort.Value = int.Parse(args[name]);
                             break;
+                        case "ToastEnable":
+                            m_ToastManager.Enabled = bool.Parse(args[name]);
+                            break;
                     }
                 }
             });
@@ -930,6 +933,12 @@ namespace ControllerHelper
         private void IL_AboutDonate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Utils.OpenUrl("https://www.paypal.com/paypalme/BenjaminLSR");
+        }
+
+        private void cB_EnableToast_CheckedChanged(object sender, EventArgs e)
+        {
+            PipeClientSettings settings = new PipeClientSettings("ToastEnable", cB_EnableToast.Checked);
+            pipeClient.SendMessage(settings);
         }
 
         private void cB_HIDcloak_CheckedChanged(object sender, EventArgs e)
