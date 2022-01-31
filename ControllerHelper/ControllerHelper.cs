@@ -521,19 +521,6 @@ namespace ControllerHelper
             pipeClient.SendMessage(settings);
         }
 
-        private void tB_DeviceWidthHeightRatio_Scroll(object sender, EventArgs e)
-        {
-            float value = tB_DeviceWidthHeightRatio.Value / 10.0f;
-
-            BeginInvoke((MethodInvoker)delegate ()
-            {
-                toolTip1.SetToolTip(tB_DeviceWidthHeightRatio, $"Ratio: {value}");
-            });
-
-            PipeClientSettings settings = new PipeClientSettings("DeviceWidthHeightRatio", tB_DeviceWidthHeightRatio.Value);
-            pipeClient.SendMessage(settings);
-        }
-
         private void tB_PullRate_Scroll(object sender, EventArgs e)
         {
             // update mouse hook delay based on controller pull rate
