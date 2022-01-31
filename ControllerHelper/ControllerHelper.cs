@@ -48,7 +48,7 @@ namespace ControllerHelper
         public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
 
         private bool RunAtStartup, StartMinimized, CloseMinimises, HookMouse;
-        private bool IsElevated, FirstStart, appClosing;
+        private bool IsElevated, FirstStart, appClosing, ToastEnable;
 
         public ProfileManager ProfileManager;
         public HIDmode HIDmode;
@@ -144,6 +144,7 @@ namespace ControllerHelper
             cB_StartMinimized.Checked = StartMinimized = Properties.Settings.Default.StartMinimized;
             cB_CloseMinimizes.Checked = CloseMinimises = Properties.Settings.Default.CloseMinimises;
             cB_touchpad.Checked = HookMouse = Properties.Settings.Default.HookMouse;
+            cB_ToastEnable.Checked = ToastEnable = Properties.Settings.Default.ToastEnable;
 
             if (FirstStart)
             {
@@ -477,6 +478,7 @@ namespace ControllerHelper
                             break;
                         case "ToastEnable":
                             m_ToastManager.Enabled = bool.Parse(args[name]);
+                            cB_ToastEnable.Checked = bool.Parse(args[name]);
                             break;
                     }
                 }
@@ -935,10 +937,13 @@ namespace ControllerHelper
             Utils.OpenUrl("https://www.paypal.com/paypalme/BenjaminLSR");
         }
 
-        private void cB_EnableToast_CheckedChanged(object sender, EventArgs e)
+        private void cB_ToastEnable_CheckedChanged(object sender, EventArgs e)
         {
-            PipeClientSettings settings = new PipeClientSettings("ToastEnable", cB_EnableToast.Checked);
-            pipeClient.SendMessage(settings);
+            ToastEnable = cB_ToastEnable.Checked;
+            Properties.Settings.Default.ToastEnable = ToastEnable;
+            Properties.Settings.Default.Save();
+
+            m_ToastManager.Enabled = cB_ToastEnable.Checked;
         }
 
         private void cB_HIDcloak_CheckedChanged(object sender, EventArgs e)

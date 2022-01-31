@@ -138,12 +138,14 @@ namespace ControllerCommon
             string url = $"file:///{AppDomain.CurrentDomain.BaseDirectory}Resources\\{img}.png";
             var uri = new Uri(url);
 
+            DateTimeOffset DeliveryTime = new DateTimeOffset(DateTime.Now.AddMilliseconds(100));
+
             new ToastContentBuilder()
                 .AddText(title)
                 .AddText(content)
                 .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
                 .SetToastScenario(ToastScenario.Default)
-                .Schedule(DateTime.Now.AddMilliseconds(100), toast =>
+                .Schedule(DeliveryTime, toast =>
                 {
                     toast.Tag = title;
                     toast.Group = m_Group;
@@ -155,7 +157,7 @@ namespace ControllerCommon
 
         private void ClearHistory(object obj)
         {
-            Thread.Sleep(8000); // remove toast after 8 seconds
+            Thread.Sleep(5000); // remove toast after 5 seconds
             string[] array = (string[])obj;
             string tag = array[0];
             string group = array[1];

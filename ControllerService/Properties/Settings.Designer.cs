@@ -118,17 +118,5 @@ namespace ControllerService.Properties {
                 this["HIDstrength"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool ToastEnable {
-            get {
-                return ((bool)(this["ToastEnable"]));
-            }
-            set {
-                this["ToastEnable"] = value;
-            }
-        }
     }
 }

@@ -118,6 +118,7 @@ namespace ControllerHelper
             this.b_ServiceDelete = new System.Windows.Forms.Button();
             this.b_ServiceInstall = new System.Windows.Forms.Button();
             this.gb_SettingsInterface = new System.Windows.Forms.GroupBox();
+            this.cB_ToastEnable = new System.Windows.Forms.CheckBox();
             this.cB_RunAtStartup = new System.Windows.Forms.CheckBox();
             this.cB_CloseMinimizes = new System.Windows.Forms.CheckBox();
             this.cB_StartMinimized = new System.Windows.Forms.CheckBox();
@@ -886,12 +887,21 @@ namespace ControllerHelper
             // gb_SettingsInterface
             // 
             resources.ApplyResources(this.gb_SettingsInterface, "gb_SettingsInterface");
+            this.gb_SettingsInterface.Controls.Add(this.cB_ToastEnable);
             this.gb_SettingsInterface.Controls.Add(this.cB_RunAtStartup);
             this.gb_SettingsInterface.Controls.Add(this.cB_CloseMinimizes);
             this.gb_SettingsInterface.Controls.Add(this.cB_StartMinimized);
             this.gb_SettingsInterface.Name = "gb_SettingsInterface";
             this.gb_SettingsInterface.TabStop = false;
             this.toolTip1.SetToolTip(this.gb_SettingsInterface, resources.GetString("gb_SettingsInterface.ToolTip"));
+            // 
+            // cB_EnableToast
+            // 
+            resources.ApplyResources(this.cB_ToastEnable, "cB_EnableToast");
+            this.cB_ToastEnable.Name = "cB_EnableToast";
+            this.toolTip1.SetToolTip(this.cB_ToastEnable, resources.GetString("cB_EnableToast.ToolTip"));
+            this.cB_ToastEnable.UseVisualStyleBackColor = true;
+            this.cB_ToastEnable.CheckedChanged += new System.EventHandler(this.cB_ToastEnable_CheckedChanged);
             // 
             // cB_RunAtStartup
             // 
@@ -1154,6 +1164,7 @@ namespace ControllerHelper
         private System.Windows.Forms.LinkLabel lL_AboutWiki;
         private System.Windows.Forms.Label lb_ErrorCode;
         private System.Windows.Forms.PictureBox pB_HidMode;
+        private System.Windows.Forms.CheckBox cB_ToastEnable;
     }
 }
 
