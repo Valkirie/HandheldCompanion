@@ -207,7 +207,6 @@ namespace ControllerHelper
             // 
             // gB_DeviceDetails
             // 
-            resources.ApplyResources(this.gB_DeviceDetails, "gB_DeviceDetails");
             this.gB_DeviceDetails.Controls.Add(this.lb_DeviceWidthHeightRatio);
             this.gB_DeviceDetails.Controls.Add(this.tB_DeviceWidthHeightRatio);
             this.gB_DeviceDetails.Controls.Add(this.cB_touchpad);
@@ -233,24 +232,6 @@ namespace ControllerHelper
             this.tB_DeviceWidthHeightRatio.Minimum = 1;
             this.tB_DeviceWidthHeightRatio.Name = "tB_DeviceWidthHeightRatio";
             this.tB_DeviceWidthHeightRatio.TickFrequency = 2;
-            this.tB_DeviceWidthHeightRatio.Value = 25;
-            this.tB_DeviceWidthHeightRatio.ValueChanged += new System.EventHandler(this.tB_DeviceWidthHeightRatio_Scroll);
-            // 
-            // lb_DeviceWidthHeightRatio
-            // 
-            resources.ApplyResources(this.lb_DeviceWidthHeightRatio, "lb_DeviceWidthHeightRatio");
-            this.lb_DeviceWidthHeightRatio.Name = "lb_DeviceWidthHeightRatio";
-            this.toolTip1.SetToolTip(this.lb_DeviceWidthHeightRatio, resources.GetString("lb_DeviceWidthHeightRatio.ToolTip"));
-            // 
-            // tB_DeviceWidthHeightRatio
-            // 
-            resources.ApplyResources(this.tB_DeviceWidthHeightRatio, "tB_DeviceWidthHeightRatio");
-            this.tB_DeviceWidthHeightRatio.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(249)))), ((int)(((byte)(249)))));
-            this.tB_DeviceWidthHeightRatio.Maximum = 40;
-            this.tB_DeviceWidthHeightRatio.Minimum = 1;
-            this.tB_DeviceWidthHeightRatio.Name = "tB_DeviceWidthHeightRatio";
-            this.tB_DeviceWidthHeightRatio.TickFrequency = 2;
-            this.toolTip1.SetToolTip(this.tB_DeviceWidthHeightRatio, resources.GetString("tB_DeviceWidthHeightRatio.ToolTip"));
             this.tB_DeviceWidthHeightRatio.Value = 25;
             this.tB_DeviceWidthHeightRatio.ValueChanged += new System.EventHandler(this.tB_DeviceWidthHeightRatio_Scroll);
             // 
@@ -847,7 +828,6 @@ namespace ControllerHelper
             // 
             // gb_SettingsInterface
             // 
-            resources.ApplyResources(this.gb_SettingsInterface, "gb_SettingsInterface");
             this.gb_SettingsInterface.Controls.Add(this.cB_ToastEnable);
             this.gb_SettingsInterface.Controls.Add(this.cB_RunAtStartup);
             this.gb_SettingsInterface.Controls.Add(this.cB_CloseMinimizes);
@@ -860,7 +840,6 @@ namespace ControllerHelper
             // 
             resources.ApplyResources(this.cB_ToastEnable, "cB_ToastEnable");
             this.cB_ToastEnable.Name = "cB_ToastEnable";
-            this.toolTip1.SetToolTip(this.cB_ToastEnable, resources.GetString("cB_ToastEnable.ToolTip"));
             this.cB_ToastEnable.UseVisualStyleBackColor = true;
             this.cB_ToastEnable.CheckedChanged += new System.EventHandler(this.cB_ToastEnable_CheckedChanged);
             // 

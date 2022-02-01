@@ -461,9 +461,13 @@ namespace ControllerService
 
         private void OnPowerChange(object s, PowerModeChangedEventArgs e)
         {
+            logger.LogInformation("Device power mode set to {0}", e.Mode);
+
             switch (e.Mode)
             {
 				default:
+                case PowerModes.StatusChange:
+                    break;
                 case PowerModes.Resume:
                     // (re)initialize sensors
                     UpdateSensors();
