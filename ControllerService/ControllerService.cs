@@ -471,12 +471,8 @@ namespace ControllerService
                 case PowerModes.Resume:
                     // (re)initialize sensors
                     UpdateSensors();
-                    // (re)connect controller
-                    XInputController.virtualTarget.Connect();
                     break;
                 case PowerModes.Suspend:
-                    // disconnect controller
-                    XInputController.virtualTarget.Disconnect();
                     break;
             }
         }
