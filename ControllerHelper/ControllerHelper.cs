@@ -233,7 +233,7 @@ namespace ControllerHelper
             // update Position and Size
             Size = new Size((int)Math.Max(this.MinimumSize.Width, Properties.Settings.Default.MainWindowWidth), (int)Math.Max(this.MinimumSize.Height, Properties.Settings.Default.MainWindowHeight));
             Location = new Point((int)Math.Max(0, Properties.Settings.Default.MainWindowX), (int)Math.Max(0, Properties.Settings.Default.MainWindowY));
-            WindowState = (FormWindowState)Properties.Settings.Default.WindowState;
+            WindowState = StartMinimized ? FormWindowState.Minimized : (FormWindowState)Properties.Settings.Default.WindowState;
 
             // elevation check
             if (!IsElevated)
