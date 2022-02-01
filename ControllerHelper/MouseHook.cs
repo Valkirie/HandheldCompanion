@@ -31,8 +31,6 @@ namespace ControllerHelper
         private TouchInput m_MouseUp;
         private ushort m_MouseMove;
 
-        public bool hooked;
-
         public MouseHook(PipeClient client, ILogger logger)
         {
             this.client = client;
@@ -47,7 +45,6 @@ namespace ControllerHelper
         {
             m_Hook = new Thread(Subscribe) { IsBackground = true };
             m_Hook.Start();
-            hooked = true;
 
             logger.LogInformation("Mouse hook has started");
         }
@@ -155,7 +152,6 @@ namespace ControllerHelper
             m_Events.MouseUpExt -= OnMouseUp;
             m_Events.Dispose();
             m_Events = null;
-            hooked = false;
 
             logger.LogInformation("Mouse hook has stopped");
         }

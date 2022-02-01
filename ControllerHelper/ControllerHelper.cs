@@ -1,5 +1,6 @@
 using ControllerCommon;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Collections.Generic;
@@ -113,6 +114,9 @@ namespace ControllerHelper
             ProfileManager.Deleted += ProfileDeleted;
             ProfileManager.Updated += ProfileUpdated;
 
+            // listen to system events
+            SystemEvents.PowerModeChanged += OnPowerChange;
+
             // initialize command parser
             cmdParser = new CmdParser(pipeClient, this, logger);
 
@@ -219,8 +223,7 @@ namespace ControllerHelper
         private void OnClientDisconnected(object sender)
         {
             // stop mouse hook
-            if (m_Hook.hooked)
-                m_Hook.Stop();
+            m_Hook.Stop();
 
             // stop processes monitor
             MonitorTimer.Elapsed -= MonitorHelper;
@@ -271,6 +274,26 @@ namespace ControllerHelper
 
             // execute args
             cmdParser.ParseArgs(args);
+        }
+
+        private void OnPowerChange(object s, PowerModeChangedEventArgs e)
+        {
+            logger.LogInformation("Device power mode set to {0}", e.Mode);
+
+            switch (e.Mode)
+            {
+                default:
+                case PowerModes.StatusChange:
+                    break;
+                case PowerModes.Resume:
+                    // (re)hook touchscreen
+                    // if (HookMouse) m_Hook.Start();
+                    break;
+                case PowerModes.Suspend:
+                    // (de)hook touchscreen
+                    // m_Hook.Stop();
+                    break;
+            }
         }
 
         public void UpdateProcess(int ProcessId, string ProcessPath, string ProcessName)
@@ -354,8 +377,7 @@ namespace ControllerHelper
 
             ProfileManager.Stop();
 
-            if (m_Hook.hooked)
-                m_Hook.Stop();
+            m_Hook.Stop();
         }
 
         private void MonitorHelper(object sender, ElapsedEventArgs e)
@@ -683,7 +705,7 @@ namespace ControllerHelper
 
             if (HookMouse && pipeClient.connected)
                 m_Hook.Start();
-            else if (m_Hook.hooked)
+            else
                 m_Hook.Stop();
         }
 
