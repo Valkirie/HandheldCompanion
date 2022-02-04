@@ -453,6 +453,7 @@ namespace ControllerHelper
             resources.ApplyResources(this.cB_Wrapper, "cB_Wrapper");
             this.cB_Wrapper.Name = "cB_Wrapper";
             this.cB_Wrapper.UseVisualStyleBackColor = true;
+            this.cB_Wrapper.CheckedChanged += new System.EventHandler(this.cB_Wrapper_CheckedChanged);
             // 
             // cB_Whitelist
             // 
