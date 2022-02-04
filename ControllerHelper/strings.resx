@@ -155,6 +155,12 @@ If you are enjoying it, please consider giving back to the author's efforts and 
     <value>User</value>
   </data>
   <data name="WarningElevated" xml:space="preserve">
-    <value>Run this tool as Administrator to unlock these settings.</value>
+    <value>Run this tool as Administrator to unlock specific settings.</value>
+  </data>
+  <data name="WarningTitle" xml:space="preserve">
+    <value>Please, read carefully</value>
+  </data>
+  <data name="WarningWrapper" xml:space="preserve">
+    <value>Using Wrapper might trigger anti-cheat system in specific games. Use it at your own risk.</value>
   </data>
 </root>

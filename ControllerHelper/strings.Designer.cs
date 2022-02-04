@@ -164,11 +164,29 @@ namespace ControllerHelper {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Run this tool as Administrator to unlock these settings..
+        ///   Looks up a localized string similar to Run this tool as Administrator to unlock specific settings..
         /// </summary>
         public static string WarningElevated {
             get {
                 return ResourceManager.GetString("WarningElevated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please, read carefully.
+        /// </summary>
+        public static string WarningTitle {
+            get {
+                return ResourceManager.GetString("WarningTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using Wrapper might trigger anti-cheat system in specific games. Use it at your own risk..
+        /// </summary>
+        public static string WarningWrapper {
+            get {
+                return ResourceManager.GetString("WarningWrapper", resourceCulture);
             }
         }
     }
