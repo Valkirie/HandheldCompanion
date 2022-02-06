@@ -24,6 +24,10 @@ namespace ControllerService
         public Vector3 Acceleration;
         public Timer AccelerationTimer;
 
+        private Vector3 prevAngle;
+        public Vector3 Angle;
+        public Timer AngleTimer;
+
         private Vector3 prevAngularVelocity;
         public Vector3 AngularVelocity;
         public Timer AngularVelocityTimer;
@@ -62,12 +66,16 @@ namespace ControllerService
             // initialize vectors
             AngularVelocity = new();
             Acceleration = new();
+            Angle = new();
 
             AccelerationTimer = new Timer() { Enabled = false, AutoReset = false };
             AccelerationTimer.Elapsed += AccelerationTimer_Elapsed;
 
             AngularVelocityTimer = new Timer() { Enabled = false, AutoReset = false };
             AngularVelocityTimer.Elapsed += AngularVelocityTimer_Elapsed;
+
+            AngleTimer = new Timer() { Enabled = false, AutoReset = false };
+            AngleTimer.Elapsed +=AngleTimer_Elapsed;
 
             // initialize profile(s)
             profile = new();
@@ -140,6 +148,11 @@ namespace ControllerService
             Accelerometer = accelerometer;
             Accelerometer.ReadingHasChanged += Accelerometer_ReadingChanged;
         }
+        public void SetInclinometer(XInputInclinometer inclinometer)
+        {
+            Inclinometer = inclinometer;
+            Inclinometer.ReadingHasChanged += Inclinometer_ReadingChanged;
+        }
 
         public void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 Acceleration)
         {
@@ -167,10 +180,18 @@ namespace ControllerService
             AngularVelocity = new();
         }
 
-        public void SetInclinometer(XInputInclinometer inclinometer)
+        public void Inclinometer_ReadingChanged(XInputInclinometer sender, Vector3 Angle)
         {
-            Inclinometer = inclinometer;
+            this.Angle = Angle;
+
+            AngleTimer?.Stop();
+            AngleTimer?.Start();
         }
+        private void AngleTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Acceleration = new();
+        }
+
         public void SetWidthHeightRatio(int ratio)
         {
             WidhtHeightRatio = ((float)ratio) / 10;
@@ -184,6 +205,7 @@ namespace ControllerService
             UpdateTimer.Interval = HIDrate;
             AccelerationTimer.Interval = HIDrate * 4;
             AngularVelocityTimer.Interval = HIDrate * 4;
+            AngleTimer.Interval = HIDrate * 4;
 
             this.virtualTarget?.SetPollRate(updateInterval);
         }

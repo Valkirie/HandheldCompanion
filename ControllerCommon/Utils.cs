@@ -241,6 +241,25 @@ namespace ControllerCommon
             return (short)Math.Clamp(value + compute * sensivity, short.MinValue, short.MaxValue);
         }
 
+        // Determine -1 to 1 joystick ratio with max input angle
+        public static float AngleToJoystickRatio(float angle, float max_angle)
+        {
+            float result = (Math.Clamp(angle, -max_angle, max_angle) / max_angle);
+            return result;
+        }
+
+        // Apply power of to -1 to 1 joystick ratio while respecting direction
+        public static float DirectionRespectingPowerOf(float input, float power)
+        {
+            float result = (float)Math.Pow(Math.Abs(input), power);
+
+            if (input < 0.0)
+            {
+                result *= -1;
+            }
+            return result;
+        }
+
         public static bool IsTextAValidIPAddress(string text)
         {
             return IPAddress.TryParse(text, out _);

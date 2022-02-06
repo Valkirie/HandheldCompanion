@@ -37,6 +37,10 @@ namespace ControllerService
                 sensor.ReadingChanged += ReadingChanged;
                 sensor.Shaken += Shaken;
             }
+            else
+            {
+                logger.LogInformation("{0} not initialised.", this.ToString());
+            }
         }
 
         private void Shaken(Accelerometer sender, AccelerometerShakenEventArgs args)
