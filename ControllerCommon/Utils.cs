@@ -241,10 +241,22 @@ namespace ControllerCommon
             return (short)Math.Clamp(value + compute * sensivity, short.MinValue, short.MaxValue);
         }
 
-        // Determine -1 to 1 joystick ratio with max input angle
-        public static float AngleToJoystickRatio(float angle, float max_angle)
+        // Determine -1 to 1 joystick ratio given user defined max input angle and dead zone
+        public static float AngleToJoystickRatio(float angle, float max_angle, float deadzone_angle)
         {
-            float result = (Math.Clamp(angle, -max_angle, max_angle) / max_angle);
+            // Deadzone remapped angle, note this angle is no longer correct with device angle
+            float result = ((Math.Abs(angle) - deadzone_angle) / (max_angle - deadzone_angle)) * max_angle;
+            
+            // Clamp deadzone remapped angle, prevents negative values when
+            // actual device angle is below dead zone angle
+            // Divide by max angle, angle to joystick ratio with user max
+            result = Math.Clamp(result, 0, max_angle) / max_angle;
+
+            // Above calculations are done with absolute angle, apply correct direction here
+            if (angle < 0.0)
+            {
+                result *= -1;
+            }
             return result;
         }
 

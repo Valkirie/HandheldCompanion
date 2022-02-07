@@ -161,20 +161,19 @@ namespace ControllerService.Targets
                             // LeftThumbY = Utils.ComputeInput(LeftThumbY, xinputController.AngularVelocity.X, sensivity, intensity);
 
                             // TODO @Benjamin Remove/update/replace with new GUI profile variables
-                            float user_defined_max_device_angle = 25;
+                            float user_defined_max_device_angle = 30;
                             float to_the_power_of = 1;
                             float deadzone_angle = 2;
-                            float hysteresis_angle = 2;
 
                             // TODO @Benjamin What to do with the log statements?
 
-                            // Range angle y value (0 to user defined angle) into -1.0 to 1.0 ratio value
-                            float joystick_ratio_caped_angle = Utils.AngleToJoystickRatio(xinputController.Angle.Y, user_defined_max_device_angle);
-                            logger?.LogInformation("Y, with max angle of {0:00.#}, ranged from -1.0 to 1: {1:0.####}, from angle: {2:0.####}", user_defined_max_device_angle, joystick_ratio_caped_angle, xinputController.Angle.Y);
+                            // Range angle y value (0 to user defined angle) into -1.0 to 1.0 ratio value taking into account deadzone angle
+                            float joystick_ratio_capped_angle = Utils.AngleToJoystickRatio(xinputController.Angle.Y, user_defined_max_device_angle, deadzone_angle);
+                            logger?.LogInformation("Y, with max angle of {0:00.#}, ranged from -1.0 to 1: {1:0.####}, from angle: {2:0.####}", user_defined_max_device_angle, joystick_ratio_capped_angle, xinputController.Angle.Y);
 
                             // Apply user defined to the power of to ratio
-                            float joystick_ratio_powered = Utils.DirectionRespectingPowerOf(joystick_ratio_caped_angle, to_the_power_of);
-                            logger?.LogInformation("DirectionRespectingPowerOf. Input: {0:0.#####} Power: {1:0.#} Result: {2:0.####}", joystick_ratio_caped_angle, to_the_power_of, joystick_ratio_powered);
+                            float joystick_ratio_powered = Utils.DirectionRespectingPowerOf(joystick_ratio_capped_angle, to_the_power_of);
+                            logger?.LogInformation("DirectionRespectingPowerOf. Input: {0:0.#####} Power: {1:0.#} Result: {2:0.####}", joystick_ratio_capped_angle, to_the_power_of, joystick_ratio_powered);
 
                             // Scale ratio to joystick range
                             LeftThumbX = (short)-(joystick_ratio_powered * short.MaxValue);
