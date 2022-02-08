@@ -6,7 +6,7 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:local="clr-namespace:ControllerHelperWPF"
       mc:Ignorable="d" 
-      d:DesignHeight="740" d:DesignWidth="1280"
+      d:DesignHeight="740" d:DesignWidth="1000"
       Loaded="Page_Loaded"
       Title="Devices">
     
@@ -20,8 +20,8 @@
                 
                 <Border
                         Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
-                        Height="200"
-                        Padding="12"
+                        Height="300"
+                        Padding="0,12,12,12"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
@@ -30,16 +30,33 @@
                         <Grid.Background>
                             <ImageBrush ImageSource="/Resources/ps_controller_grayed.png" Stretch="Uniform"/>
                         </Grid.Background>
+                        <ui:SimpleStackPanel Spacing="18" VerticalAlignment="Bottom">
+                            <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal">
+                                <Button Name="B_ServiceSwitch" Content="Turn on" IsEnabled="False" Width="80" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}"/>
+                                <ComboBox Name="cB_HidMode" Width="260" IsEnabled="False" SelectionChanged="cB_HidMode_SelectionChanged"/>
+                            </ui:SimpleStackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.5*" MinWidth="80"></ColumnDefinition>
+                                    <ColumnDefinition Width="3.5*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="6*" MinWidth="120"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
 
-                        <ui:SimpleStackPanel Spacing="24" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal">
-                            <Button Name="B_ServiceSwitch" Content="Turn on" IsEnabled="False" Width="80" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}"/>
-                            <ComboBox Name="cB_HidMode" Width="240" IsEnabled="False" SelectionChanged="cB_HidMode_SelectionChanged"/>
+                                <ui:FontIcon Glyph="&#xE877;" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                                <ui:SimpleStackPanel Grid.Column="1">
+                                    <TextBlock Text="Vibration strength" FontSize="16"/>
+                                    <TextBlock Text="Change controller vibration strength" FontSize="14" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+
+                                <Slider Grid.Column="2" VerticalAlignment="Center"></Slider>
+                            </Grid>
                         </ui:SimpleStackPanel>
                     </Grid>
                 </Border>
 
                 <ui:SimpleStackPanel Spacing="6">
-                    <Label Content="XInput details" FontWeight="Bold"></Label>
+                    <Label Content="XInput details" FontWeight="SemiBold"></Label>
                     <Border
                         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
                         Padding="12"
@@ -58,6 +75,59 @@
                             Text="028e045e-0000-0000-0000-504944564944"
                             IsReadOnly="True" />
                         </ui:SimpleStackPanel>
+                    </Border>
+                </ui:SimpleStackPanel>
+                
+                <ui:SimpleStackPanel Spacing="6">
+                    <Label Content="Device cloaking" FontWeight="SemiBold"></Label>
+                    <Border
+                        Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
+                        Padding="0,12,12,12"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.5*" MinWidth="80"></ColumnDefinition>
+                                <ColumnDefinition Width="7.5*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <ui:FontIcon Glyph="&#xE793;" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel Grid.Column="1">
+                                <TextBlock Text="Cloak device" FontSize="16"/>
+                                <TextBlock Text="Change the physical controller visibility" FontSize="14" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+
+                            <ui:ToggleSwitch Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right"/>
+                        </Grid>
+                    </Border>
+                    
+                    <Border
+                        Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
+                        Padding="0,12,12,12"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.5*" MinWidth="80"></ColumnDefinition>
+                                <ColumnDefinition Width="7.5*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <ui:FontIcon Glyph="&#xE7B3;" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel Grid.Column="1">
+                                <TextBlock Text="Uncloak on close" FontSize="16"/>
+                                <TextBlock Text="Restore physical controller visibility on close" FontSize="14" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+
+                            <ui:ToggleSwitch Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right"/>
+                        </Grid>
                     </Border>
                 </ui:SimpleStackPanel>
 

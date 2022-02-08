@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:ui="http://schemas.modernwpf.com/2019"
       mc:Ignorable="d" 
-      d:DesignHeight="740" d:DesignWidth="1280"
+      d:DesignHeight="740" d:DesignWidth="1000"
       Loaded="Page_Loaded"
       Title="Profiles">
 

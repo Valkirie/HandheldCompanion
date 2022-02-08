@@ -8,7 +8,8 @@
         mc:Ignorable="d"
         Title="Controller Helper WPF" Height="800" Width="1280"
         Loaded="Window_Loaded"
-        ui:WindowHelper.UseModernWindowStyle="True" MinWidth="420">
+        ui:WindowHelper.UseModernWindowStyle="True" MinWidth="600">
+    
     <Grid>
         <ui:NavigationView Name="navView" PaneDisplayMode="Auto" SelectionChanged="navView_SelectionChanged" OpenPaneLength="240" IsBackEnabled="True" Header="">
             <ui:NavigationView.MenuItems>
@@ -32,7 +33,7 @@
                 <ScrollViewer>
                     <ui:Frame
                         Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-                        Name="ContentFrame" MaxWidth="1000"
+                        Name="ContentFrame" MaxWidth="1100"
                         HorizontalAlignment="Left"/>
                 </ScrollViewer>
             </Grid>
