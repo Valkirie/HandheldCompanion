@@ -1,22 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
-using ModernWpf.Controls;
-using Serilog;
-using Serilog.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ModernWpf.Controls;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using System.Globalization;
+using System.Reflection;
+using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using ControllerCommon;
 
 namespace ControllerHelperWPF
 {
@@ -25,23 +14,37 @@ namespace ControllerHelperWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private readonly ILogger microsoftLogger;
+        private StartupEventArgs arguments;
+
+        public static PipeClient pipeClient;
+        public static PipeServer pipeServer;
+
+        public MainWindow(StartupEventArgs arguments, ILogger microsoftLogger)
         {
             InitializeComponent();
 
-            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            this.microsoftLogger = microsoftLogger;
+            this.arguments = arguments;
 
-            var configuration = new ConfigurationBuilder()
-                        .AddJsonFile("ControllerHelper.json")
-                        .Build();
+            Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
 
-            var serilogLogger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
+            // initialize log
+            microsoftLogger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
-            var microsoftLogger = new SerilogLoggerFactory(serilogLogger).CreateLogger("ControllerHelper");
+            // initialize pipe server
+            pipeServer = new PipeServer("ControllerHelper", microsoftLogger);
+            pipeServer.ClientMessage += OnClientMessage;
 
             navView.SelectedItem = navView.MenuItems[0];
+        }
+
+        private void OnClientMessage(object sender, PipeMessage e)
+        {
+            // todo
+            pipeServer.SendMessage(new PipeShutdown());
         }
 
         private void navView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -63,6 +66,11 @@ namespace ControllerHelperWPF
                         break;
                 }
             }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            pipeServer.Start();
         }
     }
 }

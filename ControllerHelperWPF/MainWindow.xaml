@@ -7,6 +7,7 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
         Title="Controller Helper WPF" Height="800" Width="1280"
+        Loaded="Window_Loaded"
         ui:WindowHelper.UseModernWindowStyle="True">
     <Grid>
         <ui:NavigationView Name="navView" PaneDisplayMode="Auto" SelectionChanged="navView_SelectionChanged" IsPaneOpen="False" OpenPaneLength="160">
