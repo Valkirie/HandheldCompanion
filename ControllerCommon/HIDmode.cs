@@ -8,5 +8,7 @@ namespace ControllerCommon
         DualShock4Controller = 0,
         [Description("Emulated XBOX 360 Controller")]
         Xbox360Controller = 1,
+        [Description("No Controller")]
+        None = 2,
     }
 }

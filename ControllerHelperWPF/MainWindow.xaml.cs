@@ -25,11 +25,11 @@ namespace ControllerHelperWPF
         static Profiles profilesPage;
 
         // static vars
-        public static PipeClient pipeClient;
-        public static PipeServer pipeServer;
-        public static CmdParser cmdParser;
-        public static MouseHook mouseHook;
-        public static ToastManager toastManager;
+        public PipeClient pipeClient;
+        public PipeServer pipeServer;
+        public CmdParser cmdParser;
+        public MouseHook mouseHook;
+        public ToastManager toastManager;
 
         public ProfileManager profileManager;
         public ServiceManager serviceManager;
@@ -53,8 +53,8 @@ namespace ControllerHelperWPF
             microsoftLogger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
             // initialize pages
-            devicesPage = new Devices();
-            profilesPage = new Profiles();
+            devicesPage = new Devices(this);
+            profilesPage = new Profiles(this);
 
             // paths
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
@@ -102,48 +102,49 @@ namespace ControllerHelperWPF
         #region cmdParser
         internal void UpdateCloak(bool cloak)
         {
-            throw new NotImplementedException();
+            // implement me
         }
 
         internal void UpdateHID(HIDmode mode)
         {
-            throw new NotImplementedException();
+            // implement me
         }
         #endregion
 
         #region pipeClient
         private void OnServerMessage(object sender, PipeMessage e)
         {
-            throw new NotImplementedException();
+            // implement me
         }
 
         private void OnClientDisconnected(object sender)
         {
-            throw new NotImplementedException();
+            // implement me
         }
 
         private void OnClientConnected(object sender)
         {
-            throw new NotImplementedException();
+            // implement me
         }
         #endregion
 
         #region serviceManager
         private void UpdateService(ServiceControllerStatus status, ServiceStartMode mode)
         {
-            throw new NotImplementedException();
+            // update pages
+            devicesPage.UpdateServivce(status, mode);
         }
         #endregion
 
         #region profileManager
         private void ProfileUpdated(Profile profile)
         {
-            throw new NotImplementedException();
+            // implement me
         }
 
         private void ProfileDeleted(Profile profile)
         {
-            throw new NotImplementedException();
+            // implement me
         }
         #endregion
 
@@ -165,11 +166,13 @@ namespace ControllerHelperWPF
         {
             if (args.IsSettingsSelected)
             {
-
+                navView.Header = "Settings";
             }
             else
             {
                 NavigationViewItem item = args.SelectedItem as NavigationViewItem;
+                navView.Header = item.Content;
+
                 switch (item.Content)
                 {
                     case "Devices":
@@ -184,13 +187,17 @@ namespace ControllerHelperWPF
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            foreach (HIDmode mode in (HIDmode[])Enum.GetValues(typeof(HIDmode)))
-                devicesPage.cB_HidMode.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
-
             navView.SelectedItem = navView.MenuItems[0];
 
+            // start Service Manager
+            serviceManager.Start();
+
             // start pipe client and server
+            pipeClient.Start();
             pipeServer.Start();
+
+            // start Profile Manager
+            profileManager.Start();
 
             // execute args
             cmdParser.ParseArgs(arguments.Args);

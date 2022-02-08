@@ -18,9 +18,21 @@ namespace ControllerHelperWPF
     /// </summary>
     public partial class Profiles : Page
     {
+        private MainWindow mainWindow;
+
         public Profiles()
         {
             InitializeComponent();
+        }
+
+        public Profiles(MainWindow mainWindow) : this()
+        {
+            this.mainWindow = mainWindow;
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

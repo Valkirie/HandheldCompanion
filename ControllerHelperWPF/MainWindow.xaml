@@ -8,9 +8,9 @@
         mc:Ignorable="d"
         Title="Controller Helper WPF" Height="800" Width="1280"
         Loaded="Window_Loaded"
-        ui:WindowHelper.UseModernWindowStyle="True">
+        ui:WindowHelper.UseModernWindowStyle="True" MinWidth="420">
     <Grid>
-        <ui:NavigationView Name="navView" PaneDisplayMode="Auto" SelectionChanged="navView_SelectionChanged" IsPaneOpen="False" OpenPaneLength="160">
+        <ui:NavigationView Name="navView" PaneDisplayMode="Auto" SelectionChanged="navView_SelectionChanged" OpenPaneLength="240" IsBackEnabled="True" Header="">
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItem Name="navDevices" Content="Devices">
                     <ui:NavigationViewItem.Icon>
@@ -28,17 +28,14 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
-            <ui:Frame x:Name="ContentFrame">
-                <ui:Frame.ContentTransitions>
-                    <ui:TransitionCollection>
-                        <ui:NavigationThemeTransition>
-                            <ui:NavigationThemeTransition.DefaultNavigationTransitionInfo>
-                                <ui:SuppressNavigationTransitionInfo/>
-                            </ui:NavigationThemeTransition.DefaultNavigationTransitionInfo>
-                        </ui:NavigationThemeTransition>
-                    </ui:TransitionCollection>
-                </ui:Frame.ContentTransitions>
-            </ui:Frame>
+            <Grid>
+                <ScrollViewer>
+                    <ui:Frame
+                        Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
+                        Name="ContentFrame" MaxWidth="1000"
+                        HorizontalAlignment="Left"/>
+                </ScrollViewer>
+            </Grid>
         </ui:NavigationView>
     </Grid>
 </Window>

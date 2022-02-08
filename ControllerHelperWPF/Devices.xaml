@@ -2,25 +2,71 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:ControllerHelperWPF"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:ui="http://schemas.modernwpf.com/2019"
-      xmlns:tz="http://schemas.abtsoftware.co.uk/transitionz"
+      xmlns:local="clr-namespace:ControllerHelperWPF"
       mc:Ignorable="d" 
-      d:DesignHeight="800" d:DesignWidth="1280"
-      Title="Devices" Background="#FF6B3030">
+      d:DesignHeight="740" d:DesignWidth="1280"
+      Loaded="Page_Loaded"
+      Title="Devices">
+    
+    <Page.Resources>
+        <local:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
+    </Page.Resources>
 
-    <Grid>
-        <Grid.Background>
-            <ImageBrush ImageSource="/xbox_controller.png" Stretch="None"/>
-        </Grid.Background>
-        <Button HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" Height="60" Margin="0,250,0,0">
-            <WrapPanel Height="60" Width="150">
-                <ui:FontIcon Height="50" Width="50" Glyph="&#xE946;"/>
-                <TextBlock TextWrapping="Wrap" Text="Turn On" FontSize="18" VerticalAlignment="Center" Padding="0,0,0,0"/>
-            </WrapPanel>
-        </Button>
-        <ComboBox Name="cB_HidMode" Margin="0,133,0,0" Width="340" HorizontalAlignment="Center">
-        </ComboBox>
+    <Grid Name="MainGrid" Margin="20,20,20,20" >
+        <Border Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
+            <ui:SimpleStackPanel Spacing="24">
+                
+                <Border
+                        Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
+                        Height="200"
+                        Padding="12"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.Background>
+                            <ImageBrush ImageSource="/Resources/ps_controller_grayed.png" Stretch="Uniform"/>
+                        </Grid.Background>
+
+                        <ui:SimpleStackPanel Spacing="24" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal">
+                            <Button Name="B_ServiceSwitch" Content="Turn on" IsEnabled="False" Width="80" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}"/>
+                            <ComboBox Name="cB_HidMode" Width="240" IsEnabled="False" SelectionChanged="cB_HidMode_SelectionChanged"/>
+                        </ui:SimpleStackPanel>
+                    </Grid>
+                </Border>
+
+                <ui:SimpleStackPanel Spacing="6">
+                    <Label Content="XInput details" FontWeight="Bold"></Label>
+                    <Border
+                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                        Padding="12"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
+
+                        <ui:SimpleStackPanel Spacing="10">
+                            <TextBox
+                            ui:ControlHelper.Header="Instance ID"
+                            Text="246cbbd0-6a26-11ec-8008-444553540000"
+                            IsReadOnly="True" />
+                            <TextBox
+                            ui:ControlHelper.Header="Product ID"
+                            Text="028e045e-0000-0000-0000-504944564944"
+                            IsReadOnly="True" />
+                        </ui:SimpleStackPanel>
+                    </Border>
+                </ui:SimpleStackPanel>
+
+                <Button
+                        Content="Toggle theme"
+                        Click="ToggleTheme" />
+                <Button
+                    Name="B_ServiceAlert" Content="Service is not running" IsEnabled="False" Width="340"/>
+            </ui:SimpleStackPanel>
+        </Border>
     </Grid>
 </Page>
