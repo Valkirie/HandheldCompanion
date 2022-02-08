@@ -14,6 +14,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControllerHelperWPF", "ControllerHelperWPF\ControllerHelperWPF.csproj", "{AD4B9060-93FE-4FD2-B64D-4D31EABC7C4D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D1B95ACA-77CF-4332-A1DC-AF4A6DA54FC2} = {D1B95ACA-77CF-4332-A1DC-AF4A6DA54FC2}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +37,10 @@ Global
 		{D1B95ACA-77CF-4332-A1DC-AF4A6DA54FC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1B95ACA-77CF-4332-A1DC-AF4A6DA54FC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1B95ACA-77CF-4332-A1DC-AF4A6DA54FC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD4B9060-93FE-4FD2-B64D-4D31EABC7C4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD4B9060-93FE-4FD2-B64D-4D31EABC7C4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD4B9060-93FE-4FD2-B64D-4D31EABC7C4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD4B9060-93FE-4FD2-B64D-4D31EABC7C4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
