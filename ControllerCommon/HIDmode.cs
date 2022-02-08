@@ -4,11 +4,9 @@ namespace ControllerCommon
 {
     public enum HIDmode
     {
-        [Description("No emulation")]
-        None = 0,
-        [Description("DualShock 4 emulation")]
-        DualShock4Controller = 1,
-        [Description("Xbox 360 emulation")]
-        Xbox360Controller = 2,
+        [Description("Emulated DualShock 4 Controller")]
+        DualShock4Controller = 0,
+        [Description("Emulated XBOX 360 Controller")]
+        Xbox360Controller = 1,
     }
 }

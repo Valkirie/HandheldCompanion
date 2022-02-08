@@ -20,9 +20,7 @@
                 <TextBlock TextWrapping="Wrap" Text="Turn On" FontSize="18" VerticalAlignment="Center" Padding="0,0,0,0"/>
             </WrapPanel>
         </Button>
-        <ComboBox Margin="0,133,0,0" Width="340" HorizontalAlignment="Center">
-            <ComboBoxItem>Emulated DualShock 4 Controller</ComboBoxItem>
-            <ComboBoxItem IsSelected="True">Emulated XBOX 360 Controller</ComboBoxItem>
+        <ComboBox Name="cB_HidMode" Margin="0,133,0,0" Width="340" HorizontalAlignment="Center">
         </ComboBox>
     </Grid>
 </Page>

@@ -3,9 +3,12 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <StartupObject>ControllerHelperWPF.App</StartupObject>
+    <OutputPath>$(SolutionDir)bin\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.0" />
     <PackageReference Include="ModernWpfUI" Version="0.9.4" />
@@ -38,6 +42,21 @@
 
   <ItemGroup>
     <Resource Include="xbox_controller.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="strings.Designer.cs">
+      <DependentUpon>strings.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="strings.resx">
+      <LastGenOutput>strings.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
