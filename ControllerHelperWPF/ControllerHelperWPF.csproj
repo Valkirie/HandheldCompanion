@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-	<TargetPlatformVersion>10.0.18362.0</TargetPlatformVersion>
+    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <StartupObject>ControllerHelperWPF.App</StartupObject>
@@ -11,7 +10,6 @@
 
   <ItemGroup>
     <None Remove="ControllerHelper.json" />
-    <None Remove="HelperGUI.png" />
     <None Remove="xbox_controller.png" />
   </ItemGroup>
 
@@ -35,7 +33,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="HelperGUI.png" />
+    <ProjectReference Include="..\ControllerCommon\ControllerCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="xbox_controller.png" />
   </ItemGroup>
 
