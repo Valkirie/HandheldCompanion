@@ -24,8 +24,6 @@ namespace ControllerHelperWPF
         PipeClient pipeClient;
         bool pipeConnected;
 
-        ServiceManager serviceManager;
-
         // controllers vars
         private XInputDevice mainController;
         private HIDmode controllerMode = HIDmode.None;
@@ -45,13 +43,9 @@ namespace ControllerHelperWPF
             this.microsoftLogger = microsoftLogger;
 
             this.pipeClient = mainWindow.pipeClient;
-            this.serviceManager = mainWindow.serviceManager;
-
             this.pipeClient.ServerMessage += OnServerMessage;
             this.pipeClient.Connected += OnClientConnected;
             this.pipeClient.Disconnected += OnClientDisconnected;
-
-            this.serviceManager.Updated += OnServiceUpdate;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -65,9 +59,11 @@ namespace ControllerHelperWPF
                 return;
 
             // update UI icon to match HIDmode
-            ImageBrush uniformToFillBrush = new ImageBrush();
-            uniformToFillBrush.Stretch = Stretch.Uniform;
-            uniformToFillBrush.ImageSource = new BitmapImage(new Uri($"pack://application:,,,/Resources/controller_{Convert.ToInt32(controllerMode)}_{Convert.ToInt32(controllerStatus)}.png"));
+            ImageBrush uniformToFillBrush = new ImageBrush()
+            {
+                Stretch = Stretch.Uniform,
+                ImageSource = new BitmapImage(new Uri($"pack://application:,,,/Resources/controller_{Convert.ToInt32(controllerMode)}_{Convert.ToInt32(controllerStatus)}.png"))
+            };
 
             // Freeze the brush (make it unmodifiable) for performance benefits.
             uniformToFillBrush.Freeze();
@@ -78,6 +74,7 @@ namespace ControllerHelperWPF
                 cB_HidMode.SelectedIndex = (int)controllerMode;
                 ControllerGrid.Background = uniformToFillBrush;
 
+                // todo: localization
                 B_ServiceSwitch.Content = controllerStatus == HIDstatus.Connected ? "Disconnect" : "Connect";
             });
         }
@@ -151,10 +148,22 @@ namespace ControllerHelperWPF
                         UpdateController();
                         break;
                     case "HIDcloaked":
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            Toggle_Cloaked.IsOn = bool.Parse(property);
+                        });
                         break;
                     case "HIDuncloakonclose":
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            Toggle_Uncloak.IsOn = bool.Parse(property);
+                        });
                         break;
                     case "HIDstrength":
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            SliderStrength.Value = float.Parse(property);
+                        });
                         break;
                 }
             }
@@ -182,26 +191,6 @@ namespace ControllerHelperWPF
             UpdateController();
         }
 
-        private void OnServiceUpdate(ServiceControllerStatus status, ServiceStartMode mode)
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                switch (status)
-                {
-                    case ServiceControllerStatus.Paused:
-                    case ServiceControllerStatus.Stopped:
-                        break;
-                    case ServiceControllerStatus.Running:
-                        break;
-                    case ServiceControllerStatus.StartPending:
-                    case ServiceControllerStatus.StopPending:
-                        break;
-                    default:
-                        break;
-                }
-            });
-        }
-
         private void B_ServiceSwitch_Click(object sender, RoutedEventArgs e)
         {
             controllerStatus = controllerStatus == HIDstatus.Connected ? HIDstatus.Disconnected : HIDstatus.Connected;
@@ -210,6 +199,18 @@ namespace ControllerHelperWPF
             mainWindow.pipeClient.SendMessage(settings);
 
             UpdateController();
+        }
+
+        private void Toggle_Cloaked_Toggled(object sender, RoutedEventArgs e)
+        {
+            PipeClientSettings settings = new PipeClientSettings("HIDcloaked", Toggle_Cloaked.IsOn);
+            pipeClient.SendMessage(settings);
+        }
+
+        private void Toggle_Uncloak_Toggled(object sender, RoutedEventArgs e)
+        {
+            PipeClientSettings settings = new PipeClientSettings("HIDuncloakonclose", Toggle_Uncloak.IsOn);
+            pipeClient.SendMessage(settings);
         }
     }
 }

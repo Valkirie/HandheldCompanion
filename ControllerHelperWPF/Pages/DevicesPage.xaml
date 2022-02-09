@@ -50,7 +50,7 @@
                                     <TextBlock Text="Change controller vibration strength" FontSize="14" TextWrapping="Wrap"/>
                                 </ui:SimpleStackPanel>
 
-                                <Slider Grid.Column="2" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" Minimum="1" SmallChange="1" TickFrequency="10" Value="50" TickPlacement="BottomRight"></Slider>
+                                <Slider Name="SliderStrength" Grid.Column="2" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" Minimum="1" SmallChange="1" TickFrequency="10" Value="50" TickPlacement="BottomRight"></Slider>
                             </Grid>
                         </ui:SimpleStackPanel>
                     </Grid>
@@ -113,7 +113,7 @@
                                 <TextBlock Text="Change the physical controller visibility" FontSize="14" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
 
-                            <ui:ToggleSwitch Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right"/>
+                            <ui:ToggleSwitch Name="Toggle_Cloaked" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Cloaked_Toggled"/>
                         </Grid>
                     </Border>
 
@@ -139,7 +139,7 @@
                                 <TextBlock Text="Restore physical controller visibility on close" FontSize="14" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
 
-                            <ui:ToggleSwitch Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right"/>
+                            <ui:ToggleSwitch Name="Toggle_Uncloak" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Uncloak_Toggled"/>
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>
