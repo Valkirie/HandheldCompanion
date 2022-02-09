@@ -38,7 +38,8 @@ namespace ControllerService
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
         private int DSUport, HIDrate, HIDstrength, DeviceWidthHeightRatio;
 
-        private HIDmode HIDmode;
+        private HIDmode HIDmode = HIDmode.None;
+        private HIDstatus HIDstatus = HIDstatus.Disconnected;
 
         private readonly ILogger<ControllerService> logger;
         private readonly IHostApplicationLifetime lifetime;
@@ -65,6 +66,7 @@ namespace ControllerService
             HIDuncloakonclose = Properties.Settings.Default.HIDuncloakonclose;
             DeviceWidthHeightRatio = Properties.Settings.Default.DeviceWidthHeightRatio;
             HIDmode = (HIDmode)Properties.Settings.Default.HIDmode;
+            HIDstatus = (HIDstatus)Properties.Settings.Default.HIDstatus;
             DSUEnabled = Properties.Settings.Default.DSUEnabled;
             DSUip = Properties.Settings.Default.DSUip;
             DSUport = Properties.Settings.Default.DSUport;
@@ -160,9 +162,10 @@ namespace ControllerService
             XInputController.SetInclinometer(Inclinometer);
         }
 
-        private void OnVirtualControllerChange(HIDmode mode)
+        private void SetControllerMode(HIDmode mode)
         {
-            VirtualTarget?.Disconnect();
+            // disconnect current virtual controller
+            SetControllerStatus(HIDstatus.Disconnected);
 
             switch (mode)
             {
@@ -188,7 +191,19 @@ namespace ControllerService
             VirtualTarget.Disconnected += OnTargetDisconnected;
 
             XInputController.SetViGEmTarget(VirtualTarget);
-            VirtualTarget?.Connect();
+        }
+
+        private void SetControllerStatus(HIDstatus status)
+        {
+            switch (status)
+            {
+                case HIDstatus.Connected:
+                    VirtualTarget?.Connect();
+                    break;
+                case HIDstatus.Disconnected:
+                    VirtualTarget?.Disconnect();
+                    break;
+            }
         }
 
         private void OnTargetDisconnected(ViGEmTarget target)
@@ -383,7 +398,10 @@ namespace ControllerService
                         HIDuncloakonclose = (bool)value;
                         break;
                     case "HIDmode":
-                        OnVirtualControllerChange((HIDmode)value);
+                        SetControllerMode((HIDmode)value);
+                        break;
+                    case "HIDstatus":
+                        SetControllerStatus((HIDstatus)value);
                         break;
                     case "DeviceWidthHeightRatio":
                         XInputController.SetWidthHeightRatio((int)value);
@@ -424,7 +442,8 @@ namespace ControllerService
             if (DSUEnabled) DSUServer.Start();
 
             // update virtual controller
-            OnVirtualControllerChange(HIDmode);
+            SetControllerMode(HIDmode);
+            SetControllerStatus(HIDstatus);
 
             // start Pipe Server
             pipeServer.Start();
@@ -445,7 +464,7 @@ namespace ControllerService
             Hidder?.SetCloaking(!HIDuncloakonclose);
 
             // update virtual controller
-            OnVirtualControllerChange(HIDmode.None);
+            SetControllerStatus(HIDstatus.Disconnected);
 
             // stop listening to system events
             SystemEvents.PowerModeChanged -= OnPowerChange;
@@ -465,7 +484,7 @@ namespace ControllerService
 
             switch (e.Mode)
             {
-				default:
+                default:
                 case PowerModes.StatusChange:
                     break;
                 case PowerModes.Resume:

@@ -11,19 +11,19 @@
         ui:WindowHelper.UseModernWindowStyle="True" MinWidth="600">
     
     <Grid>
-        <ui:NavigationView Name="navView" PaneDisplayMode="Auto" SelectionChanged="navView_SelectionChanged" OpenPaneLength="240" IsBackEnabled="True" Header="">
+        <ui:NavigationView Name="navView" PaneDisplayMode="Auto" BackRequested="navView_BackRequested" ItemInvoked="navView_ItemInvoked" OpenPaneLength="240" IsBackEnabled="True" Header="" SelectionFollowsFocus="Enabled" ShoulderNavigationEnabled="WhenSelectionFollowsFocus">
             <ui:NavigationView.MenuItems>
-                <ui:NavigationViewItem Name="navDevices" Content="Devices">
+                <ui:NavigationViewItem Name="navDevices" Content="Devices" Tag="DevicesPage">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE7FC;"></ui:FontIcon>
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-                <ui:NavigationViewItem Name="navProfiles" Content="Profiles">
+                <ui:NavigationViewItem Name="navProfiles" Content="Profiles" Tag="ProfilesPage">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE748;"></ui:FontIcon>
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-                <ui:NavigationViewItem Name="navContent" Content="About">
+                <ui:NavigationViewItem Name="navContent" Content="About" Tag="AboutPage">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE946;"></ui:FontIcon>
                     </ui:NavigationViewItem.Icon>
@@ -34,7 +34,8 @@
                     <ui:Frame
                         Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
                         Name="ContentFrame" MaxWidth="1100"
-                        HorizontalAlignment="Left"/>
+                        HorizontalAlignment="Left"
+                        Navigated="ContentFrame_Navigated"/>
                 </ScrollViewer>
             </Grid>
         </ui:NavigationView>

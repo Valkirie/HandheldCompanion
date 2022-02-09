@@ -24,10 +24,11 @@
 
   <ItemGroup>
     <None Remove="ControllerHelper.json" />
-    <None Remove="Resources\ps_controller.png" />
-    <None Remove="Resources\ps_controller_grayed.png" />
-    <None Remove="Resources\xbox_controller.png" />
-    <None Remove="Resources\xbox_controller_grayed.png" />
+    <None Remove="Resources\b21f9f98829dea9a48fd8aaddc1f159d.png" />
+    <None Remove="Resources\controller_0_0.png" />
+    <None Remove="Resources\controller_0_1.png" />
+    <None Remove="Resources\controller_1_0.png" />
+    <None Remove="Resources\controller_1_1.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,10 +40,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\ps_controller.png" />
-    <Resource Include="Resources\ps_controller_grayed.png" />
-    <Resource Include="Resources\xbox_controller.png" />
-    <Resource Include="Resources\xbox_controller_grayed.png" />
+    <Resource Include="Resources\b21f9f98829dea9a48fd8aaddc1f159d.png" />
+    <Resource Include="Resources\controller_0_1.png" />
+    <Resource Include="Resources\controller_0_0.png" />
+    <Resource Include="Resources\controller_1_1.png" />
+    <Resource Include="Resources\controller_1_0.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -63,6 +65,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Pages\ProfilePage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Update="strings.Designer.cs">
       <DependentUpon>strings.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -75,6 +85,20 @@
       <LastGenOutput>strings.Designer.cs</LastGenOutput>
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Pages\ProfilePage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

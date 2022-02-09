@@ -60,6 +60,7 @@ namespace ControllerService.Targets
         public delegate void DisconnectedEventHandler(ViGEmTarget target);
 
         protected object updateLock = new();
+        protected bool isConnected;
 
         protected ViGEmTarget(XInputController xinput, ViGEmClient client, Controller controller, int index, ILogger logger)
         {
@@ -106,6 +107,7 @@ namespace ControllerService.Targets
             UpdateTimer.Enabled = true;
             UpdateTimer.Start();
 
+            isConnected = true;
             Connected?.Invoke(this);
             logger.LogInformation("Virtual {0} connected", ToString());
         }
@@ -115,6 +117,7 @@ namespace ControllerService.Targets
             UpdateTimer.Enabled = false;
             UpdateTimer.Stop();
 
+            isConnected = false;
             Disconnected?.Invoke(this);
             logger.LogInformation("Virtual {0} disconnected", ToString());
         }

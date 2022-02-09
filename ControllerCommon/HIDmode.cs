@@ -11,4 +11,12 @@ namespace ControllerCommon
         [Description("No Controller")]
         None = 2,
     }
+
+    public enum HIDstatus
+    {
+        [Description("Disconnected")]
+        Disconnected = 0,
+        [Description("Connected")]
+        Connected = 1
+    }
 }

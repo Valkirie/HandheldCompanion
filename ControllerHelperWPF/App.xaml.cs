@@ -3,13 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace ControllerHelperWPF
@@ -18,7 +13,7 @@ namespace ControllerHelperWPF
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
-	{
+    {
         static MainWindow m_MainWindow;
         static PipeClient m_PipeClient;
         static StartupEventArgs m_Arguments;
@@ -28,7 +23,7 @@ namespace ControllerHelperWPF
 
         [STAThread]
         private void Main(object sender, StartupEventArgs Arguments)
-		{
+        {
             if (mutex.WaitOne(TimeSpan.Zero, true))
             {
                 Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);

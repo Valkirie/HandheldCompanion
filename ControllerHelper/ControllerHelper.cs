@@ -38,7 +38,7 @@ namespace ControllerHelper
         private Timer MonitorTimer;
         private uint CurrentProcess;
 
-        public static Controller CurrentController;
+        public static XInputDevice CurrentController;
 
         private MouseHook m_Hook;
         private ToastManager m_ToastManager;
@@ -446,7 +446,7 @@ namespace ControllerHelper
 
         public void UpdateController(string ProductName, Guid InstanceGuid, Guid ProductGuid, int ProductIndex)
         {
-            CurrentController = new Controller(ProductName, InstanceGuid, ProductGuid, ProductIndex);
+            CurrentController = new XInputDevice(ProductName, InstanceGuid, ProductGuid, ProductIndex);
 
             BeginInvoke((MethodInvoker)delegate ()
             {
@@ -520,7 +520,7 @@ namespace ControllerHelper
 
         private void lB_Devices_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Controller con = (Controller)lB_Devices.SelectedItem;
+            XInputDevice con = (XInputDevice)lB_Devices.SelectedItem;
 
             if (con == null)
                 return;

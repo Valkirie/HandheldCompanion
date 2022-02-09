@@ -1,0 +1,58 @@
+﻿<Page x:Class="ControllerHelperWPF.ProfilesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      xmlns:local="clr-namespace:ControllerHelperWPF"
+      mc:Ignorable="d" 
+      d:DesignHeight="1000" d:DesignWidth="1000"
+      Loaded="Page_Loaded"
+      Title="Profiles">
+
+    <Page.Resources>
+        <local:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
+    </Page.Resources>
+
+    <Grid Name="MainGrid" Margin="20,20,20,20" >
+        <Border Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
+            <ui:SimpleStackPanel Spacing="6">
+
+                <!-- Create new profile -->
+                <Button HorizontalAlignment="Stretch" Padding="12,12,12,12">
+                    <ui:SimpleStackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="12">
+                        <ui:FontIcon Glyph="&#xE710;" Height="50" Width="50" Grid.Column="2" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Create a new profile" FontSize="16" VerticalAlignment="Center"/>
+                    </ui:SimpleStackPanel>
+                </Button>
+
+                <!-- Profile1 -->
+                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,12,12,12" Click="Button_Click">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.5*" MinWidth="80"></ColumnDefinition>
+                            <ColumnDefinition Width="7.0*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Height="50" Width="50" Grid.Column="0">
+                            <Image.Source>
+                                <BitmapImage UriSource="/Resources/b21f9f98829dea9a48fd8aaddc1f159d.png"/>
+                            </Image.Source>
+                        </Image>
+
+                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="God of War" FontSize="16"/>
+                            <TextBlock Text="C:\Jeux\God of War\GoW.exe" FontSize="14" TextWrapping="Wrap"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:ToggleSwitch Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right"/>
+                        <ui:FontIcon Glyph="&#xE974;" Grid.Column="3" FlowDirection="RightToLeft" HorizontalAlignment="Right"/>
+                    </Grid>
+                </Button>
+
+            </ui:SimpleStackPanel>
+        </Border>
+    </Grid>
+</Page>

@@ -1,4 +1,4 @@
-﻿<Page x:Class="ControllerHelperWPF.Devices"
+﻿<Page x:Class="ControllerHelperWPF.DevicesPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,18 +6,19 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:local="clr-namespace:ControllerHelperWPF"
       mc:Ignorable="d" 
-      d:DesignHeight="740" d:DesignWidth="1000"
+      d:DesignHeight="1000" d:DesignWidth="1000"
       Loaded="Page_Loaded"
       Title="Devices">
-    
+
     <Page.Resources>
         <local:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
     </Page.Resources>
 
-    <Grid Name="MainGrid" Margin="20,20,20,20" >
+    <Grid Name="MainGrid" Margin="20,20,20,20" IsEnabled="False">
         <Border Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
             <ui:SimpleStackPanel Spacing="24">
-                
+
+                <!-- Header -->
                 <Border
                         Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
                         Height="300"
@@ -26,14 +27,14 @@
                         VerticalAlignment="Stretch"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                    <Grid>
+                    <Grid Name="ControllerGrid">
                         <Grid.Background>
-                            <ImageBrush ImageSource="/Resources/ps_controller_grayed.png" Stretch="Uniform"/>
+                            <ImageBrush ImageSource="/Resources/controller_1_0.png" Stretch="Uniform"/>
                         </Grid.Background>
                         <ui:SimpleStackPanel Spacing="18" VerticalAlignment="Bottom">
                             <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal">
-                                <Button Name="B_ServiceSwitch" Content="Turn on" IsEnabled="False" Width="80" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}"/>
-                                <ComboBox Name="cB_HidMode" Width="260" IsEnabled="False" SelectionChanged="cB_HidMode_SelectionChanged"/>
+                                <Button Name="B_ServiceSwitch" Content="Connect" Width="Auto" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" Click="B_ServiceSwitch_Click"/>
+                                <ComboBox Name="cB_HidMode" Width="Auto" SelectionChanged="cB_HidMode_SelectionChanged"/>
                             </ui:SimpleStackPanel>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -49,12 +50,13 @@
                                     <TextBlock Text="Change controller vibration strength" FontSize="14" TextWrapping="Wrap"/>
                                 </ui:SimpleStackPanel>
 
-                                <Slider Grid.Column="2" VerticalAlignment="Center"></Slider>
+                                <Slider Grid.Column="2" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" Minimum="1" SmallChange="1" TickFrequency="10" Value="50" TickPlacement="BottomRight"></Slider>
                             </Grid>
                         </ui:SimpleStackPanel>
                     </Grid>
                 </Border>
 
+                <!-- XInput details -->
                 <ui:SimpleStackPanel Spacing="6">
                     <Label Content="XInput details" FontWeight="SemiBold"></Label>
                     <Border
@@ -67,19 +69,29 @@
 
                         <ui:SimpleStackPanel Spacing="10">
                             <TextBox
-                            ui:ControlHelper.Header="Instance ID"
-                            Text="246cbbd0-6a26-11ec-8008-444553540000"
-                            IsReadOnly="True" />
+                                ui:ControlHelper.Header="Device name"
+                                Name = "DeviceName"
+                                Text=""
+                                IsReadOnly="True" />
                             <TextBox
-                            ui:ControlHelper.Header="Product ID"
-                            Text="028e045e-0000-0000-0000-504944564944"
-                            IsReadOnly="True" />
+                                ui:ControlHelper.Header="Instance ID"
+                                Name = "DeviceInstanceID"
+                                Text=""
+                                IsReadOnly="True" />
+                            <TextBox
+                                ui:ControlHelper.Header="Product ID"
+                                Name = "DeviceProductID"
+                                Text=""
+                                IsReadOnly="True" />
                         </ui:SimpleStackPanel>
                     </Border>
                 </ui:SimpleStackPanel>
-                
+
+                <!-- Device cloaking -->
                 <ui:SimpleStackPanel Spacing="6">
                     <Label Content="Device cloaking" FontWeight="SemiBold"></Label>
+
+                    <!-- Cloak device -->
                     <Border
                         Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
                         Padding="0,12,12,12"
@@ -94,9 +106,9 @@
                                 <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
-                            <ui:FontIcon Glyph="&#xE793;" Grid.Column="0" HorizontalAlignment="Center"/>
+                            <ui:FontIcon Glyph="&#xE793;" Height="50" Grid.Column="0" HorizontalAlignment="Center"/>
 
-                            <ui:SimpleStackPanel Grid.Column="1">
+                            <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="Cloak device" FontSize="16"/>
                                 <TextBlock Text="Change the physical controller visibility" FontSize="14" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
@@ -104,7 +116,8 @@
                             <ui:ToggleSwitch Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right"/>
                         </Grid>
                     </Border>
-                    
+
+                    <!-- Uncloak on close -->
                     <Border
                         Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
                         Padding="0,12,12,12"
@@ -119,9 +132,9 @@
                                 <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
-                            <ui:FontIcon Glyph="&#xE7B3;" Grid.Column="0" HorizontalAlignment="Center"/>
+                            <ui:FontIcon Glyph="&#xE7B3;" Height="50" Grid.Column="0" HorizontalAlignment="Center"/>
 
-                            <ui:SimpleStackPanel Grid.Column="1">
+                            <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="Uncloak on close" FontSize="16"/>
                                 <TextBlock Text="Restore physical controller visibility on close" FontSize="14" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>

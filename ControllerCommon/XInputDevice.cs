@@ -1,15 +1,15 @@
 ﻿using System;
 
-namespace ControllerHelper
+namespace ControllerCommon
 {
-    public class Controller
+    public class XInputDevice
     {
         public string ProductName;
         public Guid ProductGuid;
         public Guid InstanceGuid;
         public int ProductIndex;
 
-        public Controller(string ProductName, Guid InstanceGuid, Guid ProductGuid, int ProductIndex)
+        public XInputDevice(string ProductName, Guid InstanceGuid, Guid ProductGuid, int ProductIndex)
         {
             this.ProductName = ProductName;
             this.InstanceGuid = InstanceGuid;

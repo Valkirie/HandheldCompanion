@@ -1,14 +1,19 @@
-﻿using ModernWpf.Controls;
+﻿using ControllerCommon;
+using ControllerHelperWPF.Pages;
 using Microsoft.Extensions.Logging;
+using ModernWpf.Controls;
+using ModernWpf.Navigation;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.ServiceProcess;
 using System.Threading;
 using System.Windows;
-using ControllerCommon;
-using System;
-using System.IO;
-using System.ServiceProcess;
+using Page = System.Windows.Controls.Page;
 
 namespace ControllerHelperWPF
 {
@@ -21,12 +26,13 @@ namespace ControllerHelperWPF
         private StartupEventArgs arguments;
 
         // page vars
-        static Devices devicesPage;
-        static Profiles profilesPage;
+        public DevicesPage devicesPage;
+        public ProfilesPage profilesPage;
 
-        // static vars
+        // connectivity vars
         public PipeClient pipeClient;
         public PipeServer pipeServer;
+
         public CmdParser cmdParser;
         public MouseHook mouseHook;
         public ToastManager toastManager;
@@ -52,10 +58,6 @@ namespace ControllerHelperWPF
             // initialize log
             microsoftLogger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
-            // initialize pages
-            devicesPage = new Devices(this);
-            profilesPage = new Profiles(this);
-
             // paths
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -72,8 +74,6 @@ namespace ControllerHelperWPF
 
             // initialize pipe client
             pipeClient = new PipeClient("ControllerService", microsoftLogger);
-            pipeClient.Connected += OnClientConnected;
-            pipeClient.Disconnected += OnClientDisconnected;
             pipeClient.ServerMessage += OnServerMessage;
 
             // initialize pipe server
@@ -96,7 +96,59 @@ namespace ControllerHelperWPF
 
             // initialize Service Manager
             serviceManager = new ServiceManager("ControllerService", strings.ServiceName, strings.ServiceDescription, microsoftLogger);
-            serviceManager.Updated += UpdateService;
+            serviceManager.Updated += OnServiceUpdate;
+
+            // initialize pages
+            devicesPage = new DevicesPage(this, microsoftLogger);
+            profilesPage = new ProfilesPage(this);
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            navView.SelectedItem = navView.MenuItems.OfType<NavigationViewItem>().First();
+            Navigate(navView.SelectedItem);
+
+            // start Service Manager
+            serviceManager.Start();
+
+            // start pipe client and server
+            pipeClient.Start();
+            pipeServer.Start();
+
+            // start Profile Manager
+            profileManager.Start();
+
+            // execute args
+            cmdParser.ParseArgs(arguments.Args);
+        }
+
+        public void UpdateSettings(Dictionary<string, string> args)
+        {
+            foreach (KeyValuePair<string, string> pair in args)
+            {
+                string name = pair.Key;
+                string property = pair.Value;
+
+                switch (name)
+                {
+                    case "gyrometer":
+                        break;
+                    case "accelerometer":
+                        break;
+                    case "DeviceWidthHeightRatio":
+                        break;
+                    case "HIDrate":
+                        break;
+                    case "DSUEnabled":
+                        break;
+                    case "DSUip":
+                        break;
+                    case "DSUport":
+                        break;
+                    case "ToastEnable":
+                        break;
+                }
+            }
         }
 
         #region cmdParser
@@ -112,27 +164,27 @@ namespace ControllerHelperWPF
         #endregion
 
         #region pipeClient
-        private void OnServerMessage(object sender, PipeMessage e)
+        private void OnServerMessage(object sender, PipeMessage message)
         {
-            // implement me
-        }
+            switch (message.code)
+            {
+                case PipeCode.SERVER_TOAST:
+                    PipeServerToast toast = (PipeServerToast)message;
+                    toastManager.SendToast(toast.title, toast.content, toast.image);
+                    break;
 
-        private void OnClientDisconnected(object sender)
-        {
-            // implement me
-        }
-
-        private void OnClientConnected(object sender)
-        {
-            // implement me
+                case PipeCode.SERVER_SETTINGS:
+                    PipeServerSettings settings = (PipeServerSettings)message;
+                    UpdateSettings(settings.settings);
+                    break;
+            }
         }
         #endregion
 
         #region serviceManager
-        private void UpdateService(ServiceControllerStatus status, ServiceStartMode mode)
+        private void OnServiceUpdate(ServiceControllerStatus status, ServiceStartMode mode)
         {
-            // update pages
-            devicesPage.UpdateServivce(status, mode);
+            // implement me
         }
         #endregion
 
@@ -162,45 +214,64 @@ namespace ControllerHelperWPF
         }
         #endregion
 
-        private void navView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        #region UI
+        private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            if (args.IsSettingsSelected)
+            if (args.IsSettingsInvoked)
             {
                 navView.Header = "Settings";
+                Navigate(typeof(SettingsPage));
             }
             else
             {
-                NavigationViewItem item = args.SelectedItem as NavigationViewItem;
-                navView.Header = item.Content;
-
-                switch (item.Content)
-                {
-                    case "Devices":
-                        ContentFrame.Navigate(devicesPage);
-                        break;
-                    case "Profiles":
-                        ContentFrame.Navigate(profilesPage);
-                        break;
-                }
+                navView.Header = args.InvokedItemContainer.Content;
+                Navigate(args.InvokedItemContainer);
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
         {
-            navView.SelectedItem = navView.MenuItems[0];
-
-            // start Service Manager
-            serviceManager.Start();
-
-            // start pipe client and server
-            pipeClient.Start();
-            pipeServer.Start();
-
-            // start Profile Manager
-            profileManager.Start();
-
-            // execute args
-            cmdParser.ParseArgs(arguments.Args);
+            if (ContentFrame.CanGoBack)
+                ContentFrame.GoBack();
         }
+
+        private void ContentFrame_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            if (e.SourcePageType() == typeof(SettingsPage))
+            {
+                navView.SelectedItem = navView.SettingsItem;
+            }
+            else
+            {
+                string eName = e.SourcePageType().Name;
+                navView.SelectedItem = navView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(x => x.Tag.ToString() == e.SourcePageType().Name);
+            }
+        }
+
+        private void Navigate(object item)
+        {
+            if (item is NavigationViewItem menuItem)
+            {
+                Page page = GetPage(menuItem);
+                ContentFrame.Navigate(page);
+            }
+        }
+
+        private Page GetPage(NavigationViewItem item)
+        {
+            switch (item.Tag)
+            {
+                case "DevicesPage":
+                    return (Page)devicesPage;
+                case "ProfilesPage":
+                    return (Page)profilesPage;
+                case "AboutPage":
+                    return (Page)profilesPage;
+                case "SettingsPage":
+                    return new SettingsPage(); // temp
+            }
+            return null;
+        }
+        #endregion
     }
 }
