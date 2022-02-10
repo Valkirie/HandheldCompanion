@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
 using SharpDX.DirectInput;
@@ -189,7 +189,7 @@ namespace ControllerService
         }
         private void AngleTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Acceleration = new();
+            Angle = new();
         }
 
         public void SetWidthHeightRatio(int ratio)
