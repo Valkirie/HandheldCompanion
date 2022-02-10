@@ -36,7 +36,8 @@ namespace ControllerService
 
         private string DSUip;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
-        private int DSUport, HIDrate, HIDstrength, DeviceWidthHeightRatio;
+        private int DSUport, HIDrate, DeviceWidthHeightRatio;
+        private double HIDstrength;
 
         private HIDmode HIDmode = HIDmode.None;
         private HIDstatus HIDstatus = HIDstatus.Disconnected;
@@ -165,7 +166,7 @@ namespace ControllerService
         private void SetControllerMode(HIDmode mode)
         {
             // disconnect current virtual controller
-            SetControllerStatus(HIDstatus.Disconnected);
+            VirtualTarget?.Disconnect();
 
             switch (mode)
             {
@@ -191,10 +192,12 @@ namespace ControllerService
             VirtualTarget.Disconnected += OnTargetDisconnected;
 
             XInputController.SetViGEmTarget(VirtualTarget);
+            SetControllerStatus(HIDstatus);
         }
 
         private void SetControllerStatus(HIDstatus status)
         {
+            HIDstatus = status;
             switch (status)
             {
                 case HIDstatus.Connected:
@@ -356,6 +359,10 @@ namespace ControllerService
                             value = (float)value;
                             prev_value = (float)prev_value;
                             break;
+                        case TypeCode.Double:
+                            value = (double)value;
+                            prev_value = (double)prev_value;
+                            break;
                         case TypeCode.Int16:
                         case TypeCode.Int32:
                         case TypeCode.Int64:
@@ -410,7 +417,7 @@ namespace ControllerService
                         XInputController.SetPollRate((int)value);
                         break;
                     case "HIDstrength":
-                        XInputController.SetVibrationStrength((int)value);
+                        XInputController.SetVibrationStrength((double)value);
                         break;
                     case "DSUEnabled":
                         switch ((bool)value)
@@ -517,9 +524,6 @@ namespace ControllerService
 
             foreach (SettingsProperty s in Properties.Settings.Default.Properties)
                 settings.Add(s.Name, Properties.Settings.Default[s.Name].ToString());
-
-            settings.Add("gyrometer", $"{XInputController.Gyrometer.sensor != null}");
-            settings.Add("accelerometer", $"{XInputController.Accelerometer.sensor != null}");
 
             return settings;
         }

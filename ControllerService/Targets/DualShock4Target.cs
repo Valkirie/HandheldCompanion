@@ -66,6 +66,9 @@ namespace ControllerService.Targets
 
         public override void Connect()
         {
+            if (isConnected)
+                return;
+
             virtualController.Connect();
             base.Connect();
         }

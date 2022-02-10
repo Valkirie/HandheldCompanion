@@ -3,12 +3,14 @@ using Microsoft.Extensions.Logging;
 using ModernWpf;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Windows.System.Profile.SystemManufacturers;
 
 namespace ControllerHelperWPF
 {
@@ -35,6 +37,8 @@ namespace ControllerHelperWPF
 
             foreach (HIDmode mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.None))
                 cB_HidMode.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
+
+            UpdateDevice();
         }
 
         public DevicesPage(MainWindow mainWindow, ILogger microsoftLogger) : this()
@@ -53,6 +57,54 @@ namespace ControllerHelperWPF
             // implement me
         }
 
+        private void UpdateDevice()
+        {
+            // List of supported devices
+            // AYANEO 2021 Pro Retro Power
+            // AYANEO 2021 Pro
+            // AYANEO 2021
+            // AYANEO NEXT Pro
+            // AYANEO NEXT Advance
+            // AYANEO NEXT
+
+            string ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
+            string ProductName = MotherboardInfo.Product;
+
+            // Device visual
+            Uri ImageSource;
+
+            switch(ProductName)
+            {
+                /* case "AYANEO 2021 Pro Retro Power":
+                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_retro_power.png");
+                    break;
+                case "AYANEO 2021 Pro":
+                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_2021_pro.png");
+                    break;
+                case "AYANEO 2021":
+                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_2021.png");
+                    break;
+                case "AYANEO NEXT Pro":
+                case "AYANEO NEXT Advance":
+                case "AYANEO NEXT":
+                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_next.png");
+                    break; */
+                default:
+                    ImageSource = new Uri($"pack://application:,,,/Resources/device_generic.png");
+                    break;
+            }
+
+            // threaded call to update UI
+            this.Dispatcher.Invoke(() =>
+            {
+                // Motherboard properties
+                LabelManufacturer.Content = ManufacturerName;
+                LabelProductName.Content = ProductName;
+
+                ImageDevice.Source = new BitmapImage(ImageSource);
+            });
+        }
+
         private void UpdateController()
         {
             if (controllerMode == HIDmode.None)
@@ -64,8 +116,6 @@ namespace ControllerHelperWPF
                 Stretch = Stretch.Uniform,
                 ImageSource = new BitmapImage(new Uri($"pack://application:,,,/Resources/controller_{Convert.ToInt32(controllerMode)}_{Convert.ToInt32(controllerStatus)}.png"))
             };
-
-            // Freeze the brush (make it unmodifiable) for performance benefits.
             uniformToFillBrush.Freeze();
 
             // threaded call to update UI
@@ -204,13 +254,19 @@ namespace ControllerHelperWPF
         private void Toggle_Cloaked_Toggled(object sender, RoutedEventArgs e)
         {
             PipeClientSettings settings = new PipeClientSettings("HIDcloaked", Toggle_Cloaked.IsOn);
-            pipeClient.SendMessage(settings);
+            pipeClient?.SendMessage(settings);
         }
 
         private void Toggle_Uncloak_Toggled(object sender, RoutedEventArgs e)
         {
             PipeClientSettings settings = new PipeClientSettings("HIDuncloakonclose", Toggle_Uncloak.IsOn);
-            pipeClient.SendMessage(settings);
+            pipeClient?.SendMessage(settings);
+        }
+
+        private void SliderStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            PipeClientSettings settings = new PipeClientSettings("HIDstrength", SliderStrength.Value);
+            pipeClient?.SendMessage(settings);
         }
     }
 }

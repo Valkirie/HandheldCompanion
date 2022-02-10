@@ -28,7 +28,6 @@
                                 <ResourceDictionary Source="/FluentWPF;component/Styles/Brushes.xaml" />
                                 <ResourceDictionary Source="/ModernWpf;component/ThemeResources/Dark.xaml" />
                             </ResourceDictionary.MergedDictionaries>
-                            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource SystemBaseHighColor}" />
                         </ResourceDictionary>
                     </ui:ThemeResources.ThemeDictionaries>
                 </ui:ThemeResources>

@@ -93,6 +93,7 @@ namespace ControllerHelperWPF
 
             // initialize toast manager
             toastManager = new ToastManager("ControllerService");
+            toastManager.Enabled = Properties.Settings.Default.ToastEnable;
 
             // initialize Service Manager
             serviceManager = new ServiceManager("ControllerService", strings.ServiceName, strings.ServiceDescription, microsoftLogger);
@@ -131,21 +132,11 @@ namespace ControllerHelperWPF
 
                 switch (name)
                 {
-                    case "gyrometer":
-                        break;
-                    case "accelerometer":
-                        break;
-                    case "DeviceWidthHeightRatio":
-                        break;
-                    case "HIDrate":
-                        break;
                     case "DSUEnabled":
                         break;
                     case "DSUip":
                         break;
                     case "DSUport":
-                        break;
-                    case "ToastEnable":
                         break;
                 }
             }
@@ -219,12 +210,10 @@ namespace ControllerHelperWPF
         {
             if (args.IsSettingsInvoked)
             {
-                navView.Header = "Settings";
                 Navigate(typeof(SettingsPage));
             }
             else
             {
-                navView.Header = args.InvokedItemContainer.Content;
                 Navigate(args.InvokedItemContainer);
             }
         }
@@ -254,6 +243,7 @@ namespace ControllerHelperWPF
             {
                 Page page = GetPage(menuItem);
                 ContentFrame.Navigate(page);
+                navView.Header = menuItem.Content;
             }
         }
 

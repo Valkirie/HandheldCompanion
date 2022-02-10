@@ -62,12 +62,18 @@ namespace ControllerService.Targets
 
         public override void Connect()
         {
+            if (isConnected)
+                return;
+
             virtualController.Connect();
             base.Connect();
         }
 
         public override void Disconnect()
         {
+            if (!isConnected)
+                return;
+
             virtualController.Disconnect();
             base.Disconnect();
         }

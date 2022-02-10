@@ -22,5 +22,17 @@ namespace ControllerHelperWPF.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ToastEnable {
+            get {
+                return ((bool)(this["ToastEnable"]));
+            }
+            set {
+                this["ToastEnable"] = value;
+            }
+        }
     }
 }

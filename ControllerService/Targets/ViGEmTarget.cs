@@ -46,7 +46,7 @@ namespace ControllerService.Targets
 
         protected XInputStateSecret state_s;
 
-        protected float vibrationStrength;
+        protected double vibrationStrength;
 
         protected int UserIndex;
 
@@ -91,7 +91,7 @@ namespace ControllerService.Targets
             logger.LogInformation("Virtual {0} report interval set to {1}ms", this, HIDrate);
         }
 
-        public void SetVibrationStrength(float strength)
+        public void SetVibrationStrength(double strength)
         {
             vibrationStrength = strength / 100.0f;
             logger.LogInformation("Virtual {0} vibration strength set to {1}%", this, strength);

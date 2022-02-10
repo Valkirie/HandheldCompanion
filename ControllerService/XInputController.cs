@@ -30,7 +30,7 @@ namespace ControllerService
 
         public Timer UpdateTimer;
         public float WidhtHeightRatio = 2.5f;
-        public float vibrationStrength = 100.0f;
+        public double vibrationStrength = 100.0d;
         public int updateInterval = 10;
 
         public DeviceInstance Instance;
@@ -188,7 +188,7 @@ namespace ControllerService
             this.virtualTarget?.SetPollRate(updateInterval);
         }
 
-        public void SetVibrationStrength(float strength)
+        public void SetVibrationStrength(double strength)
         {
             vibrationStrength = strength;
             this.virtualTarget?.SetVibrationStrength(vibrationStrength);

@@ -29,6 +29,12 @@
     <None Remove="Resources\controller_0_1.png" />
     <None Remove="Resources\controller_1_0.png" />
     <None Remove="Resources\controller_1_1.png" />
+    <None Remove="Resources\controller_2_0.png" />
+    <None Remove="Resources\device_aya_2021.png" />
+    <None Remove="Resources\device_aya_2021_pro.png" />
+    <None Remove="Resources\device_aya_next.png" />
+    <None Remove="Resources\device_aya_retro_power.png" />
+    <None Remove="Resources\device_generic.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,11 +46,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\controller_2_0.png" />
+    <Resource Include="Resources\device_generic.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\device_aya_2021_pro.png" />
+    <Resource Include="Resources\device_aya_2021.png" />
     <Resource Include="Resources\b21f9f98829dea9a48fd8aaddc1f159d.png" />
     <Resource Include="Resources\controller_0_1.png" />
     <Resource Include="Resources\controller_0_0.png" />
     <Resource Include="Resources\controller_1_1.png" />
     <Resource Include="Resources\controller_1_0.png" />
+    <Resource Include="Resources\device_aya_next.png" />
+    <Resource Include="Resources\device_aya_retro_power.png" />
   </ItemGroup>
 
   <ItemGroup>
