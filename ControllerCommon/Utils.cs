@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Notifications;
+using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -269,6 +269,28 @@ namespace ControllerCommon
             {
                 result *= -1;
             }
+            return result;
+        }
+
+        // Compensation for in game deadzone
+        // Inputs: -1 to 1 joystick position and deadzone 0-100%
+        // Should not be used under normal circumstances, in game should be set to 0%
+        // Use cases foreseen:
+        // - Game has deadzone, but no way to configure or change it
+        // - User does not want to change general emulator deadzone setting but want's it removed for specific game and use UMC Steering
+        public static float InGameDeadZoneSettingCompensation(float joystick_pos, float deadzone_percentage)
+        {
+            // Use absolute value, apply uniform in both directions
+            // Map to new range i.e. remove bottom %
+            float result = ((Math.Abs(joystick_pos)) / 1) * (1 - deadzone_percentage / 100) + (deadzone_percentage / 100);
+
+            // Clamp deadzone remapped 0 to 1 value, prevents negative values when
+            // actual device angle is below dead zone percentage set
+            result = Math.Clamp(result, deadzone_percentage / 100, 1);
+
+            // Apply direction again
+            result = (joystick_pos < 0.0) ? -result : result;
+
             return result;
         }
 

@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
@@ -164,6 +164,7 @@ namespace ControllerService.Targets
                             float user_defined_max_device_angle = 30;
                             float to_the_power_of = 1;
                             float deadzone_angle = 2;
+                            float ingame_deadzone_setting_compensation = 0; // 0 to 100 %, in 1% increments, default 0 %
 
                             // TODO @Benjamin What to do with the log statements?
 
@@ -175,9 +176,14 @@ namespace ControllerService.Targets
                             float joystick_ratio_powered = Utils.DirectionRespectingPowerOf(joystick_ratio_capped_angle, to_the_power_of);
                             logger?.LogInformation("DirectionRespectingPowerOf. Input: {0:0.#####} Power: {1:0.#} Result: {2:0.####}", joystick_ratio_capped_angle, to_the_power_of, joystick_ratio_powered);
 
+                            // Apply user defined in game deadzone setting compensation
+                            float joystick_pos_in_game_deadzone_compensated = Utils.InGameDeadZoneSettingCompensation(joystick_ratio_powered, ingame_deadzone_setting_compensation);
+                            logger?.LogInformation("InGameDeadZoneSettingCompensation. Input: {0:0.#####} Ingame Deadzone %: {1:0.#} Result: {2:0.####}", joystick_ratio_powered, ingame_deadzone_setting_compensation, joystick_pos_in_game_deadzone_compensated);
+
                             // Scale ratio to joystick range
-                            LeftThumbX = (short)-(joystick_ratio_powered * short.MaxValue);
-                            logger?.LogInformation("LeftThumbX: {0} based on Y angle: {1:00.######} degs", LeftThumbX, xinputController.Angle.Y);
+                            LeftThumbX = (short)-(joystick_pos_in_game_deadzone_compensated * short.MaxValue);
+
+                            logger?.LogInformation("LeftThumbX: {0} based on device Y angle: {1:00.######} degs", LeftThumbX, xinputController.Angle.Y);
                             break;
                     }
                 }
