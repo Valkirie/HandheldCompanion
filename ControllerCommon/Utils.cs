@@ -1,4 +1,4 @@
-using Microsoft.Toolkit.Uwp.Notifications;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -241,34 +241,32 @@ namespace ControllerCommon
             return (short)Math.Clamp(value + compute * sensivity, short.MinValue, short.MaxValue);
         }
 
-        // Determine -1 to 1 joystick ratio given user defined max input angle and dead zone
-        public static float AngleToJoystickRatio(float angle, float max_angle, float deadzone_angle)
+        // Determine -1 to 1 joystick position given user defined max input angle and dead zone
+        // Angles in degrees
+        public static float AngleToJoystickPos(float angle, float max_angle, float deadzone_angle)
         {
             // Deadzone remapped angle, note this angle is no longer correct with device angle
             float result = ((Math.Abs(angle) - deadzone_angle) / (max_angle - deadzone_angle)) * max_angle;
             
             // Clamp deadzone remapped angle, prevents negative values when
             // actual device angle is below dead zone angle
-            // Divide by max angle, angle to joystick ratio with user max
+            // Divide by max angle, angle to joystick position with user max
             result = Math.Clamp(result, 0, max_angle) / max_angle;
 
-            // Above calculations are done with absolute angle, apply correct direction here
-            if (angle < 0.0)
-            {
-                result *= -1;
-            }
+            // Apply direction again
+            result = (angle < 0.0) ? -result : result;
+
             return result;
         }
 
-        // Apply power of to -1 to 1 joystick ratio while respecting direction
-        public static float DirectionRespectingPowerOf(float input, float power)
+        // Apply power of to -1 to 1 joystick position while respecting direction
+        public static float DirectionRespectingPowerOf(float joystick_pos, float power)
         {
-            float result = (float)Math.Pow(Math.Abs(input), power);
+            float result = (float)Math.Pow(Math.Abs(joystick_pos), power);
 
-            if (input < 0.0)
-            {
-                result *= -1;
-            }
+            // Apply direction again
+            result = (joystick_pos < 0.0) ? -result : result;
+
             return result;
         }
 
