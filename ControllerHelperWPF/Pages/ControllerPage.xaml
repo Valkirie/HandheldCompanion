@@ -1,4 +1,4 @@
-﻿<Page x:Class="ControllerHelperWPF.DevicesPage"
+﻿<Page x:Class="ControllerHelperWPF.ControllerPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,7 +8,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
       Loaded="Page_Loaded"
-      Title="Devices">
+      Title="Controller">
 
     <Page.Resources>
         <local:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
@@ -41,12 +41,11 @@
 
                 <!-- Controller -->
                 <Border
-                        Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
-                        Height="300"
-                        Padding="0,12,12,12"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                    Height="300"
+                    Padding="0,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    BorderThickness="1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowRevealBorderBrush}"
+                    Background="{DynamicResource SystemControlBackgroundBaseLowRevealBorderBrush}">
 
                     <Grid Name="ControllerGrid">
                         <Grid.Background>
@@ -83,8 +82,6 @@
                     <Border
                         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
                         Padding="12"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
 
@@ -113,12 +110,11 @@
                     <Label Content="Device cloaking" FontWeight="SemiBold"></Label>
 
                     <!-- Cloak device -->
-                    <Border
-                        Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
+                    <Border                      
                         Padding="0,12,12,12"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        BorderThickness="1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowRevealBorderBrush}"
+                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -139,12 +135,11 @@
                     </Border>
 
                     <!-- Uncloak on close -->
-                    <Border
-                        Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
+                    <Border  
                         Padding="0,12,12,12"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        BorderThickness="1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowRevealBorderBrush}"
+                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>

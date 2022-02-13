@@ -26,7 +26,7 @@ namespace ControllerHelperWPF
         private StartupEventArgs arguments;
 
         // page vars
-        public DevicesPage devicesPage;
+        public ControllerPage controllerPage;
         public ProfilesPage profilesPage;
 
         // connectivity vars
@@ -37,8 +37,8 @@ namespace ControllerHelperWPF
         public MouseHook mouseHook;
         public ToastManager toastManager;
 
-        public ProfileManager profileManager;
         public ServiceManager serviceManager;
+        public ProfileManager profileManager;
 
         private WindowState prevWindowState;
 
@@ -82,8 +82,6 @@ namespace ControllerHelperWPF
 
             // initialize Profile Manager
             profileManager = new ProfileManager(CurrentPathProfiles, microsoftLogger, pipeClient);
-            profileManager.Deleted += ProfileDeleted;
-            profileManager.Updated += ProfileUpdated;
 
             // initialize command parser
             cmdParser = new CmdParser(pipeClient, this, microsoftLogger);
@@ -100,14 +98,15 @@ namespace ControllerHelperWPF
             serviceManager.Updated += OnServiceUpdate;
 
             // initialize pages
-            devicesPage = new DevicesPage(this, microsoftLogger);
-            profilesPage = new ProfilesPage(this);
+            controllerPage = new ControllerPage(this, microsoftLogger);
+            profilesPage = new ProfilesPage(this, microsoftLogger);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            navView.SelectedItem = navView.MenuItems.OfType<NavigationViewItem>().First();
-            Navigate(navView.SelectedItem);
+            NavigationViewItem item = navView.MenuItems.OfType<NavigationViewItem>().First();
+            navView.SelectedItem = item;
+            Navigate(item);
 
             // start Service Manager
             serviceManager.Start();
@@ -115,9 +114,6 @@ namespace ControllerHelperWPF
             // start pipe client and server
             pipeClient.Start();
             pipeServer.Start();
-
-            // start Profile Manager
-            profileManager.Start();
 
             // execute args
             cmdParser.ParseArgs(arguments.Args);
@@ -209,13 +205,9 @@ namespace ControllerHelperWPF
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             if (args.IsSettingsInvoked)
-            {
-                Navigate(typeof(SettingsPage));
-            }
+                Navigate(typeof(SettingsPage)); // temp
             else
-            {
-                Navigate(args.InvokedItemContainer);
-            }
+                Navigate((NavigationViewItem)args.InvokedItemContainer);
         }
 
         private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
@@ -226,33 +218,36 @@ namespace ControllerHelperWPF
 
         private void ContentFrame_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
         {
+            NavigationViewItem menuItem;
             if (e.SourcePageType() == typeof(SettingsPage))
-            {
-                navView.SelectedItem = navView.SettingsItem;
-            }
+                menuItem = (NavigationViewItem)navView.SettingsItem;
             else
-            {
-                string eName = e.SourcePageType().Name;
-                navView.SelectedItem = navView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(x => x.Tag.ToString() == e.SourcePageType().Name);
-            }
+                menuItem = navView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(x => x.Tag.ToString() == e.SourcePageType().Name);
+
+            if (menuItem == null)
+                return;
+
+            navView.SelectedItem = menuItem;
+            navView.Header = menuItem.Content;
         }
 
-        private void Navigate(object item)
+        private void Navigate(Type type)
         {
-            if (item is NavigationViewItem menuItem)
-            {
-                Page page = GetPage(menuItem);
-                ContentFrame.Navigate(page);
-                navView.Header = menuItem.Content;
-            }
+            ContentFrame.Navigate(type);
+        }
+
+        private void Navigate(NavigationViewItem menuItem)
+        {
+            Page page = GetPage(menuItem);
+            ContentFrame.Navigate(page);
         }
 
         private Page GetPage(NavigationViewItem item)
         {
             switch (item.Tag)
             {
-                case "DevicesPage":
-                    return (Page)devicesPage;
+                case "ControllerPage":
+                    return (Page)controllerPage;
                 case "ProfilesPage":
                     return (Page)profilesPage;
                 case "AboutPage":

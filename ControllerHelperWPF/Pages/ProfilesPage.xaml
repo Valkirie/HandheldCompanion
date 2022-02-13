@@ -14,20 +14,152 @@
         <local:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
     </Page.Resources>
 
-    <Grid Name="MainGrid" Margin="20,20,20,20" >
+    <Grid Name="MainGrid" Margin="20" >
         <Border>
-            <ui:SimpleStackPanel Spacing="6">
+            <ui:SimpleStackPanel Name="StackPanel_Profiles" Spacing="6">
 
-                <!-- Create new profile -->
-                <Button HorizontalAlignment="Stretch" Padding="12,12,12,12" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}">
-                    <ui:SimpleStackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="12">
-                        <ui:FontIcon Glyph="&#xE710;" Height="50" Width="50" Grid.Column="2" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Create a new profile" FontSize="14" VerticalAlignment="Center"/>
-                    </ui:SimpleStackPanel>
-                </Button>
+                <!-- Profile picker -->
+                <Border
+                    Padding="12,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    BorderThickness="1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowRevealBorderBrush}"
+                    Background="{DynamicResource SystemControlBackgroundBaseLowRevealBorderBrush}">
 
-                <!-- Profile1 -->
-                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,12,12,12" Click="Button_Click" Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="0.5*" MinWidth="12"></ColumnDefinition>
+                            <ColumnDefinition Width="8*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <ui:SimpleStackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock Text="Profile selection" FontSize="14"/>
+                            <TextBlock Text="Select the profile you would like to edit" FontSize="12" TextWrapping="Wrap"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:SimpleStackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="6">
+                            <ComboBox Name="cB_Profiles" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowBrush}"/>
+
+                            <!-- Create new profile -->
+                            <Button Grid.Column="2" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" Click="Button_Click_1">
+                                <ui:SimpleStackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="12">
+                                    <ui:FontIcon Glyph="&#xE710;" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Create a new profile" FontSize="14" VerticalAlignment="Center"/>
+                                </ui:SimpleStackPanel>
+                            </Button>
+                        </ui:SimpleStackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Header -->
+                <Border
+                    Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                    Padding="12,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    BorderThickness="1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.5*" MinWidth="150"></ColumnDefinition>
+                            <ColumnDefinition Width="9.5*" MinWidth="200"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <Border
+                            Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            CornerRadius="20">
+
+                            <Image Height="80" Width="80" Grid.Column="0">
+                                <Image.Source>
+                                    <BitmapImage UriSource="/Resources/b21f9f98829dea9a48fd8aaddc1f159d.png"/>
+                                </Image.Source>
+                            </Image>
+                        </Border>
+
+                        <ui:SimpleStackPanel HorizontalAlignment="Stretch" Spacing="12" Grid.Column="1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.5*" MinWidth="80"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*" MinWidth="80"></ColumnDefinition>
+                                    <ColumnDefinition Width="7.5*" MinWidth="200"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <ui:FontIcon Glyph="&#xE8AC;" Grid.Column="0" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Name" Grid.Column="1" FontSize="14" VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="2" Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}" IsReadOnly="True" FlowDirection="RightToLeft" VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="God of War" BorderThickness="1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowBrush}"/>
+                            </Grid>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.5*" MinWidth="80"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*" MinWidth="80"></ColumnDefinition>
+                                    <ColumnDefinition Width="7.5*" MinWidth="200"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <ui:FontIcon Glyph="&#xED25;" Grid.Column="0" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Path" Grid.Column="1" FontSize="14" VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="2" Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}" IsReadOnly="True" FlowDirection="RightToLeft" VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="C:\Jeux\God of War\GoW.exe" BorderThickness="1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowBrush}"/>
+                            </Grid>
+
+                            <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal">
+                                <Button Content="Delete profile" Width="Auto" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}"/>
+                                <Button Content="Update profile" Width="Auto"/>
+                            </ui:SimpleStackPanel>
+
+                        </ui:SimpleStackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Expander -->
+                <Border
+                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                        Padding="12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        BorderThickness="1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowBrush}">
+                    
+                    <Expander FlowDirection="RightToLeft" IsExpanded="True">
+                        <Expander.Header>
+                            <DockPanel FlowDirection="LeftToRight"
+                                       Margin="-12,0,0,0"
+                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
+                                <!-- Change the look inside header here -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="200"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <ui:FontIcon Glyph="&#xE793;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                                    <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Profiles option" FontSize="14"/>
+                                        <TextBlock Text="Change the global profiles option" FontSize="12" TextWrapping="Wrap"/>
+                                    </ui:SimpleStackPanel>
+                                </Grid>
+                            </DockPanel>
+                        </Expander.Header>
+
+                        <Expander.Content>
+                            <Grid FlowDirection="LeftToRight" Margin="0,12,0,0">
+                                <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
+                                    <Grid Background="{DynamicResource SystemControlBackgroundBaseLowBrush}" Height="1" Margin="-52,0,-12,0"/>
+                                    <!-- Dirty separator -->
+                                    <CheckBox Content="Allow the application to access device physical controller"></CheckBox>
+                                    <Grid Background="{DynamicResource SystemControlBackgroundBaseLowBrush}" Height="1" Margin="-52,0,-12,0"/>
+                                    <!-- Dirty separator -->
+                                    <CheckBox Content="Translates DirectInput calls to XInput calls"></CheckBox>
+                                    <Grid Background="{DynamicResource SystemControlBackgroundBaseLowBrush}" Height="1" Margin="-52,0,-12,0"/>
+                                    <!-- Dirty separator -->
+                                    <CheckBox Content="Translate device motions into controller inputs"></CheckBox>
+                                </ui:SimpleStackPanel>
+                            </Grid>
+                        </Expander.Content>
+                    </Expander>
+                </Border>
+
+                <!-- Template Profile : DO NOT DELETE -->
+                <Button Name="Button_Template" Visibility="Hidden" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="0,12,12,12" Click="Button_Click" Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
@@ -36,15 +168,11 @@
                             <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <Image Height="40" Width="40" Grid.Column="0">
-                            <Image.Source>
-                                <BitmapImage UriSource="/Resources/b21f9f98829dea9a48fd8aaddc1f159d.png"/>
-                            </Image.Source>
-                        </Image>
+                        <TextBlock Name="ProfileKey" Width="Auto" FontSize="30" Grid.Column="0" Text="G" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="God of War" FontSize="14"/>
-                            <TextBlock Text="C:\Jeux\God of War\GoW.exe" FontSize="12" TextWrapping="Wrap"/>
+                        <ui:SimpleStackPanel Name="ProfilePanel" Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Name="ProfileName" Text="God of War" FontSize="14"/>
+                            <TextBlock Name="ProfilePath" Text="C:\Jeux\God of War\GoW.exe" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
 
                         <ui:ToggleSwitch Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right"/>

@@ -11,13 +11,14 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Windows.System.Profile.SystemManufacturers;
+using Page = System.Windows.Controls.Page;
 
 namespace ControllerHelperWPF
 {
     /// <summary>
     /// Interaction logic for Devices.xaml
     /// </summary>
-    public partial class DevicesPage : Page
+    public partial class ControllerPage : Page
     {
         private MainWindow mainWindow;
         private readonly ILogger microsoftLogger;
@@ -31,7 +32,7 @@ namespace ControllerHelperWPF
         private HIDmode controllerMode = HIDmode.None;
         private HIDstatus controllerStatus = HIDstatus.Disconnected;
 
-        public DevicesPage()
+        public ControllerPage()
         {
             InitializeComponent();
 
@@ -41,7 +42,7 @@ namespace ControllerHelperWPF
             UpdateDevice();
         }
 
-        public DevicesPage(MainWindow mainWindow, ILogger microsoftLogger) : this()
+        public ControllerPage(MainWindow mainWindow, ILogger microsoftLogger) : this()
         {
             this.mainWindow = mainWindow;
             this.microsoftLogger = microsoftLogger;
