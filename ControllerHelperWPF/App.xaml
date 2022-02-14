@@ -15,10 +15,8 @@
                     <ui:ThemeResources.ThemeDictionaries>
                         <ResourceDictionary x:Key="Light">
                             <ResourceDictionary.MergedDictionaries>
-                                <!-- FluentWPF theme resources -->
                                 <ResourceDictionary Source="/FluentWPF;component/Styles/Colors.Light.xaml" />
                                 <ResourceDictionary Source="/FluentWPF;component/Styles/Brushes.xaml" />
-                                <!-- ModernWPF theme resources -->
                                 <ResourceDictionary Source="/ModernWpf;component/ThemeResources/Light.xaml" />
                             </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>

@@ -10,10 +10,6 @@
       Loaded="Page_Loaded"
       Title="Controller">
 
-    <Page.Resources>
-        <local:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
-    </Page.Resources>
-
     <Grid Name="MainGrid" Margin="20" IsEnabled="False">
         <Border>
             <ui:SimpleStackPanel Spacing="24">
@@ -63,7 +59,7 @@
                                     <ColumnDefinition Width="6*" MinWidth="120"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <ui:FontIcon Glyph="&#xE877;" Grid.Column="0" HorizontalAlignment="Center"/>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE877;" Grid.Column="0" HorizontalAlignment="Center"/>
 
                                 <ui:SimpleStackPanel Grid.Column="1">
                                     <TextBlock Text="Vibration strength" FontSize="14"/>
@@ -113,8 +109,7 @@
                     <Border                      
                         Padding="0,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        BorderThickness="1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowRevealBorderBrush}"
-                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
+                        Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -123,7 +118,7 @@
                                 <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
-                            <ui:FontIcon Glyph="&#xE793;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE793;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="Cloak device" FontSize="14"/>
@@ -138,8 +133,7 @@
                     <Border  
                         Padding="0,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        BorderThickness="1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowRevealBorderBrush}"
-                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
+                        Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -148,7 +142,7 @@
                                 <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
-                            <ui:FontIcon Glyph="&#xE7B3;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7B3;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="Uncloak on close" FontSize="14"/>

@@ -13,6 +13,9 @@ using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using Windows.UI.ViewManagement;
 using Page = System.Windows.Controls.Page;
 
 namespace ControllerHelperWPF
@@ -214,6 +217,36 @@ namespace ControllerHelperWPF
         {
             if (ContentFrame.CanGoBack)
                 ContentFrame.GoBack();
+        }
+
+        Point scrollPoint = new Point();
+        double scrollOffset = 1;
+
+        private void ScrollViewer_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            scrollPoint = e.GetPosition(scrollViewer);
+            scrollOffset = scrollViewer.VerticalOffset;
+        }
+
+        private void ScrollViewer_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (scrollPoint == new Point())
+                return;
+            
+            scrollViewer.ScrollToVerticalOffset(scrollOffset + (scrollPoint.Y - e.GetPosition(scrollViewer).Y));
+        }
+
+        private void ScrollViewer_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            scrollPoint = new Point();
+        }
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+        }
+
+        private void ScrollViewerEx_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
         }
 
         private void ContentFrame_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
