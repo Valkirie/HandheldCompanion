@@ -13,22 +13,23 @@ namespace ControllerHelperWPF
     /// <summary>
     /// Interaction logic for Profiles.xaml
     /// </summary>
-    public partial class ProfilesPage : Page
+    public partial class ProfileListPage : Page
     {
         private MainWindow mainWindow;
         private ILogger microsoftLogger;
 
-        public ProfileManager profileManager;
+        private ProfileManager profileManager;
+        private Profile profileCurrent;
 
         // pipe vars
         PipeClient pipeClient;
 
-        public ProfilesPage()
+        public ProfileListPage()
         {
             InitializeComponent();
         }
 
-        public ProfilesPage(MainWindow mainWindow, ILogger microsoftLogger) : this()
+        public ProfileListPage(MainWindow mainWindow, ILogger microsoftLogger) : this()
         {
             this.mainWindow = mainWindow;
             this.microsoftLogger = microsoftLogger;
@@ -44,6 +45,8 @@ namespace ControllerHelperWPF
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            // select default profile
+            cB_Profiles.SelectedItem = profileManager.GetDefault();
         }
 
         #region UI
@@ -97,15 +100,53 @@ namespace ControllerHelperWPF
         }
         #endregion
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            // temp
-            mainWindow.ContentFrame.Navigate(typeof(ProfilePage));
-        }
-
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             // todo
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            // todo
+            mainWindow.ContentFrame.Navigate(typeof(ProfileSettingsPage));
+        }
+
+        private void cB_Profiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            profileCurrent = (Profile)cB_Profiles.SelectedItem;
+
+            if (profileCurrent == null)
+                return;
+
+            this.Dispatcher.Invoke(() =>
+            {
+                // disable button if is default profile
+                b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
+
+                tB_ProfileName.Text = profileCurrent.name;
+                tB_ProfilePath.Text = profileCurrent.path;
+                cB_Whitelist.IsChecked = profileCurrent.whitelisted;
+                cB_Wrapper.IsChecked = profileCurrent.use_wrapper;
+                cB_UniversalMotion.IsChecked = profileCurrent.umc_enabled;
+
+                tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
+                tb_ProfileAcceleroValue.Value = profileCurrent.accelerometer;
+
+                cB_GyroSteering.SelectedIndex = profileCurrent.steering;
+
+                cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
+                cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
+            });
+        }
+
+        private void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void b_ApplyProfile_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

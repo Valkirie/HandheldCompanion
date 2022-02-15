@@ -30,7 +30,7 @@ namespace ControllerHelperWPF
 
         // page vars
         public ControllerPage controllerPage;
-        public ProfilesPage profilesPage;
+        public ProfileListPage profilesPage;
 
         // connectivity vars
         public PipeClient pipeClient;
@@ -109,7 +109,7 @@ namespace ControllerHelperWPF
 
             // initialize pages
             controllerPage = new ControllerPage(this, microsoftLogger);
-            profilesPage = new ProfilesPage(this, microsoftLogger);
+            profilesPage = new ProfileListPage(this, microsoftLogger);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -256,32 +256,38 @@ namespace ControllerHelperWPF
         #endregion
 
         #region UI
+        private NavigationViewItem prevMenuItem;
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             NavigationViewItem menuItem = (NavigationViewItem)args.InvokedItemContainer;
+            string menuTag = (string)menuItem.Tag;
 
             if (args.IsSettingsInvoked)
                 Navigate(typeof(SettingsPage)); // temp
-            else
+            else if (menuTag.Contains("Service"))
             {
                 switch (menuItem.Tag)
                 {
                     case "ServiceStart":
                         serviceManager.StartService();
-                        return;
+                        break;
                     case "ServiceStop":
                         serviceManager.StopService();
-                        return;
+                        break;
                     case "ServiceInstall":
                         serviceManager.CreateService(CurrentPathService);
-                        return;
+                        break;
                     case "ServiceDelete":
                         serviceManager.DeleteService();
-                        return;
+                        break;
                 }
-
-                Navigate(menuItem);
+                navView.SelectedItem = prevMenuItem;
+                return;
             }
+            else
+                Navigate(menuItem);
+
+            prevMenuItem = menuItem;
         }
 
         private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)

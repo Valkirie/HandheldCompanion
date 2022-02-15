@@ -1,21 +1,22 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using ControllerCommon;
 
 namespace ControllerHelperWPF
 {
     /// <summary>
     /// Interaction logic for Profiles.xaml
     /// </summary>
-    public partial class ProfilePage : Page
+    public partial class ProfileSettingsPage : Page
     {
         private MainWindow mainWindow;
 
-        public ProfilePage()
+        public ProfileSettingsPage()
         {
             InitializeComponent();
         }
 
-        public ProfilePage(MainWindow mainWindow) : this()
+        public ProfileSettingsPage(Profile profile) : this()
         {
             this.mainWindow = mainWindow;
         }

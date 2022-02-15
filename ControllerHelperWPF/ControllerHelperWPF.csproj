@@ -80,7 +80,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Pages\ProfilePage.xaml.cs">
+    <Compile Update="Pages\ProfileSettingsPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Properties\Settings.Designer.cs">
@@ -110,7 +110,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Pages\ProfilePage.xaml">
+    <Page Update="Pages\ProfileSettingsPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
