@@ -27,8 +27,6 @@ namespace ControllerCommon
 
         private readonly ILogger logger;
 
-        private AutoResetEvent autoEvent;
-
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(ServiceControllerStatus status, ServiceStartMode mode);
 
@@ -41,7 +39,6 @@ namespace ControllerCommon
             this.description = description;
 
             controller = new ServiceController(name);
-            autoEvent = new AutoResetEvent(false);
 
             process = new Process
             {
@@ -88,26 +85,10 @@ namespace ControllerCommon
                     type = ServiceStartMode.Disabled;
                 }
 
-                if (nextStatus != 0)
-                {
-                    try
-                    {
-                        controller.WaitForStatus(nextStatus, TimeSpan.FromSeconds(2));
-                    }
-                    catch (Exception ex)
-                    {
-                        nextStatus = 0;
-                        prevStatus = 0;
-                        prevType = 0;
-                        logger.LogError("Service manager returned error: {0}", ex.Message);
-                    }
-                }
-
-                if (prevStatus != (int)status || prevType != (int)type)
+                if (prevStatus != (int)status || prevType != (int)type || nextStatus != 0)
                 {
                     Updated?.Invoke(status, type);
                     logger.LogInformation("Controller Service status has changed to: {0}", status.ToString());
-                    autoEvent.Set();
                 }
 
                 prevStatus = (int)status;
@@ -117,7 +98,7 @@ namespace ControllerCommon
 
         public void CreateService(string path)
         {
-            autoEvent.WaitOne(1000);
+            nextStatus = ServiceControllerStatus.StartPending;
 
             try
             {
@@ -133,26 +114,20 @@ namespace ControllerCommon
             {
                 logger.LogError("Service manager returned error: {0}", ex.Message);
             }
-            finally
-            {
-                nextStatus = ServiceControllerStatus.Stopped;
-            }
         }
 
         public void DeleteService()
         {
-            autoEvent.WaitOne(1000);
+            nextStatus = ServiceControllerStatus.StopPending;
 
             process.StartInfo.Arguments = $"delete {name}";
             process.Start();
             process.WaitForExit();
-
-            nextStatus = 0;
         }
 
         public void StartService()
         {
-            autoEvent.WaitOne(1000);
+            nextStatus = ServiceControllerStatus.Running;
 
             try
             {
@@ -163,15 +138,11 @@ namespace ControllerCommon
             {
                 logger.LogError("Service manager returned error: {0}", ex.Message);
             }
-            finally
-            {
-                nextStatus = ServiceControllerStatus.Running;
-            }
         }
 
         public void StopService()
         {
-            autoEvent.WaitOne(1000);
+            nextStatus = ServiceControllerStatus.Stopped;
 
             try
             {
@@ -182,16 +153,10 @@ namespace ControllerCommon
             {
                 logger.LogError("Service manager returned error: {0}", ex.Message);
             }
-            finally
-            {
-                nextStatus = ServiceControllerStatus.Stopped;
-            }
         }
 
         public void SetStartType(ServiceStartMode mode)
         {
-            autoEvent.WaitOne(1000);
-
             ServiceHelper.ChangeStartMode(controller, mode);
         }
     }

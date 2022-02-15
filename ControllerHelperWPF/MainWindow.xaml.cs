@@ -46,10 +46,14 @@ namespace ControllerHelperWPF
         private WindowState prevWindowState;
 
         public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
+        private bool IsElevated, FirstStart, appClosing, ToastEnable;
 
         public MainWindow(StartupEventArgs arguments, ILogger microsoftLogger)
         {
             InitializeComponent();
+
+            string ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
+            navView.PaneTitle = ManufacturerName;
 
             this.microsoftLogger = microsoftLogger;
             this.arguments = arguments;
@@ -67,6 +71,9 @@ namespace ControllerHelperWPF
             CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
             CurrentPathService = Path.Combine(CurrentPath, "ControllerService.exe");
             CurrentPathLogs = Path.Combine(CurrentPath, "Logs");
+
+            // settings
+            IsElevated = Utils.IsAdministrator();
 
             // verifying HidHide is installed
             if (!File.Exists(CurrentPathService))
@@ -174,7 +181,51 @@ namespace ControllerHelperWPF
         #region serviceManager
         private void OnServiceUpdate(ServiceControllerStatus status, ServiceStartMode mode)
         {
-            // implement me
+            this.Dispatcher.Invoke(() =>
+            {
+                // disable service control if not elevated
+                status = IsElevated ? status : ServiceControllerStatus.ContinuePending;
+
+                switch (status)
+                {
+                    case ServiceControllerStatus.Paused:
+                    case ServiceControllerStatus.Stopped:
+                        b_ServiceInstall.Visibility = Visibility.Collapsed;
+                        b_ServiceStop.Visibility = Visibility.Collapsed;
+
+                        b_ServiceDelete.Visibility = Visibility.Visible;
+                        b_ServiceStart.Visibility = Visibility.Visible;
+
+                        b_ServiceDelete.IsEnabled = true;
+                        b_ServiceStart.IsEnabled = true;
+                        break;
+                    case ServiceControllerStatus.Running:
+                        b_ServiceInstall.Visibility = Visibility.Collapsed;
+                        b_ServiceDelete.Visibility = Visibility.Collapsed;
+                        b_ServiceStart.Visibility = Visibility.Collapsed;
+
+                        b_ServiceStop.Visibility = Visibility.Visible;
+
+                        b_ServiceStop.IsEnabled = true;
+                        break;
+                    case ServiceControllerStatus.StartPending:
+                    case ServiceControllerStatus.StopPending:
+                        b_ServiceInstall.IsEnabled = false;
+                        b_ServiceDelete.IsEnabled = false;
+                        b_ServiceStart.IsEnabled = false;
+                        b_ServiceStop.IsEnabled = false;
+                        break;
+                    default:
+                        b_ServiceDelete.Visibility = Visibility.Collapsed;
+                        b_ServiceStart.Visibility = Visibility.Collapsed;
+                        b_ServiceStop.Visibility = Visibility.Collapsed;
+
+                        b_ServiceInstall.Visibility = IsElevated ? Visibility.Visible : Visibility.Collapsed;
+
+                        b_ServiceInstall.IsEnabled = IsElevated;
+                        break;
+                }
+            });
         }
         #endregion
 
@@ -207,10 +258,30 @@ namespace ControllerHelperWPF
         #region UI
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
+            NavigationViewItem menuItem = (NavigationViewItem)args.InvokedItemContainer;
+
             if (args.IsSettingsInvoked)
                 Navigate(typeof(SettingsPage)); // temp
             else
-                Navigate((NavigationViewItem)args.InvokedItemContainer);
+            {
+                switch (menuItem.Tag)
+                {
+                    case "ServiceStart":
+                        serviceManager.StartService();
+                        return;
+                    case "ServiceStop":
+                        serviceManager.StopService();
+                        return;
+                    case "ServiceInstall":
+                        serviceManager.CreateService(CurrentPathService);
+                        return;
+                    case "ServiceDelete":
+                        serviceManager.DeleteService();
+                        return;
+                }
+
+                Navigate(menuItem);
+            }
         }
 
         private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)

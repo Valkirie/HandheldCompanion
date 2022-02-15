@@ -8,44 +8,66 @@
         mc:Ignorable="d"
         Title="Controller Helper WPF" Height="800" Width="1280"
         Loaded="Window_Loaded"
-        ui:WindowHelper.UseModernWindowStyle="True" MinWidth="600">
+        ui:WindowHelper.UseModernWindowStyle="True"
+        MinWidth="600" MinHeight="500"
+        Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
 
-        <ui:NavigationView Name="navView" PaneDisplayMode="Auto" BackRequested="navView_BackRequested" ItemInvoked="navView_ItemInvoked" OpenPaneLength="240" IsBackEnabled="True" Header="" SelectionFollowsFocus="Enabled" ShoulderNavigationEnabled="WhenSelectionFollowsFocus">
+    <ui:NavigationView
+            Name="navView" PaneDisplayMode="Auto"
+            BackRequested="navView_BackRequested"
+            ItemInvoked="navView_ItemInvoked"
+            OpenPaneLength="240" IsBackEnabled="True"
+            SelectionFollowsFocus="Enabled"
+            ShoulderNavigationEnabled="WhenSelectionFollowsFocus">
 
         <ui:NavigationView.Resources>
-            <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{DynamicResource SystemChromeLowColor}"/>
-            <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="{DynamicResource SystemChromeLowColor}" />
+            <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{DynamicResource SystemChromeMediumColor}"/>
+            <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="{DynamicResource SystemChromeMediumColor}" />
         </ui:NavigationView.Resources>
-            
-        <ui:NavigationView.MenuItems>
-                <ui:NavigationViewItem Name="navController" Content="Controller" Tag="ControllerPage">
-                    <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7FC;"></ui:FontIcon>
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-                <ui:NavigationViewItem Name="navProfiles" Content="Profiles" Tag="ProfilesPage">
-                    <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE748;"></ui:FontIcon>
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-                <ui:NavigationViewItem Name="navContent" Content="About" Tag="AboutPage">
-                    <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE946;"></ui:FontIcon>
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-            </ui:NavigationView.MenuItems>
 
-            <ui:ScrollViewerEx PanningMode="VerticalOnly"
+        <ui:NavigationView.MenuItems>
+            <ui:NavigationViewItemSeparator></ui:NavigationViewItemSeparator>
+
+            <!-- Game icon -->
+            <ui:NavigationViewItem Name="navController" Content="Controller" Tag="ControllerPage">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7FC;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <!-- Profiles icon -->
+            <ui:NavigationViewItem Name="navProfiles" Content="Profiles" Tag="ProfilesPage">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE748;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <!-- About icon -->
+            <ui:NavigationViewItem Name="navAbout" Content="About" Tag="AboutPage">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+        </ui:NavigationView.MenuItems>
+
+        <ui:NavigationView.FooterMenuItems>
+            <ui:NavigationViewItem Icon="Stop" Content="Halt service" Name="b_ServiceStop" Tag="ServiceStop" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" />
+            <ui:NavigationViewItem Icon="Play" Content="Start service" Name="b_ServiceStart" Tag="ServiceStart" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" />
+            <ui:NavigationViewItem Icon="Refresh" Content="Deploy service" Name="b_ServiceInstall" Tag="ServiceInstall" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" />
+            <ui:NavigationViewItem Icon="Delete" Content="Remove service" Name="b_ServiceDelete" Tag="ServiceDelete" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" />
+        </ui:NavigationView.FooterMenuItems>
+
+        <ui:ScrollViewerEx PanningMode="VerticalOnly"
                                Name="scrollViewer"
                                PreviewMouseLeftButtonDown="ScrollViewer_PreviewMouseLeftButtonDown"
                                PreviewMouseMove="ScrollViewer_PreviewMouseMove"
                                PreviewMouseLeftButtonUp="ScrollViewer_PreviewMouseLeftButtonUp"
                                PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
-                <ui:Frame
+            <ui:Frame
                             Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
                             Name="ContentFrame" MaxWidth="1100"
                             HorizontalAlignment="Left"
                             Navigated="ContentFrame_Navigated"/>
-            </ui:ScrollViewerEx>
-        </ui:NavigationView>
+        </ui:ScrollViewerEx>
+    </ui:NavigationView>
 </Window>

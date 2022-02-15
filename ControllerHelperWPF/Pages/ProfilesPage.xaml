@@ -16,28 +16,31 @@
 
                 <!-- Profile picker -->
                 <Border
-                    Padding="12,12,12,12"
+                    Padding="0,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundBaseLowRevealBorderBrush}">
+                    Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
-                            <ColumnDefinition Width="0.5*" MinWidth="12"></ColumnDefinition>
-                            <ColumnDefinition Width="8*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="0.5*" MinWidth="50"></ColumnDefinition>
+                            <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="0.5*" MinWidth="24"></ColumnDefinition>
+                            <ColumnDefinition Width="7*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:SimpleStackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <ui:FontIcon Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE748;" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="Profile selection" FontSize="14"/>
                             <TextBlock Text="Select the profile you would like to edit" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
 
-                        <ui:SimpleStackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="6">
+                        <ui:SimpleStackPanel Grid.Column="3" VerticalAlignment="Center" Spacing="6">
                             <ComboBox Name="cB_Profiles" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowBrush}"/>
 
                             <!-- Create new profile -->
-                            <Button Grid.Column="2" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" Click="Button_Click_1">
-                                <ui:SimpleStackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="12">
+                            <Button Click="Button_Click_1">
+                                <ui:SimpleStackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="12">
                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE710;" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     <TextBlock Text="Create a new profile" FontSize="14" VerticalAlignment="Center"/>
                                 </ui:SimpleStackPanel>
@@ -107,7 +110,7 @@
 
                 <!-- Profiles option -->
                 <Border
-                        Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 
@@ -153,7 +156,7 @@
 
                 <!-- Motion control options -->
                 <Border
-                        Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 

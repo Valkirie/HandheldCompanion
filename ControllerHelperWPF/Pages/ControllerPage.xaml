@@ -10,6 +10,10 @@
       Loaded="Page_Loaded"
       Title="Controller">
 
+    <Page.Resources>
+        <local:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
+    </Page.Resources>
+
     <Grid Name="MainGrid" Margin="20" IsEnabled="False">
         <Border>
             <ui:SimpleStackPanel Spacing="24">
@@ -40,7 +44,6 @@
                     Height="300"
                     Padding="0,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    BorderThickness="1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowRevealBorderBrush}"
                     Background="{DynamicResource SystemControlBackgroundBaseLowRevealBorderBrush}">
 
                     <Grid Name="ControllerGrid">
@@ -109,13 +112,13 @@
                     <Border                      
                         Padding="0,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}">
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
-                                <ColumnDefinition Width="7.5*" MinWidth="200"></ColumnDefinition>
-                                <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
+                                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE793;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
@@ -133,13 +136,13 @@
                     <Border  
                         Padding="0,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}">
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
-                                <ColumnDefinition Width="7.5*" MinWidth="200"></ColumnDefinition>
-                                <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
+                                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7B3;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
