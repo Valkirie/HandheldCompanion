@@ -1,7 +1,8 @@
 ﻿using ControllerCommon;
-using ControllerHelperWPF.Pages;
+using ControllerHelperWPF.Views.Pages;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
+using ModernWpf.Media.Animation;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,7 +10,7 @@ using System.Windows.Markup;
 using System.Xml;
 using Page = System.Windows.Controls.Page;
 
-namespace ControllerHelperWPF
+namespace ControllerHelperWPF.Views.Pages
 {
     /// <summary>
     /// Interaction logic for Profiles.xaml
@@ -30,8 +31,10 @@ namespace ControllerHelperWPF
             InitializeComponent();
         }
 
-        public ProfilesPage(MainWindow mainWindow, ILogger microsoftLogger) : this()
+        public ProfilesPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
         {
+            this.Tag = Tag;
+
             this.mainWindow = mainWindow;
             this.microsoftLogger = microsoftLogger;
 
@@ -112,10 +115,10 @@ namespace ControllerHelperWPF
             switch((Input)cB_Input.SelectedIndex)
             {
                 case Input.JoystickCamera:
-                    mainWindow.Navigate(new ProfileSettingsMode0(profileCurrent)); // temp, store me in a local variable ?
+                    mainWindow.NavView_Navigate("profilesettings_0"); // temp, store me in a local variable ?
                     break;
                 case Input.JoystickSteering:
-                    mainWindow.Navigate(new ProfileSettingsMode1(profileCurrent)); // temp, store me in a local variable ?
+                    mainWindow.NavView_Navigate("profilesettings_1"); // temp, store me in a local variable ?
                     break;
             }
         }

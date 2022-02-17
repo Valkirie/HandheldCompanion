@@ -1,7 +1,8 @@
 ﻿using ControllerCommon;
-using ControllerHelperWPF.Pages;
+using ControllerHelperWPF.Views.Pages;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
+using ModernWpf.Media.Animation;
 using ModernWpf.Navigation;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,12 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Navigation;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Page = System.Windows.Controls.Page;
 
-namespace ControllerHelperWPF
+namespace ControllerHelperWPF.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -29,8 +32,15 @@ namespace ControllerHelperWPF
         private StartupEventArgs arguments;
 
         // page vars
+        private Dictionary<string, Page> _pages = new();
+        private string preNavItemTag;
+
         public ControllerPage controllerPage;
         public ProfilesPage profilesPage;
+
+        // touchscroll vars
+        Point scrollPoint = new Point();
+        double scrollOffset = 1;
 
         // connectivity vars
         public PipeClient pipeClient;
@@ -108,16 +118,16 @@ namespace ControllerHelperWPF
             serviceManager.Updated += OnServiceUpdate;
 
             // initialize pages
-            controllerPage = new ControllerPage(this, microsoftLogger);
-            profilesPage = new ProfilesPage(this, microsoftLogger);
+            controllerPage = new ControllerPage("controller", this, microsoftLogger);
+            profilesPage = new ProfilesPage("profiles", this, microsoftLogger);
+
+            _pages.Add("ControllerPage", controllerPage);
+            _pages.Add("ProfilesPage", profilesPage);
+            _pages.Add("AboutPage", profilesPage); // todo
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            NavigationViewItem item = navView.MenuItems.OfType<NavigationViewItem>().First();
-            navView.SelectedItem = item;
-            Navigate((string)item.Content);
-
             // start Service Manager
             serviceManager.Start();
 
@@ -256,18 +266,19 @@ namespace ControllerHelperWPF
         #endregion
 
         #region UI
-        private NavigationViewItem prevMenuItem;
+
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            NavigationViewItem menuItem = (NavigationViewItem)args.InvokedItemContainer;
-            string menuTag = (string)menuItem.Tag;
-
-            if (args.IsSettingsInvoked)
-                menuTag = "Settings";
-
-            if (menuTag.Contains("Service"))
+            if (args.IsSettingsInvoked == true)
             {
-                switch (menuItem.Tag)
+                NavView_Navigate("Settings");
+            }
+            else if (args.InvokedItemContainer != null)
+            {
+                NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
+                string navItemTag = (string)navItem.Tag;
+
+                switch(navItemTag)
                 {
                     case "ServiceStart":
                         serviceManager.StartService();
@@ -281,24 +292,42 @@ namespace ControllerHelperWPF
                     case "ServiceDelete":
                         serviceManager.DeleteService();
                         break;
+                    default:
+                        preNavItemTag = navItemTag;
+                        break;
                 }
-                navView.SelectedItem = prevMenuItem;
-                return;
+
+                NavView_Navigate(preNavItemTag);
+            }
+        }
+
+        public void NavView_Navigate(string navItemTag)
+        {
+            Page _page = null;
+            if (navItemTag == "Settings")
+            {
+                _page = new SettingsPage();
             }
             else
-                Navigate(menuTag);
+            {
+                var item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
+                _page = item.Value;
+            }
+            // Get the page type before navigation so you can prevent duplicate
+            // entries in the backstack.
+            var preNavPageType = ContentFrame.CurrentSourcePageType;
 
-            prevMenuItem = menuItem;
+            // Only navigate if the selected page isn't currently loaded.
+            if (!(_page is null) && !Type.Equals(preNavPageType, _page))
+            {
+                ContentFrame.Navigate(_page);
+            }
         }
 
         private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
         {
-            if (ContentFrame.CanGoBack)
-                ContentFrame.GoBack();
+            TryGoBack();
         }
-
-        Point scrollPoint = new Point();
-        double scrollOffset = 1;
 
         private void ScrollViewer_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -314,6 +343,59 @@ namespace ControllerHelperWPF
             scrollViewer.ScrollToVerticalOffset(scrollOffset + (scrollPoint.Y - e.GetPosition(scrollViewer).Y));
         }
 
+        private void navView_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Add handler for ContentFrame navigation.
+            ContentFrame.Navigated += On_Navigated;
+
+            // NavView doesn't load any page by default, so load home page.
+            navView.SelectedItem = navView.MenuItems[0];
+
+            // If navigation occurs on SelectionChanged, this isn't needed.
+            // Because we use ItemInvoked to navigate, we need to call Navigate
+            // here to load the home page.
+            NavView_Navigate("ControllerPage");
+        }
+
+        private bool TryGoBack()
+        {
+            if (!ContentFrame.CanGoBack)
+                return false;
+
+            // Don't go back if the nav pane is overlayed.
+            if (navView.IsPaneOpen &&
+                (navView.DisplayMode == NavigationViewDisplayMode.Compact ||
+                 navView.DisplayMode == NavigationViewDisplayMode.Minimal))
+                return false;
+
+            ContentFrame.GoBack();
+            return true;
+        }
+
+        private void On_Navigated(object sender, NavigationEventArgs e)
+        {
+            navView.IsBackEnabled = ContentFrame.CanGoBack;
+
+            if (ContentFrame.SourcePageType == typeof(SettingsPage))
+            {
+                // SettingsItem is not part of NavView.MenuItems, and doesn't have a Tag.
+                navView.SelectedItem = (NavigationViewItem)navView.SettingsItem;
+                navView.Header = "Settings";
+            }
+            else if (ContentFrame.SourcePageType != null)
+            {
+                var preNavPageType = ContentFrame.CurrentSourcePageType;
+                var preNavPageName = preNavPageType.Name;
+
+                navView.SelectedItem = navView.MenuItems
+                    .OfType<NavigationViewItem>()
+                    .First(n => n.Tag.Equals(preNavPageName));
+
+                navView.Header =
+                    ((NavigationViewItem)navView.SelectedItem)?.Content?.ToString();
+            }
+        }
+
         private void ScrollViewer_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             scrollPoint = new Point();
@@ -325,46 +407,6 @@ namespace ControllerHelperWPF
 
         private void ScrollViewerEx_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-        }
-
-        private void ContentFrame_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
-        {
-            string menuName = ((Page)e.Content).Title;
-            BuildBreadcrumb();
-
-            // TODO: implement breadcrumb maybe ?
-            // Store parent page in Tag ?
-            navView.Header = menuName;
-        }
-
-        private void BuildBreadcrumb()
-        {
-
-        }
-
-        public void Navigate(string pageTag)
-        {
-            Page page = null;
-            switch (pageTag)
-            {
-                case "Controller":
-                    page = controllerPage;
-                    break;
-                case "Profiles":
-                    page = profilesPage;
-                    break;
-                case "Settings":
-                    page = new SettingsPage(); // temp
-                    break;
-            }
-
-            if (page != null)
-                ContentFrame.Navigate(page);
-        }
-
-        public void Navigate(Page page, Page parent = null)
-        {
-            ContentFrame.Navigate(page);
         }
         #endregion
     }

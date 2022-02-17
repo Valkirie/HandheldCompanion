@@ -1,10 +1,11 @@
-﻿<Page x:Class="ControllerHelperWPF.ProfilesPage"
+﻿<Page x:Class="ControllerHelperWPF.Views.Pages.ProfilesPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:ui="http://schemas.modernwpf.com/2019"
-      xmlns:local="clr-namespace:ControllerHelperWPF"
+      xmlns:local="clr-namespace:ControllerHelperWPF" 
+      xmlns:pages="clr-namespace:ControllerHelperWPF.Views.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
       KeepAlive="True"
@@ -142,17 +143,17 @@
                             <Grid FlowDirection="LeftToRight" Margin="0,12,0,0">
                                 <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
                                     <!-- Separator -->
-                                    <Separator Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Margin="-52,0,-12,0" />
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                     <CheckBox Name="cB_Whitelist" Content="Allow the application to access device physical controller"></CheckBox>
 
                                     <!-- Separator -->
-                                    <Separator Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Margin="-52,0,-12,0" />
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                     <CheckBox Name="cB_Wrapper" Content="Translates DirectInput calls to XInput calls"></CheckBox>
 
                                     <!-- Separator -->
-                                    <Separator Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Margin="-52,0,-12,0" />
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                     <CheckBox Name="cB_UniversalMotion" Content="Translate device motions into controller inputs"></CheckBox>
                                 </ui:SimpleStackPanel>
@@ -194,7 +195,7 @@
                                 <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
 
                                     <!-- Separator -->
-                                    <Separator Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Margin="-52,0,-12,0" />
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -212,7 +213,7 @@
                                     </Grid>
 
                                     <!-- Separator -->
-                                    <Separator Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Margin="-52,0,-12,0" />
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -230,7 +231,7 @@
                                     </Grid>
 
                                     <!-- Separator -->
-                                    <Separator Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Margin="-52,0,-12,0" />
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -251,9 +252,13 @@
                                     </Grid>
 
                                     <!-- Separator -->
-                                    <Separator Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Margin="-52,0,-12,0" />
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                     <CheckBox Name="cB_InvertHorizontal" Content="Invert horizontal axis"></CheckBox>
+                                    
+                                    <!-- Separator -->
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+                                    
                                     <CheckBox Name="cB_InvertVertical" Content="Invert vertical axis"></CheckBox>
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -294,7 +299,7 @@
                                 <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
 
                                     <!-- Separator -->
-                                    <Separator Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Margin="-52,0,-12,0" />
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -315,7 +320,7 @@
                                     </Grid>
 
                                     <!-- Separator -->
-                                    <Separator Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Margin="-52,0,-12,0" />
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -336,8 +341,7 @@
                                     </Grid>
 
                                     <!-- Separator -->
-                                    <Separator Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Margin="-52,0,-12,0" />
-
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                     <Grid>
                                         <Grid.ColumnDefinitions>

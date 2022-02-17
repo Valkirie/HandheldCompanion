@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerHelperWPF.Views;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Extensions.Logging;

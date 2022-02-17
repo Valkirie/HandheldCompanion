@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace ControllerHelperWPF
+namespace ControllerHelperWPF.Converters
 {
     public class InverseAppThemeConverter : IValueConverter
     {

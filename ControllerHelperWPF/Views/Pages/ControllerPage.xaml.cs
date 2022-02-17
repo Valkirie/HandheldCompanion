@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerHelperWPF.Converters;
 using Microsoft.Extensions.Logging;
 using ModernWpf;
 using System;
@@ -13,7 +14,7 @@ using System.Windows.Media.Imaging;
 using Windows.System.Profile.SystemManufacturers;
 using Page = System.Windows.Controls.Page;
 
-namespace ControllerHelperWPF
+namespace ControllerHelperWPF.Views.Pages
 {
     /// <summary>
     /// Interaction logic for Devices.xaml
@@ -22,10 +23,12 @@ namespace ControllerHelperWPF
     {
         private MainWindow mainWindow;
         private readonly ILogger microsoftLogger;
+        private ServiceManager serviceManager;
 
         // pipe vars
         PipeClient pipeClient;
-        bool pipeConnected;
+        bool isConnected;
+        bool isLoading;
 
         // controllers vars
         private XInputDevice mainController;
@@ -42,15 +45,47 @@ namespace ControllerHelperWPF
             UpdateDevice();
         }
 
-        public ControllerPage(MainWindow mainWindow, ILogger microsoftLogger) : this()
+        public ControllerPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
         {
+            this.Tag = Tag;
+
             this.mainWindow = mainWindow;
             this.microsoftLogger = microsoftLogger;
 
             this.pipeClient = mainWindow.pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
-            this.pipeClient.Connected += OnClientConnected;
-            this.pipeClient.Disconnected += OnClientDisconnected;
+
+            this.serviceManager = mainWindow.serviceManager;
+            this.serviceManager.Updated += ServiceManager_Updated;
+        }
+
+        private void ServiceManager_Updated(ServiceControllerStatus status, ServiceStartMode mode)
+        {
+            switch (status)
+            {
+                case ServiceControllerStatus.ContinuePending:
+                case ServiceControllerStatus.PausePending:
+                case ServiceControllerStatus.StartPending:
+                case ServiceControllerStatus.StopPending:
+                    isLoading = true;
+                    break;
+                case ServiceControllerStatus.Paused:
+                    isLoading = false;
+                    break;
+                case ServiceControllerStatus.Stopped:
+                    controllerStatus = HIDstatus.Disconnected;
+                    isLoading = false;
+                    isConnected = false;
+                    break;
+                case ServiceControllerStatus.Running:
+                    isLoading = false;
+                    isConnected = true;
+                    break;
+                default:
+                    isLoading = false;
+                    break;
+            }
+            UpdateMainGrid();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -156,27 +191,13 @@ namespace ControllerHelperWPF
             }
         }
 
-        private void OnClientDisconnected(object sender)
-        {
-            controllerStatus = HIDstatus.Disconnected;
-            pipeConnected = false;
-
-            UpdateMainGrid();
-        }
-
-        private void OnClientConnected(object sender)
-        {
-            pipeConnected = true;
-
-            UpdateMainGrid();
-        }
-
         private void UpdateMainGrid()
         {
             // threaded call to update UI
             this.Dispatcher.Invoke(() =>
             {
-                MainGrid.IsEnabled = pipeConnected;
+                navLoad.Visibility = isLoading ? Visibility.Visible : Visibility.Hidden;
+                MainGrid.IsEnabled = isConnected && !isLoading;
                 UpdateController();
             });
         }

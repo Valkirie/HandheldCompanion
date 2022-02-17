@@ -14,23 +14,28 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ControllerHelperWPF.Pages
+namespace ControllerHelperWPF.Views.Pages
 {
     /// <summary>
-    /// Interaction logic for ProfileSettingsMode1.xaml
+    /// Interaction logic for ProfileSettingsMode0.xaml
     /// </summary>
-    public partial class ProfileSettingsMode1 : Page
+    public partial class ProfileSettingsMode0 : Page
     {
         private Profile profileCurrent;
 
-        public ProfileSettingsMode1()
+        public ProfileSettingsMode0()
         {
             InitializeComponent();
         }
 
-        public ProfileSettingsMode1(Profile profileCurrent)
+        public ProfileSettingsMode0(Profile profileCurrent) : this()
         {
             this.profileCurrent = profileCurrent;
+            this.Title += $" > {profileCurrent.name}";
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
         }
     }
 }

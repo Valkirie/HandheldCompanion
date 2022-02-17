@@ -1,17 +1,20 @@
-﻿<Page x:Class="ControllerHelperWPF.ControllerPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:ui="http://schemas.modernwpf.com/2019"
-      xmlns:local="clr-namespace:ControllerHelperWPF"
-      mc:Ignorable="d" 
-      d:DesignHeight="1000" d:DesignWidth="1000"
-      Loaded="Page_Loaded"
-      Title="Controller">
+﻿<Page
+    x:Class="ControllerHelperWPF.Views.Pages.ControllerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:ControllerHelperWPF" 
+    xmlns:pages="clr-namespace:ControllerHelperWPF.Views.Pages"
+    xmlns:converters="clr-namespace:ControllerHelperWPF.Converters"
+    mc:Ignorable="d" 
+    d:DesignHeight="1000" d:DesignWidth="1000"
+    Loaded="Page_Loaded"
+    Title="Controller">
 
     <Page.Resources>
-        <local:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
+        <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
     </Page.Resources>
 
     <Grid Name="MainGrid" Margin="20" IsEnabled="False">
@@ -50,6 +53,7 @@
                         <Grid.Background>
                             <ImageBrush ImageSource="/Resources/controller_2_0.png" Stretch="Uniform"/>
                         </Grid.Background>
+                        <ui:ProgressRing Name="navLoad" IsActive="True" Width="50" Height="50" Visibility="Hidden"/>
                         <ui:SimpleStackPanel Spacing="18" VerticalAlignment="Bottom">
                             <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal">
                                 <Button Name="B_ServiceSwitch" Content="Connect" Width="Auto" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" Click="B_ServiceSwitch_Click"/>

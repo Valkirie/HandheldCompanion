@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ControllerHelperWPF.Pages
+namespace ControllerHelperWPF.Views.Pages
 {
     /// <summary>
     /// Interaction logic for SettingsPage.xaml
