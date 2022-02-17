@@ -34,6 +34,9 @@ namespace ControllerHelperWPF
             [Option("input", Required = false)]
             public int input { get; set; }
 
+            [Option("output", Required = false)]
+            public int output { get; set; }
+
             [Option("trigger", Required = false)]
             public int trigger { get; set; }
 

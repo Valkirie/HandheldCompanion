@@ -1,4 +1,4 @@
-﻿<Page x:Class="ControllerHelperWPF.ProfileListPage"
+﻿<Page x:Class="ControllerHelperWPF.ProfilesPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,6 +7,7 @@
       xmlns:local="clr-namespace:ControllerHelperWPF"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
+      KeepAlive="True"
       Loaded="Page_Loaded"
       Title="Profiles">
 
@@ -66,7 +67,8 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             CornerRadius="20">
-
+                            
+                            <!-- TODO, pull the image from cache or whatever -->
                             <Image Height="80" Width="80" Grid.Column="0">
                                 <Image.Source>
                                     <BitmapImage UriSource="/Resources/b21f9f98829dea9a48fd8aaddc1f159d.png"/>
@@ -84,7 +86,7 @@
 
                                 <ui:FontIcon Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8AC;" Grid.Column="0" HorizontalAlignment="Center"/>
                                 <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" Text="Name" Grid.Column="1" FontSize="14" VerticalAlignment="Center"/>
-                                <TextBox Name="tB_ProfileName" Grid.Column="2" IsReadOnly="True" FlowDirection="RightToLeft" VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="God of War" BorderThickness="1"/>
+                                <TextBox Name="tB_ProfileName" Grid.Column="2" IsReadOnly="True" FlowDirection="RightToLeft" VerticalAlignment="Center" HorizontalAlignment="Stretch" BorderThickness="1"/>
                             </Grid>
 
                             <Grid>
@@ -96,7 +98,7 @@
 
                                 <ui:FontIcon Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"  Glyph="&#xED25;" Grid.Column="0" HorizontalAlignment="Center"/>
                                 <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"  Text="Path" Grid.Column="1" FontSize="14" VerticalAlignment="Center"/>
-                                <TextBox Name="tB_ProfilePath" Grid.Column="2" IsReadOnly="True" FlowDirection="RightToLeft" VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="C:\Jeux\God of War\GoW.exe" BorderThickness="1"/>
+                                <TextBox Name="tB_ProfilePath" Grid.Column="2" IsReadOnly="True" FlowDirection="RightToLeft" VerticalAlignment="Center" HorizontalAlignment="Stretch" BorderThickness="1"/>
                             </Grid>
 
                             <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal">
@@ -306,7 +308,7 @@
                                             <TextBlock Text="The physical inputs of the controller can be programmed to act like different types of devices" FontSize="12" TextWrapping="Wrap"/>
                                         </ui:SimpleStackPanel>
 
-                                        <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0">
+                                        <ComboBox Name="cB_Input" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0">
                                             <ComboBoxItem Content="Joystick camera"/>
                                             <ComboBoxItem Content="Joystick steering"/>
                                         </ComboBox>
@@ -327,7 +329,7 @@
                                             <TextBlock Text="When sending analog joystick commands to the game, should those commands be a left or right joystick" FontSize="12" TextWrapping="Wrap"/>
                                         </ui:SimpleStackPanel>
 
-                                        <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0">
+                                        <ComboBox Name="cB_Output" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0">
                                             <ComboBoxItem Content="Right joystick"/>
                                             <ComboBoxItem Content="Let joystick"/>
                                         </ComboBox>

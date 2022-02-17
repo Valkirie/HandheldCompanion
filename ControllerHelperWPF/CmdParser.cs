@@ -63,7 +63,10 @@ namespace ControllerHelperWPF
             profile.use_wrapper = option.wrapper;
             profile.whitelisted = option.whitelist;
             profile.umc_trigger = (GamepadButtonFlags)option.trigger;
-            profile.umc_input = (InputStyle)option.input;
+
+            profile.umc_input = (Input)option.input;
+            profile.umc_output = (Output)option.output;
+
             profile.steering = option.steering;
             profile.inverthorizontal = option.inverthorizontal;
             profile.invertvertical = option.invertvertical;

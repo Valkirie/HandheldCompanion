@@ -839,7 +839,10 @@ namespace ControllerHelper
             CurrentProfile.invertvertical = cB_InvertVAxis.Checked && cB_InvertVAxis.Enabled;
 
             CurrentProfile.umc_enabled = cB_UniversalMC.Checked && cB_UniversalMC.Enabled;
-            CurrentProfile.umc_input = (InputStyle)cB_UMCInputStyle.SelectedIndex;
+
+            CurrentProfile.umc_input = (Input)cB_UMCInputStyle.SelectedIndex;
+            CurrentProfile.umc_output = (Output)cB_UMCInputStyle.SelectedIndex;
+
             CurrentProfile.umc_sensivity = tB_UMCSensivity.Value;
             CurrentProfile.umc_intensity = tB_UMCIntensity.Value;
 

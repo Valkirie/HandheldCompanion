@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerHelperWPF.Pages;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
 using System.IO;
@@ -13,7 +14,7 @@ namespace ControllerHelperWPF
     /// <summary>
     /// Interaction logic for Profiles.xaml
     /// </summary>
-    public partial class ProfileListPage : Page
+    public partial class ProfilesPage : Page
     {
         private MainWindow mainWindow;
         private ILogger microsoftLogger;
@@ -24,12 +25,12 @@ namespace ControllerHelperWPF
         // pipe vars
         PipeClient pipeClient;
 
-        public ProfileListPage()
+        public ProfilesPage()
         {
             InitializeComponent();
         }
 
-        public ProfileListPage(MainWindow mainWindow, ILogger microsoftLogger) : this()
+        public ProfilesPage(MainWindow mainWindow, ILogger microsoftLogger) : this()
         {
             this.mainWindow = mainWindow;
             this.microsoftLogger = microsoftLogger;
@@ -41,12 +42,13 @@ namespace ControllerHelperWPF
             profileManager.Deleted += ProfileDeleted;
             profileManager.Updated += ProfileUpdated;
             profileManager.Start();
+
+            // select default profile
+            cB_Profiles.SelectedItem = profileManager.GetDefault();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            // select default profile
-            cB_Profiles.SelectedItem = profileManager.GetDefault();
         }
 
         #region UI
@@ -107,8 +109,15 @@ namespace ControllerHelperWPF
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            // todo
-            mainWindow.ContentFrame.Navigate(typeof(ProfileSettingsPage));
+            switch((Input)cB_Input.SelectedIndex)
+            {
+                case Input.JoystickCamera:
+                    mainWindow.Navigate(new ProfileSettingsMode0(profileCurrent)); // temp, store me in a local variable ?
+                    break;
+                case Input.JoystickSteering:
+                    mainWindow.Navigate(new ProfileSettingsMode1(profileCurrent)); // temp, store me in a local variable ?
+                    break;
+            }
         }
 
         private void cB_Profiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -136,6 +145,9 @@ namespace ControllerHelperWPF
 
                 cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
                 cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
+
+                cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
+                cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
             });
         }
 

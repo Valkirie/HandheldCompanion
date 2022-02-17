@@ -12,16 +12,22 @@ namespace ControllerCommon
         MissingPermission
     }
 
-    public enum InputStyle
+    public enum Input
     {
-        [Description("None")]
-        None = 0,
-        [Description("RightStick")]
-        RightStick = 1,
-        [Description("LeftStick")]
-        LeftStick = 2,
-        [Description("Mouse")]
-        Mouse = 3
+        [Description("Joystick Camera")]
+        JoystickCamera = 0,
+        [Description("Joystick Steering")]
+        JoystickSteering = 1
+    }
+
+    public enum Output
+    {
+        [Description("Right joystick")]
+        RightStick = 0,
+        [Description("Left Joystick")]
+        LeftStick = 1,
+        /* [Description("Mouse")]
+        Mouse = 2 */
     }
 
     [Serializable]
@@ -40,7 +46,8 @@ namespace ControllerCommon
         public bool invertvertical { get; set; } = false;           // if false, invert vertical axis
 
         public bool umc_enabled { get; set; } = false;
-        public InputStyle umc_input { get; set; } = InputStyle.None;
+        public Input umc_input { get; set; } = Input.JoystickCamera;
+        public Output umc_output { get; set; } = Output.RightStick;
 
         public float umc_sensivity { get; set; } = 2.0f;
         public float umc_intensity { get; set; } = 2.0f;

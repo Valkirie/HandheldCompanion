@@ -30,7 +30,7 @@ namespace ControllerHelperWPF
 
         // page vars
         public ControllerPage controllerPage;
-        public ProfileListPage profilesPage;
+        public ProfilesPage profilesPage;
 
         // connectivity vars
         public PipeClient pipeClient;
@@ -109,14 +109,14 @@ namespace ControllerHelperWPF
 
             // initialize pages
             controllerPage = new ControllerPage(this, microsoftLogger);
-            profilesPage = new ProfileListPage(this, microsoftLogger);
+            profilesPage = new ProfilesPage(this, microsoftLogger);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             NavigationViewItem item = navView.MenuItems.OfType<NavigationViewItem>().First();
             navView.SelectedItem = item;
-            Navigate(item);
+            Navigate((string)item.Content);
 
             // start Service Manager
             serviceManager.Start();
@@ -263,8 +263,9 @@ namespace ControllerHelperWPF
             string menuTag = (string)menuItem.Tag;
 
             if (args.IsSettingsInvoked)
-                Navigate(typeof(SettingsPage)); // temp
-            else if (menuTag.Contains("Service"))
+                menuTag = "Settings";
+
+            if (menuTag.Contains("Service"))
             {
                 switch (menuItem.Tag)
                 {
@@ -285,7 +286,7 @@ namespace ControllerHelperWPF
                 return;
             }
             else
-                Navigate(menuItem);
+                Navigate(menuTag);
 
             prevMenuItem = menuItem;
         }
@@ -328,44 +329,42 @@ namespace ControllerHelperWPF
 
         private void ContentFrame_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
         {
-            NavigationViewItem menuItem;
-            if (e.SourcePageType() == typeof(SettingsPage))
-                menuItem = (NavigationViewItem)navView.SettingsItem;
-            else
-                menuItem = navView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(x => x.Tag.ToString() == e.SourcePageType().Name);
+            string menuName = ((Page)e.Content).Title;
+            BuildBreadcrumb();
 
-            if (menuItem == null)
-                return;
-
-            navView.SelectedItem = menuItem;
-            navView.Header = menuItem.Content;
+            // TODO: implement breadcrumb maybe ?
+            // Store parent page in Tag ?
+            navView.Header = menuName;
         }
 
-        private void Navigate(Type type)
+        private void BuildBreadcrumb()
         {
-            ContentFrame.Navigate(type);
+
         }
 
-        private void Navigate(NavigationViewItem menuItem)
+        public void Navigate(string pageTag)
         {
-            Page page = GetPage(menuItem);
-            ContentFrame.Navigate(page);
-        }
-
-        private Page GetPage(NavigationViewItem item)
-        {
-            switch (item.Tag)
+            Page page = null;
+            switch (pageTag)
             {
-                case "ControllerPage":
-                    return (Page)controllerPage;
-                case "ProfilesPage":
-                    return (Page)profilesPage;
-                case "AboutPage":
-                    return (Page)profilesPage;
-                case "SettingsPage":
-                    return new SettingsPage(); // temp
+                case "Controller":
+                    page = controllerPage;
+                    break;
+                case "Profiles":
+                    page = profilesPage;
+                    break;
+                case "Settings":
+                    page = new SettingsPage(); // temp
+                    break;
             }
-            return null;
+
+            if (page != null)
+                ContentFrame.Navigate(page);
+        }
+
+        public void Navigate(Page page, Page parent = null)
+        {
+            ContentFrame.Navigate(page);
         }
         #endregion
     }

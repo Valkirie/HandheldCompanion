@@ -150,14 +150,14 @@ namespace ControllerService.Targets
                     float intensity = xinputController.profile.GetIntensity();
                     float sensivity = xinputController.profile.GetSensiviy();
 
-                    switch (xinputController.profile.umc_input)
+                    switch (xinputController.profile.umc_output)
                     {
                         default:
-                        case InputStyle.RightStick:
+                        case Output.RightStick:
                             RightThumbX = Utils.ComputeInput(RightThumbX, -xinputController.AngularVelocity.Z, sensivity, intensity);
                             RightThumbY = Utils.ComputeInput(RightThumbY, xinputController.AngularVelocity.X, sensivity, intensity);
                             break;
-                        case InputStyle.LeftStick:
+                        case Output.LeftStick:
                             LeftThumbX = Utils.ComputeInput(LeftThumbX, -xinputController.AngularVelocity.Z, sensivity, intensity);
                             LeftThumbY = Utils.ComputeInput(LeftThumbY, xinputController.AngularVelocity.X, sensivity, intensity);
                             break;

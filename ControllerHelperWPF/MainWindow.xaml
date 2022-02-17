@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ControllerHelperWPF"
         xmlns:ui="http://schemas.modernwpf.com/2019"
+        xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+        Style="{StaticResource UiWindow}"
         mc:Ignorable="d"
         Title="Controller Helper WPF" Height="800" Width="1280"
         Loaded="Window_Loaded"
@@ -29,21 +31,21 @@
             <ui:NavigationViewItemSeparator></ui:NavigationViewItemSeparator>
 
             <!-- Game icon -->
-            <ui:NavigationViewItem Name="navController" Content="Controller" Tag="ControllerPage">
+            <ui:NavigationViewItem Name="navController" Content="Controller" Tag="Controller">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7FC;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
             <!-- Profiles icon -->
-            <ui:NavigationViewItem Name="navProfiles" Content="Profiles" Tag="ProfilesPage">
+            <ui:NavigationViewItem Name="navProfiles" Content="Profiles" Tag="Profiles">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE748;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
             <!-- About icon -->
-            <ui:NavigationViewItem Name="navAbout" Content="About" Tag="AboutPage">
+            <ui:NavigationViewItem Name="navAbout" Content="About" Tag="About">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>

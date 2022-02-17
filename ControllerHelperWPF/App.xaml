@@ -18,6 +18,8 @@
                                 <ResourceDictionary Source="/FluentWPF;component/Styles/Colors.Light.xaml" />
                                 <ResourceDictionary Source="/FluentWPF;component/Styles/Brushes.xaml" />
                                 <ResourceDictionary Source="/ModernWpf;component/ThemeResources/Light.xaml" />
+                                <ResourceDictionary Source="pack://application:,,,/WPFUI;component/Styles/Theme/Dark.xaml" />
+                                <ResourceDictionary Source="pack://application:,,,/WPFUI;component/Styles/WPFUI.xaml" />
                             </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>
                         <ResourceDictionary x:Key="Dark">
@@ -25,6 +27,8 @@
                                 <ResourceDictionary Source="/FluentWPF;component/Styles/Colors.Dark.xaml" />
                                 <ResourceDictionary Source="/FluentWPF;component/Styles/Brushes.xaml" />
                                 <ResourceDictionary Source="/ModernWpf;component/ThemeResources/Dark.xaml" />
+                                <ResourceDictionary Source="pack://application:,,,/WPFUI;component/Styles/Theme/Dark.xaml" />
+                                <ResourceDictionary Source="pack://application:,,,/WPFUI;component/Styles/WPFUI.xaml" />
                             </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>
                     </ui:ThemeResources.ThemeDictionaries>
