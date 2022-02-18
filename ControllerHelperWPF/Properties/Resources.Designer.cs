@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ControllerHelperWPF {
+namespace ControllerHelperWPF.Properties {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace ControllerHelperWPF {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class strings {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal strings() {
+        internal Resources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace ControllerHelperWPF {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ControllerHelperWPF.strings", typeof(strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ControllerHelperWPF.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,47 +61,29 @@ namespace ControllerHelperWPF {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Administrator.
+        ///   Looks up a localized string similar to About.
         /// </summary>
-        public static string Administrator {
+        public static string navAbout {
             get {
-                return ResourceManager.GetString("Administrator", resourceCulture);
+                return ResourceManager.GetString("navAbout", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Build: {0}.
+        ///   Looks up a localized string similar to Controller.
         /// </summary>
-        public static string Build {
+        public static string navController {
             get {
-                return ResourceManager.GetString("Build", resourceCulture);
+                return ResourceManager.GetString("navController", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Profile has unreachable or missing executable..
+        ///   Looks up a localized string similar to Profiles.
         /// </summary>
-        public static string ErrorCodeMissingExecutable {
+        public static string navProfiles {
             get {
-                return ResourceManager.GetString("ErrorCodeMissingExecutable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Profile has unreachable or missing path..
-        /// </summary>
-        public static string ErrorCodeMissingPath {
-            get {
-                return ResourceManager.GetString("ErrorCodeMissingPath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Profile has insuffisant permissions to access path..
-        /// </summary>
-        public static string ErrorCodeMissingPermission {
-            get {
-                return ResourceManager.GetString("ErrorCodeMissingPermission", resourceCulture);
+                return ResourceManager.GetString("navProfiles", resourceCulture);
             }
         }
         
@@ -120,46 +102,6 @@ namespace ControllerHelperWPF {
         public static string ServiceName {
             get {
                 return ResourceManager.GetString("ServiceName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Dear handheld gamer !
-        ///
-        ///The service you are about to use was made for free in order to bring the best possible gaming experience out of your device.
-        ///
-        ///If you are enjoying it, please consider giving back to the author&apos;s efforts and show your appreciation through a donation. Have fun !.
-        /// </summary>
-        public static string ServiceWelcome {
-            get {
-                return ResourceManager.GetString("ServiceWelcome", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Run Controller Helper as Administrator to complete first initilization process..
-        /// </summary>
-        public static string ToastInitialization {
-            get {
-                return ResourceManager.GetString("ToastInitialization", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please, gives us a minute.
-        /// </summary>
-        public static string ToastTitle {
-            get {
-                return ResourceManager.GetString("ToastTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User.
-        /// </summary>
-        public static string User {
-            get {
-                return ResourceManager.GetString("User", resourceCulture);
             }
         }
         

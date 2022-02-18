@@ -9,6 +9,7 @@
     <UseWPF>true</UseWPF>
     <StartupObject>ControllerHelperWPF.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\</OutputPath>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,6 +36,7 @@
     <None Remove="Resources\device_aya_next.png" />
     <None Remove="Resources\device_aya_retro_power.png" />
     <None Remove="Resources\device_generic.png" />
+    <None Remove="Resources\icon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +45,7 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Include="Resources\icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +63,7 @@
     <Resource Include="Resources\controller_1_0.png" />
     <Resource Include="Resources\device_aya_next.png" />
     <Resource Include="Resources\device_aya_retro_power.png" />
+    <Resource Include="Resources\icon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,22 +85,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Update="Properties\Settings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Update="strings.Designer.cs">
-      <DependentUpon>strings.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="strings.resx">
-      <LastGenOutput>strings.Designer.cs</LastGenOutput>
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

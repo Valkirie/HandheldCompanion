@@ -1,6 +1,7 @@
 ﻿using ControllerCommon;
 using ControllerHelperWPF.Views.Pages;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 using ModernWpf.Controls;
 using ModernWpf.Media.Animation;
 using System.IO;
@@ -107,20 +108,27 @@ namespace ControllerHelperWPF.Views.Pages
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            // todo
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var icon = ImageUtilities.GetRegisteredIcon(openFileDialog.FileName);
+            }
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
+            Page page;
             switch((Input)cB_Input.SelectedIndex)
             {
+                default:
                 case Input.JoystickCamera:
-                    mainWindow.NavView_Navigate("profilesettings_0"); // temp, store me in a local variable ?
+                    page = new ProfileSettingsMode0(profileCurrent); // temp, store me in a local variable ?
                     break;
                 case Input.JoystickSteering:
-                    mainWindow.NavView_Navigate("profilesettings_1"); // temp, store me in a local variable ?
+                    page = new ProfileSettingsMode1(profileCurrent); // temp, store me in a local variable ?
                     break;
             }
+            mainWindow.NavView_Navigate(page);
         }
 
         private void cB_Profiles_SelectionChanged(object sender, SelectionChangedEventArgs e)

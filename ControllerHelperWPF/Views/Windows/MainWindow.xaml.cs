@@ -6,6 +6,7 @@ using ModernWpf.Media.Animation;
 using ModernWpf.Navigation;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -14,11 +15,13 @@ using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using WPFUI.Tray;
 using Page = System.Windows.Controls.Page;
 
 namespace ControllerHelperWPF.Views
@@ -37,6 +40,7 @@ namespace ControllerHelperWPF.Views
 
         public ControllerPage controllerPage;
         public ProfilesPage profilesPage;
+        public SettingsPage settingsPage;
 
         // touchscroll vars
         Point scrollPoint = new Point();
@@ -54,9 +58,10 @@ namespace ControllerHelperWPF.Views
         public ProfileManager profileManager;
 
         private WindowState prevWindowState;
+        private NotifyIcon notifyIcon;
 
         public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
-        private bool IsElevated, FirstStart, appClosing, ToastEnable;
+        private bool IsElevated, FirstStart, appClosing;
 
         public MainWindow(StartupEventArgs arguments, ILogger microsoftLogger)
         {
@@ -74,6 +79,17 @@ namespace ControllerHelperWPF.Views
 
             // initialize log
             microsoftLogger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
+
+            // initialize notifyIcon
+            notifyIcon = new()
+            {
+                Parent = this,
+                Tooltip = "Tooltip test",
+                // ContextMenu = NotifyIconMenu,
+                Icon = this.Icon,
+                // Click = icon => { RaiseEvent(new RoutedEventArgs(NotifyIconClickEvent, this)); },
+                // DoubleClick = icon => { RaiseEvent(new RoutedEventArgs(NotifyIconDoubleClickEvent, this)); }
+            };
 
             // paths
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
@@ -111,23 +127,39 @@ namespace ControllerHelperWPF.Views
 
             // initialize toast manager
             toastManager = new ToastManager("ControllerService");
-            toastManager.Enabled = Properties.Settings.Default.ToastEnable;
 
             // initialize Service Manager
-            serviceManager = new ServiceManager("ControllerService", strings.ServiceName, strings.ServiceDescription, microsoftLogger);
+            serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription, microsoftLogger);
             serviceManager.Updated += OnServiceUpdate;
 
             // initialize pages
             controllerPage = new ControllerPage("controller", this, microsoftLogger);
             profilesPage = new ProfilesPage("profiles", this, microsoftLogger);
+            settingsPage = new SettingsPage("settings", this, microsoftLogger);
 
             _pages.Add("ControllerPage", controllerPage);
             _pages.Add("ProfilesPage", profilesPage);
             _pages.Add("AboutPage", profilesPage); // todo
+
+            if (!IsElevated)
+            {
+                foreach(NavigationViewItem item in navView.FooterMenuItems)
+                    item.ToolTip = Properties.Resources.WarningElevated;
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // update Position and Size
+            this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.MainWindowHeight);
+            this.Width = (int)Math.Max(this.MinWidth, Properties.Settings.Default.MainWindowWidth);
+
+            this.Left = Math.Max(0, Properties.Settings.Default.MainWindowLeft);
+            this.Top = Math.Max(0, Properties.Settings.Default.MainWindowTop);
+
+            // improve me
+            WindowState = settingsPage.s_StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
+
             // start Service Manager
             serviceManager.Start();
 
@@ -193,31 +225,28 @@ namespace ControllerHelperWPF.Views
         {
             this.Dispatcher.Invoke(() =>
             {
-                // disable service control if not elevated
-                status = IsElevated ? status : ServiceControllerStatus.ContinuePending;
-
                 switch (status)
                 {
                     case ServiceControllerStatus.Paused:
                     case ServiceControllerStatus.Stopped:
                         b_ServiceInstall.Visibility = Visibility.Collapsed;
                         b_ServiceStop.Visibility = Visibility.Collapsed;
-
                         b_ServiceDelete.Visibility = Visibility.Visible;
                         b_ServiceStart.Visibility = Visibility.Visible;
 
-                        b_ServiceDelete.IsEnabled = true;
-                        b_ServiceStart.IsEnabled = true;
+                        b_ServiceDelete.IsEnabled = IsElevated;
+                        b_ServiceStart.IsEnabled = IsElevated;
                         break;
                     case ServiceControllerStatus.Running:
                         b_ServiceInstall.Visibility = Visibility.Collapsed;
                         b_ServiceDelete.Visibility = Visibility.Collapsed;
                         b_ServiceStart.Visibility = Visibility.Collapsed;
-
                         b_ServiceStop.Visibility = Visibility.Visible;
 
-                        b_ServiceStop.IsEnabled = true;
+                        b_ServiceStop.IsEnabled = IsElevated;
                         break;
+                    case ServiceControllerStatus.ContinuePending:
+                    case ServiceControllerStatus.PausePending:
                     case ServiceControllerStatus.StartPending:
                     case ServiceControllerStatus.StopPending:
                         b_ServiceInstall.IsEnabled = false;
@@ -229,8 +258,7 @@ namespace ControllerHelperWPF.Views
                         b_ServiceDelete.Visibility = Visibility.Collapsed;
                         b_ServiceStart.Visibility = Visibility.Collapsed;
                         b_ServiceStop.Visibility = Visibility.Collapsed;
-
-                        b_ServiceInstall.Visibility = IsElevated ? Visibility.Visible : Visibility.Collapsed;
+                        b_ServiceInstall.Visibility = Visibility.Visible;
 
                         b_ServiceInstall.IsEnabled = IsElevated;
                         break;
@@ -320,8 +348,13 @@ namespace ControllerHelperWPF.Views
             // Only navigate if the selected page isn't currently loaded.
             if (!(_page is null) && !Type.Equals(preNavPageType, _page))
             {
-                ContentFrame.Navigate(_page);
+                NavView_Navigate(_page);
             }
+        }
+
+        public void NavView_Navigate(Page _page)
+        {
+            ContentFrame.Navigate(_page);
         }
 
         private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
@@ -329,18 +362,72 @@ namespace ControllerHelperWPF.Views
             TryGoBack();
         }
 
-        private void ScrollViewer_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ScrollViewer_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             scrollPoint = e.GetPosition(scrollViewer);
             scrollOffset = scrollViewer.VerticalOffset;
         }
 
-        private void ScrollViewer_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ScrollViewer_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (scrollPoint == new Point())
                 return;
             
             scrollViewer.ScrollToVerticalOffset(scrollOffset + (scrollPoint.Y - e.GetPosition(scrollViewer).Y));
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            serviceManager.Stop();
+
+            if (pipeClient.connected)
+                pipeClient.Stop();
+
+            if (pipeServer.connected)
+                pipeServer.Stop();
+
+            profileManager.Stop();
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            // position and size settings
+            switch (WindowState)
+            {
+                case WindowState.Normal:
+                    Properties.Settings.Default.MainWindowLeft = this.Left;  
+                    Properties.Settings.Default.MainWindowTop = this.Top;
+
+                    Properties.Settings.Default.MainWindowWidth = this.Width;
+                    Properties.Settings.Default.MainWindowHeight = this.Height;
+                    break;
+            }
+            Properties.Settings.Default.MainWindowState = (int)WindowState;
+
+            if (settingsPage.s_CloseMinimises && !appClosing)
+            {
+                e.Cancel = true;
+                WindowState = WindowState.Minimized;
+            }
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            switch (WindowState)
+            {
+                case WindowState.Minimized:
+                    notifyIcon.Show();
+                    ShowInTaskbar = false;
+                    break;
+                case WindowState.Normal:
+                case WindowState.Maximized:
+                    notifyIcon.Destroy();
+                    ShowInTaskbar = true;
+                    prevWindowState = WindowState;
+                    break;
+            }
         }
 
         private void navView_Loaded(object sender, RoutedEventArgs e)
@@ -387,21 +474,28 @@ namespace ControllerHelperWPF.Views
                 var preNavPageType = ContentFrame.CurrentSourcePageType;
                 var preNavPageName = preNavPageType.Name;
 
-                navView.SelectedItem = navView.MenuItems
+                var NavViewItem = navView.MenuItems
                     .OfType<NavigationViewItem>()
-                    .First(n => n.Tag.Equals(preNavPageName));
+                    .Where(n => n.Tag.Equals(preNavPageName)).FirstOrDefault();
 
-                navView.Header =
-                    ((NavigationViewItem)navView.SelectedItem)?.Content?.ToString();
+                if (!(NavViewItem is null))
+                {
+                    navView.SelectedItem = NavViewItem;
+                    navView.Header = (string)NavViewItem.Content;
+                }
+                else
+                {
+                    navView.Header = ((Page)e.Content).Title;
+                }
             }
         }
 
-        private void ScrollViewer_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void ScrollViewer_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             scrollPoint = new Point();
         }
 
-        private void ScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
         }
 
