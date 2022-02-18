@@ -205,7 +205,7 @@ namespace ControllerService
             UpdateTimer.Interval = HIDrate;
             AccelerationTimer.Interval = HIDrate * 4;
             AngularVelocityTimer.Interval = HIDrate * 4;
-            AngleTimer.Interval = HIDrate * 4;
+            AngleTimer.Interval = HIDrate * 100;
 
             this.virtualTarget?.SetPollRate(updateInterval);
         }
