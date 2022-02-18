@@ -88,7 +88,7 @@ namespace ControllerHelperWPF.Views
                 // ContextMenu = NotifyIconMenu,
                 Icon = this.Icon,
                 // Click = icon => { RaiseEvent(new RoutedEventArgs(NotifyIconClickEvent, this)); },
-                // DoubleClick = icon => { RaiseEvent(new RoutedEventArgs(NotifyIconDoubleClickEvent, this)); }
+                DoubleClick = icon => { NotifyIconDoubleClick(this); }
             };
 
             // paths
@@ -146,6 +146,11 @@ namespace ControllerHelperWPF.Views
                 foreach(NavigationViewItem item in navView.FooterMenuItems)
                     item.ToolTip = Properties.Resources.WarningElevated;
             }
+        }
+
+        private void NotifyIconDoubleClick(MainWindow mainWindow)
+        {
+            WindowState = prevWindowState;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
