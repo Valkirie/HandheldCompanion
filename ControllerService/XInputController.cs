@@ -164,7 +164,8 @@ namespace ControllerService
 
         private void AccelerationTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Acceleration = new();
+            // Disable drift compensation for acceleration values.
+            // Acceleration = new();
         }
 
         public void Girometer_ReadingChanged(XInputGirometer sender, Vector3 AngularVelocity)
@@ -189,7 +190,8 @@ namespace ControllerService
         }
         private void AngleTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Angle = new();
+            // Disable drift compensation for angle values. 
+            //Angle = new();
         }
 
         public void SetWidthHeightRatio(int ratio)
