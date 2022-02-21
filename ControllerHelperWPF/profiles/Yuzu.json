@@ -1,5 +1,6 @@
 {
   "name": "Yuzu",
   "path": "yuzu.exe",
+  "executable": "yuzu.exe",
   "whitelisted": false
 }

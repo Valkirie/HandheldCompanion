@@ -1,5 +1,6 @@
 {
   "name": "Joyxoff",
   "path": "Joyxoff.exe",
+  "executable": "Joyxoff.exe",
   "whitelisted": true
 }

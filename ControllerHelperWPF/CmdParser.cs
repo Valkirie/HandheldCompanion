@@ -52,12 +52,9 @@ namespace ControllerHelperWPF
 
         private bool CmdProfile(ProfileOption option)
         {
-            string ProcessExec = Path.GetFileNameWithoutExtension(option.exe);
+            Profile profile = new Profile(option.exe);
 
-            Profile profile = new Profile(ProcessExec, option.exe);
-
-            if (mainWindow.profileManager.profiles.ContainsKey(ProcessExec))
-                profile = mainWindow.profileManager.profiles[ProcessExec];
+            // shall we check if profile already exists ?
 
             profile.fullpath = option.exe;
             profile.umc_enabled = option.umc;

@@ -30,7 +30,7 @@
                             <ColumnDefinition Width="7*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE748;" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <ui:FontIcon Name="ProfileIcon" Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE748;" Grid.Column="0" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="Profile selection" FontSize="14"/>
@@ -38,8 +38,7 @@
                         </ui:SimpleStackPanel>
 
                         <ui:SimpleStackPanel Grid.Column="3" VerticalAlignment="Center" Spacing="6">
-                            <ComboBox SelectionChanged="cB_Profiles_SelectionChanged" Name="cB_Profiles" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1"/>
-
+                            <ComboBox SelectionChanged="cB_Profiles_SelectionChanged" Name="cB_Profiles" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
                             <!-- Create new profile -->
                             <Button Click="Button_Click_1">
                                 <ui:SimpleStackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="12">
@@ -59,25 +58,7 @@
                     ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
 
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="0.5*" MinWidth="150"></ColumnDefinition>
-                            <ColumnDefinition Width="9.5*" MinWidth="200"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <Border
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            CornerRadius="20">
-                            
-                            <!-- TODO, pull the image from cache or whatever -->
-                            <Image Height="80" Width="80" Grid.Column="0">
-                                <Image.Source>
-                                    <BitmapImage UriSource="/Resources/b21f9f98829dea9a48fd8aaddc1f159d.png"/>
-                                </Image.Source>
-                            </Image>
-                        </Border>
-
-                        <ui:SimpleStackPanel HorizontalAlignment="Stretch" Spacing="12" Grid.Column="1">
+                        <ui:SimpleStackPanel HorizontalAlignment="Stretch" Spacing="12" Grid.Column="0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="0.5*" MinWidth="80"></ColumnDefinition>
@@ -145,17 +126,17 @@
                                     <!-- Separator -->
                                     <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
-                                    <CheckBox Name="cB_Whitelist" Content="Allow the application to access device physical controller"></CheckBox>
+                                    <CheckBox Name="cB_Whitelist" Content="Allow the application to access device physical controller" Checked="cB_Whitelist_Checked" Unchecked="cB_Whitelist_Checked"></CheckBox>
 
                                     <!-- Separator -->
                                     <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
-                                    <CheckBox Name="cB_Wrapper" Content="Translates DirectInput calls to XInput calls"></CheckBox>
+                                    <CheckBox Name="cB_Wrapper" Content="Translates DirectInput calls to XInput calls" Checked="cB_Wrapper_Checked" Unchecked="cB_Wrapper_Checked"></CheckBox>
 
                                     <!-- Separator -->
                                     <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
-                                    <CheckBox Name="cB_UniversalMotion" Content="Translate device motions into controller inputs"></CheckBox>
+                                    <CheckBox Name="cB_UniversalMotion" Content="Translate device motions into controller inputs" Checked="cB_UniversalMotion_Checked" Unchecked="cB_UniversalMotion_Checked"></CheckBox>
                                 </ui:SimpleStackPanel>
                             </Grid>
                         </Expander.Content>
@@ -255,10 +236,10 @@
                                     <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                     <CheckBox Name="cB_InvertHorizontal" Content="Invert horizontal axis"></CheckBox>
-                                    
+
                                     <!-- Separator -->
                                     <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
-                                    
+
                                     <CheckBox Name="cB_InvertVertical" Content="Invert vertical axis"></CheckBox>
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -272,7 +253,7 @@
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                    <Expander FlowDirection="RightToLeft" IsExpanded="False">
+                    <Expander Name="Expander_UMC" FlowDirection="RightToLeft" IsExpanded="False" IsEnabled="False">
                         <Expander.Header>
                             <DockPanel FlowDirection="LeftToRight"
                                        Margin="-12,0,0,0"
@@ -313,10 +294,7 @@
                                             <TextBlock Text="The physical inputs of the controller can be programmed to act like different types of devices" FontSize="12" TextWrapping="Wrap"/>
                                         </ui:SimpleStackPanel>
 
-                                        <ComboBox Name="cB_Input" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0">
-                                            <ComboBoxItem Content="Joystick camera"/>
-                                            <ComboBoxItem Content="Joystick steering"/>
-                                        </ComboBox>
+                                        <ComboBox Name="cB_Input" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0"/>
                                     </Grid>
 
                                     <!-- Separator -->
@@ -334,10 +312,31 @@
                                             <TextBlock Text="When sending analog joystick commands to the game, should those commands be a left or right joystick" FontSize="12" TextWrapping="Wrap"/>
                                         </ui:SimpleStackPanel>
 
-                                        <ComboBox Name="cB_Output" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0">
-                                            <ComboBoxItem Content="Right joystick"/>
-                                            <ComboBoxItem Content="Let joystick"/>
-                                        </ComboBox>
+                                        <ComboBox Name="cB_Output" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0"/>
+                                    </Grid>
+
+                                    <!-- Separator -->
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                                            <ColumnDefinition Width="0.5*" ></ColumnDefinition>
+                                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <ui:SimpleStackPanel Grid.Column="0">
+                                            <TextBlock Text="Output" FontSize="14"/>
+                                            <TextBlock Text="When sending analog joystick commands to the game, should those commands be a left or right joystick" FontSize="12" TextWrapping="Wrap"/>
+                                        </ui:SimpleStackPanel>
+
+                                        <ui:ListView
+                                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                            Name="cB_Buttons" Height="120" SelectionMode="Multiple"
+                                            IsMultiSelectCheckBoxEnabled="True" Grid.Column="2"
+                                            HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                                            BorderBrush="{DynamicResource SystemControlBackgroundBaseMediumBrush}" BorderThickness="1 1 1 1"
+                                            CornerRadius="{DynamicResource ControlCornerRadius}"/>
                                     </Grid>
 
                                     <!-- Separator -->

@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <None Remove="ControllerHelper.json" />
-    <None Remove="Resources\b21f9f98829dea9a48fd8aaddc1f159d.png" />
     <None Remove="Resources\controller_0_0.png" />
     <None Remove="Resources\controller_0_1.png" />
     <None Remove="Resources\controller_1_0.png" />
@@ -56,7 +55,6 @@
   <ItemGroup>
     <Resource Include="Resources\device_aya_2021_pro.png" />
     <Resource Include="Resources\device_aya_2021.png" />
-    <Resource Include="Resources\b21f9f98829dea9a48fd8aaddc1f159d.png" />
     <Resource Include="Resources\controller_0_1.png" />
     <Resource Include="Resources\controller_0_0.png" />
     <Resource Include="Resources\controller_1_1.png" />
@@ -105,10 +103,41 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="profiles\AYASpace.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="profiles\Cemu.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="profiles\ControllerCompanion.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="profiles\Default.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="profiles\Dolphin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="profiles\HidHideCLI.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="profiles\JoyXOff.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="profiles\Playnite.FullscreenApp.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="profiles\Yuzu.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Cache\" />
   </ItemGroup>
 
 </Project>

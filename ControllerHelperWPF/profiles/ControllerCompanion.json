@@ -1,5 +1,6 @@
 {
   "name": "ControllerCompanion",
   "path": "ControllerCompanion.exe",
+  "executable": "ControllerCompanion.exe",
   "whitelisted": true
 }

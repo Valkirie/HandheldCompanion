@@ -2,8 +2,6 @@
 using ControllerHelperWPF.Views.Pages;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
-using ModernWpf.Media.Animation;
-using ModernWpf.Navigation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,12 +13,8 @@ using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Navigation;
-using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using WPFUI.Tray;
 using Page = System.Windows.Controls.Page;
 
@@ -143,7 +137,7 @@ namespace ControllerHelperWPF.Views
 
             if (!IsElevated)
             {
-                foreach(NavigationViewItem item in navView.FooterMenuItems)
+                foreach (NavigationViewItem item in navView.FooterMenuItems)
                     item.ToolTip = Properties.Resources.WarningElevated;
             }
         }
@@ -311,7 +305,7 @@ namespace ControllerHelperWPF.Views
                 NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
                 string navItemTag = (string)navItem.Tag;
 
-                switch(navItemTag)
+                switch (navItemTag)
                 {
                     case "ServiceStart":
                         serviceManager.StartService();
@@ -377,7 +371,7 @@ namespace ControllerHelperWPF.Views
         {
             if (scrollPoint == new Point())
                 return;
-            
+
             scrollViewer.ScrollToVerticalOffset(scrollOffset + (scrollPoint.Y - e.GetPosition(scrollViewer).Y));
         }
 
@@ -400,7 +394,7 @@ namespace ControllerHelperWPF.Views
             switch (WindowState)
             {
                 case WindowState.Normal:
-                    Properties.Settings.Default.MainWindowLeft = this.Left;  
+                    Properties.Settings.Default.MainWindowLeft = this.Left;
                     Properties.Settings.Default.MainWindowTop = this.Top;
 
                     Properties.Settings.Default.MainWindowWidth = this.Width;

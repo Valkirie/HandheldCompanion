@@ -1,5 +1,8 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
+using Microsoft.WindowsAPICodePack.Shell;
+using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -189,6 +192,31 @@ namespace ControllerCommon
         [DllImport("Kernel32.dll")]
         static extern uint QueryFullProcessImageName(IntPtr hProcess, uint flags, StringBuilder text, out uint size);
         #endregion
+
+        public static Dictionary<string, string> GetAppProperties(string filePath1)
+        {
+            Dictionary<string, string> AppProperties = new Dictionary<string, string>();
+
+            ShellObject shellFile = ShellObject.FromParsingName(filePath1);
+            foreach (var property in typeof(ShellProperties.PropertySystem).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                IShellProperty shellProperty = property.GetValue(shellFile.Properties.System, null) as IShellProperty;
+                if (shellProperty?.ValueAsObject == null) continue;
+                if (AppProperties.ContainsKey(property.Name)) continue;
+
+                string[] shellPropertyValues = shellProperty.ValueAsObject as string[];
+
+                if (shellPropertyValues != null && shellPropertyValues.Length > 0)
+                {
+                    foreach (string shellPropertyValue in shellPropertyValues)
+                        AppProperties[property.Name] = shellPropertyValue.ToString();
+                }
+                else
+                    AppProperties[property.Name] = shellProperty.ValueAsObject.ToString();
+            }
+
+            return AppProperties;
+        }
 
         public static string GetDescriptionFromEnumValue(Enum value)
         {

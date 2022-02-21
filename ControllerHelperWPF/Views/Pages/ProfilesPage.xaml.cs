@@ -1,13 +1,12 @@
 ﻿using ControllerCommon;
-using ControllerHelperWPF.Views.Pages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
-using ModernWpf.Controls;
-using ModernWpf.Media.Animation;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Markup;
 using System.Xml;
 using Page = System.Windows.Controls.Page;
 
@@ -48,7 +47,16 @@ namespace ControllerHelperWPF.Views.Pages
             profileManager.Start();
 
             // select default profile
-            cB_Profiles.SelectedItem = profileManager.GetDefault();
+            cB_Profiles.SelectedItem = profileCurrent = profileManager.GetDefault();
+
+            foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
+                cB_Input.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
+
+            foreach (Output mode in (Output[])Enum.GetValues(typeof(Output)))
+                cB_Output.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
+
+            foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
+                cB_Buttons.Items.Add(Utils.GetDescriptionFromEnumValue(button));
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -64,36 +72,27 @@ namespace ControllerHelperWPF.Views.Pages
 
             this.Dispatcher.Invoke(() =>
             {
-                int idx = cB_Profiles.Items.IndexOf(profile);
+                int idx = -1;
 
                 foreach (Profile pr in cB_Profiles.Items)
-                    if (pr.path == profile.path)
+                {
+                    if (pr.executable == profile.executable)
                     {
-                        // IndexOf will always fail !
                         idx = cB_Profiles.Items.IndexOf(pr);
                         break;
                     }
+                }
 
                 if (idx == -1)
                     cB_Profiles.Items.Add(profile);
                 else
+                {
+
+                    // todo: display a warning message !
                     cB_Profiles.Items[idx] = profile;
+                }
 
-                /* clone template
-                string gridXaml = XamlWriter.Save(Button_Template);
-                
-                StringReader stringReader = new StringReader(gridXaml);
-                XmlReader xmlReader = XmlReader.Create(stringReader);
-
-                Button ProfileButton = (Button)XamlReader.Load(xmlReader);
-
-                // update template before copy
-                ProfileButton.Visibility = Visibility.Visible;
-                ((TextBlock)ProfileButton.FindName("ProfileName")).Text = profile.name;
-                ((TextBlock)ProfileButton.FindName("ProfilePath")).Text = profile.path;
-                ((TextBlock)ProfileButton.FindName("ProfileKey")).Text = profile.name.Substring(0,1);
-
-                StackPanel_Profiles.Children.Add(ProfileButton); */
+                cB_Profiles.SelectedItem = profile;
             });
         }
 
@@ -101,7 +100,9 @@ namespace ControllerHelperWPF.Views.Pages
         {
             this.Dispatcher.Invoke(() =>
             {
-                // todo
+                int idx = cB_Profiles.Items.IndexOf(profile);
+                if (idx != -1)
+                    cB_Profiles.Items.RemoveAt(idx);
             });
         }
         #endregion
@@ -111,14 +112,72 @@ namespace ControllerHelperWPF.Views.Pages
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
-                var icon = ImageUtilities.GetRegisteredIcon(openFileDialog.FileName);
+                try
+                {
+                    var path = openFileDialog.FileName;
+                    var folder = Path.GetDirectoryName(path);
+
+                    var file = openFileDialog.SafeFileName;
+                    var ext = Path.GetExtension(file);
+
+                    switch (ext)
+                    {
+                        default:
+                        case ".exe":
+                            break;
+                        case ".xml":
+                            try
+                            {
+                                XmlDocument doc = new XmlDocument();
+                                doc.Load(path);
+
+                                XmlNodeList Applications = doc.GetElementsByTagName("Applications");
+                                foreach (XmlNode node in Applications)
+                                {
+                                    foreach (XmlNode child in node.ChildNodes)
+                                    {
+                                        if (child.Name.Equals("Application"))
+                                        {
+                                            if (child.Attributes != null)
+                                            {
+                                                foreach (XmlAttribute attribute in child.Attributes)
+                                                {
+                                                    switch (attribute.Name)
+                                                    {
+                                                        case "Executable":
+                                                            path = Path.Combine(folder, attribute.InnerText);
+                                                            file = Path.GetFileName(path);
+                                                            break;
+                                                    }
+                                                    continue;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                microsoftLogger.LogError(ex.Message, true);
+                            }
+                            break;
+                    }
+
+                    Profile profile = new Profile(path);
+                    profileManager.UpdateProfile(profile);
+                    profileManager.SerializeProfile(profile);
+                }
+                catch (Exception ex)
+                {
+                    microsoftLogger.LogError(ex.Message);
+                }
             }
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             Page page;
-            switch((Input)cB_Input.SelectedIndex)
+            switch ((Input)cB_Input.SelectedIndex)
             {
                 default:
                 case Input.JoystickCamera:
@@ -142,6 +201,8 @@ namespace ControllerHelperWPF.Views.Pages
             {
                 // disable button if is default profile
                 b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
+                cB_Whitelist.IsEnabled = (bool)!cB_UniversalMotion.IsChecked && !profileCurrent.IsDefault; // can't be ticked is UMC is ticked
+                cB_Wrapper.IsEnabled = !profileCurrent.IsDefault;
 
                 tB_ProfileName.Text = profileCurrent.name;
                 tB_ProfilePath.Text = profileCurrent.path;
@@ -159,17 +220,88 @@ namespace ControllerHelperWPF.Views.Pages
 
                 cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
                 cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
+
+                cB_Buttons.SelectedItems.Clear();
+                foreach(string value in cB_Buttons.Items)
+                {
+                    GamepadButtonFlags button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(value);
+                    if(profileCurrent.umc_trigger.HasFlag(button))
+                        cB_Buttons.SelectedItems.Add(value);
+                }
             });
         }
 
         private void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
         {
+            Profile profile = (Profile)cB_Profiles.SelectedItem;
+            profileManager.DeleteProfile(profile);
 
+            cB_Profiles.SelectedIndex = 0;
         }
 
         private void b_ApplyProfile_Click(object sender, RoutedEventArgs e)
         {
+            if (profileCurrent == null)
+                return;
 
+            profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
+            profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
+            profileCurrent.whitelisted = (bool)cB_Whitelist.IsChecked && cB_Whitelist.IsEnabled;
+            profileCurrent.use_wrapper = (bool)cB_Wrapper.IsChecked && cB_Wrapper.IsEnabled;
+
+            profileCurrent.steering = cB_GyroSteering.SelectedIndex;
+
+            profileCurrent.invertvertical = (bool)cB_InvertVertical.IsChecked && cB_InvertVertical.IsEnabled;
+            profileCurrent.inverthorizontal = (bool)cB_InvertHorizontal.IsChecked && cB_InvertHorizontal.IsEnabled;
+
+            profileCurrent.umc_enabled = (bool)cB_UniversalMotion.IsChecked && cB_UniversalMotion.IsEnabled;
+
+            profileCurrent.umc_input = (Input)cB_Input.SelectedIndex;
+            profileCurrent.umc_output = (Output)cB_Output.SelectedIndex;
+
+            // implement me: UMC Steering
+
+            // implement me: UMC Aiming
+            // profileCurrent.umc_sensivity = tB_UMCSensivity.Value;
+            // profileCurrent.umc_intensity = tB_UMCIntensity.Value;
+
+            profileCurrent.umc_trigger = 0;
+
+            foreach (string item in cB_Buttons.SelectedItems)
+            {
+                GamepadButtonFlags button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(item);
+                profileCurrent.umc_trigger |= button;
+            }
+
+            profileManager.profiles[profileCurrent.name] = profileCurrent;
+            profileManager.UpdateProfile(profileCurrent);
+            profileManager.SerializeProfile(profileCurrent);
+        }
+
+        private void cB_Whitelist_Click(object sender, RoutedEventArgs e)
+        {
+            cB_UniversalMotion.IsEnabled = (bool)!cB_Whitelist.IsChecked;
+            cB_UniversalMotion.IsChecked = (bool)!cB_Whitelist.IsChecked;
+        }
+
+        private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)
+        {
+            cB_UniversalMotion.IsEnabled = (bool)!cB_Whitelist.IsChecked;
+        }
+
+        private void cB_Wrapper_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void cB_UniversalMotion_Checked(object sender, RoutedEventArgs e)
+        {
+            Expander_UMC.IsEnabled = (bool)cB_UniversalMotion.IsChecked;
+            cB_Whitelist.IsEnabled = !(bool)cB_UniversalMotion.IsChecked && !profileCurrent.IsDefault;
+
+            // shrink on disable
+            if (!Expander_UMC.IsEnabled)
+                Expander_UMC.IsExpanded = false;
         }
     }
 }

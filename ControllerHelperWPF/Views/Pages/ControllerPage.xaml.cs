@@ -1,17 +1,14 @@
 ﻿using ControllerCommon;
-using ControllerHelperWPF.Converters;
 using Microsoft.Extensions.Logging;
 using ModernWpf;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Windows.System.Profile.SystemManufacturers;
 using Page = System.Windows.Controls.Page;
 
 namespace ControllerHelperWPF.Views.Pages
@@ -109,7 +106,7 @@ namespace ControllerHelperWPF.Views.Pages
             // Device visual
             Uri ImageSource;
 
-            switch(ProductName)
+            switch (ProductName)
             {
                 /* case "AYANEO 2021 Pro Retro Power":
                     ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_retro_power.png");

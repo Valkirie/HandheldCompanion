@@ -91,9 +91,10 @@ namespace ControllerCommon
 
         public void SetDefault()
         {
-            Profile def = new Profile("Default", "");
-            profiles["Default"] = def;
-            SerializeProfile(def);
+            Profile profile = new Profile("Default", "");
+            profiles["Default"] = profile;
+            SerializeProfile(profile);
+            UpdateProfile(profile);
         }
 
         public Profile GetDefault()
@@ -150,7 +151,8 @@ namespace ControllerCommon
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(profile, options);
 
-            string settingsPath = Path.Combine(path, $"{profile.name}.json");
+            string json = Path.GetFileNameWithoutExtension(profile.executable);
+            string settingsPath = Path.Combine(path, $"{json}.json");
             File.WriteAllText(settingsPath, jsonString);
         }
 

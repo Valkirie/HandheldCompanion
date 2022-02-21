@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Text.Json.Serialization;
 
 namespace ControllerCommon
@@ -35,6 +37,8 @@ namespace ControllerCommon
     {
         public string name { get; set; }
         public string path { get; set; }
+        public string executable { get; set; }
+
         public bool whitelisted { get; set; } = false;              // if true, can see through the HidHide cloak
         public bool use_wrapper { get; set; } = false;              // if true, deploy xinput1_3.dll
         public float gyrometer { get; set; } = 1.0f;                // gyroscope multiplicator (remove me)
@@ -62,11 +66,24 @@ namespace ControllerCommon
         {
         }
 
+        public Profile (string path)
+        {
+            Dictionary<string, string> AppProperties = Utils.GetAppProperties(path);
+
+            string ProductName = AppProperties.ContainsKey("FileDescription") ? AppProperties["FileDescription"] : AppProperties["ItemFolderNameDisplay"];
+            string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";
+            string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
+            
+            this.executable = AppProperties["FileName"];
+            this.name = ProductName;
+            this.path = this.fullpath = path;
+        }
+
         public Profile(string name, string path)
         {
+            this.executable = Path.GetFileName(path);
             this.name = name;
-            this.path = path;
-            this.fullpath = path;
+            this.path = this.fullpath = path;
         }
 
         public float GetSensiviy()

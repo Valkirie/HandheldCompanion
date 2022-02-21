@@ -2,7 +2,6 @@
 using System;
 using System.Diagnostics;
 using System.ServiceProcess;
-using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
