@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using SharpDX.XInput;

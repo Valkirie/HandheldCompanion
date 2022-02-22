@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
 using SharpDX.DirectInput;
@@ -23,6 +23,10 @@ namespace ControllerService
         private Vector3 prevAcceleration;
         public Vector3 Acceleration;
         public Timer AccelerationTimer;
+
+        private Vector3 prevAngle;
+        public Vector3 Angle;
+        public Timer AngleTimer;
 
         private Vector3 prevAngle;
         public Vector3 Angle;
@@ -73,6 +77,9 @@ namespace ControllerService
 
             AngularVelocityTimer = new Timer() { Enabled = false, AutoReset = false };
             AngularVelocityTimer.Elapsed += AngularVelocityTimer_Elapsed;
+
+            AngleTimer = new Timer() { Enabled = false, AutoReset = false };
+            AngleTimer.Elapsed +=AngleTimer_Elapsed;
 
             AngleTimer = new Timer() { Enabled = false, AutoReset = false };
             AngleTimer.Elapsed += AngleTimer_Elapsed;

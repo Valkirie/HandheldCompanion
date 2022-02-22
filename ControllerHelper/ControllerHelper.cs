@@ -241,6 +241,8 @@ namespace ControllerHelper
             // elevation check
             if (!IsElevated)
             {
+                m_ToastManager.SendToast(strings.WarningTitle, strings.WarningElevated);
+
                 // disable service control
                 gb_SettingsService.SuspendLayout();
                 foreach (Control ctrl in gb_SettingsService.Controls)
@@ -977,6 +979,12 @@ namespace ControllerHelper
         private void IL_AboutDonate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Utils.OpenUrl("https://www.paypal.com/paypalme/BenjaminLSR");
+        }
+
+        private void cB_Wrapper_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cB_Wrapper.Checked)
+                m_ToastManager.SendToast(strings.WarningTitle, strings.WarningWrapper);
         }
 
         private void cB_ToastEnable_CheckedChanged(object sender, EventArgs e)

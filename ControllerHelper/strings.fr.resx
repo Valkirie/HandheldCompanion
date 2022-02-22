@@ -155,6 +155,12 @@ Si vous l'appréciez, pensez à soutenir les efforts de l'auteur et montrez votr
     <value>Utilisateur</value>
   </data>
   <data name="WarningElevated" xml:space="preserve">
-    <value>Exécutez cet outil en tant qu'administrateur pour déverrouiller ces paramètres.</value>
+    <value>Exécutez cet outil en tant qu'administrateur pour déverrouiller certains paramètres.</value>
+  </data>
+  <data name="WarningTitle" xml:space="preserve">
+    <value>S'il vous plaît, lisez attentivement</value>
+  </data>
+  <data name="WarningWrapper" xml:space="preserve">
+    <value>L'utilisation du wrapper peut déclencher un système anti-triche dans certains jeux. Utilisez-le à vos risques et périls.</value>
   </data>
 </root>
