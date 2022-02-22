@@ -75,7 +75,7 @@ namespace ControllerService
             AngularVelocityTimer.Elapsed += AngularVelocityTimer_Elapsed;
 
             AngleTimer = new Timer() { Enabled = false, AutoReset = false };
-            AngleTimer.Elapsed +=AngleTimer_Elapsed;
+            AngleTimer.Elapsed += AngleTimer_Elapsed;
 
             AngleTimer = new Timer() { Enabled = false, AutoReset = false };
             AngleTimer.Elapsed += AngleTimer_Elapsed;

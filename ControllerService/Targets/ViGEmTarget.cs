@@ -147,7 +147,7 @@ namespace ControllerService.Targets
 
                 if (xinputController.profile.umc_enabled && (xinputController.profile.umc_trigger & buttons) != 0)
                 {
-                    switch(xinputController.profile.umc_input)
+                    switch (xinputController.profile.umc_input)
                     {
                         case Input.JoystickCamera:
                             {
@@ -194,13 +194,13 @@ namespace ControllerService.Targets
                                     default:
                                     case Output.RightStick:
                                         RightThumbX = (short)-(joystick_pos_in_game_deadzone_compensated * short.MaxValue);
+                                        logger?.LogDebug("LeftThumbX: {0} based on device Y angle: {1:00.######} degs", RightThumbX, xinputController.Angle.Y);
                                         break;
                                     case Output.LeftStick:
                                         LeftThumbX = (short)-(joystick_pos_in_game_deadzone_compensated * short.MaxValue);
+                                        logger?.LogDebug("LeftThumbX: {0} based on device Y angle: {1:00.######} degs", LeftThumbX, xinputController.Angle.Y);
                                         break;
                                 }
-
-                                logger?.LogDebug("LeftThumbX: {0} based on device Y angle: {1:00.######} degs", LeftThumbX, xinputController.Angle.Y);
                             }
                             break;
                     }
