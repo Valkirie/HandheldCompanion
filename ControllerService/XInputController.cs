@@ -28,10 +28,6 @@ namespace ControllerService
         public Vector3 Angle;
         public Timer AngleTimer;
 
-        private Vector3 prevAngle;
-        public Vector3 Angle;
-        public Timer AngleTimer;
-
         private Vector3 prevAngularVelocity;
         public Vector3 AngularVelocity;
         public Timer AngularVelocityTimer;
