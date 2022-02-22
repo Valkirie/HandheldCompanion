@@ -12,9 +12,6 @@ namespace ControllerService
         public Accelerometer sensor;
         private Vector3 reading = new();
 
-        private long prev_microseconds;
-        private readonly OneEuroFilter3D accelFilter;
-
         public event ReadingChangedEventHandler ReadingHasChanged;
         public delegate void ReadingChangedEventHandler(XInputAccelerometer sender, Vector3 e);
 
@@ -26,8 +23,6 @@ namespace ControllerService
             this.logger = logger;
             this.xinput = controller;
 
-            accelFilter = new OneEuroFilter3D();
-
             sensor = Accelerometer.GetDefault();
             if (sensor != null)
             {
@@ -36,6 +31,10 @@ namespace ControllerService
 
                 sensor.ReadingChanged += ReadingChanged;
                 sensor.Shaken += Shaken;
+            }
+            else
+            {
+                logger.LogInformation("{0} not initialised.", this.ToString());
             }
         }
 
@@ -54,15 +53,11 @@ namespace ControllerService
         {
             AccelerometerReading reading = args.Reading;
 
-            var microseconds = (long)(reading.Timestamp.Ticks / (Stopwatch.Frequency / (1000L * 1000L)));
-            var elapsedTime = 0.000001 * (microseconds - prev_microseconds);
-            var rate = elapsedTime;
-
-            prev_microseconds = microseconds;
-
-            float readingX = this.reading.X = (float)accelFilter.axis1Filter.Filter(reading.AccelerationX, rate);
-            float readingY = this.reading.Y = (float)accelFilter.axis1Filter.Filter(reading.AccelerationZ, rate);
-            float readingZ = this.reading.Z = (float)accelFilter.axis1Filter.Filter(reading.AccelerationY, rate);
+            // Y up coordinate system, swap Y and Z
+            // Duplicate values to allow for optional swapping or inverting.
+            float readingX = this.reading.X = (float)reading.AccelerationX;
+            float readingY = this.reading.Y = (float)reading.AccelerationZ;
+            float readingZ = this.reading.Z = (float)reading.AccelerationY;
 
             if (xinput.virtualTarget != null)
             {
