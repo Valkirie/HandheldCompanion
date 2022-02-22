@@ -5,11 +5,119 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:ControllerHelperWPF" 
       xmlns:pages="clr-namespace:ControllerHelperWPF.Views.Pages"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="ProfileSettingsMode1">
+      d:DesignHeight="1000" d:DesignWidth="1000"
+      Title="Profiles > Joystick steering"
+      Loaded="Page_Loaded">
 
-    <Grid>
-        
+    <Grid Name="MainGrid" Margin="20">
+        <ui:SimpleStackPanel Spacing="6">
+            <Label Content="Joystcik steering options" FontWeight="SemiBold"></Label>
+
+            <!-- Steering angle -->
+            <Border                      
+                        Padding="0,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
+                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
+                        <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                    <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Max steering angle" FontSize="14"/>
+                        <TextBlock Text="Change the maximum steering angle value, in degree." FontSize="12" TextWrapping="Wrap"/>
+                    </ui:SimpleStackPanel>
+
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderSteeringAngle, Mode=OneWay}" />
+                    <Slider Name="SliderSteeringAngle" ValueChanged="SliderSteeringAngle_ValueChanged" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="80" Minimum="10" Value="35" TickPlacement="BottomRight" SmallChange="2" TickFrequency="10"/>
+                </Grid>
+            </Border>
+
+            <!-- Power -->
+            <Border                      
+                        Padding="0,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
+                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
+                        <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                    <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Power" FontSize="14"/>
+                        <TextBlock Text="Change the steering function mathematical power." FontSize="12" TextWrapping="Wrap"/>
+                    </ui:SimpleStackPanel>
+
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderPower, Mode=OneWay}" />
+                    <Slider Name="SliderPower" ValueChanged="SliderPower_ValueChanged" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="5" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.2"/>
+                </Grid>
+            </Border>
+
+            <!-- Deadzone -->
+            <Border                      
+                        Padding="0,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
+                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
+                        <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                    <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Deadzone" FontSize="14"/>
+                        <TextBlock Text="Change the steering deadzone, in degree." FontSize="12" TextWrapping="Wrap"/>
+                    </ui:SimpleStackPanel>
+
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneAngle, Mode=OneWay}" />
+                    <Slider Name="SliderDeadzoneAngle" ValueChanged="SliderDeadzoneAngle_ValueChanged" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="5" TickPlacement="BottomRight" SmallChange="1"/>
+                </Grid>
+            </Border>
+
+            <!-- Deadzone compensation -->
+            <Border                      
+                        Padding="0,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
+                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
+                        <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                    <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Deadzone compensation" FontSize="14"/>
+                        <TextBlock Text="Change the steering deadzone compensation, in degree." FontSize="12" TextWrapping="Wrap"/>
+                    </ui:SimpleStackPanel>
+
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneCompensation, Mode=OneWay}" />
+                    <Slider Name="SliderDeadzoneCompensation" ValueChanged="SliderDeadzoneCompensation_ValueChanged" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="10"/>
+                </Grid>
+            </Border>
+        </ui:SimpleStackPanel>
     </Grid>
 </Page>
