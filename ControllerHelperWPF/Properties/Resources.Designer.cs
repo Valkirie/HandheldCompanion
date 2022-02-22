@@ -61,6 +61,15 @@ namespace ControllerHelperWPF.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Administrator.
+        /// </summary>
+        public static string Administrator {
+            get {
+                return ResourceManager.GetString("Administrator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
         public static string navAbout {
@@ -102,6 +111,15 @@ namespace ControllerHelperWPF.Properties {
         public static string ServiceName {
             get {
                 return ResourceManager.GetString("ServiceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User.
+        /// </summary>
+        public static string User {
+            get {
+                return ResourceManager.GetString("User", resourceCulture);
             }
         }
         

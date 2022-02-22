@@ -212,9 +212,6 @@ namespace ControllerHelperWPF.Views.Pages
             {
                 // disable button if is default profile
                 b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
-                cB_Whitelist.IsEnabled = (bool)!Toggle_UniversalMotion.IsOn && !profileCurrent.IsDefault;
-                Toggle_UniversalMotion.IsEnabled = (bool)!cB_Whitelist.IsChecked;
-                cB_Wrapper.IsEnabled = !profileCurrent.IsDefault;
 
                 tB_ProfileName.Text = profileCurrent.name;
                 tB_ProfilePath.Text = profileCurrent.path;

@@ -160,7 +160,7 @@
                                         <ColumnDefinition MinWidth="200"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
-                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEC49;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8B4;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
 
                                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                         <TextBlock Text="Motion control options" FontSize="14"/>
@@ -333,7 +333,8 @@
                                         </ui:SimpleStackPanel>
 
                                         <ui:ListView
-                                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                            ScrollViewer.PanningMode="VerticalOnly"
+                                            ScrollViewer.VerticalScrollBarVisibility="Visible"
                                             Name="cB_Buttons" Height="120" SelectionMode="Multiple"
                                             IsMultiSelectCheckBoxEnabled="True" Grid.Column="2"
                                             HorizontalAlignment="Stretch" VerticalAlignment="Center"

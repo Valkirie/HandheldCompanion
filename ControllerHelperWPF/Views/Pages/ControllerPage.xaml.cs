@@ -38,8 +38,6 @@ namespace ControllerHelperWPF.Views.Pages
 
             foreach (HIDmode mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.None))
                 cB_HidMode.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
-
-            UpdateDevice();
         }
 
         public ControllerPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
@@ -54,6 +52,8 @@ namespace ControllerHelperWPF.Views.Pages
 
             this.serviceManager = mainWindow.serviceManager;
             this.serviceManager.Updated += ServiceManager_Updated;
+
+            UpdateDevice();
         }
 
         private void ServiceManager_Updated(ServiceControllerStatus status, ServiceStartMode mode)
@@ -102,6 +102,8 @@ namespace ControllerHelperWPF.Views.Pages
 
             string ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
             string ProductName = MotherboardInfo.Product;
+
+            microsoftLogger.LogInformation("{0} ({1})", ManufacturerName, ProductName);
 
             // Device visual
             Uri ImageSource;

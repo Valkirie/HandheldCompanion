@@ -61,9 +61,6 @@ namespace ControllerHelperWPF.Views
         {
             InitializeComponent();
 
-            string ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
-            navView.PaneTitle = ManufacturerName;
-
             this.microsoftLogger = microsoftLogger;
             this.arguments = arguments;
 
@@ -94,6 +91,10 @@ namespace ControllerHelperWPF.Views
 
             // settings
             IsElevated = Utils.IsAdministrator();
+
+            // initialize title
+            this.Title += $" ({fileVersionInfo.FileVersion})";
+            navView.PaneTitle = IsElevated ? Properties.Resources.Administrator : Properties.Resources.User;
 
             // verifying HidHide is installed
             if (!File.Exists(CurrentPathService))

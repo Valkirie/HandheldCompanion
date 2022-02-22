@@ -8,65 +8,60 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
-      Title="Profiles"
+      Title="Profiles > Joystick camera"
       Loaded="Page_Loaded">
 
-    <Grid Name="MainGrid" Margin="20" >
-        <Border>
-            <ui:SimpleStackPanel Name="StackPanel_Profiles" Spacing="12">
-                
-                <!-- Profiles option -->
-                <Border
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                        Padding="12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+    <Grid Name="MainGrid" Margin="20">
+        <ui:SimpleStackPanel Spacing="6">
+            <Label Content="Joystcik camera options" FontWeight="SemiBold"></Label>
 
-                    <Expander FlowDirection="RightToLeft" IsExpanded="True">
-                        <Expander.Header>
-                            <DockPanel FlowDirection="LeftToRight"
-                                       Margin="-12,0,0,0"
-                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
-                                <!-- Change the look inside header here -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="50"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
+            <!-- Sensivity -->
+            <Border                      
+                        Padding="0,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
-                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
+                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                        <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
 
-                                    <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                                        <TextBlock Text="Profiles options" FontSize="14"/>
-                                        <TextBlock Text="Change the global profiles option" FontSize="12" TextWrapping="Wrap"/>
-                                    </ui:SimpleStackPanel>
-                                </Grid>
-                            </DockPanel>
-                        </Expander.Header>
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
 
-                        <Expander.Content>
-                            <Grid FlowDirection="LeftToRight" Margin="0,12,0,0">
-                                <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
-                                    <!-- Separator -->
-                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+                    <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Sensivity" FontSize="14"/>
+                        <TextBlock Text="Scale the device sensivity. This will change the motion sensivity of the vertical and horizontal axis." FontSize="12" TextWrapping="Wrap"/>
+                    </ui:SimpleStackPanel>
 
-                                    <CheckBox Name="cB_Whitelist" Content="Allow the application to access device physical controller"></CheckBox>
+                    <Slider Name="SliderSensivity" Grid.Column="2" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderSensivity_ValueChanged"/>
+                </Grid>
+            </Border>
 
-                                    <!-- Separator -->
-                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+            <!-- Intensity -->
+            <Border                      
+                        Padding="0,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
-                                    <CheckBox Name="cB_Wrapper" Content="Translates DirectInput calls to XInput calls"></CheckBox>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
+                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                        <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
 
-                                    <!-- Separator -->
-                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
 
-                                    <CheckBox Name="cB_UniversalMotion" Content="Translate device motions into controller inputs"></CheckBox>
-                                </ui:SimpleStackPanel>
-                            </Grid>
-                        </Expander.Content>
-                    </Expander>
-                </Border>
+                    <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Intensity" FontSize="14"/>
+                        <TextBlock Text="Scale the device intensity. This will change the motion sensivity of the vertical and horizontal axis." FontSize="12" TextWrapping="Wrap"/>
+                    </ui:SimpleStackPanel>
 
-            </ui:SimpleStackPanel>
-        </Border>
+                    <Slider Name="SliderIntensity" Grid.Column="2" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderIntensity_ValueChanged"/>
+                </Grid>
+            </Border>
+        </ui:SimpleStackPanel>
     </Grid>
 </Page>

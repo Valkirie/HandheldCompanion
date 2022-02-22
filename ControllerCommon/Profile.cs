@@ -16,9 +16,9 @@ namespace ControllerCommon
 
     public enum Input
     {
-        [Description("Joystick Camera")]
+        [Description("Joystick camera")]
         JoystickCamera = 0,
-        [Description("Joystick Steering")]
+        [Description("Joystick steering")]
         JoystickSteering = 1
     }
 
