@@ -59,10 +59,10 @@ namespace ControllerCommon
         public float aiming_intensity { get; set; } = 2.0f;
 
         // steering
-        public float steering_max_angle { get; set; } = 30.0f;
-        public float steering_power { get; set; } = 1.0f;
-        public float steering_deadzone { get; set; } = 0.0f;
-        public float steering_deadzone_compensation { get; set; } = 0.0f;
+        public float steering_max_angle { get; set; } = 30.0f;              // Max steering angle 10 to 80 degrees in 5 degree increments, default 35 degrees
+        public float steering_power { get; set; } = 1.0f;                   // 0.1 to 5 in 0.1 increments, default 1.0 (lineair)
+        public float steering_deadzone { get; set; } = 0.0f;                // 0 to 5 degrees in 1 degree increments, default 0 degrees
+        public float steering_deadzone_compensation { get; set; } = 0.0f;   // 0 to 100 %, in 1% increments, default 0 %
 
         public GamepadButtonFlags umc_trigger { get; set; } = 0;
 
