@@ -1,10 +1,12 @@
 ﻿using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
+using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
@@ -70,7 +72,7 @@ namespace ControllerHelperWPF.Views.Pages
             if (profile.IsDefault)
                 pipeClient.SendMessage(new PipeClientProfile() { profile = profile });
 
-            this.Dispatcher.Invoke(() =>
+            this.Dispatcher.Invoke(async () =>
             {
                 int idx = -1;
 
@@ -87,9 +89,18 @@ namespace ControllerHelperWPF.Views.Pages
                     cB_Profiles.Items.Add(profile);
                 else
                 {
+                    // todo: implement localized strings
+                    Task<ContentDialogResult> result = Dialog.ShowAsync("Overwrite profile permanently?", "A profile with the same executable has been fund. Do you want to overwrite it?", ContentDialogButton.Primary, "Close", "Yes");
+                    await result; // sync call
 
-                    // todo: display a warning message !
-                    cB_Profiles.Items[idx] = profile;
+                    switch(result.Result)
+                    {
+                        case ContentDialogResult.Primary:
+                            cB_Profiles.Items[idx] = profile;
+                            break;
+                        default:
+                            return;
+                    }
                 }
 
                 cB_Profiles.SelectedItem = profile;
@@ -201,14 +212,15 @@ namespace ControllerHelperWPF.Views.Pages
             {
                 // disable button if is default profile
                 b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
-                cB_Whitelist.IsEnabled = (bool)!cB_UniversalMotion.IsChecked && !profileCurrent.IsDefault; // can't be ticked is UMC is ticked
+                cB_Whitelist.IsEnabled = (bool)!Toggle_UniversalMotion.IsOn && !profileCurrent.IsDefault;
+                Toggle_UniversalMotion.IsEnabled = (bool)!cB_Whitelist.IsChecked;
                 cB_Wrapper.IsEnabled = !profileCurrent.IsDefault;
 
                 tB_ProfileName.Text = profileCurrent.name;
                 tB_ProfilePath.Text = profileCurrent.path;
                 cB_Whitelist.IsChecked = profileCurrent.whitelisted;
                 cB_Wrapper.IsChecked = profileCurrent.use_wrapper;
-                cB_UniversalMotion.IsChecked = profileCurrent.umc_enabled;
+                Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
 
                 tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
                 tb_ProfileAcceleroValue.Value = profileCurrent.accelerometer;
@@ -254,7 +266,7 @@ namespace ControllerHelperWPF.Views.Pages
             profileCurrent.invertvertical = (bool)cB_InvertVertical.IsChecked && cB_InvertVertical.IsEnabled;
             profileCurrent.inverthorizontal = (bool)cB_InvertHorizontal.IsChecked && cB_InvertHorizontal.IsEnabled;
 
-            profileCurrent.umc_enabled = (bool)cB_UniversalMotion.IsChecked && cB_UniversalMotion.IsEnabled;
+            profileCurrent.umc_enabled = (bool)Toggle_UniversalMotion.IsOn && Toggle_UniversalMotion.IsEnabled;
 
             profileCurrent.umc_input = (Input)cB_Input.SelectedIndex;
             profileCurrent.umc_output = (Output)cB_Output.SelectedIndex;
@@ -278,15 +290,9 @@ namespace ControllerHelperWPF.Views.Pages
             profileManager.SerializeProfile(profileCurrent);
         }
 
-        private void cB_Whitelist_Click(object sender, RoutedEventArgs e)
-        {
-            cB_UniversalMotion.IsEnabled = (bool)!cB_Whitelist.IsChecked;
-            cB_UniversalMotion.IsChecked = (bool)!cB_Whitelist.IsChecked;
-        }
-
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)
         {
-            cB_UniversalMotion.IsEnabled = (bool)!cB_Whitelist.IsChecked;
+            Expander_UMC.IsEnabled = (bool)!cB_Whitelist.IsChecked;
         }
 
         private void cB_Wrapper_Checked(object sender, RoutedEventArgs e)
@@ -294,14 +300,10 @@ namespace ControllerHelperWPF.Views.Pages
 
         }
 
-        private void cB_UniversalMotion_Checked(object sender, RoutedEventArgs e)
+        private void Toggle_UniversalMotion_Toggled(object sender, RoutedEventArgs e)
         {
-            Expander_UMC.IsEnabled = (bool)cB_UniversalMotion.IsChecked;
-            cB_Whitelist.IsEnabled = !(bool)cB_UniversalMotion.IsChecked && !profileCurrent.IsDefault;
-
-            // shrink on disable
-            if (!Expander_UMC.IsEnabled)
-                Expander_UMC.IsExpanded = false;
+            cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !profileCurrent.IsDefault;
+            Expander_UMC.IsExpanded = Toggle_UniversalMotion.IsOn;
         }
     }
 }

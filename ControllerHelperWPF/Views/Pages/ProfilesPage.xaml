@@ -136,7 +136,6 @@
                                     <!-- Separator -->
                                     <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
-                                    <CheckBox Name="cB_UniversalMotion" Content="Translate device motions into controller inputs" Checked="cB_UniversalMotion_Checked" Unchecked="cB_UniversalMotion_Checked"></CheckBox>
                                 </ui:SimpleStackPanel>
                             </Grid>
                         </Expander.Content>
@@ -165,7 +164,7 @@
 
                                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                         <TextBlock Text="Motion control options" FontSize="14"/>
-                                        <TextBlock Text="Change the global profiles option" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="Change the global motion control options" FontSize="12" TextWrapping="Wrap"/>
                                     </ui:SimpleStackPanel>
                                 </Grid>
                             </DockPanel>
@@ -187,7 +186,7 @@
 
                                         <ui:SimpleStackPanel Grid.Column="0">
                                             <TextBlock Text="Gyrometer multiplier" FontSize="14"/>
-                                            <TextBlock Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor." FontSize="12" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Change the system reported gyrometer value" FontSize="12" TextWrapping="Wrap"/>
                                         </ui:SimpleStackPanel>
 
                                         <Slider Name="tb_ProfileGyroValue" Grid.Column="2" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="3" TickFrequency="0.2" Value="10" TickPlacement="BottomRight" Minimum="0.1"/>
@@ -205,7 +204,7 @@
 
                                         <ui:SimpleStackPanel Grid.Column="0">
                                             <TextBlock Text="Accelerometer multiplier" FontSize="14"/>
-                                            <TextBlock Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor." FontSize="12" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Change the system reported accelerometer value" FontSize="12" TextWrapping="Wrap"/>
                                         </ui:SimpleStackPanel>
 
                                         <Slider Name="tb_ProfileAcceleroValue" Grid.Column="2" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="3" Minimum="0.1" TickFrequency="0.2" Value="10" TickPlacement="BottomRight"/>
@@ -253,7 +252,7 @@
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                    <Expander Name="Expander_UMC" FlowDirection="RightToLeft" IsExpanded="False" IsEnabled="False">
+                    <Expander Name="Expander_UMC" FlowDirection="RightToLeft" IsExpanded="False">
                         <Expander.Header>
                             <DockPanel FlowDirection="LeftToRight"
                                        Margin="-12,0,0,0"
@@ -262,15 +261,18 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="50"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="8*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEC49;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
 
                                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                         <TextBlock Text="Universal motion control options" FontSize="14"/>
-                                        <TextBlock Text="Change the global profiles option" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="Translate device motions into controller inputs" FontSize="12" TextWrapping="Wrap"/>
                                     </ui:SimpleStackPanel>
+
+                                    <ui:ToggleSwitch Name="Toggle_UniversalMotion" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Left" Toggled="Toggle_UniversalMotion_Toggled"/>
                                 </Grid>
                             </DockPanel>
                         </Expander.Header>
