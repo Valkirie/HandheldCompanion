@@ -8,7 +8,7 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
-      Title="Profiles > Joystick camera"
+      Title="Additional settings"
       Loaded="Page_Loaded">
 
     <Grid Name="MainGrid" Margin="20">
