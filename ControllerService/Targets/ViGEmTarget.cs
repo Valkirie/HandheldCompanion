@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
@@ -182,8 +182,9 @@ namespace ControllerService.Targets
                             float joystick_pos_in_game_deadzone_compensated = Utils.InGameDeadZoneSettingCompensation(joystick_pos_powered, ingame_deadzone_setting_compensation);
                             logger?.LogInformation("InGameDeadZoneSettingCompensation. Input: {0:0.#####} Ingame Deadzone %: {1:0.#} Result: {2:0.####}", joystick_pos_powered, ingame_deadzone_setting_compensation, joystick_pos_in_game_deadzone_compensated);
 
-                            // Scale joystick pos -1 to 1 to joystick range
+                            // Scale joystick x pos -1 to 1 to joystick x range, send 0 for y.
                             LeftThumbX = (short)-(joystick_pos_in_game_deadzone_compensated * short.MaxValue);
+                            LeftThumbY = 0;
 
                             logger?.LogInformation("LeftThumbX: {0} based on device Y angle: {1:00.######} degs", LeftThumbX, xinputController.Angle.Y);
                             break;
