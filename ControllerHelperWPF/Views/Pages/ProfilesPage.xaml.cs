@@ -3,8 +3,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using ModernWpf.Controls;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -93,7 +91,7 @@ namespace ControllerHelperWPF.Views.Pages
                     Task<ContentDialogResult> result = Dialog.ShowAsync("Overwrite profile permanently?", "A profile with the same executable has been fund. Do you want to overwrite it?", ContentDialogButton.Primary, "Close", "Yes");
                     await result; // sync call
 
-                    switch(result.Result)
+                    switch (result.Result)
                     {
                         case ContentDialogResult.Primary:
                             cB_Profiles.Items[idx] = profile;
@@ -231,10 +229,10 @@ namespace ControllerHelperWPF.Views.Pages
                 cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
 
                 cB_Buttons.SelectedItems.Clear();
-                foreach(string value in cB_Buttons.Items)
+                foreach (string value in cB_Buttons.Items)
                 {
                     GamepadButtonFlags button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(value);
-                    if(profileCurrent.umc_trigger.HasFlag(button))
+                    if (profileCurrent.umc_trigger.HasFlag(button))
                         cB_Buttons.SelectedItems.Add(value);
                 }
             });

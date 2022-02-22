@@ -20,8 +20,8 @@ namespace ControllerHelperWPF.Views.Pages
         {
             this.profileCurrent = profileCurrent;
 
-            SliderSensivity.Value = profileCurrent.umc_sensivity;
-            SliderIntensity.Value = profileCurrent.umc_intensity;
+            SliderSensivity.Value = profileCurrent.aiming_sensivity;
+            SliderIntensity.Value = profileCurrent.aiming_intensity;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -33,7 +33,7 @@ namespace ControllerHelperWPF.Views.Pages
             if (profileCurrent is null)
                 return;
 
-            profileCurrent.umc_sensivity = (float)SliderSensivity.Value;
+            profileCurrent.aiming_sensivity = (float)SliderSensivity.Value;
         }
 
         private void SliderIntensity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -41,7 +41,7 @@ namespace ControllerHelperWPF.Views.Pages
             if (profileCurrent is null)
                 return;
 
-            profileCurrent.umc_intensity = (float)SliderIntensity.Value;
+            profileCurrent.aiming_intensity = (float)SliderIntensity.Value;
         }
     }
 }

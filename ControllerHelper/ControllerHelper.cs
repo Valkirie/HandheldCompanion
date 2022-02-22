@@ -783,8 +783,8 @@ namespace ControllerHelper
 
                     cB_UniversalMC.Checked = CurrentProfile.umc_enabled && !cB_Whitelist.Checked; // can't be ticked is passthrough is ticked
                     cB_UMCInputStyle.SelectedIndex = (int)CurrentProfile.umc_input;
-                    tB_UMCSensivity.Value = (int)CurrentProfile.umc_sensivity;
-                    tB_UMCIntensity.Value = (int)CurrentProfile.umc_intensity;
+                    tB_UMCSensivity.Value = (int)CurrentProfile.aiming_sensivity;
+                    tB_UMCIntensity.Value = (int)CurrentProfile.aiming_intensity;
 
                     for (int idx = 0; idx < cB_UMCInputButton.Items.Count; idx++)
                     {
@@ -843,8 +843,8 @@ namespace ControllerHelper
             CurrentProfile.umc_input = (Input)cB_UMCInputStyle.SelectedIndex;
             CurrentProfile.umc_output = (Output)cB_UMCInputStyle.SelectedIndex;
 
-            CurrentProfile.umc_sensivity = tB_UMCSensivity.Value;
-            CurrentProfile.umc_intensity = tB_UMCIntensity.Value;
+            CurrentProfile.aiming_sensivity = tB_UMCSensivity.Value;
+            CurrentProfile.aiming_intensity = tB_UMCIntensity.Value;
 
             CurrentProfile.umc_trigger = 0;
 

@@ -4,7 +4,6 @@ using ControllerHelperWPF.Views;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using static ControllerHelperWPF.Options;
 
 namespace ControllerHelperWPF

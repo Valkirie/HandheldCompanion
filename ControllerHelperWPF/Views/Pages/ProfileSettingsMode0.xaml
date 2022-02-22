@@ -25,6 +25,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
                         <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
@@ -32,10 +33,11 @@
 
                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Sensivity" FontSize="14"/>
-                        <TextBlock Text="Scale the device sensivity. This will change the motion sensivity of the vertical and horizontal axis." FontSize="12" TextWrapping="Wrap"/>
+                        <TextBlock Text="Change the motion sensivity of the vertical and horizontal axis." FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
-                    <Slider Name="SliderSensivity" Grid.Column="2" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderSensivity_ValueChanged"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensivity, Mode=OneWay}" />
+                    <Slider Name="SliderSensivity" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderSensivity_ValueChanged"/>
                 </Grid>
             </Border>
 
@@ -49,6 +51,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
                         <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
@@ -56,10 +59,11 @@
 
                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Intensity" FontSize="14"/>
-                        <TextBlock Text="Scale the device intensity. This will change the motion sensivity of the vertical and horizontal axis." FontSize="12" TextWrapping="Wrap"/>
+                        <TextBlock Text="Change the motion intensity of the vertical and horizontal axis." FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
-                    <Slider Name="SliderIntensity" Grid.Column="2" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderIntensity_ValueChanged"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderIntensity, Mode=OneWay}" />
+                    <Slider Name="SliderIntensity" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderIntensity_ValueChanged"/>
                 </Grid>
             </Border>
         </ui:SimpleStackPanel>

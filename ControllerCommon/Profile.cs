@@ -50,11 +50,19 @@ namespace ControllerCommon
         public bool invertvertical { get; set; } = false;           // if false, invert vertical axis
 
         public bool umc_enabled { get; set; } = false;
+
         public Input umc_input { get; set; } = Input.JoystickCamera;
         public Output umc_output { get; set; } = Output.RightStick;
 
-        public float umc_sensivity { get; set; } = 2.0f;
-        public float umc_intensity { get; set; } = 2.0f;
+        // aiming
+        public float aiming_sensivity { get; set; } = 2.0f;
+        public float aiming_intensity { get; set; } = 2.0f;
+
+        // steering
+        public float steering_max_angle { get; set; } = 30.0f;
+        public float steering_power { get; set; } = 1.0f;
+        public float steering_deadzone { get; set; } = 0.0f;
+        public float steering_deadzone_compensation { get; set; } = 0.0f;
 
         public GamepadButtonFlags umc_trigger { get; set; } = 0;
 
@@ -66,14 +74,14 @@ namespace ControllerCommon
         {
         }
 
-        public Profile (string path)
+        public Profile(string path)
         {
             Dictionary<string, string> AppProperties = Utils.GetAppProperties(path);
 
             string ProductName = AppProperties.ContainsKey("FileDescription") ? AppProperties["FileDescription"] : AppProperties["ItemFolderNameDisplay"];
             string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";
             string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
-            
+
             this.executable = AppProperties["FileName"];
             this.name = ProductName;
             this.path = this.fullpath = path;
@@ -88,12 +96,12 @@ namespace ControllerCommon
 
         public float GetSensiviy()
         {
-            return umc_sensivity * 500.0f;
+            return aiming_sensivity * 500.0f;
         }
 
         public float GetIntensity()
         {
-            return 1.0f - (umc_intensity / 20.0f) + 0.1f;
+            return 1.0f - (aiming_intensity / 20.0f) + 0.1f;
         }
 
         public override string ToString()

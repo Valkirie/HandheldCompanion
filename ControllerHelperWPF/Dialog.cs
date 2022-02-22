@@ -1,6 +1,5 @@
 ﻿using ModernWpf.Controls;
 using System.Threading.Tasks;
-using Windows.Foundation;
 
 namespace ControllerHelperWPF
 {
