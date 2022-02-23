@@ -292,6 +292,55 @@ namespace ControllerCommon
             return result;
         }
 
+        // Custom sensitivity
+        // Interpolation function (linear), takes list of nodes coordinates and gamepad joystick position returns game input
+        public static short ApplyCustomSensitivity(short GamepadThumb, float[,] Nodes)
+        {
+
+            // Use absolute joystick position, range -1 to 1, re-apply direction later
+            float JoystickPosAbs = (float)Math.Abs((decimal)GamepadThumb / short.MaxValue);
+            float JoystickPosAdjusted = 0.0f;
+
+            // Check what we will be sending
+            if (JoystickPosAbs <= Nodes[0, 0])
+            {
+                // Send 0 output to game
+                JoystickPosAdjusted = 0.0f;
+            }
+            else if (JoystickPosAbs >= Nodes[4, 0])
+            {
+                // Send 1 output to game
+                JoystickPosAdjusted = 1.0f;
+            }
+            // Calculate custom sensitivty
+            else if (JoystickPosAbs > Nodes[0, 0] && JoystickPosAbs < Nodes[4, 0])
+            {
+
+                // Convert xy list to separate single lists
+                float[] X = new float[5];
+                float[] Y = new float[5];
+
+                for (int node_index = 0; node_index < 5; node_index++)
+                {
+                    X[node_index] = Nodes[node_index, 0];
+                    Y[node_index] = Nodes[node_index, 1];
+                }
+
+                // Figure out between which two nodes the physical joystick position is
+                int i = Array.FindIndex(X, k => JoystickPosAbs <= k);
+
+                // Interpolate between those two points
+                JoystickPosAdjusted = Y[i - 1] + (JoystickPosAbs - X[i - 1]) * (Y[i] - Y[i - 1]) / (X[i] - X[i - 1]);
+            }
+
+            // Apply direction
+            JoystickPosAdjusted = (GamepadThumb < 0.0) ? -JoystickPosAdjusted : JoystickPosAdjusted;
+
+            short Output = (short)(JoystickPosAdjusted * short.MaxValue);
+
+            return Output;
+        }
+
         public static bool IsTextAValidIPAddress(string text)
         {
             return IPAddress.TryParse(text, out _);

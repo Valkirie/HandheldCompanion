@@ -147,6 +147,11 @@ namespace ControllerService.Targets
                     float intensity = xinputController.profile.GetIntensity();
                     float sensivity = xinputController.profile.GetSensiviy();
 
+                    // @Benjamin TODO, this is where we get the values from the profile / GUI.
+                    // Example implementation
+                    // float[,] ProfileCustomSensititvyNodes = { { 0.0f, 0.0f }, { 0.2f, 0.6f }, { 0.5f, 0.8f }, { 0.98f, 0.95f }, { 1.0f, 1.0f } };
+                    // RightThumbX = Utils.ApplyCustomSensitivity(RightThumbX, ProfileCustomSensititvyNodes);
+
                     switch (xinputController.profile.umc_input)
                     {
                         // TODO @Benjamin Switch case or if statements for style of input (Joystick Move or Steering)
