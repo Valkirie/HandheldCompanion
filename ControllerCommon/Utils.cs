@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Notifications;
+using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -296,6 +296,7 @@ namespace ControllerCommon
         // Interpolation function (linear), takes list of nodes coordinates and gamepad joystick position returns game input
         public static short ApplyCustomSensitivity(short GamepadThumb, float[,] Nodes)
         {
+            int NodeAmount = 5;
 
             // Use absolute joystick position, range -1 to 1, re-apply direction later
             float JoystickPosAbs = (float)Math.Abs((decimal)GamepadThumb / short.MaxValue);
@@ -307,20 +308,20 @@ namespace ControllerCommon
                 // Send 0 output to game
                 JoystickPosAdjusted = 0.0f;
             }
-            else if (JoystickPosAbs >= Nodes[4, 0])
+            else if (JoystickPosAbs >= Nodes[NodeAmount - 1, 0])
             {
                 // Send 1 output to game
                 JoystickPosAdjusted = 1.0f;
             }
             // Calculate custom sensitivty
-            else if (JoystickPosAbs > Nodes[0, 0] && JoystickPosAbs < Nodes[4, 0])
+            else if (JoystickPosAbs > Nodes[0, 0] && JoystickPosAbs < Nodes[NodeAmount - 1, 0])
             {
 
                 // Convert xy list to separate single lists
-                float[] X = new float[5];
-                float[] Y = new float[5];
+                float[] X = new float[NodeAmount];
+                float[] Y = new float[NodeAmount];
 
-                for (int node_index = 0; node_index < 5; node_index++)
+                for (int node_index = 0; node_index < NodeAmount; node_index++)
                 {
                     X[node_index] = Nodes[node_index, 0];
                     Y[node_index] = Nodes[node_index, 1];
