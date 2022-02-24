@@ -269,33 +269,54 @@ namespace ControllerCommon
             return (short)Math.Clamp(value + compute * sensivity, short.MinValue, short.MaxValue);
         }
 
+        public static short Steering(float DeviceAngle, 
+                                     float DeviceAngleMax,
+                                     float ToThePowerOf,
+                                     float DeadzoneAngle,
+                                     float DeadzoneCompensation)
+        {
+            // Range angle y value (0 to user defined angle) into -1.0 to 1.0 position value taking into account deadzone angle
+            float JoystickPosCappedAngle = AngleToJoystickPos(DeviceAngle, DeviceAngleMax, DeadzoneAngle);
+
+            // Apply user defined to the power of to joystick pos
+            float JoystickPosPowered = DirectionRespectingPowerOf(JoystickPosCappedAngle, ToThePowerOf);
+
+            // Apply user defined in game deadzone setting compensation
+            float JoystickPosInGameDeadzoneCompensated = InGameDeadZoneSettingCompensation(JoystickPosPowered, DeadzoneCompensation);
+
+            // Scale joystick x pos -1 to 1 to joystick x range, send 0 for y.
+            short Output = (short)-(JoystickPosInGameDeadzoneCompensated * short.MaxValue);
+
+            return Output;
+        }
+
         // Determine -1 to 1 joystick position given user defined max input angle and dead zone
         // Angles in degrees
-        public static float AngleToJoystickPos(float angle, float max_angle, float deadzone_angle)
+        public static float AngleToJoystickPos(float Angle, float DeviceAngleMax, float DeadzoneAngle)
         {
             // Deadzone remapped angle, note this angle is no longer correct with device angle
-            float result = ((Math.Abs(angle) - deadzone_angle) / (max_angle - deadzone_angle)) * max_angle;
-
+            float Result = ((Math.Abs(Angle) - DeadzoneAngle) / (DeviceAngleMax - DeadzoneAngle)) * DeviceAngleMax;
+            
             // Clamp deadzone remapped angle, prevents negative values when
             // actual device angle is below dead zone angle
             // Divide by max angle, angle to joystick position with user max
-            result = Math.Clamp(result, 0, max_angle) / max_angle;
+            Result = Math.Clamp(Result, 0, DeviceAngleMax) / DeviceAngleMax;
 
             // Apply direction again
-            result = (angle < 0.0) ? -result : result;
+            Result = (Angle < 0.0) ? -Result : Result;
 
-            return result;
+            return Result;
         }
 
         // Apply power of to -1 to 1 joystick position while respecting direction
-        public static float DirectionRespectingPowerOf(float joystick_pos, float power)
+        public static float DirectionRespectingPowerOf(float JoystickPos, float Power)
         {
-            float result = (float)Math.Pow(Math.Abs(joystick_pos), power);
+            float Result = (float)Math.Pow(Math.Abs(JoystickPos), Power);
 
             // Apply direction again
-            result = (joystick_pos < 0.0) ? -result : result;
+            Result = (JoystickPos < 0.0) ? -Result : Result;
 
-            return result;
+            return Result;
         }
 
         // Compensation for in game deadzone
@@ -304,20 +325,20 @@ namespace ControllerCommon
         // Use cases foreseen:
         // - Game has deadzone, but no way to configure or change it
         // - User does not want to change general emulator deadzone setting but want's it removed for specific game and use UMC Steering
-        public static float InGameDeadZoneSettingCompensation(float joystick_pos, float deadzone_percentage)
+        public static float InGameDeadZoneSettingCompensation(float JoystickPos, float DeadzonePercentage)
         {
             // Use absolute value, apply uniform in both directions
             // Map to new range i.e. remove bottom %
-            float result = ((Math.Abs(joystick_pos)) / 1) * (1 - deadzone_percentage / 100) + (deadzone_percentage / 100);
+            float Result = ((Math.Abs(JoystickPos)) / 1) * (1 - DeadzonePercentage / 100) + (DeadzonePercentage / 100);
 
             // Clamp deadzone remapped 0 to 1 value, prevents negative values when
             // actual device angle is below dead zone percentage set
-            result = Math.Clamp(result, deadzone_percentage / 100, 1);
+            Result = Math.Clamp(Result, DeadzonePercentage / 100, 1);
 
             // Apply direction again
-            result = (joystick_pos < 0.0) ? -result : result;
+            Result = (JoystickPos < 0.0) ? -Result : Result;
 
-            return result;
+            return Result;
         }
 
         public static bool IsTextAValidIPAddress(string text)
