@@ -158,35 +158,22 @@ namespace ControllerService.Targets
                             break;
                         case InputStyle.LeftStick:
                             LeftThumbX = Utils.ComputeInput(LeftThumbX, -xinputController.AngularVelocity.Z, sensivity, intensity);
-                            // LeftThumbY = Utils.ComputeInput(LeftThumbY, xinputController.AngularVelocity.X, sensivity, intensity);
+                            LeftThumbY = Utils.ComputeInput(LeftThumbY, xinputController.AngularVelocity.X, sensivity, intensity);
 
                             // TODO @Benjamin Remove/update/replace with new GUI profile variables, see notes on needed sliders
-                            float user_defined_max_device_angle = 30; // Max steering angle 10 to 80 degrees in 5 degree increments, default 35 degrees
-                            float to_the_power_of = 1; // 0.1 to 5 in 0.1 increments, default 1.0 (lineair)
-                            float deadzone_angle = 2; // 0 to 5 degrees in 1 degree increments, default 0 degrees
-                            float ingame_deadzone_setting_compensation = 0; // 0 to 100 %, in 1% increments, default 0 %
+                            // TODO @Benjamin Perhaps use a struct for the profile options?
+                            float MaxDeviceAngle = 30; // Max steering angle 10 to 80 degrees in 5 degree increments, default 35 degrees
+                            float ToThePowerOf = 1; // 0.1 to 5 in 0.1 increments, default 1.0 (lineair)
+                            float DeadzoneAngle = 2; // 0 to 5 degrees in 1 degree increments, default 0 degrees
+                            float DeadzoneCompensation = 0; // 0 to 100 %, in 1% increments, default 0 %
 
-                            // TODO @Benjamin What to do with the log statements?
-                            // I prefer putting logging in the functions, but utils does not have logging.
-                            // Change them to debug log statements?
-
-                            // Range angle y value (0 to user defined angle) into -1.0 to 1.0 position value taking into account deadzone angle
-                            float joystick_pos_capped_angle = Utils.AngleToJoystickPos(xinputController.Angle.Y, user_defined_max_device_angle, deadzone_angle);
-                            logger?.LogInformation("Y, with max angle of {0:00.#}, ranged from -1.0 to 1: {1:0.####}, from angle: {2:0.####}", user_defined_max_device_angle, joystick_pos_capped_angle, xinputController.Angle.Y);
-
-                            // Apply user defined to the power of to joystick pos
-                            float joystick_pos_powered = Utils.DirectionRespectingPowerOf(joystick_pos_capped_angle, to_the_power_of);
-                            logger?.LogInformation("DirectionRespectingPowerOf. Input: {0:0.#####} Power: {1:0.#} Result: {2:0.####}", joystick_pos_capped_angle, to_the_power_of, joystick_pos_powered);
-
-                            // Apply user defined in game deadzone setting compensation
-                            float joystick_pos_in_game_deadzone_compensated = Utils.InGameDeadZoneSettingCompensation(joystick_pos_powered, ingame_deadzone_setting_compensation);
-                            logger?.LogInformation("InGameDeadZoneSettingCompensation. Input: {0:0.#####} Ingame Deadzone %: {1:0.#} Result: {2:0.####}", joystick_pos_powered, ingame_deadzone_setting_compensation, joystick_pos_in_game_deadzone_compensated);
-
-                            // Scale joystick x pos -1 to 1 to joystick x range, send 0 for y.
-                            LeftThumbX = (short)-(joystick_pos_in_game_deadzone_compensated * short.MaxValue);
+                            LeftThumbX = Utils.Steering(xinputController.Angle.Y, 
+                                                        MaxDeviceAngle,
+                                                        ToThePowerOf,
+                                                        DeadzoneAngle,
+                                                        DeadzoneCompensation);
                             LeftThumbY = 0;
 
-                            logger?.LogInformation("LeftThumbX: {0} based on device Y angle: {1:00.######} degs", LeftThumbX, xinputController.Angle.Y);
                             break;
                     }
                 }
