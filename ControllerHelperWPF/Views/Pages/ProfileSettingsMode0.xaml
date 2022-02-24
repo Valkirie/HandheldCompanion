@@ -13,7 +13,7 @@
 
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="6">
-            <Label Content="Joystcik camera options" FontWeight="SemiBold"></Label>
+            <Label Content="Joystick camera options" FontWeight="SemiBold"></Label>
 
             <!-- Sensivity -->
             <Border                      
@@ -66,6 +66,20 @@
                     <Slider Name="SliderIntensity" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderIntensity_ValueChanged"/>
                 </Grid>
             </Border>
+
+            <!-- Chart -->
+            <ui:SimpleStackPanel Spacing="6">
+                <Label Content="Joystcik camera agressivity" FontWeight="SemiBold"></Label>
+                <Border                      
+                        Padding="0,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <ui:SimpleStackPanel Name="StackCurve" Orientation="Horizontal" HorizontalAlignment="Center" Height="410"/>
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
         </ui:SimpleStackPanel>
     </Grid>
 </Page>

@@ -263,10 +263,10 @@ namespace ControllerCommon
             return (byte)Math.Round(output);
         }
 
-        public static short ComputeInput(short value, float input, float sensivity, float curve)
+        public static short ComputeInput(float input, float sensivity, float curve)
         {
             float compute = (float)(Math.Sign(input) * Math.Pow(Math.Abs(input) / 20.0f, curve) * 20.0f);
-            return (short)Math.Clamp(value + compute * sensivity, short.MinValue, short.MaxValue);
+            return (short)Math.Clamp(compute * sensivity, short.MinValue, short.MaxValue);
         }
 
         public static short Steering(float DeviceAngle, 
@@ -339,6 +339,56 @@ namespace ControllerCommon
             Result = (JoystickPos < 0.0) ? -Result : Result;
 
             return Result;
+        }
+
+        // Custom sensitivity
+        // Interpolation function (linear), takes list of nodes coordinates and gamepad joystick position returns game input
+        public static short ApplyCustomSensitivity(short GamepadThumb, List<ProfileVector> Nodes)
+        {
+            int NodeAmount = Profile.array_size;
+
+            // Use absolute joystick position, range -1 to 1, re-apply direction later
+            double JoystickPosAbs = (double)Math.Abs((decimal)GamepadThumb / short.MaxValue);
+            double JoystickPosAdjusted = 0.0f;
+
+            // Check what we will be sending
+            if (JoystickPosAbs <= Nodes[0].x)
+            {
+                // Send 0 output to game
+                JoystickPosAdjusted = 0.0f;
+            }
+            else if (JoystickPosAbs >= Nodes[NodeAmount - 1].x)
+            {
+                // Send 1 output to game
+                JoystickPosAdjusted = 1.0f;
+            }
+            // Calculate custom sensitivty
+            else if (JoystickPosAbs > Nodes[0].x && JoystickPosAbs < Nodes[NodeAmount - 1].x)
+            {
+                // Convert xy list to separate single lists
+                int[] X = new int[NodeAmount];
+                double[] Y = new double[NodeAmount];
+
+                for (int idx = 0; idx < NodeAmount; idx++)
+                {
+                    ProfileVector vector = Nodes[idx];
+                    X[idx] = vector.x;
+                    Y[idx] = vector.y;
+                }
+
+                // Figure out between which two nodes the physical joystick position is
+                int i = Array.FindIndex(X, k => JoystickPosAbs <= k);
+
+                // Interpolate between those two points
+                JoystickPosAdjusted = Y[i - 1] + (JoystickPosAbs - X[i - 1]) * (Y[i] - Y[i - 1]) / (X[i] - X[i - 1]);
+            }
+
+            // Apply direction
+            JoystickPosAdjusted = (GamepadThumb < 0.0) ? -JoystickPosAdjusted : JoystickPosAdjusted;
+
+            short Output = (short)(JoystickPosAdjusted * short.MaxValue);
+
+            return Output;
         }
 
         public static bool IsTextAValidIPAddress(string text)

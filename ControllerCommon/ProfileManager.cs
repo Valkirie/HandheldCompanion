@@ -91,7 +91,9 @@ namespace ControllerCommon
 
         public void SetDefault()
         {
+            // dirty !
             Profile profile = new Profile("Default", "");
+            profile.executable = "Default.exe";
             profiles["Default"] = profile;
             SerializeProfile(profile);
             UpdateProfile(profile);

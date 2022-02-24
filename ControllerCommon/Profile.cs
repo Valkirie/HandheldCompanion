@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Numerics;
 using System.Text.Json.Serialization;
 
 namespace ControllerCommon
@@ -33,6 +34,19 @@ namespace ControllerCommon
     }
 
     [Serializable]
+    public class ProfileVector
+    {
+        public int x { get; set; }
+        public double y { get; set; }
+
+        public ProfileVector(int x, double y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    [Serializable]
     public class Profile
     {
         public string name { get; set; }
@@ -58,6 +72,8 @@ namespace ControllerCommon
         public float aiming_sensivity { get; set; } = 2.0f;
         public float aiming_intensity { get; set; } = 2.0f;
 
+        public List<ProfileVector> aiming_array { get; set; } = new();
+
         // steering
         public float steering_max_angle { get; set; } = 30.0f;
         public float steering_power { get; set; } = 1.0f;
@@ -69,9 +85,18 @@ namespace ControllerCommon
         [JsonIgnore] public ProfileErrorCode error;
         [JsonIgnore] public string fullpath { get; set; }
         [JsonIgnore] public bool IsDefault { get; set; } = false;
+        [JsonIgnore] public static int array_size = 12;
 
         public Profile()
         {
+            if (aiming_array.Count == 0)
+            {
+                for (int i = 1; i <= array_size; i++)
+                {
+                    ProfileVector vector = new ProfileVector(i, i / 10.0f);
+                    aiming_array.Add(vector);
+                }
+            }
         }
 
         public Profile(string path)

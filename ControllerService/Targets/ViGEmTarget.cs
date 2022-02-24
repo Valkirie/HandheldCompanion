@@ -154,42 +154,43 @@ namespace ControllerService.Targets
                                 float intensity = xinputController.profile.GetIntensity();
                                 float sensivity = xinputController.profile.GetSensiviy();
 
+                                short value_X = Utils.ComputeInput(-xinputController.AngularVelocity.Z, sensivity, intensity);
+                                short value_Y = Utils.ComputeInput(xinputController.AngularVelocity.X, sensivity, intensity);
+                                value_X = Utils.ApplyCustomSensitivity(value_X, xinputController.profile.aiming_array);
+                                value_Y = Utils.ApplyCustomSensitivity(value_Y, xinputController.profile.aiming_array);
+
                                 switch (xinputController.profile.umc_output)
                                 {
                                     default:
                                     case Output.RightStick:
-                                        RightThumbX = Utils.ComputeInput(RightThumbX, -xinputController.AngularVelocity.Z, sensivity, intensity);
-                                        RightThumbY = Utils.ComputeInput(RightThumbY, xinputController.AngularVelocity.X, sensivity, intensity);
+                                        RightThumbX += value_X;
+                                        RightThumbY += value_Y;
                                         break;
                                     case Output.LeftStick:
-                                        LeftThumbX = Utils.ComputeInput(LeftThumbX, -xinputController.AngularVelocity.Z, sensivity, intensity);
-                                        LeftThumbY = Utils.ComputeInput(LeftThumbY, xinputController.AngularVelocity.X, sensivity, intensity);
+                                        LeftThumbX += value_X;
+                                        LeftThumbY += value_Y;
                                         break;
                                 }
                             }
                             break;
 
                         case Input.JoystickSteering:
-                            {    
-                                float MaxDeviceAngle = 30; // Max steering angle 10 to 80 degrees in 5 degree increments, default 35 degrees
-                                float ToThePowerOf = 1; // 0.1 to 5 in 0.1 increments, default 1.0 (lineair)
-                                float DeadzoneAngle = 2; // 0 to 5 degrees in 1 degree increments, default 0 degrees
-                                float DeadzoneCompensation = 0; // 0 to 100 %, in 1% increments, default 0 %
-
-                                float Output = Utils.Steering(xinputController.Angle.Y,
-                                                            xinputController.profile.steering_max_angle,
-                                                            xinputController.profile.steering_power,
-                                                            xinputController.profile.steering_deadzone,
-                                                            xinputController.profile.steering_deadzone_compensation);
+                            {
+                                short value_X = Utils.Steering(
+                                    xinputController.Angle.Y,
+                                    xinputController.profile.steering_max_angle,
+                                    xinputController.profile.steering_power,
+                                    xinputController.profile.steering_deadzone,
+                                    xinputController.profile.steering_deadzone_compensation);
 
                                 switch (xinputController.profile.umc_output)
                                 {
                                     default:
                                     case Output.RightStick:
-                                        RightThumbX = (short)Output;
+                                        RightThumbX = value_X;
                                         break;
                                     case Output.LeftStick:
-                                        LeftThumbX = (short)Output;
+                                        LeftThumbX = value_X;
                                         break;
                                 }
                             }

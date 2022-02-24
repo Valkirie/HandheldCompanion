@@ -267,6 +267,7 @@
                                         <ColumnDefinition Width="50"></ColumnDefinition>
                                         <ColumnDefinition Width="8*" MinWidth="200"></ColumnDefinition>
                                         <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition Width="0.25*" MinWidth="20"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEC49;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
@@ -276,7 +277,7 @@
                                         <TextBlock Text="Translate device motions into controller inputs" FontSize="12" TextWrapping="Wrap"/>
                                     </ui:SimpleStackPanel>
 
-                                    <ui:ToggleSwitch Name="Toggle_UniversalMotion" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Left" Toggled="Toggle_UniversalMotion_Toggled"/>
+                                    <ui:ToggleSwitch Name="Toggle_UniversalMotion" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_UniversalMotion_Toggled"/>
                                 </Grid>
                             </DockPanel>
                         </Expander.Header>

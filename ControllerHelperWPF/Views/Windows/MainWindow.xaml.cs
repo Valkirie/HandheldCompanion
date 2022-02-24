@@ -15,8 +15,10 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using Windows.System.Diagnostics;
 using WPFUI.Tray;
 using Page = System.Windows.Controls.Page;
+using Timer = System.Timers.Timer;
 
 namespace ControllerHelperWPF.Views
 {
@@ -27,6 +29,11 @@ namespace ControllerHelperWPF.Views
     {
         private readonly ILogger microsoftLogger;
         private StartupEventArgs arguments;
+
+        // process vars
+        private Timer MonitorTimer;
+        private uint CurrentProcess;
+        private object updateLock = new();
 
         // page vars
         private Dictionary<string, Page> _pages = new();
@@ -106,6 +113,7 @@ namespace ControllerHelperWPF.Views
             // initialize pipe client
             pipeClient = new PipeClient("ControllerService", microsoftLogger);
             pipeClient.ServerMessage += OnServerMessage;
+            pipeClient.Connected += OnClientConnected;
 
             // initialize pipe server
             pipeServer = new PipeServer("ControllerHelper", microsoftLogger);
@@ -141,6 +149,78 @@ namespace ControllerHelperWPF.Views
                 foreach (NavigationViewItem item in navView.FooterMenuItems)
                     item.ToolTip = Properties.Resources.WarningElevated;
             }
+        }
+
+        private void OnClientConnected(object sender)
+        {
+            // send default profile to Service
+            pipeClient.SendMessage(new PipeClientProfile() { profile = profileManager.GetDefault() });
+
+            // start processes monitor
+            MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
+            MonitorTimer.Elapsed += MonitorHelper;
+        }
+
+        private void MonitorHelper(object? sender, System.Timers.ElapsedEventArgs e)
+        {
+            lock (updateLock)
+            {
+                uint processId;
+                string name = string.Empty;
+                string exec = string.Empty;
+                string path = string.Empty;
+
+                ProcessDiagnosticInfo process = new FindHostedProcess().Process;
+                if (process == null)
+                    return;
+
+                processId = process.ProcessId;
+
+                if (processId != CurrentProcess)
+                {
+                    Process proc = Process.GetProcessById((int)processId);
+                    path = Utils.GetPathToApp(proc);
+                    exec = process.ExecutableFileName;
+
+                    if (process.IsPackaged)
+                    {
+                        var apps = process.GetAppDiagnosticInfos();
+                        if (apps.Count > 0)
+                            name = apps.First().AppInfo.DisplayInfo.DisplayName;
+                        else
+                            name = Path.GetFileNameWithoutExtension(exec);
+                    }
+                    else
+                        name = Path.GetFileNameWithoutExtension(exec);
+
+                    UpdateProcess((int)processId, path, name);
+
+                    CurrentProcess = processId;
+                }
+            }
+        }
+
+        public void UpdateProcess(int ProcessId, string ProcessPath, string ProcessName)
+        {
+            try
+            {
+                string ProcessExec = Path.GetFileNameWithoutExtension(ProcessPath);
+
+                if (profileManager.profiles.ContainsKey(ProcessExec))
+                {
+                    Profile profile = profileManager.profiles[ProcessExec];
+                    profile.fullpath = ProcessPath;
+
+                    profileManager.UpdateProfile(profile);
+
+                    pipeClient.SendMessage(new PipeClientProfile { profile = profile });
+
+                    microsoftLogger.LogInformation("Profile {0} applied", profile.name);
+                }
+                else
+                    pipeClient.SendMessage(new PipeClientProfile());
+            }
+            catch (Exception) { }
         }
 
         private void NotifyIconDoubleClick(MainWindow mainWindow)
