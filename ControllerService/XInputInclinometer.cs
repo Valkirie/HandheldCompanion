@@ -77,8 +77,6 @@ namespace ControllerService
             double angle_x_psi = -1 * (Math.Atan(this.reading.Y / (Math.Sqrt(Math.Pow(this.reading.X, 2) + Math.Pow(this.reading.Z, 2))))) * 180 / Math.PI;
             double angle_y_theta = -1 * (Math.Atan(this.reading.X / (Math.Sqrt(Math.Pow(this.reading.Y, 2) + Math.Pow(this.reading.Z, 2))))) * 180 / Math.PI;
 
-            logger?.LogInformation("Axis angles X: {0:00.####}, Y: {1:00.####}", angle_x_psi, angle_y_theta);
-
             this.reading.X = (float)(angle_x_psi);
             this.reading.Y = (float)(angle_y_theta);
 
