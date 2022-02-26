@@ -366,7 +366,7 @@ namespace ControllerCommon
             else if (JoystickPosAbs > Nodes[0].x && JoystickPosAbs < Nodes[NodeAmount - 1].x)
             {
                 // Convert xy list to separate single lists
-                int[] X = new int[NodeAmount];
+                double[] X = new double[NodeAmount];
                 double[] Y = new double[NodeAmount];
 
                 for (int idx = 0; idx < NodeAmount; idx++)

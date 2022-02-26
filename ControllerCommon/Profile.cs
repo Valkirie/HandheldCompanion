@@ -36,10 +36,10 @@ namespace ControllerCommon
     [Serializable]
     public class ProfileVector
     {
-        public int x { get; set; }
+        public double x { get; set; }
         public double y { get; set; }
 
-        public ProfileVector(int x, double y)
+        public ProfileVector(double x, double y)
         {
             this.x = x;
             this.y = y;
@@ -91,9 +91,10 @@ namespace ControllerCommon
         {
             if (aiming_array.Count == 0)
             {
-                for (int i = 1; i <= array_size; i++)
+                for (int i = 0; i < array_size; i++)
                 {
-                    ProfileVector vector = new ProfileVector(i, i / 10.0f);
+                    double value = (double)i / (double)(array_size - 1);
+                    ProfileVector vector = new ProfileVector(value, value);
                     aiming_array.Add(vector);
                 }
             }
