@@ -333,14 +333,14 @@
                                         </Grid.ColumnDefinitions>
 
                                         <ui:SimpleStackPanel Grid.Column="0">
-                                            <TextBlock Text="Output" FontSize="14"/>
-                                            <TextBlock Text="When sending analog joystick commands to the game, should those commands be a left or right joystick" FontSize="12" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Enable Button" FontSize="14"/>
+                                            <TextBlock Text="Motion controls are enabled when the selected button(s) is(are) pressed." FontSize="12" TextWrapping="Wrap"/>
                                         </ui:SimpleStackPanel>
 
                                         <ui:ListView
                                             ScrollViewer.PanningMode="VerticalOnly"
                                             ScrollViewer.VerticalScrollBarVisibility="Visible"
-                                            Name="cB_Buttons" Height="120" SelectionMode="Multiple"
+                                            Name="cB_Buttons" Height="131" SelectionMode="Multiple"
                                             IsMultiSelectCheckBoxEnabled="True" Grid.Column="2"
                                             HorizontalAlignment="Stretch" VerticalAlignment="Center"
                                             BorderBrush="{DynamicResource SystemControlBackgroundBaseMediumBrush}" BorderThickness="1 1 1 1"
