@@ -76,7 +76,23 @@
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
-                        <ui:SimpleStackPanel Name="StackCurve" Orientation="Horizontal" HorizontalAlignment="Center" Height="410" PreviewMouseMove="StackCurve_MouseMove" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"/>
+                        <ui:SimpleStackPanel Name="StackCurve" Orientation="Horizontal" HorizontalAlignment="Center" Height="410" PreviewMouseMove="StackCurve_MouseMove">
+                            <ui:SimpleStackPanel.Background>
+                                <DrawingBrush TileMode="Tile" Viewport="40,40,40,40" 
+                                     ViewportUnits="Absolute">
+                                    <DrawingBrush.Drawing>
+                                        <GeometryDrawing>
+                                            <GeometryDrawing.Geometry>
+                                                <RectangleGeometry Rect="50,50,50,50"/>
+                                            </GeometryDrawing.Geometry>
+                                            <GeometryDrawing.Pen>
+                                                <Pen Brush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Thickness="1"/>
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                    </DrawingBrush.Drawing>
+                                </DrawingBrush>
+                            </ui:SimpleStackPanel.Background>
+                        </ui:SimpleStackPanel>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>

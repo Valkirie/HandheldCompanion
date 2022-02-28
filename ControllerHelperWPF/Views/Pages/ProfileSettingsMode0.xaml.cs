@@ -95,7 +95,7 @@ namespace ControllerHelperWPF.Views.Pages
                 }
             }
 
-            Thumb.Background = new SolidColorBrush(Colors.White);
+            Thumb.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentHighBrush"];
 
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
             {
