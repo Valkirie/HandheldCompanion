@@ -534,8 +534,11 @@ namespace ControllerService
 
         public void Stop()
         {
-            udpSock.Close();
-            udpSock = null;
+            if (udpSock != null)
+            {
+                udpSock.Close();
+                udpSock = null;
+            }
             running = false;
 
             logger.LogInformation($"{0} has stopped", this.ToString());
