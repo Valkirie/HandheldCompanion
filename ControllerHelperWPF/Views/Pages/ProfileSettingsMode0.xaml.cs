@@ -35,14 +35,16 @@ namespace ControllerHelperWPF.Views.Pages
                 if (i == 1)
                     continue;
 
+                double height = profileCurrent.aiming_array[i - 1].y * StackCurve.Height;
                 Thumb thumb = new Thumb()
                 {
                     Tag = i - 1,
                     Width = 10,
                     MaxHeight = StackCurve.Height,
-                    Height = StackCurve.Height / 2.0f,
+                    Height = height,
                     VerticalAlignment = VerticalAlignment.Bottom,
-                    Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentLowBrush"]
+                    Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentLowBrush"],
+                    IsEnabled = false // prevent the control from being clickable
                 };
 
                 StackCurve.Children.Add(thumb);
