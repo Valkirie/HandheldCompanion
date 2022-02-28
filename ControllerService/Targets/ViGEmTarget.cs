@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerService.Sensors;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
@@ -151,24 +152,31 @@ namespace ControllerService.Targets
                     {
                         case Input.JoystickCamera:
                             {
+                                float AngularX = -xinputController.AngularVelocity.Z;
+                                float AngularY = xinputController.AngularVelocity.X;
+
+                                // apply sensivity curve
+                                AngularX *= Utils.ApplyCustomSensitivity(AngularX, XInputGirometer.MaxValue, xinputController.profile.aiming_array);
+                                AngularY *= Utils.ApplyCustomSensitivity(AngularY, XInputGirometer.MaxValue, xinputController.profile.aiming_array);
+
+                                // get profile vars
                                 float intensity = xinputController.profile.GetIntensity();
                                 float sensivity = xinputController.profile.GetSensiviy();
 
-                                short value_X = Utils.ComputeInput(-xinputController.AngularVelocity.Z, sensivity, intensity);
-                                short value_Y = Utils.ComputeInput(xinputController.AngularVelocity.X, sensivity, intensity);
-                                value_X = Utils.ApplyCustomSensitivity(value_X, xinputController.profile.aiming_array);
-                                value_Y = Utils.ApplyCustomSensitivity(value_Y, xinputController.profile.aiming_array);
+                                // apply sensivity, intensity sliders (deprecated ?)
+                                float GamepadThumbX = Utils.ComputeInput(AngularX, sensivity, intensity);
+                                float GamepadThumbY = Utils.ComputeInput(AngularY, sensivity, intensity);
 
                                 switch (xinputController.profile.umc_output)
                                 {
                                     default:
                                     case Output.RightStick:
-                                        RightThumbX += value_X;
-                                        RightThumbY += value_Y;
+                                        RightThumbX += (short)GamepadThumbX;
+                                        RightThumbY += (short)GamepadThumbY;
                                         break;
                                     case Output.LeftStick:
-                                        LeftThumbX += value_X;
-                                        LeftThumbY += value_Y;
+                                        LeftThumbX += (short)GamepadThumbX;
+                                        LeftThumbY += (short)GamepadThumbY;
                                         break;
                                 }
                             }
@@ -176,7 +184,7 @@ namespace ControllerService.Targets
 
                         case Input.JoystickSteering:
                             {
-                                short value_X = Utils.Steering(
+                                float GamepadThumbX = Utils.Steering(
                                     xinputController.Angle.Y,
                                     xinputController.profile.steering_max_angle,
                                     xinputController.profile.steering_power,
@@ -187,10 +195,10 @@ namespace ControllerService.Targets
                                 {
                                     default:
                                     case Output.RightStick:
-                                        RightThumbX = value_X;
+                                        RightThumbX = (short)GamepadThumbX;
                                         break;
                                     case Output.LeftStick:
-                                        LeftThumbX = value_X;
+                                        LeftThumbX = (short)GamepadThumbX;
                                         break;
                                 }
                             }

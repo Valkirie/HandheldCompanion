@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerService.Sensors;
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

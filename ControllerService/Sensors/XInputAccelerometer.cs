@@ -3,23 +3,20 @@ using System;
 using System.Numerics;
 using Windows.Devices.Sensors;
 
-namespace ControllerService
+namespace ControllerService.Sensors
 {
-    public class XInputAccelerometer
+    public class XInputAccelerometer : XInputSensor
     {
         public Accelerometer sensor;
-        private Vector3 reading = new();
 
         public event ReadingChangedEventHandler ReadingHasChanged;
         public delegate void ReadingChangedEventHandler(XInputAccelerometer sender, Vector3 e);
 
         private readonly ILogger logger;
-        private readonly XInputController xinput;
 
-        public XInputAccelerometer(XInputController controller, ILogger logger)
+        public XInputAccelerometer(XInputController controller, ILogger logger) : base(controller)
         {
             this.logger = logger;
-            this.xinput = controller;
 
             sensor = Accelerometer.GetDefault();
             if (sensor != null)
@@ -57,26 +54,28 @@ namespace ControllerService
             float readingY = this.reading.Y = (float)reading.AccelerationZ;
             float readingZ = this.reading.Z = (float)reading.AccelerationY;
 
-            if (xinput.virtualTarget != null)
+            if (controller.virtualTarget != null)
             {
-                this.reading *= xinput.profile.accelerometer;
+                this.reading *= controller.profile.accelerometer;
 
-                this.reading.Z = xinput.profile.steering == 0 ? readingZ : readingY;
-                this.reading.Y = xinput.profile.steering == 0 ? readingY : -readingZ;
-                this.reading.X = xinput.profile.steering == 0 ? readingX : readingX;
+                this.reading.Z = controller.profile.steering == 0 ? readingZ : readingY;
+                this.reading.Y = controller.profile.steering == 0 ? readingY : -readingZ;
+                this.reading.X = controller.profile.steering == 0 ? readingX : readingX;
 
-                if (xinput.profile.inverthorizontal)
+                if (controller.profile.inverthorizontal)
                 {
                     this.reading.Y *= -1.0f;
                     this.reading.Z *= -1.0f;
                 }
 
-                if (xinput.profile.invertvertical)
+                if (controller.profile.invertvertical)
                 {
                     this.reading.Y *= -1.0f;
                     this.reading.X *= -1.0f;
                 }
             }
+
+            logger?.LogDebug("XInputAccelerometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
 
             // raise event
             ReadingHasChanged?.Invoke(this, this.reading);

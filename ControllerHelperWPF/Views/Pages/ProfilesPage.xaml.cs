@@ -46,9 +46,6 @@ namespace ControllerHelperWPF.Views.Pages
             profileManager.Updated += ProfileUpdated;
             profileManager.Start();
 
-            // select default profile
-            cB_Profiles.SelectedItem = profileCurrent = profileManager.GetDefault();
-
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
                 cB_Input.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
 
@@ -57,6 +54,9 @@ namespace ControllerHelperWPF.Views.Pages
 
             foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
                 cB_Buttons.Items.Add(Utils.GetDescriptionFromEnumValue(button));
+
+            // select default profile
+            cB_Profiles.SelectedItem = profileCurrent = profileManager.GetDefault();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

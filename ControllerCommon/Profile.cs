@@ -85,7 +85,7 @@ namespace ControllerCommon
         [JsonIgnore] public ProfileErrorCode error;
         [JsonIgnore] public string fullpath { get; set; }
         [JsonIgnore] public bool IsDefault { get; set; } = false;
-        [JsonIgnore] public static int array_size = 12;
+        [JsonIgnore] public static int array_size = 49;             // x + 1 (hidden)
 
         public Profile()
         {

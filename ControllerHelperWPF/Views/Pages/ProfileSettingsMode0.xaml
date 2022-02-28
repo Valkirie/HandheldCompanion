@@ -76,7 +76,7 @@
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
-                        <ui:SimpleStackPanel Name="StackCurve" Orientation="Horizontal" HorizontalAlignment="Center" Height="410"/>
+                        <ui:SimpleStackPanel Name="StackCurve" Orientation="Horizontal" HorizontalAlignment="Center" Height="410" PreviewMouseMove="StackCurve_MouseMove" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>

@@ -3,23 +3,20 @@ using System;
 using System.Numerics;
 using Windows.Devices.Sensors;
 
-namespace ControllerService
+namespace ControllerService.Sensors
 {
-    public class XInputInclinometer
+    public class XInputInclinometer : XInputSensor
     {
         public Accelerometer sensor;
-        private Vector3 reading = new();
 
         public event ReadingChangedEventHandler ReadingHasChanged;
         public delegate void ReadingChangedEventHandler(XInputInclinometer sender, Vector3 e);
 
         private readonly ILogger logger;
-        private readonly XInputController xinput;
 
-        public XInputInclinometer(XInputController controller, ILogger logger)
+        public XInputInclinometer(XInputController controller, ILogger logger) : base(controller)
         {
             this.logger = logger;
-            this.xinput = controller;
 
             sensor = Accelerometer.GetDefault();
 
@@ -51,21 +48,21 @@ namespace ControllerService
             float readingY = this.reading.Y = (float)reading.AccelerationZ;
             float readingZ = this.reading.Z = (float)reading.AccelerationY;
 
-            if (xinput.virtualTarget != null)
+            if (controller.virtualTarget != null)
             {
                 // Allow for user swapping X and Y axis.
-                this.reading.Z = xinput.profile.steering == 0 ? readingZ : readingY;
-                this.reading.Y = xinput.profile.steering == 0 ? readingY : -readingZ;
-                this.reading.X = xinput.profile.steering == 0 ? readingX : readingX;
+                this.reading.Z = controller.profile.steering == 0 ? readingZ : readingY;
+                this.reading.Y = controller.profile.steering == 0 ? readingY : -readingZ;
+                this.reading.X = controller.profile.steering == 0 ? readingX : readingX;
 
                 // Allow for user inverting X or Y axis direction.
-                if (xinput.profile.inverthorizontal)
+                if (controller.profile.inverthorizontal)
                 {
                     this.reading.Y *= -1.0f;
                     this.reading.Z *= -1.0f;
                 }
 
-                if (xinput.profile.invertvertical)
+                if (controller.profile.invertvertical)
                 {
                     this.reading.Y *= -1.0f;
                     this.reading.X *= -1.0f;
@@ -77,10 +74,10 @@ namespace ControllerService
             double angle_x_psi = -1 * (Math.Atan(this.reading.Y / (Math.Sqrt(Math.Pow(this.reading.X, 2) + Math.Pow(this.reading.Z, 2))))) * 180 / Math.PI;
             double angle_y_theta = -1 * (Math.Atan(this.reading.X / (Math.Sqrt(Math.Pow(this.reading.Y, 2) + Math.Pow(this.reading.Z, 2))))) * 180 / Math.PI;
 
-            logger?.LogInformation("Axis angles X: {0:00.####}, Y: {1:00.####}", angle_x_psi, angle_y_theta);
-
             this.reading.X = (float)(angle_x_psi);
             this.reading.Y = (float)(angle_y_theta);
+
+            logger?.LogDebug("XInputInclinometer.ReadingChanged({0:00.####}, {1:00.####})", angle_x_psi, angle_y_theta);
 
             // Raise event
             ReadingHasChanged?.Invoke(this, this.reading);

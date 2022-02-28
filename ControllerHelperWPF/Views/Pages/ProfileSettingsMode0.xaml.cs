@@ -31,18 +31,21 @@ namespace ControllerHelperWPF.Views.Pages
             StackCurve.Children.Clear();
             for (int i = 1; i <= Profile.array_size; i++)
             {
+                // skip first item ?
+                if (i == 1)
+                    continue;
+
                 double height = profileCurrent.aiming_array[i - 1].y * StackCurve.Height;
 
                 Thumb thumb = new Thumb()
                 {
                     Tag = i - 1,
-                    Width = 40,
+                    Width = 10,
                     MaxHeight = StackCurve.Height,
                     Height = height,
                     VerticalAlignment = VerticalAlignment.Bottom,
                     Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentLowBrush"]
                 };
-                thumb.DragDelta += Thumb_DragDelta;
 
                 StackCurve.Children.Add(thumb);
             }
@@ -68,25 +71,38 @@ namespace ControllerHelperWPF.Views.Pages
             profileCurrent.aiming_intensity = (float)SliderIntensity.Value;
         }
 
-        private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
+        private void StackCurve_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            //Move the Thumb to the mouse position during the drag operation
-            Thumb Thumb = (Thumb)sender;
-            int idx = (int)Thumb.Tag;
+            if (profileCurrent is null)
+                return;
 
-            Vector offset = VisualTreeHelper.GetOffset(Thumb);
-            double pos_y = offset.Y;
-            double height = (Thumb.MaxHeight) - e.VerticalChange - pos_y;
+            Control Thumb = null;
 
-            try
+            double min_x = StackCurve.ActualWidth;
+            double dist_y = StackCurve.ActualHeight - e.GetPosition(StackCurve).Y;
+
+            foreach (Control control in StackCurve.Children)
             {
-                Thumb.Height = height;
-                if (profileCurrent != null)
-                    profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
-            }
-            catch (Exception) { }
+                Point position = e.GetPosition(control);
+                double dist_x = Math.Abs(position.X);
 
-            e.Handled = true;
+                control.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentLowBrush"];
+
+                if (dist_x < min_x)
+                {
+                    Thumb = control;
+                    min_x = dist_x;
+                }
+            }
+
+            Thumb.Background = new SolidColorBrush(Colors.White);
+
+            if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+            {
+                int idx = (int)Thumb.Tag;
+                Thumb.Height = dist_y;
+                profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
+            }
         }
     }
 }
