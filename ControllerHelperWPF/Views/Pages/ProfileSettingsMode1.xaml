@@ -13,7 +13,7 @@
 
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="6">
-            <Label Content="Joystcik steering options" FontWeight="SemiBold"></Label>
+            <Label Content="Joystick steering options" FontWeight="SemiBold"></Label>
 
             <!-- Steering angle -->
             <Border                      
@@ -33,7 +33,7 @@
 
                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Max steering angle" FontSize="14"/>
-                        <TextBlock Text="Change the maximum steering angle value, in degree." FontSize="12" TextWrapping="Wrap"/>
+                        <TextBlock Text="Change the maximum steering angle value, in degree" FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
                     <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderSteeringAngle, Mode=OneWay}" />
@@ -58,8 +58,8 @@
                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
 
                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Power" FontSize="14"/>
-                        <TextBlock Text="Change the steering function mathematical power." FontSize="12" TextWrapping="Wrap"/>
+                        <TextBlock Text="Power of" FontSize="14"/>
+                        <TextBlock Text="Change the steering function mathematical exponent, 1 is linear" FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
                     <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderPower, Mode=OneWay}" />
@@ -85,7 +85,7 @@
 
                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Deadzone" FontSize="14"/>
-                        <TextBlock Text="Change the steering deadzone, in degree." FontSize="12" TextWrapping="Wrap"/>
+                        <TextBlock Text="Change the steering deadzone, in degree" FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
                     <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneAngle, Mode=OneWay}" />
@@ -111,7 +111,7 @@
 
                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Deadzone compensation" FontSize="14"/>
-                        <TextBlock Text="Change the steering deadzone compensation, in degree." FontSize="12" TextWrapping="Wrap"/>
+                        <TextBlock Text="Change the steering deadzone compensation, in degree" FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
                     <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneCompensation, Mode=OneWay}" />

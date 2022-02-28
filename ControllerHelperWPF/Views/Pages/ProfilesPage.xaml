@@ -333,14 +333,14 @@
                                         </Grid.ColumnDefinitions>
 
                                         <ui:SimpleStackPanel Grid.Column="0">
-                                            <TextBlock Text="Output" FontSize="14"/>
-                                            <TextBlock Text="When sending analog joystick commands to the game, should those commands be a left or right joystick" FontSize="12" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Enable button" FontSize="14"/>
+                                            <TextBlock Text="The gyro input can be turned on only when a button is pressed" FontSize="12" TextWrapping="Wrap"/>
                                         </ui:SimpleStackPanel>
 
                                         <ui:ListView
                                             ScrollViewer.PanningMode="VerticalOnly"
                                             ScrollViewer.VerticalScrollBarVisibility="Visible"
-                                            Name="cB_Buttons" Height="120" SelectionMode="Multiple"
+                                            Name="cB_Buttons" Height="130" SelectionMode="Multiple"
                                             IsMultiSelectCheckBoxEnabled="True" Grid.Column="2"
                                             HorizontalAlignment="Stretch" VerticalAlignment="Center"
                                             MouseEnter="cB_Buttons_MouseEnter"
