@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using static ControllerCommon.Utils;
 
@@ -67,6 +68,29 @@ namespace ControllerCommon
         {
             profileWatcher.Deleted -= ProfileDeleted;
             profileWatcher.Dispose();
+        }
+
+        public bool Contains(Profile profile)
+        {
+            foreach (Profile pr in profiles.Values)
+                if (pr.executable == profile.executable)
+                    return true;
+
+            return false;
+        }
+
+        public int GetProfileIndex(Profile profile)
+        {
+            int idx = -1;
+
+            for(int i = 0; i < profiles.Count; i++)
+            {
+                Profile pr = profiles.Values.ToList()[i];
+                if (pr.executable == profile.executable)
+                    return i;
+            }
+
+            return idx;
         }
 
         private void ProfileDeleted(object sender, FileSystemEventArgs e)

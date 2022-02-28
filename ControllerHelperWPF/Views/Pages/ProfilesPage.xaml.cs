@@ -73,33 +73,17 @@ namespace ControllerHelperWPF.Views.Pages
             this.Dispatcher.Invoke(async () =>
             {
                 int idx = -1;
-
                 foreach (Profile pr in cB_Profiles.Items)
-                {
                     if (pr.executable == profile.executable)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
                         break;
                     }
-                }
 
                 if (idx == -1)
                     cB_Profiles.Items.Add(profile);
                 else
-                {
-                    // todo: implement localized strings
-                    Task<ContentDialogResult> result = Dialog.ShowAsync("Overwrite profile permanently?", "A profile with the same executable has been fund. Do you want to overwrite it?", ContentDialogButton.Primary, "Close", "Yes");
-                    await result; // sync call
-
-                    switch (result.Result)
-                    {
-                        case ContentDialogResult.Primary:
-                            cB_Profiles.Items[idx] = profile;
-                            break;
-                        default:
-                            return;
-                    }
-                }
+                    cB_Profiles.Items[idx] = profile;
 
                 cB_Profiles.SelectedItem = profile;
             });
@@ -116,7 +100,7 @@ namespace ControllerHelperWPF.Views.Pages
         }
         #endregion
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
@@ -173,8 +157,31 @@ namespace ControllerHelperWPF.Views.Pages
                     }
 
                     Profile profile = new Profile(path);
-                    profileManager.UpdateProfile(profile);
-                    profileManager.SerializeProfile(profile);
+
+                    bool exists = false;
+
+                    if (profileManager.Contains(profile))
+                    {
+                        // todo: implement localized strings
+                        Task<ContentDialogResult> result = Dialog.ShowAsync("Overwrite profile permanently?", "A profile with the same executable has been fund. Do you want to overwrite it?", ContentDialogButton.Primary, "Close", "Yes");
+                        await result; // sync call
+
+                        switch (result.Result)
+                        {
+                            case ContentDialogResult.Primary:
+                                exists = false;
+                                break;
+                            default:
+                                exists = true;
+                                break;
+                        }
+                    }
+
+                    if (!exists)
+                    {
+                        profileManager.UpdateProfile(profile);
+                        profileManager.SerializeProfile(profile);
+                    }
                 }
                 catch (Exception ex)
                 {
