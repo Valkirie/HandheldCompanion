@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ModernWpf;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading.Tasks;
@@ -239,7 +240,7 @@ namespace ControllerHelperWPF.Views.Pages
                     case "HIDstrength":
                         this.Dispatcher.Invoke(() =>
                         {
-                            SliderStrength.Value = float.Parse(property);
+                            SliderStrength.Value = double.Parse(property, CultureInfo.InvariantCulture);
                         });
                         break;
                 }
