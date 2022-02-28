@@ -85,19 +85,19 @@ namespace ControllerHelperWPF
                     mainWindow.serviceManager.DeleteService();
                     break;
                 case ProfileServiceAction.start:
-                    mainWindow.serviceManager.StartService();
+                    mainWindow.serviceManager.StartServiceAsync();
                     break;
                 case ProfileServiceAction.stop:
-                    mainWindow.serviceManager.StopService();
+                    mainWindow.serviceManager.StopServiceAsync();
                     break;
                 case ProfileServiceAction.install:
                     mainWindow.serviceManager.CreateService(mainWindow.CurrentPathService);
                     mainWindow.serviceManager.SetStartType(System.ServiceProcess.ServiceStartMode.Automatic);
-                    mainWindow.serviceManager.StartService();
+                    mainWindow.serviceManager.StartServiceAsync();
                     break;
                 case ProfileServiceAction.uninstall:
                     pipeClient.SendMessage(new PipeShutdown());
-                    mainWindow.serviceManager.StopService();
+                    mainWindow.serviceManager.StopServiceAsync();
                     mainWindow.serviceManager.DeleteService();
                     mainWindow.Close(); // temp
                     break;

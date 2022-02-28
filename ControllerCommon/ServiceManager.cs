@@ -2,6 +2,8 @@
 using System;
 using System.Diagnostics;
 using System.ServiceProcess;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -127,7 +129,7 @@ namespace ControllerCommon
             process.WaitForExit();
         }
 
-        public void StartService()
+        public async Task StartServiceAsync()
         {
             Updated?.Invoke(ServiceControllerStatus.StartPending, ServiceStartMode.Disabled);
             nextStatus = ServiceControllerStatus.Running;
@@ -139,11 +141,13 @@ namespace ControllerCommon
             }
             catch (Exception ex)
             {
+                await Task.Delay(2000);
+                StartServiceAsync();
                 logger.LogError("Service manager returned error: {0}", ex.Message);
             }
         }
 
-        public void StopService()
+        public async Task StopServiceAsync()
         {
             Updated?.Invoke(ServiceControllerStatus.StopPending, ServiceStartMode.Disabled);
             nextStatus = ServiceControllerStatus.Stopped;
@@ -155,6 +159,8 @@ namespace ControllerCommon
             }
             catch (Exception ex)
             {
+                await Task.Delay(2000);
+                StopServiceAsync();
                 logger.LogError("Service manager returned error: {0}", ex.Message);
             }
         }

@@ -390,10 +390,10 @@ namespace ControllerHelperWPF.Views
                 switch (navItemTag)
                 {
                     case "ServiceStart":
-                        serviceManager.StartService();
+                        serviceManager.StartServiceAsync();
                         break;
                     case "ServiceStop":
-                        serviceManager.StopService();
+                        serviceManager.StopServiceAsync();
                         break;
                     case "ServiceInstall":
                         serviceManager.CreateService(CurrentPathService);
