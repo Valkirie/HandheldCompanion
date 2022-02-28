@@ -258,6 +258,9 @@ namespace ControllerHelperWPF.Views.Pages
             if (profileCurrent == null)
                 return;
 
+            // todo: implement localized strings
+            Task<ContentDialogResult> result = Dialog.ShowAsync("Profile updated", $"{profileCurrent.name} was updated.", ContentDialogButton.Primary, null, "OK");
+
             profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
             profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
             profileCurrent.whitelisted = (bool)cB_Whitelist.IsChecked && cB_Whitelist.IsEnabled;
