@@ -35,14 +35,12 @@ namespace ControllerHelperWPF.Views.Pages
                 if (i == 1)
                     continue;
 
-                double height = profileCurrent.aiming_array[i - 1].y * StackCurve.Height;
-
                 Thumb thumb = new Thumb()
                 {
                     Tag = i - 1,
                     Width = 10,
                     MaxHeight = StackCurve.Height,
-                    Height = height,
+                    Height = StackCurve.Height / 2.0f,
                     VerticalAlignment = VerticalAlignment.Bottom,
                     Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentLowBrush"]
                 };
@@ -95,6 +93,9 @@ namespace ControllerHelperWPF.Views.Pages
                 }
             }
 
+            if (Thumb is null)
+                return;
+
             Thumb.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentHighBrush"];
 
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
@@ -103,6 +104,8 @@ namespace ControllerHelperWPF.Views.Pages
                 Thumb.Height = dist_y;
                 profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
             }
+
+            e.Handled = true;
         }
     }
 }

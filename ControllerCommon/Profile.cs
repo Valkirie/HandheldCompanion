@@ -94,7 +94,7 @@ namespace ControllerCommon
                 for (int i = 0; i < array_size; i++)
                 {
                     double value = (double)i / (double)(array_size - 1);
-                    ProfileVector vector = new ProfileVector(value, value);
+                    ProfileVector vector = new ProfileVector(value, 0.5f);
                     aiming_array.Add(vector);
                 }
             }
