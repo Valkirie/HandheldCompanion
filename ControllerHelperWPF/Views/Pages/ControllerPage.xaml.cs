@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -57,7 +58,7 @@ namespace ControllerHelperWPF.Views.Pages
             UpdateDevice();
         }
 
-        private void ServiceManager_Updated(ServiceControllerStatus status, ServiceStartMode mode)
+        private async void ServiceManager_Updated(ServiceControllerStatus status, ServiceStartMode mode)
         {
             switch (status)
             {
@@ -76,7 +77,11 @@ namespace ControllerHelperWPF.Views.Pages
                     isConnected = false;
                     break;
                 case ServiceControllerStatus.Running:
-                    isLoading = !hasSettings;
+
+                    while (!hasSettings)
+                        await Task.Delay(500);
+
+                    isLoading = false;
                     isConnected = true;
                     break;
                 default:
@@ -241,7 +246,6 @@ namespace ControllerHelperWPF.Views.Pages
             }
 
             hasSettings = true;
-            isLoading = false;
 
             UpdateMainGrid();
         }
