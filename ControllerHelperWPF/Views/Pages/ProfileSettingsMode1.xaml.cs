@@ -16,7 +16,7 @@ namespace ControllerHelperWPF.Views.Pages
             InitializeComponent();
         }
 
-        public ProfileSettingsMode1(Profile profileCurrent) : this()
+        public ProfileSettingsMode1(Profile profileCurrent, PipeClient pipeClient) : this()
         {
             this.profileCurrent = profileCurrent;
 

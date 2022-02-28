@@ -13,15 +13,17 @@ namespace ControllerHelperWPF.Views.Pages
     public partial class ProfileSettingsMode0 : Page
     {
         private Profile profileCurrent;
+        private PipeClient pipeClient;
 
         public ProfileSettingsMode0()
         {
             InitializeComponent();
         }
 
-        public ProfileSettingsMode0(Profile profileCurrent) : this()
+        public ProfileSettingsMode0(Profile profileCurrent, PipeClient pipeClient) : this()
         {
             this.profileCurrent = profileCurrent;
+            this.pipeClient = pipeClient;
 
             SliderSensivity.Value = profileCurrent.aiming_sensivity;
             SliderIntensity.Value = profileCurrent.aiming_intensity;

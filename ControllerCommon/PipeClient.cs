@@ -97,6 +97,10 @@ namespace ControllerCommon
         {
             if (!connected)
             {
+                Type nodeType = message.GetType();
+                if (nodeType == typeof(PipeClientCursor))
+                    return;
+
                 m_queue.Enqueue(message);
                 m_timer.Start();
                 return;

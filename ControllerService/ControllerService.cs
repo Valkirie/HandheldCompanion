@@ -121,6 +121,12 @@ namespace ControllerService
                 throw new InvalidOperationException();
             }
 
+            // initialize PipeServer
+            pipeServer = new PipeServer("ControllerService", logger);
+            pipeServer.Connected += OnClientConnected;
+            pipeServer.Disconnected += OnClientDisconnected;
+            pipeServer.ClientMessage += OnClientMessage;
+
             // initialize sensors
             UpdateSensors();
 
@@ -135,12 +141,6 @@ namespace ControllerService
             DSUServer.Started += OnDSUStarted;
             DSUServer.Stopped += OnDSUStopped;
 
-            // initialize PipeServer
-            pipeServer = new PipeServer("ControllerService", logger);
-            pipeServer.Connected += OnClientConnected;
-            pipeServer.Disconnected += OnClientDisconnected;
-            pipeServer.ClientMessage += OnClientMessage;
-
             // initialize Profile Manager
             profileManager = new ProfileManager(CurrentPathProfiles, logger);
             profileManager.Updated += ProfileUpdated;
@@ -148,17 +148,17 @@ namespace ControllerService
 
         private void UpdateSensors()
         {
-            var Gyrometer = new XInputGirometer(XInputController, logger);
+            var Gyrometer = new XInputGirometer(XInputController, logger, pipeServer);
             if (Gyrometer.sensor == null)
                 logger.LogWarning("No Gyrometer detected");
             XInputController.SetGyroscope(Gyrometer);
 
-            var Accelerometer = new XInputAccelerometer(XInputController, logger);
+            var Accelerometer = new XInputAccelerometer(XInputController, logger, pipeServer);
             if (Accelerometer.sensor == null)
                 logger.LogWarning("No Accelerometer detected");
             XInputController.SetAccelerometer(Accelerometer);
 
-            var Inclinometer = new XInputInclinometer(XInputController, logger);
+            var Inclinometer = new XInputInclinometer(XInputController, logger, pipeServer);
             if (Inclinometer.sensor == null)
                 logger.LogWarning("No Inclinometer detected");
             XInputController.SetInclinometer(Inclinometer);

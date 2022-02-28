@@ -1,3 +1,4 @@
+using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Numerics;
@@ -14,7 +15,7 @@ namespace ControllerService.Sensors
 
         private readonly ILogger logger;
 
-        public XInputInclinometer(XInputController controller, ILogger logger) : base(controller)
+        public XInputInclinometer(XInputController controller, ILogger logger, PipeServer pipeServer) : base(controller, pipeServer)
         {
             this.logger = logger;
 

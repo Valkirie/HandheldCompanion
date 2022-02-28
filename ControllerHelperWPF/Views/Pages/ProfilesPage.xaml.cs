@@ -39,6 +39,8 @@ namespace ControllerHelperWPF.Views.Pages
             this.microsoftLogger = microsoftLogger;
 
             this.pipeClient = mainWindow.pipeClient;
+            this.pipeClient.ServerMessage += PipeClient_ServerMessage;
+
             this.profileManager = mainWindow.profileManager;
 
             // initialize Profile Manager
@@ -57,6 +59,10 @@ namespace ControllerHelperWPF.Views.Pages
 
             // select default profile
             cB_Profiles.SelectedItem = profileCurrent = profileManager.GetDefault();
+        }
+
+        private void PipeClient_ServerMessage(object sender, PipeMessage e)
+        {
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -197,10 +203,10 @@ namespace ControllerHelperWPF.Views.Pages
             {
                 default:
                 case Input.JoystickCamera:
-                    page = new ProfileSettingsMode0(profileCurrent); // temp, store me in a local variable ?
+                    page = new ProfileSettingsMode0(profileCurrent, pipeClient);
                     break;
                 case Input.JoystickSteering:
-                    page = new ProfileSettingsMode1(profileCurrent); // temp, store me in a local variable ?
+                    page = new ProfileSettingsMode1(profileCurrent, pipeClient);
                     break;
             }
             mainWindow.NavView_Navigate(page);

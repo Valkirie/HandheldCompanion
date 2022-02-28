@@ -1,9 +1,11 @@
+using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Numerics;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils;
+using SensorType = ControllerCommon.SensorType;
 
 namespace ControllerService.Sensors
 {
@@ -21,7 +23,7 @@ namespace ControllerService.Sensors
 
         private readonly ILogger logger;
 
-        public XInputGirometer(XInputController controller, ILogger logger) : base(controller)
+        public XInputGirometer(XInputController controller, ILogger logger, PipeServer pipeServer) : base(controller, pipeServer)
         {
             this.logger = logger;
 
@@ -80,6 +82,9 @@ namespace ControllerService.Sensors
             }
 
             logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
+
+            // update client(s)
+            pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Girometer));
 
             // raise event
             ReadingChanged?.Invoke(this, this.reading);
