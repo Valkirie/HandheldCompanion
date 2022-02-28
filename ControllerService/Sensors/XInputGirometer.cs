@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics;
 using System.Numerics;
 using Windows.Devices.Sensors;
@@ -10,7 +11,7 @@ namespace ControllerService.Sensors
     {
         public Gyrometer sensor;
 
-        public static new float MaxValue = 128.0f;
+        public static new float MaxValue = 28.0f;
 
         private long prev_microseconds;
         private readonly OneEuroFilter3D gyroFilter;
@@ -51,9 +52,9 @@ namespace ControllerService.Sensors
 
             prev_microseconds = microseconds;
 
-            float readingX = this.reading.X = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityX, rate);
-            float readingY = this.reading.Y = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityZ, rate);
-            float readingZ = this.reading.Z = (float)gyroFilter.axis1Filter.Filter(reading.AngularVelocityY, rate);
+            float readingX = this.reading.X = (float)Math.Min(MaxValue, gyroFilter.axis1Filter.Filter(reading.AngularVelocityX, rate));
+            float readingY = this.reading.Y = (float)Math.Min(MaxValue, gyroFilter.axis1Filter.Filter(reading.AngularVelocityZ, rate));
+            float readingZ = this.reading.Z = (float)Math.Min(MaxValue, gyroFilter.axis1Filter.Filter(reading.AngularVelocityY, rate));
 
             if (controller.virtualTarget != null)
             {
