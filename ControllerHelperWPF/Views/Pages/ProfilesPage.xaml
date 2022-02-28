@@ -343,6 +343,8 @@
                                             Name="cB_Buttons" Height="120" SelectionMode="Multiple"
                                             IsMultiSelectCheckBoxEnabled="True" Grid.Column="2"
                                             HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                                            MouseEnter="cB_Buttons_MouseEnter"
+                                            MouseLeave="cB_Buttons_MouseLeave"
                                             BorderBrush="{DynamicResource SystemControlBackgroundBaseMediumBrush}" BorderThickness="1 1 1 1"
                                             CornerRadius="{DynamicResource ControlCornerRadius}"/>
                                     </Grid>

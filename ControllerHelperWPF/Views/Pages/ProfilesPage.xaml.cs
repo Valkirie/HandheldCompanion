@@ -310,5 +310,15 @@ namespace ControllerHelperWPF.Views.Pages
             cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !profileCurrent.IsDefault;
             Expander_UMC.IsExpanded = Toggle_UniversalMotion.IsOn;
         }
+
+        private void cB_Buttons_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            MainWindow.scrollLock = true;
+        }
+
+        private void cB_Buttons_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            MainWindow.scrollLock = false;
+        }
     }
 }
