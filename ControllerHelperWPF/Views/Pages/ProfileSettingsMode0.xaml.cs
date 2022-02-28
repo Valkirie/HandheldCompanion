@@ -109,5 +109,45 @@ namespace ControllerHelperWPF.Views.Pages
 
             e.Handled = true;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            // default preset
+            foreach (Control Thumb in StackCurve.Children)
+            {
+                int idx = (int)Thumb.Tag;
+
+                Thumb.Height = StackCurve.Height / 2.0f;
+                profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
+            }
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            // agressive preset
+            float tempx = 0.50f / Profile.array_size;
+            foreach (Control Thumb in StackCurve.Children)
+            {
+                int idx = (int)Thumb.Tag;
+                float value = (float)(-Math.Sqrt(idx * tempx) + 0.85f);
+
+                Thumb.Height = StackCurve.Height * value;
+                profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
+            }
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            // precise preset
+            float tempx = 0.25f / Profile.array_size;
+            foreach (Control Thumb in StackCurve.Children)
+            {
+                int idx = (int)Thumb.Tag;
+                float value = (float)(Math.Sqrt(idx * tempx) + 0.25f - (tempx * idx));
+
+                Thumb.Height = StackCurve.Height * value;
+                profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
+            }
+        }
     }
 }

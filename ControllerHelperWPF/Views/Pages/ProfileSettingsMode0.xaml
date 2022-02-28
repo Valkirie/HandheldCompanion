@@ -104,6 +104,17 @@
                                     </ui:SimpleStackPanel.Background>
                                 </ui:SimpleStackPanel>
                                 <Label Content="Movement intensity" HorizontalAlignment="Center"></Label>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3.33*"></ColumnDefinition>
+                                        <ColumnDefinition Width="3.33*"></ColumnDefinition>
+                                        <ColumnDefinition Width="3.33*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <Button Content="Default" HorizontalAlignment="Center" Grid.Column="0" Click="Button_Click"></Button>
+                                    <Button Content="Agressive" HorizontalAlignment="Center" Grid.Column="1" Click="Button_Click_1"></Button>
+                                    <Button Content="Precise" HorizontalAlignment="Center" Grid.Column="2" Click="Button_Click_2"></Button>
+                                </Grid>
                             </ui:SimpleStackPanel>
                         </ui:SimpleStackPanel>
                     </Grid>
