@@ -24,6 +24,7 @@ namespace ControllerHelperWPF.Views.Pages
         {
             this.profileCurrent = profileCurrent;
             this.pipeClient = pipeClient;
+            this.pipeClient.ServerMessage += OnServerMessage;
 
             SliderSensivity.Value = profileCurrent.aiming_sensivity;
             SliderIntensity.Value = profileCurrent.aiming_intensity;
@@ -56,6 +57,17 @@ namespace ControllerHelperWPF.Views.Pages
         {
         }
 
+        private void OnServerMessage(object sender, PipeMessage message)
+        {
+            switch (message.code)
+            {
+                case PipeCode.SERVER_SENSOR:
+                    PipeSensor sensor = (PipeSensor)message;
+                    Highlight_Thumb(sensor.z);
+                    break;
+            }
+        }
+
         private void SliderSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (profileCurrent is null)
@@ -70,6 +82,31 @@ namespace ControllerHelperWPF.Views.Pages
                 return;
 
             profileCurrent.aiming_intensity = (float)SliderIntensity.Value;
+        }
+
+        private void Highlight_Thumb(float value)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                Control Thumb = null;
+                double dist_x = Math.Abs(value) / 28.0f; // temp
+
+                foreach (Control control in StackCurve.Children)
+                {
+                    control.BorderThickness = new Thickness(1, 1, 1, 1);
+
+                    int idx = (int)control.Tag;
+                    ProfileVector vector = profileCurrent.aiming_array[idx];
+
+                    if (dist_x <= vector.x && Thumb is null)
+                        Thumb = control;
+                }
+
+                if (Thumb is null)
+                    return;
+
+                Thumb.BorderThickness = new Thickness(1, 1, 1, 10);
+            });
         }
 
         private void StackCurve_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)

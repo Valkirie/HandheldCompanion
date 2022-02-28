@@ -109,6 +109,8 @@
                                         </DrawingBrush>
                                     </ui:SimpleStackPanel.Background>
                                 </ui:SimpleStackPanel>
+                                <ui:SimpleStackPanel Name="StackIndicator" Orientation="Horizontal" Height="10">                                    
+                                </ui:SimpleStackPanel>
                                 <Label Content="Movement intensity" HorizontalAlignment="Center"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
