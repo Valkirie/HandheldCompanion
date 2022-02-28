@@ -73,6 +73,8 @@ namespace ControllerHelperWPF.Views.Pages
 
         private void StackCurve_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            MainWindow.scrollLock = true;
+
             if (profileCurrent is null)
                 return;
 
@@ -102,6 +104,7 @@ namespace ControllerHelperWPF.Views.Pages
 
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
             {
+
                 int idx = (int)Thumb.Tag;
                 Thumb.Height = dist_y;
                 profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
@@ -148,6 +151,16 @@ namespace ControllerHelperWPF.Views.Pages
                 Thumb.Height = StackCurve.Height * value;
                 profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
             }
+        }
+
+        private void StackCurve_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            MainWindow.scrollLock = false;
+        }
+
+        private void StackCurve_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            MainWindow.scrollLock = true;
         }
     }
 }

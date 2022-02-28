@@ -46,6 +46,7 @@ namespace ControllerHelperWPF.Views
         // touchscroll vars
         Point scrollPoint = new Point();
         double scrollOffset = 1;
+        public static bool scrollLock = false;
 
         // connectivity vars
         public PipeClient pipeClient;
@@ -451,6 +452,9 @@ namespace ControllerHelperWPF.Views
         private void ScrollViewer_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (scrollPoint == new Point())
+                return;
+
+            if (MainWindow.scrollLock)
                 return;
 
             scrollViewer.ScrollToVerticalOffset(scrollOffset + (scrollPoint.Y - e.GetPosition(scrollViewer).Y));

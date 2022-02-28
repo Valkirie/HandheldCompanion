@@ -76,7 +76,12 @@
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
-                        <ui:SimpleStackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="12">
+                        <ui:SimpleStackPanel Orientation="Horizontal"
+                                             HorizontalAlignment="Center"
+                                             Spacing="12"
+                                             MouseEnter="StackCurve_MouseEnter"
+                                             MouseLeave="StackCurve_MouseLeave"
+                                             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
                             <Label Content="Output sent to game" VerticalAlignment="Center">
                                 <Label.LayoutTransform>
                                     <TransformGroup>
@@ -86,6 +91,7 @@
                                 </Label.LayoutTransform>
                             </Label>
                             <ui:SimpleStackPanel Orientation="Vertical" Spacing="12">
+                                <Label Content="Movement intensity" HorizontalAlignment="Center"/>
                                 <ui:SimpleStackPanel Name="StackCurve" Orientation="Horizontal" Height="410" MouseMove="StackCurve_MouseMove">
                                     <ui:SimpleStackPanel.Background>
                                         <DrawingBrush TileMode="Tile" Viewport="40,40,40,40" 
@@ -103,19 +109,27 @@
                                         </DrawingBrush>
                                     </ui:SimpleStackPanel.Background>
                                 </ui:SimpleStackPanel>
-                                <Label Content="Movement intensity" HorizontalAlignment="Center"></Label>
+                                <Label Content="Movement intensity" HorizontalAlignment="Center"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="3.33*"></ColumnDefinition>
                                         <ColumnDefinition Width="3.33*"></ColumnDefinition>
                                         <ColumnDefinition Width="3.33*"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
-                                    
-                                    <Button Content="Default" HorizontalAlignment="Center" Grid.Column="0" Click="Button_Click"></Button>
+
+                                    <Button Content="Default" HorizontalAlignment="Center" Grid.Column="0" Click="Button_Click" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}"></Button>
                                     <Button Content="Agressive" HorizontalAlignment="Center" Grid.Column="1" Click="Button_Click_1"></Button>
                                     <Button Content="Precise" HorizontalAlignment="Center" Grid.Column="2" Click="Button_Click_2"></Button>
                                 </Grid>
                             </ui:SimpleStackPanel>
+                            <Label Content="Output sent to game" VerticalAlignment="Center">
+                                <Label.LayoutTransform>
+                                    <TransformGroup>
+                                        <RotateTransform Angle="-90"></RotateTransform>
+                                        <ScaleTransform ScaleX="-1" ScaleY="-1"/>
+                                    </TransformGroup>
+                                </Label.LayoutTransform>
+                            </Label>
                         </ui:SimpleStackPanel>
                     </Grid>
                 </Border>
