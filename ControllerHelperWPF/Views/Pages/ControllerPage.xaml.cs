@@ -26,6 +26,7 @@ namespace ControllerHelperWPF.Views.Pages
         PipeClient pipeClient;
         bool isConnected;
         bool isLoading;
+        bool hasSettings;
 
         // controllers vars
         private XInputDevice mainController;
@@ -75,7 +76,7 @@ namespace ControllerHelperWPF.Views.Pages
                     isConnected = false;
                     break;
                 case ServiceControllerStatus.Running:
-                    isLoading = false;
+                    isLoading = !hasSettings;
                     isConnected = true;
                     break;
                 default:
@@ -238,6 +239,11 @@ namespace ControllerHelperWPF.Views.Pages
                         break;
                 }
             }
+
+            hasSettings = true;
+            isLoading = false;
+
+            UpdateMainGrid();
         }
 
         private void ToggleTheme(object sender, RoutedEventArgs e)
