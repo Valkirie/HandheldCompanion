@@ -269,7 +269,7 @@ namespace ControllerCommon
             return Math.Clamp(compute * sensivity, short.MinValue, short.MaxValue);
         }
 
-        public static float Steering(float DeviceAngle, 
+        public static float Steering(float DeviceAngle,
                                      float DeviceAngleMax,
                                      float ToThePowerOf,
                                      float DeadzoneAngle,
@@ -294,7 +294,7 @@ namespace ControllerCommon
         {
             // Deadzone remapped angle, note this angle is no longer correct with device angle
             float Result = ((Math.Abs(Angle) - DeadzoneAngle) / (DeviceAngleMax - DeadzoneAngle)) * DeviceAngleMax;
-            
+
             // Clamp deadzone remapped angle, prevents negative values when
             // actual device angle is below dead zone angle
             // Divide by max angle, angle to joystick position with user max

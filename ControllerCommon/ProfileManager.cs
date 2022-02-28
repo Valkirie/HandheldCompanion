@@ -83,7 +83,7 @@ namespace ControllerCommon
         {
             int idx = -1;
 
-            for(int i = 0; i < profiles.Count; i++)
+            for (int i = 0; i < profiles.Count; i++)
             {
                 Profile pr = profiles.Values.ToList()[i];
                 if (pr.executable == profile.executable)
