@@ -263,9 +263,9 @@ namespace ControllerCommon
             return (byte)Math.Round(output);
         }
 
-        public static float ComputeInput(float GamepadThumb, float sensivity, float curve)
+        public static float ComputeInput(float GamepadThumb, float sensivity, float curve, float MaxValue)
         {
-            float compute = (float)(Math.Sign(GamepadThumb) * Math.Pow(Math.Abs(GamepadThumb) / 20.0f, curve) * 20.0f);
+            float compute = (float)(Math.Sign(GamepadThumb) * Math.Pow(Math.Abs(GamepadThumb) / MaxValue, curve) * MaxValue);
             return Math.Clamp(compute * sensivity, short.MinValue, short.MaxValue);
         }
 

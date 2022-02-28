@@ -164,8 +164,8 @@ namespace ControllerService.Targets
                                 float sensivity = xinputController.profile.GetSensiviy();
 
                                 // apply sensivity, intensity sliders (deprecated ?)
-                                float GamepadThumbX = Utils.ComputeInput(AngularX, sensivity, intensity);
-                                float GamepadThumbY = Utils.ComputeInput(AngularY, sensivity, intensity);
+                                float GamepadThumbX = Utils.ComputeInput(AngularX, sensivity, intensity, XInputGirometer.MaxValue);
+                                float GamepadThumbY = Utils.ComputeInput(AngularY, sensivity, intensity, XInputGirometer.MaxValue);
 
                                 switch (xinputController.profile.umc_output)
                                 {
