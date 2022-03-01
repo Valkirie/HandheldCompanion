@@ -162,10 +162,6 @@
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>
-
-                <Button
-                        Content="Toggle theme"
-                        Click="ToggleTheme" />
             </ui:SimpleStackPanel>
         </Border>
     </Grid>

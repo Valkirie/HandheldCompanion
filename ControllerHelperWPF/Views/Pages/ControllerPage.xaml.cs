@@ -1,6 +1,5 @@
 ﻿using ControllerCommon;
 using Microsoft.Extensions.Logging;
-using ModernWpf;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -249,18 +248,6 @@ namespace ControllerHelperWPF.Views.Pages
             hasSettings = true;
 
             UpdateMainGrid();
-        }
-
-        private void ToggleTheme(object sender, RoutedEventArgs e)
-        {
-            if (ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark)
-            {
-                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
-            }
-            else
-            {
-                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
-            }
         }
 
         private void cB_HidMode_SelectionChanged(object sender, SelectionChangedEventArgs e)

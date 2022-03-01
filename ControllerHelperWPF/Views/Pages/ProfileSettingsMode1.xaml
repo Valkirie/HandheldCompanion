@@ -25,7 +25,8 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
+                        <ColumnDefinition MinWidth="20"></ColumnDefinition>
+                        <ColumnDefinition Width="0.5*" MinWidth="40"></ColumnDefinition>
                         <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
@@ -36,8 +37,8 @@
                         <TextBlock Text="Change the maximum steering angle value, in degree" FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
-                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderSteeringAngle, Mode=OneWay}" />
-                    <Slider Name="SliderSteeringAngle" ValueChanged="SliderSteeringAngle_ValueChanged" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="80" Minimum="10" Value="35" TickPlacement="BottomRight" SmallChange="2" TickFrequency="10"/>
+                    <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderSteeringAngle, Mode=OneWay}" />
+                    <Slider Name="SliderSteeringAngle" ValueChanged="SliderSteeringAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="80" Minimum="10" Value="35" TickPlacement="BottomRight" SmallChange="2" TickFrequency="10"/>
                 </Grid>
             </Border>
 
@@ -51,7 +52,8 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
+                        <ColumnDefinition MinWidth="20"></ColumnDefinition>
+                        <ColumnDefinition Width="0.5*" MinWidth="40"></ColumnDefinition>
                         <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
@@ -62,8 +64,8 @@
                         <TextBlock Text="Change the steering function mathematical exponent, 1 is linear" FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
-                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderPower, Mode=OneWay}" />
-                    <Slider Name="SliderPower" ValueChanged="SliderPower_ValueChanged" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="5" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.2"/>
+                    <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderPower, Mode=OneWay}" />
+                    <Slider Name="SliderPower" ValueChanged="SliderPower_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="5" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.2"/>
                 </Grid>
             </Border>
 
@@ -77,7 +79,8 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
+                        <ColumnDefinition MinWidth="20"></ColumnDefinition>
+                        <ColumnDefinition Width="0.5*" MinWidth="40"></ColumnDefinition>
                         <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
@@ -88,8 +91,8 @@
                         <TextBlock Text="Change the steering deadzone, in degree" FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
-                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneAngle, Mode=OneWay}" />
-                    <Slider Name="SliderDeadzoneAngle" ValueChanged="SliderDeadzoneAngle_ValueChanged" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="5" TickPlacement="BottomRight" SmallChange="1"/>
+                    <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneAngle, Mode=OneWay}" />
+                    <Slider Name="SliderDeadzoneAngle" ValueChanged="SliderDeadzoneAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="5" TickPlacement="BottomRight" SmallChange="1"/>
                 </Grid>
             </Border>
 
@@ -103,7 +106,8 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
+                        <ColumnDefinition MinWidth="20"></ColumnDefinition>
+                        <ColumnDefinition Width="0.5*" MinWidth="40"></ColumnDefinition>
                         <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
@@ -114,8 +118,8 @@
                         <TextBlock Text="Change the steering deadzone compensation, in degree" FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
-                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneCompensation, Mode=OneWay}" />
-                    <Slider Name="SliderDeadzoneCompensation" ValueChanged="SliderDeadzoneCompensation_ValueChanged" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="10"/>
+                    <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneCompensation, Mode=OneWay}" />
+                    <Slider Name="SliderDeadzoneCompensation" ValueChanged="SliderDeadzoneCompensation_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="10"/>
                 </Grid>
             </Border>
         </ui:SimpleStackPanel>

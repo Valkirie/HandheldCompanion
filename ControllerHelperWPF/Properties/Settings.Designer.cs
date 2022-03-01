@@ -130,5 +130,17 @@ namespace ControllerHelperWPF.Properties {
                 this["MainWindowState"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MainWindowTheme {
+            get {
+                return ((int)(this["MainWindowTheme"]));
+            }
+            set {
+                this["MainWindowTheme"] = value;
+            }
+        }
     }
 }

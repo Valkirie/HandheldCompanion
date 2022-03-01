@@ -13,10 +13,12 @@ using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using Windows.System.Diagnostics;
-using WPFUI.Tray;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Page = System.Windows.Controls.Page;
 using Timer = System.Timers.Timer;
 
@@ -58,6 +60,7 @@ namespace ControllerHelperWPF.Views
 
         public ServiceManager serviceManager;
         public ProfileManager profileManager;
+        public TaskManager taskManager;
 
         private WindowState prevWindowState;
         private NotifyIcon notifyIcon;
@@ -80,14 +83,24 @@ namespace ControllerHelperWPF.Views
             microsoftLogger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
             // initialize notifyIcon
+            ToolStripMenuItem notifyMenuItem = new("Exit");
+            ContextMenu notifyMenu = new();
+            notifyMenu.Items.Add(notifyMenuItem);
+
             notifyIcon = new()
             {
-                Parent = this,
-                Tooltip = "Tooltip test",
-                // ContextMenu = NotifyIconMenu,
-                Icon = this.Icon,
-                // Click = icon => { RaiseEvent(new RoutedEventArgs(NotifyIconClickEvent, this)); },
-                DoubleClick = icon => { NotifyIconDoubleClick(this); }
+                Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location),
+                Visible = true,
+                ContextMenuStrip = new(),
+            };
+            notifyIcon.DoubleClick += NotifyIconDoubleClick;
+
+            notifyIcon.ContextMenuStrip = new ContextMenuStrip();
+            notifyIcon.ContextMenuStrip.Items.Add("Exit");
+            notifyIcon.ContextMenuStrip.Items[0].Click += (o, e) =>
+            {
+                appClosing = true;
+                this.Close();
             };
 
             // paths
@@ -132,14 +145,25 @@ namespace ControllerHelperWPF.Views
             // initialize toast manager
             toastManager = new ToastManager("ControllerService");
 
-            // initialize Service Manager
+            // initialize service manager
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription, microsoftLogger);
             serviceManager.Updated += OnServiceUpdate;
+
+            // initialize task manager
+            taskManager = new TaskManager("ControllerService", CurrentExe);
 
             // initialize pages
             controllerPage = new ControllerPage("controller", this, microsoftLogger);
             profilesPage = new ProfilesPage("profiles", this, microsoftLogger);
             settingsPage = new SettingsPage("settings", this, microsoftLogger);
+            settingsPage.ToastChanged += (value) =>
+            {
+                toastManager.Enabled = value;
+            };
+            settingsPage.AutoStartChanged += (value) =>
+            {
+                taskManager.UpdateTask(value);
+            };
 
             _pages.Add("ControllerPage", controllerPage);
             _pages.Add("ProfilesPage", profilesPage);
@@ -150,6 +174,11 @@ namespace ControllerHelperWPF.Views
                 foreach (NavigationViewItem item in navView.FooterMenuItems)
                     item.ToolTip = Properties.Resources.WarningElevated;
             }
+        }
+
+        private void NotifyIconDoubleClick(object? sender, EventArgs e)
+        {
+            WindowState = prevWindowState;
         }
 
         private void OnClientConnected(object sender)
@@ -224,11 +253,6 @@ namespace ControllerHelperWPF.Views
             catch (Exception) { }
         }
 
-        private void NotifyIconDoubleClick(MainWindow mainWindow)
-        {
-            WindowState = prevWindowState;
-        }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // update Position and Size
@@ -238,7 +262,7 @@ namespace ControllerHelperWPF.Views
             this.Left = Math.Max(0, Properties.Settings.Default.MainWindowLeft);
             this.Top = Math.Max(0, Properties.Settings.Default.MainWindowTop);
 
-            // improve me
+            // pull settings
             WindowState = settingsPage.s_StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
 
             // start Service Manager
@@ -415,7 +439,7 @@ namespace ControllerHelperWPF.Views
             Page _page = null;
             if (navItemTag == "Settings")
             {
-                _page = new SettingsPage();
+                _page = settingsPage;
             }
             else
             {
@@ -502,12 +526,12 @@ namespace ControllerHelperWPF.Views
             switch (WindowState)
             {
                 case WindowState.Minimized:
-                    notifyIcon.Show();
+                    notifyIcon.Visible = true;
                     ShowInTaskbar = false;
                     break;
                 case WindowState.Normal:
                 case WindowState.Maximized:
-                    notifyIcon.Destroy();
+                    notifyIcon.Visible = false;
                     ShowInTaskbar = true;
                     prevWindowState = WindowState;
                     break;
