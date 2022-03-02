@@ -1,0 +1,7 @@
+{
+  "name": "Aperture Deskjob",
+  "path": "deskjob.exe",
+  "executable": "deskjob.exe",
+  "whitelisted": false,
+  "mousehook_exclusive": true
+}
