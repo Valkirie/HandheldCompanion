@@ -15,7 +15,7 @@
       <Value Profile="(Default)">26760</Value>
     </Setting>
     <Setting Name="HIDrate" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">10</Value>
+      <Value Profile="(Default)">4</Value>
     </Setting>
     <Setting Name="DSUip" Type="System.String" Scope="User">
       <Value Profile="(Default)">127.0.0.1</Value>
