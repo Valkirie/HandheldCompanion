@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32.TaskScheduler;
+﻿using ControllerHelperWPF.Views;
+using Microsoft.Win32.TaskScheduler;
 using System;
 using Task = Microsoft.Win32.TaskScheduler.Task;
 
@@ -14,6 +15,9 @@ namespace ControllerHelperWPF
         {
             this.ServiceName = ServiceName;
             this.ServiceExecutable = ServiceExecutable;
+
+            if (!MainWindow.IsElevated)
+                return;
 
             TaskService TaskServ = new TaskService();
             CurrentTask = TaskServ.FindTask(ServiceName);

@@ -49,6 +49,7 @@ namespace ControllerHelperWPF.Views
         Point scrollPoint = new Point();
         double scrollOffset = 1;
         public static bool scrollLock = false;
+        public static bool IsElevated = false;
 
         // connectivity vars
         public PipeClient pipeClient;
@@ -66,7 +67,7 @@ namespace ControllerHelperWPF.Views
         private NotifyIcon notifyIcon;
 
         public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
-        private bool IsElevated, FirstStart, appClosing;
+        private bool FirstStart, appClosing;
 
         public MainWindow(StartupEventArgs arguments, ILogger microsoftLogger)
         {
