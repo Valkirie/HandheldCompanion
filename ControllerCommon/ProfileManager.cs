@@ -318,6 +318,14 @@ namespace ControllerCommon
             }
         }
 
+        public Profile GetProfileFromExec(string processExec)
+        {
+            foreach (Profile pr in profiles.Values)
+                if (pr.executable.Equals(processExec, StringComparison.InvariantCultureIgnoreCase))
+                    return pr;
+            return null;
+        }
+
         public void UnregisterApplication(Profile profile)
         {
             PipeClient?.SendMessage(new PipeClientHidder

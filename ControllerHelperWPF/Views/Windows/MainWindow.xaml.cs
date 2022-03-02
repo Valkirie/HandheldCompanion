@@ -242,22 +242,20 @@ namespace ControllerHelperWPF.Views
                     else
                         name = Path.GetFileNameWithoutExtension(exec);
 
-                    UpdateProcess((int)processId, path, name);
+                    UpdateProcess((int)processId, path, exec);
 
                     CurrentProcess = processId;
                 }
             }
         }
 
-        public void UpdateProcess(int ProcessId, string ProcessPath, string ProcessName)
+        public void UpdateProcess(int ProcessId, string ProcessPath, string ProcessExec)
         {
             try
             {
-                string ProcessExec = Path.GetFileNameWithoutExtension(ProcessPath);
-
-                if (profileManager.profiles.ContainsKey(ProcessExec))
+                Profile currentProfile = profileManager.GetProfileFromExec(ProcessExec);
+                if (currentProfile != null)
                 {
-                    Profile currentProfile = profileManager.profiles[ProcessExec];
                     currentProfile.fullpath = ProcessPath;
 
                     profileManager.UpdateProfile(currentProfile);
