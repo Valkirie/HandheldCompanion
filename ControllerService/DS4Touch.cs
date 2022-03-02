@@ -63,8 +63,7 @@ namespace ControllerService
             // TrackPadTouch1.X = TouchX;
             // TrackPadTouch1.Y = TouchY;
 
-            if (Button == MouseButtons.Right)
-                OutputClickButton = false;
+            OutputClickButton = false;
 
             TrackPadTouch0.RawTrackingNum |= TOUCH_DISABLE;
             // TrackPadTouch1.RawTrackingNum |= TOUCH_DISABLE;
