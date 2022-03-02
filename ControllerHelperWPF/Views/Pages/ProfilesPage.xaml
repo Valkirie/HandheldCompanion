@@ -38,7 +38,7 @@
                         </ui:SimpleStackPanel>
 
                         <ui:SimpleStackPanel Grid.Column="3" VerticalAlignment="Center" Spacing="6">
-                            <ComboBox SelectionChanged="cB_Profiles_SelectionChanged" Name="cB_Profiles" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                            <ComboBox SelectionChanged="cB_Profiles_SelectionChanged" Name="cB_Profiles" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="0"/>
                             <!-- Create new profile -->
                             <Button Click="Button_Click_1">
                                 <ui:SimpleStackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="12">
@@ -62,25 +62,28 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="0.5*" MinWidth="80"></ColumnDefinition>
-                                    <ColumnDefinition Width="1*" MinWidth="80"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*" MinWidth="100"></ColumnDefinition>
                                     <ColumnDefinition Width="7.5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <ui:FontIcon Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8AC;" Grid.Column="0" HorizontalAlignment="Center"/>
-                                <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" Text="Name" Grid.Column="1" FontSize="14" VerticalAlignment="Center"/>
-                                <TextBox Name="tB_ProfileName" Grid.Column="2" IsReadOnly="True" FlowDirection="RightToLeft" VerticalAlignment="Center" HorizontalAlignment="Stretch" BorderThickness="1"/>
+                                <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" Text="Profile name" Grid.Column="1" FontSize="14" VerticalAlignment="Center"/>
+                                <TextBox Name="tB_ProfileName"
+                                         Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
+                                         BorderThickness="0"
+                                         Grid.Column="2" FlowDirection="RightToLeft" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             </Grid>
 
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="0.5*" MinWidth="80"></ColumnDefinition>
-                                    <ColumnDefinition Width="1*" MinWidth="80"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*" MinWidth="100"></ColumnDefinition>
                                     <ColumnDefinition Width="7.5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <ui:FontIcon Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"  Glyph="&#xED25;" Grid.Column="0" HorizontalAlignment="Center"/>
-                                <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"  Text="Path" Grid.Column="1" FontSize="14" VerticalAlignment="Center"/>
-                                <TextBox Name="tB_ProfilePath" Grid.Column="2" IsReadOnly="True" FlowDirection="RightToLeft" VerticalAlignment="Center" HorizontalAlignment="Stretch" BorderThickness="1"/>
+                                <ui:FontIcon Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" Glyph="&#xED25;" Grid.Column="0" HorizontalAlignment="Center"/>
+                                <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" Text="Profile path" Grid.Column="1" FontSize="14" VerticalAlignment="Center"/>
+                                <TextBox Name="tB_ProfilePath" Grid.Column="2" IsEnabled="False" IsReadOnly="True" FlowDirection="RightToLeft" VerticalAlignment="Center" HorizontalAlignment="Stretch" BorderThickness="1"/>
                             </Grid>
 
                             <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal">
@@ -92,7 +95,7 @@
                     </Grid>
                 </Border>
 
-                <!-- Profiles option -->
+                <!-- Profiles settings -->
                 <Border
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
                         Padding="12"
@@ -113,8 +116,8 @@
                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
 
                                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                                        <TextBlock Text="Profiles options" FontSize="14"/>
-                                        <TextBlock Text="Change the global profiles option" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="Profiles settings" FontSize="14"/>
+                                        <TextBlock Text="Change the global profiles settings" FontSize="12" TextWrapping="Wrap"/>
                                     </ui:SimpleStackPanel>
                                 </Grid>
                             </DockPanel>
@@ -142,7 +145,57 @@
                     </Expander>
                 </Border>
 
-                <!-- Motion control options -->
+                <!-- Touch settings -->
+                <Border
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                        Padding="12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Expander FlowDirection="RightToLeft">
+                        <Expander.Header>
+                            <DockPanel FlowDirection="LeftToRight"
+                                       Margin="-12,0,0,0"
+                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
+                                <!-- Change the look inside header here -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="200"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEDA4;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                                    <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Touch settings" FontSize="14"/>
+                                        <TextBlock Text="Change the touch settings" FontSize="12" TextWrapping="Wrap"/>
+                                    </ui:SimpleStackPanel>
+                                </Grid>
+                            </DockPanel>
+                        </Expander.Header>
+
+                        <Expander.Content>
+                            <Grid FlowDirection="LeftToRight" Margin="0,12,0,0">
+                                <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
+                                    <!-- Separator -->
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+
+                                    <CheckBox Name="cB_EnableHook" Content="Share touchs inputs with virtual controller" Checked="cB_EnableHook_Checked" Unchecked="cB_EnableHook_Checked"></CheckBox>
+
+                                    <!-- Separator -->
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+
+                                    <CheckBox Name="cB_ExclusiveHook" Content="Give virtual controller an exclusive access to touch inputs" Checked="cB_ExclusiveHook_Checked" Unchecked="cB_ExclusiveHook_Checked"></CheckBox>
+
+                                    <!-- Separator -->
+                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+
+                                </ui:SimpleStackPanel>
+                            </Grid>
+                        </Expander.Content>
+                    </Expander>
+                </Border>
+
+                <!-- Motion control settings -->
                 <Border
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
                         Padding="12"
@@ -163,8 +216,8 @@
                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8B4;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
 
                                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                                        <TextBlock Text="Motion control options" FontSize="14"/>
-                                        <TextBlock Text="Change the global motion control options" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="Motion control settings" FontSize="14"/>
+                                        <TextBlock Text="Change the global motion control settings" FontSize="12" TextWrapping="Wrap"/>
                                     </ui:SimpleStackPanel>
                                 </Grid>
                             </DockPanel>
@@ -250,7 +303,7 @@
                     </Expander>
                 </Border>
 
-                <!-- Universal motion control options -->
+                <!-- Universal motion control settings -->
                 <Border
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
                         Padding="12"
@@ -273,7 +326,7 @@
                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEC49;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
 
                                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                                        <TextBlock Text="Universal motion control options" FontSize="14"/>
+                                        <TextBlock Text="Universal motion control settings" FontSize="14"/>
                                         <TextBlock Text="Translate device motions into controller inputs" FontSize="12" TextWrapping="Wrap"/>
                                     </ui:SimpleStackPanel>
 

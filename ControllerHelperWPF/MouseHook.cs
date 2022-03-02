@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Timers;
+using System.Windows.Forms;
 using WindowsHook;
 using MouseButtons = WindowsHook.MouseButtons;
 using Timer = System.Timers.Timer;
@@ -29,6 +30,9 @@ namespace ControllerHelperWPF
 
         private TouchInput m_MouseUp;
         private ushort m_MouseMove;
+
+        private bool m_MouseEnable;
+        private bool m_MouseExclusive;
 
         public MouseHook(PipeClient client, ILogger logger)
         {
@@ -57,8 +61,10 @@ namespace ControllerHelperWPF
         private void Subscribe()
         {
             m_Events = Hook.GlobalEvents();
-            m_Events.MouseDownExt += OnMouseDown;
-            m_Events.MouseUpExt += OnMouseUp;
+            m_Events.MouseDownExt += OnMouseDownExt;
+            m_Events.MouseUpExt += OnMouseUpExt;
+
+            Application.Run();
         }
 
         private void SendMouseUp(object sender, ElapsedEventArgs e)
@@ -72,9 +78,9 @@ namespace ControllerHelperWPF
             });
         }
 
-        private void OnMouseDown(object sender, MouseEventExtArgs e)
+        private void OnMouseDownExt(object sender, MouseEventExtArgs e)
         {
-            if (m_Events == null)
+            if (m_Events == null || !m_MouseEnable)
                 return;
 
             m_Timer.Stop();
@@ -99,10 +105,15 @@ namespace ControllerHelperWPF
             });
 
             logger.LogDebug("OnMouseDown x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
+
+            e.Handled = m_MouseExclusive;
         }
 
         private void OnMouseMove(object sender, MouseEventExtArgs e)
         {
+            if (m_Events == null || !m_MouseEnable)
+                return;
+
             m_MouseMove++;
 
             // reduce CPU usage by moving pointer every 10 px
@@ -120,9 +131,9 @@ namespace ControllerHelperWPF
             logger.LogDebug("OnMouseMove x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
         }
 
-        private void OnMouseUp(object sender, MouseEventExtArgs e)
+        private void OnMouseUpExt(object sender, MouseEventExtArgs e)
         {
-            if (m_Events == null)
+            if (m_Events == null || !m_MouseEnable)
                 return;
 
             m_Events.MouseMoveExt -= OnMouseMove;
@@ -131,7 +142,7 @@ namespace ControllerHelperWPF
             {
                 X = e.X,
                 Y = e.Y,
-                Button = isDoubleClick ? MouseButtons.Right : e.Button,
+                Button = e.Button,
                 Timestamp = e.Timestamp
             };
             logger.LogDebug("OnMouseUp x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
@@ -141,17 +152,24 @@ namespace ControllerHelperWPF
             isDoubleClick = false;
         }
 
-        internal void Stop()
+        public void Stop()
         {
             if (m_Events == null)
                 return;
 
-            m_Events.MouseDownExt -= OnMouseDown;
-            m_Events.MouseUpExt -= OnMouseUp;
+            m_Events.MouseDownExt -= OnMouseDownExt;
+            m_Events.MouseUpExt -= OnMouseUpExt;
+            m_Events.MouseMoveExt -= OnMouseMove;
             m_Events.Dispose();
             m_Events = null;
 
             logger.LogInformation("Mouse hook has stopped");
+        }
+
+        public void UpdateProfile(Profile profile)
+        {
+            m_MouseExclusive = profile.mousehook_exclusive;
+            m_MouseEnable = profile.mousehook_enabled;
         }
     }
 }

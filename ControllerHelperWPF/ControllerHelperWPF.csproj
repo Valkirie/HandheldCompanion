@@ -10,6 +10,7 @@
     <StartupObject>ControllerHelperWPF.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
@@ -75,7 +76,6 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-    <PackageReference Include="TaskScheduler" Version="2.10.1" />
   </ItemGroup>
 
   <ItemGroup>

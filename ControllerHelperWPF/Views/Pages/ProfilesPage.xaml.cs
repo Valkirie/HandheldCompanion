@@ -86,10 +86,9 @@ namespace ControllerHelperWPF.Views.Pages
                         break;
                     }
 
-                if (idx == -1)
-                    cB_Profiles.Items.Add(profile);
-                else
-                    cB_Profiles.Items[idx] = profile;
+                if (idx != -1)
+                    cB_Profiles.Items.RemoveAt(idx);
+                cB_Profiles.Items.Add(profile);
 
                 cB_Profiles.SelectedItem = profile;
             });
@@ -223,6 +222,8 @@ namespace ControllerHelperWPF.Views.Pages
             {
                 // disable button if is default profile
                 b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
+                tB_ProfileName.IsEnabled = !profileCurrent.IsDefault;
+                cB_ExclusiveHook.IsEnabled = !profileCurrent.IsDefault;
 
                 tB_ProfileName.Text = profileCurrent.name;
                 tB_ProfilePath.Text = profileCurrent.path;
@@ -240,6 +241,10 @@ namespace ControllerHelperWPF.Views.Pages
 
                 cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
                 cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
+
+                // Touch settings
+                cB_EnableHook.IsChecked = profileCurrent.mousehook_enabled;
+                cB_ExclusiveHook.IsChecked = profileCurrent.mousehook_exclusive;
 
                 cB_Buttons.SelectedItems.Clear();
                 foreach (string value in cB_Buttons.Items)
@@ -267,6 +272,8 @@ namespace ControllerHelperWPF.Views.Pages
             // todo: implement localized strings
             Task<ContentDialogResult> result = Dialog.ShowAsync("Profile updated", $"{profileCurrent.name} was updated.", ContentDialogButton.Primary, null, "OK");
 
+            profileCurrent.name = tB_ProfileName.Text;
+
             profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
             profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
             profileCurrent.whitelisted = (bool)cB_Whitelist.IsChecked && cB_Whitelist.IsEnabled;
@@ -282,11 +289,9 @@ namespace ControllerHelperWPF.Views.Pages
             profileCurrent.umc_input = (Input)cB_Input.SelectedIndex;
             profileCurrent.umc_output = (Output)cB_Output.SelectedIndex;
 
-            // implement me: UMC Steering
-
-            // implement me: UMC Aiming
-            // profileCurrent.umc_sensivity = tB_UMCSensivity.Value;
-            // profileCurrent.umc_intensity = tB_UMCIntensity.Value;
+            // Touch settings
+            profileCurrent.mousehook_enabled = (bool)cB_EnableHook.IsChecked;
+            profileCurrent.mousehook_exclusive = (bool)cB_ExclusiveHook.IsChecked;
 
             profileCurrent.umc_trigger = 0;
 
@@ -308,7 +313,17 @@ namespace ControllerHelperWPF.Views.Pages
 
         private void cB_Wrapper_Checked(object sender, RoutedEventArgs e)
         {
+            // do something
+        }
 
+        private void cB_EnableHook_Checked(object sender, RoutedEventArgs e)
+        {
+            // do something
+        }
+
+        private void cB_ExclusiveHook_Checked(object sender, RoutedEventArgs e)
+        {
+            // do something
         }
 
         private void Toggle_UniversalMotion_Toggled(object sender, RoutedEventArgs e)

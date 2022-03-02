@@ -79,6 +79,10 @@ namespace ControllerCommon
         public float steering_deadzone { get; set; } = 0.0f;
         public float steering_deadzone_compensation { get; set; } = 0.0f;
 
+        // mousehook
+        public bool mousehook_enabled { get; set; } = true;
+        public bool mousehook_exclusive { get; set; } = false;
+
         public GamepadButtonFlags umc_trigger { get; set; } = 0;
 
         [JsonIgnore] public ProfileErrorCode error;

@@ -57,7 +57,7 @@
                         <ui:SimpleStackPanel Spacing="18" VerticalAlignment="Bottom">
                             <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal">
                                 <Button Name="B_ServiceSwitch" Content="Connect" Width="Auto" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" Click="B_ServiceSwitch_Click"/>
-                                <ComboBox Name="cB_HidMode" Width="Auto" SelectionChanged="cB_HidMode_SelectionChanged"/>
+                                <ComboBox Name="cB_HidMode" Width="Auto" SelectionChanged="cB_HidMode_SelectionChanged" BorderThickness="0"/>
                             </ui:SimpleStackPanel>
                             <Grid>
                                 <Grid.ColumnDefinitions>

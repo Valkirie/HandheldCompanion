@@ -89,6 +89,7 @@ namespace ControllerHelperWPF.Views
 
             notifyIcon = new()
             {
+                Text = "Controller Helper",
                 Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location),
                 Visible = true,
                 ContextMenuStrip = new(),
@@ -128,6 +129,7 @@ namespace ControllerHelperWPF.Views
             pipeClient = new PipeClient("ControllerService", microsoftLogger);
             pipeClient.ServerMessage += OnServerMessage;
             pipeClient.Connected += OnClientConnected;
+            pipeClient.Disconnected += OnClientDisconnected;
 
             // initialize pipe server
             pipeServer = new PipeServer("ControllerHelper", microsoftLogger);
@@ -183,12 +185,28 @@ namespace ControllerHelperWPF.Views
 
         private void OnClientConnected(object sender)
         {
-            // send default profile to Service
-            pipeClient.SendMessage(new PipeClientProfile() { profile = profileManager.GetDefault() });
+            // start mouse hook
+            mouseHook.Start();
+
+            // update service screen size
+            pipeClient.SendMessage(new PipeClientScreen
+            {
+                width = Screen.PrimaryScreen.Bounds.Width,
+                height = Screen.PrimaryScreen.Bounds.Height
+            });
 
             // start processes monitor
             MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
             MonitorTimer.Elapsed += MonitorHelper;
+        }
+
+        private void OnClientDisconnected(object sender)
+        {
+            // stop mouse hook
+            mouseHook.Stop();
+
+            // stop processes monitor
+            MonitorTimer.Elapsed -= MonitorHelper;
         }
 
         private void MonitorHelper(object? sender, System.Timers.ElapsedEventArgs e)
@@ -238,17 +256,24 @@ namespace ControllerHelperWPF.Views
 
                 if (profileManager.profiles.ContainsKey(ProcessExec))
                 {
-                    Profile profile = profileManager.profiles[ProcessExec];
-                    profile.fullpath = ProcessPath;
+                    Profile currentProfile = profileManager.profiles[ProcessExec];
+                    currentProfile.fullpath = ProcessPath;
 
-                    profileManager.UpdateProfile(profile);
+                    profileManager.UpdateProfile(currentProfile);
 
-                    pipeClient.SendMessage(new PipeClientProfile { profile = profile });
+                    // inform service & mouseHook
+                    pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
+                    mouseHook.UpdateProfile(currentProfile);
 
-                    microsoftLogger.LogInformation("Profile {0} applied", profile.name);
+                    microsoftLogger.LogInformation("Profile {0} applied", currentProfile.name);
                 }
                 else
-                    pipeClient.SendMessage(new PipeClientProfile());
+                {
+                    // inform service & mouseHook
+                    Profile defaultProfile = profileManager.GetDefault();
+                    pipeClient.SendMessage(new PipeClientProfile { profile = defaultProfile });
+                    mouseHook.UpdateProfile(defaultProfile);
+                }
             }
             catch (Exception) { }
         }
@@ -495,6 +520,8 @@ namespace ControllerHelperWPF.Views
                 pipeServer.Stop();
 
             profileManager.Stop();
+
+            mouseHook.Stop();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
