@@ -14,7 +14,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>$(SolutionDir)bin\</OutputPath>
     <DebugType>portable</DebugType>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -27,9 +26,6 @@
     <Content Remove="dependencies\**" />
     <EmbeddedResource Remove="dependencies\**" />
     <None Remove="dependencies\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <AdditionalFiles Remove="app.manifest" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
