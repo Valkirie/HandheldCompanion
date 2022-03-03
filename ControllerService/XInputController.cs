@@ -99,14 +99,14 @@ namespace ControllerService
 
         private void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            // update timestamp
+            microseconds = stopwatch.ElapsedMilliseconds * 1000L;
+
             lock (updateLock)
             {
                 // get current gamepad state
                 State state = physicalController.GetState();
                 Gamepad = state.Gamepad;
-
-                // update timestamp
-                microseconds = (long)(stopwatch.ElapsedTicks / (Stopwatch.Frequency / (1000L * 1000L)));
 
                 Updated?.Invoke(this);
             }

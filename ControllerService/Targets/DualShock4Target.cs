@@ -4,6 +4,7 @@ using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
 using System.Timers;
 using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
@@ -218,7 +219,7 @@ namespace ControllerService.Targets
 
                 outDS4Report.bBatteryLvlSpecial = 11;
 
-                outDS4Report.wTimestamp = (ushort)(xinputController.microseconds / 5.33f);
+                outDS4Report.wTimestamp = (ushort)(xinputController.microseconds);
 
                 DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
                 virtualController.SubmitRawReport(rawOutReportEx);
