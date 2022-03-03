@@ -74,7 +74,7 @@ namespace ControllerHelperWPF.Views.Pages
                 return;
 
             profileCurrent.steering_power = (float)SliderPower.Value;
-            UpdatePoints((float)SliderPower.Value);
+            GeneratePoints((float)SliderPower.Value);
         }
 
         private void SliderDeadzoneAngle_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -93,28 +93,29 @@ namespace ControllerHelperWPF.Views.Pages
             profileCurrent.steering_deadzone_compensation = (float)SliderDeadzoneCompensation.Value;
         }
 
-        private void GeneratePoints(float power)
+        private void GeneratePoints(float Power)
         {
-            int array_size = 100;
+            int ArraySize = 80;
 
-            for (int i = 0; i < array_size; i++)
+            if (SteeringLinearityPoints.Count == 0)
             {
-                double value = (double)i / (double)(array_size - 1);
-                SteeringLinearityPoints.Add(new ObservablePoint
+                for (int i = 0; i < ArraySize; i++)
                 {
-                    X = value,
-                    Y = value
-                });
+                    double value = (double)i / (double)(ArraySize - 1);
+                    SteeringLinearityPoints.Add(new ObservablePoint
+                    {
+                        X = value,
+                        Y = value
+                    });
+                } 
             }
-        }
 
-        private void UpdatePoints(float Power)
-        {
-            int array_size = 100;
-
-            for (int i = 0; i < array_size; i++)
+            if (SteeringLinearityPoints.Count == ArraySize)
             {
-                SteeringLinearityPoints[i].Y = (float)Math.Pow(SteeringLinearityPoints[i].X, Power);
+                for (int i = 0; i < ArraySize; i++)
+                {
+                    SteeringLinearityPoints[i].Y = (float)Math.Pow(SteeringLinearityPoints[i].X, Power);
+                }
             }
         }
 
