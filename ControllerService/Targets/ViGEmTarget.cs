@@ -147,8 +147,8 @@ namespace ControllerService.Targets
                     {
                         case Input.JoystickCamera:
                             {
-                                float AngularX = -xinputController.AngularVelocity.Z;
-                                float AngularY = xinputController.AngularVelocity.X;
+                                float AngularX = -xinputController.AngularUniversal.Z;
+                                float AngularY = xinputController.AngularUniversal.X;
 
                                 // apply sensivity curve
                                 AngularX *= Utils.ApplyCustomSensitivity(AngularX, XInputSensor.MaxValue, xinputController.profile.aiming_array);

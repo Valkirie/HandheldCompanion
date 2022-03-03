@@ -21,15 +21,13 @@ namespace ControllerService
         public Profile profile;
         private Profile defaultProfile;
 
-        private Vector3 prevAcceleration;
         public Vector3 Acceleration;
         public Timer AccelerationTimer;
 
-        private Vector3 prevAngle;
         public Vector3 Angle;
         public Timer AngleTimer;
 
-        private Vector3 prevAngularVelocity;
+        public Vector3 AngularUniversal;
         public Vector3 AngularVelocity;
         public Timer AngularVelocityTimer;
 
@@ -175,6 +173,7 @@ namespace ControllerService
         public void Girometer_ReadingChanged(XInputGirometer sender, Vector3 AngularVelocity)
         {
             this.AngularVelocity = AngularVelocity;
+            this.AngularUniversal = AngularVelocity;
 
             AngularVelocityTimer?.Stop();
             AngularVelocityTimer?.Start();
@@ -182,7 +181,9 @@ namespace ControllerService
 
         private void AngularVelocityTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            AngularVelocity = new();
+            // Disable drift compensation for angle values. 
+            // AngularVelocity = new();
+            AngularUniversal = new();
         }
 
         public void Inclinometer_ReadingChanged(XInputInclinometer sender, Vector3 Angle)
@@ -192,10 +193,11 @@ namespace ControllerService
             AngleTimer?.Stop();
             AngleTimer?.Start();
         }
+
         private void AngleTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // Disable drift compensation for angle values. 
-            //Angle = new();
+            // Angle = new();
         }
 
         public void SetWidthHeightRatio(int ratio)
