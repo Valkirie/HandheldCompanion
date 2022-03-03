@@ -13,11 +13,6 @@ namespace ControllerService.Sensors
     {
         public Gyrometer sensor;
 
-        public static new float MaxValue = 28.0f;
-
-        private long prev_microseconds;
-        private readonly OneEuroFilter3D gyroFilter;
-
         public event ReadingChangedEventHandler ReadingChanged;
         public delegate void ReadingChangedEventHandler(XInputGirometer sender, Vector3 e);
 
@@ -26,8 +21,6 @@ namespace ControllerService.Sensors
         public XInputGirometer(XInputController controller, ILogger logger, PipeServer pipeServer) : base(controller, pipeServer)
         {
             this.logger = logger;
-
-            gyroFilter = new OneEuroFilter3D();
 
             sensor = Gyrometer.GetDefault();
             if (sensor != null)
@@ -48,15 +41,9 @@ namespace ControllerService.Sensors
         {
             GyrometerReading reading = args.Reading;
 
-            var microseconds = (long)(reading.Timestamp.Ticks / (Stopwatch.Frequency / (1000L * 1000L)));
-            var elapsedTime = 0.000001 * (microseconds - prev_microseconds);
-            var rate = elapsedTime;
-
-            prev_microseconds = microseconds;
-
-            float readingX = this.reading.X = (float)Math.Min(MaxValue, gyroFilter.axis1Filter.Filter(reading.AngularVelocityX, rate));
-            float readingY = this.reading.Y = (float)Math.Min(MaxValue, gyroFilter.axis1Filter.Filter(reading.AngularVelocityZ, rate));
-            float readingZ = this.reading.Z = (float)Math.Min(MaxValue, gyroFilter.axis1Filter.Filter(reading.AngularVelocityY, rate));
+            float readingX = this.reading.X = (float)reading.AngularVelocityX;
+            float readingY = this.reading.Y = (float)reading.AngularVelocityZ;
+            float readingZ = this.reading.Z = (float)reading.AngularVelocityY;
 
             if (controller.virtualTarget != null)
             {

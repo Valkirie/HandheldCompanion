@@ -156,8 +156,8 @@ namespace ControllerService.Targets
                                 float AngularY = xinputController.AngularVelocity.X;
 
                                 // apply sensivity curve
-                                AngularX *= Utils.ApplyCustomSensitivity(AngularX, XInputGirometer.MaxValue, xinputController.profile.aiming_array);
-                                AngularY *= Utils.ApplyCustomSensitivity(AngularY, XInputGirometer.MaxValue, xinputController.profile.aiming_array);
+                                AngularX *= Utils.ApplyCustomSensitivity(AngularX, XInputSensor.MaxValue, xinputController.profile.aiming_array);
+                                AngularY *= Utils.ApplyCustomSensitivity(AngularY, XInputSensor.MaxValue, xinputController.profile.aiming_array);
 
                                 // get profile vars
                                 float intensity = xinputController.profile.GetIntensity();

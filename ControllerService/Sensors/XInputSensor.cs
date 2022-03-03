@@ -9,8 +9,7 @@ namespace ControllerService.Sensors
         protected XInputController controller;
         protected PipeServer pipeServer;
 
-        protected static float MaxValue = 0.0f;
-        protected static float MinValue = 0.0f;
+        public static float MaxValue = 128.0f;
 
         protected XInputSensor(XInputController controller, PipeServer pipeServer)
         {
