@@ -40,8 +40,6 @@ namespace ControllerService.Targets
 
         protected readonly ILogger logger;
 
-        public MadgwickAHRS madgwick;
-
         protected ViGEmClient client { get; }
         protected IVirtualGamepad virtualController;
 
@@ -67,9 +65,6 @@ namespace ControllerService.Targets
         {
             this.logger = logger;
             this.xinputController = xinput;
-
-            // initialize madgwick
-            madgwick = new(1f / 14f, 0.1f);
 
             // initialize secret state
             state_s = new();
@@ -164,8 +159,8 @@ namespace ControllerService.Targets
                                 float sensivity = xinputController.profile.GetSensiviy();
 
                                 // apply sensivity, intensity sliders (deprecated ?)
-                                float GamepadThumbX = Utils.ComputeInput(AngularX, sensivity, intensity, XInputGirometer.MaxValue);
-                                float GamepadThumbY = Utils.ComputeInput(AngularY, sensivity, intensity, XInputGirometer.MaxValue);
+                                float GamepadThumbX = Utils.ComputeInput(AngularX, sensivity, intensity, XInputSensor.MaxValue);
+                                float GamepadThumbY = Utils.ComputeInput(AngularY, sensivity, intensity, XInputSensor.MaxValue);
 
                                 switch (xinputController.profile.umc_output)
                                 {
