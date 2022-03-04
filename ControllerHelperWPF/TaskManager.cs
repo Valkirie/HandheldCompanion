@@ -1,7 +1,6 @@
 ﻿using ControllerHelperWPF.Views;
 using Microsoft.Win32.TaskScheduler;
 using System;
-using Task = Microsoft.Win32.TaskScheduler.Task;
 
 namespace ControllerHelperWPF
 {

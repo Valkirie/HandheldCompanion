@@ -186,12 +186,17 @@ namespace ControllerCommon
         {
             string processpath = Path.GetDirectoryName(profile.fullpath);
 
-            if (!Directory.Exists(processpath))
-                return ProfileErrorCode.MissingPath;
-            else if (!File.Exists(profile.fullpath))
-                return ProfileErrorCode.MissingExecutable;
-            else if (!Utils.IsDirectoryWritable(processpath))
-                return ProfileErrorCode.MissingPermission;
+            if (profile.IsDefault)
+                return ProfileErrorCode.IsDefault;
+            else
+            {
+                if (!Directory.Exists(processpath))
+                    return ProfileErrorCode.MissingPath;
+                else if (!File.Exists(profile.fullpath))
+                    return ProfileErrorCode.MissingExecutable;
+                else if (!Utils.IsDirectoryWritable(processpath))
+                    return ProfileErrorCode.MissingPermission;
+            }
 
             return ProfileErrorCode.None;
         }

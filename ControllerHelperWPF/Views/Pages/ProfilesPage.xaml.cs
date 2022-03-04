@@ -217,43 +217,57 @@ namespace ControllerHelperWPF.Views.Pages
 
             if (profileCurrent == null)
                 return;
-
-            this.Dispatcher.Invoke(() =>
-            {
-                // disable button if is default profile
-                b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
-                tB_ProfileName.IsEnabled = !profileCurrent.IsDefault;
-                cB_ExclusiveHook.IsEnabled = !profileCurrent.IsDefault;
-
-                tB_ProfileName.Text = profileCurrent.name;
-                tB_ProfilePath.Text = profileCurrent.path;
-                cB_Whitelist.IsChecked = profileCurrent.whitelisted;
-                cB_Wrapper.IsChecked = profileCurrent.use_wrapper;
-                Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
-
-                tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
-                tb_ProfileAcceleroValue.Value = profileCurrent.accelerometer;
-
-                cB_GyroSteering.SelectedIndex = profileCurrent.steering;
-
-                cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
-                cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
-
-                cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
-                cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
-
-                // Touch settings
-                cB_EnableHook.IsChecked = profileCurrent.mousehook_enabled;
-                cB_ExclusiveHook.IsChecked = profileCurrent.mousehook_exclusive;
-
-                cB_Buttons.SelectedItems.Clear();
-                foreach (string value in cB_Buttons.Items)
+            using (var d = Dispatcher.DisableProcessing())
+                Dispatcher.BeginInvoke(() =>
                 {
-                    GamepadButtonFlags button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(value);
-                    if (profileCurrent.umc_trigger.HasFlag(button))
-                        cB_Buttons.SelectedItems.Add(value);
-                }
-            });
+                    // disable button if is default profile
+                    b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
+                    tB_ProfileName.IsEnabled = !profileCurrent.IsDefault;
+                    cB_ExclusiveHook.IsEnabled = !profileCurrent.IsDefault;
+
+                    // populate controls
+                    tB_ProfileName.Text = profileCurrent.name;
+                    tB_ProfilePath.Text = profileCurrent.path;
+                    Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
+                    tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
+                    tb_ProfileAcceleroValue.Value = profileCurrent.accelerometer;
+                    cB_GyroSteering.SelectedIndex = profileCurrent.steering;
+                    cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
+                    cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
+                    cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
+                    cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
+                    cB_EnableHook.IsChecked = profileCurrent.mousehook_enabled;
+                    cB_ExclusiveHook.IsChecked = profileCurrent.mousehook_exclusive;
+
+                    cB_Buttons.SelectedItems.Clear();
+                    foreach (string value in cB_Buttons.Items)
+                    {
+                        GamepadButtonFlags button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(value);
+                        if (profileCurrent.umc_trigger.HasFlag(button))
+                            cB_Buttons.SelectedItems.Add(value);
+                    }
+
+                    // display warnings
+                    switch(profileCurrent.error)
+                    {
+                        default:
+                        case ProfileErrorCode.None:
+                            WarningBorder.Visibility = Visibility.Collapsed;
+                            cB_Whitelist.IsEnabled = profileCurrent.whitelisted;
+                            cB_Wrapper.IsEnabled = profileCurrent.use_wrapper;
+                            break;
+
+                        case ProfileErrorCode.MissingExecutable:
+                        case ProfileErrorCode.MissingPath:
+                        case ProfileErrorCode.MissingPermission:
+                        case ProfileErrorCode.IsDefault:
+                            WarningBorder.Visibility = Visibility.Visible;
+                            WarningContent.Text = Utils.GetDescriptionFromEnumValue(profileCurrent.error);
+                            cB_Whitelist.IsEnabled = false; // you can't whitelist an application without path
+                            cB_Wrapper.IsEnabled = false;   // you can't deploy wrapper on an application without path
+                            break;
+                    }
+                });
         }
 
         private void b_DeleteProfile_Click(object sender, RoutedEventArgs e)

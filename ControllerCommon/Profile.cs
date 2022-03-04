@@ -9,9 +9,14 @@ namespace ControllerCommon
     public enum ProfileErrorCode
     {
         None = 0,
+        [Description("Oops. It seems this profile does not have an executable. How is this even possible?")]
         MissingExecutable = 1,
+        [Description("Oops. It seems this profile does not have a path to the application. It should work nevertheless but some options will be unavailable to you.")]
         MissingPath = 2,
-        MissingPermission
+        [Description("Oops. It seems you do not have the necessary permission level to modify the content of this application. Make sure you have started this program in administrator mode.")]
+        MissingPermission = 3,
+        [Description("This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled.")]
+        IsDefault = 4
     }
 
     public enum Input

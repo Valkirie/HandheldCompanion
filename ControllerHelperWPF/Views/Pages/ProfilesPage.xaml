@@ -53,11 +53,10 @@
                 </ui:SimpleStackPanel>
                 <ui:SimpleStackPanel Spacing="6">
                     <Label Content="Profile details" FontWeight="SemiBold"></Label>
-                
+                    
                     <!-- Warning -->
                     <Border
                         Name="WarningBorder"
-                        Visibility="Collapsed"
                         Background="#F09D6500"
                         Padding="12,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
@@ -68,15 +67,14 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="0.5*" MinWidth="80"></ColumnDefinition>
-                                        <ColumnDefinition Width="2*" MinWidth="100"></ColumnDefinition>
-                                        <ColumnDefinition Width="7.5*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="9.5*"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <Grid>
                                         <ui:FontIcon Foreground="#F0F1DE0E" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF136;" />
                                         <ui:FontIcon Foreground="Black" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF13C;" />
                                     </Grid>
-                                    <TextBlock Name="WarningContent" Foreground="White" Text="Error 123" Grid.Column="1" FontSize="14" VerticalAlignment="Center"/>
+                                    <TextBlock Name="WarningContent" TextWrapping="Wrap" Foreground="White" Grid.Column="1" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Grid>
                             </ui:SimpleStackPanel>
                         </Grid>

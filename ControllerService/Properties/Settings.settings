@@ -6,7 +6,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="HIDmode" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="DSUEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -21,7 +21,7 @@
       <Value Profile="(Default)">127.0.0.1</Value>
     </Setting>
     <Setting Name="HIDuncloakonclose" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="HIDstrength" Type="System.Double" Scope="User">
       <Value Profile="(Default)">100</Value>

@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerService.Sensors;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -89,7 +90,7 @@ namespace ControllerHelperWPF.Views.Pages
             this.Dispatcher.Invoke(() =>
             {
                 Control Thumb = null;
-                double dist_x = Math.Abs(value) / 28.0f; // temp
+                double dist_x = Math.Abs(value) / XInputSensor.MaxValue; // temp
 
                 foreach (Control control in StackCurve.Children)
                 {

@@ -40,6 +40,13 @@ namespace ControllerHelperWPF.Views.Pages
             Toggle_Notification.IsOn = s_ToastEnable = Properties.Settings.Default.ToastEnable;
         }
 
+        public SettingsPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
+        {
+            this.Tag = Tag;
+            this.mainWindow = mainWindow;
+            this.microsoftLogger = microsoftLogger;
+        }
+
         private void Toggle_AutoStart_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
             Properties.Settings.Default.RunAtStartup = Toggle_AutoStart.IsOn;
@@ -72,13 +79,6 @@ namespace ControllerHelperWPF.Views.Pages
 
             s_ToastEnable = Toggle_Notification.IsOn;
             ToastChanged?.Invoke(s_ToastEnable);
-        }
-
-        public SettingsPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
-        {
-            this.Tag = Tag;
-            this.mainWindow = mainWindow;
-            this.microsoftLogger = microsoftLogger;
         }
 
         private void cB_Theme_SelectionChanged(object sender, SelectionChangedEventArgs e)

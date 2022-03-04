@@ -10,7 +10,7 @@
       d:DesignHeight="1000" d:DesignWidth="1000"
       KeepAlive="True"
       Loaded="Page_Loaded"
-      Title="Settings">
+      Title="About">
 
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="24">

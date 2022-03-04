@@ -44,6 +44,7 @@ namespace ControllerHelperWPF.Views
         public ControllerPage controllerPage;
         public ProfilesPage profilesPage;
         public SettingsPage settingsPage;
+        public AboutPage aboutPage;
 
         // touchscroll vars
         Point scrollPoint = new Point();
@@ -159,6 +160,9 @@ namespace ControllerHelperWPF.Views
             controllerPage = new ControllerPage("controller", this, microsoftLogger);
             profilesPage = new ProfilesPage("profiles", this, microsoftLogger);
             settingsPage = new SettingsPage("settings", this, microsoftLogger);
+            aboutPage = new AboutPage("about", this, microsoftLogger);
+
+            // initialize pages events
             settingsPage.ToastChanged += (value) =>
             {
                 toastManager.Enabled = value;
@@ -170,7 +174,7 @@ namespace ControllerHelperWPF.Views
 
             _pages.Add("ControllerPage", controllerPage);
             _pages.Add("ProfilesPage", profilesPage);
-            _pages.Add("AboutPage", profilesPage); // todo
+            _pages.Add("AboutPage", aboutPage);
 
             if (!IsElevated)
             {

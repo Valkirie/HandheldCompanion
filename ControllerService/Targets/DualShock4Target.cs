@@ -47,7 +47,7 @@ namespace ControllerService.Targets
 
         private DS4_REPORT_EX outDS4Report;
 
-        private const float F_ACC_RES_PER_G = 8192.0f;
+        private const float F_ACC_RES_PER_G = 128.0f;
         private const float F_GYRO_RES_IN_DEG_SEC = 16.0f;
 
         private new IDualShock4Controller virtualController;
@@ -215,7 +215,7 @@ namespace ControllerService.Targets
 
                 outDS4Report.wAccelX = (short)(-xinputController.Acceleration.X * F_ACC_RES_PER_G); // accelXFull
                 outDS4Report.wAccelY = (short)(-xinputController.Acceleration.Y * F_ACC_RES_PER_G); // accelYFull
-                outDS4Report.wAccelZ = (short)(xinputController.Acceleration.Z * F_ACC_RES_PER_G); // accelZFull
+                outDS4Report.wAccelZ = (short)(-xinputController.Acceleration.Z * F_ACC_RES_PER_G); // accelZFull
 
                 outDS4Report.bBatteryLvlSpecial = 11;
 
