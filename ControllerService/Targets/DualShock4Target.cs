@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerService.Sensors;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
@@ -6,6 +7,7 @@ using Nefarius.ViGEm.Client.Targets.DualShock4;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Timers;
 using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
 
@@ -46,9 +48,6 @@ namespace ControllerService.Targets
         };
 
         private DS4_REPORT_EX outDS4Report;
-
-        private const float F_ACC_RES_PER_G = 128.0f;
-        private const float F_GYRO_RES_IN_DEG_SEC = 16.0f;
 
         private new IDualShock4Controller virtualController;
 
@@ -209,13 +208,13 @@ namespace ControllerService.Targets
                     outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(Touch.TrackPadTouch1.Y >> 4);
                 }
 
-                outDS4Report.wGyroX = (short)(xinputController.AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
-                outDS4Report.wGyroY = (short)(-xinputController.AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
-                outDS4Report.wGyroZ = (short)(xinputController.AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
+                outDS4Report.wGyroX = (short)Utils.rangeMap(xinputController.AngularVelocity.X, XInputGirometer.sensorSpec); // (short)(xinputController.AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
+                outDS4Report.wGyroY = (short)Utils.rangeMap(-xinputController.AngularVelocity.Y, XInputGirometer.sensorSpec); // (short)(-xinputController.AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
+                outDS4Report.wGyroZ = (short)Utils.rangeMap(xinputController.AngularVelocity.Z, XInputGirometer.sensorSpec); // (short)(xinputController.AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
 
-                outDS4Report.wAccelX = (short)(-xinputController.Acceleration.X * F_ACC_RES_PER_G); // accelXFull
-                outDS4Report.wAccelY = (short)(-xinputController.Acceleration.Y * F_ACC_RES_PER_G); // accelYFull
-                outDS4Report.wAccelZ = (short)(-xinputController.Acceleration.Z * F_ACC_RES_PER_G); // accelZFull
+                outDS4Report.wAccelX = (short)Utils.rangeMap(-xinputController.Acceleration.X, XInputAccelerometer.sensorSpec); // (short)(-xinputController.Acceleration.X * F_ACC_RES_PER_G); // accelXFull
+                outDS4Report.wAccelY = (short)Utils.rangeMap(-xinputController.Acceleration.Y, XInputAccelerometer.sensorSpec); // (short)(-xinputController.Acceleration.Y * F_ACC_RES_PER_G); // accelYFull
+                outDS4Report.wAccelZ = (short)Utils.rangeMap(xinputController.Acceleration.Z, XInputAccelerometer.sensorSpec); // (short)(xinputController.Acceleration.Z * F_ACC_RES_PER_G); // accelZFull
 
                 outDS4Report.bBatteryLvlSpecial = 11;
 

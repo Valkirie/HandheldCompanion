@@ -151,16 +151,16 @@ namespace ControllerService.Targets
                                 float AngularY = xinputController.AngularUniversal.X;
 
                                 // apply sensivity curve
-                                AngularX *= Utils.ApplyCustomSensitivity(AngularX, XInputSensor.MaxValue, xinputController.profile.aiming_array);
-                                AngularY *= Utils.ApplyCustomSensitivity(AngularY, XInputSensor.MaxValue, xinputController.profile.aiming_array);
+                                AngularX *= Utils.ApplyCustomSensitivity(AngularX, XInputGirometer.sensorSpec.maxIn, xinputController.profile.aiming_array);
+                                AngularY *= Utils.ApplyCustomSensitivity(AngularY, XInputGirometer.sensorSpec.maxIn, xinputController.profile.aiming_array);
 
                                 // get profile vars
                                 float intensity = xinputController.profile.GetIntensity();
                                 float sensivity = xinputController.profile.GetSensiviy();
 
                                 // apply sensivity, intensity sliders (deprecated ?)
-                                float GamepadThumbX = Utils.ComputeInput(AngularX, sensivity, intensity, XInputSensor.MaxValue);
-                                float GamepadThumbY = Utils.ComputeInput(AngularY, sensivity, intensity, XInputSensor.MaxValue);
+                                float GamepadThumbX = Utils.ComputeInput(AngularX, sensivity, intensity, XInputGirometer.sensorSpec.maxIn);
+                                float GamepadThumbY = Utils.ComputeInput(AngularY, sensivity, intensity, XInputGirometer.sensorSpec.maxIn);
 
                                 switch (xinputController.profile.umc_output)
                                 {

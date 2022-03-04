@@ -12,6 +12,13 @@ namespace ControllerService.Sensors
     public class XInputGirometer : XInputSensor
     {
         public Gyrometer sensor;
+        public static SensorSpec sensorSpec = new SensorSpec()
+        {
+            minIn = -128.0f,
+            maxIn = 128.0f,
+            minOut = -2048.0f,
+            maxOut = 2048.0f,
+        };
 
         public event ReadingChangedEventHandler ReadingChanged;
         public delegate void ReadingChangedEventHandler(XInputGirometer sender, Vector3 e);

@@ -99,7 +99,7 @@ namespace ControllerHelperWPF.Views.Pages
             this.Dispatcher.Invoke(() =>
             {
                 Control Thumb = null;
-                double dist_x = Math.Abs(value) / XInputSensor.MaxValue; // temp
+                double dist_x = Math.Abs(value) / XInputGirometer.sensorSpec.maxIn;
 
                 foreach (Control control in StackCurve.Children)
                 {

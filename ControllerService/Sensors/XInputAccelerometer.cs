@@ -3,12 +3,19 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using static ControllerCommon.Utils;
 
 namespace ControllerService.Sensors
 {
     public class XInputAccelerometer : XInputSensor
     {
         public Accelerometer sensor;
+        public static SensorSpec sensorSpec = new SensorSpec() {
+            minIn = -2.0f,
+            maxIn = 2.0f,
+            minOut = -32767.0f,
+            maxOut = 32767.0f,
+        };
 
         public event ReadingChangedEventHandler ReadingHasChanged;
         public delegate void ReadingChangedEventHandler(XInputAccelerometer sender, Vector3 e);

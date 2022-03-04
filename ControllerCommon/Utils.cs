@@ -370,6 +370,27 @@ namespace ControllerCommon
             return IPAddress.TryParse(text, out _);
         }
 
+        public static float Clamp(float value, float min, float max)
+        {
+            return Math.Min(max, Math.Max(min, value));
+        }
+
+        public struct SensorSpec
+        {
+            public float minIn;
+            public float maxIn;
+            public float minOut;
+            public float maxOut;
+        }
+
+        public static float rangeMap(float value, SensorSpec spec)
+        {
+            float inRange = spec.maxIn - spec.minIn;
+            float outRange = spec.maxOut - spec.minOut;
+
+            return spec.minOut + outRange * ((value - spec.minIn) / inRange);
+        }
+
         public static string GetPathToApp(Process process)
         {
             try

@@ -1,5 +1,6 @@
 ﻿using ControllerCommon;
 using System.Numerics;
+using static ControllerCommon.Utils;
 
 namespace ControllerService.Sensors
 {
@@ -9,7 +10,7 @@ namespace ControllerService.Sensors
         protected XInputController controller;
         protected PipeServer pipeServer;
 
-        public static float MaxValue = 128.0f;
+        protected static SensorSpec sensorSpec;
 
         protected XInputSensor(XInputController controller, PipeServer pipeServer)
         {
