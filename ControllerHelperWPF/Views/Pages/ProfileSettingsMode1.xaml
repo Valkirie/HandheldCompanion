@@ -3,9 +3,9 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:local="clr-namespace:ControllerHelperWPF" 
-      xmlns:pages="clr-namespace:ControllerHelperWPF.Views.Pages"
       xmlns:ui="http://schemas.modernwpf.com/2019"
+      xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+      xmlns:ikriv="clr-namespace:IKriv.Wpf"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
       Title="Additional settings"
@@ -13,6 +13,74 @@
 
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="6">
+
+            <!-- Steering Visuals -->
+            <Border
+                    Height="200"
+                    Padding="0,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <Grid Name="SteeringVisualsGrid">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" MinWidth="200"/>
+                        <ColumnDefinition Width="1*" MinWidth="200"/>
+                    </Grid.ColumnDefinitions>
+
+                    <lvc:AngularGauge 
+                          Value="{Binding InclinoY}" 
+                          FromValue="-80" ToValue="80"  
+                          LabelsStep="10" TicksStep="5" Wedge="160" 
+                          NeedleFill="{DynamicResource SystemControlForegroundAccentBrush}"
+                          AnimationsSpeed="00:00:00.15"
+                          TicksForeground="{DynamicResource SystemControlForegroundBaseMediumHighBrush}" 
+                          Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                          FontSize="12" 
+                          SectionsInnerRadius="0.6"
+                          Margin="0,0,0,-130"
+                          Grid.Column="0">
+                        <lvc:AngularGauge.Sections>
+                            <lvc:AngularSection FromValue="-80" ToValue="{Binding Value, ElementName=SliderSteeringAngle, Converter={ikriv:MathConverter}, ConverterParameter=x*-1}" Fill="{DynamicResource SystemControlHighlightListMediumBrush}"/>
+                            <lvc:AngularSection FromValue="{Binding Value, ElementName=SliderDeadzoneAngle, Converter={ikriv:MathConverter}, ConverterParameter=x*-1}" ToValue="{Binding Value, ElementName=SliderDeadzoneAngle}" Fill="#94221C"/>
+                            <lvc:AngularSection FromValue="{Binding Value, ElementName=SliderSteeringAngle}" ToValue="80" Fill="{DynamicResource SystemControlHighlightListMediumBrush}"/>
+                        </lvc:AngularGauge.Sections>
+                    </lvc:AngularGauge>
+
+                    <lvc:CartesianChart LegendLocation="None" Grid.Column="1" Hoverable="False">
+                        <lvc:CartesianChart.Series>
+                            <lvc:LineSeries Values="{Binding LinearDefault}" 
+                            StrokeThickness="1"
+                            Stroke="{DynamicResource SystemControlHighlightListMediumBrush}" 
+                            Fill="Transparent" 
+                            LineSmoothness="0" 
+                            PointGeometry="{x:Null}" />
+                            <lvc:LineSeries Values="{Binding SteeringLinearityPoints}" 
+                            StrokeThickness="2" 
+                            Stroke="{DynamicResource SystemControlForegroundAccentBrush}" 
+                            Fill="Transparent" 
+                            LineSmoothness="1" 
+                            PointGeometry="{x:Null}"
+                            />
+                        </lvc:CartesianChart.Series>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Title="Joystick Game Input" MinValue="0.0" MaxValue="1.00001" FontSize="12" Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}">
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Stroke="{DynamicResource SystemControlPageTextBaseHighBrush}"/>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisY>
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis Title="Joystick Steering" MinValue="0" MaxValue="1.00001" FontSize="12" Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}">
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Stroke="{DynamicResource SystemControlPageTextBaseHighBrush}"/>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisX>
+                    </lvc:CartesianChart>
+
+                </Grid>
+            </Border>
+
             <Label Content="Joystick steering options" FontWeight="SemiBold"></Label>
 
             <!-- Steering angle -->
@@ -60,8 +128,8 @@
                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
 
                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Power of" FontSize="14"/>
-                        <TextBlock Text="Change the steering function mathematical exponent, 1 is linear" FontSize="12" TextWrapping="Wrap"/>
+                        <TextBlock Text="Steering linearity" FontSize="14"/>
+                        <TextBlock FontSize="12" TextWrapping="Wrap"><Run Text="Mapping between input and steering. Lower values provide more accuracy "/><Run Text="near full lock but less accuracy near the center"/><Run Text=". Higher values provide more accuracy "/><Run Text="near the center but less accuracy near full lock"/><Run Text=". 1.0 is a linear mapping."/></TextBlock>
                     </ui:SimpleStackPanel>
 
                     <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderPower, Mode=OneWay}" />
@@ -88,7 +156,7 @@
 
                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Deadzone" FontSize="14"/>
-                        <TextBlock Text="Change the steering deadzone, in degree" FontSize="12" TextWrapping="Wrap"/>
+                        <TextBlock Text="Change the steering deadzone, in degree. Improves steering straight." FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
                     <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneAngle, Mode=OneWay}" />
@@ -115,7 +183,7 @@
 
                     <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Deadzone compensation" FontSize="14"/>
-                        <TextBlock Text="Change the steering deadzone compensation, in degree" FontSize="12" TextWrapping="Wrap"/>
+                        <TextBlock Text="Change the in-game steering deadzone compensation, in degree." FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
                     <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneCompensation, Mode=OneWay}" />
