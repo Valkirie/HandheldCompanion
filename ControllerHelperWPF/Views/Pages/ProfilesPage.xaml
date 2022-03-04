@@ -134,7 +134,7 @@
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                        <Expander FlowDirection="RightToLeft">
+                        <Expander FlowDirection="RightToLeft" Expanded="Expander_Expanded">
                             <Expander.Header>
                                 <DockPanel FlowDirection="LeftToRight"
                                        Margin="-12,0,0,0"
@@ -184,7 +184,7 @@
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                        <Expander FlowDirection="RightToLeft">
+                        <Expander FlowDirection="RightToLeft" Expanded="Expander_Expanded">
                             <Expander.Header>
                                 <DockPanel FlowDirection="LeftToRight"
                                        Margin="-12,0,0,0"
@@ -234,7 +234,7 @@
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                        <Expander FlowDirection="RightToLeft">
+                        <Expander FlowDirection="RightToLeft" Expanded="Expander_Expanded">
                             <Expander.Header>
                                 <DockPanel FlowDirection="LeftToRight"
                                        Margin="-12,0,0,0"
@@ -342,7 +342,7 @@
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                        <Expander Name="Expander_UMC" FlowDirection="RightToLeft" IsExpanded="False">
+                        <Expander Name="Expander_UMC" FlowDirection="RightToLeft" Expanded="Expander_Expanded">
                             <Expander.Header>
                                 <DockPanel FlowDirection="LeftToRight"
                                        Margin="-12,0,0,0"

@@ -355,5 +355,10 @@ namespace ControllerHelperWPF.Views.Pages
         {
             MainWindow.scrollLock = false;
         }
+
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            ((Expander)sender).BringIntoView();
+        }
     }
 }
