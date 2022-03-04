@@ -27,18 +27,18 @@
                         <ColumnDefinition Width="1*" MinWidth="200"/>
                     </Grid.ColumnDefinitions>
 
-                    <lvc:AngularGauge 
-                          Value="{Binding InclinoY}" 
-                          FromValue="-80" ToValue="80"  
-                          LabelsStep="10" TicksStep="5" Wedge="160" 
-                          NeedleFill="{DynamicResource SystemControlForegroundAccentBrush}"
-                          AnimationsSpeed="00:00:00.15"
-                          TicksForeground="{DynamicResource SystemControlForegroundBaseMediumHighBrush}" 
-                          Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
-                          FontSize="12" 
-                          SectionsInnerRadius="0.6"
-                          Margin="0,0,0,-130"
-                          Grid.Column="0">
+                    <lvc:AngularGauge
+                        Name = "lvAngularGauge"
+                        FromValue="-80" ToValue="80"  
+                        LabelsStep="10" TicksStep="5" Wedge="160" 
+                        NeedleFill="{DynamicResource SystemControlForegroundAccentBrush}"
+                        AnimationsSpeed="00:00:00.05"
+                        TicksForeground="{DynamicResource SystemControlForegroundBaseMediumHighBrush}" 
+                        Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                        FontSize="12" 
+                        SectionsInnerRadius="0.6"
+                        Margin="0,0,0,-130"
+                        Grid.Column="0">
                         <lvc:AngularGauge.Sections>
                             <lvc:AngularSection FromValue="-80" ToValue="{Binding Value, ElementName=SliderSteeringAngle, Converter={ikriv:MathConverter}, ConverterParameter=x*-1}" Fill="{DynamicResource SystemControlHighlightListMediumBrush}"/>
                             <lvc:AngularSection FromValue="{Binding Value, ElementName=SliderDeadzoneAngle, Converter={ikriv:MathConverter}, ConverterParameter=x*-1}" ToValue="{Binding Value, ElementName=SliderDeadzoneAngle}" Fill="#94221C"/>
@@ -48,19 +48,20 @@
 
                     <lvc:CartesianChart LegendLocation="None" Grid.Column="1" Hoverable="False">
                         <lvc:CartesianChart.Series>
-                            <lvc:LineSeries Values="{Binding LinearDefault}" 
-                            StrokeThickness="1"
-                            Stroke="{DynamicResource SystemControlHighlightListMediumBrush}" 
-                            Fill="Transparent" 
-                            LineSmoothness="0" 
-                            PointGeometry="{x:Null}" />
-                            <lvc:LineSeries Values="{Binding SteeringLinearityPoints}" 
-                            StrokeThickness="2" 
-                            Stroke="{DynamicResource SystemControlForegroundAccentBrush}" 
-                            Fill="Transparent" 
-                            LineSmoothness="1" 
-                            PointGeometry="{x:Null}"
-                            />
+                            <lvc:LineSeries
+                                Name = "lvLineSeriesDefault"
+                                StrokeThickness="1"
+                                Stroke="{DynamicResource SystemControlHighlightListMediumBrush}" 
+                                Fill="Transparent" 
+                                LineSmoothness="0" 
+                                PointGeometry="{x:Null}" />
+                            <lvc:LineSeries
+                                Name = "lvLineSeriesValues"
+                                StrokeThickness="2" 
+                                Stroke="{DynamicResource SystemControlForegroundAccentBrush}" 
+                                Fill="Transparent" 
+                                LineSmoothness="1" 
+                                PointGeometry="{x:Null}" />
                         </lvc:CartesianChart.Series>
                         <lvc:CartesianChart.AxisY>
                             <lvc:Axis Title="Joystick Game Input" MinValue="0.0" MaxValue="1.00001" FontSize="12" Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}">

@@ -64,7 +64,13 @@ namespace ControllerHelperWPF.Views.Pages
             {
                 case PipeCode.SERVER_SENSOR:
                     PipeSensor sensor = (PipeSensor)message;
-                    Highlight_Thumb(sensor.z);
+
+                    switch (sensor.type)
+                    {
+                        case SensorType.Girometer:
+                            Highlight_Thumb(sensor.z);
+                            break;
+                    }
                     break;
             }
         }
