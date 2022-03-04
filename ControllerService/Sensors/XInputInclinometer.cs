@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using SensorType = ControllerCommon.SensorType;
 
 namespace ControllerService.Sensors
 {
@@ -79,6 +80,9 @@ namespace ControllerService.Sensors
             this.reading.Y = (float)(angle_y_theta);
 
             logger?.LogDebug("XInputInclinometer.ReadingChanged({0:00.####}, {1:00.####})", angle_x_psi, angle_y_theta);
+
+            // update client(s)
+            pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Inclinometer));
 
             // Raise event
             ReadingHasChanged?.Invoke(this, this.reading);
