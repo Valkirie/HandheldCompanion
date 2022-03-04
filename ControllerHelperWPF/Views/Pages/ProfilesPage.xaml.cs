@@ -202,10 +202,10 @@ namespace ControllerHelperWPF.Views.Pages
             {
                 default:
                 case Input.JoystickCamera:
-                    page = new ProfileSettingsMode0(profileCurrent, pipeClient);
+                    page = new ProfileSettingsMode0("ProfileSettingsMode0", profileCurrent, pipeClient);
                     break;
                 case Input.JoystickSteering:
-                    page = new ProfileSettingsMode1(profileCurrent, pipeClient);
+                    page = new ProfileSettingsMode1("ProfileSettingsMode1", profileCurrent, pipeClient);
                     break;
             }
             mainWindow.NavView_Navigate(page);

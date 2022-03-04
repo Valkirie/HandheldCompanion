@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using ControllerCommon;
+using Microsoft.Extensions.Logging;
 using ModernWpf;
 using System.Windows.Controls;
 
@@ -9,9 +10,9 @@ namespace ControllerHelperWPF.Views.Pages
     /// </summary>
     public partial class AboutPage : Page
     {
-        private string Tag;
         private MainWindow mainWindow;
         private ILogger microsoftLogger;
+        private PipeClient pipeClient;
 
         public AboutPage()
         {
@@ -23,6 +24,8 @@ namespace ControllerHelperWPF.Views.Pages
             this.Tag = Tag;
             this.mainWindow = mainWindow;
             this.microsoftLogger = microsoftLogger;
+
+            this.pipeClient = mainWindow.pipeClient;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using ControllerCommon;
+using Microsoft.Extensions.Logging;
 using ModernWpf;
 using System.Windows.Controls;
 
@@ -9,9 +10,9 @@ namespace ControllerHelperWPF.Views.Pages
     /// </summary>
     public partial class SettingsPage : Page
     {
-        private string Tag;
         private MainWindow mainWindow;
         private ILogger microsoftLogger;
+        private PipeClient pipeClient;
 
         // settings vars
         public bool s_ToastEnable, s_RunAtStartup, s_StartMinimized, s_CloseMinimises;
@@ -45,6 +46,8 @@ namespace ControllerHelperWPF.Views.Pages
             this.Tag = Tag;
             this.mainWindow = mainWindow;
             this.microsoftLogger = microsoftLogger;
+
+            this.pipeClient = mainWindow.pipeClient;
         }
 
         private void Toggle_AutoStart_Toggled(object sender, System.Windows.RoutedEventArgs e)

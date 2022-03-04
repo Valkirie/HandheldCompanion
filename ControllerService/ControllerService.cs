@@ -34,6 +34,7 @@ namespace ControllerService
         public HidHide Hidder;
 
         public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathDep, CurrentPathProfiles;
+        public static string CurrentTag;
 
         private string DSUip;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
@@ -305,6 +306,24 @@ namespace ControllerService
                             Hidder.UnregisterApplication(hidder.path);
                             break;
                     }
+                    break;
+
+                case PipeCode.CLIENT_NAVIGATED:
+                    PipeNavigation navigation = (PipeNavigation)message;
+                    CurrentTag = navigation.Tag;
+
+                    switch (navigation.Tag)
+                    {
+                        case "ProfileSettingsMode0":
+                            // do something
+                            break;
+                        case "ProfileSettingsMode1":
+                            // do something
+                            break;
+                        default:
+                            break;
+                    }
+
                     break;
             }
         }

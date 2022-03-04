@@ -43,7 +43,10 @@ namespace ControllerCommon
         FORCE_SHUTDOWN = 13,                // Sent to server or client to halt process
                                             // args: ...
 
-        SERVER_SENSOR = 14,                 // Sent client to share sensor values
+        SERVER_SENSOR = 14,                 // Sent to client to share sensor values
+                                            // args: ...
+
+        CLIENT_NAVIGATED = 15,              // Sent to server to share current navigated page
                                             // args: ...
     }
 

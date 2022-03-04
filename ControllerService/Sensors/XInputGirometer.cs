@@ -71,7 +71,8 @@ namespace ControllerService.Sensors
             logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
 
             // update client(s)
-            pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Girometer));
+            if (ControllerService.CurrentTag == "ProfileSettingsMode0")
+                pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Girometer));
 
             // raise event
             ReadingChanged?.Invoke(this, this.reading);

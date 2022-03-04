@@ -34,11 +34,14 @@ namespace ControllerHelperWPF.Views.Pages
             lvLineSeriesDefault.Values = new ChartValues<double>() { 0, 1 };
         }
 
-        public ProfileSettingsMode1(Profile profileCurrent, PipeClient pipeClient) : this()
+        public ProfileSettingsMode1(string Tag, Profile profileCurrent, PipeClient pipeClient) : this()
         {
+            this.Tag = Tag;
+
             this.profileCurrent = profileCurrent;
             this.pipeClient = pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
+            this.pipeClient.SendMessage(new PipeNavigation((string)this.Tag));
 
             SliderDeadzoneAngle.Value = profileCurrent.steering_deadzone;
             SliderDeadzoneCompensation.Value = profileCurrent.steering_deadzone_compensation;

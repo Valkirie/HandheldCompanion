@@ -21,11 +21,14 @@ namespace ControllerHelperWPF.Views.Pages
             InitializeComponent();
         }
 
-        public ProfileSettingsMode0(Profile profileCurrent, PipeClient pipeClient) : this()
+        public ProfileSettingsMode0(string Tag, Profile profileCurrent, PipeClient pipeClient) : this()
         {
+            this.Tag = Tag;
+
             this.profileCurrent = profileCurrent;
             this.pipeClient = pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
+            this.pipeClient.SendMessage(new PipeNavigation((string)this.Tag));
 
             SliderSensivity.Value = profileCurrent.aiming_sensivity;
             SliderIntensity.Value = profileCurrent.aiming_intensity;

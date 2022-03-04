@@ -191,5 +191,18 @@ namespace ControllerCommon
             this.type = type;
         }
     }
+
+    [Serializable]
+    public partial class PipeNavigation : PipeMessage
+    {
+        public string Tag;
+
+        public PipeNavigation(string Tag)
+        {
+            code = PipeCode.CLIENT_NAVIGATED;
+
+            this.Tag = Tag;
+        }
+    }
     #endregion
 }
