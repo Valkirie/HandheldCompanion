@@ -54,8 +54,6 @@ namespace ControllerHelperWPF.Views.Pages
 
             this.serviceManager = mainWindow.serviceManager;
             this.serviceManager.Updated += ServiceManager_Updated;
-
-            UpdateDevice();
         }
 
         private async void ServiceManager_Updated(ServiceControllerStatus status, ServiceStartMode mode)
@@ -94,56 +92,6 @@ namespace ControllerHelperWPF.Views.Pages
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             // implement me
-        }
-
-        private void UpdateDevice()
-        {
-            // List of supported devices
-            // AYANEO 2021 Pro Retro Power
-            // AYANEO 2021 Pro
-            // AYANEO 2021
-            // AYANEO NEXT Pro
-            // AYANEO NEXT Advance
-            // AYANEO NEXT
-
-            string ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
-            string ProductName = MotherboardInfo.Product;
-
-            microsoftLogger.LogInformation("{0} ({1})", ManufacturerName, ProductName);
-
-            // Device visual
-            Uri ImageSource;
-
-            switch (ProductName)
-            {
-                /* case "AYANEO 2021 Pro Retro Power":
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_retro_power.png");
-                    break;
-                case "AYANEO 2021 Pro":
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_2021_pro.png");
-                    break;
-                case "AYANEO 2021":
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_2021.png");
-                    break;
-                case "AYANEO NEXT Pro":
-                case "AYANEO NEXT Advance":
-                case "AYANEO NEXT":
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_next.png");
-                    break; */
-                default:
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_generic.png");
-                    break;
-            }
-
-            // threaded call to update UI
-            this.Dispatcher.Invoke(() =>
-            {
-                // Motherboard properties
-                LabelManufacturer.Content = ManufacturerName;
-                LabelProductName.Content = ProductName;
-
-                ImageDevice.Source = new BitmapImage(ImageSource);
-            });
         }
 
         private void UpdateController()
