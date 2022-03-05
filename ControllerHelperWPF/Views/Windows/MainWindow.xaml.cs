@@ -636,10 +636,6 @@ namespace ControllerHelperWPF.Views
         private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
         }
-
-        private void ScrollViewerEx_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-        }
         #endregion
     }
 }
