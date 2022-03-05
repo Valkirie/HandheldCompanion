@@ -14,8 +14,8 @@ namespace ControllerService.Sensors
         public Gyrometer sensor;
         public static SensorSpec sensorSpec = new SensorSpec()
         {
-            minIn = -128.0f,
-            maxIn = 128.0f,
+            minIn = -2000.0f,
+            maxIn = 2000.0f,
             minOut = -2048.0f,
             maxOut = 2048.0f,
         };
