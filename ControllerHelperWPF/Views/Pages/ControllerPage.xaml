@@ -21,27 +21,6 @@
         <Border>
             <ui:SimpleStackPanel Spacing="24">
 
-                <!-- System -->
-                <Border
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
-                    
-                    <ui:SimpleStackPanel Spacing="10" Grid.Column="1" HorizontalAlignment="Left" Orientation="Horizontal">
-                        
-                        <Image Name="ImageDevice" Height="50" Width="120">
-                            <Image.Source>
-                                <BitmapImage UriSource="/Resources/device_generic.png"/>
-                            </Image.Source>
-                        </Image>
-
-                        <ui:SimpleStackPanel Orientation="Vertical" VerticalAlignment="Center">
-                            <Label Name="LabelManufacturer" Content="Manufacturer" FontWeight="SemiBold" FontSize="20" Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}"></Label>
-                            <Label Name="LabelProductName" Content="Product name" Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}"></Label>
-                        </ui:SimpleStackPanel>
-                    </ui:SimpleStackPanel>
-                </Border>
-
                 <!-- Controller -->
                 <Border
                     Height="300"
