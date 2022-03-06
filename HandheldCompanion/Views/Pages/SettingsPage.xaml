@@ -163,6 +163,39 @@
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
+
+            <!-- Service options -->
+            <ui:SimpleStackPanel Spacing="6">
+                <Label Content="Service options" FontWeight="SemiBold"></Label>
+
+                <!-- Toast notification -->
+                <Border                      
+                        Padding="0,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="Startup type" FontSize="14"/>
+                            <TextBlock Text="Used by the service manager to define the service startup type " Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                        </ui:SimpleStackPanel>
+
+                        <ComboBox Name="cB_StartupType" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_StartupType_SelectionChanged" >
+                            <ComboBoxItem Content="Automatic"/>
+                            <ComboBoxItem Content="Manual"/>
+                            <ComboBoxItem Content="Disabled"/>
+                        </ComboBox>
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
         </ui:SimpleStackPanel>
     </Grid>
 </Page>

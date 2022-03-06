@@ -177,6 +177,10 @@ namespace HandheldCompanion.Views
             {
                 taskManager.UpdateTask(value);
             };
+            settingsPage.ServiceChanged += (value) =>
+            {
+                serviceManager.SetStartType(value);
+            };
 
             _pages.Add("ControllerPage", controllerPage);
             _pages.Add("ProfilesPage", profilesPage);
@@ -401,6 +405,13 @@ namespace HandheldCompanion.Views
                         b_ServiceInstall.Visibility = Visibility.Visible;
 
                         b_ServiceInstall.IsEnabled = IsElevated;
+                        break;
+                }
+
+                switch (mode)
+                {
+                    case ServiceStartMode.Disabled:
+                        b_ServiceStart.IsEnabled = false;
                         break;
                 }
             });
