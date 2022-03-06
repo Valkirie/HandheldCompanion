@@ -31,6 +31,8 @@ namespace ControllerHelperWPF.Views
     {
         private readonly ILogger microsoftLogger;
         private StartupEventArgs arguments;
+        public HandheldDevice handheldDevice;
+        public FileVersionInfo fileVersionInfo;
 
         // process vars
         private Timer MonitorTimer;
@@ -58,8 +60,9 @@ namespace ControllerHelperWPF.Views
 
         public CmdParser cmdParser;
         public MouseHook mouseHook;
-        public ToastManager toastManager;
 
+        // manager(s) vars
+        public static ToastManager toastManager;
         public ServiceManager serviceManager;
         public ProfileManager profileManager;
         public TaskManager taskManager;
@@ -77,9 +80,13 @@ namespace ControllerHelperWPF.Views
             this.microsoftLogger = microsoftLogger;
             this.arguments = arguments;
 
+            handheldDevice = new HandheldDevice();
+
+            microsoftLogger.LogInformation("{0} ({1})", handheldDevice.ManufacturerName, handheldDevice.ProductName);
+
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
             Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
+            fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
 
             // initialize log
             microsoftLogger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
@@ -93,7 +100,7 @@ namespace ControllerHelperWPF.Views
             {
                 Text = "Controller Helper",
                 Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location),
-                Visible = true,
+                Visible = false,
                 ContextMenuStrip = new(),
             };
             notifyIcon.DoubleClick += NotifyIconDoubleClick;
@@ -292,6 +299,7 @@ namespace ControllerHelperWPF.Views
 
             // pull settings
             WindowState = settingsPage.s_StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
+            toastManager.Enabled = settingsPage.s_ToastEnable;
 
             // start Service Manager
             serviceManager.Start();
@@ -548,6 +556,7 @@ namespace ControllerHelperWPF.Views
                 WindowState = WindowState.Minimized;
             }
 
+            notifyIcon.Visible = false;
             Properties.Settings.Default.Save();
         }
 
@@ -558,6 +567,7 @@ namespace ControllerHelperWPF.Views
                 case WindowState.Minimized:
                     notifyIcon.Visible = true;
                     ShowInTaskbar = false;
+                    toastManager.SendToast("Controller Helper", "The application is running in the background.");
                     break;
                 case WindowState.Normal:
                 case WindowState.Maximized:

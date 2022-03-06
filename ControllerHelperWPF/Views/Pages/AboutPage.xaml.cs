@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Diagnostics;
 using Page = System.Windows.Controls.Page;
+using System.Windows.Controls;
 
 namespace ControllerHelperWPF.Views.Pages
 {
@@ -16,6 +17,8 @@ namespace ControllerHelperWPF.Views.Pages
         private MainWindow mainWindow;
         private ILogger microsoftLogger;
         private PipeClient pipeClient;
+
+        private HandheldDevice handheldDevice;
 
         public AboutPage()
         {
@@ -29,6 +32,22 @@ namespace ControllerHelperWPF.Views.Pages
             this.microsoftLogger = microsoftLogger;
 
             this.pipeClient = mainWindow.pipeClient;
+
+            this.handheldDevice = mainWindow.handheldDevice;
+
+            VersionValue.Text = mainWindow.fileVersionInfo.FileVersion;
+            SensorName.Text = handheldDevice.sensorName;
+            GyrometerValue.Text = handheldDevice.hasGyrometer ? "Detected" : "N/A";
+            AccelerometerValue.Text = handheldDevice.hasAccelerometer ? "Detected" : "N/A";
+            InclinometerValue.Text = handheldDevice.hasInclinometer ? "Detected" : "N/A";
+
+            /* List of supported sensors
+                - BMI160
+            */
+
+            WarningBorder.Visibility = handheldDevice.sensorSupported ? Visibility.Collapsed : Visibility.Visible;
+            if (!handheldDevice.sensorSupported)
+                WarningContent.Text = "Oups, it appears your device is not compatible with Controller Helper. Please reach out to us.";
 
             UpdateDevice();
         }
@@ -45,23 +64,19 @@ namespace ControllerHelperWPF.Views.Pages
 
         private void UpdateDevice()
         {
-            // List of supported devices
-            // AYANEO 2021 Pro Retro Power
-            // AYANEO 2021 Pro
-            // AYANEO 2021
-            // AYANEO NEXT Pro
-            // AYANEO NEXT Advance
-            // AYANEO NEXT
-
-            string ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
-            string ProductName = MotherboardInfo.Product;
-
-            microsoftLogger.LogInformation("{0} ({1})", ManufacturerName, ProductName);
+            /* List of supported devices
+                - AYANEO 2021 Pro Retro Power
+                - AYANEO 2021 Pro
+                - AYANEO 2021
+                - AYANEO NEXT Pro
+                - AYANEO NEXT Advance
+                - AYANEO NEXT
+            */
 
             // Device visual
             Uri ImageSource;
 
-            switch (ProductName)
+            switch (handheldDevice.ProductName)
             {
                 case "AYANEO 2021 Pro Retro Power":
                     ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_retro_power.png");
@@ -76,7 +91,7 @@ namespace ControllerHelperWPF.Views.Pages
                 case "AYANEO NEXT Advance":
                 case "AYANEO NEXT":
                     ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_next.png");
-                    break; 
+                    break;
                 default:
                     ImageSource = new Uri($"pack://application:,,,/Resources/device_generic.png");
                     break;
@@ -86,8 +101,8 @@ namespace ControllerHelperWPF.Views.Pages
             this.Dispatcher.Invoke(() =>
             {
                 // Motherboard properties
-                LabelManufacturer.Content = ManufacturerName;
-                LabelProductName.Content = ProductName;
+                LabelManufacturer.Content = handheldDevice.ManufacturerName;
+                LabelProductName.Content = handheldDevice.ProductName;
 
                 ImageDevice.Source = new BitmapImage(ImageSource);
             });
@@ -99,6 +114,11 @@ namespace ControllerHelperWPF.Views.Pages
             System.Diagnostics.Process.Start(sInfo);
 
             e.Handled = true;
+        }
+
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            ((Expander)sender).BringIntoView();
         }
     }
 }

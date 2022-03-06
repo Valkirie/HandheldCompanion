@@ -40,7 +40,7 @@
                             </ui:SimpleStackPanel>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
+                                    <ColumnDefinition Width="60"></ColumnDefinition>
                                     <ColumnDefinition Width="3.5*" MinWidth="200"></ColumnDefinition>
                                     <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
                                     <ColumnDefinition Width="6*" MinWidth="120"></ColumnDefinition>
@@ -50,7 +50,7 @@
 
                                 <ui:SimpleStackPanel Grid.Column="1">
                                     <TextBlock Text="Vibration strength" FontSize="14"/>
-                                    <TextBlock Text="Change controller vibration strength" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="Change controller vibration strength" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </ui:SimpleStackPanel>
 
                                 <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderStrength, Mode=OneWay}" />
@@ -101,7 +101,7 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
+                                <ColumnDefinition Width="60"></ColumnDefinition>
                                 <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
@@ -110,7 +110,7 @@
 
                             <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="Cloak device" FontSize="14"/>
-                                <TextBlock Text="Change the physical controller visibility to other applications" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="Change the physical controller visibility to other applications" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
 
                             <ui:ToggleSwitch Name="Toggle_Cloaked" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Stretch" Toggled="Toggle_Cloaked_Toggled"/>
@@ -125,7 +125,7 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="0.5*" MinWidth="60"></ColumnDefinition>
+                                <ColumnDefinition Width="60"></ColumnDefinition>
                                 <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
@@ -134,7 +134,7 @@
 
                             <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="Uncloak on close" FontSize="14"/>
-                                <TextBlock Text="Restore visibility of the physical controller to other applications on service exit" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="Restore visibility of the physical controller to other applications on service exit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
 
                             <ui:ToggleSwitch Name="Toggle_Uncloak" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Stretch" Toggled="Toggle_Uncloak_Toggled"/>

@@ -7,7 +7,7 @@
         xmlns:resx="clr-namespace:ControllerHelperWPF.Properties"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
-        Title="Controller Helper WPF" Height="800" Width="1280"
+        Title="Handheld Companion" Height="800" Width="1280"
         Loaded="Window_Loaded"
         Closed="Window_Closed"
         Closing="Window_Closing"

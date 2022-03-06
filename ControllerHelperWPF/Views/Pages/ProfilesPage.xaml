@@ -35,7 +35,7 @@
 
                             <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="Profile selection" FontSize="14"/>
-                                <TextBlock Text="Select the profile you would like to edit" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="Select the profile you would like to edit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
 
                             <ui:SimpleStackPanel Grid.Column="3" VerticalAlignment="Center" Spacing="6">
@@ -150,7 +150,7 @@
 
                                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                             <TextBlock Text="Global settings" FontSize="14"/>
-                                            <TextBlock Text="Change the global profiles settings" FontSize="12" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Change the global profiles settings" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                         </ui:SimpleStackPanel>
                                     </Grid>
                                 </DockPanel>
@@ -200,7 +200,7 @@
 
                                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                             <TextBlock Text="Touch settings" FontSize="14"/>
-                                            <TextBlock Text="Change the touch settings" FontSize="12" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Change the touch settings" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                         </ui:SimpleStackPanel>
                                     </Grid>
                                 </DockPanel>
@@ -250,7 +250,7 @@
 
                                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                             <TextBlock Text="Motion control settings" FontSize="14"/>
-                                            <TextBlock Text="Change the global motion control settings" FontSize="12" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Change the global motion control settings" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                         </ui:SimpleStackPanel>
                                     </Grid>
                                 </DockPanel>
@@ -273,7 +273,7 @@
 
                                             <ui:SimpleStackPanel Grid.Column="0">
                                                 <TextBlock Text="Gyrometer multiplier" FontSize="14"/>
-                                                <TextBlock Text="Change the system reported gyrometer value" FontSize="12" TextWrapping="Wrap"/>
+                                                <TextBlock Text="Change the system reported gyrometer value" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
 
                                             <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileGyroValue, Mode=OneWay}" />
@@ -293,7 +293,7 @@
 
                                             <ui:SimpleStackPanel Grid.Column="0">
                                                 <TextBlock Text="Accelerometer multiplier" FontSize="14"/>
-                                                <TextBlock Text="Change the system reported accelerometer value" FontSize="12" TextWrapping="Wrap"/>
+                                                <TextBlock Text="Change the system reported accelerometer value" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
 
                                             <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAcceleroValue, Mode=OneWay}" />
@@ -312,7 +312,7 @@
 
                                             <ui:SimpleStackPanel Grid.Column="0">
                                                 <TextBlock Text="Gyro steering axis" FontSize="14"/>
-                                                <TextBlock Text="For controlling the horizontal movement of the controller, you can use either the yaw or roll axis" FontSize="12" TextWrapping="Wrap"/>
+                                                <TextBlock Text="For controlling the horizontal movement of the controller, you can use either the yaw or roll axis" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
 
                                             <ComboBox Name="cB_GyroSteering" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0">
@@ -360,7 +360,7 @@
 
                                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                             <TextBlock Text="Universal motion control settings" FontSize="14"/>
-                                            <TextBlock Text="Translate device motions into controller inputs" FontSize="12" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Translate device motions into controller inputs" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                         </ui:SimpleStackPanel>
 
                                         <ui:ToggleSwitch Name="Toggle_UniversalMotion" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_UniversalMotion_Toggled"/>
@@ -384,7 +384,7 @@
 
                                             <ui:SimpleStackPanel Grid.Column="0">
                                                 <TextBlock Text="Style of input" FontSize="14"/>
-                                                <TextBlock Text="The physical inputs of the controller can be programmed to act like different types of devices" FontSize="12" TextWrapping="Wrap"/>
+                                                <TextBlock Text="The physical inputs of the controller can be programmed to act like different types of devices" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
 
                                             <ComboBox Name="cB_Input" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0"/>
@@ -402,7 +402,7 @@
 
                                             <ui:SimpleStackPanel Grid.Column="0">
                                                 <TextBlock Text="Output" FontSize="14"/>
-                                                <TextBlock Text="When sending analog joystick commands to the game, should those commands be a left or right joystick" FontSize="12" TextWrapping="Wrap"/>
+                                                <TextBlock Text="When sending analog joystick commands to the game, should those commands be a left or right joystick" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
 
                                             <ComboBox Name="cB_Output" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0"/>
@@ -420,7 +420,7 @@
 
                                             <ui:SimpleStackPanel Grid.Column="0">
                                                 <TextBlock Text="Enable button" FontSize="14"/>
-                                                <TextBlock Text="The gyro input can be turned on only when a button is pressed" FontSize="12" TextWrapping="Wrap"/>
+                                                <TextBlock Text="The gyro input can be turned on only when a button is pressed" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
 
                                             <ui:ListView
