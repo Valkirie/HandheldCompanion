@@ -33,6 +33,7 @@ namespace HandheldCompanion.Views
         private StartupEventArgs arguments;
         public HandheldDevice handheldDevice;
         public FileVersionInfo fileVersionInfo;
+        public static new string Name;
 
         // process vars
         private Timer MonitorTimer;
@@ -76,6 +77,7 @@ namespace HandheldCompanion.Views
         public MainWindow(StartupEventArgs arguments, ILogger microsoftLogger)
         {
             InitializeComponent();
+            Name = this.Title;
 
             this.microsoftLogger = microsoftLogger;
             this.arguments = arguments;
@@ -98,7 +100,7 @@ namespace HandheldCompanion.Views
 
             notifyIcon = new()
             {
-                Text = "Controller Helper",
+                Text = Name,
                 Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location),
                 Visible = false,
                 ContextMenuStrip = new(),
@@ -577,7 +579,7 @@ namespace HandheldCompanion.Views
                 case WindowState.Minimized:
                     notifyIcon.Visible = true;
                     ShowInTaskbar = false;
-                    toastManager.SendToast("Controller Helper", "The application is running in the background.");
+                    toastManager.SendToast(Name, "The application is running in the background.");
                     break;
                 case WindowState.Normal:
                 case WindowState.Maximized:

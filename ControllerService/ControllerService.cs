@@ -185,10 +185,7 @@ namespace ControllerService
             }
 
             if (VirtualTarget == null)
-            {
-                logger.LogDebug("No virtual controller selected.");
                 return;
-            }
 
             VirtualTarget.Connected += OnTargetConnected;
             VirtualTarget.Disconnected += OnTargetDisconnected;

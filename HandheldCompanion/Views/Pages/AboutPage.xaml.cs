@@ -47,7 +47,7 @@ namespace HandheldCompanion.Views.Pages
 
             WarningBorder.Visibility = handheldDevice.sensorSupported ? Visibility.Collapsed : Visibility.Visible;
             if (!handheldDevice.sensorSupported)
-                WarningContent.Text = "Oups, it appears your device is not compatible with Controller Helper. Please reach out to us.";
+                WarningContent.Text = "Oups, it appears your device is not compatible.";
 
             UpdateDevice();
         }

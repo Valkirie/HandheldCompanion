@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 using WindowsHook;
@@ -61,8 +62,8 @@ namespace HandheldCompanion
         private void Subscribe()
         {
             m_Events = Hook.GlobalEvents();
-            m_Events.MouseDownExt += OnMouseDownExt;
-            m_Events.MouseUpExt += OnMouseUpExt;
+            m_Events.MouseDownExt += OnMouseDownExtAsync;
+            m_Events.MouseUpExt += OnMouseUpExtAsync;
 
             Application.Run();
         }
@@ -78,7 +79,7 @@ namespace HandheldCompanion
             });
         }
 
-        private void OnMouseDownExt(object sender, MouseEventExtArgs e)
+        private async void OnMouseDownExtAsync(object sender, MouseEventExtArgs e)
         {
             if (m_Events == null || !m_MouseEnable)
                 return;
@@ -94,7 +95,7 @@ namespace HandheldCompanion
                     isDoubleClick = true;
             }
 
-            m_Events.MouseMoveExt += OnMouseMove;
+            m_Events.MouseMoveExt += OnMouseMoveAsync;
 
             client.SendMessage(new PipeClientCursor
             {
@@ -104,12 +105,15 @@ namespace HandheldCompanion
                 button = isDoubleClick ? MouseButtons.Right : e.Button
             });
 
-            logger.LogDebug("OnMouseDown x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
+            Task.Run(async () =>
+            {
+                logger.LogDebug("OnMouseDown x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
+            });
 
             e.Handled = m_MouseExclusive;
         }
 
-        private void OnMouseMove(object sender, MouseEventExtArgs e)
+        private async void OnMouseMoveAsync(object sender, MouseEventExtArgs e)
         {
             if (m_Events == null || !m_MouseEnable)
                 return;
@@ -128,15 +132,18 @@ namespace HandheldCompanion
                 button = e.Button
             });
 
-            logger.LogDebug("OnMouseMove x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
+            Task.Run(async () =>
+            {
+                logger.LogDebug("OnMouseMove x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
+            });
         }
 
-        private void OnMouseUpExt(object sender, MouseEventExtArgs e)
+        private async void OnMouseUpExtAsync(object sender, MouseEventExtArgs e)
         {
             if (m_Events == null || !m_MouseEnable)
                 return;
 
-            m_Events.MouseMoveExt -= OnMouseMove;
+            m_Events.MouseMoveExt -= OnMouseMoveAsync;
 
             m_MouseUp = new TouchInput()
             {
@@ -145,7 +152,11 @@ namespace HandheldCompanion
                 Button = e.Button,
                 Timestamp = e.Timestamp
             };
-            logger.LogDebug("OnMouseUp x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
+
+            Task.Run(async () =>
+            {
+                logger.LogDebug("OnMouseUp x:{0} y:{1} button:{2}", e.X, e.Y, e.Button);
+            });
 
             m_Timer.Start();
 
@@ -157,9 +168,9 @@ namespace HandheldCompanion
             if (m_Events == null)
                 return;
 
-            m_Events.MouseDownExt -= OnMouseDownExt;
-            m_Events.MouseUpExt -= OnMouseUpExt;
-            m_Events.MouseMoveExt -= OnMouseMove;
+            m_Events.MouseDownExt -= OnMouseDownExtAsync;
+            m_Events.MouseUpExt -= OnMouseUpExtAsync;
+            m_Events.MouseMoveExt -= OnMouseMoveAsync;
             m_Events.Dispose();
             m_Events = null;
 

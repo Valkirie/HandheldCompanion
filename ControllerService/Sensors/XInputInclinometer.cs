@@ -2,6 +2,7 @@ using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Numerics;
+using System.Threading.Tasks;
 using Windows.Devices.Sensors;
 using SensorType = ControllerCommon.SensorType;
 
@@ -21,7 +22,6 @@ namespace ControllerService.Sensors
             this.logger = logger;
 
             sensor = Accelerometer.GetDefault();
-
             if (sensor != null)
             {
                 sensor.ReportInterval = sensor.MinimumReportInterval;
@@ -79,8 +79,11 @@ namespace ControllerService.Sensors
             this.reading.X = (float)(angle_x_psi);
             this.reading.Y = (float)(angle_y_theta);
 
-            logger?.LogDebug("XInputInclinometer.ReadingChanged({0:00.####}, {1:00.####})", angle_x_psi, angle_y_theta);
-
+            Task.Run(async () =>
+            {
+                logger?.LogDebug("XInputInclinometer.ReadingChanged({0:00.####}, {1:00.####})", angle_x_psi, angle_y_theta);
+            });
+            
             // update client(s)
             if (ControllerService.CurrentTag == "ProfileSettingsMode1")
                 pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Inclinometer));
