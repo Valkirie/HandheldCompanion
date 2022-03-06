@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerService.Sensors;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
@@ -46,9 +47,6 @@ namespace ControllerService.Targets
 
         private DS4_REPORT_EX outDS4Report;
 
-        private const float F_ACC_RES_PER_G = 8192.0f;
-        private const float F_GYRO_RES_IN_DEG_SEC = 16.0f;
-
         private new IDualShock4Controller virtualController;
 
         public DualShock4Target(XInputController xinput, ViGEmClient client, Controller controller, int index, ILogger logger) : base(xinput, client, controller, index, logger)
@@ -66,12 +64,18 @@ namespace ControllerService.Targets
 
         public override void Connect()
         {
+            if (isConnected)
+                return;
+
             virtualController.Connect();
             base.Connect();
         }
 
         public override void Disconnect()
         {
+            if (!isConnected)
+                return;
+
             virtualController.Disconnect();
             base.Disconnect();
         }
@@ -189,30 +193,30 @@ namespace ControllerService.Targets
                 {
                     outDS4Report.bTouchPacketsN = 0x01;
                     outDS4Report.sCurrentTouch.bPacketCounter = Touch.TouchPacketCounter;
-                    outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = (byte)Touch.TrackPadTouch0.RawTrackingNum;
-                    outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(Touch.TrackPadTouch0.X & 0xFF);
+                    outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = (byte)Touch.TrackPadTouch1.RawTrackingNum;
+                    outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(Touch.TrackPadTouch1.X & 0xFF);
                     outDS4Report.sCurrentTouch.bTouchData1[1] =
-                        (byte)(((Touch.TrackPadTouch0.X >> 8) & 0x0F) | ((Touch.TrackPadTouch0.Y << 4) & 0xF0));
-                    outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(Touch.TrackPadTouch0.Y >> 4);
-
-                    outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = (byte)Touch.TrackPadTouch1.RawTrackingNum;
-                    outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(Touch.TrackPadTouch1.X & 0xFF);
-                    outDS4Report.sCurrentTouch.bTouchData2[1] =
                         (byte)(((Touch.TrackPadTouch1.X >> 8) & 0x0F) | ((Touch.TrackPadTouch1.Y << 4) & 0xF0));
-                    outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(Touch.TrackPadTouch1.Y >> 4);
+                    outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(Touch.TrackPadTouch1.Y >> 4);
+
+                    /* outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = (byte)Touch.TrackPadTouch2.RawTrackingNum;
+                    outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(Touch.TrackPadTouch2.X & 0xFF);
+                    outDS4Report.sCurrentTouch.bTouchData2[1] =
+                        (byte)(((Touch.TrackPadTouch2.X >> 8) & 0x0F) | ((Touch.TrackPadTouch2.Y << 4) & 0xF0));
+                    outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(Touch.TrackPadTouch2.Y >> 4); */
                 }
 
-                outDS4Report.wGyroX = (short)(xinputController.AngularVelocity.X * F_GYRO_RES_IN_DEG_SEC); // gyroPitchFull
-                outDS4Report.wGyroY = (short)(-xinputController.AngularVelocity.Y * F_GYRO_RES_IN_DEG_SEC); // gyroYawFull
-                outDS4Report.wGyroZ = (short)(xinputController.AngularVelocity.Z * F_GYRO_RES_IN_DEG_SEC); // gyroRollFull
+                outDS4Report.wGyroX = (short)Utils.rangeMap(xinputController.AngularVelocity.X, XInputGirometer.sensorSpec);    // gyroPitchFull
+                outDS4Report.wGyroY = (short)Utils.rangeMap(-xinputController.AngularVelocity.Y, XInputGirometer.sensorSpec);   // gyroYawFull
+                outDS4Report.wGyroZ = (short)Utils.rangeMap(xinputController.AngularVelocity.Z, XInputGirometer.sensorSpec);    // gyroRollFull
 
-                outDS4Report.wAccelX = (short)(-xinputController.Acceleration.X * F_ACC_RES_PER_G); // accelXFull
-                outDS4Report.wAccelY = (short)(-xinputController.Acceleration.Y * F_ACC_RES_PER_G); // accelYFull
-                outDS4Report.wAccelZ = (short)(xinputController.Acceleration.Z * F_ACC_RES_PER_G); // accelZFull
+                outDS4Report.wAccelX = (short)Utils.rangeMap(-xinputController.Acceleration.X, XInputAccelerometer.sensorSpec); // accelXFull
+                outDS4Report.wAccelY = (short)Utils.rangeMap(-xinputController.Acceleration.Y, XInputAccelerometer.sensorSpec); // accelYFull
+                outDS4Report.wAccelZ = (short)Utils.rangeMap(xinputController.Acceleration.Z, XInputAccelerometer.sensorSpec);  // accelZFull
 
                 outDS4Report.bBatteryLvlSpecial = 11;
 
-                outDS4Report.wTimestamp = (ushort)(xinputController.microseconds / 5.33f);
+                outDS4Report.wTimestamp = (ushort)(xinputController.microseconds);
 
                 DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
                 virtualController.SubmitRawReport(rawOutReportEx);

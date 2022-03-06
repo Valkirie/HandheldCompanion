@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerService.Sensors;
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -33,12 +34,15 @@ namespace ControllerService
         public HidHide Hidder;
 
         public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathDep, CurrentPathProfiles;
+        public static string CurrentTag;
 
         private string DSUip;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
-        private int DSUport, HIDrate, HIDstrength, DeviceWidthHeightRatio;
+        private int DSUport, HIDrate, DeviceWidthHeightRatio;
+        private double HIDstrength;
 
-        private HIDmode HIDmode;
+        private HIDmode HIDmode = HIDmode.None;
+        private HIDstatus HIDstatus = HIDstatus.Disconnected;
 
         private readonly ILogger<ControllerService> logger;
         private readonly IHostApplicationLifetime lifetime;
@@ -65,6 +69,7 @@ namespace ControllerService
             HIDuncloakonclose = Properties.Settings.Default.HIDuncloakonclose;
             DeviceWidthHeightRatio = Properties.Settings.Default.DeviceWidthHeightRatio;
             HIDmode = (HIDmode)Properties.Settings.Default.HIDmode;
+            HIDstatus = (HIDstatus)Properties.Settings.Default.HIDstatus;
             DSUEnabled = Properties.Settings.Default.DSUEnabled;
             DSUip = Properties.Settings.Default.DSUip;
             DSUport = Properties.Settings.Default.DSUport;
@@ -117,6 +122,12 @@ namespace ControllerService
                 throw new InvalidOperationException();
             }
 
+            // initialize PipeServer
+            pipeServer = new PipeServer("ControllerService", logger);
+            pipeServer.Connected += OnClientConnected;
+            pipeServer.Disconnected += OnClientDisconnected;
+            pipeServer.ClientMessage += OnClientMessage;
+
             // initialize sensors
             UpdateSensors();
 
@@ -131,12 +142,6 @@ namespace ControllerService
             DSUServer.Started += OnDSUStarted;
             DSUServer.Stopped += OnDSUStopped;
 
-            // initialize PipeServer
-            pipeServer = new PipeServer("ControllerService", logger);
-            pipeServer.Connected += OnClientConnected;
-            pipeServer.Disconnected += OnClientDisconnected;
-            pipeServer.ClientMessage += OnClientMessage;
-
             // initialize Profile Manager
             profileManager = new ProfileManager(CurrentPathProfiles, logger);
             profileManager.Updated += ProfileUpdated;
@@ -144,24 +149,25 @@ namespace ControllerService
 
         private void UpdateSensors()
         {
-            var Gyrometer = new XInputGirometer(XInputController, logger);
+            var Gyrometer = new XInputGirometer(XInputController, logger, pipeServer);
             if (Gyrometer.sensor == null)
                 logger.LogWarning("No Gyrometer detected");
             XInputController.SetGyroscope(Gyrometer);
 
-            var Accelerometer = new XInputAccelerometer(XInputController, logger);
+            var Accelerometer = new XInputAccelerometer(XInputController, logger, pipeServer);
             if (Accelerometer.sensor == null)
                 logger.LogWarning("No Accelerometer detected");
             XInputController.SetAccelerometer(Accelerometer);
 
-            var Inclinometer = new XInputInclinometer(XInputController, logger);
+            var Inclinometer = new XInputInclinometer(XInputController, logger, pipeServer);
             if (Inclinometer.sensor == null)
                 logger.LogWarning("No Inclinometer detected");
             XInputController.SetInclinometer(Inclinometer);
         }
 
-        private void OnVirtualControllerChange(HIDmode mode)
+        private void SetControllerMode(HIDmode mode)
         {
+            // disconnect current virtual controller
             VirtualTarget?.Disconnect();
 
             switch (mode)
@@ -179,16 +185,27 @@ namespace ControllerService
             }
 
             if (VirtualTarget == null)
-            {
-                logger.LogDebug("No virtual controller selected.");
                 return;
-            }
 
             VirtualTarget.Connected += OnTargetConnected;
             VirtualTarget.Disconnected += OnTargetDisconnected;
 
             XInputController.SetViGEmTarget(VirtualTarget);
-            VirtualTarget?.Connect();
+            SetControllerStatus(HIDstatus);
+        }
+
+        private void SetControllerStatus(HIDstatus status)
+        {
+            HIDstatus = status;
+            switch (status)
+            {
+                case HIDstatus.Connected:
+                    VirtualTarget?.Connect();
+                    break;
+                case HIDstatus.Disconnected:
+                    VirtualTarget?.Disconnect();
+                    break;
+            }
         }
 
         private void OnTargetDisconnected(ViGEmTarget target)
@@ -287,6 +304,24 @@ namespace ControllerService
                             break;
                     }
                     break;
+
+                case PipeCode.CLIENT_NAVIGATED:
+                    PipeNavigation navigation = (PipeNavigation)message;
+                    CurrentTag = navigation.Tag;
+
+                    switch (navigation.Tag)
+                    {
+                        case "ProfileSettingsMode0":
+                            // do something
+                            break;
+                        case "ProfileSettingsMode1":
+                            // do something
+                            break;
+                        default:
+                            break;
+                    }
+
+                    break;
             }
         }
 
@@ -341,6 +376,10 @@ namespace ControllerService
                             value = (float)value;
                             prev_value = (float)prev_value;
                             break;
+                        case TypeCode.Double:
+                            value = (double)value;
+                            prev_value = (double)prev_value;
+                            break;
                         case TypeCode.Int16:
                         case TypeCode.Int32:
                         case TypeCode.Int64:
@@ -383,7 +422,10 @@ namespace ControllerService
                         HIDuncloakonclose = (bool)value;
                         break;
                     case "HIDmode":
-                        OnVirtualControllerChange((HIDmode)value);
+                        SetControllerMode((HIDmode)value);
+                        break;
+                    case "HIDstatus":
+                        SetControllerStatus((HIDstatus)value);
                         break;
                     case "DeviceWidthHeightRatio":
                         XInputController.SetWidthHeightRatio((int)value);
@@ -392,7 +434,7 @@ namespace ControllerService
                         XInputController.SetPollRate((int)value);
                         break;
                     case "HIDstrength":
-                        XInputController.SetVibrationStrength((int)value);
+                        XInputController.SetVibrationStrength((double)value);
                         break;
                     case "DSUEnabled":
                         switch ((bool)value)
@@ -424,7 +466,8 @@ namespace ControllerService
             if (DSUEnabled) DSUServer.Start();
 
             // update virtual controller
-            OnVirtualControllerChange(HIDmode);
+            SetControllerMode(HIDmode);
+            SetControllerStatus(HIDstatus);
 
             // start Pipe Server
             pipeServer.Start();
@@ -445,7 +488,7 @@ namespace ControllerService
             Hidder?.SetCloaking(!HIDuncloakonclose);
 
             // update virtual controller
-            OnVirtualControllerChange(HIDmode.None);
+            SetControllerStatus(HIDstatus.Disconnected);
 
             // stop listening to system events
             SystemEvents.PowerModeChanged -= OnPowerChange;
@@ -465,7 +508,7 @@ namespace ControllerService
 
             switch (e.Mode)
             {
-				default:
+                default:
                 case PowerModes.StatusChange:
                     break;
                 case PowerModes.Resume:
@@ -498,9 +541,6 @@ namespace ControllerService
 
             foreach (SettingsProperty s in Properties.Settings.Default.Properties)
                 settings.Add(s.Name, Properties.Settings.Default[s.Name].ToString());
-
-            settings.Add("gyrometer", $"{XInputController.Gyrometer.sensor != null}");
-            settings.Add("accelerometer", $"{XInputController.Accelerometer.sensor != null}");
 
             return settings;
         }

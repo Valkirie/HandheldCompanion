@@ -28,9 +28,6 @@
     <None Remove="dependencies\**" />
   </ItemGroup>
   <ItemGroup>
-    <AdditionalFiles Remove="app.manifest" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>

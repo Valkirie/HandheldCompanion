@@ -42,6 +42,12 @@ namespace ControllerCommon
 
         FORCE_SHUTDOWN = 13,                // Sent to server or client to halt process
                                             // args: ...
+
+        SERVER_SENSOR = 14,                 // Sent to client to share sensor values
+                                            // args: ...
+
+        CLIENT_NAVIGATED = 15,              // Sent to server to share current navigated page
+                                            // args: ...
     }
 
     public class PipeServer
@@ -140,6 +146,10 @@ namespace ControllerCommon
         {
             if (!connected)
             {
+                Type nodeType = message.GetType();
+                if (nodeType == typeof(PipeSensor))
+                    return;
+
                 m_queue.Enqueue(message);
                 m_timer.Start();
                 return;

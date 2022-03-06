@@ -1,5 +1,8 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
+using Microsoft.WindowsAPICodePack.Shell;
+using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -41,6 +44,25 @@ namespace ControllerCommon
         public static IntPtr GetforegroundWindow()
         {
             return GetForegroundWindow();
+        }
+    }
+
+    public class USBDeviceInfo
+    {
+        public USBDeviceInfo(string deviceId, string name, string description)
+        {
+            DeviceId = deviceId;
+            Name = name;
+            Description = description;
+        }
+
+        public string DeviceId { get; }
+        public string Name { get; }
+        public string Description { get; }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 
@@ -190,6 +212,56 @@ namespace ControllerCommon
         static extern uint QueryFullProcessImageName(IntPtr hProcess, uint flags, StringBuilder text, out uint size);
         #endregion
 
+        public static List<USBDeviceInfo> GetUSBDevices()
+        {
+            var devices = new List<USBDeviceInfo>();
+
+            using (var mos = new ManagementObjectSearcher(@"Select * From Win32_PnPEntity"))
+            {
+                using (ManagementObjectCollection collection = mos.Get())
+                {
+                    foreach (var device in collection)
+                    {
+                        try
+                        {
+                            var id = device.GetPropertyValue("DeviceId").ToString();
+                            var name = device.GetPropertyValue("Name").ToString();
+                            var description = device.GetPropertyValue("Description").ToString();
+                            devices.Add(new USBDeviceInfo(id, name, description));
+                        }
+                        catch (Exception ex) { }
+                    }
+                }
+            }
+
+            return devices;
+        }
+
+        public static Dictionary<string, string> GetAppProperties(string filePath1)
+        {
+            Dictionary<string, string> AppProperties = new Dictionary<string, string>();
+
+            ShellObject shellFile = ShellObject.FromParsingName(filePath1);
+            foreach (var property in typeof(ShellProperties.PropertySystem).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                IShellProperty shellProperty = property.GetValue(shellFile.Properties.System, null) as IShellProperty;
+                if (shellProperty?.ValueAsObject == null) continue;
+                if (AppProperties.ContainsKey(property.Name)) continue;
+
+                string[] shellPropertyValues = shellProperty.ValueAsObject as string[];
+
+                if (shellPropertyValues != null && shellPropertyValues.Length > 0)
+                {
+                    foreach (string shellPropertyValue in shellPropertyValues)
+                        AppProperties[property.Name] = shellPropertyValue.ToString();
+                }
+                else
+                    AppProperties[property.Name] = shellProperty.ValueAsObject.ToString();
+            }
+
+            return AppProperties;
+        }
+
         public static string GetDescriptionFromEnumValue(Enum value)
         {
             DescriptionAttribute attribute = value.GetType()
@@ -235,13 +307,13 @@ namespace ControllerCommon
             return (byte)Math.Round(output);
         }
 
-        public static short ComputeInput(short value, float input, float sensivity, float curve)
+        public static float ComputeInput(float GamepadThumb, float sensivity, float curve, float MaxValue)
         {
-            float compute = (float)(Math.Sign(input) * Math.Pow(Math.Abs(input) / 20.0f, curve) * 20.0f);
-            return (short)Math.Clamp(value + compute * sensivity, short.MinValue, short.MaxValue);
+            float compute = (float)(Math.Sign(GamepadThumb) * Math.Pow(Math.Abs(GamepadThumb) / MaxValue, curve) * MaxValue);
+            return Math.Clamp(compute * sensivity, short.MinValue, short.MaxValue);
         }
 
-        public static short Steering(float DeviceAngle, 
+        public static float Steering(float DeviceAngle,
                                      float DeviceAngleMax,
                                      float ToThePowerOf,
                                      float DeadzoneAngle,
@@ -257,9 +329,7 @@ namespace ControllerCommon
             float JoystickPosInGameDeadzoneCompensated = InGameDeadZoneSettingCompensation(JoystickPosPowered, DeadzoneCompensation);
 
             // Scale joystick x pos -1 to 1 to joystick x range, send 0 for y.
-            short Output = (short)-(JoystickPosInGameDeadzoneCompensated * short.MaxValue);
-
-            return Output;
+            return (float)-(JoystickPosInGameDeadzoneCompensated * short.MaxValue);
         }
 
         // Determine -1 to 1 joystick position given user defined max input angle and dead zone
@@ -268,16 +338,14 @@ namespace ControllerCommon
         {
             // Deadzone remapped angle, note this angle is no longer correct with device angle
             float Result = ((Math.Abs(Angle) - DeadzoneAngle) / (DeviceAngleMax - DeadzoneAngle)) * DeviceAngleMax;
-            
+
             // Clamp deadzone remapped angle, prevents negative values when
             // actual device angle is below dead zone angle
             // Divide by max angle, angle to joystick position with user max
             Result = Math.Clamp(Result, 0, DeviceAngleMax) / DeviceAngleMax;
 
             // Apply direction again
-            Result = (Angle < 0.0) ? -Result : Result;
-
-            return Result;
+            return (Angle < 0.0) ? -Result : Result;
         }
 
         // Apply power of to -1 to 1 joystick position while respecting direction
@@ -286,9 +354,7 @@ namespace ControllerCommon
             float Result = (float)Math.Pow(Math.Abs(JoystickPos), Power);
 
             // Apply direction again
-            Result = (JoystickPos < 0.0) ? -Result : Result;
-
-            return Result;
+            return (JoystickPos < 0.0) ? -Result : Result;
         }
 
         // Compensation for in game deadzone
@@ -308,14 +374,65 @@ namespace ControllerCommon
             Result = Math.Clamp(Result, DeadzonePercentage / 100, 1);
 
             // Apply direction again
-            Result = (JoystickPos < 0.0) ? -Result : Result;
+            return (JoystickPos < 0.0) ? -Result : Result;
+        }
 
-            return Result;
+        // Custom sensitivity
+        // Interpolation function (linear), takes list of nodes coordinates and gamepad joystick position returns game input
+        public static float ApplyCustomSensitivity(float AngularValue, float MaxValue, List<ProfileVector> Nodes)
+        {
+            int NodeAmount = Profile.array_size;
+
+            // Use absolute joystick position, range -1 to 1, re-apply direction later
+            float JoystickPosAbs = (float)Math.Abs(AngularValue / MaxValue);
+            float JoystickPosAdjusted = 0.0f;
+
+            // Check what we will be sending
+            if (JoystickPosAbs <= Nodes[0].x)
+            {
+                // Send 0 output to game
+                JoystickPosAdjusted = 0.0f;
+            }
+            else if (JoystickPosAbs >= Nodes[NodeAmount - 1].x)
+            {
+                // Send 1 output to game
+                JoystickPosAdjusted = 1.0f;
+            }
+            // Calculate custom sensitivty
+            else
+            {
+                ProfileVector vector = Nodes.Where(n => JoystickPosAbs <= n.x).FirstOrDefault();
+                JoystickPosAdjusted = (float)vector.y * 2.0f;
+            }
+
+            // Apply direction
+            return JoystickPosAdjusted;
         }
 
         public static bool IsTextAValidIPAddress(string text)
         {
             return IPAddress.TryParse(text, out _);
+        }
+
+        public static float Clamp(float value, float min, float max)
+        {
+            return Math.Min(max, Math.Max(min, value));
+        }
+
+        public struct SensorSpec
+        {
+            public float minIn;
+            public float maxIn;
+            public float minOut;
+            public float maxOut;
+        }
+
+        public static float rangeMap(float value, SensorSpec spec)
+        {
+            float inRange = spec.maxIn - spec.minIn;
+            float outRange = spec.maxOut - spec.minOut;
+
+            return spec.minOut + outRange * ((value - spec.minIn) / inRange);
         }
 
         public static string GetPathToApp(Process process)

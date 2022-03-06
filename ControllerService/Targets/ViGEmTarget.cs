@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerService.Sensors;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
@@ -39,14 +40,12 @@ namespace ControllerService.Targets
 
         protected readonly ILogger logger;
 
-        public MadgwickAHRS madgwick;
-
         protected ViGEmClient client { get; }
         protected IVirtualGamepad virtualController;
 
         protected XInputStateSecret state_s;
 
-        protected float vibrationStrength;
+        protected double vibrationStrength;
 
         protected int UserIndex;
 
@@ -60,14 +59,12 @@ namespace ControllerService.Targets
         public delegate void DisconnectedEventHandler(ViGEmTarget target);
 
         protected object updateLock = new();
+        protected bool isConnected;
 
         protected ViGEmTarget(XInputController xinput, ViGEmClient client, Controller controller, int index, ILogger logger)
         {
             this.logger = logger;
             this.xinputController = xinput;
-
-            // initialize madgwick
-            madgwick = new(1f / 14f, 0.1f);
 
             // initialize secret state
             state_s = new();
@@ -90,7 +87,7 @@ namespace ControllerService.Targets
             logger.LogInformation("Virtual {0} report interval set to {1}ms", this, HIDrate);
         }
 
-        public void SetVibrationStrength(float strength)
+        public void SetVibrationStrength(double strength)
         {
             vibrationStrength = strength / 100.0f;
             logger.LogInformation("Virtual {0} vibration strength set to {1}%", this, strength);
@@ -106,6 +103,7 @@ namespace ControllerService.Targets
             UpdateTimer.Enabled = true;
             UpdateTimer.Start();
 
+            isConnected = true;
             Connected?.Invoke(this);
             logger.LogInformation("Virtual {0} connected", ToString());
         }
@@ -115,6 +113,7 @@ namespace ControllerService.Targets
             UpdateTimer.Enabled = false;
             UpdateTimer.Stop();
 
+            isConnected = false;
             Disconnected?.Invoke(this);
             logger.LogInformation("Virtual {0} disconnected", ToString());
         }
@@ -144,36 +143,60 @@ namespace ControllerService.Targets
 
                 if (xinputController.profile.umc_enabled && (xinputController.profile.umc_trigger & buttons) != 0)
                 {
-                    float intensity = xinputController.profile.GetIntensity();
-                    float sensivity = xinputController.profile.GetSensiviy();
-
                     switch (xinputController.profile.umc_input)
                     {
-                        // TODO @Benjamin Switch case or if statements for style of input (Joystick Move or Steering)
+                        case Input.JoystickCamera:
+                            {
+                                float AngularX = -xinputController.AngularUniversal.Z;
+                                float AngularY = xinputController.AngularUniversal.X;
 
-                        default:
-                        case InputStyle.RightStick:
-                            RightThumbX = Utils.ComputeInput(RightThumbX, -xinputController.AngularVelocity.Z, sensivity, intensity);
-                            RightThumbY = Utils.ComputeInput(RightThumbY, xinputController.AngularVelocity.X, sensivity, intensity);
+                                // apply sensivity curve
+                                AngularX *= Utils.ApplyCustomSensitivity(AngularX, XInputGirometer.sensorSpec.maxIn, xinputController.profile.aiming_array);
+                                AngularY *= Utils.ApplyCustomSensitivity(AngularY, XInputGirometer.sensorSpec.maxIn, xinputController.profile.aiming_array);
+
+                                // get profile vars
+                                float intensity = xinputController.profile.GetIntensity();
+                                float sensivity = xinputController.profile.GetSensiviy();
+
+                                // apply sensivity, intensity sliders (deprecated ?)
+                                float GamepadThumbX = Utils.ComputeInput(AngularX, sensivity, intensity, XInputGirometer.sensorSpec.maxIn);
+                                float GamepadThumbY = Utils.ComputeInput(AngularY, sensivity, intensity, XInputGirometer.sensorSpec.maxIn);
+
+                                switch (xinputController.profile.umc_output)
+                                {
+                                    default:
+                                    case Output.RightStick:
+                                        RightThumbX += (short)GamepadThumbX;
+                                        RightThumbY += (short)GamepadThumbY;
+                                        break;
+                                    case Output.LeftStick:
+                                        LeftThumbX += (short)GamepadThumbX;
+                                        LeftThumbY += (short)GamepadThumbY;
+                                        break;
+                                }
+                            }
                             break;
-                        case InputStyle.LeftStick:
-                            LeftThumbX = Utils.ComputeInput(LeftThumbX, -xinputController.AngularVelocity.Z, sensivity, intensity);
-                            LeftThumbY = Utils.ComputeInput(LeftThumbY, xinputController.AngularVelocity.X, sensivity, intensity);
 
-                            // TODO @Benjamin Remove/update/replace with new GUI profile variables, see notes on needed sliders
-                            // TODO @Benjamin Perhaps use a struct for the profile options?
-                            float MaxDeviceAngle = 30; // Max steering angle 10 to 80 degrees in 5 degree increments, default 35 degrees
-                            float ToThePowerOf = 1; // 0.1 to 5 in 0.1 increments, default 1.0 (lineair)
-                            float DeadzoneAngle = 2; // 0 to 5 degrees in 1 degree increments, default 0 degrees
-                            float DeadzoneCompensation = 0; // 0 to 100 %, in 1% increments, default 0 %
+                        case Input.JoystickSteering:
+                            {
+                                float GamepadThumbX = Utils.Steering(
+                                    xinputController.Angle.Y,
+                                    xinputController.profile.steering_max_angle,
+                                    xinputController.profile.steering_power,
+                                    xinputController.profile.steering_deadzone,
+                                    xinputController.profile.steering_deadzone_compensation);
 
-                            LeftThumbX = Utils.Steering(xinputController.Angle.Y, 
-                                                        MaxDeviceAngle,
-                                                        ToThePowerOf,
-                                                        DeadzoneAngle,
-                                                        DeadzoneCompensation);
-                            LeftThumbY = 0;
-
+                                switch (xinputController.profile.umc_output)
+                                {
+                                    default:
+                                    case Output.RightStick:
+                                        RightThumbX = (short)GamepadThumbX;
+                                        break;
+                                    case Output.LeftStick:
+                                        LeftThumbX = (short)GamepadThumbX;
+                                        break;
+                                }
+                            }
                             break;
                     }
                 }

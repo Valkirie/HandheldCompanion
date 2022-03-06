@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using WindowsHook;
 
 namespace ControllerCommon
@@ -162,6 +163,45 @@ namespace ControllerCommon
         public PipeShutdown()
         {
             code = PipeCode.FORCE_SHUTDOWN;
+        }
+    }
+
+    [Serializable]
+    public enum SensorType
+    {
+        Girometer = 0,
+        Accelerometer = 1,
+        Inclinometer = 2
+    }
+
+    [Serializable]
+    public partial class PipeSensor : PipeMessage
+    {
+        public float x, y, z;
+        public SensorType type;
+
+        public PipeSensor(Vector3 reading, SensorType type)
+        {
+            code = PipeCode.SERVER_SENSOR;
+
+            this.x = reading.X;
+            this.y = reading.Y;
+            this.z = reading.Z;
+
+            this.type = type;
+        }
+    }
+
+    [Serializable]
+    public partial class PipeNavigation : PipeMessage
+    {
+        public string Tag;
+
+        public PipeNavigation(string Tag)
+        {
+            code = PipeCode.CLIENT_NAVIGATED;
+
+            this.Tag = Tag;
         }
     }
     #endregion

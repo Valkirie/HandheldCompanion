@@ -34,25 +34,10 @@ namespace ControllerService.Properties {
                 this["HIDcloaked"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("25")]
-        public int DeviceWidthHeightRatio
-        {
-            get
-            {
-                return ((int)(this["DeviceWidthHeightRatio"]));
-            }
-            set
-            {
-                this["DeviceWidthHeightRatio"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int HIDmode {
             get {
                 return ((int)(this["HIDmode"]));
@@ -88,7 +73,7 @@ namespace ControllerService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
         public int HIDrate {
             get {
                 return ((int)(this["HIDrate"]));
@@ -112,7 +97,7 @@ namespace ControllerService.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool HIDuncloakonclose {
             get {
                 return ((bool)(this["HIDuncloakonclose"]));
@@ -125,12 +110,36 @@ namespace ControllerService.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
-        public int HIDstrength {
+        public double HIDstrength {
             get {
-                return ((int)(this["HIDstrength"]));
+                return ((double)(this["HIDstrength"]));
             }
             set {
                 this["HIDstrength"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int HIDstatus {
+            get {
+                return ((int)(this["HIDstatus"]));
+            }
+            set {
+                this["HIDstatus"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("25")]
+        public int DeviceWidthHeightRatio {
+            get {
+                return ((int)(this["DeviceWidthHeightRatio"]));
+            }
+            set {
+                this["DeviceWidthHeightRatio"] = value;
             }
         }
     }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using static ControllerCommon.Utils;
 
@@ -69,6 +70,29 @@ namespace ControllerCommon
             profileWatcher.Dispose();
         }
 
+        public bool Contains(Profile profile)
+        {
+            foreach (Profile pr in profiles.Values)
+                if (pr.executable == profile.executable)
+                    return true;
+
+            return false;
+        }
+
+        public int GetProfileIndex(Profile profile)
+        {
+            int idx = -1;
+
+            for (int i = 0; i < profiles.Count; i++)
+            {
+                Profile pr = profiles.Values.ToList()[i];
+                if (pr.executable == profile.executable)
+                    return i;
+            }
+
+            return idx;
+        }
+
         private void ProfileDeleted(object sender, FileSystemEventArgs e)
         {
             string ProfileName = e.Name.Replace(".json", "");
@@ -91,9 +115,12 @@ namespace ControllerCommon
 
         public void SetDefault()
         {
-            Profile def = new Profile("Default", "");
-            profiles["Default"] = def;
-            SerializeProfile(def);
+            // dirty !
+            Profile profile = new Profile("Default", "");
+            profile.executable = "Default.exe";
+            profiles["Default"] = profile;
+            SerializeProfile(profile);
+            UpdateProfile(profile);
         }
 
         public Profile GetDefault()
@@ -150,7 +177,8 @@ namespace ControllerCommon
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(profile, options);
 
-            string settingsPath = Path.Combine(path, $"{profile.name}.json");
+            string json = Path.GetFileNameWithoutExtension(profile.executable);
+            string settingsPath = Path.Combine(path, $"{json}.json");
             File.WriteAllText(settingsPath, jsonString);
         }
 
@@ -158,12 +186,17 @@ namespace ControllerCommon
         {
             string processpath = Path.GetDirectoryName(profile.fullpath);
 
-            if (!Directory.Exists(processpath))
-                return ProfileErrorCode.MissingPath;
-            else if (!File.Exists(profile.fullpath))
-                return ProfileErrorCode.MissingExecutable;
-            else if (!Utils.IsDirectoryWritable(processpath))
-                return ProfileErrorCode.MissingPermission;
+            if (profile.IsDefault)
+                return ProfileErrorCode.IsDefault;
+            else
+            {
+                if (!Directory.Exists(processpath))
+                    return ProfileErrorCode.MissingPath;
+                else if (!File.Exists(profile.fullpath))
+                    return ProfileErrorCode.MissingExecutable;
+                else if (!Utils.IsDirectoryWritable(processpath))
+                    return ProfileErrorCode.MissingPermission;
+            }
 
             return ProfileErrorCode.None;
         }
@@ -288,6 +321,14 @@ namespace ControllerCommon
                     }
                 }
             }
+        }
+
+        public Profile GetProfileFromExec(string processExec)
+        {
+            foreach (Profile pr in profiles.Values)
+                if (pr.executable.Equals(processExec, StringComparison.InvariantCultureIgnoreCase))
+                    return pr;
+            return null;
         }
 
         public void UnregisterApplication(Profile profile)

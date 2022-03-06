@@ -534,8 +534,11 @@ namespace ControllerService
 
         public void Stop()
         {
-            udpSock.Close();
-            udpSock = null;
+            if (udpSock != null)
+            {
+                udpSock.Close();
+                udpSock = null;
+            }
             running = false;
 
             logger.LogInformation($"{0} has stopped", this.ToString());
@@ -605,7 +608,7 @@ namespace ControllerService
                 //DS4 only: touchpad points
                 for (int i = 0; i < 2; i++)
                 {
-                    var tpad = (i == 0) ? hidReport.Touch.TrackPadTouch0 : hidReport.Touch.TrackPadTouch1;
+                    var tpad = (i == 0) ? hidReport.Touch.TrackPadTouch1 : hidReport.Touch.TrackPadTouch2;
 
                     outputData[outIdx++] = tpad.IsActive ? (byte)1 : (byte)0;
                     outputData[outIdx++] = (byte)tpad.RawTrackingNum;
