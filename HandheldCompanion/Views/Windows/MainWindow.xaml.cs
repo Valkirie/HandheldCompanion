@@ -365,7 +365,7 @@ namespace HandheldCompanion.Views
         #endregion
 
         #region serviceManager
-        private void OnServiceUpdate(ServiceControllerStatus status, ServiceStartMode mode)
+        private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -408,7 +408,7 @@ namespace HandheldCompanion.Views
                         break;
                 }
 
-                switch (mode)
+                switch ((ServiceStartMode)mode)
                 {
                     case ServiceStartMode.Disabled:
                         b_ServiceStart.IsEnabled = false;

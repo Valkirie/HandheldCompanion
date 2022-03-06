@@ -28,7 +28,7 @@ namespace ControllerCommon
         private readonly ILogger logger;
 
         public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(ServiceControllerStatus status, ServiceStartMode mode);
+        public delegate void UpdatedEventHandler(ServiceControllerStatus status, int mode);
 
         public ServiceManager(string name, string display, string description, ILogger logger)
         {
@@ -87,7 +87,7 @@ namespace ControllerCommon
 
                 if (prevStatus != (int)status || prevType != (int)type || nextStatus != 0)
                 {
-                    Updated?.Invoke(status, type);
+                    Updated?.Invoke(status, (int)type);
                     nextStatus = 0;
                     logger.LogInformation("Controller Service status has changed to: {0}", status.ToString());
                 }
@@ -99,7 +99,7 @@ namespace ControllerCommon
 
         public void CreateService(string path)
         {
-            Updated?.Invoke(ServiceControllerStatus.StartPending, ServiceStartMode.Disabled);
+            Updated?.Invoke(ServiceControllerStatus.StartPending, -1);
             nextStatus = ServiceControllerStatus.StartPending;
 
             try
@@ -120,7 +120,7 @@ namespace ControllerCommon
 
         public void DeleteService()
         {
-            Updated?.Invoke(ServiceControllerStatus.StopPending, ServiceStartMode.Disabled);
+            Updated?.Invoke(ServiceControllerStatus.StopPending, -1);
             nextStatus = ServiceControllerStatus.StopPending;
 
             process.StartInfo.Arguments = $"delete {name}";
@@ -130,7 +130,7 @@ namespace ControllerCommon
 
         public async Task StartServiceAsync()
         {
-            Updated?.Invoke(ServiceControllerStatus.StartPending, ServiceStartMode.Disabled);
+            Updated?.Invoke(ServiceControllerStatus.StartPending, -1);
             nextStatus = ServiceControllerStatus.Running;
 
             try
@@ -148,7 +148,7 @@ namespace ControllerCommon
 
         public async Task StopServiceAsync()
         {
-            Updated?.Invoke(ServiceControllerStatus.StopPending, ServiceStartMode.Disabled);
+            Updated?.Invoke(ServiceControllerStatus.StopPending, -1);
             nextStatus = ServiceControllerStatus.Stopped;
 
             try

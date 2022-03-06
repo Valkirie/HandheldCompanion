@@ -188,11 +188,7 @@
                             <TextBlock Text="Used by the service manager to define the service startup type " Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
 
-                        <ComboBox Name="cB_StartupType" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_StartupType_SelectionChanged" >
-                            <ComboBoxItem Content="Automatic"/>
-                            <ComboBoxItem Content="Manual"/>
-                            <ComboBoxItem Content="Disabled"/>
-                        </ComboBox>
+                        <ComboBox Name="cB_StartupType" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_StartupType_SelectionChanged" />
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>

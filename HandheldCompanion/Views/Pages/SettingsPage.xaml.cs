@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using ModernWpf;
 using System;
+using System.Linq;
 using System.ServiceProcess;
 using System.Windows.Controls;
 
@@ -56,6 +57,9 @@ namespace HandheldCompanion.Views.Pages
             this.pipeClient = mainWindow.pipeClient;
             this.serviceManager = mainWindow.serviceManager;
             this.serviceManager.Updated += OnServiceUpdate;
+
+            foreach (ServiceStartMode mode in ((ServiceStartMode[])Enum.GetValues(typeof(ServiceStartMode))).Where(mode => mode >= ServiceStartMode.Automatic))
+                cB_StartupType.Items.Add(mode);
         }
 
         private void Toggle_AutoStart_Toggled(object sender, System.Windows.RoutedEventArgs e)
@@ -125,7 +129,7 @@ namespace HandheldCompanion.Views.Pages
         }
 
         #region serviceManager
-        private void OnServiceUpdate(ServiceControllerStatus status, ServiceStartMode mode)
+        private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -145,7 +149,11 @@ namespace HandheldCompanion.Views.Pages
                         break;
                 }
 
-                cB_StartupType.SelectedIndex = s_ServiceStartup = ((int)mode - 2);
+                if (mode != -1)
+                {
+                    ServiceStartMode serviceMode = (ServiceStartMode)mode;
+                    cB_StartupType.SelectedItem = serviceMode;
+                }
             });
         }
         #endregion

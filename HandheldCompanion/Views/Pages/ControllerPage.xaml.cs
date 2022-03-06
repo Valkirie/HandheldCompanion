@@ -56,7 +56,7 @@ namespace HandheldCompanion.Views.Pages
             this.serviceManager.Updated += ServiceManager_Updated;
         }
 
-        private async void ServiceManager_Updated(ServiceControllerStatus status, ServiceStartMode mode)
+        private async void ServiceManager_Updated(ServiceControllerStatus status, int mode)
         {
             switch (status)
             {
