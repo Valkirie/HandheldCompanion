@@ -83,7 +83,7 @@ namespace ControllerService.Sensors
             {
                 logger?.LogDebug("XInputInclinometer.ReadingChanged({0:00.####}, {1:00.####})", angle_x_psi, angle_y_theta);
             });
-            
+
             // update client(s)
             if (ControllerService.CurrentTag == "ProfileSettingsMode1")
                 pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Inclinometer));

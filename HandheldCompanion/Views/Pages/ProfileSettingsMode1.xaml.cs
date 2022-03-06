@@ -1,11 +1,9 @@
 ﻿using ControllerCommon;
-using System.Windows;
-using System.Windows.Controls;
 using LiveCharts;
-using LiveCharts.Wpf;
 using LiveCharts.Defaults;
 using System;
-using System.Diagnostics;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -62,7 +60,7 @@ namespace HandheldCompanion.Views.Pages
                 case PipeCode.SERVER_SENSOR:
                     PipeSensor sensor = (PipeSensor)message;
 
-                    switch(sensor.type)
+                    switch (sensor.type)
                     {
                         case SensorType.Inclinometer:
                             Rotate_Needle(-sensor.y);

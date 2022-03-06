@@ -1,10 +1,7 @@
 using ControllerCommon;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Diagnostics;
 using System.Numerics;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils;
 using SensorType = ControllerCommon.SensorType;

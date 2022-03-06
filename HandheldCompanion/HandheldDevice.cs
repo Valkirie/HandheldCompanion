@@ -1,10 +1,6 @@
 ﻿using ControllerCommon;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Devices.Sensors;
 
 namespace HandheldCompanion
@@ -42,7 +38,7 @@ namespace HandheldCompanion
             string ACPI = Utils.Between(gyrometer.DeviceId, "ACPI#", "#");
 
             USBDeviceInfo Sensor = Utils.GetUSBDevices().Where(device => device.DeviceId.Contains(ACPI)).FirstOrDefault();
-            
+
             if (Sensor != null)
             {
                 sensorName = Sensor.Name;

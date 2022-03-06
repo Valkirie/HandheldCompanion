@@ -11,7 +11,8 @@ namespace ControllerService.Sensors
     public class XInputAccelerometer : XInputSensor
     {
         public Accelerometer sensor;
-        public static SensorSpec sensorSpec = new SensorSpec() {
+        public static SensorSpec sensorSpec = new SensorSpec()
+        {
             minIn = -2.0f,
             maxIn = 2.0f,
             minOut = short.MinValue,

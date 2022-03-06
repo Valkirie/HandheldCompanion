@@ -5,9 +5,7 @@ using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using SharpDX.XInput;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Timers;
 using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
 

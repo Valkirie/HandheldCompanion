@@ -2,10 +2,9 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Diagnostics;
-using Page = System.Windows.Controls.Page;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -110,7 +109,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            var sInfo = new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri){UseShellExecute = true};
+            var sInfo = new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true };
             System.Diagnostics.Process.Start(sInfo);
 
             e.Handled = true;

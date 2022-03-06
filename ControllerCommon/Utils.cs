@@ -228,7 +228,8 @@ namespace ControllerCommon
                             var name = device.GetPropertyValue("Name").ToString();
                             var description = device.GetPropertyValue("Description").ToString();
                             devices.Add(new USBDeviceInfo(id, name, description));
-                        }catch (Exception ex) { }
+                        }
+                        catch (Exception ex) { }
                     }
                 }
             }

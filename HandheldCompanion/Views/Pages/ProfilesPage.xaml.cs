@@ -248,7 +248,7 @@ namespace HandheldCompanion.Views.Pages
                     }
 
                     // display warnings
-                    switch(profileCurrent.error)
+                    switch (profileCurrent.error)
                     {
                         default:
                         case ProfileErrorCode.None:
