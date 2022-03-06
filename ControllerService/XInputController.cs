@@ -22,19 +22,16 @@ namespace ControllerService
         private Profile defaultProfile;
 
         public Vector3 Acceleration;
-        public Timer AccelerationTimer;
-
         public Vector3 Angle;
-        public Timer AngleTimer;
-
         public Vector3 AngularUniversal;
         public Vector3 AngularVelocity;
+
         public Timer AngularVelocityTimer;
 
         public Timer UpdateTimer;
         public float WidhtHeightRatio = 2.5f;
         public double vibrationStrength = 100.0d;
-        public int updateInterval = 10;
+        public int updateInterval = 4;
 
         public DeviceInstance Instance;
 
@@ -67,17 +64,8 @@ namespace ControllerService
             Acceleration = new();
             Angle = new();
 
-            AccelerationTimer = new Timer() { Enabled = false, AutoReset = false };
-            AccelerationTimer.Elapsed += AccelerationTimer_Elapsed;
-
             AngularVelocityTimer = new Timer() { Enabled = false, AutoReset = false };
             AngularVelocityTimer.Elapsed += AngularVelocityTimer_Elapsed;
-
-            AngleTimer = new Timer() { Enabled = false, AutoReset = false };
-            AngleTimer.Elapsed += AngleTimer_Elapsed;
-
-            AngleTimer = new Timer() { Enabled = false, AutoReset = false };
-            AngleTimer.Elapsed += AngleTimer_Elapsed;
 
             // initialize profile(s)
             profile = new();
@@ -150,6 +138,7 @@ namespace ControllerService
             Accelerometer = accelerometer;
             Accelerometer.ReadingHasChanged += Accelerometer_ReadingChanged;
         }
+
         public void SetInclinometer(XInputInclinometer inclinometer)
         {
             Inclinometer = inclinometer;
@@ -159,15 +148,6 @@ namespace ControllerService
         public void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 Acceleration)
         {
             this.Acceleration = Acceleration;
-
-            AccelerationTimer?.Stop();
-            AccelerationTimer?.Start();
-        }
-
-        private void AccelerationTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            // Disable drift compensation for acceleration values.
-            // Acceleration = new();
         }
 
         public void Girometer_ReadingChanged(XInputGirometer sender, Vector3 AngularVelocity)
@@ -189,15 +169,6 @@ namespace ControllerService
         public void Inclinometer_ReadingChanged(XInputInclinometer sender, Vector3 Angle)
         {
             this.Angle = Angle;
-
-            AngleTimer?.Stop();
-            AngleTimer?.Start();
-        }
-
-        private void AngleTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            // Disable drift compensation for angle values. 
-            // Angle = new();
         }
 
         public void SetWidthHeightRatio(int ratio)
@@ -211,9 +182,7 @@ namespace ControllerService
             updateInterval = HIDrate;
 
             UpdateTimer.Interval = HIDrate;
-            AccelerationTimer.Interval = HIDrate * 4;
             AngularVelocityTimer.Interval = HIDrate * 4;
-            AngleTimer.Interval = HIDrate * 100;
 
             this.virtualTarget?.SetPollRate(updateInterval);
         }

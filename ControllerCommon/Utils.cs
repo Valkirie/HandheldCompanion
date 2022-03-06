@@ -47,6 +47,25 @@ namespace ControllerCommon
         }
     }
 
+    public class USBDeviceInfo
+    {
+        public USBDeviceInfo(string deviceId, string name, string description)
+        {
+            DeviceId = deviceId;
+            Name = name;
+            Description = description;
+        }
+
+        public string DeviceId { get; }
+        public string Name { get; }
+        public string Description { get; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+
     public class FindHostedProcess
     {
         public ProcessDiagnosticInfo Process { get; private set; }
@@ -192,6 +211,30 @@ namespace ControllerCommon
         [DllImport("Kernel32.dll")]
         static extern uint QueryFullProcessImageName(IntPtr hProcess, uint flags, StringBuilder text, out uint size);
         #endregion
+
+        public static List<USBDeviceInfo> GetUSBDevices()
+        {
+            var devices = new List<USBDeviceInfo>();
+
+            using (var mos = new ManagementObjectSearcher(@"Select * From Win32_PnPEntity"))
+            {
+                using (ManagementObjectCollection collection = mos.Get())
+                {
+                    foreach (var device in collection)
+                    {
+                        try
+                        {
+                            var id = device.GetPropertyValue("DeviceId").ToString();
+                            var name = device.GetPropertyValue("Name").ToString();
+                            var description = device.GetPropertyValue("Description").ToString();
+                            devices.Add(new USBDeviceInfo(id, name, description));
+                        }catch (Exception ex) { }
+                    }
+                }
+            }
+
+            return devices;
+        }
 
         public static Dictionary<string, string> GetAppProperties(string filePath1)
         {
