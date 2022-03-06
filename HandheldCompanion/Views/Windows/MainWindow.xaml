@@ -18,6 +18,7 @@
 
     <ui:NavigationView
         Name="navView" PaneDisplayMode="Auto"
+        PaneTitle="Handheld Companion"
         ItemInvoked="navView_ItemInvoked"
         OpenPaneLength="240" IsBackEnabled="True"
         SelectionFollowsFocus="Enabled"

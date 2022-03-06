@@ -124,8 +124,7 @@ namespace HandheldCompanion.Views
             IsElevated = Utils.IsAdministrator();
 
             // initialize title
-            this.Title += $" ({fileVersionInfo.FileVersion})";
-            navView.PaneTitle = IsElevated ? Properties.Resources.Administrator : Properties.Resources.User;
+            this.Title += $" ({fileVersionInfo.FileVersion}) ({(IsElevated ? Properties.Resources.Administrator : Properties.Resources.User)})";
 
             // verifying HidHide is installed
             if (!File.Exists(CurrentPathService))
