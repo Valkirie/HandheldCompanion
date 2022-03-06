@@ -13,8 +13,8 @@ namespace ControllerService.Sensors
         public static SensorSpec sensorSpec = new SensorSpec() {
             minIn = -2.0f,
             maxIn = 2.0f,
-            minOut = -32767.0f,
-            maxOut = 32767.0f,
+            minOut = short.MinValue,
+            maxOut = short.MaxValue,
         };
 
         public event ReadingChangedEventHandler ReadingHasChanged;
