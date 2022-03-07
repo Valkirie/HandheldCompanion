@@ -163,6 +163,16 @@ namespace HandheldCompanion.Views
             // initialize service manager
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription, microsoftLogger);
             serviceManager.Updated += OnServiceUpdate;
+            serviceManager.StartFailed += (status) =>
+            {
+                // todo: implement localized strings
+                Dialog.ShowAsync("Service manager", "Oups. There was an issue while we tried to start the service.", ContentDialogButton.Primary, null, "OK");
+            };
+            serviceManager.StopFailed += (status) =>
+            {
+                // todo: implement localized strings
+                Dialog.ShowAsync("Service manager", "Oups. There was an issue while we tried to stop the service.", ContentDialogButton.Primary, null, "OK");
+            };
 
             // initialize task manager
             taskManager = new TaskManager("ControllerService", CurrentExe);

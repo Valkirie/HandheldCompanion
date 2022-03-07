@@ -8,6 +8,18 @@ using Timer = System.Timers.Timer;
 
 namespace ControllerCommon
 {
+    public enum ServiceControllerStatus
+    {
+        None = 0,
+        Stopped = 1,
+        StartPending = 2,
+        StopPending = 3,
+        Running = 4,
+        ContinuePending = 5,
+        PausePending = 6,
+        Paused = 7
+    }
+
     public class ServiceManager
     {
         private string name;
@@ -29,6 +41,12 @@ namespace ControllerCommon
 
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(ServiceControllerStatus status, int mode);
+
+        public event StartFailedEventHandler StartFailed;
+        public delegate void StartFailedEventHandler(ServiceControllerStatus status);
+
+        public event StopFailedEventHandler StopFailed;
+        public delegate void StopFailedEventHandler(ServiceControllerStatus status);
 
         public ServiceManager(string name, string display, string description, ILogger logger)
         {
@@ -76,19 +94,19 @@ namespace ControllerCommon
                 try
                 {
                     controller.Refresh();
-                    status = controller.Status;
+                    status = (ServiceControllerStatus)controller.Status;
                     type = controller.StartType;
                 }
                 catch (Exception)
                 {
-                    status = 0;
+                    status = ServiceControllerStatus.None;
                     type = ServiceStartMode.Disabled;
                 }
 
                 if (prevStatus != (int)status || prevType != (int)type || nextStatus != 0)
                 {
                     Updated?.Invoke(status, (int)type);
-                    nextStatus = 0;
+                    nextStatus = ServiceControllerStatus.None;
                     logger.LogInformation("Controller Service status has changed to: {0}", status.ToString());
                 }
 
@@ -128,6 +146,7 @@ namespace ControllerCommon
             process.WaitForExit();
         }
 
+        private int StartTentative;
         public async Task StartServiceAsync()
         {
             Updated?.Invoke(ServiceControllerStatus.StartPending, -1);
@@ -137,15 +156,22 @@ namespace ControllerCommon
             {
                 if (type != ServiceStartMode.Disabled)
                     controller.Start();
+                StartTentative = 0;
             }
             catch (Exception ex)
             {
-                await Task.Delay(2000);
-                StartServiceAsync();
-                logger.LogError("Service manager returned error: {0}", ex.Message);
+                while (StartTentative < 3)
+                {
+                    await Task.Delay(4000);
+                    controller.Start();
+                    logger.LogError("Service manager returned error: {0}", ex.Message);
+                }
+
+                StartFailed?.Invoke(status);
             }
         }
 
+        private int StopTentative;
         public async Task StopServiceAsync()
         {
             Updated?.Invoke(ServiceControllerStatus.StopPending, -1);
@@ -155,12 +181,18 @@ namespace ControllerCommon
             {
                 if (status == ServiceControllerStatus.Running)
                     controller.Stop();
+                StopTentative = 0;
             }
             catch (Exception ex)
             {
-                await Task.Delay(2000);
-                StopServiceAsync();
-                logger.LogError("Service manager returned error: {0}", ex.Message);
+                while (StopTentative < 3)
+                {
+                    await Task.Delay(4000);
+                    controller.Stop();
+                    logger.LogError("Service manager returned error: {0}", ex.Message);
+                }
+
+                StopFailed?.Invoke(status);
             }
         }
 
