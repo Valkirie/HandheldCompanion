@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using ModernWpf.Controls;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,6 +23,8 @@ namespace HandheldCompanion.Views.Pages
 
         private ProfileManager profileManager;
         private Profile profileCurrent;
+
+        private Dictionary<GamepadButtonFlags, CheckBox> activators = new();
 
         // pipe vars
         PipeClient pipeClient;
@@ -54,8 +57,21 @@ namespace HandheldCompanion.Views.Pages
             foreach (Output mode in (Output[])Enum.GetValues(typeof(Output)))
                 cB_Output.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
 
+            int idx = 0;
             foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
-                cB_Buttons.Items.Add(Utils.GetDescriptionFromEnumValue(button));
+            {
+                CheckBox checkbox = new CheckBox()
+                {
+                    Tag = button,
+                    Content = Utils.GetDescriptionFromEnumValue(button)
+                };
+
+                ((SimpleStackPanel)cB_Buttons.Children[idx]).Children.Add(checkbox);
+
+                activators.Add(button, checkbox);
+
+                idx = idx < 3 ? idx += 1 : 0;
+            }
 
             // select default profile
             cB_Profiles.SelectedItem = profileCurrent = profileManager.GetDefault();
@@ -241,13 +257,11 @@ namespace HandheldCompanion.Views.Pages
                 cB_Whitelist.IsChecked = profileCurrent.whitelisted;
                 cB_Wrapper.IsChecked = profileCurrent.use_wrapper;
 
-                cB_Buttons.SelectedItems.Clear();
-                foreach (string value in cB_Buttons.Items)
-                {
-                    GamepadButtonFlags button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(value);
+                foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
                     if (profileCurrent.umc_trigger.HasFlag(button))
-                        cB_Buttons.SelectedItems.Add(value);
-                }
+                        activators[button].IsChecked = true;
+                    else
+                        activators[button].IsChecked = false;
 
                 // display warnings
                 ProfileErrorCode currentError = profileCurrent.error;
@@ -323,11 +337,9 @@ namespace HandheldCompanion.Views.Pages
 
             profileCurrent.umc_trigger = 0;
 
-            foreach (string item in cB_Buttons.SelectedItems)
-            {
-                GamepadButtonFlags button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(item);
-                profileCurrent.umc_trigger |= button;
-            }
+            foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
+                if ((bool)activators[button].IsChecked)
+                    profileCurrent.umc_trigger |= button;
 
             profileManager.profiles[profileCurrent.name] = profileCurrent;
             profileManager.UpdateProfile(profileCurrent);
