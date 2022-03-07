@@ -108,7 +108,7 @@
                     </ui:SimpleStackPanel>
 
                     <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderSteeringAngle, Mode=OneWay}" />
-                    <Slider Name="SliderSteeringAngle" ValueChanged="SliderSteeringAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="80" Minimum="10" Value="35" TickPlacement="BottomRight" SmallChange="2" TickFrequency="10"/>
+                    <Slider Name="SliderSteeringAngle" ValueChanged="SliderSteeringAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="80" Minimum="10" Value="35" TickPlacement="BottomRight" SmallChange="2" TickFrequency="10" AutoToolTipPrecision="1" />
                 </Grid>
             </Border>
 
@@ -162,7 +162,7 @@
                     </ui:SimpleStackPanel>
 
                     <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneAngle, Mode=OneWay}" />
-                    <Slider Name="SliderDeadzoneAngle" ValueChanged="SliderDeadzoneAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="5" TickPlacement="BottomRight" SmallChange="1"/>
+                    <Slider Name="SliderDeadzoneAngle" ValueChanged="SliderDeadzoneAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="5" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="1"/>
                 </Grid>
             </Border>
 
@@ -189,7 +189,7 @@
                     </ui:SimpleStackPanel>
 
                     <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneCompensation, Mode=OneWay}" />
-                    <Slider Name="SliderDeadzoneCompensation" ValueChanged="SliderDeadzoneCompensation_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="10"/>
+                    <Slider Name="SliderDeadzoneCompensation" ValueChanged="SliderDeadzoneCompensation_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="10" AutoToolTipPrecision="1"/>
                 </Grid>
             </Border>
         </ui:SimpleStackPanel>

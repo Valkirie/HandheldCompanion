@@ -1,4 +1,4 @@
-using ControllerCommon;
+﻿using ControllerCommon;
 using LiveCharts;
 using LiveCharts.Defaults;
 using System;
