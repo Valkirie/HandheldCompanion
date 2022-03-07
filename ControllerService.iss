@@ -651,7 +651,7 @@ end;
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/ControllerService'
-#define MyAppExeName "ControllerHelper.exe"
+#define MyAppExeName "HandheldCompanion.exe"
 #define MySerExeName "ControllerService.exe"
 
 AppName={#MyAppSetupName}
@@ -668,6 +668,7 @@ OutputBaseFilename={#MyAppSetupName}-{#MyAppVersion}
 DefaultGroupName={#MyAppSetupName}
 DefaultDirName={autopf}\{#MyAppSetupName}
 UninstallDisplayIcon={app}\MyProgram.exe
+SetupIconFile="{#SourcePath}\HandheldCompanion\Resources\icon.ico"
 SourceDir=src
 OutputDir={#SourcePath}\install
 AllowNoIcons=yes
@@ -693,8 +694,8 @@ Source: "netcorecheck.exe"; Flags: dontcopy noencryption
 Source: "netcorecheck_x64.exe"; Flags: dontcopy noencryption
 #endif
 
-Source: "D:\GitHub\ControllerService\bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\GitHub\ControllerService\bin\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourcePath}\bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourcePath}\bin\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"
@@ -714,14 +715,14 @@ Filename: "{sys}\sc.exe"; Parameters: "delete ControllerService" ; RunOnceId: "D
 Filename: "C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe"; Parameters: "--cloak-off" ; RunOnceId: "CloakOff"; Flags: runascurrentuser runhidden
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{localappdata}\ControllerHelper"
+Type: filesandordirs; Name: "{localappdata}\HandheldCompanion"
 Type: filesandordirs; Name: "{localappdata}\ControllerService"
 Type: filesandordirs; Name: "{app}"
 
 [Registry]
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps"; Flags: uninsdeletekeyifempty
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{app}"; Flags: uninsdeletekey
-Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerHelper.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{app}"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{app}"; Flags: uninsdeletekey
 
 [Code]  
 procedure InitializeWizard;
