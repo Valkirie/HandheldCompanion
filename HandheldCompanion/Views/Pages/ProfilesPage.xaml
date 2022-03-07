@@ -277,7 +277,7 @@
                                             </ui:SimpleStackPanel>
 
                                             <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileGyroValue, Mode=OneWay}" />
-                                            <Slider Name="tb_ProfileGyroValue" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="3" TickFrequency="0.2" Value="10" TickPlacement="BottomRight" Minimum="0.1"/>
+                                            <Slider Name="tb_ProfileGyroValue" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3" TickFrequency="0.2" Value="10" TickPlacement="BottomRight" Minimum="0.1" AutoToolTipPrecision="1"/>
                                         </Grid>
 
                                         <!-- Separator -->
@@ -297,7 +297,7 @@
                                             </ui:SimpleStackPanel>
 
                                             <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAcceleroValue, Mode=OneWay}" />
-                                            <Slider Name="tb_ProfileAcceleroValue" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="3" Minimum="0.1" TickFrequency="0.2" Value="10" TickPlacement="BottomRight"/>
+                                            <Slider Name="tb_ProfileAcceleroValue" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3" Minimum="0.1" TickFrequency="0.2" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1"/>
                                         </Grid>
 
                                         <!-- Separator -->
