@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using HandheldCompanion.Views.Pages;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;

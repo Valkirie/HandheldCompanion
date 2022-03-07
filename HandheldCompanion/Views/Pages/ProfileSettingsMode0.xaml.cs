@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using ControllerService.Sensors;
 using System;
 using System.Windows;

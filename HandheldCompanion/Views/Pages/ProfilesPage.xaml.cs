@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using ModernWpf.Controls;

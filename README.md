@@ -4,9 +4,10 @@ Windows Service enables AYA NEO built in 6-axis gyroscope/accelerometer, providi
 
 ----
 
-![image](https://user-images.githubusercontent.com/934757/149888308-46ecd8aa-823e-48b4-8b3c-27602173c9c5.png)
-![image](https://user-images.githubusercontent.com/934757/149888339-5f00cb10-8f93-4d13-81b7-b34f0a5125a7.png)
-![image](https://user-images.githubusercontent.com/934757/149888351-017754ee-70ab-48c7-8c51-38989086b265.png)
+![image](https://user-images.githubusercontent.com/934757/156935541-5e54c35d-4bc9-4c7d-b4f4-c992805d2e3c.png)
+![image](https://user-images.githubusercontent.com/934757/156935542-411bb01e-dc5e-4193-920c-76ac45e3fcc8.png)
+![image](https://user-images.githubusercontent.com/934757/156935547-da4334ee-fa94-4d92-810d-06245c2dad75.png)
+![image](https://user-images.githubusercontent.com/934757/156935551-37798138-1fcd-4147-a1a0-beaa8ca83d73.png)
 
 ## About
 Controller Service provides gyroscope and accelerometer support to the AYA NEO 2020 and 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled.
