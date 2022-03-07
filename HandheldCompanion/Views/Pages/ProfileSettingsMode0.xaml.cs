@@ -45,11 +45,13 @@ namespace HandheldCompanion.Views.Pages
                 Thumb thumb = new Thumb()
                 {
                     Tag = i - 1,
-                    Width = 10,
+                    Width = 8,
                     MaxHeight = StackCurve.Height,
                     Height = height,
                     VerticalAlignment = VerticalAlignment.Bottom,
                     Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentLowBrush"],
+                    BorderThickness = new Thickness(0),
+                    BorderBrush = (SolidColorBrush)new BrushConverter().ConvertFrom("#F09D6500"),
                     IsEnabled = false // prevent the control from being clickable
                 };
 
@@ -103,7 +105,7 @@ namespace HandheldCompanion.Views.Pages
 
                 foreach (Control control in StackCurve.Children)
                 {
-                    control.BorderThickness = new Thickness(1, 1, 1, 1);
+                    control.BorderThickness = new Thickness(0);
 
                     int idx = (int)control.Tag;
                     ProfileVector vector = profileCurrent.aiming_array[idx];
@@ -115,7 +117,7 @@ namespace HandheldCompanion.Views.Pages
                 if (Thumb is null)
                     return;
 
-                Thumb.BorderThickness = new Thickness(1, 1, 1, 10);
+                Thumb.BorderThickness = new Thickness(0, 0, 0, 20);
             });
         }
 
