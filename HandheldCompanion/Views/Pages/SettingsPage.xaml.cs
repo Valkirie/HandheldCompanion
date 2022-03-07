@@ -1,10 +1,11 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using ModernWpf;
 using System;
 using System.Linq;
 using System.ServiceProcess;
 using System.Windows.Controls;
+using ServiceControllerStatus = ControllerCommon.ServiceControllerStatus;
 
 namespace HandheldCompanion.Views.Pages
 {

@@ -1,4 +1,4 @@
-﻿<Page x:Class="HandheldCompanion.Views.Pages.ProfilesPage"
+<Page x:Class="HandheldCompanion.Views.Pages.ProfilesPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,7 +7,7 @@
       xmlns:local="clr-namespace:HandheldCompanion" 
       xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
       mc:Ignorable="d" 
-      d:DesignHeight="1000" d:DesignWidth="1000"
+      d:DesignHeight="2000" d:DesignWidth="1000"
       KeepAlive="True"
       Loaded="Page_Loaded"
       Title="Profiles">
@@ -422,18 +422,14 @@
                                                 <TextBlock Text="Enable button" FontSize="14"/>
                                                 <TextBlock Text="The gyro input can be turned on only when a button is pressed" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
-
-                                            <ui:ListView
-                                            ScrollViewer.PanningMode="VerticalOnly"
-                                            ScrollViewer.VerticalScrollBarVisibility="Visible"
-                                            Name="cB_Buttons" Height="130" SelectionMode="Multiple"
-                                            IsMultiSelectCheckBoxEnabled="True" Grid.Column="2"
-                                            HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                                            MouseEnter="cB_Buttons_MouseEnter"
-                                            MouseLeave="cB_Buttons_MouseLeave"
-                                            BorderBrush="{DynamicResource SystemControlBackgroundBaseMediumBrush}" BorderThickness="1 1 1 1"
-                                            CornerRadius="{DynamicResource ControlCornerRadius}"/>
                                         </Grid>
+
+                                        <ui:SimpleStackPanel Name="cB_Buttons" Orientation="Horizontal" Spacing="6">
+                                            <ui:SimpleStackPanel Name="cB_Buttons_0" Spacing="6"/>
+                                            <ui:SimpleStackPanel Name="cB_Buttons_1" Spacing="6"/>
+                                            <ui:SimpleStackPanel Name="cB_Buttons_2" Spacing="6"/>
+                                            <ui:SimpleStackPanel Name="cB_Buttons_3" Spacing="6"/>
+                                        </ui:SimpleStackPanel>
 
                                         <!-- Separator -->
                                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />

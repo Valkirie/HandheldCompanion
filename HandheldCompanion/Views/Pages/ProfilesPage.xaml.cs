@@ -1,8 +1,9 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using ModernWpf.Controls;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,6 +23,8 @@ namespace HandheldCompanion.Views.Pages
 
         private ProfileManager profileManager;
         private Profile profileCurrent;
+
+        private Dictionary<GamepadButtonFlags, CheckBox> activators = new();
 
         // pipe vars
         PipeClient pipeClient;
@@ -54,8 +57,21 @@ namespace HandheldCompanion.Views.Pages
             foreach (Output mode in (Output[])Enum.GetValues(typeof(Output)))
                 cB_Output.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
 
+            int idx = 0;
             foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
-                cB_Buttons.Items.Add(Utils.GetDescriptionFromEnumValue(button));
+            {
+                CheckBox checkbox = new CheckBox()
+                {
+                    Tag = button,
+                    Content = Utils.GetDescriptionFromEnumValue(button)
+                };
+
+                ((SimpleStackPanel)cB_Buttons.Children[idx]).Children.Add(checkbox);
+
+                activators.Add(button, checkbox);
+
+                idx = idx < 3 ? idx += 1 : 0;
+            }
 
             // select default profile
             cB_Profiles.SelectedItem = profileCurrent = profileManager.GetDefault();
@@ -87,9 +103,9 @@ namespace HandheldCompanion.Views.Pages
                     }
 
                 if (idx != -1)
-                    cB_Profiles.Items.RemoveAt(idx);
-                cB_Profiles.Items.Add(profile);
-
+                    cB_Profiles.Items[idx] = profile;
+                else
+                    cB_Profiles.Items.Add(profile);
                 cB_Profiles.SelectedItem = profile;
             });
         }
@@ -217,57 +233,68 @@ namespace HandheldCompanion.Views.Pages
 
             if (profileCurrent == null)
                 return;
-            using (var d = Dispatcher.DisableProcessing())
-                Dispatcher.BeginInvoke(() =>
+
+            Dispatcher.BeginInvoke(() =>
+            {
+                // disable button if is default profile
+                b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
+                tB_ProfileName.IsEnabled = !profileCurrent.IsDefault;
+                cB_ExclusiveHook.IsEnabled = !profileCurrent.IsDefault;
+
+                // populate controls
+                tB_ProfileName.Text = profileCurrent.name;
+                tB_ProfilePath.Text = profileCurrent.fullpath;
+                Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
+                tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
+                tb_ProfileAcceleroValue.Value = profileCurrent.accelerometer;
+                cB_GyroSteering.SelectedIndex = profileCurrent.steering;
+                cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
+                cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
+                cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
+                cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
+                cB_EnableHook.IsChecked = profileCurrent.mousehook_enabled;
+                cB_ExclusiveHook.IsChecked = profileCurrent.mousehook_exclusive;
+                cB_Whitelist.IsChecked = profileCurrent.whitelisted;
+                cB_Wrapper.IsChecked = profileCurrent.use_wrapper;
+
+                foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
+                    if (profileCurrent.umc_trigger.HasFlag(button))
+                        activators[button].IsChecked = true;
+                    else
+                        activators[button].IsChecked = false;
+
+                // display warnings
+                ProfileErrorCode currentError = profileCurrent.error;
+                if (profileCurrent.IsRunning)
+                    currentError = ProfileErrorCode.IsRunning;
+
+                switch (currentError)
                 {
-                    // disable button if is default profile
-                    b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
-                    tB_ProfileName.IsEnabled = !profileCurrent.IsDefault;
-                    cB_ExclusiveHook.IsEnabled = !profileCurrent.IsDefault;
+                    default:
+                    case ProfileErrorCode.None:
+                        WarningBorder.Visibility = Visibility.Collapsed;
+                        cB_Whitelist.IsEnabled = true;
+                        cB_Wrapper.IsEnabled = true;
+                        break;
 
-                    // populate controls
-                    tB_ProfileName.Text = profileCurrent.name;
-                    tB_ProfilePath.Text = profileCurrent.path;
-                    Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
-                    tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
-                    tb_ProfileAcceleroValue.Value = profileCurrent.accelerometer;
-                    cB_GyroSteering.SelectedIndex = profileCurrent.steering;
-                    cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
-                    cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
-                    cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
-                    cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
-                    cB_EnableHook.IsChecked = profileCurrent.mousehook_enabled;
-                    cB_ExclusiveHook.IsChecked = profileCurrent.mousehook_exclusive;
+                    case ProfileErrorCode.MissingExecutable:
+                    case ProfileErrorCode.MissingPath:
+                    case ProfileErrorCode.MissingPermission:
+                    case ProfileErrorCode.IsDefault:
+                        WarningBorder.Visibility = Visibility.Visible;
+                        WarningContent.Text = Utils.GetDescriptionFromEnumValue(currentError);
+                        cB_Whitelist.IsEnabled = false; // you can't whitelist an application without path
+                        cB_Wrapper.IsEnabled = false;   // you can't deploy wrapper on an application without path
+                        break;
 
-                    cB_Buttons.SelectedItems.Clear();
-                    foreach (string value in cB_Buttons.Items)
-                    {
-                        GamepadButtonFlags button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(value);
-                        if (profileCurrent.umc_trigger.HasFlag(button))
-                            cB_Buttons.SelectedItems.Add(value);
-                    }
-
-                    // display warnings
-                    switch (profileCurrent.error)
-                    {
-                        default:
-                        case ProfileErrorCode.None:
-                            WarningBorder.Visibility = Visibility.Collapsed;
-                            cB_Whitelist.IsEnabled = profileCurrent.whitelisted;
-                            cB_Wrapper.IsEnabled = profileCurrent.use_wrapper;
-                            break;
-
-                        case ProfileErrorCode.MissingExecutable:
-                        case ProfileErrorCode.MissingPath:
-                        case ProfileErrorCode.MissingPermission:
-                        case ProfileErrorCode.IsDefault:
-                            WarningBorder.Visibility = Visibility.Visible;
-                            WarningContent.Text = Utils.GetDescriptionFromEnumValue(profileCurrent.error);
-                            cB_Whitelist.IsEnabled = false; // you can't whitelist an application without path
-                            cB_Wrapper.IsEnabled = false;   // you can't deploy wrapper on an application without path
-                            break;
-                    }
-                });
+                    case ProfileErrorCode.IsRunning:
+                        WarningBorder.Visibility = Visibility.Visible;
+                        WarningContent.Text = Utils.GetDescriptionFromEnumValue(currentError);
+                        cB_Whitelist.IsEnabled = true; // you can't whitelist an application without path
+                        cB_Wrapper.IsEnabled = false;   // you can't deploy wrapper on a running application
+                        break;
+                }
+            });
         }
 
         private void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
@@ -284,21 +311,22 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // todo: implement localized strings
-            Task<ContentDialogResult> result = Dialog.ShowAsync("Profile updated", $"{profileCurrent.name} was updated.", ContentDialogButton.Primary, null, "OK");
+            Dialog.ShowAsync("Profile updated", $"{profileCurrent.name} was updated.", ContentDialogButton.Primary, null, "OK");
 
             profileCurrent.name = tB_ProfileName.Text;
+            profileCurrent.fullpath = tB_ProfilePath.Text;
 
             profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
             profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
-            profileCurrent.whitelisted = (bool)cB_Whitelist.IsChecked && cB_Whitelist.IsEnabled;
-            profileCurrent.use_wrapper = (bool)cB_Wrapper.IsChecked && cB_Wrapper.IsEnabled;
+            profileCurrent.whitelisted = (bool)cB_Whitelist.IsChecked;
+            profileCurrent.use_wrapper = (bool)cB_Wrapper.IsChecked;
 
             profileCurrent.steering = cB_GyroSteering.SelectedIndex;
 
-            profileCurrent.invertvertical = (bool)cB_InvertVertical.IsChecked && cB_InvertVertical.IsEnabled;
-            profileCurrent.inverthorizontal = (bool)cB_InvertHorizontal.IsChecked && cB_InvertHorizontal.IsEnabled;
+            profileCurrent.invertvertical = (bool)cB_InvertVertical.IsChecked;
+            profileCurrent.inverthorizontal = (bool)cB_InvertHorizontal.IsChecked;
 
-            profileCurrent.umc_enabled = (bool)Toggle_UniversalMotion.IsOn && Toggle_UniversalMotion.IsEnabled;
+            profileCurrent.umc_enabled = (bool)Toggle_UniversalMotion.IsOn;
 
             profileCurrent.umc_input = (Input)cB_Input.SelectedIndex;
             profileCurrent.umc_output = (Output)cB_Output.SelectedIndex;
@@ -309,11 +337,9 @@ namespace HandheldCompanion.Views.Pages
 
             profileCurrent.umc_trigger = 0;
 
-            foreach (string item in cB_Buttons.SelectedItems)
-            {
-                GamepadButtonFlags button = Utils.GetEnumValueFromDescription<GamepadButtonFlags>(item);
-                profileCurrent.umc_trigger |= button;
-            }
+            foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
+                if ((bool)activators[button].IsChecked)
+                    profileCurrent.umc_trigger |= button;
 
             profileManager.profiles[profileCurrent.name] = profileCurrent;
             profileManager.UpdateProfile(profileCurrent);

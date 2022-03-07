@@ -1,4 +1,4 @@
-﻿<Page x:Class="HandheldCompanion.Views.Pages.ProfileSettingsMode1"
+<Page x:Class="HandheldCompanion.Views.Pages.ProfileSettingsMode1"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -30,23 +30,24 @@
                     <lvc:AngularGauge
                         Name = "lvAngularGauge"
                         FromValue="-80" ToValue="80"  
-                        LabelsStep="10" TicksStep="5" Wedge="160" 
+                        LabelsStep="20" TicksStep="10" Wedge="160" 
                         NeedleFill="{DynamicResource SystemControlForegroundAccentBrush}"
-                        AnimationsSpeed="00:00:00.05"
-                        TicksForeground="{DynamicResource SystemControlForegroundBaseMediumHighBrush}" 
-                        Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                        TicksForeground="{DynamicResource SystemControlForegroundBaseMediumHighBrush}"
                         FontSize="12" 
-                        SectionsInnerRadius="0.6"
+                        SectionsInnerRadius="0.25"
                         Margin="0,0,0,-130"
+                        DisableaAnimations="True"
+                        LabelsEffect="{x:Null}"
                         Grid.Column="0">
+
                         <lvc:AngularGauge.Sections>
                             <lvc:AngularSection FromValue="-80" ToValue="{Binding Value, ElementName=SliderSteeringAngle, Converter={ikriv:MathConverter}, ConverterParameter=x*-1}" Fill="{DynamicResource SystemControlHighlightListMediumBrush}"/>
                             <lvc:AngularSection FromValue="{Binding Value, ElementName=SliderDeadzoneAngle, Converter={ikriv:MathConverter}, ConverterParameter=x*-1}" ToValue="{Binding Value, ElementName=SliderDeadzoneAngle}" Fill="#94221C"/>
                             <lvc:AngularSection FromValue="{Binding Value, ElementName=SliderSteeringAngle}" ToValue="80" Fill="{DynamicResource SystemControlHighlightListMediumBrush}"/>
-                        </lvc:AngularGauge.Sections>
+                        </lvc:AngularGauge.Sections>                        
                     </lvc:AngularGauge>
 
-                    <lvc:CartesianChart LegendLocation="None" Grid.Column="1" Hoverable="False">
+                    <lvc:CartesianChart LegendLocation="None" Grid.Column="1" Hoverable="False" DisableAnimations="True">
                         <lvc:CartesianChart.Series>
                             <lvc:LineSeries
                                 Name = "lvLineSeriesDefault"
