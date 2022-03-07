@@ -11,12 +11,14 @@ namespace ControllerCommon
         None = 0,
         [Description("Oops. It seems this profile does not have an executable. How is this even possible?")]
         MissingExecutable = 1,
-        [Description("Oops. It seems this profile does not have a path to the application. It should work nevertheless but some options will be unavailable to you.")]
+        [Description("Oops. It seems this profile does not have a path to the application. Some options requiring an executable might be disabled.")]
         MissingPath = 2,
         [Description("Oops. It seems you do not have the necessary permission level to modify the content of this application. Make sure you have started this program in administrator mode.")]
         MissingPermission = 3,
         [Description("This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled.")]
-        IsDefault = 4
+        IsDefault = 4,
+        [Description("Oops. It seems this profile excutable is running. Some options requiring an executable might be disabled.")]
+        IsRunning = 5
     }
 
     public enum Input
@@ -93,6 +95,7 @@ namespace ControllerCommon
         [JsonIgnore] public ProfileErrorCode error;
         [JsonIgnore] public string fullpath { get; set; }
         [JsonIgnore] public bool IsDefault { get; set; } = false;
+        [JsonIgnore] public bool IsRunning { get; set; } = false;
         [JsonIgnore] public static int array_size = 49;             // x + 1 (hidden)
 
         public Profile()

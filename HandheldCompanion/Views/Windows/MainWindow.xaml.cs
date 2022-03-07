@@ -20,6 +20,7 @@ using System.Windows.Navigation;
 using Windows.System.Diagnostics;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Page = System.Windows.Controls.Page;
+using ServiceControllerStatus = ControllerCommon.ServiceControllerStatus;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Views
@@ -34,11 +35,6 @@ namespace HandheldCompanion.Views
         public HandheldDevice handheldDevice;
         public FileVersionInfo fileVersionInfo;
         public static new string Name;
-
-        // process vars
-        private Timer MonitorTimer;
-        private uint CurrentProcess;
-        private object updateLock = new();
 
         // page vars
         private Dictionary<string, Page> _pages = new();
@@ -64,6 +60,7 @@ namespace HandheldCompanion.Views
 
         // manager(s) vars
         public static ToastManager toastManager;
+        public ProcessManager processManager;
         public ServiceManager serviceManager;
         public ProfileManager profileManager;
         public TaskManager taskManager;
@@ -157,6 +154,12 @@ namespace HandheldCompanion.Views
             // initialize toast manager
             toastManager = new ToastManager("ControllerService");
 
+            // initialize process manager
+            processManager = new ProcessManager();
+            processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            processManager.ProcessStarted += ProcessManager_ProcessStarted;
+            processManager.ProcessStopped += ProcessManager_ProcessStopped;
+
             // initialize service manager
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription, microsoftLogger);
             serviceManager.Updated += OnServiceUpdate;
@@ -195,85 +198,53 @@ namespace HandheldCompanion.Views
             }
         }
 
-        private void NotifyIconDoubleClick(object? sender, EventArgs e)
-        {
-            WindowState = prevWindowState;
-        }
-
-        private void OnClientConnected(object sender)
-        {
-            // start mouse hook
-            mouseHook.Start();
-
-            // update service screen size
-            pipeClient.SendMessage(new PipeClientScreen
-            {
-                width = Screen.PrimaryScreen.Bounds.Width,
-                height = Screen.PrimaryScreen.Bounds.Height
-            });
-
-            // start processes monitor
-            MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
-            MonitorTimer.Elapsed += MonitorHelper;
-        }
-
-        private void OnClientDisconnected(object sender)
-        {
-            // stop mouse hook
-            mouseHook.Stop();
-
-            // stop processes monitor
-            MonitorTimer.Elapsed -= MonitorHelper;
-        }
-
-        private void MonitorHelper(object? sender, System.Timers.ElapsedEventArgs e)
-        {
-            lock (updateLock)
-            {
-                uint processId;
-                string name = string.Empty;
-                string exec = string.Empty;
-                string path = string.Empty;
-
-                ProcessDiagnosticInfo process = new FindHostedProcess().Process;
-                if (process == null)
-                    return;
-
-                processId = process.ProcessId;
-
-                if (processId != CurrentProcess)
-                {
-                    Process proc = Process.GetProcessById((int)processId);
-                    path = Utils.GetPathToApp(proc);
-                    exec = process.ExecutableFileName;
-
-                    if (process.IsPackaged)
-                    {
-                        var apps = process.GetAppDiagnosticInfos();
-                        if (apps.Count > 0)
-                            name = apps.First().AppInfo.DisplayInfo.DisplayName;
-                        else
-                            name = Path.GetFileNameWithoutExtension(exec);
-                    }
-                    else
-                        name = Path.GetFileNameWithoutExtension(exec);
-
-                    UpdateProcess((int)processId, path, exec);
-
-                    CurrentProcess = processId;
-                }
-            }
-        }
-
-        public void UpdateProcess(int ProcessId, string ProcessPath, string ProcessExec)
+        private void ProcessManager_ProcessStopped(uint processid, string path, string exec)
         {
             try
             {
-                Profile currentProfile = profileManager.GetProfileFromExec(ProcessExec);
+                Profile currentProfile = profileManager.GetProfileFromExec(exec);
+
+                if (currentProfile == null)
+                    return;
+
+                currentProfile.fullpath = path;
+                currentProfile.IsRunning = false;
+
+                // update profile and inform settings page
+                profileManager.UpdateProfile(currentProfile);
+            }
+            catch (Exception) { }
+        }
+
+        private void ProcessManager_ProcessStarted(uint processid, string path, string exec)
+        {
+            try
+            {
+                Profile currentProfile = profileManager.GetProfileFromExec(exec);
+
+                if (currentProfile == null)
+                    return;
+
+                currentProfile.fullpath = path;
+                currentProfile.IsRunning = true;
+
+                // update profile and inform settings page
+                profileManager.UpdateProfile(currentProfile);
+            }
+            catch (Exception) { }
+        }
+
+        private void ProcessManager_ForegroundChanged(uint processid, string path, string exec)
+        {
+            try
+            {
+                Profile currentProfile = profileManager.GetProfileFromExec(exec);
                 if (currentProfile != null)
                 {
-                    currentProfile.fullpath = ProcessPath;
+                    currentProfile.fullpath = path;
+                    currentProfile.IsRunning = true;
 
+                    // update profile and inform settings page
                     profileManager.UpdateProfile(currentProfile);
 
                     // inform service & mouseHook
@@ -291,6 +262,36 @@ namespace HandheldCompanion.Views
                 }
             }
             catch (Exception) { }
+        }
+
+        private void NotifyIconDoubleClick(object? sender, EventArgs e)
+        {
+            WindowState = prevWindowState;
+        }
+
+        private void OnClientConnected(object sender)
+        {
+            // start listening to mouse inputs
+            mouseHook.Start();
+
+            // start process manager
+            processManager.Start();
+
+            // update service screen size
+            pipeClient.SendMessage(new PipeClientScreen
+            {
+                width = Screen.PrimaryScreen.Bounds.Width,
+                height = Screen.PrimaryScreen.Bounds.Height
+            });
+        }
+
+        private void OnClientDisconnected(object sender)
+        {
+            // stop listening to mouse inputs
+            mouseHook.Stop();
+
+            // stop process manager
+            processManager.Stop();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
