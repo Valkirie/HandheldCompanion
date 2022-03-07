@@ -135,7 +135,7 @@
                     </ui:SimpleStackPanel>
 
                     <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderPower, Mode=OneWay}" />
-                    <Slider Name="SliderPower" ValueChanged="SliderPower_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="5" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.2"/>
+                    <Slider Name="SliderPower" ValueChanged="SliderPower_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="5" Minimum="0.2" Value="1" TickPlacement="BottomRight" TickFrequency="0.2" AutoToolTipPrecision="1"/>
                 </Grid>
             </Border>
 

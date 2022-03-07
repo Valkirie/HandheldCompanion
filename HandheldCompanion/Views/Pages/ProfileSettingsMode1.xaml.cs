@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using LiveCharts;
 using LiveCharts.Defaults;
 using System;
@@ -15,7 +15,7 @@ namespace HandheldCompanion.Views.Pages
         private Profile profileCurrent;
         private PipeClient pipeClient;
 
-        private int SteeringArraySize = 80;
+        private int SteeringArraySize = 30;
         private ChartValues<ObservablePoint> SteeringLinearityPoints;
 
         public ProfileSettingsMode1()
