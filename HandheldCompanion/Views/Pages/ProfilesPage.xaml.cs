@@ -106,7 +106,8 @@ namespace HandheldCompanion.Views.Pages
                     cB_Profiles.Items[idx] = profile;
                 else
                     cB_Profiles.Items.Add(profile);
-                cB_Profiles.SelectedItem = profile;
+
+                UpdateSelectedProfile();
             });
         }
 
@@ -121,7 +122,7 @@ namespace HandheldCompanion.Views.Pages
         }
         #endregion
 
-        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        private async void b_CreateProfile_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
@@ -211,7 +212,7 @@ namespace HandheldCompanion.Views.Pages
             }
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private void b_AdditionalSettings_Click(object sender, RoutedEventArgs e)
         {
             Page page;
             switch ((Input)cB_Input.SelectedIndex)
@@ -228,6 +229,11 @@ namespace HandheldCompanion.Views.Pages
         }
 
         private void cB_Profiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateSelectedProfile();
+        }
+
+        private void UpdateSelectedProfile()
         {
             profileCurrent = (Profile)cB_Profiles.SelectedItem;
 

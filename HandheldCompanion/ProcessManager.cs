@@ -24,10 +24,11 @@ namespace HandheldCompanion
         private Timer MonitorTimer;
         private ManagementEventWatcher startWatch;
         private ManagementEventWatcher stopWatch;
-        private Dictionary<uint, ProcessDetails> processes = new Dictionary<uint, ProcessDetails>();
+        private Dictionary<uint, ProcessDetails> CurrentProcesses = new();
 
         private uint CurrentProcess;
         private object updateLock = new();
+        private bool isRunning;
 
         public event ForegroundChangedEventHandler ForegroundChanged;
         public delegate void ForegroundChangedEventHandler(uint processid, string path, string exec);
@@ -56,10 +57,15 @@ namespace HandheldCompanion
 
             startWatch.Start();
             stopWatch.Start();
+
+            isRunning = true;
         }
 
         public void Stop()
         {
+            if (!isRunning)
+                return;
+
             // stop processes monitor
             MonitorTimer.Elapsed -= MonitorHelper;
             MonitorTimer.Stop();
@@ -101,10 +107,10 @@ namespace HandheldCompanion
             {
                 uint processId = (uint)e.NewEvent.Properties["ProcessID"].Value;
 
-                if (processes.ContainsKey(processId))
+                if (CurrentProcesses.ContainsKey(processId))
                 {
-                    ProcessDetails proc = processes[processId];
-                    processes.Remove(processId);
+                    ProcessDetails proc = CurrentProcesses[processId];
+                    CurrentProcesses.Remove(processId);
 
                     ProcessStopped?.Invoke(proc.processId, proc.processPath, proc.processExec);
                 }
@@ -130,8 +136,8 @@ namespace HandheldCompanion
                     processPath = path
                 };
 
-                if (!processes.ContainsKey(processId))
-                    processes.Add(processId, details);
+                if (!CurrentProcesses.ContainsKey(processId))
+                    CurrentProcesses.Add(processId, details);
 
                 ProcessStarted?.Invoke(processId, path, exec);
             }

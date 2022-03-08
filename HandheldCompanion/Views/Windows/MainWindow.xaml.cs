@@ -285,7 +285,8 @@ namespace HandheldCompanion.Views
             mouseHook.Start();
 
             // start process manager
-            processManager.Start();
+            if (IsElevated)
+                processManager.Start();
 
             // update service screen size
             pipeClient.SendMessage(new PipeClientScreen
