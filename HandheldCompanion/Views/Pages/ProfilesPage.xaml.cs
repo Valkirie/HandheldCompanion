@@ -29,6 +29,9 @@ namespace HandheldCompanion.Views.Pages
         // pipe vars
         PipeClient pipeClient;
 
+        // UI vars
+        private int maxColumns = 4;
+
         public ProfilesPage()
         {
             InitializeComponent();
@@ -51,30 +54,31 @@ namespace HandheldCompanion.Views.Pages
             profileManager.Updated += ProfileUpdated;
             profileManager.Start();
 
+            // draw buttons
+            for (int i = 0; i < maxColumns; i++)
+                cB_Buttons.Children.Add(new SimpleStackPanel() { Spacing = 6 });
+
+            int idx = 0;
+            foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
+            {
+                string description = Utils.GetDescriptionFromEnumValue(button);
+                CheckBox checkbox = new CheckBox() { Tag = button, Content = description };
+
+                ((SimpleStackPanel)cB_Buttons.Children[idx]).Children.Add(checkbox);
+
+                activators.Add(button, checkbox);
+
+                idx = idx < (maxColumns - 1) ? idx += 1 : 0;
+            }
+
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
                 cB_Input.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
 
             foreach (Output mode in (Output[])Enum.GetValues(typeof(Output)))
                 cB_Output.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
 
-            int idx = 0;
-            foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
-            {
-                CheckBox checkbox = new CheckBox()
-                {
-                    Tag = button,
-                    Content = Utils.GetDescriptionFromEnumValue(button)
-                };
-
-                ((SimpleStackPanel)cB_Buttons.Children[idx]).Children.Add(checkbox);
-
-                activators.Add(button, checkbox);
-
-                idx = idx < 3 ? idx += 1 : 0;
-            }
-
             // select default profile
-            cB_Profiles.SelectedItem = profileCurrent = profileManager.GetDefault();
+            cB_Profiles.SelectedItem = profileManager.GetDefault();
         }
 
         private void PipeClient_ServerMessage(object sender, PipeMessage e)
@@ -107,7 +111,8 @@ namespace HandheldCompanion.Views.Pages
                 else
                     cB_Profiles.Items.Add(profile);
 
-                UpdateSelectedProfile();
+                if (profile.executable == profileCurrent.executable)
+                    cB_Profiles.SelectedItem = profile;
             });
         }
 
@@ -214,6 +219,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void b_AdditionalSettings_Click(object sender, RoutedEventArgs e)
         {
+            if (profileCurrent == null)
+                return;
+
             Page page;
             switch ((Input)cB_Input.SelectedIndex)
             {
@@ -230,13 +238,15 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_Profiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (cB_Profiles.SelectedItem == null)
+                return;
+
+            profileCurrent = (Profile)cB_Profiles.SelectedItem;
             UpdateSelectedProfile();
         }
 
         private void UpdateSelectedProfile()
         {
-            profileCurrent = (Profile)cB_Profiles.SelectedItem;
-
             if (profileCurrent == null)
                 return;
 
@@ -374,6 +384,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_UniversalMotion_Toggled(object sender, RoutedEventArgs e)
         {
+            if (profileCurrent == null)
+                return;
+
             cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !profileCurrent.IsDefault;
             Expander_UMC.IsExpanded = Toggle_UniversalMotion.IsOn;
         }

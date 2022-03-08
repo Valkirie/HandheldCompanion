@@ -424,12 +424,7 @@
                                             </ui:SimpleStackPanel>
                                         </Grid>
 
-                                        <ui:SimpleStackPanel Name="cB_Buttons" Orientation="Horizontal" Spacing="6">
-                                            <ui:SimpleStackPanel Name="cB_Buttons_0" Spacing="6"/>
-                                            <ui:SimpleStackPanel Name="cB_Buttons_1" Spacing="6"/>
-                                            <ui:SimpleStackPanel Name="cB_Buttons_2" Spacing="6"/>
-                                            <ui:SimpleStackPanel Name="cB_Buttons_3" Spacing="6"/>
-                                        </ui:SimpleStackPanel>
+                                        <ui:SimpleStackPanel Name="cB_Buttons" Orientation="Horizontal" Spacing="6" />
 
                                         <!-- Separator -->
                                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
