@@ -21,7 +21,7 @@
       <Value Profile="(Default)">127.0.0.1</Value>
     </Setting>
     <Setting Name="HIDuncloakonclose" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="HIDstrength" Type="System.Double" Scope="User">
       <Value Profile="(Default)">100</Value>

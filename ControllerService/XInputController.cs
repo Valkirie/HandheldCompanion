@@ -147,13 +147,20 @@ namespace ControllerService
 
         public void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 Acceleration)
         {
-            this.Acceleration = Acceleration;
+            this.Acceleration.X = Acceleration.X;
+            this.Acceleration.Y = Acceleration.Y;
+            this.Acceleration.Z = Acceleration.Z;
         }
 
         public void Girometer_ReadingChanged(XInputGirometer sender, Vector3 AngularVelocity)
         {
-            this.AngularVelocity = AngularVelocity;
-            this.AngularUniversal = AngularVelocity;
+            this.AngularVelocity.X = AngularVelocity.X;
+            this.AngularVelocity.Y = AngularVelocity.Y;
+            this.AngularVelocity.Z = AngularVelocity.Z;
+
+            this.AngularUniversal.X = AngularVelocity.X;
+            this.AngularUniversal.Y = AngularVelocity.Y;
+            this.AngularUniversal.Z = AngularVelocity.Z;
 
             AngularVelocityTimer?.Stop();
             AngularVelocityTimer?.Start();
@@ -168,7 +175,9 @@ namespace ControllerService
 
         public void Inclinometer_ReadingChanged(XInputInclinometer sender, Vector3 Angle)
         {
-            this.Angle = Angle;
+            this.Angle.X = Angle.X;
+            this.Angle.Y = Angle.Y;
+            this.Angle.Z = Angle.Z;
         }
 
         public void SetWidthHeightRatio(int ratio)
