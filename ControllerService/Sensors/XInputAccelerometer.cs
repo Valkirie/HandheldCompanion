@@ -34,7 +34,7 @@ namespace ControllerService.Sensors
                 sensor.ReportInterval = sensor.MinimumReportInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
-                sensor.ReadingChanged += ReadingChangedAsync;
+                sensor.ReadingChanged += ReadingChanged;
                 sensor.Shaken += Shaken;
             }
             else
@@ -54,7 +54,7 @@ namespace ControllerService.Sensors
             return this.GetType().Name;
         }
 
-        private async void ReadingChangedAsync(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
+        private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
             AccelerometerReading reading = args.Reading;
 
@@ -85,10 +85,7 @@ namespace ControllerService.Sensors
                 }
             }
 
-            Task.Run(async () =>
-            {
-                logger?.LogDebug("XInputAccelerometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
-            });
+            Task.Run(() => logger?.LogDebug("XInputAccelerometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
 
             // raise event
             ReadingHasChanged?.Invoke(this, this.reading);

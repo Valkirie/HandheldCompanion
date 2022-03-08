@@ -34,7 +34,7 @@ namespace ControllerService.Sensors
                 sensor.ReportInterval = sensor.MinimumReportInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
-                sensor.ReadingChanged += ReadingHasChangedAsync;
+                sensor.ReadingChanged += ReadingHasChanged;
             }
         }
 
@@ -43,7 +43,7 @@ namespace ControllerService.Sensors
             return this.GetType().Name;
         }
 
-        private async void ReadingHasChangedAsync(Gyrometer sender, GyrometerReadingChangedEventArgs args)
+        private void ReadingHasChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
         {
             GyrometerReading reading = args.Reading;
 
@@ -74,10 +74,7 @@ namespace ControllerService.Sensors
                 }
             }
 
-            Task.Run(async () =>
-            {
-                logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
-            });
+            Task.Run(() => logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
 
             // update client(s)
             if (ControllerService.CurrentTag == "ProfileSettingsMode0")

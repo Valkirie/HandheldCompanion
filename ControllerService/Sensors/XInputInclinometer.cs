@@ -79,10 +79,7 @@ namespace ControllerService.Sensors
             this.reading.X = (float)(angle_x_psi);
             this.reading.Y = (float)(angle_y_theta);
 
-            Task.Run(async () =>
-            {
-                logger?.LogDebug("XInputInclinometer.ReadingChanged({0:00.####}, {1:00.####})", angle_x_psi, angle_y_theta);
-            });
+            Task.Run(() => logger?.LogDebug("XInputInclinometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
 
             // update client(s)
             if (ControllerService.CurrentTag == "ProfileSettingsMode1")
