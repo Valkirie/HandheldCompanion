@@ -165,6 +165,7 @@ namespace ControllerCommon
                     await Task.Delay(4000);
                     controller.Start();
                     logger.LogError("Service manager returned error: {0}", ex.Message);
+                    StartTentative++;
                 }
 
                 StartFailed?.Invoke(status);
@@ -190,6 +191,7 @@ namespace ControllerCommon
                     await Task.Delay(4000);
                     controller.Stop();
                     logger.LogError("Service manager returned error: {0}", ex.Message);
+                    StopTentative++;
                 }
 
                 StopFailed?.Invoke(status);
