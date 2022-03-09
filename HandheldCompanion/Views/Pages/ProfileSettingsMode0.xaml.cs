@@ -100,24 +100,18 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Dispatcher.Invoke(() =>
             {
-                Control Thumb = null;
                 double dist_x = Math.Abs(value) / XInputGirometer.sensorSpec.maxIn;
 
                 foreach (Control control in StackCurve.Children)
                 {
-                    control.BorderThickness = new Thickness(0);
-
                     int idx = (int)control.Tag;
                     ProfileVector vector = profileCurrent.aiming_array[idx];
 
-                    if (dist_x <= vector.x && Thumb is null)
-                        Thumb = control;
+                    if (dist_x > vector.x)
+                        control.BorderThickness = new Thickness(0, 0, 0, 20);
+                    else
+                        control.BorderThickness = new Thickness(0);
                 }
-
-                if (Thumb is null)
-                    return;
-
-                Thumb.BorderThickness = new Thickness(0, 0, 0, 20);
             });
         }
 
