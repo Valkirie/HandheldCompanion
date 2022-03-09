@@ -90,7 +90,7 @@ namespace HandheldCompanion.Views.Pages
         }
 
         #region UI
-        public void ProfileUpdated(Profile profile)
+        public void ProfileUpdated(Profile profile, bool backgroundtask)
         {
             // inform Service we have a new default profile
             if (profile.IsDefault)
@@ -111,7 +111,7 @@ namespace HandheldCompanion.Views.Pages
                 else
                     cB_Profiles.Items.Add(profile);
 
-                if (profile.executable == profileCurrent.executable)
+                if (!backgroundtask || profile.executable == profileCurrent.executable)
                     cB_Profiles.SelectedItem = profile;
             });
         }
@@ -120,9 +120,14 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Dispatcher.Invoke(() =>
             {
-                int idx = cB_Profiles.Items.IndexOf(profile);
-                if (idx != -1)
-                    cB_Profiles.Items.RemoveAt(idx);
+                int idx = -1;
+                foreach (Profile pr in cB_Profiles.Items)
+                    if (pr.executable == profile.executable)
+                    {
+                        idx = cB_Profiles.Items.IndexOf(pr);
+                        break;
+                    }
+                cB_Profiles.Items.RemoveAt(idx);
             });
         }
         #endregion
@@ -206,7 +211,7 @@ namespace HandheldCompanion.Views.Pages
 
                     if (!exists)
                     {
-                        profileManager.UpdateProfile(profile);
+                        profileManager.UpdateOrCreateProfile(profile, false);
                         profileManager.SerializeProfile(profile);
                     }
                 }
@@ -358,7 +363,7 @@ namespace HandheldCompanion.Views.Pages
                     profileCurrent.umc_trigger |= button;
 
             profileManager.profiles[profileCurrent.name] = profileCurrent;
-            profileManager.UpdateProfile(profileCurrent);
+            profileManager.UpdateOrCreateProfile(profileCurrent, false);
             profileManager.SerializeProfile(profileCurrent);
         }
 

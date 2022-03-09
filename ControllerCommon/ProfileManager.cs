@@ -23,7 +23,7 @@ namespace ControllerCommon
         public event DeletedEventHandler Deleted;
         public delegate void DeletedEventHandler(Profile profile);
         public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(Profile profile);
+        public delegate void UpdatedEventHandler(Profile profile, bool backgroundtask);
 
         public PipeClient PipeClient;
 
@@ -58,10 +58,6 @@ namespace ControllerCommon
             string[] fileEntries = Directory.GetFiles(path, filter, SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
                 ProcessProfile(fileName);
-
-            // create default profile if missing
-            if (GetDefault() == null)
-                SetDefault();
         }
 
         public void Stop()
@@ -100,27 +96,17 @@ namespace ControllerCommon
             if (!profiles.ContainsKey(ProfileName))
                 return;
 
+            Profile profile = profiles[ProfileName];
+
             switch (ProfileName)
             {
-                // prevent default profile from being deleted
                 case "Default":
-                    SetDefault();
+                    SerializeProfile(profile);
                     break;
                 default:
-                    Profile profile = profiles[ProfileName];
                     DeleteProfile(profile);
                     break;
             }
-        }
-
-        public void SetDefault()
-        {
-            // dirty !
-            Profile profile = new Profile("Default", "");
-            profile.executable = "Default.exe";
-            profiles["Default"] = profile;
-            SerializeProfile(profile);
-            UpdateProfile(profile);
         }
 
         public Profile GetDefault()
@@ -154,12 +140,13 @@ namespace ControllerCommon
             if (profile.name == "Default")
                 profile.IsDefault = true;
 
-            UpdateProfile(profile);
+            UpdateOrCreateProfile(profile);
         }
 
         public void DeleteProfile(Profile profile)
         {
-            string settingsPath = Path.Combine(path, $"{profile.name}.json");
+            string json = Path.GetFileNameWithoutExtension(profile.executable);
+            string settingsPath = Path.Combine(path, $"{json}.json");
 
             if (profiles.ContainsKey(profile.name))
             {
@@ -201,7 +188,7 @@ namespace ControllerCommon
             return ProfileErrorCode.None;
         }
 
-        public void UpdateProfile(Profile profile)
+        public void UpdateOrCreateProfile(Profile profile, bool backgroundtask = true)
         {
             // update database
             profiles[profile.name] = profile;
@@ -213,7 +200,7 @@ namespace ControllerCommon
             UpdateProfileCloaking(profile);
 
             // warn owner
-            Updated?.Invoke(profile);
+            Updated?.Invoke(profile, backgroundtask);
 
             if (profile.error != ProfileErrorCode.None && !profile.IsDefault)
             {

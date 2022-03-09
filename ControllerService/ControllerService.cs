@@ -261,7 +261,7 @@ namespace ControllerService
 
                 case PipeCode.CLIENT_PROFILE:
                     PipeClientProfile profile = (PipeClientProfile)message;
-                    ProfileUpdated(profile.profile);
+                    ProfileUpdated(profile.profile, true);
                     break;
 
                 case PipeCode.CLIENT_CURSOR:
@@ -346,7 +346,7 @@ namespace ControllerService
             pipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
         }
 
-        internal void ProfileUpdated(Profile profile)
+        internal void ProfileUpdated(Profile profile, bool backgroundtask)
         {
             XInputController.SetProfile(profile);
         }

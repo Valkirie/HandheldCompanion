@@ -68,7 +68,7 @@ namespace HandheldCompanion
             profile.inverthorizontal = option.inverthorizontal;
             profile.invertvertical = option.invertvertical;
 
-            mainWindow.profileManager.UpdateProfile(profile);
+            mainWindow.profileManager.UpdateOrCreateProfile(profile);
             mainWindow.profileManager.SerializeProfile(profile);
 
             return true;
