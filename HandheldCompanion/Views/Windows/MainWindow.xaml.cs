@@ -221,7 +221,7 @@ namespace HandheldCompanion.Views
                 currentProfile.IsRunning = false;
 
                 // update profile and inform settings page
-                profileManager.UpdateProfile(currentProfile);
+                profileManager.UpdateOrCreateProfile(currentProfile);
             }
             catch (Exception) { }
         }
@@ -239,7 +239,7 @@ namespace HandheldCompanion.Views
                 currentProfile.IsRunning = true;
 
                 // update profile and inform settings page
-                profileManager.UpdateProfile(currentProfile);
+                profileManager.UpdateOrCreateProfile(currentProfile);
             }
             catch (Exception) { }
         }
@@ -255,7 +255,7 @@ namespace HandheldCompanion.Views
                     currentProfile.IsRunning = true;
 
                     // update profile and inform settings page
-                    profileManager.UpdateProfile(currentProfile);
+                    profileManager.UpdateOrCreateProfile(currentProfile);
 
                     // inform service & mouseHook
                     pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });

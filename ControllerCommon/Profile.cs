@@ -100,6 +100,7 @@ namespace ControllerCommon
 
         public Profile()
         {
+            // initialize aiming array
             if (aiming_array.Count == 0)
             {
                 for (int i = 0; i < array_size; i++)
@@ -111,7 +112,7 @@ namespace ControllerCommon
             }
         }
 
-        public Profile(string path)
+        public Profile(string path) : this()
         {
             Dictionary<string, string> AppProperties = Utils.GetAppProperties(path);
 
@@ -121,13 +122,6 @@ namespace ControllerCommon
 
             this.executable = AppProperties["FileName"];
             this.name = ProductName;
-            this.path = this.fullpath = path;
-        }
-
-        public Profile(string name, string path)
-        {
-            this.executable = Path.GetFileName(path);
-            this.name = name;
             this.path = this.fullpath = path;
         }
 
