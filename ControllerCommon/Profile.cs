@@ -94,6 +94,7 @@ namespace ControllerCommon
 
         [JsonIgnore] public ProfileErrorCode error;
         [JsonIgnore] public string fullpath { get; set; }
+        [JsonIgnore] public string json { get; set; }
         [JsonIgnore] public bool IsDefault { get; set; } = false;
         [JsonIgnore] public bool IsRunning { get; set; } = false;
         [JsonIgnore] public static int array_size = 49;             // x + 1 (hidden)
@@ -121,6 +122,7 @@ namespace ControllerCommon
             string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
 
             this.executable = AppProperties["FileName"];
+            this.json = $"{Path.GetFileNameWithoutExtension(path)}.json";
             this.name = ProductName;
             this.path = this.fullpath = path;
         }

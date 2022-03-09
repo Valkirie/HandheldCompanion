@@ -145,8 +145,7 @@ namespace ControllerCommon
 
         public void DeleteProfile(Profile profile)
         {
-            string json = Path.GetFileNameWithoutExtension(profile.executable);
-            string settingsPath = Path.Combine(path, $"{json}.json");
+            string settingsPath = Path.Combine(path, profile.json);
 
             if (profiles.ContainsKey(profile.name))
             {
@@ -164,8 +163,7 @@ namespace ControllerCommon
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(profile, options);
 
-            string json = Path.GetFileNameWithoutExtension(profile.executable);
-            string settingsPath = Path.Combine(path, $"{json}.json");
+            string settingsPath = Path.Combine(path, profile.json);
             File.WriteAllText(settingsPath, jsonString);
         }
 
