@@ -23,7 +23,7 @@ namespace ControllerService.Sensors
         private double CameraPitch;
         private double GyroFactorX = 1.0; // Todo should get from profile
         private double GyroFactorY = 1.0; // Todo should get from profile
-        private double AdditionalFactor = 20.0;// Sensitivity?
+        private double AdditionalFactor = 20.0; // Sensitivity?
 
         // Device Angle
         public Vector2 DeviceAngle;
@@ -35,32 +35,70 @@ namespace ControllerService.Sensors
         // Time
         // Stopwatch, used for delta 
         protected readonly Stopwatch stopwatch;
-        double UpdateTimePreviousMicroSeconds;
+        double UpdateTimePreviousMilliSeconds;
 
         // Timer used for sensor data reading 
         private Timer UpdateTimer;
 
-        int CalculationEveryMilliseconds = 10;
+        int CalculationEveryNDefinedMilliseconds = 10;
         int WaitForOtherSensorDelayMilliseconds = 2;
 
         private readonly ILogger logger;
 
-        public XInputSensorFusion() {
+        public XInputSensorFusion(ILogger logger) {
+
+            this.logger = logger;
 
             // Initialize stopwatch
             stopwatch = new Stopwatch();
-            //Stopwatch.IsHighResolution = true;
+            //Stopwatch.IsHighResolution = true; // Todo, check if we have the best
 
             stopwatch.Start();
 
-            // Initialize timers
-            UpdateTimer = new Timer() { Enabled = true, AutoReset = true };
-            UpdateTimer.Interval = CalculationEveryMilliseconds;
-            UpdateTimer.Elapsed += UpdateTimer_Elapsed;
+            // Initialize Accelerometer
+            AccelSensor = Accelerometer.GetDefault();
+            if (AccelSensor != null)
+            {
+                AccelSensor.ReportInterval = AccelSensor.MinimumReportInterval;
+                logger.LogInformation("Accelerometer initialised for sensor fusion. Report interval set to {0} ms", AccelSensor.ReportInterval);
+
+                AccelSensor.ReadingChanged += Accelerometer_ReadingChanged;
+            }
+            else
+            {
+                logger.LogInformation("Accelerometer not initialised for sensor fusion.", this.ToString());
+            }
+
+            // Initialize Gyrometer
+            GyroSensor = Gyrometer.GetDefault();
+            if (GyroSensor != null)
+            {
+                GyroSensor.ReportInterval = GyroSensor.MinimumReportInterval;
+                logger.LogInformation("Gyrometer initialised for sensor fusion. Report interval set to {0} ms", GyroSensor.ReportInterval);
+
+                GyroSensor.ReadingChanged += Gyro_ReadingChanged;
+            }
+            else
+            {
+                logger.LogInformation("Gyrometer not initialised for sensor fusion.", this.ToString());
+            }
+
+            // Todo, add some conditionals that we actually have all the senors we want...
+
+            // Additional notes:
+            // https://stackoverflow.com/questions/24839105/high-resolution-timer-in-c-sharp
+            // Better(?) timer: https://github.com/HypsyNZ/Precision-Timer.NET
+
+            // Initialize timer
+            UpdateTimer = new Timer();
+            UpdateTimer.Interval = CalculationEveryNDefinedMilliseconds;
+            UpdateTimer.Elapsed += UpdateTimer_Elapsed; // Todo, consider async? https://josipmisko.com/posts/c-sharp-timer
+            UpdateTimer.AutoReset = true;
+            UpdateTimer.Enabled = true;
 
         }
 
-        private void ReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
+        private void Gyro_ReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
         {
             // Set timer to go off in n milliseconds, 
             // allow for "other" sensor to provide data 
@@ -68,11 +106,14 @@ namespace ControllerService.Sensors
             // time delay between data and calculation 
             // to a minimum. 
 
+            logger.LogInformation("Plot XInputSensorFusion_GyroReadingChanged {0} 0.9", stopwatch.Elapsed.TotalMilliseconds);
+
+            UpdateTimer.Stop();
             UpdateTimer.Interval = WaitForOtherSensorDelayMilliseconds;
             UpdateTimer.Start();
         }
 
-        private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
+        private void Accelerometer_ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
             // Set timer to go off in n milliseconds, 
             // allow for "other" sensor to provide data 
@@ -80,8 +121,12 @@ namespace ControllerService.Sensors
             // time delay between data and calculation 
             // to a minimum. 
 
+            logger.LogInformation("Plot XInputSensorFusion_AccelerometerReadingChanged {0} 1.0", stopwatch.Elapsed.TotalMilliseconds);
+
+            UpdateTimer.Stop();
             UpdateTimer.Interval = WaitForOtherSensorDelayMilliseconds;
             UpdateTimer.Start();
+
         }
 
         private void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -89,36 +134,53 @@ namespace ControllerService.Sensors
             // Set timer to go off in n milliseconds ie trigges regardless 
             // if there's new sensor input yes or no. 
             // Everything below has to be done within n milliseconds or shit hits the fan! 
-            UpdateTimer.Interval = CalculationEveryMilliseconds;
+            //logger.LogInformation("Sensor Fusion update timer elapsed at {0}", stopwatch.Elapsed.TotalMilliseconds);
+            logger.LogInformation("Plot XInputSensorFusion_UpdateTimeElapsed {0} 1.1", stopwatch.Elapsed.TotalMilliseconds);
+
+            UpdateTimer.Stop();
+            UpdateTimer.Interval = CalculationEveryNDefinedMilliseconds;
             UpdateTimer.Start();
 
             // Get readings
+            // Todo, add some conditionals that we actually have all the senors we want...
             AccelerometerReading AccelReading = AccelSensor.GetCurrentReading();
             GyrometerReading GyroReading = GyroSensor.GetCurrentReading();
 
             Vector3 AngularVelocity = new();
             Vector3 Acceleration = new();
 
-            AngularVelocity.X = (float)GyroReading.AngularVelocityX;
-            AngularVelocity.Y = (float)GyroReading.AngularVelocityY;
-            AngularVelocity.Z = (float)GyroReading.AngularVelocityZ;
+            // Todo, if get reading returns null after initialise, does that mean we have no fresh reading, use the previous one? Unsure...
+            if (GyroReading != null)
+            {
+                AngularVelocity.X = (float)GyroReading.AngularVelocityX;
+                AngularVelocity.Y = (float)GyroReading.AngularVelocityY;
+                AngularVelocity.Z = (float)GyroReading.AngularVelocityZ;
+                // Todo, timestamp
+            }
+            else { logger.LogInformation("Gyrometer returned null {0}", stopwatch.Elapsed.TotalMilliseconds); }
 
-            Acceleration.X = (float)AccelReading.AccelerationX;
-            Acceleration.Y = (float)AccelReading.AccelerationY;
-            Acceleration.Z = (float)AccelReading.AccelerationZ;
+            if (AccelReading != null)
+            {
+                Acceleration.X = (float)AccelReading.AccelerationX;
+                Acceleration.Y = (float)AccelReading.AccelerationY;
+                Acceleration.Z = (float)AccelReading.AccelerationZ;
+                // Todo, timestamp
+            }
+            else { logger.LogInformation("Accelerometer returned null {0}", stopwatch.Elapsed.TotalMilliseconds); }
 
-            // Do swapping and inversion based on profile
+            // TODO Do swapping and inversion based on profile
 
             // Determine time
-            double DeltaSeconds = (double)(stopwatch.Elapsed.TotalMilliseconds - UpdateTimePreviousMicroSeconds) / (1000L * 1000L);
-            UpdateTimePreviousMicroSeconds = stopwatch.Elapsed.TotalMilliseconds;
+            // Note Elapsed.TotalMilliseconds returns milliseconds including x.xxx precision i.e. microseconds.
+            double DeltaSeconds = (double)(stopwatch.Elapsed.TotalMilliseconds - UpdateTimePreviousMilliSeconds) / 1000L;
+            UpdateTimePreviousMilliSeconds = stopwatch.Elapsed.TotalMilliseconds;
 
             // Do calculations 
             CalculateGravitySimple(DeltaSeconds, AngularVelocity, Acceleration);
-            CalculateGravityFancy(DeltaSeconds, AngularVelocity, Acceleration);
+            //CalculateGravityFancy(DeltaSeconds, AngularVelocity, Acceleration);
             
             DeviceAngles(GravityVectorSimple);
-            PlayerSpace(DeltaSeconds, AngularVelocity, GravityVectorSimple);
+            //PlayerSpace(DeltaSeconds, AngularVelocity, GravityVectorSimple);
         }
 
         public void CalculateGravitySimple(double DeltaTimeSec, Vector3 AngularVelocity, Vector3 Acceleration)

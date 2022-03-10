@@ -163,6 +163,9 @@ namespace ControllerService
             if (Inclinometer.sensor == null)
                 logger.LogWarning("No Inclinometer detected");
             XInputController.SetInclinometer(Inclinometer);
+
+            var SensorFusion = new XInputSensorFusion(logger);
+            XInputController.SetSensorFusion(SensorFusion);
         }
 
         private void SetControllerMode(HIDmode mode)

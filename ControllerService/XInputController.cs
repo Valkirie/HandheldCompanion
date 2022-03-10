@@ -38,6 +38,7 @@ namespace ControllerService
         public XInputGirometer Gyrometer;
         public XInputAccelerometer Accelerometer;
         public XInputInclinometer Inclinometer;
+        public XInputSensorFusion SensorFusion;
 
         protected readonly Stopwatch stopwatch;
         public long microseconds;
@@ -143,6 +144,10 @@ namespace ControllerService
         {
             Inclinometer = inclinometer;
             Inclinometer.ReadingHasChanged += Inclinometer_ReadingChanged;
+        }
+        public void SetSensorFusion(XInputSensorFusion sensorfusion)
+        {
+            SensorFusion= sensorfusion;
         }
 
         public void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 Acceleration)
