@@ -31,7 +31,7 @@ namespace ControllerService
         public Timer UpdateTimer;
         public float WidhtHeightRatio = 2.5f;
         public double vibrationStrength = 100.0d;
-        public int updateInterval = 4;
+        public int updateInterval = 15;
 
         public DeviceInstance Instance;
 
