@@ -73,7 +73,7 @@ namespace HandheldCompanion.Views.Pages
                     switch (sensor.type)
                     {
                         case SensorType.Girometer:
-                            Highlight_Thumb(sensor.z);
+                            Highlight_Thumb(Math.Max(sensor.z, sensor.x));
                             break;
                     }
                     break;
