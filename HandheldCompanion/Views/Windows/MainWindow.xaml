@@ -19,7 +19,7 @@
     <ui:NavigationView
         Name="navView" PaneDisplayMode="Auto"
         ItemInvoked="navView_ItemInvoked"
-        OpenPaneLength="240" IsBackEnabled="True"
+        OpenPaneLength="160" IsBackEnabled="True"
         SelectionFollowsFocus="Enabled"
         ShoulderNavigationEnabled="WhenSelectionFollowsFocus"
         Loaded="navView_Loaded"
