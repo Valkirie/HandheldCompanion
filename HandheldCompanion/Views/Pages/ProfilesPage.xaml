@@ -169,9 +169,6 @@
 
                                         <CheckBox Name="cB_Wrapper" Content="Translates DirectInput calls to XInput calls" Checked="cB_Wrapper_Checked" Unchecked="cB_Wrapper_Checked"></CheckBox>
 
-                                        <!-- Separator -->
-                                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
-
                                     </ui:SimpleStackPanel>
                                 </Grid>
                             </Expander.Content>
@@ -218,9 +215,6 @@
                                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                         <CheckBox Name="cB_ExclusiveHook" Content="Give virtual controller exclusive access to touch inputs" Checked="cB_ExclusiveHook_Checked" Unchecked="cB_ExclusiveHook_Checked"></CheckBox>
-
-                                        <!-- Separator -->
-                                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                     </ui:SimpleStackPanel>
                                 </Grid>
