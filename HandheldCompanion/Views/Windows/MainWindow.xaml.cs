@@ -284,9 +284,11 @@ namespace HandheldCompanion.Views
             // start listening to mouse inputs
             mouseHook.Start();
 
-            // start process manager
             if (IsElevated)
+            {
+                // start process manager
                 processManager.Start();
+            }
 
             // update service screen size
             pipeClient.SendMessage(new PipeClientScreen
@@ -315,8 +317,8 @@ namespace HandheldCompanion.Views
             this.Top = Math.Max(0, Properties.Settings.Default.MainWindowTop);
 
             // pull settings
-            WindowState = settingsPage.s_StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
-            toastManager.Enabled = settingsPage.s_ToastEnable;
+            WindowState = settingsPage.StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
+            toastManager.Enabled = settingsPage.ToastEnable;
 
             // start Service Manager
             serviceManager.Start();
@@ -327,6 +329,13 @@ namespace HandheldCompanion.Views
 
             // execute args
             cmdParser.ParseArgs(arguments.Args);
+
+            if (IsElevated)
+            {
+                // start service with companion
+                if (settingsPage.StartServiceWithCompanion)
+                    serviceManager.StartServiceAsync();
+            }
         }
 
         public void UpdateSettings(Dictionary<string, string> args)
@@ -574,10 +583,18 @@ namespace HandheldCompanion.Views
             }
             Properties.Settings.Default.MainWindowState = (int)WindowState;
 
-            if (settingsPage.s_CloseMinimises && !appClosing)
+            if (settingsPage.CloseMinimises && !appClosing)
             {
                 e.Cancel = true;
                 WindowState = WindowState.Minimized;
+                return;
+            }
+
+            if (IsElevated)
+            {
+                // stop service with companion
+                if (settingsPage.HaltServiceWithCompanion)
+                    serviceManager.StopServiceAsync();
             }
 
             notifyIcon.Visible = false;

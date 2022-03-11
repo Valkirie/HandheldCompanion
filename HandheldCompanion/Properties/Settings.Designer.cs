@@ -142,5 +142,29 @@ namespace HandheldCompanion.Properties {
                 this["MainWindowTheme"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool StartServiceWithCompanion {
+            get {
+                return ((bool)(this["StartServiceWithCompanion"]));
+            }
+            set {
+                this["StartServiceWithCompanion"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HaltServiceWithCompanion {
+            get {
+                return ((bool)(this["HaltServiceWithCompanion"]));
+            }
+            set {
+                this["HaltServiceWithCompanion"] = value;
+            }
+        }
     }
 }

@@ -191,6 +191,56 @@
                         <ComboBox Name="cB_StartupType" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_StartupType_SelectionChanged" />
                     </Grid>
                 </Border>
+
+                <!-- Start with Companion -->
+                <Border                      
+                            Padding="0,12,12,12"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEDB5;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="Start with Companion" FontSize="14"/>
+                            <TextBlock Text="Automatically turn on service when companion starts" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:ToggleSwitch Name="Toggle_ServiceStartup" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Stretch" Toggled="Toggle_ServiceStartup_Toggled" IsEnabled="False">
+                            
+                        </ui:ToggleSwitch>
+                    </Grid>
+                </Border>
+
+                <!-- Stop with Companion -->
+                <Border                      
+                            Padding="0,12,12,12"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE71A;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="Halt with Companion" FontSize="14"/>
+                            <TextBlock Text="Automatically turn off service when companion is closed" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                        </ui:SimpleStackPanel>
+
+                        <ui:ToggleSwitch Name="Toggle_ServiceShutdown" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Stretch" Toggled="Toggle_ServiceShutdown_Toggled" IsEnabled="False"/>
+                    </Grid>
+                </Border>
             </ui:SimpleStackPanel>
         </ui:SimpleStackPanel>
     </Grid>
