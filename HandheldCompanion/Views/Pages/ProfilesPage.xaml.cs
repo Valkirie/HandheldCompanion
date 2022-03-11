@@ -195,7 +195,7 @@ namespace HandheldCompanion.Views.Pages
                     if (profileManager.Contains(profile))
                     {
                         // todo: implement localized strings
-                        Task<ContentDialogResult> result = Dialog.ShowAsync("Overwrite profile permanently?", "A profile with the same executable has been fund. Do you want to overwrite it?", ContentDialogButton.Primary, "Close", "Yes");
+                        Task<ContentDialogResult> result = Dialog.ShowAsync($"Are you sure you want to overwrite \"{profile.name}\"?", "This item will be overwrite. You can't undo this action.", ContentDialogButton.Primary, "Cancel", "Yes");
                         await result; // sync call
 
                         switch (result.Result)
@@ -318,12 +318,23 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
-        private void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
+        private async void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
         {
             Profile profile = (Profile)cB_Profiles.SelectedItem;
-            profileManager.DeleteProfile(profile);
 
-            cB_Profiles.SelectedIndex = 0;
+            // todo: implement localized strings
+            Task<ContentDialogResult> result = Dialog.ShowAsync($"Are you sure you want to delete \"{profile.name}\"?", "This item will be deleted immediatly. You can't undo this action.", ContentDialogButton.Primary, "Cancel", "Delete");
+            await result; // sync call
+
+            switch (result.Result)
+            {
+                case ContentDialogResult.Primary:
+                    profileManager.DeleteProfile(profile);
+                    cB_Profiles.SelectedIndex = 0;
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void b_ApplyProfile_Click(object sender, RoutedEventArgs e)
