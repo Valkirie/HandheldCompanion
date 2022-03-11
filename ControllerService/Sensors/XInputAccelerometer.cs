@@ -31,7 +31,7 @@ namespace ControllerService.Sensors
             sensor = Accelerometer.GetDefault();
             if (sensor != null)
             {
-                sensor.ReportInterval = sensor.MinimumReportInterval;
+                sensor.ReportInterval = (uint)controller.updateInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
                 sensor.ReadingChanged += ReadingChanged;
