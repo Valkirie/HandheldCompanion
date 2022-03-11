@@ -166,12 +166,12 @@ namespace ControllerService.Targets
                                 {
                                     default:
                                     case Output.RightStick:
-                                        RightThumbX += (short)GamepadThumbX;
-                                        RightThumbY += (short)GamepadThumbY;
+                                        RightThumbX = (short)(Math.Clamp(RightThumbX + GamepadThumbX, short.MinValue, short.MaxValue));
+                                        RightThumbY = (short)(Math.Clamp(RightThumbY + GamepadThumbY, short.MinValue, short.MaxValue));
                                         break;
                                     case Output.LeftStick:
-                                        LeftThumbX += (short)GamepadThumbX;
-                                        LeftThumbY += (short)GamepadThumbY;
+                                        LeftThumbX = (short)(Math.Clamp(LeftThumbX + GamepadThumbX, short.MinValue, short.MaxValue));
+                                        LeftThumbY = (short)(Math.Clamp(LeftThumbY + GamepadThumbY, short.MinValue, short.MaxValue));
                                         break;
                                 }
                             }
