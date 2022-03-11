@@ -188,11 +188,12 @@ namespace ControllerCommon
 
         public void UpdateOrCreateProfile(Profile profile, bool backgroundtask = true)
         {
-            // update database
-            profiles[profile.name] = profile;
-
             // refresh error code
             profile.error = SanitizeProfile(profile);
+            profile.json = $"{Path.GetFileNameWithoutExtension(profile.path)}.json";
+
+            // update database
+            profiles[profile.name] = profile;
 
             // update cloaking
             UpdateProfileCloaking(profile);

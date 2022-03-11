@@ -118,11 +118,10 @@ namespace ControllerCommon
             Dictionary<string, string> AppProperties = Utils.GetAppProperties(path);
 
             string ProductName = AppProperties.ContainsKey("FileDescription") ? AppProperties["FileDescription"] : AppProperties["ItemFolderNameDisplay"];
-            string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";
-            string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
+            // string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";
+            // string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
 
             this.executable = AppProperties["FileName"];
-            this.json = $"{Path.GetFileNameWithoutExtension(path)}.json";
             this.name = ProductName;
             this.path = this.fullpath = path;
         }
