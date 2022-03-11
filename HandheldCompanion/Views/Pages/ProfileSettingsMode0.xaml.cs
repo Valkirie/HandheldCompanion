@@ -4,6 +4,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Views.Pages
@@ -115,7 +116,12 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
-        private void StackCurve_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void StackCurve_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            StackCurve_MouseMove(sender, (MouseEventArgs)e);
+        }
+
+        private void StackCurve_MouseMove(object sender, MouseEventArgs e)
         {
             MainWindow.scrollLock = true;
 
@@ -146,7 +152,7 @@ namespace HandheldCompanion.Views.Pages
 
             Thumb.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentHighBrush"];
 
-            if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
 
                 int idx = (int)Thumb.Tag;

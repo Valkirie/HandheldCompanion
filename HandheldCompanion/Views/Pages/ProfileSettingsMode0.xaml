@@ -92,7 +92,7 @@
                             </Label>
                             <ui:SimpleStackPanel Orientation="Vertical" Spacing="12">
                                 <Label Content="Movement intensity" HorizontalAlignment="Center"/>
-                                <ui:SimpleStackPanel Name="StackCurve" Orientation="Horizontal" Height="410" MouseMove="StackCurve_MouseMove" Spacing="2">
+                                <ui:SimpleStackPanel Name="StackCurve" Orientation="Horizontal" Height="410" MouseDown="StackCurve_MouseDown" MouseMove="StackCurve_MouseMove" Spacing="2">
                                     <ui:SimpleStackPanel.Background>
                                         <DrawingBrush TileMode="Tile" Viewport="40,40,40,40" 
                                              ViewportUnits="Absolute">
