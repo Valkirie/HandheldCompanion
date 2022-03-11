@@ -190,7 +190,7 @@ namespace ControllerCommon
         {
             // refresh error code
             profile.error = SanitizeProfile(profile);
-            profile.json = $"{Path.GetFileNameWithoutExtension(profile.path)}.json";
+            profile.json = $"{Path.GetFileNameWithoutExtension(profile.executable)}.json";
 
             // update database
             profiles[profile.name] = profile;
