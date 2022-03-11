@@ -118,7 +118,7 @@
 
                                 <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal">
                                     <Button Click="b_DeleteProfile_Click" Name="b_DeleteProfile" Content="Delete profile" Width="Auto" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}"/>
-                                    <Button Click="b_ApplyProfile_Click" Name="b_ApplyProfile" Content="Update profile" Width="Auto"/>
+                                    <Button Click="b_ApplyProfile_Click" Name="b_ApplyProfile" Content="Update profile" Width="Auto" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100"/>
                                 </ui:SimpleStackPanel>
 
                             </ui:SimpleStackPanel>

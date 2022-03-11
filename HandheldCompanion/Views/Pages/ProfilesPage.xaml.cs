@@ -321,6 +321,9 @@ namespace HandheldCompanion.Views.Pages
                 tB_ProfileName.IsEnabled = !profileCurrent.IsDefault;
                 cB_ExclusiveHook.IsEnabled = !profileCurrent.IsDefault;
 
+                b_ApplyProfile.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
+                b_ApplyProfile.ToolTip = b_ApplyProfile.IsEnabled == false ? Properties.Resources.WarningElevated : null;
+
                 // populate controls
                 tB_ProfileName.Text = profileCurrent.name;
                 tB_ProfilePath.Text = profileCurrent.fullpath;
@@ -363,8 +366,8 @@ namespace HandheldCompanion.Views.Pages
                     case ProfileErrorCode.IsDefault:
                         WarningBorder.Visibility = Visibility.Visible;
                         WarningContent.Text = Utils.GetDescriptionFromEnumValue(currentError);
-                        cB_Whitelist.IsEnabled = false; // you can't whitelist an application without path
-                        cB_Wrapper.IsEnabled = false;   // you can't deploy wrapper on an application without path
+                        cB_Whitelist.IsEnabled = false;     // you can't whitelist an application without path
+                        cB_Wrapper.IsEnabled = false;       // you can't deploy wrapper on an application without path
                         break;
 
                     case ProfileErrorCode.IsRunning:
