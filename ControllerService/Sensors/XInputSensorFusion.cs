@@ -40,7 +40,7 @@ namespace ControllerService.Sensors
         // Timer used for sensor data reading 
         private Timer UpdateTimer;
 
-        int CalculationEveryNDefinedMilliseconds = 10;
+        int CalculationIntervalMilliseconds = 15;
         int WaitForOtherSensorDelayMilliseconds = 2;
 
         private readonly ILogger logger;
@@ -52,17 +52,17 @@ namespace ControllerService.Sensors
             // Initialize stopwatch
             stopwatch = new Stopwatch();
             //Stopwatch.IsHighResolution = true; // Todo, check if we have the best
-
             stopwatch.Start();
 
             // Initialize Accelerometer
             AccelSensor = Accelerometer.GetDefault();
+
             if (AccelSensor != null)
             {
                 AccelSensor.ReportInterval = AccelSensor.MinimumReportInterval;
                 logger.LogInformation("Accelerometer initialised for sensor fusion. Report interval set to {0} ms", AccelSensor.ReportInterval);
 
-                AccelSensor.ReadingChanged += Accelerometer_ReadingChanged;
+                //AccelSensor.ReadingChanged += Accelerometer_ReadingChanged;
             }
             else
             {
@@ -71,12 +71,13 @@ namespace ControllerService.Sensors
 
             // Initialize Gyrometer
             GyroSensor = Gyrometer.GetDefault();
+
             if (GyroSensor != null)
             {
                 GyroSensor.ReportInterval = GyroSensor.MinimumReportInterval;
                 logger.LogInformation("Gyrometer initialised for sensor fusion. Report interval set to {0} ms", GyroSensor.ReportInterval);
 
-                GyroSensor.ReadingChanged += Gyro_ReadingChanged;
+                //GyroSensor.ReadingChanged += Gyro_ReadingChanged;
             }
             else
             {
@@ -91,7 +92,7 @@ namespace ControllerService.Sensors
 
             // Initialize timer
             UpdateTimer = new Timer();
-            UpdateTimer.Interval = CalculationEveryNDefinedMilliseconds;
+            UpdateTimer.Interval = CalculationIntervalMilliseconds;
             UpdateTimer.Elapsed += UpdateTimer_Elapsed; // Todo, consider async? https://josipmisko.com/posts/c-sharp-timer
             UpdateTimer.AutoReset = true;
             UpdateTimer.Enabled = true;
@@ -137,9 +138,9 @@ namespace ControllerService.Sensors
             //logger.LogInformation("Sensor Fusion update timer elapsed at {0}", stopwatch.Elapsed.TotalMilliseconds);
             logger.LogInformation("Plot XInputSensorFusion_UpdateTimeElapsed {0} 1.1", stopwatch.Elapsed.TotalMilliseconds);
 
-            UpdateTimer.Stop();
-            UpdateTimer.Interval = CalculationEveryNDefinedMilliseconds;
-            UpdateTimer.Start();
+            //UpdateTimer.Stop();
+            //UpdateTimer.Interval = CalculationIntervalMilliseconds;
+            //UpdateTimer.Start();
 
             // Get readings
             // Todo, add some conditionals that we actually have all the senors we want...
@@ -178,7 +179,6 @@ namespace ControllerService.Sensors
             // Do calculations 
             CalculateGravitySimple(DeltaSeconds, AngularVelocity, Acceleration);
             //CalculateGravityFancy(DeltaSeconds, AngularVelocity, Acceleration);
-            
             DeviceAngles(GravityVectorSimple);
             //PlayerSpace(DeltaSeconds, AngularVelocity, GravityVectorSimple);
         }
