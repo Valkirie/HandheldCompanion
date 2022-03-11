@@ -73,7 +73,7 @@ namespace HandheldCompanion.Views.Pages
                     switch (sensor.type)
                     {
                         case SensorType.Girometer:
-                            Highlight_Thumb(Math.Max(sensor.z, sensor.x));
+                            Highlight_Thumb(Math.Max(Math.Abs(sensor.z), Math.Abs(sensor.x)));
                             break;
                     }
                     break;
@@ -100,7 +100,7 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Dispatcher.Invoke(() =>
             {
-                double dist_x = Math.Abs(value) / XInputGirometer.sensorSpec.maxIn;
+                double dist_x = value / XInputGirometer.sensorSpec.maxIn;
 
                 foreach (Control control in StackCurve.Children)
                 {
