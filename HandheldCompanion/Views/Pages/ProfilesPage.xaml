@@ -418,7 +418,7 @@
                                             </ui:SimpleStackPanel>
                                         </Grid>
 
-                                        <ui:SimpleStackPanel Name="cB_Buttons" Orientation="Horizontal" Spacing="6" />
+                                        <ui:SimpleStackPanel Name="cB_Buttons" Orientation="Horizontal" Spacing="12" />
 
                                         <!-- Separator -->
                                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
