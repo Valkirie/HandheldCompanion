@@ -646,7 +646,7 @@ end;
 ;#define UseSql2017Express
 ;#define UseSql2019Express
 
-#define MyAppSetupName 'Controller Service'
+#define MyAppSetupName 'Handheld Companion'
 #define MyAppVersion '0.9.0.4'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
