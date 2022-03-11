@@ -647,7 +647,7 @@ end;
 ;#define UseSql2019Express
 
 #define MyAppSetupName 'Handheld Companion'
-#define MyAppVersion '0.9.0.5'
+#define MyAppVersion '0.9.0.6'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/ControllerService'
