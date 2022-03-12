@@ -45,33 +45,9 @@ namespace ControllerService.Sensors
             GyrometerReading reading = args.Reading;
 
             // swapping Y and Z
-            float readingX = this.reading.X = (float)reading.AngularVelocityX;
-            float readingY = this.reading.Y = (float)reading.AngularVelocityZ;
-            float readingZ = this.reading.Z = (float)reading.AngularVelocityY;
-
-            // apply profile
-            if (controller.virtualTarget != null)
-            {
-                this.reading *= controller.profile.gyrometer;
-
-                this.reading.Y *= controller.WidhtHeightRatio;
-
-                this.reading.Z = controller.profile.steering == 0 ? readingZ : readingY;
-                this.reading.Y = controller.profile.steering == 0 ? readingY : readingZ;
-                this.reading.X = controller.profile.steering == 0 ? readingX : readingX;
-
-                if (controller.profile.inverthorizontal)
-                {
-                    this.reading.Y *= -1.0f;
-                    this.reading.Z *= -1.0f;
-                }
-
-                if (controller.profile.invertvertical)
-                {
-                    this.reading.Y *= -1.0f;
-                    this.reading.X *= -1.0f;
-                }
-            }
+            this.reading.X = (float)reading.AngularVelocityX;
+            this.reading.Y = (float)reading.AngularVelocityZ;
+            this.reading.Z = (float)reading.AngularVelocityY;
 
             logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
 
@@ -86,6 +62,36 @@ namespace ControllerService.Sensors
         }
 
         public Vector3 GetCurrentReading()
+        {
+            Vector3 reading = new Vector3(this.reading.X, this.reading.Y, this.reading.Z);
+
+            if (controller.virtualTarget != null)
+            {
+                reading *= controller.profile.gyrometer;
+
+                reading.Y *= controller.WidhtHeightRatio;
+
+                reading.Z = controller.profile.steering == 0 ? this.reading.Z : this.reading.Y;
+                reading.Y = controller.profile.steering == 0 ? this.reading.Y : this.reading.Z;
+                reading.X = controller.profile.steering == 0 ? this.reading.X : this.reading.X;
+
+                if (controller.profile.inverthorizontal)
+                {
+                    reading.Y *= -1.0f;
+                    reading.Z *= -1.0f;
+                }
+
+                if (controller.profile.invertvertical)
+                {
+                    reading.Y *= -1.0f;
+                    reading.X *= -1.0f;
+                }
+            }
+
+            return reading;
+        }
+
+        public Vector3 GetCurrentReadingRaw()
         {
             return this.reading;
         }

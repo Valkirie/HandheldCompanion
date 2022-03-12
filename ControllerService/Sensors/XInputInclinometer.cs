@@ -38,39 +38,9 @@ namespace ControllerService.Sensors
         {
             AccelerometerReading reading = args.Reading;
 
-            float readingX = this.reading.X = (float)reading.AccelerationX;
-            float readingY = this.reading.Y = (float)reading.AccelerationZ;
-            float readingZ = this.reading.Z = (float)reading.AccelerationY;
-
-            // apply profile
-            if (controller.virtualTarget != null)
-            {
-                // Allow for user swapping X and Y axis.
-                this.reading.Z = controller.profile.steering == 0 ? readingZ : readingY;
-                this.reading.Y = controller.profile.steering == 0 ? readingY : -readingZ;
-                this.reading.X = controller.profile.steering == 0 ? readingX : readingX;
-
-                // Allow for user inverting X or Y axis direction.
-                if (controller.profile.inverthorizontal)
-                {
-                    this.reading.Y *= -1.0f;
-                    this.reading.Z *= -1.0f;
-                }
-
-                if (controller.profile.invertvertical)
-                {
-                    this.reading.Y *= -1.0f;
-                    this.reading.X *= -1.0f;
-                }
-            }
-
-            // Calculate angles around Y and X axis (Theta and Psi) using all 3 directions of accelerometer
-            // Based on: https://www.digikey.com/en/articles/using-an-accelerometer-for-inclination-sensing               
-            double angle_x_psi = -1 * (Math.Atan(this.reading.Y / (Math.Sqrt(Math.Pow(this.reading.X, 2) + Math.Pow(this.reading.Z, 2))))) * 180 / Math.PI;
-            double angle_y_theta = -1 * (Math.Atan(this.reading.X / (Math.Sqrt(Math.Pow(this.reading.Y, 2) + Math.Pow(this.reading.Z, 2))))) * 180 / Math.PI;
-
-            this.reading.X = (float)(angle_x_psi);
-            this.reading.Y = (float)(angle_y_theta);
+            this.reading.X = (float)reading.AccelerationX;
+            this.reading.Y = (float)reading.AccelerationZ;
+            this.reading.Z = (float)reading.AccelerationY;
 
             logger?.LogDebug("XInputInclinometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
 
@@ -85,6 +55,40 @@ namespace ControllerService.Sensors
         }
 
         public Vector3 GetCurrentReading()
+        {
+            Vector3 reading = new Vector3(this.reading.X, this.reading.Y, this.reading.Z);
+
+            if (controller.virtualTarget != null)
+            {
+                reading.Z = controller.profile.steering == 0 ? this.reading.Z : this.reading.Y;
+                reading.Y = controller.profile.steering == 0 ? this.reading.Y : -this.reading.Z;
+                reading.X = controller.profile.steering == 0 ? this.reading.X : this.reading.X;
+
+                if (controller.profile.inverthorizontal)
+                {
+                    reading.Y *= -1.0f;
+                    reading.Z *= -1.0f;
+                }
+
+                if (controller.profile.invertvertical)
+                {
+                    reading.Y *= -1.0f;
+                    reading.X *= -1.0f;
+                }
+            }
+
+            // Calculate angles around Y and X axis (Theta and Psi) using all 3 directions of accelerometer
+            // Based on: https://www.digikey.com/en/articles/using-an-accelerometer-for-inclination-sensing               
+            double angle_x_psi = -1 * (Math.Atan(reading.Y / (Math.Sqrt(Math.Pow(reading.X, 2) + Math.Pow(reading.Z, 2))))) * 180 / Math.PI;
+            double angle_y_theta = -1 * (Math.Atan(reading.X / (Math.Sqrt(Math.Pow(reading.Y, 2) + Math.Pow(reading.Z, 2))))) * 180 / Math.PI;
+
+            reading.X = (float)(angle_x_psi);
+            reading.Y = (float)(angle_y_theta);
+
+            return reading;
+        }
+
+        public Vector3 GetCurrentReadingRaw()
         {
             return this.reading;
         }
