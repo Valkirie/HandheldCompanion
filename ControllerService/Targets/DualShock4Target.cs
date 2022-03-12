@@ -90,12 +90,12 @@ namespace ControllerService.Targets
             physicalController.SetVibration(inputMotor);
         }
 
-        public override unsafe void UpdateReport()
+        public override unsafe void UpdateReport(Gamepad Gamepad)
         {
             if (!physicalController.IsConnected)
                 return;
 
-            base.UpdateReport();
+            base.UpdateReport(Gamepad);
 
             var Touch = xinputController.Touch;
 

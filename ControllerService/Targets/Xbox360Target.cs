@@ -88,7 +88,7 @@ namespace ControllerService.Targets
             physicalController.SetVibration(inputMotor);
         }
 
-        public override unsafe void UpdateReport()
+        public override unsafe void UpdateReport(Gamepad Gamepad)
         {
             if (!physicalController.IsConnected)
                 return;
@@ -96,7 +96,7 @@ namespace ControllerService.Targets
             if (xinputController.profile.whitelisted)
                 return;
 
-            base.UpdateReport();
+            base.UpdateReport(Gamepad);
 
             virtualController.SetAxisValue(Xbox360Axis.LeftThumbX, LeftThumbX);
             virtualController.SetAxisValue(Xbox360Axis.LeftThumbY, LeftThumbY);

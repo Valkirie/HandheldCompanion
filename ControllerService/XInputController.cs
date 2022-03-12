@@ -116,7 +116,7 @@ namespace ControllerService
                 Angle = Inclinometer.GetCurrentReading();
 
                 // update virtual controller
-                virtualTarget?.UpdateReport();
+                virtualTarget?.UpdateReport(Gamepad);
                 sensorFusion?.UpdateReport(totalmilliseconds, AngularVelocity, Acceleration);
 
                 Updated?.Invoke(this);

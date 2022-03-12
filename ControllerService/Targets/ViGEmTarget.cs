@@ -35,7 +35,6 @@ namespace ControllerService.Targets
         public Controller physicalController;
         public XInputController xinputController;
 
-        public Gamepad Gamepad;
         public HIDmode HID = HIDmode.None;
 
         protected readonly ILogger logger;
@@ -101,12 +100,10 @@ namespace ControllerService.Targets
             logger.LogInformation("Virtual {0} disconnected", ToString());
         }
 
-        public virtual unsafe void UpdateReport()
+        public virtual unsafe void UpdateReport(Gamepad Gamepad)
         {
             // get current gamepad state
             XInputGetStateSecret13(UserIndex, out state_s);
-            State state = physicalController.GetState();
-            Gamepad = state.Gamepad;
 
             // get buttons values
             GamepadButtonFlags buttons = (GamepadButtonFlags)Gamepad.Buttons;
