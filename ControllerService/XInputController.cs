@@ -97,16 +97,8 @@ namespace ControllerService
         public void UpdateSensors()
         {
             Gyrometer = new XInputGirometer(this, logger, pipeServer);
-            if (Gyrometer.sensor == null)
-                logger.LogWarning("No Gyrometer detected");
-
             Accelerometer = new XInputAccelerometer(this, logger, pipeServer);
-            if (Accelerometer.sensor == null)
-                logger.LogWarning("No Accelerometer detected");
-
             Inclinometer = new XInputInclinometer(this, logger, pipeServer);
-            if (Inclinometer.sensor == null)
-                logger.LogWarning("No Inclinometer detected");
         }
 
         private Stopwatch sw = new();

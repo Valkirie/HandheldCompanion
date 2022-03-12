@@ -34,6 +34,10 @@ namespace ControllerService.Sensors
 
                 sensor.ReadingChanged += ReadingHasChanged;
             }
+            else
+            {
+                logger.LogWarning("{0} not initialised.", this.ToString());
+            }
         }
 
         private void ReadingHasChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)

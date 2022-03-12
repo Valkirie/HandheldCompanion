@@ -39,7 +39,7 @@ namespace ControllerService.Sensors
             }
             else
             {
-                logger.LogInformation("{0} not initialised.", this.ToString());
+                logger.LogWarning("{0} not initialised.", this.ToString());
             }
         }
 
