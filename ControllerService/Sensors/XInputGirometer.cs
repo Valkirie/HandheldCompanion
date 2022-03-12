@@ -44,6 +44,12 @@ namespace ControllerService.Sensors
             this.reading.X = (float)reading.AngularVelocityX;
             this.reading.Y = (float)reading.AngularVelocityZ;
             this.reading.Z = (float)reading.AngularVelocityY;
+
+            logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
+
+            // update client(s)
+            if (ControllerService.CurrentTag == "ProfileSettingsMode0")
+                pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Girometer));
         }
 
         public override string ToString()
@@ -79,12 +85,6 @@ namespace ControllerService.Sensors
                     this.reading.X *= -1.0f;
                 }
             }
-
-            Task.Run(() => logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
-
-            // update client(s)
-            if (ControllerService.CurrentTag == "ProfileSettingsMode0")
-                pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Girometer));
 
             return this.reading;
         }

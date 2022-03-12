@@ -51,14 +51,19 @@ namespace ControllerService
         protected object updateLock = new();
         public UserIndex UserIndex;
         private readonly ILogger logger;
+        private readonly PipeServer pipeServer;
 
-        public XInputController(Controller controller, UserIndex index, ILogger logger)
+        public XInputController(Controller controller, UserIndex index, ILogger logger, PipeServer pipeServer)
         {
             this.logger = logger;
+            this.pipeServer = pipeServer;
 
             // initilize controller
             this.physicalController = controller;
             this.UserIndex = index;
+
+            // initialize sensor(s)
+            UpdateSensors();
 
             // initialize sensorfusion
             sensorFusion = new SensorFusion(logger);
@@ -87,6 +92,21 @@ namespace ControllerService
             UpdateTimer.Elapsed += UpdateTimer_Elapsed;
         }
 
+        public void UpdateSensors()
+        {
+            Gyrometer = new XInputGirometer(this, logger, pipeServer);
+            if (Gyrometer.sensor == null)
+                logger.LogWarning("No Gyrometer detected");
+
+            Accelerometer = new XInputAccelerometer(this, logger, pipeServer);
+            if (Accelerometer.sensor == null)
+                logger.LogWarning("No Accelerometer detected");
+
+            Inclinometer = new XInputInclinometer(this, logger, pipeServer);
+            if (Inclinometer.sensor == null)
+                logger.LogWarning("No Inclinometer detected");
+        }
+
         private Stopwatch sw = new();
         private void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -104,12 +124,9 @@ namespace ControllerService
                 sw.Restart();
 
                 // update reading(s)
-                if (Gyrometer != null)
-                    AngularVelocity = AngularUniversal = Gyrometer.GetCurrentReading();
-                if (Accelerometer != null)
-                    Acceleration = Accelerometer.GetCurrentReading();
-                if (Inclinometer != null)
-                    Angle = Inclinometer.GetCurrentReading();
+                AngularVelocity = AngularUniversal = Gyrometer.GetCurrentReading();
+                Acceleration = Accelerometer.GetCurrentReading();
+                Angle = Inclinometer.GetCurrentReading();
 
                 /* reset timer(s)
                 AngularVelocityTimer?.Stop();
@@ -150,21 +167,6 @@ namespace ControllerService
                 defaultProfile = profile;
             else
                 logger.LogInformation("Profile {0} applied.", profile.name);
-        }
-
-        public void SetGyroscope(XInputGirometer gyrometer)
-        {
-            Gyrometer = gyrometer;
-        }
-
-        public void SetAccelerometer(XInputAccelerometer accelerometer)
-        {
-            Accelerometer = accelerometer;
-        }
-
-        public void SetInclinometer(XInputInclinometer inclinometer)
-        {
-            Inclinometer = inclinometer;
         }
 
         private void AngularVelocityTimer_Elapsed(object sender, ElapsedEventArgs e)
