@@ -59,7 +59,7 @@ namespace ControllerService.Targets
 
         public override void Connect()
         {
-            if (isConnected)
+            if (IsConnected)
                 return;
 
             virtualController.Connect();
@@ -68,7 +68,7 @@ namespace ControllerService.Targets
 
         public override void Disconnect()
         {
-            if (!isConnected)
+            if (!IsConnected)
                 return;
 
             virtualController.Disconnect();

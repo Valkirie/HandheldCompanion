@@ -56,7 +56,7 @@ namespace ControllerService.Targets
         public event DisconnectedEventHandler Disconnected;
         public delegate void DisconnectedEventHandler(ViGEmTarget target);
 
-        protected bool isConnected;
+        protected bool IsConnected;
 
         protected ViGEmTarget(XInputController xinput, ViGEmClient client, Controller controller, int index, ILogger logger)
         {
@@ -88,14 +88,14 @@ namespace ControllerService.Targets
 
         public virtual void Connect()
         {
-            isConnected = true;
+            IsConnected = true;
             Connected?.Invoke(this);
             logger.LogInformation("Virtual {0} connected", ToString());
         }
 
         public virtual void Disconnect()
         {
-            isConnected = false;
+            IsConnected = false;
             Disconnected?.Invoke(this);
             logger.LogInformation("Virtual {0} disconnected", ToString());
         }

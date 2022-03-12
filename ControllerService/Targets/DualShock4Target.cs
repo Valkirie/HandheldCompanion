@@ -61,7 +61,7 @@ namespace ControllerService.Targets
 
         public override void Connect()
         {
-            if (isConnected)
+            if (IsConnected)
                 return;
 
             virtualController.Connect();
@@ -70,7 +70,7 @@ namespace ControllerService.Targets
 
         public override void Disconnect()
         {
-            if (!isConnected)
+            if (!IsConnected)
                 return;
 
             virtualController.Disconnect();
@@ -92,7 +92,7 @@ namespace ControllerService.Targets
 
         public override unsafe void UpdateReport(Gamepad Gamepad)
         {
-            if (!physicalController.IsConnected)
+            if (!IsConnected)
                 return;
 
             base.UpdateReport(Gamepad);
