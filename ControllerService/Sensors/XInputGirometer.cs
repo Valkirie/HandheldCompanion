@@ -31,10 +31,10 @@ namespace ControllerService.Sensors
             sensor = Gyrometer.GetDefault();
             if (sensor != null)
             {
-                sensor.ReportInterval = (uint)controller.updateInterval;
+                sensor.ReportInterval = (uint)updateInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
-                AngularVelocityTimer = new Timer() { Enabled = false, AutoReset = false, Interval = sensor.ReportInterval * 4 };
+                AngularVelocityTimer = new Timer() { Enabled = false, AutoReset = false, Interval = updateInterval * 6 };
                 AngularVelocityTimer.Elapsed += AngularVelocityTimer_Elapsed;
 
                 sensor.ReadingChanged += ReadingHasChanged;

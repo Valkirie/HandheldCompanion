@@ -11,11 +11,14 @@ namespace ControllerService.Sensors
         protected PipeServer pipeServer;
 
         protected static SensorSpec sensorSpec;
+        protected int updateInterval;
 
         protected XInputSensor(XInputController controller, PipeServer pipeServer)
         {
             this.controller = controller;
             this.pipeServer = pipeServer;
+
+            this.updateInterval = controller.updateInterval;
         }
     }
 }
