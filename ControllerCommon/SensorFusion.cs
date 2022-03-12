@@ -33,11 +33,6 @@ namespace ControllerCommon
         // Time
         double UpdateTimePreviousMilliSeconds;
 
-        // Timer used for sensor data reading 
-        private Timer UpdateTimer;
-
-        int CalculationIntervalMilliseconds = 15;
-
         private readonly ILogger logger;
 
         public SensorFusion(ILogger logger)
@@ -49,15 +44,26 @@ namespace ControllerCommon
         {
             // TODO Do swapping and inversion based on profile
 
+            logger.LogInformation("Plot XInputSensorFusion_AngularVelocityX {0} {1}", TotalMilliseconds, AngularVelocity.X);
+            logger.LogInformation("Plot XInputSensorFusion_AngularVelocityY {0} {1}", TotalMilliseconds, AngularVelocity.Y);
+            logger.LogInformation("Plot XInputSensorFusion_AngularVelocityZ {0} {1}", TotalMilliseconds, AngularVelocity.Z);
+
+            logger.LogInformation("Plot XInputSensorFusion_AccelerationX {0} {1}", TotalMilliseconds, Acceleration.X);
+            logger.LogInformation("Plot XInputSensorFusion_AccelerationY {0} {1}", TotalMilliseconds, Acceleration.Y);
+            logger.LogInformation("Plot XInputSensorFusion_AccelerationZ {0} {1}", TotalMilliseconds, Acceleration.Z);
+
+
             // Determine time
             // Note Elapsed.TotalMilliseconds returns milliseconds including x.xxx precision i.e. microseconds.
             double DeltaSeconds = (double)(TotalMilliseconds - UpdateTimePreviousMilliSeconds) / 1000L;
             UpdateTimePreviousMilliSeconds = TotalMilliseconds;
+            logger.LogInformation("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaSeconds);
+
 
             // Do calculations 
             CalculateGravitySimple(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
             //CalculateGravityFancy(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
-            DeviceAngles(GravityVectorSimple);
+            DeviceAngles(TotalMilliseconds, GravityVectorSimple);
             //PlayerSpace(TotalMilliseconds, DeltaSeconds, AngularVelocity, GravityVectorSimple);
         }
 
@@ -81,7 +87,11 @@ namespace ControllerCommon
             Vector3 newGravity = -Acceleration;
             Vector3 gravityDelta = Vector3.Subtract(newGravity, GravityVectorSimple);
 
-            GravityVectorSimple += Vector3.Normalize(gravityDelta) * (float)0.02;
+            GravityVectorSimple += Vector3.Multiply(0.02f, Vector3.Normalize(gravityDelta));
+
+            logger.LogInformation("Plot XInputSensorFusion_GravityVectorSimpleEndX {0} {1}", TotalMilliseconds, GravityVectorSimple.X);
+            logger.LogInformation("Plot XInputSensorFusion_GravityVectorSimpleEndY {0} {1}", TotalMilliseconds, GravityVectorSimple.Y);
+            logger.LogInformation("Plot XInputSensorFusion_GravityVectorSimpleEndZ {0} {1}", TotalMilliseconds, GravityVectorSimple.Z);
 
         }
 
@@ -248,13 +258,14 @@ namespace ControllerCommon
             CameraPitch += CameraPitchDelta;
         }
 
-        private void DeviceAngles(Vector3 GravityVector)
+        private void DeviceAngles(double TotalMilliseconds, Vector3 GravityVector)
         {
 
             // Calculate angles around Y and X axis (Theta and Psi) using all 3 directions of accelerometer
             // Based on: https://www.digikey.com/en/articles/using-an-accelerometer-for-inclination-sensing               
             DeviceAngle.X = (float)(-1 * (Math.Atan(GravityVector.Y / (Math.Sqrt(Math.Pow(GravityVector.X, 2) + Math.Pow(GravityVector.Z, 2))))) * 180 / Math.PI);
             DeviceAngle.Y = (float)(-1 * (Math.Atan(GravityVector.X / (Math.Sqrt(Math.Pow(GravityVector.Y, 2) + Math.Pow(GravityVector.Z, 2))))) * 180 / Math.PI);
+            logger.LogInformation("Plot XInputSensorFusion_DeviceAngle.Y {0} {1}", TotalMilliseconds, DeviceAngle.Y);
         }
 
         public Vector3 GetCurrentReading()
