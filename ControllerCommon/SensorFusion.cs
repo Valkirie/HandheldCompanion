@@ -31,8 +31,6 @@ namespace ControllerCommon
         private double AdditionalFactor = 20.0; // Sensitivity?
 
         // Time
-        // Stopwatch, used for delta 
-        protected readonly Stopwatch stopwatch = new();
         double UpdateTimePreviousMilliSeconds;
 
         // Timer used for sensor data reading 
@@ -47,25 +45,23 @@ namespace ControllerCommon
             this.logger = logger;
         }
 
-        public void UpdateReport(Vector3 AngularVelocity, Vector3 Acceleration)
+        public void UpdateReport(double TotalMilliseconds, Vector3 AngularVelocity, Vector3 Acceleration)
         {
-            if (AngularVelocity == new Vector3() || Acceleration == new Vector3())
-                return;
-
             // TODO Do swapping and inversion based on profile
 
             // Determine time
             // Note Elapsed.TotalMilliseconds returns milliseconds including x.xxx precision i.e. microseconds.
-            double DeltaSeconds = (double)(stopwatch.Elapsed.TotalMilliseconds - UpdateTimePreviousMilliSeconds) / 1000L;
-            UpdateTimePreviousMilliSeconds = stopwatch.Elapsed.TotalMilliseconds;
+            double DeltaSeconds = (double)(TotalMilliseconds - UpdateTimePreviousMilliSeconds) / 1000L;
+            UpdateTimePreviousMilliSeconds = TotalMilliseconds;
 
             // Do calculations 
-            CalculateGravitySimple(DeltaSeconds, AngularVelocity, Acceleration);
-            //CalculateGravityFancy(DeltaSeconds, AngularVelocity, Acceleration);
+            CalculateGravitySimple(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
+            //CalculateGravityFancy(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
             DeviceAngles(GravityVectorSimple);
-            //PlayerSpace(DeltaSeconds, AngularVelocity, GravityVectorSimple);
+            //PlayerSpace(TotalMilliseconds, DeltaSeconds, AngularVelocity, GravityVectorSimple);
         }
-        public void CalculateGravitySimple(double DeltaTimeSec, Vector3 AngularVelocity, Vector3 Acceleration)
+
+        public void CalculateGravitySimple(double TotalMilliseconds, double DeltaTimeSec, Vector3 AngularVelocity, Vector3 Acceleration)
         {
             // Gravity determination using sensor fusion, "Something Simple" example from:
             // http://gyrowiki.jibbsmart.com/blog:finding-gravity-with-sensor-fusion
@@ -89,7 +85,7 @@ namespace ControllerCommon
 
         }
 
-        public void CalculateGravityFancy(double DeltaTimeSec, Vector3 AngularVelocity, Vector3 accel)
+        public void CalculateGravityFancy(double TotalMilliseconds, double DeltaTimeSec, Vector3 AngularVelocity, Vector3 accel)
         {
             // TODO Does not work yet!!!
 
@@ -128,36 +124,36 @@ namespace ControllerCommon
 
             // convert gyro input to reverse rotation  
             Quaternion reverseRotation = Quaternion.CreateFromAxisAngle(-AngularVelocityRad, AngularVelocityRad.Length() * (float)DeltaTimeSec);
-            logger.LogInformation("Plot vigemtarget_reverseRotationy.X {0} {1}", stopwatch.Elapsed.TotalMilliseconds, reverseRotation.X);
-            logger.LogInformation("Plot vigemtarget_reverseRotationy.Y {0} {1}", stopwatch.Elapsed.TotalMilliseconds, reverseRotation.Y);
-            logger.LogInformation("Plot vigemtarget_reverseRotationy.Z {0} {1}", stopwatch.Elapsed.TotalMilliseconds, reverseRotation.Z);
-            logger.LogInformation("Plot vigemtarget_reverseRotationy.W {0} {1}", stopwatch.Elapsed.TotalMilliseconds, reverseRotation.W);
+            logger.LogInformation("Plot vigemtarget_reverseRotationy.X {0} {1}", TotalMilliseconds, reverseRotation.X);
+            logger.LogInformation("Plot vigemtarget_reverseRotationy.Y {0} {1}", TotalMilliseconds, reverseRotation.Y);
+            logger.LogInformation("Plot vigemtarget_reverseRotationy.Z {0} {1}", TotalMilliseconds, reverseRotation.Z);
+            logger.LogInformation("Plot vigemtarget_reverseRotationy.W {0} {1}", TotalMilliseconds, reverseRotation.W);
 
             // rotate gravity vector
             GravityVectorFancy = Vector3.Transform(GravityVectorFancy, reverseRotation);
 
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_after_rotate_x {0} {1}", stopwatch.Elapsed.TotalMilliseconds, GravityVectorFancy.X);
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_after_rotate_y {0} {1}", stopwatch.Elapsed.TotalMilliseconds, GravityVectorFancy.Y);
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_after_rotate_z {0} {1}", stopwatch.Elapsed.TotalMilliseconds, GravityVectorFancy.Z);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_after_rotate_x {0} {1}", TotalMilliseconds, GravityVectorFancy.X);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_after_rotate_y {0} {1}", TotalMilliseconds, GravityVectorFancy.Y);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_after_rotate_z {0} {1}", TotalMilliseconds, GravityVectorFancy.Z);
 
             // Correction factor variables
             SmoothAccel = Vector3.Transform(SmoothAccel, reverseRotation);
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_SmoothAccel_x {0} {1}", stopwatch.Elapsed.TotalMilliseconds, SmoothAccel.X);
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_SmoothAccel_y {0} {1}", stopwatch.Elapsed.TotalMilliseconds, SmoothAccel.Y);
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_SmoothAccel_z {0} {1}", stopwatch.Elapsed.TotalMilliseconds, SmoothAccel.Z);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_SmoothAccel_x {0} {1}", TotalMilliseconds, SmoothAccel.X);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_SmoothAccel_y {0} {1}", TotalMilliseconds, SmoothAccel.Y);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_SmoothAccel_z {0} {1}", TotalMilliseconds, SmoothAccel.Z);
             // Note to self, SmoothAccel seems OK.
             float smoothInterpolator = (float)Math.Pow(2, (-(float)DeltaTimeSec / SmoothingHalfTime));
             // Note to self, SmoothInterpolator seems OK, still no sure about the Pow from C++ to C#, also, is it suppose to be a negative value?
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_smoothInterpolator {0} {1}", stopwatch.Elapsed.TotalMilliseconds, smoothInterpolator);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_smoothInterpolator {0} {1}", TotalMilliseconds, smoothInterpolator);
 
             Shakiness *= smoothInterpolator;
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_ShakinessTimesInterpolator {0} {1}", stopwatch.Elapsed.TotalMilliseconds, Shakiness);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_ShakinessTimesInterpolator {0} {1}", TotalMilliseconds, Shakiness);
             Shakiness = Math.Max(Shakiness, Vector3.Subtract(accel, SmoothAccel).Length()); // Does this apply vector subtract and length correctly?
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_Shakiness {0} {1}", stopwatch.Elapsed.TotalMilliseconds, Shakiness);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_Shakiness {0} {1}", TotalMilliseconds, Shakiness);
             SmoothAccel = Vector3.Lerp(accel, SmoothAccel, smoothInterpolator); // smoothInterpolator is a negative value, correct?
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_x {0} {1}", stopwatch.Elapsed.TotalMilliseconds, SmoothAccel.X);
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_y {0} {1}", stopwatch.Elapsed.TotalMilliseconds, SmoothAccel.Y);
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_z {0} {1}", stopwatch.Elapsed.TotalMilliseconds, SmoothAccel.Z);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_x {0} {1}", TotalMilliseconds, SmoothAccel.X);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_y {0} {1}", TotalMilliseconds, SmoothAccel.Y);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_z {0} {1}", TotalMilliseconds, SmoothAccel.Z);
 
             Vector3 gravityDelta = Vector3.Subtract(-accel, GravityVectorFancy);
             Vector3 gravityDirection = Vector3.Normalize(gravityDelta);
@@ -169,7 +165,7 @@ namespace ControllerCommon
                 float stillOrShaky = Math.Clamp((Shakiness - ShakinessMinThreshold) / (ShakinessMaxThreshold - ShakinessMaxThreshold), 0, 1);
                 // 
 
-                logger.LogInformation("Plot vigemtarget_GravityVectorFancy_stillOrShaky {0} {1}", stopwatch.Elapsed.TotalMilliseconds, stillOrShaky);
+                logger.LogInformation("Plot vigemtarget_GravityVectorFancy_stillOrShaky {0} {1}", TotalMilliseconds, stillOrShaky);
 
                 correctionRate = CorrectionStillRate + (CorrectionShakyRate - CorrectionStillRate) * stillOrShaky;
                 // 1 + (0.1 - 1) * 1 = 0.1
@@ -185,15 +181,15 @@ namespace ControllerCommon
                 correctionRate = CorrectionStillRate;
             }
 
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_correctionRate {0} {1}", stopwatch.Elapsed.TotalMilliseconds, correctionRate);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_correctionRate {0} {1}", TotalMilliseconds, correctionRate);
 
             // limit in proportion to rotation rate
             // my input library has the gyro report degrees per second, so convert to radians per second here
             float angleRate = AngularVelocity.Length() * (float)Math.PI / 180;
             float correctionLimit = angleRate * GravityVectorFancy.Length() * CorrectionGyroFactor;
 
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_angleRate {0} {1}", stopwatch.Elapsed.TotalMilliseconds, angleRate);
-            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_correctionLimit {0} {1}", stopwatch.Elapsed.TotalMilliseconds, correctionLimit);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_angleRate {0} {1}", TotalMilliseconds, angleRate);
+            logger.LogInformation("Plot vigemtarget_GravityVectorFancy_correctionLimit {0} {1}", TotalMilliseconds, correctionLimit);
 
             if (correctionRate > correctionLimit)
             {
@@ -230,7 +226,7 @@ namespace ControllerCommon
             }
         }
 
-        private void PlayerSpace(double DeltaTimeSec, Vector3 GravityVector, Vector3 AngularVelocity)
+        private void PlayerSpace(double TotalMilliseconds, double DeltaTimeSec, Vector3 GravityVector, Vector3 AngularVelocity)
         {
             // PlayerSpace
             Vector3 GravityNorm = Vector3.Normalize(GravityVector);

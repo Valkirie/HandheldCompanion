@@ -43,6 +43,7 @@ namespace ControllerService
 
         protected readonly Stopwatch stopwatch;
         public long microseconds;
+        public double totalmilliseconds;
 
         public DS4Touch Touch;
 
@@ -107,6 +108,8 @@ namespace ControllerService
         {
             // update timestamp
             microseconds = stopwatch.ElapsedMilliseconds * 1000L;
+            totalmilliseconds = stopwatch.Elapsed.TotalMilliseconds;
+
             AverageElapsedMilliseconds = stopwatch.ElapsedMilliseconds / ElapsedTicks;
             ElapsedTicks++;
 
@@ -130,7 +133,7 @@ namespace ControllerService
 
                 // update virtual controller
                 virtualTarget?.UpdateReport();
-                sensorFusion?.UpdateReport(AngularVelocity, Acceleration);
+                sensorFusion?.UpdateReport(totalmilliseconds, AngularVelocity, Acceleration);
 
                 Updated?.Invoke(this);
             }
