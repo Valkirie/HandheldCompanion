@@ -4,6 +4,7 @@ using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
@@ -28,7 +29,7 @@ namespace ControllerService
 
         public Timer AngularVelocityTimer;
 
-        public Timer UpdateTimer;
+        public MultimediaTimer UpdateTimer;
         public float WidhtHeightRatio = 2.5f;
         public double vibrationStrength = 100.0d;
         public int updateInterval = 15;
@@ -88,8 +89,9 @@ namespace ControllerService
             stopwatch.Start();
 
             // initialize timers
-            UpdateTimer = new Timer() { Enabled = true, AutoReset = true };
-            UpdateTimer.Elapsed += UpdateTimer_Elapsed;
+            UpdateTimer = new MultimediaTimer(updateInterval);
+            UpdateTimer.Tick += UpdateTimer_Ticked;
+            UpdateTimer.Start();
         }
 
         public void UpdateSensors()
@@ -108,7 +110,7 @@ namespace ControllerService
         }
 
         private Stopwatch sw = new();
-        private void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private void UpdateTimer_Ticked(object sender, EventArgs e)
         {
             // update timestamp
             microseconds = stopwatch.ElapsedMilliseconds * 1000L;
