@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
+using System.Timers;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils;
 using SensorType = ControllerCommon.SensorType;
@@ -21,6 +22,7 @@ namespace ControllerService.Sensors
         };
 
         private readonly ILogger logger;
+        private readonly Timer AngularVelocityTimer;
 
         public XInputGirometer(XInputController controller, ILogger logger, PipeServer pipeServer) : base(controller, pipeServer)
         {
@@ -32,12 +34,20 @@ namespace ControllerService.Sensors
                 sensor.ReportInterval = (uint)controller.updateInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
+                AngularVelocityTimer = new Timer() { Enabled = false, AutoReset = false, Interval = sensor.ReportInterval * 4 };
+                AngularVelocityTimer.Elapsed += AngularVelocityTimer_Elapsed;
+
                 sensor.ReadingChanged += ReadingHasChanged;
             }
             else
             {
                 logger.LogWarning("{0} not initialised.", this.ToString());
             }
+        }
+
+        private void AngularVelocityTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            this.reading = new();
         }
 
         private void ReadingHasChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
@@ -48,6 +58,10 @@ namespace ControllerService.Sensors
             this.reading.X = (float)reading.AngularVelocityX;
             this.reading.Y = (float)reading.AngularVelocityZ;
             this.reading.Z = (float)reading.AngularVelocityY;
+
+            // reset reading after inactivity
+            AngularVelocityTimer?.Stop();
+            AngularVelocityTimer?.Start();
 
             logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
 
