@@ -90,7 +90,7 @@ namespace ControllerService.Targets
 
         public override unsafe void UpdateReport(Gamepad Gamepad)
         {
-            if (!physicalController.IsConnected)
+            if (!IsConnected)
                 return;
 
             if (xinputController.profile.whitelisted)
