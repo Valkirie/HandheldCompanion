@@ -27,8 +27,6 @@ namespace ControllerService
         public Vector3 AngularUniversal;
         public Vector3 AngularVelocity;
 
-        public Timer AngularVelocityTimer;
-
         public MultimediaTimer UpdateTimer;
         public float WidhtHeightRatio = 2.5f;
         public double vibrationStrength = 100.0d;
@@ -75,9 +73,6 @@ namespace ControllerService
             Acceleration = new();
             Angle = new();
 
-            AngularVelocityTimer = new Timer() { Enabled = false, AutoReset = false };
-            AngularVelocityTimer.Elapsed += AngularVelocityTimer_Elapsed;
-
             // initialize profile(s)
             profile = new();
             defaultProfile = new();
@@ -102,16 +97,11 @@ namespace ControllerService
             Inclinometer = new XInputInclinometer(this, logger, pipeServer);
         }
 
-        private long AverageElapsedMilliseconds;
-        private long ElapsedTicks = 1;
         private void UpdateTimer_Ticked(object sender, EventArgs e)
         {
             // update timestamp
             microseconds = stopwatch.ElapsedMilliseconds * 1000L;
             totalmilliseconds = stopwatch.Elapsed.TotalMilliseconds;
-
-            AverageElapsedMilliseconds = stopwatch.ElapsedMilliseconds / ElapsedTicks;
-            ElapsedTicks++;
 
             // get current gamepad state
             State state = physicalController.GetState();
@@ -119,17 +109,11 @@ namespace ControllerService
 
             lock (updateLock)
             {
-                // debug
-                Debug.WriteLine($"AverageElapsedMilliseconds:{AverageElapsedMilliseconds}");
-
                 // update reading(s)
-                AngularVelocity = AngularUniversal = Gyrometer.GetCurrentReading();
+                AngularVelocity = Gyrometer.GetCurrentReading();
+                AngularUniversal = Gyrometer.GetCurrentReading(); // todo: implement auto recenter
                 Acceleration = Accelerometer.GetCurrentReading();
                 Angle = Inclinometer.GetCurrentReading();
-
-                /* reset timer(s)
-                AngularVelocityTimer?.Stop();
-                AngularVelocityTimer?.Start(); */
 
                 // update virtual controller
                 virtualTarget?.UpdateReport();
@@ -168,13 +152,6 @@ namespace ControllerService
                 logger.LogInformation("Profile {0} applied.", profile.name);
         }
 
-        private void AngularVelocityTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            // Disable drift compensation for angle values. 
-            // AngularVelocity = new();
-            AngularUniversal = new();
-        }
-
         public void SetWidthHeightRatio(int ratio)
         {
             WidhtHeightRatio = ((float)ratio) / 10;
@@ -184,9 +161,7 @@ namespace ControllerService
         public void SetPollRate(int HIDrate)
         {
             updateInterval = HIDrate;
-
             UpdateTimer.Interval = HIDrate;
-            AngularVelocityTimer.Interval = HIDrate * 4;
         }
 
         public void SetVibrationStrength(double strength)

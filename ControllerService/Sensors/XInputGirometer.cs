@@ -45,28 +45,11 @@ namespace ControllerService.Sensors
             GyrometerReading reading = args.Reading;
 
             // swapping Y and Z
-            this.reading.X = (float)reading.AngularVelocityX;
-            this.reading.Y = (float)reading.AngularVelocityZ;
-            this.reading.Z = (float)reading.AngularVelocityY;
+            float readingX = this.reading.X = (float)reading.AngularVelocityX;
+            float readingY = this.reading.Y = (float)reading.AngularVelocityZ;
+            float readingZ = this.reading.Z = (float)reading.AngularVelocityY;
 
-            logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
-
-            // update client(s)
-            if (ControllerService.CurrentTag == "ProfileSettingsMode0")
-                pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Girometer));
-        }
-
-        public override string ToString()
-        {
-            return this.GetType().Name;
-        }
-
-        public Vector3 GetCurrentReading()
-        {
-            float readingX = this.reading.X;
-            float readingY = this.reading.Y;
-            float readingZ = this.reading.Z;
-
+            // apply profile
             if (controller.virtualTarget != null)
             {
                 this.reading *= controller.profile.gyrometer;
@@ -90,6 +73,20 @@ namespace ControllerService.Sensors
                 }
             }
 
+            logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
+
+            // update client(s)
+            if (ControllerService.CurrentTag == "ProfileSettingsMode0")
+                pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Girometer));
+        }
+
+        public override string ToString()
+        {
+            return this.GetType().Name;
+        }
+
+        public Vector3 GetCurrentReading()
+        {
             return this.reading;
         }
     }

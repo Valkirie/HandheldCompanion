@@ -47,32 +47,11 @@ namespace ControllerService.Sensors
         {
             AccelerometerReading reading = args.Reading;
 
-            this.reading.X = (float)reading.AccelerationX;
-            this.reading.Y = (float)reading.AccelerationZ;
-            this.reading.Z = (float)reading.AccelerationY;
-            
-            logger?.LogDebug("XInputAccelerometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
-        }
+            float readingX = this.reading.X = (float)reading.AccelerationX;
+            float readingY = this.reading.Y = (float)reading.AccelerationZ;
+            float readingZ = this.reading.Z = (float)reading.AccelerationY;
 
-        private void Shaken(Accelerometer sender, AccelerometerShakenEventArgs args)
-        {
-            return; // implement me
-            throw new NotImplementedException();
-        }
-
-        public override string ToString()
-        {
-            return this.GetType().Name;
-        }
-
-        public Vector3 GetCurrentReading()
-        {
-            // Y up coordinate system, swap Y and Z.
-            // Duplicate values to allow for optional swapping or inverting.
-            float readingX = this.reading.X;
-            float readingY = this.reading.Y;
-            float readingZ = this.reading.Z;
-
+            // apply profile
             if (controller.virtualTarget != null)
             {
                 this.reading *= controller.profile.accelerometer;
@@ -94,6 +73,22 @@ namespace ControllerService.Sensors
                 }
             }
 
+            logger?.LogDebug("XInputAccelerometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
+        }
+
+        private void Shaken(Accelerometer sender, AccelerometerShakenEventArgs args)
+        {
+            return; // implement me
+            throw new NotImplementedException();
+        }
+
+        public override string ToString()
+        {
+            return this.GetType().Name;
+        }
+
+        public Vector3 GetCurrentReading()
+        {
             return this.reading;
         }
     }
