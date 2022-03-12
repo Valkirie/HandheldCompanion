@@ -1,5 +1,6 @@
 using ControllerCommon;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Devices.Sensors;
@@ -19,9 +20,6 @@ namespace ControllerService.Sensors
             maxOut = 2048.0f,
         };
 
-        public event ReadingChangedEventHandler ReadingChanged;
-        public delegate void ReadingChangedEventHandler(XInputGirometer sender, Vector3 e);
-
         private readonly ILogger logger;
 
         public XInputGirometer(XInputController controller, ILogger logger, PipeServer pipeServer) : base(controller, pipeServer)
@@ -38,18 +36,26 @@ namespace ControllerService.Sensors
             }
         }
 
+        private void ReadingHasChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
+        {
+            GyrometerReading reading = args.Reading;
+
+            // swapping Y and Z
+            this.reading.X = (float)reading.AngularVelocityX;
+            this.reading.Y = (float)reading.AngularVelocityZ;
+            this.reading.Z = (float)reading.AngularVelocityY;
+        }
+
         public override string ToString()
         {
             return this.GetType().Name;
         }
 
-        private void ReadingHasChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
+        public Vector3 GetCurrentReading()
         {
-            GyrometerReading reading = args.Reading;
-
-            float readingX = this.reading.X = (float)reading.AngularVelocityX;
-            float readingY = this.reading.Y = (float)reading.AngularVelocityZ;
-            float readingZ = this.reading.Z = (float)reading.AngularVelocityY;
+            float readingX = this.reading.X;
+            float readingY = this.reading.Y;
+            float readingZ = this.reading.Z;
 
             if (controller.virtualTarget != null)
             {
@@ -80,8 +86,7 @@ namespace ControllerService.Sensors
             if (ControllerService.CurrentTag == "ProfileSettingsMode0")
                 pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Girometer));
 
-            // raise event
-            ReadingChanged?.Invoke(this, this.reading);
+            return this.reading;
         }
     }
 }

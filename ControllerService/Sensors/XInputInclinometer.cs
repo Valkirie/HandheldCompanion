@@ -26,7 +26,6 @@ namespace ControllerService.Sensors
             {
                 sensor.ReportInterval = (uint)controller.updateInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
-
                 sensor.ReadingChanged += ReadingChanged;
             }
             else
@@ -35,20 +34,27 @@ namespace ControllerService.Sensors
             }
         }
 
+        private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
+        {
+            AccelerometerReading reading = args.Reading;
+
+            this.reading.X = (float)reading.AccelerationX;
+            this.reading.Y = (float)reading.AccelerationZ;
+            this.reading.Z = (float)reading.AccelerationY;
+        }
+
         public override string ToString()
         {
             return this.GetType().Name;
         }
 
-        private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
+        public Vector3 GetCurrentReading()
         {
-            AccelerometerReading reading = args.Reading;
-
             // Y up coordinate system, swap Y and Z.
             // Duplicate values to allow for optional swapping or inverting.
-            float readingX = this.reading.X = (float)reading.AccelerationX;
-            float readingY = this.reading.Y = (float)reading.AccelerationZ;
-            float readingZ = this.reading.Z = (float)reading.AccelerationY;
+            float readingX = this.reading.X;
+            float readingY = this.reading.Y;
+            float readingZ = this.reading.Z;
 
             if (controller.virtualTarget != null)
             {
@@ -85,8 +91,7 @@ namespace ControllerService.Sensors
             if (ControllerService.CurrentTag == "ProfileSettingsMode1")
                 pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Inclinometer));
 
-            // Raise event
-            ReadingHasChanged?.Invoke(this, this.reading);
+            return this.reading;
         }
     }
 }
