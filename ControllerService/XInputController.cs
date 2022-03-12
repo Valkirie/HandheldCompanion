@@ -101,11 +101,14 @@ namespace ControllerService
             Inclinometer = new XInputInclinometer(this, logger, pipeServer);
         }
 
-        private Stopwatch sw = new();
+        private long AverageElapsedMilliseconds;
+        private long ElapsedTicks = 1;
         private void UpdateTimer_Ticked(object sender, EventArgs e)
         {
             // update timestamp
             microseconds = stopwatch.ElapsedMilliseconds * 1000L;
+            AverageElapsedMilliseconds = stopwatch.ElapsedMilliseconds / ElapsedTicks;
+            ElapsedTicks++;
 
             // get current gamepad state
             State state = physicalController.GetState();
@@ -114,8 +117,7 @@ namespace ControllerService
             lock (updateLock)
             {
                 // debug
-                Debug.WriteLine(sw.ElapsedMilliseconds);
-                sw.Restart();
+                Debug.WriteLine($"AverageElapsedMilliseconds:{AverageElapsedMilliseconds}");
 
                 // update reading(s)
                 AngularVelocity = AngularUniversal = Gyrometer.GetCurrentReading();
