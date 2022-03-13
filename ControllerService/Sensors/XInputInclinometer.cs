@@ -49,14 +49,14 @@ namespace ControllerService.Sensors
                 pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Inclinometer));
         }
 
-        public override string ToString()
+        public new Vector3 GetCurrentReading(bool center = false)
         {
-            return this.GetType().Name;
-        }
-
-        public Vector3 GetCurrentReading()
-        {
-            Vector3 reading = new Vector3(this.reading.X, this.reading.Y, this.reading.Z);
+            Vector3 reading = new Vector3()
+            {
+                X = center ? this.reading_fixed.X : this.reading.X,
+                Y = center ? this.reading_fixed.Y : this.reading.Y,
+                Z = center ? this.reading_fixed.Z : this.reading.Z
+            };
 
             if (controller.virtualTarget != null)
             {
@@ -86,11 +86,6 @@ namespace ControllerService.Sensors
             reading.Y = (float)(angle_y_theta);
 
             return reading;
-        }
-
-        public Vector3 GetCurrentReadingRaw()
-        {
-            return this.reading;
         }
     }
 }

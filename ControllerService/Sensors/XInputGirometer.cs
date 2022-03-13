@@ -22,7 +22,6 @@ namespace ControllerService.Sensors
         };
 
         private readonly ILogger logger;
-        private readonly Timer AngularVelocityTimer;
 
         public XInputGirometer(XInputController controller, ILogger logger, PipeServer pipeServer) : base(controller, pipeServer)
         {
@@ -34,8 +33,8 @@ namespace ControllerService.Sensors
                 sensor.ReportInterval = (uint)updateInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
-                AngularVelocityTimer = new Timer() { Enabled = false, AutoReset = false, Interval = updateInterval * 6 };
-                AngularVelocityTimer.Elapsed += AngularVelocityTimer_Elapsed;
+                // (re)center
+                updateTimer.Interval = updateInterval * 6;
 
                 sensor.ReadingChanged += ReadingHasChanged;
             }
@@ -45,23 +44,18 @@ namespace ControllerService.Sensors
             }
         }
 
-        private void AngularVelocityTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            this.reading = new();
-        }
-
         private void ReadingHasChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
         {
             GyrometerReading reading = args.Reading;
 
             // swapping Y and Z
-            this.reading.X = (float)reading.AngularVelocityX;
-            this.reading.Y = (float)reading.AngularVelocityZ;
-            this.reading.Z = (float)reading.AngularVelocityY;
+            this.reading.X = this.reading_fixed.X = (float)reading.AngularVelocityX;
+            this.reading.Y = this.reading_fixed.Y = (float)reading.AngularVelocityZ;
+            this.reading.Z = this.reading_fixed.Z = (float)reading.AngularVelocityY;
 
             // reset reading after inactivity
-            AngularVelocityTimer?.Stop();
-            AngularVelocityTimer?.Start();
+            updateTimer.Stop();
+            updateTimer.Start();
 
             logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
 
@@ -70,14 +64,14 @@ namespace ControllerService.Sensors
                 pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Girometer));
         }
 
-        public override string ToString()
+        public new Vector3 GetCurrentReading(bool center = false)
         {
-            return this.GetType().Name;
-        }
-
-        public Vector3 GetCurrentReading()
-        {
-            Vector3 reading = new Vector3(this.reading.X, this.reading.Y, this.reading.Z);
+            Vector3 reading = new Vector3()
+            {
+                X = center ? this.reading_fixed.X : this.reading.X,
+                Y = center ? this.reading_fixed.Y : this.reading.Y,
+                Z = center ? this.reading_fixed.Z : this.reading.Z
+            };
 
             if (controller.virtualTarget != null)
             {
@@ -103,11 +97,6 @@ namespace ControllerService.Sensors
             }
 
             return reading;
-        }
-
-        public Vector3 GetCurrentReadingRaw()
-        {
-            return this.reading;
         }
     }
 }

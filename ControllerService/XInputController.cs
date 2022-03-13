@@ -111,7 +111,7 @@ namespace ControllerService
             {
                 // update reading(s)
                 AngularVelocity = Gyrometer.GetCurrentReading();
-                AngularUniversal = Gyrometer.GetCurrentReading(); // todo: implement auto recenter
+                AngularUniversal = Gyrometer.GetCurrentReading(true);
                 Acceleration = Accelerometer.GetCurrentReading();
                 Angle = Inclinometer.GetCurrentReading();
 
