@@ -158,7 +158,6 @@ namespace ControllerCommon
                 {
                     if (type != ServiceStartMode.Disabled)
                         controller.Start();
-                    StartTentative = 0;
                 }
                 catch (Exception ex)
                 {
@@ -169,13 +168,15 @@ namespace ControllerCommon
                     // exit loop
                     if (StartTentative == 3)
                     {
-                        StartTentative = 0;
                         nextStatus = ServiceControllerStatus.Failed;
                         StartFailed?.Invoke(status);
-                        return;
+                        break;
                     }
                 }
             }
+
+            StartTentative = 0;
+            return;
         }
 
         private int StopTentative;
@@ -190,6 +191,7 @@ namespace ControllerCommon
                     if (status == ServiceControllerStatus.Running)
                         controller.Stop();
                     StopTentative = 0;
+                    return;
                 }
                 catch (Exception ex)
                 {
@@ -200,13 +202,15 @@ namespace ControllerCommon
                     // exit loop
                     if (StopTentative == 3)
                     {
-                        StopTentative = 0;
                         nextStatus = ServiceControllerStatus.Failed;
                         StopFailed?.Invoke(status);
-                        return;
+                        break;
                     }
                 }
             }
+
+            StopTentative = 0;
+            return;
         }
 
         public void SetStartType(ServiceStartMode mode)
