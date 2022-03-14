@@ -4,6 +4,7 @@ using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
@@ -26,9 +27,7 @@ namespace ControllerService
         public Vector3 AngularUniversal;
         public Vector3 AngularVelocity;
 
-        public Timer AngularVelocityTimer;
-
-        public Timer UpdateTimer;
+        public MultimediaTimer UpdateTimer;
         public float WidhtHeightRatio = 2.5f;
         public double vibrationStrength = 100.0d;
         public int updateInterval = 15;
@@ -38,9 +37,11 @@ namespace ControllerService
         public XInputGirometer Gyrometer;
         public XInputAccelerometer Accelerometer;
         public XInputInclinometer Inclinometer;
+        public SensorFusion sensorFusion;
 
         protected readonly Stopwatch stopwatch;
         public long microseconds;
+        public double totalmilliseconds;
 
         public DS4Touch Touch;
 
@@ -50,22 +51,27 @@ namespace ControllerService
         protected object updateLock = new();
         public UserIndex UserIndex;
         private readonly ILogger logger;
+        private readonly PipeServer pipeServer;
 
-        public XInputController(Controller controller, UserIndex index, ILogger logger)
+        public XInputController(Controller controller, UserIndex index, ILogger logger, PipeServer pipeServer)
         {
             this.logger = logger;
+            this.pipeServer = pipeServer;
 
             // initilize controller
             this.physicalController = controller;
             this.UserIndex = index;
 
+            // initialize sensor(s)
+            UpdateSensors();
+
+            // initialize sensorfusion
+            sensorFusion = new SensorFusion(logger);
+
             // initialize vectors
             AngularVelocity = new();
             Acceleration = new();
             Angle = new();
-
-            AngularVelocityTimer = new Timer() { Enabled = false, AutoReset = false };
-            AngularVelocityTimer.Elapsed += AngularVelocityTimer_Elapsed;
 
             // initialize profile(s)
             profile = new();
@@ -79,20 +85,39 @@ namespace ControllerService
             stopwatch.Start();
 
             // initialize timers
-            UpdateTimer = new Timer() { Enabled = true, AutoReset = true };
-            UpdateTimer.Elapsed += UpdateTimer_Elapsed;
+            UpdateTimer = new MultimediaTimer(updateInterval);
+            UpdateTimer.Tick += UpdateTimer_Ticked;
+            UpdateTimer.Start();
         }
 
-        private void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
+        public void UpdateSensors()
+        {
+            Gyrometer = new XInputGirometer(this, logger, pipeServer);
+            Accelerometer = new XInputAccelerometer(this, logger, pipeServer);
+            Inclinometer = new XInputInclinometer(this, logger, pipeServer);
+        }
+
+        private void UpdateTimer_Ticked(object sender, EventArgs e)
         {
             // update timestamp
             microseconds = stopwatch.ElapsedMilliseconds * 1000L;
+            totalmilliseconds = stopwatch.Elapsed.TotalMilliseconds;
+
+            // get current gamepad state
+            State state = physicalController.GetState();
+            Gamepad = state.Gamepad;
 
             lock (updateLock)
             {
-                // get current gamepad state
-                State state = physicalController.GetState();
-                Gamepad = state.Gamepad;
+                // update reading(s)
+                AngularVelocity = Gyrometer.GetCurrentReading();
+                AngularUniversal = Gyrometer.GetCurrentReading(true);
+                Acceleration = Accelerometer.GetCurrentReading();
+                Angle = Inclinometer.GetCurrentReading();
+
+                // update virtual controller
+                virtualTarget?.UpdateReport(Gamepad);
+                sensorFusion?.UpdateReport(totalmilliseconds, AngularVelocity, Acceleration);
 
                 Updated?.Invoke(this);
             }
@@ -127,59 +152,6 @@ namespace ControllerService
                 logger.LogInformation("Profile {0} applied.", profile.name);
         }
 
-        public void SetGyroscope(XInputGirometer gyrometer)
-        {
-            Gyrometer = gyrometer;
-            Gyrometer.ReadingChanged += Girometer_ReadingChanged;
-        }
-
-        public void SetAccelerometer(XInputAccelerometer accelerometer)
-        {
-            Accelerometer = accelerometer;
-            Accelerometer.ReadingHasChanged += Accelerometer_ReadingChanged;
-        }
-
-        public void SetInclinometer(XInputInclinometer inclinometer)
-        {
-            Inclinometer = inclinometer;
-            Inclinometer.ReadingHasChanged += Inclinometer_ReadingChanged;
-        }
-
-        public void Accelerometer_ReadingChanged(XInputAccelerometer sender, Vector3 Acceleration)
-        {
-            this.Acceleration.X = Acceleration.X;
-            this.Acceleration.Y = Acceleration.Y;
-            this.Acceleration.Z = Acceleration.Z;
-        }
-
-        public void Girometer_ReadingChanged(XInputGirometer sender, Vector3 AngularVelocity)
-        {
-            this.AngularVelocity.X = AngularVelocity.X;
-            this.AngularVelocity.Y = AngularVelocity.Y;
-            this.AngularVelocity.Z = AngularVelocity.Z;
-
-            this.AngularUniversal.X = AngularVelocity.X;
-            this.AngularUniversal.Y = AngularVelocity.Y;
-            this.AngularUniversal.Z = AngularVelocity.Z;
-
-            AngularVelocityTimer?.Stop();
-            AngularVelocityTimer?.Start();
-        }
-
-        private void AngularVelocityTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            // Disable drift compensation for angle values. 
-            // AngularVelocity = new();
-            AngularUniversal = new();
-        }
-
-        public void Inclinometer_ReadingChanged(XInputInclinometer sender, Vector3 Angle)
-        {
-            this.Angle.X = Angle.X;
-            this.Angle.Y = Angle.Y;
-            this.Angle.Z = Angle.Z;
-        }
-
         public void SetWidthHeightRatio(int ratio)
         {
             WidhtHeightRatio = ((float)ratio) / 10;
@@ -189,11 +161,7 @@ namespace ControllerService
         public void SetPollRate(int HIDrate)
         {
             updateInterval = HIDrate;
-
             UpdateTimer.Interval = HIDrate;
-            AngularVelocityTimer.Interval = HIDrate * 4;
-
-            this.virtualTarget?.SetPollRate(updateInterval);
         }
 
         public void SetVibrationStrength(double strength)

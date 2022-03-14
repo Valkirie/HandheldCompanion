@@ -55,14 +55,11 @@ namespace ControllerService.Targets
             virtualController = client.CreateXbox360Controller();
             virtualController.AutoSubmitReport = false;
             virtualController.FeedbackReceived += FeedbackReceived;
-
-            // initialize timers
-            UpdateTimer.Elapsed += UpdateReport;
         }
 
         public override void Connect()
         {
-            if (isConnected)
+            if (IsConnected)
                 return;
 
             virtualController.Connect();
@@ -71,7 +68,7 @@ namespace ControllerService.Targets
 
         public override void Disconnect()
         {
-            if (!isConnected)
+            if (!IsConnected)
                 return;
 
             virtualController.Disconnect();
@@ -91,34 +88,31 @@ namespace ControllerService.Targets
             physicalController.SetVibration(inputMotor);
         }
 
-        public override unsafe void UpdateReport(object sender, ElapsedEventArgs e)
+        public override unsafe void UpdateReport(Gamepad Gamepad)
         {
-            lock (updateLock)
+            if (!IsConnected)
+                return;
+
+            if (xinputController.profile.whitelisted)
+                return;
+
+            base.UpdateReport(Gamepad);
+
+            virtualController.SetAxisValue(Xbox360Axis.LeftThumbX, LeftThumbX);
+            virtualController.SetAxisValue(Xbox360Axis.LeftThumbY, LeftThumbY);
+            virtualController.SetAxisValue(Xbox360Axis.RightThumbX, RightThumbX);
+            virtualController.SetAxisValue(Xbox360Axis.RightThumbY, RightThumbY);
+
+            foreach (Xbox360Button button in ButtonMap)
             {
-                if (!physicalController.IsConnected)
-                    return;
-
-                if (xinputController.profile.whitelisted)
-                    return;
-
-                base.UpdateReport(sender, e);
-
-                virtualController.SetAxisValue(Xbox360Axis.LeftThumbX, LeftThumbX);
-                virtualController.SetAxisValue(Xbox360Axis.LeftThumbY, LeftThumbY);
-                virtualController.SetAxisValue(Xbox360Axis.RightThumbX, RightThumbX);
-                virtualController.SetAxisValue(Xbox360Axis.RightThumbY, RightThumbY);
-
-                foreach (Xbox360Button button in ButtonMap)
-                {
-                    GamepadButtonFlags value = (GamepadButtonFlags)button.Value;
-                    virtualController.SetButtonState(button, Gamepad.Buttons.HasFlag(value));
-                }
-
-                virtualController.SetSliderValue(Xbox360Slider.LeftTrigger, Gamepad.LeftTrigger);
-                virtualController.SetSliderValue(Xbox360Slider.RightTrigger, Gamepad.RightTrigger);
-
-                virtualController.SubmitReport();
+                GamepadButtonFlags value = (GamepadButtonFlags)button.Value;
+                virtualController.SetButtonState(button, Gamepad.Buttons.HasFlag(value));
             }
+
+            virtualController.SetSliderValue(Xbox360Slider.LeftTrigger, Gamepad.LeftTrigger);
+            virtualController.SetSliderValue(Xbox360Slider.RightTrigger, Gamepad.RightTrigger);
+
+            virtualController.SubmitReport();
 
             base.SubmitReport();
         }

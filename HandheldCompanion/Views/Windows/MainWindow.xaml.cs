@@ -143,7 +143,7 @@ namespace HandheldCompanion.Views
             pipeServer.ClientMessage += OnClientMessage;
 
             // initialize Profile Manager
-            profileManager = new ProfileManager(CurrentPathProfiles, microsoftLogger, pipeClient);
+            profileManager = new ProfileManager(microsoftLogger, pipeClient);
 
             // initialize command parser
             cmdParser = new CmdParser(pipeClient, this, microsoftLogger);
@@ -249,7 +249,7 @@ namespace HandheldCompanion.Views
             try
             {
                 Profile currentProfile = profileManager.GetProfileFromExec(exec);
-                if (currentProfile != null)
+                if (currentProfile != null && currentProfile.enabled)
                 {
                     currentProfile.fullpath = path;
                     currentProfile.IsRunning = true;

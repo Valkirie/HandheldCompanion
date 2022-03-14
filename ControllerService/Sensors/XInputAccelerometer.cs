@@ -31,7 +31,7 @@ namespace ControllerService.Sensors
             sensor = Accelerometer.GetDefault();
             if (sensor != null)
             {
-                sensor.ReportInterval = (uint)controller.updateInterval;
+                sensor.ReportInterval = (uint)updateInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
                 sensor.ReadingChanged += ReadingChanged;
@@ -39,56 +39,57 @@ namespace ControllerService.Sensors
             }
             else
             {
-                logger.LogInformation("{0} not initialised.", this.ToString());
+                logger.LogWarning("{0} not initialised.", this.ToString());
             }
-        }
-
-        private void Shaken(Accelerometer sender, AccelerometerShakenEventArgs args)
-        {
-            return; // implement me
-            throw new NotImplementedException();
-        }
-
-        public override string ToString()
-        {
-            return this.GetType().Name;
         }
 
         private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
             AccelerometerReading reading = args.Reading;
 
-            // Y up coordinate system, swap Y and Z
-            // Duplicate values to allow for optional swapping or inverting.
-            float readingX = this.reading.X = (float)reading.AccelerationX;
-            float readingY = this.reading.Y = (float)reading.AccelerationZ;
-            float readingZ = this.reading.Z = (float)reading.AccelerationY;
+            this.reading.X = (float)reading.AccelerationX;
+            this.reading.Y = (float)reading.AccelerationZ;
+            this.reading.Z = (float)reading.AccelerationY;
+
+            Task.Run(() => logger?.LogDebug("XInputAccelerometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
+        }
+
+        private void Shaken(Accelerometer sender, AccelerometerShakenEventArgs args)
+        {
+            // throw new NotImplementedException();
+        }
+
+        public new Vector3 GetCurrentReading(bool center = false)
+        {
+            Vector3 reading = new Vector3()
+            {
+                X = center ? this.reading_fixed.X : this.reading.X,
+                Y = center ? this.reading_fixed.Y : this.reading.Y,
+                Z = center ? this.reading_fixed.Z : this.reading.Z
+            };
 
             if (controller.virtualTarget != null)
             {
-                this.reading *= controller.profile.accelerometer;
+                reading *= controller.profile.accelerometer;
 
-                this.reading.Z = controller.profile.steering == 0 ? readingZ : readingY;
-                this.reading.Y = controller.profile.steering == 0 ? readingY : -readingZ;
-                this.reading.X = controller.profile.steering == 0 ? readingX : readingX;
+                reading.Z = controller.profile.steering == 0 ? this.reading.Z : this.reading.Y;
+                reading.Y = controller.profile.steering == 0 ? this.reading.Y : -this.reading.Z;
+                reading.X = controller.profile.steering == 0 ? this.reading.X : this.reading.X;
 
                 if (controller.profile.inverthorizontal)
                 {
-                    this.reading.Y *= -1.0f;
-                    this.reading.Z *= -1.0f;
+                    reading.Y *= -1.0f;
+                    reading.Z *= -1.0f;
                 }
 
                 if (controller.profile.invertvertical)
                 {
-                    this.reading.Y *= -1.0f;
-                    this.reading.X *= -1.0f;
+                    reading.Y *= -1.0f;
+                    reading.X *= -1.0f;
                 }
             }
 
-            Task.Run(() => logger?.LogDebug("XInputAccelerometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
-
-            // raise event
-            ReadingHasChanged?.Invoke(this, this.reading);
+            return reading;
         }
     }
 }

@@ -3,6 +3,7 @@ using ControllerService.Sensors;
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic.FileIO;
 using Microsoft.Win32;
 using Nefarius.ViGEm.Client;
 using SharpDX.DirectInput;
@@ -33,7 +34,7 @@ namespace ControllerService
         private DSUServer DSUServer;
         public HidHide Hidder;
 
-        public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathDep, CurrentPathProfiles;
+        public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathDep;
         public static string CurrentTag;
 
         private string DSUip;
@@ -60,7 +61,6 @@ namespace ControllerService
             // paths
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
-            CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
             CurrentPathCli = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
             CurrentPathDep = Path.Combine(CurrentPath, "dependencies");
 
@@ -101,6 +101,12 @@ namespace ControllerService
             Hidder = new HidHide(CurrentPathCli, logger, this);
             Hidder.RegisterApplication(CurrentExe);
 
+            // initialize PipeServer
+            pipeServer = new PipeServer("ControllerService", logger);
+            pipeServer.Connected += OnClientConnected;
+            pipeServer.Disconnected += OnClientDisconnected;
+            pipeServer.ClientMessage += OnClientMessage;
+
             // prepare physical controller
             DirectInput dinput = new DirectInput();
             IList<DeviceInstance> dinstances = dinput.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly);
@@ -111,7 +117,7 @@ namespace ControllerService
                 if (!controller.IsConnected)
                     continue;
 
-                XInputController = new XInputController(controller, idx, logger);
+                XInputController = new XInputController(controller, idx, logger, pipeServer);
                 XInputController.Instance = dinstances[(int)idx];
                 break;
             }
@@ -121,15 +127,6 @@ namespace ControllerService
                 logger.LogCritical("No physical controller detected. Application will stop");
                 throw new InvalidOperationException();
             }
-
-            // initialize PipeServer
-            pipeServer = new PipeServer("ControllerService", logger);
-            pipeServer.Connected += OnClientConnected;
-            pipeServer.Disconnected += OnClientDisconnected;
-            pipeServer.ClientMessage += OnClientMessage;
-
-            // initialize sensors
-            UpdateSensors();
 
             // XInputController settings
             XInputController.SetWidthHeightRatio(DeviceWidthHeightRatio);
@@ -143,26 +140,8 @@ namespace ControllerService
             DSUServer.Stopped += OnDSUStopped;
 
             // initialize Profile Manager
-            profileManager = new ProfileManager(CurrentPathProfiles, logger);
+            profileManager = new ProfileManager(logger);
             profileManager.Updated += ProfileUpdated;
-        }
-
-        private void UpdateSensors()
-        {
-            var Gyrometer = new XInputGirometer(XInputController, logger, pipeServer);
-            if (Gyrometer.sensor == null)
-                logger.LogWarning("No Gyrometer detected");
-            XInputController.SetGyroscope(Gyrometer);
-
-            var Accelerometer = new XInputAccelerometer(XInputController, logger, pipeServer);
-            if (Accelerometer.sensor == null)
-                logger.LogWarning("No Accelerometer detected");
-            XInputController.SetAccelerometer(Accelerometer);
-
-            var Inclinometer = new XInputInclinometer(XInputController, logger, pipeServer);
-            if (Inclinometer.sensor == null)
-                logger.LogWarning("No Inclinometer detected");
-            XInputController.SetInclinometer(Inclinometer);
         }
 
         private void SetControllerMode(HIDmode mode)
@@ -513,7 +492,7 @@ namespace ControllerService
                     break;
                 case PowerModes.Resume:
                     // (re)initialize sensors
-                    UpdateSensors();
+                    XInputController?.UpdateSensors();
                     break;
                 case PowerModes.Suspend:
                     break;

@@ -2,5 +2,6 @@
   "name": "Cemu",
   "path": "Cemu.exe",
   "executable": "Cemu.exe",
+  "enabled": true,
   "whitelisted": false
 }
