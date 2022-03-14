@@ -51,7 +51,7 @@
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>
-                <ui:SimpleStackPanel Spacing="6">
+                <ui:SimpleStackPanel Spacing="6" Name="GlobalDetails" IsEnabled="False" >
                     <Label Content="Profile details" FontWeight="SemiBold"></Label>
                     
                     <!-- Warning -->
@@ -125,7 +125,33 @@
                             </ui:SimpleStackPanel>
                         </Grid>
                     </Border>
+
+                    <!-- Enable profile -->
+                    <Border                      
+                        Padding="0,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="60"></ColumnDefinition>
+                                <ColumnDefinition Width="8*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7EE;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="Enable profile" FontSize="14"/>
+                                <TextBlock Text="The profile will be automatically applied when the associated application is detected" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+
+                            <ui:ToggleSwitch Name="Toggle_EnableProfile" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Stretch" Toggled="Toggle_EnableProfile_Toggled"/>
+                        </Grid>
+                    </Border>
                 </ui:SimpleStackPanel>
+
+                <!-- Profile settings -->
                 <ui:SimpleStackPanel Spacing="6" Name="GlobalSettings" IsEnabled="False">
                     <Label Content="Profile settings" FontWeight="SemiBold"></Label>
 
@@ -160,8 +186,6 @@
                             <Expander.Content>
                                 <Grid FlowDirection="LeftToRight" Margin="0,12,0,0">
                                     <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
-                                        <CheckBox Name="cB_Enable" Content="Allow automatic application of the profile" Checked="cB_Enable_Checked" Unchecked="cB_Enable_Checked"></CheckBox>
-                                        
                                         <!-- Separator -->
                                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 

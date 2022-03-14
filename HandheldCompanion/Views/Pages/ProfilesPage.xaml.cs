@@ -320,7 +320,7 @@ namespace HandheldCompanion.Views.Pages
                 tB_ProfileName.IsEnabled = !profileCurrent.IsDefault;
                 cB_ExclusiveHook.IsEnabled = !profileCurrent.IsDefault;
 
-                GlobalSettings.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
+                GlobalSettings.IsEnabled = GlobalDetails.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
                 b_ApplyProfile.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
                 b_ApplyProfile.ToolTip = b_ApplyProfile.IsEnabled == false ? Properties.Resources.WarningElevated : null;
 
@@ -328,8 +328,8 @@ namespace HandheldCompanion.Views.Pages
                 tB_ProfileName.Text = profileCurrent.name;
                 tB_ProfilePath.Text = profileCurrent.fullpath;
 
-                cB_Enable.IsEnabled = !profileCurrent.IsDefault;
-                cB_Enable.IsChecked = profileCurrent.enabled;
+                Toggle_EnableProfile.IsEnabled = !profileCurrent.IsDefault;
+                Toggle_EnableProfile.IsOn = profileCurrent.enabled;
 
                 Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
                 tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
@@ -413,7 +413,7 @@ namespace HandheldCompanion.Views.Pages
 
             profileCurrent.name = tB_ProfileName.Text;
             profileCurrent.fullpath = tB_ProfilePath.Text;
-            profileCurrent.enabled = (bool)cB_Enable.IsChecked;
+            profileCurrent.enabled = (bool)Toggle_EnableProfile.IsOn;
 
             profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
             profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
@@ -443,11 +443,6 @@ namespace HandheldCompanion.Views.Pages
             profileManager.profiles[profileCurrent.name] = profileCurrent;
             profileManager.UpdateOrCreateProfile(profileCurrent, false);
             profileManager.SerializeProfile(profileCurrent);
-        }
-
-        private void cB_Enable_Checked(object sender, RoutedEventArgs e)
-        {
-            // do something
         }
 
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)
@@ -492,6 +487,11 @@ namespace HandheldCompanion.Views.Pages
         private void Expander_Expanded(object sender, RoutedEventArgs e)
         {
             ((Expander)sender).BringIntoView();
+        }
+
+        private void Toggle_EnableProfile_Toggled(object sender, RoutedEventArgs e)
+        {
+            // do something
         }
     }
 }
