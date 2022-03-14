@@ -118,15 +118,15 @@
                                 </Grid>
 
                                 <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal">
-                                    <Button Click="b_DeleteProfile_Click" Name="b_DeleteProfile" Content="Delete profile" Width="Auto" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}"/>
-                                    <Button Click="b_ApplyProfile_Click" Name="b_ApplyProfile" Content="Update profile" Width="Auto" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100"/>
+                                    <Button Click="b_DeleteProfile_Click" Name="b_DeleteProfile" Content="Delete profile" Width="Auto" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" IsEnabled="False"/>
+                                    <Button Click="b_ApplyProfile_Click" Name="b_ApplyProfile" Content="Update profile" Width="Auto" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100" IsEnabled="False"/>
                                 </ui:SimpleStackPanel>
 
                             </ui:SimpleStackPanel>
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>
-                <ui:SimpleStackPanel Spacing="6">
+                <ui:SimpleStackPanel Spacing="6" Name="GlobalSettings" IsEnabled="False">
                     <Label Content="Profile settings" FontWeight="SemiBold"></Label>
 
                     <!-- Global settings -->

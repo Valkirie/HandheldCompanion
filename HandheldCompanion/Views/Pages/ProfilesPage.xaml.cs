@@ -320,6 +320,7 @@ namespace HandheldCompanion.Views.Pages
                 tB_ProfileName.IsEnabled = !profileCurrent.IsDefault;
                 cB_ExclusiveHook.IsEnabled = !profileCurrent.IsDefault;
 
+                GlobalSettings.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
                 b_ApplyProfile.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
                 b_ApplyProfile.ToolTip = b_ApplyProfile.IsEnabled == false ? Properties.Resources.WarningElevated : null;
 
