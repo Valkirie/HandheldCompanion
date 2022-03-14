@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Resources;
 using System.Text.Json;
 using static ControllerCommon.Utils;
@@ -38,7 +37,10 @@ namespace ControllerCommon
         {
             this.logger = logger;
             this.PipeClient = PipeClient;
+        }
 
+        public void Start(string filter = "*.json")
+        {
             this.path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "Profiles");
 
             // initialize folder
@@ -69,10 +71,6 @@ namespace ControllerCommon
                 Filter = "*.json",
                 NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size
             };
-        }
-
-        public void Start(string filter = "*.json")
-        {
             profileWatcher.Deleted += ProfileDeleted;
 
             // process existing profiles

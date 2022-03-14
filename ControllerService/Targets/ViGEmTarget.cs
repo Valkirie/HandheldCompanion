@@ -5,7 +5,6 @@ using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
 using System;
 using System.Runtime.InteropServices;
-using System.Timers;
 using GamepadButtonFlags = ControllerCommon.GamepadButtonFlags;
 
 namespace ControllerService.Targets

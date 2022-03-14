@@ -1,9 +1,7 @@
 using ControllerCommon;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Numerics;
 using System.Threading.Tasks;
-using System.Timers;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils;
 using SensorType = ControllerCommon.SensorType;

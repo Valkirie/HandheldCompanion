@@ -1,9 +1,7 @@
 using ControllerCommon;
-using ControllerService.Sensors;
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic.FileIO;
 using Microsoft.Win32;
 using Nefarius.ViGEm.Client;
 using SharpDX.DirectInput;

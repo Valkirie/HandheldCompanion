@@ -17,11 +17,9 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
-using Windows.System.Diagnostics;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.ServiceControllerStatus;
-using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Views
 {
@@ -182,7 +180,7 @@ namespace HandheldCompanion.Views
 
             // initialize command parser
             cmdParser = new CmdParser(pipeClient, this, microsoftLogger);
-            cmdParser.ParseArgs(arguments.Args);
+            cmdParser.ParseArgs(arguments.Args, true);
 
             // initialize pages events
             settingsPage.ToastChanged += (value) =>

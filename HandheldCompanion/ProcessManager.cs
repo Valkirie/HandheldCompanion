@@ -2,12 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Timers;
 using System.IO;
-using Windows.System.Diagnostics;
 using System.Management;
+using System.Timers;
+using Windows.System.Diagnostics;
 
 namespace HandheldCompanion
 {

@@ -65,7 +65,7 @@ namespace HandheldCompanion.Views.Pages
                 SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
 
                 FontIcon icon = new FontIcon() { FontSize = 24 };
-                switch(button)
+                switch (button)
                 {
                     case GamepadButtonFlags.A:
                         icon.Glyph = "\uF093";

@@ -4,6 +4,7 @@ using HandheldCompanion.Views;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using static HandheldCompanion.Options;
 
 namespace HandheldCompanion
@@ -14,7 +15,6 @@ namespace HandheldCompanion
         private readonly MainWindow mainWindow;
 
         private readonly ILogger microsoftLogger;
-        private string[] args;
 
         public CmdParser(PipeClient pipeClient, MainWindow mainWindow, ILogger microsoftLogger)
         {
@@ -23,10 +23,8 @@ namespace HandheldCompanion
             this.microsoftLogger = microsoftLogger;
         }
 
-        public void ParseArgs(string[] args)
+        public void ParseArgs(string[] args, bool init = false)
         {
-            this.args = args;
-
             if (args.Length == 0)
                 return;
 
@@ -34,22 +32,22 @@ namespace HandheldCompanion
 
             Parser.Default.ParseArguments<ProfileOption, ProfileService, DeviceOption>(args)
                 .MapResult(
-                    (ProfileOption option) => CmdProfile(option),
-                    (ProfileService option) => CmdService(option),
-                    (DeviceOption option) => CmdDevice(option),
+                    (ProfileOption option) => CmdProfile(option, init),
+                    (ProfileService option) => CmdService(option, init),
+                    (DeviceOption option) => CmdDevice(option, init),
                     errors => CmdError(errors));
         }
 
         #region cmd
 
-        private bool CmdDevice(DeviceOption option)
+        private bool CmdDevice(DeviceOption option, bool init = false)
         {
             mainWindow.UpdateHID(option.mode);
             mainWindow.UpdateCloak(option.cloak);
             return true;
         }
 
-        private bool CmdProfile(ProfileOption option)
+        private bool CmdProfile(ProfileOption option, bool init = false)
         {
             Profile profile = new Profile(option.exe);
 
@@ -74,7 +72,7 @@ namespace HandheldCompanion
             return true;
         }
 
-        private bool CmdService(ProfileService option)
+        private bool CmdService(ProfileService option, bool init = false)
         {
             switch (option.action)
             {
@@ -99,7 +97,7 @@ namespace HandheldCompanion
                     pipeClient.SendMessage(new PipeShutdown());
                     mainWindow.serviceManager.StopServiceAsync();
                     mainWindow.serviceManager.DeleteService();
-                    mainWindow.Close();
+                    if (init) Process.GetCurrentProcess().Kill();
                     break;
                 default:
                     return false;
