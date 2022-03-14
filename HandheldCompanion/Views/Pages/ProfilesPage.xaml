@@ -57,6 +57,7 @@
                     <!-- Warning -->
                     <Border
                         Name="WarningBorder"
+                        Visibility="Collapsed"
                         Background="#F09D6500"
                         Padding="12,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
