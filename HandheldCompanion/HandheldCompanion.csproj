@@ -10,7 +10,7 @@
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <FileVersion>0.9.0.7</FileVersion>
+    <FileVersion>0.9.1.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
