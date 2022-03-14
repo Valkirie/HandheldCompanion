@@ -78,4 +78,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="$(SYSTEMROOT)\System32\sc.exe stop ControllerService" IgnoreExitCode="true" />
+  </Target>
 </Project>
