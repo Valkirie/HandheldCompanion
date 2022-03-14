@@ -632,7 +632,7 @@ end;
 #define UseVC2015To2019
 
 ; requires dxwebsetup.exe (see download link below)
-#define UseDirectX
+; #define UseDirectX
 
 ; requires HidHideMSI.msi
 #define UseHideHide
@@ -647,6 +647,7 @@ end;
 ;#define UseSql2019Express
 
 #define MyAppSetupName 'Handheld Companion'
+#define MyBuildId 'HandheldCompanion'
 #define MyAppVersion '0.9.1.0'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
@@ -715,8 +716,6 @@ Filename: "{sys}\sc.exe"; Parameters: "delete ControllerService" ; RunOnceId: "D
 Filename: "C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe"; Parameters: "--cloak-off" ; RunOnceId: "CloakOff"; Flags: runascurrentuser runhidden
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{localappdata}\HandheldCompanion"
-Type: filesandordirs; Name: "{localappdata}\ControllerService"
 Type: filesandordirs; Name: "{app}"
 
 [Registry]
@@ -724,7 +723,24 @@ Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDum
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{app}"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{app}"; Flags: uninsdeletekey
 
-[Code]  
+[Code]
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+  if CurUninstallStep = usUninstall then
+  begin
+  
+    if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\Profiles'))  then
+      if MsgBox('Do you want to delete all existing profiles?', mbConfirmation, MB_YESNO) = IDYES
+      then
+        DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\Profiles'), True, True, True);
+		
+    if MsgBox('Do you want to delete all existing settings?', mbConfirmation, MB_YESNO) = IDYES
+    then
+	  DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
+	  DelTree(ExpandConstant('{localappdata}\ControllerService'), True, True, True);
+  end;
+end;
+
 procedure InitializeWizard;
 begin
   Dependency_InitializeWizard;
