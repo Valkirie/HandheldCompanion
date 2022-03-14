@@ -39,7 +39,7 @@ namespace ControllerCommon
             this.logger = logger;
             this.PipeClient = PipeClient;
 
-            this.path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ControllerService", "Profiles");
+            this.path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "Profiles");
 
             // initialize folder
             if (!Directory.Exists(path))

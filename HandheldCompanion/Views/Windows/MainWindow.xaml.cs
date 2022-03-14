@@ -249,7 +249,7 @@ namespace HandheldCompanion.Views
             try
             {
                 Profile currentProfile = profileManager.GetProfileFromExec(exec);
-                if (currentProfile != null)
+                if (currentProfile != null && currentProfile.enabled)
                 {
                     currentProfile.fullpath = path;
                     currentProfile.IsRunning = true;

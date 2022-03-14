@@ -58,6 +58,7 @@ namespace ControllerCommon
         public string name { get; set; }
         public string path { get; set; }
         public string executable { get; set; }
+        public bool enabled { get; set; } = true;
 
         public bool whitelisted { get; set; } = false;              // if true, can see through the HidHide cloak
         public bool use_wrapper { get; set; } = false;              // if true, deploy xinput1_3.dll

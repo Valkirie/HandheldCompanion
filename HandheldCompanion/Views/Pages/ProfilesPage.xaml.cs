@@ -327,6 +327,10 @@ namespace HandheldCompanion.Views.Pages
                 // populate controls
                 tB_ProfileName.Text = profileCurrent.name;
                 tB_ProfilePath.Text = profileCurrent.fullpath;
+
+                cB_Enable.IsEnabled = !profileCurrent.IsDefault;
+                cB_Enable.IsChecked = profileCurrent.enabled;
+
                 Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
                 tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
                 tb_ProfileAcceleroValue.Value = profileCurrent.accelerometer;
@@ -409,6 +413,7 @@ namespace HandheldCompanion.Views.Pages
 
             profileCurrent.name = tB_ProfileName.Text;
             profileCurrent.fullpath = tB_ProfilePath.Text;
+            profileCurrent.enabled = (bool)cB_Enable.IsChecked;
 
             profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
             profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
@@ -438,6 +443,11 @@ namespace HandheldCompanion.Views.Pages
             profileManager.profiles[profileCurrent.name] = profileCurrent;
             profileManager.UpdateOrCreateProfile(profileCurrent, false);
             profileManager.SerializeProfile(profileCurrent);
+        }
+
+        private void cB_Enable_Checked(object sender, RoutedEventArgs e)
+        {
+            // do something
         }
 
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)

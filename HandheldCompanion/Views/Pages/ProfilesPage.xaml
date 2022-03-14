@@ -159,6 +159,8 @@
                             <Expander.Content>
                                 <Grid FlowDirection="LeftToRight" Margin="0,12,0,0">
                                     <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
+                                        <CheckBox Name="cB_Enable" Content="Allow automatic application of the profile" Checked="cB_Enable_Checked" Unchecked="cB_Enable_Checked"></CheckBox>
+                                        
                                         <!-- Separator -->
                                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 

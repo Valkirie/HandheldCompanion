@@ -2,5 +2,6 @@
   "name": "Yuzu",
   "path": "yuzu.exe",
   "executable": "yuzu.exe",
+  "enabled": true,
   "whitelisted": false
 }
