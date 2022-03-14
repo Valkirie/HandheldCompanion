@@ -3,6 +3,7 @@ using ControllerService.Sensors;
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic.FileIO;
 using Microsoft.Win32;
 using Nefarius.ViGEm.Client;
 using SharpDX.DirectInput;
@@ -33,7 +34,7 @@ namespace ControllerService
         private DSUServer DSUServer;
         public HidHide Hidder;
 
-        public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathDep, CurrentPathProfiles;
+        public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathDep;
         public static string CurrentTag;
 
         private string DSUip;
@@ -60,7 +61,6 @@ namespace ControllerService
             // paths
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
-            CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
             CurrentPathCli = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
             CurrentPathDep = Path.Combine(CurrentPath, "dependencies");
 
@@ -140,7 +140,7 @@ namespace ControllerService
             DSUServer.Stopped += OnDSUStopped;
 
             // initialize Profile Manager
-            profileManager = new ProfileManager(CurrentPathProfiles, logger);
+            profileManager = new ProfileManager(logger);
             profileManager.Updated += ProfileUpdated;
         }
 

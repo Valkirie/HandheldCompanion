@@ -1,9 +1,13 @@
 ﻿using Force.Crc32;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Resources;
 using System.Text.Json;
 using static ControllerCommon.Utils;
 
@@ -30,14 +34,31 @@ namespace ControllerCommon
         private readonly ILogger logger;
         private string path;
 
-        public ProfileManager(string path, ILogger logger, PipeClient PipeClient = null)
+        public ProfileManager(ILogger logger, PipeClient PipeClient = null)
         {
             this.logger = logger;
-            this.path = path;
             this.PipeClient = PipeClient;
 
+            this.path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ControllerService", "Profiles");
+
+            // initialize folder
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
+
+            // initialize profile files
+            ResourceSet resourceSet = Properties.Resources.ResourceManager.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
+            foreach (DictionaryEntry entry in resourceSet)
+            {
+                string resourceKey = entry.Key.ToString();
+                if (!resourceKey.Contains(".json"))
+                    continue;
+
+                object resource = entry.Value;
+                string profile_path = Path.Combine(path, resourceKey);
+
+                if (!File.Exists(profile_path))
+                    File.WriteAllText(profile_path, (string)resource);
+            }
 
             // monitor profile file deletions
             profileWatcher = new FileSystemWatcher()
