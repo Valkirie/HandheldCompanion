@@ -57,7 +57,7 @@ namespace ControllerService.Sensors
             updateTimer.Stop();
             updateTimer.Start();
 
-            logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
+            Task.Run(() => logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
 
             // update client(s)
             if (ControllerService.CurrentTag == "ProfileSettingsMode0")

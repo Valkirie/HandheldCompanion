@@ -46,7 +46,8 @@ namespace ControllerCommon
             // Note Elapsed.TotalMilliseconds returns milliseconds including x.xxx precision i.e. microseconds.
             double DeltaSeconds = (double)(TotalMilliseconds - UpdateTimePreviousMilliSeconds) / 1000L;
             UpdateTimePreviousMilliSeconds = TotalMilliseconds;
-            logger.LogDebug("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaSeconds);
+
+            Task.Run(() => logger.LogDebug("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaSeconds));
 
             // Do calculations 
             CalculateGravitySimple(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);

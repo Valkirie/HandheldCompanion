@@ -42,7 +42,7 @@ namespace ControllerService.Sensors
             this.reading.Y = (float)reading.AccelerationZ;
             this.reading.Z = (float)reading.AccelerationY;
 
-            logger?.LogDebug("XInputInclinometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
+            Task.Run(() => logger?.LogDebug("XInputInclinometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
 
             // update client(s)
             if (ControllerService.CurrentTag == "ProfileSettingsMode1")

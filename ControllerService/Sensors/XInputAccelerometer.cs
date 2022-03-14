@@ -50,8 +50,8 @@ namespace ControllerService.Sensors
             this.reading.X = (float)reading.AccelerationX;
             this.reading.Y = (float)reading.AccelerationZ;
             this.reading.Z = (float)reading.AccelerationY;
-            
-            logger?.LogDebug("XInputAccelerometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z);
+
+            Task.Run(() => logger?.LogDebug("XInputAccelerometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
         }
 
         private void Shaken(Accelerometer sender, AccelerometerShakenEventArgs args)
