@@ -145,9 +145,6 @@ namespace HandheldCompanion.Views
             // initialize Profile Manager
             profileManager = new ProfileManager(microsoftLogger, pipeClient);
 
-            // initialize command parser
-            cmdParser = new CmdParser(pipeClient, this, microsoftLogger);
-
             // initialize mouse hook
             mouseHook = new MouseHook(pipeClient, microsoftLogger);
 
@@ -182,6 +179,10 @@ namespace HandheldCompanion.Views
             profilesPage = new ProfilesPage("profiles", this, microsoftLogger);
             settingsPage = new SettingsPage("settings", this, microsoftLogger);
             aboutPage = new AboutPage("about", this, microsoftLogger);
+
+            // initialize command parser
+            cmdParser = new CmdParser(pipeClient, this, microsoftLogger);
+            cmdParser.ParseArgs(arguments.Args);
 
             // initialize pages events
             settingsPage.ToastChanged += (value) =>
@@ -323,12 +324,12 @@ namespace HandheldCompanion.Views
             // start Service Manager
             serviceManager.Start();
 
+            // start Profile Manager
+            profileManager.Start();
+
             // start pipe client and server
             pipeClient.Start();
             pipeServer.Start();
-
-            // execute args
-            cmdParser.ParseArgs(arguments.Args);
 
             if (IsElevated)
             {

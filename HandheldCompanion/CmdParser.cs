@@ -99,7 +99,7 @@ namespace HandheldCompanion
                     pipeClient.SendMessage(new PipeShutdown());
                     mainWindow.serviceManager.StopServiceAsync();
                     mainWindow.serviceManager.DeleteService();
-                    mainWindow.Close(); // temp
+                    mainWindow.Close();
                     break;
                 default:
                     return false;

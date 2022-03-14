@@ -52,7 +52,6 @@ namespace HandheldCompanion.Views.Pages
             // initialize Profile Manager
             profileManager.Deleted += ProfileDeleted;
             profileManager.Updated += ProfileUpdated;
-            profileManager.Start();
 
             // draw buttons
             for (int i = 0; i < maxColumns; i++)

@@ -39,8 +39,12 @@ namespace HandheldCompanion
 
                 var microsoftLogger = new SerilogLoggerFactory(serilogLogger).CreateLogger("HandheldCompanion");
 
-                MainWindow wnd = new MainWindow(Arguments, microsoftLogger);
-                wnd.Show();
+                try
+                {
+                    MainWindow wnd = new MainWindow(Arguments, microsoftLogger);
+                    wnd.Show();
+                }
+                catch (Exception ex) { }
 
                 mutex.ReleaseMutex();
             }
