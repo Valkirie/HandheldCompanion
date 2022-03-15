@@ -51,7 +51,7 @@ namespace HandheldCompanion.Views.Pages
                     VerticalAlignment = VerticalAlignment.Bottom,
                     Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentLowBrush"],
                     BorderThickness = new Thickness(0),
-                    BorderBrush = (SolidColorBrush)new BrushConverter().ConvertFrom("#F09D6500"),
+                    BorderBrush = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentHighBrush"],
                     IsEnabled = false // prevent the control from being clickable
                 };
 
