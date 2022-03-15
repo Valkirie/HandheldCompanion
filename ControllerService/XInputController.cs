@@ -29,7 +29,7 @@ namespace ControllerService
         public MultimediaTimer UpdateTimer;
         public float WidhtHeightRatio = 2.5f;
         public double vibrationStrength = 100.0d;
-        public int updateInterval = 15;
+        public int updateInterval = 10;
 
         public DeviceInstance Instance;
 

@@ -21,6 +21,8 @@ namespace ControllerCommon
         // Player Space
         private double CameraYaw;
         private double CameraPitch;
+        public double CameraYawDelta;
+        public double CameraPitchDelta;
         private double GyroFactorX = 1.0; // Todo should get from profile
         private double GyroFactorY = 1.0; // Todo should get from profile
         private double AdditionalFactor = 20.0; // Sensitivity?
@@ -44,13 +46,6 @@ namespace ControllerCommon
 
             Task.Run(() => logger.LogDebug("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaSeconds));
 
-            // Do calculations 
-            CalculateGravitySimple(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
-            //CalculateGravityFancy(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
-
-            DeviceAngles(TotalMilliseconds, GravityVectorSimple);
-            //PlayerSpace(TotalMilliseconds, DeltaSeconds, AngularVelocity, GravityVectorSimple);
-
             Task.Run(() =>
             {
                 logger.LogDebug("Plot XInputSensorFusion_AngularVelocityX {0} {1}", TotalMilliseconds, AngularVelocity.X);
@@ -61,6 +56,22 @@ namespace ControllerCommon
                 logger.LogDebug("Plot XInputSensorFusion_AccelerationY {0} {1}", TotalMilliseconds, Acceleration.Y);
                 logger.LogDebug("Plot XInputSensorFusion_AccelerationZ {0} {1}", TotalMilliseconds, Acceleration.Z);
             });
+
+            // Check for empty inputs, prevent NaN computes
+            Vector3 EmptyVector = new(0f, 0f, 0f);
+            if (AngularVelocity.Equals(EmptyVector) || Acceleration.Equals(EmptyVector))
+            {
+                logger.LogDebug("Sensorfusion prevented from calculating with empty vectors.");
+                return;
+            }
+
+            // Perform calculations 
+            CalculateGravitySimple(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
+            //CalculateGravityFancy(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
+            
+            DeviceAngles(TotalMilliseconds, GravityVectorSimple);
+            PlayerSpace(TotalMilliseconds, DeltaSeconds, AngularVelocity, GravityVectorSimple);
+
         }
 
         public void CalculateGravitySimple(double TotalMilliseconds, double DeltaTimeSec, Vector3 AngularVelocity, Vector3 Acceleration)
@@ -93,7 +104,7 @@ namespace ControllerCommon
             });
         }
 
-        public void CalculateGravityFancy(double TotalMilliseconds, double DeltaTimeSec, Vector3 AngularVelocity, Vector3 accel)
+        public void CalculateGravityFancy(double TotalMilliseconds, double DeltaTimeSec, Vector3 AngularVelocity, Vector3 Acceleration)
         {
             // TODO Does not work yet!!!
 
@@ -164,8 +175,8 @@ namespace ControllerCommon
             // Note to self, SmoothInterpolator seems OK, still no sure about the Pow from C++ to C#, also, is it suppose to be a negative value?
 
             Shakiness *= smoothInterpolator;
-            Shakiness = Math.Max(Shakiness, Vector3.Subtract(accel, SmoothAccel).Length()); // Does this apply vector subtract and length correctly?
-            SmoothAccel = Vector3.Lerp(accel, SmoothAccel, smoothInterpolator); // smoothInterpolator is a negative value, correct?
+            Shakiness = Math.Max(Shakiness, Vector3.Subtract(Acceleration, SmoothAccel).Length()); // Does this apply vector subtract and length correctly?
+            SmoothAccel = Vector3.Lerp(Acceleration, SmoothAccel, smoothInterpolator); // smoothInterpolator is a negative value, correct?
 
             Task.Run(() =>
             {
@@ -178,7 +189,7 @@ namespace ControllerCommon
                 logger.LogDebug("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_z {0} {1}", TotalMilliseconds, SmoothAccel.Z);
             });
 
-            Vector3 gravityDelta = Vector3.Subtract(-accel, GravityVectorFancy);
+            Vector3 gravityDelta = Vector3.Subtract(-Acceleration, GravityVectorFancy);
             Vector3 gravityDirection = Vector3.Normalize(gravityDelta);
             float correctionRate;
 
@@ -254,24 +265,29 @@ namespace ControllerCommon
             }
         }
 
-        private void PlayerSpace(double TotalMilliseconds, double DeltaTimeSec, Vector3 GravityVector, Vector3 AngularVelocity)
+        private void PlayerSpace(double TotalMilliseconds, double DeltaTimeSec, Vector3 AngularVelocity, Vector3 GravityVector)
         {
             // PlayerSpace
+
+
             Vector3 GravityNorm = Vector3.Normalize(GravityVector);
 
             // use world yaw for yaw direction, local combined yaw for magnitude
             double worldYaw = AngularVelocity.Y * GravityNorm.Y + AngularVelocity.Z * GravityNorm.Z; // dot product but just yaw and roll
-            double yawRelaxFactor = 1.41f;
-            Vector2 AngularVelocityXZ = new(AngularVelocity.Y, AngularVelocity.Z);
+            
+            if (worldYaw == 0f) return; // handle NaN
 
-            double CameraYawDelta = Math.Sign(worldYaw)
-                                    * Math.Min(Math.Abs(worldYaw) * yawRelaxFactor, AngularVelocityXZ.Length())
+            double yawRelaxFactor = 1.41f;
+            Vector2 AngularVelocityYZ = new(AngularVelocity.Y, AngularVelocity.Z);
+
+            CameraYawDelta = Math.Sign(worldYaw)
+                                    * Math.Min(Math.Abs(worldYaw) * yawRelaxFactor, AngularVelocityYZ.Length())
                                     * GyroFactorY * AdditionalFactor * DeltaTimeSec;
 
             CameraYaw -= CameraYawDelta;
 
             // local pitch:
-            double CameraPitchDelta = AngularVelocity.X * GyroFactorX * AdditionalFactor * DeltaTimeSec;
+            CameraPitchDelta = AngularVelocity.X * GyroFactorX * AdditionalFactor * DeltaTimeSec;
 
             CameraPitch += CameraPitchDelta;
         }
