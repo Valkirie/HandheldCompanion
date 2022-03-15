@@ -58,7 +58,7 @@
                     <Border
                         Name="WarningBorder"
                         Visibility="Collapsed"
-                        Background="#F09D6500"
+                        Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
                         Padding="12,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
@@ -72,10 +72,10 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Grid>
-                                        <ui:FontIcon Foreground="#F0F1DE0E" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF136;" />
+                                        <ui:FontIcon Foreground="White" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF136;" />
                                         <ui:FontIcon Foreground="Black" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF13C;" />
                                     </Grid>
-                                    <TextBlock Name="WarningContent" TextWrapping="Wrap" Foreground="White" Grid.Column="1" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                    <TextBlock Name="WarningContent" TextWrapping="Wrap" Grid.Column="1" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Grid>
                             </ui:SimpleStackPanel>
                         </Grid>
