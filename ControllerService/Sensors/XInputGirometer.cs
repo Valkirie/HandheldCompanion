@@ -21,7 +21,7 @@ namespace ControllerService.Sensors
 
         private readonly ILogger logger;
 
-        public XInputGirometer(XInputController controller, ILogger logger, PipeServer pipeServer) : base(controller, pipeServer)
+        public XInputGirometer(XInputController controller, ILogger logger) : base(controller)
         {
             this.logger = logger;
 
@@ -56,10 +56,6 @@ namespace ControllerService.Sensors
             updateTimer.Start();
 
             Task.Run(() => logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
-
-            // update client(s)
-            if (ControllerService.CurrentTag == "ProfileSettingsMode0")
-                pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Girometer));
         }
 
         public new Vector3 GetCurrentReading(bool center = false)

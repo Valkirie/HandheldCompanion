@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using System.Threading.Tasks;
 
 namespace ControllerService
 {
@@ -87,9 +88,9 @@ namespace ControllerService
 
         public void UpdateSensors()
         {
-            Gyrometer = new XInputGirometer(this, logger, pipeServer);
-            Accelerometer = new XInputAccelerometer(this, logger, pipeServer);
-            Inclinometer = new XInputInclinometer(this, logger, pipeServer);
+            Gyrometer = new XInputGirometer(this, logger);
+            Accelerometer = new XInputAccelerometer(this, logger);
+            Inclinometer = new XInputInclinometer(this, logger);
         }
 
         private void UpdateTimer_Ticked(object sender, EventArgs e)
@@ -109,6 +110,21 @@ namespace ControllerService
                 AngularUniversal = Gyrometer.GetCurrentReading(true);
                 Acceleration = Accelerometer.GetCurrentReading();
                 Angle = Inclinometer.GetCurrentReading();
+
+                // async update client(s)
+                Task.Run(() =>
+                {
+                    switch (ControllerService.CurrentTag)
+                    {
+                        case "ProfileSettingsMode0":
+                            pipeServer?.SendMessage(new PipeSensor(AngularUniversal, SensorType.Girometer));
+                            break;
+
+                        case "ProfileSettingsMode1":
+                            pipeServer?.SendMessage(new PipeSensor(Angle, SensorType.Inclinometer));
+                            break;
+                    }
+                });
 
                 // update virtual controller
                 virtualTarget?.UpdateReport(Gamepad);

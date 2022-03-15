@@ -17,7 +17,7 @@ namespace ControllerService.Sensors
 
         private readonly ILogger logger;
 
-        public XInputInclinometer(XInputController controller, ILogger logger, PipeServer pipeServer) : base(controller, pipeServer)
+        public XInputInclinometer(XInputController controller, ILogger logger) : base(controller)
         {
             this.logger = logger;
 
@@ -43,10 +43,6 @@ namespace ControllerService.Sensors
             this.reading.Z = (float)reading.AccelerationY;
 
             Task.Run(() => logger?.LogDebug("XInputInclinometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
-
-            // update client(s)
-            if (ControllerService.CurrentTag == "ProfileSettingsMode1")
-                pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Inclinometer));
         }
 
         public new Vector3 GetCurrentReading(bool center = false)
