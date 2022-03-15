@@ -173,9 +173,8 @@ namespace ControllerService.Targets
 
                     case Input.JoystickSteering:
                         {
-                            // Todo, need to double check sensor fusion device angle is not inverted!
                             float GamepadThumbX = Utils.Steering(
-                                sensorFusion.DeviceAngle.Y,
+                                -sensorFusion.DeviceAngle.Y, // inverted axis
                                 xinputController.profile.steering_max_angle,
                                 xinputController.profile.steering_power,
                                 xinputController.profile.steering_deadzone,
