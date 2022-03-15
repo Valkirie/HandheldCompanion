@@ -43,7 +43,7 @@
                                 <!-- Create new profile -->
                                 <Button Click="b_CreateProfile_Click">
                                     <ui:SimpleStackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="12">
-                                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE710;" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8E5;" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         <TextBlock Text="Create a new profile" FontSize="14" VerticalAlignment="Center"/>
                                     </ui:SimpleStackPanel>
                                 </Button>
@@ -118,8 +118,8 @@
                                 </Grid>
 
                                 <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal">
-                                    <Button Click="b_DeleteProfile_Click" Name="b_DeleteProfile" Content="Delete profile" Width="Auto" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" IsEnabled="False"/>
-                                    <Button Click="b_ApplyProfile_Click" Name="b_ApplyProfile" Content="Update profile" Width="Auto" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100" IsEnabled="False"/>
+                                    <ui:AppBarButton Click="b_DeleteProfile_Click" Name="b_DeleteProfile" Label="Delete profile" Icon="Delete" Width="Auto" IsEnabled="False"/>
+                                    <ui:AppBarButton Click="b_ApplyProfile_Click" Name="b_ApplyProfile" Label="Update profile" Icon="Save" Width="Auto" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100" IsEnabled="False"/>
                                 </ui:SimpleStackPanel>
 
                             </ui:SimpleStackPanel>
