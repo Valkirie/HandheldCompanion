@@ -33,6 +33,7 @@ namespace ControllerService.Targets
 
         public Controller physicalController;
         public XInputController xinputController;
+        public SensorFusion sensorFusion;
 
         public HIDmode HID = HIDmode.None;
 
@@ -61,6 +62,9 @@ namespace ControllerService.Targets
         {
             this.logger = logger;
             this.xinputController = xinput;
+
+            // initialize sensorfusion
+            sensorFusion = new SensorFusion(logger);
 
             // initialize secret state
             state_s = new();
@@ -118,39 +122,39 @@ namespace ControllerService.Targets
             RightThumbX = Gamepad.RightThumbX;
             RightThumbY = Gamepad.RightThumbY;
 
+            // update sensorFusion (todo: call only when needed ?)
+            sensorFusion.UpdateReport(xinputController.totalmilliseconds, xinputController.AngularVelocity, xinputController.Acceleration);
+
             if (xinputController.profile.umc_enabled && (xinputController.profile.umc_trigger & buttons) != 0)
             {
-                // Todo, we only need to calculation sensor fusion if UMC is enabled
-                // Todo, we only need to calculate sensor fusion player space if that is selected
-                // Todo, we only need to calculate sensor fusion device angle if that is selected
-                // Todo, make sensor fusion profile aware? Call functions only when "needed"?
-
                 switch (xinputController.profile.umc_input)
                 {
+                    case Input.PlayerSpace:
                     case Input.JoystickCamera:
                         {
-                            // Todo, add switch case here to select between Gyro or PlayerSpace Algo
-                            float AngularX = -xinputController.AngularUniversal.Z;
-                            float AngularY = xinputController.AngularUniversal.X;
+                            float AngularX, AngularY = 0.0f;
 
-                            // Todo, unsure if we should use below multipliers etc for player space, custom sensititivy, probably, but not sensitivy and intensity
-                            // Altough at the moment a sensitivity of 3 - 7 is a nice way to play, sensitivity multiplies with 500?
-                            AngularX = (float)xinputController.sensorFusion.CameraYawDelta;
-                            AngularY = (float)xinputController.sensorFusion.CameraPitchDelta;
+                            switch (xinputController.profile.umc_input)
+                            {
+                                case Input.PlayerSpace:
+                                    AngularX = (float)sensorFusion.CameraYawDelta;
+                                    AngularY = (float)sensorFusion.CameraPitchDelta;
+                                    break;
 
-
+                                default:
+                                case Input.JoystickCamera:
+                                    AngularX = -xinputController.AngularUniversal.Z;
+                                    AngularY = xinputController.AngularUniversal.X;
+                                    break;
+                            }
 
                             // apply sensivity curve
                             AngularX *= Utils.ApplyCustomSensitivity(AngularX, XInputGirometer.sensorSpec.maxIn, xinputController.profile.aiming_array);
                             AngularY *= Utils.ApplyCustomSensitivity(AngularY, XInputGirometer.sensorSpec.maxIn, xinputController.profile.aiming_array);
 
-                            // get profile vars
-                            float intensity = xinputController.profile.GetIntensity();
-                            float sensivity = xinputController.profile.GetSensiviy();
-
-                            // apply sensivity, intensity sliders (deprecated ?)
-                            float GamepadThumbX = Utils.ComputeInput(AngularX, sensivity, intensity, XInputGirometer.sensorSpec.maxIn);
-                            float GamepadThumbY = Utils.ComputeInput(AngularY, sensivity, intensity, XInputGirometer.sensorSpec.maxIn);
+                            // apply sensivity
+                            float GamepadThumbX = AngularX * xinputController.profile.GetSensiviy();
+                            float GamepadThumbY = AngularY * xinputController.profile.GetSensiviy();
 
                             switch (xinputController.profile.umc_output)
                             {
@@ -171,7 +175,7 @@ namespace ControllerService.Targets
                         {
                             // Todo, need to double check sensor fusion device angle is not inverted!
                             float GamepadThumbX = Utils.Steering(
-                                xinputController.sensorFusion.DeviceAngle.Y,
+                                sensorFusion.DeviceAngle.Y,
                                 xinputController.profile.steering_max_angle,
                                 xinputController.profile.steering_power,
                                 xinputController.profile.steering_deadzone,

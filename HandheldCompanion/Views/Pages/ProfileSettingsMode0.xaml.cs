@@ -32,7 +32,6 @@ namespace HandheldCompanion.Views.Pages
             this.pipeClient.SendMessage(new PipeNavigation((string)this.Tag));
 
             SliderSensivity.Value = profileCurrent.aiming_sensivity;
-            SliderIntensity.Value = profileCurrent.aiming_intensity;
 
             // temp
             StackCurve.Children.Clear();
@@ -87,14 +86,6 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             profileCurrent.aiming_sensivity = (float)SliderSensivity.Value;
-        }
-
-        private void SliderIntensity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (profileCurrent is null)
-                return;
-
-            profileCurrent.aiming_intensity = (float)SliderIntensity.Value;
         }
 
         private void Highlight_Thumb(float value)

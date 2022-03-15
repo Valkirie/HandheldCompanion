@@ -271,8 +271,6 @@ namespace ControllerCommon
         private void PlayerSpace(double TotalMilliseconds, double DeltaTimeSec, Vector3 AngularVelocity, Vector3 GravityVector)
         {
             // PlayerSpace
-
-
             Vector3 GravityNorm = Vector3.Normalize(GravityVector);
 
             // use world yaw for yaw direction, local combined yaw for magnitude

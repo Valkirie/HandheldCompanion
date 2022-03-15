@@ -36,7 +36,6 @@ namespace ControllerService
         public XInputGirometer Gyrometer;
         public XInputAccelerometer Accelerometer;
         public XInputInclinometer Inclinometer;
-        public SensorFusion sensorFusion;
 
         protected readonly Stopwatch stopwatch;
         public long microseconds;
@@ -63,9 +62,6 @@ namespace ControllerService
 
             // initialize sensor(s)
             UpdateSensors();
-
-            // initialize sensorfusion
-            sensorFusion = new SensorFusion(logger);
 
             // initialize vectors
             AngularVelocity = new();
@@ -115,7 +111,6 @@ namespace ControllerService
                 Angle = Inclinometer.GetCurrentReading();
 
                 // update virtual controller
-                sensorFusion?.UpdateReport(totalmilliseconds, AngularVelocity, Acceleration);
                 virtualTarget?.UpdateReport(Gamepad);
 
                 Updated?.Invoke(this);

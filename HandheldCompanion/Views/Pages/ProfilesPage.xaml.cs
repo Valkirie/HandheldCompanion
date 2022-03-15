@@ -290,6 +290,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 default:
                 case Input.JoystickCamera:
+                case Input.PlayerSpace:
                     page = new ProfileSettingsMode0("ProfileSettingsMode0", profileCurrent, pipeClient);
                     break;
                 case Input.JoystickSteering:
