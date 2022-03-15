@@ -23,7 +23,7 @@ namespace ControllerService.Sensors
 
         private readonly ILogger logger;
 
-        public XInputAccelerometer(XInputController controller, ILogger logger, PipeServer pipeServer) : base(controller, pipeServer)
+        public XInputAccelerometer(XInputController controller, ILogger logger) : base(controller)
         {
             this.logger = logger;
 

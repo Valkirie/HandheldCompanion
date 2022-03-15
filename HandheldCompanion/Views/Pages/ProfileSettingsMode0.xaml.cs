@@ -32,7 +32,6 @@ namespace HandheldCompanion.Views.Pages
             this.pipeClient.SendMessage(new PipeNavigation((string)this.Tag));
 
             SliderSensivity.Value = profileCurrent.aiming_sensivity;
-            SliderIntensity.Value = profileCurrent.aiming_intensity;
 
             // temp
             StackCurve.Children.Clear();
@@ -52,7 +51,7 @@ namespace HandheldCompanion.Views.Pages
                     VerticalAlignment = VerticalAlignment.Bottom,
                     Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentLowBrush"],
                     BorderThickness = new Thickness(0),
-                    BorderBrush = (SolidColorBrush)new BrushConverter().ConvertFrom("#F09D6500"),
+                    BorderBrush = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentHighBrush"],
                     IsEnabled = false // prevent the control from being clickable
                 };
 
@@ -74,7 +73,7 @@ namespace HandheldCompanion.Views.Pages
                     switch (sensor.type)
                     {
                         case SensorType.Girometer:
-                            Highlight_Thumb(Math.Max(Math.Abs(sensor.z), Math.Abs(sensor.x)));
+                            Highlight_Thumb(Math.Max(Math.Max(Math.Abs(sensor.z), Math.Abs(sensor.x)), Math.Abs(sensor.y)));
                             break;
                     }
                     break;
@@ -87,14 +86,6 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             profileCurrent.aiming_sensivity = (float)SliderSensivity.Value;
-        }
-
-        private void SliderIntensity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (profileCurrent is null)
-                return;
-
-            profileCurrent.aiming_intensity = (float)SliderIntensity.Value;
         }
 
         private void Highlight_Thumb(float value)

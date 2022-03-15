@@ -11,17 +11,15 @@ namespace ControllerService.Sensors
         protected Vector3 reading_fixed = new();
 
         protected XInputController controller;
-        protected PipeServer pipeServer;
 
         protected static SensorSpec sensorSpec;
 
         protected Timer updateTimer;
         protected int updateInterval;
 
-        protected XInputSensor(XInputController controller, PipeServer pipeServer)
+        protected XInputSensor(XInputController controller)
         {
             this.controller = controller;
-            this.pipeServer = pipeServer;
 
             this.updateInterval = controller.updateInterval;
 

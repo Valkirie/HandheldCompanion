@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using System.Threading.Tasks;
 
 namespace ControllerService
 {
@@ -29,14 +30,13 @@ namespace ControllerService
         public MultimediaTimer UpdateTimer;
         public float WidhtHeightRatio = 2.5f;
         public double vibrationStrength = 100.0d;
-        public int updateInterval = 15;
+        public int updateInterval = 10;
 
         public DeviceInstance Instance;
 
         public XInputGirometer Gyrometer;
         public XInputAccelerometer Accelerometer;
         public XInputInclinometer Inclinometer;
-        public SensorFusion sensorFusion;
 
         protected readonly Stopwatch stopwatch;
         public long microseconds;
@@ -64,9 +64,6 @@ namespace ControllerService
             // initialize sensor(s)
             UpdateSensors();
 
-            // initialize sensorfusion
-            sensorFusion = new SensorFusion(logger);
-
             // initialize vectors
             AngularVelocity = new();
             Acceleration = new();
@@ -91,9 +88,9 @@ namespace ControllerService
 
         public void UpdateSensors()
         {
-            Gyrometer = new XInputGirometer(this, logger, pipeServer);
-            Accelerometer = new XInputAccelerometer(this, logger, pipeServer);
-            Inclinometer = new XInputInclinometer(this, logger, pipeServer);
+            Gyrometer = new XInputGirometer(this, logger);
+            Accelerometer = new XInputAccelerometer(this, logger);
+            Inclinometer = new XInputInclinometer(this, logger);
         }
 
         private void UpdateTimer_Ticked(object sender, EventArgs e)
@@ -114,9 +111,23 @@ namespace ControllerService
                 Acceleration = Accelerometer.GetCurrentReading();
                 Angle = Inclinometer.GetCurrentReading();
 
+                // async update client(s)
+                Task.Run(() =>
+                {
+                    switch (ControllerService.CurrentTag)
+                    {
+                        case "ProfileSettingsMode0":
+                            pipeServer?.SendMessage(new PipeSensor(AngularUniversal, SensorType.Girometer));
+                            break;
+
+                        case "ProfileSettingsMode1":
+                            pipeServer?.SendMessage(new PipeSensor(Angle, SensorType.Inclinometer));
+                            break;
+                    }
+                });
+
                 // update virtual controller
                 virtualTarget?.UpdateReport(Gamepad);
-                sensorFusion?.UpdateReport(totalmilliseconds, AngularVelocity, Acceleration);
 
                 Updated?.Invoke(this);
             }

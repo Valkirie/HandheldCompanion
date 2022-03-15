@@ -21,7 +21,7 @@ namespace ControllerService.Sensors
 
         private readonly ILogger logger;
 
-        public XInputGirometer(XInputController controller, ILogger logger, PipeServer pipeServer) : base(controller, pipeServer)
+        public XInputGirometer(XInputController controller, ILogger logger) : base(controller)
         {
             this.logger = logger;
 
@@ -56,10 +56,6 @@ namespace ControllerService.Sensors
             updateTimer.Start();
 
             Task.Run(() => logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
-
-            // update client(s)
-            if (ControllerService.CurrentTag == "ProfileSettingsMode0")
-                pipeServer?.SendMessage(new PipeSensor(this.reading, SensorType.Girometer));
         }
 
         public new Vector3 GetCurrentReading(bool center = false)
@@ -75,7 +71,8 @@ namespace ControllerService.Sensors
             {
                 reading *= controller.profile.gyrometer;
 
-                reading.Y *= controller.WidhtHeightRatio;
+                // Todo, can't have this with player space
+                //reading.Y *= controller.WidhtHeightRatio;
 
                 reading.Z = controller.profile.steering == 0 ? this.reading.Z : this.reading.Y;
                 reading.Y = controller.profile.steering == 0 ? this.reading.Y : this.reading.Z;

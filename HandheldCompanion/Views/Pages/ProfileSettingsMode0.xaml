@@ -41,32 +41,6 @@
                 </Grid>
             </Border>
 
-            <!-- Intensity -->
-            <Border                      
-                        Padding="0,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="60"></ColumnDefinition>
-                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
-                        <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-
-                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
-
-                    <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Intensity" FontSize="14"/>
-                        <TextBlock Text="Change the motion intensity of the vertical and horizontal axis" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                    </ui:SimpleStackPanel>
-
-                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderIntensity, Mode=OneWay}" />
-                    <Slider Name="SliderIntensity" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderIntensity_ValueChanged" IsSnapToTickEnabled="True"/>
-                </Grid>
-            </Border>
-
             <!-- Chart -->
             <ui:SimpleStackPanel Spacing="6">
                 <Label Content="Custom response curve" FontWeight="SemiBold"></Label>

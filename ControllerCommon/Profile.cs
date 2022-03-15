@@ -25,7 +25,9 @@ namespace ControllerCommon
         [Description("Joystick camera")]
         JoystickCamera = 0,
         [Description("Joystick steering")]
-        JoystickSteering = 1
+        JoystickSteering = 1,
+        [Description("Player space")]
+        PlayerSpace = 2
     }
 
     public enum Output
@@ -76,7 +78,6 @@ namespace ControllerCommon
 
         // aiming
         public float aiming_sensivity { get; set; } = 2.0f;
-        public float aiming_intensity { get; set; } = 2.0f;
 
         public List<ProfileVector> aiming_array { get; set; } = new();
 
@@ -129,11 +130,6 @@ namespace ControllerCommon
         public float GetSensiviy()
         {
             return aiming_sensivity * 500.0f;
-        }
-
-        public float GetIntensity()
-        {
-            return 1.0f - (aiming_intensity / 20.0f) + 0.1f;
         }
 
         public override string ToString()
