@@ -66,6 +66,9 @@ namespace ControllerCommon
             }
 
             // Perform calculations 
+            // Todo, kickstart gravity vector with = acceleration when calculation is either
+            // run for the first time or is selcted to be run based on user profile?
+            // Todo, gravity is inverted acceleration but everything still works fine, figure out
             CalculateGravitySimple(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
             //CalculateGravityFancy(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
             
@@ -290,6 +293,8 @@ namespace ControllerCommon
             CameraPitchDelta = AngularVelocity.X * GyroFactorX * AdditionalFactor * DeltaTimeSec;
 
             CameraPitch += CameraPitchDelta;
+
+            logger?.LogDebug("CameraYawDelta {0}, CameraPitchDelta {1})", CameraYawDelta, CameraPitchDelta);
         }
 
         private void DeviceAngles(double TotalMilliseconds, Vector3 GravityVector)

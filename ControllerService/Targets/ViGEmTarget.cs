@@ -120,12 +120,25 @@ namespace ControllerService.Targets
 
             if (xinputController.profile.umc_enabled && (xinputController.profile.umc_trigger & buttons) != 0)
             {
+                // Todo, we only need to calculation sensor fusion if UMC is enabled
+                // Todo, we only need to calculate sensor fusion player space if that is selected
+                // Todo, we only need to calculate sensor fusion device angle if that is selected
+                // Todo, make sensor fusion profile aware? Call functions only when "needed"?
+
                 switch (xinputController.profile.umc_input)
                 {
                     case Input.JoystickCamera:
                         {
+                            // Todo, add switch case here to select between Gyro or PlayerSpace Algo
                             float AngularX = -xinputController.AngularUniversal.Z;
                             float AngularY = xinputController.AngularUniversal.X;
+
+                            // Todo, unsure if we should use below multipliers etc for player space, custom sensititivy, probably, but not sensitivy and intensity
+                            // Altough at the moment a sensitivity of 3 - 7 is a nice way to play, sensitivity multiplies with 500?
+                            AngularX = (float)xinputController.sensorFusion.CameraYawDelta;
+                            AngularY = (float)xinputController.sensorFusion.CameraPitchDelta;
+
+
 
                             // apply sensivity curve
                             AngularX *= Utils.ApplyCustomSensitivity(AngularX, XInputGirometer.sensorSpec.maxIn, xinputController.profile.aiming_array);
@@ -156,8 +169,9 @@ namespace ControllerService.Targets
 
                     case Input.JoystickSteering:
                         {
+                            // Todo, need to double check sensor fusion device angle is not inverted!
                             float GamepadThumbX = Utils.Steering(
-                                xinputController.Angle.Y,
+                                xinputController.sensorFusion.DeviceAngle.Y,
                                 xinputController.profile.steering_max_angle,
                                 xinputController.profile.steering_power,
                                 xinputController.profile.steering_deadzone,

@@ -75,7 +75,8 @@ namespace ControllerService.Sensors
             {
                 reading *= controller.profile.gyrometer;
 
-                reading.Y *= controller.WidhtHeightRatio;
+                // Todo, can't have this with player space
+                //reading.Y *= controller.WidhtHeightRatio;
 
                 reading.Z = controller.profile.steering == 0 ? this.reading.Z : this.reading.Y;
                 reading.Y = controller.profile.steering == 0 ? this.reading.Y : this.reading.Z;
