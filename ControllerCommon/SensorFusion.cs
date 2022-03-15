@@ -23,9 +23,8 @@ namespace ControllerCommon
         private double CameraPitch;
         public double CameraYawDelta;
         public double CameraPitchDelta;
-        private double GyroFactorX = 1.0; // Todo should get from profile
-        private double GyroFactorY = 1.0; // Todo should get from profile
-        private double AdditionalFactor = 20.0; // Sensitivity?
+        // Bring Player Space more on par with gyro only
+        private double AdditionalFactor = 30.0; 
 
         // Time
         double UpdateTimePreviousMilliSeconds;
@@ -283,12 +282,12 @@ namespace ControllerCommon
 
             CameraYawDelta = Math.Sign(worldYaw)
                                     * Math.Min(Math.Abs(worldYaw) * yawRelaxFactor, AngularVelocityYZ.Length())
-                                    * GyroFactorY * AdditionalFactor * DeltaTimeSec;
+                                    * AdditionalFactor * DeltaTimeSec;
 
             CameraYaw -= CameraYawDelta;
 
             // local pitch:
-            CameraPitchDelta = AngularVelocity.X * GyroFactorX * AdditionalFactor * DeltaTimeSec;
+            CameraPitchDelta = AngularVelocity.X * AdditionalFactor * DeltaTimeSec;
 
             CameraPitch += CameraPitchDelta;
 
