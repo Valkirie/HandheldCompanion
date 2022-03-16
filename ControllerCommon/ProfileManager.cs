@@ -27,6 +27,8 @@ namespace ControllerCommon
         public delegate void DeletedEventHandler(Profile profile);
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(Profile profile, bool backgroundtask);
+        public event LoadedEventHandler Loaded;
+        public delegate void LoadedEventHandler();
 
         public PipeClient PipeClient;
 
@@ -77,6 +79,9 @@ namespace ControllerCommon
             string[] fileEntries = Directory.GetFiles(path, filter, SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
                 ProcessProfile(fileName);
+
+            // warn owner
+            Loaded?.Invoke();
         }
 
         public void Stop()

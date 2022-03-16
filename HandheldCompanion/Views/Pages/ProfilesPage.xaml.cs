@@ -52,6 +52,7 @@ namespace HandheldCompanion.Views.Pages
             // initialize Profile Manager
             profileManager.Deleted += ProfileDeleted;
             profileManager.Updated += ProfileUpdated;
+            profileManager.Loaded += ProfileLoaded;
 
             // draw buttons
             for (int i = 0; i < maxColumns; i++)
@@ -187,6 +188,11 @@ namespace HandheldCompanion.Views.Pages
                     }
                 cB_Profiles.Items.RemoveAt(idx);
             });
+        }
+
+        private void ProfileLoaded()
+        {
+            cB_Profiles.SelectedItem = profileManager.GetDefault();
         }
         #endregion
 
