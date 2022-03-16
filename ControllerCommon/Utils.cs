@@ -353,7 +353,7 @@ namespace ControllerCommon
 
         // Compensation for in game deadzone
         // Inputs: -1 to 1 joystick position and deadzone 0-100%
-        // Should not be used under normal circumstances, in game should be set to 0%
+        // Should not be used under normal circumstances, in game should be set to 0% if possible. Results in loss of resolution.
         // Use cases foreseen:
         // - Game has deadzone, but no way to configure or change it
         // - User does not want to change general emulator deadzone setting but want's it removed for specific game and use UMC Steering
