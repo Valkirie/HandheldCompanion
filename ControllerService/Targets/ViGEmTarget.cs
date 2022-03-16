@@ -132,7 +132,7 @@ namespace ControllerService.Targets
                     case Input.PlayerSpace:
                     case Input.JoystickCamera:
                         {
-                            float AngularX, AngularY = 0.0f;
+                            float AngularX, AngularY;
 
                             switch (xinputController.profile.umc_input)
                             {
@@ -174,7 +174,7 @@ namespace ControllerService.Targets
                     case Input.JoystickSteering:
                         {
                             float GamepadThumbX = Utils.Steering(
-                                -sensorFusion.DeviceAngle.Y, // inverted axis
+                                sensorFusion.DeviceAngle.Y,
                                 xinputController.profile.steering_max_angle,
                                 xinputController.profile.steering_power,
                                 xinputController.profile.steering_deadzone,
