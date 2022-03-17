@@ -408,7 +408,14 @@
                                                 <TextBlock Text="The physical inputs of the controller can be programmed to act like different types of devices" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
 
-                                            <ComboBox Name="cB_Input" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0"/>
+                                            <ComboBox Name="cB_Input" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0">
+                                                <ComboBox.Resources>
+                                                    <Style TargetType="ComboBoxItem">
+                                                        <EventSetter Event="MouseEnter" Handler="ComboBoxItem_MouseEnter" />
+                                                        <EventSetter Event="MouseLeave" Handler="ComboBoxItem_MouseLeave" />
+                                                    </Style>
+                                                </ComboBox.Resources>
+                                            </ComboBox>
                                         </Grid>
 
                                         <!-- Separator -->
@@ -445,7 +452,11 @@
                                             </ui:SimpleStackPanel>
                                         </Grid>
 
-                                        <ui:SimpleStackPanel Name="cB_Buttons" Orientation="Horizontal" Spacing="12" />
+                                        <ui:LayoutPanel Name="cB_Buttons">
+                                            <ui:LayoutPanel.Layout>
+                                                <ui:UniformGridLayout/>
+                                            </ui:LayoutPanel.Layout>
+                                        </ui:LayoutPanel>
 
                                         <!-- Separator -->
                                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
