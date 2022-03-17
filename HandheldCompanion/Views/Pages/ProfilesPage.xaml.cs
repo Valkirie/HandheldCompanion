@@ -29,9 +29,6 @@ namespace HandheldCompanion.Views.Pages
         // pipe vars
         PipeClient pipeClient;
 
-        // UI vars
-        private int maxColumns = 3;
-
         public ProfilesPage()
         {
             InitializeComponent();
@@ -55,16 +52,12 @@ namespace HandheldCompanion.Views.Pages
             profileManager.Loaded += ProfileLoaded;
 
             // draw buttons
-            for (int i = 0; i < maxColumns; i++)
-                cB_Buttons.Children.Add(new SimpleStackPanel() { Spacing = 6 });
-
-            int idx = 0;
             foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
             {
-                string description = Utils.GetDescriptionFromEnumValue(button);
-
+                // create panel
                 SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
 
+                // create icon
                 FontIcon icon = new FontIcon() { FontSize = 24 };
                 switch (button)
                 {
@@ -118,16 +111,15 @@ namespace HandheldCompanion.Views.Pages
                 if (icon.Glyph != "")
                     panel.Children.Add(icon);
 
+                // create textblock
+                string description = Utils.GetDescriptionFromEnumValue(button);
                 TextBlock text = new TextBlock() { Text = description };
                 panel.Children.Add(text);
 
-                CheckBox checkbox = new CheckBox() { Tag = button, Content = panel };
-
-                ((SimpleStackPanel)cB_Buttons.Children[idx]).Children.Add(checkbox);
-
+                // create checkbox
+                CheckBox checkbox = new CheckBox() { Tag = button, Content = panel, Width = 170 };
+                cB_Buttons.Children.Add(checkbox);
                 activators.Add(button, checkbox);
-
-                idx = idx < (maxColumns - 1) ? idx += 1 : 0;
             }
 
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
@@ -499,6 +491,23 @@ namespace HandheldCompanion.Views.Pages
         private void Toggle_EnableProfile_Toggled(object sender, RoutedEventArgs e)
         {
             // do something
+        }
+
+        private ComboBoxItem _currentItem = null;
+        private void ComboBoxItem_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            var item = sender as ComboBoxItem;
+            if (!Equals(_currentItem, item))
+            {
+                _currentItem = item;
+
+                // code to update window
+            }
+        }
+
+        private void ComboBoxItem_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            _currentItem = null;
         }
     }
 }
