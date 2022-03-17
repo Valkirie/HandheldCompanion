@@ -66,6 +66,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CodeHollow.FeedReader" Version="1.2.4" />
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="FluentWPF" Version="0.10.2" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />

@@ -23,6 +23,8 @@ namespace HandheldCompanion.Views.Pages
         public bool ToastEnable, RunAtStartup, StartMinimized, CloseMinimises, StartServiceWithCompanion, HaltServiceWithCompanion;
         public int ApplicationTheme, ServiceStartup;
 
+        private UpdateManager updateManager;
+
         public event ToastChangedEventHandler ToastChanged;
         public delegate void ToastChangedEventHandler(bool value);
 
@@ -34,6 +36,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Page_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
+            updateManager.Start();
         }
 
         public SettingsPage()
@@ -50,6 +53,52 @@ namespace HandheldCompanion.Views.Pages
 
             Toggle_ServiceStartup.IsOn = StartServiceWithCompanion = Properties.Settings.Default.StartServiceWithCompanion;
             Toggle_ServiceShutdown.IsOn = HaltServiceWithCompanion = Properties.Settings.Default.HaltServiceWithCompanion;
+
+            // initialize update manager
+            updateManager = new UpdateManager();
+            updateManager.Updated += (status, value) =>
+            {
+                switch (status)
+                {
+                    case UpdateStatus.Updated:
+                    case UpdateStatus.Initialized:
+                        LabelUpdate.Content = "You're up to date";
+                        LabelUpdateDate.Content = $"Last checked: {updateManager.GetTime()}";
+
+                        LabelUpdateDate.Visibility = System.Windows.Visibility.Visible;
+                        GridUpdateSymbol.Visibility = System.Windows.Visibility.Visible;
+                        ProgressBarUpdate.Visibility = System.Windows.Visibility.Collapsed;
+                        B_CheckUpdate.IsEnabled = true;
+                        break;
+
+                    case UpdateStatus.CheckingATOM:
+                        LabelUpdate.Content = "Checking for updates...";
+
+                        GridUpdateSymbol.Visibility = System.Windows.Visibility.Collapsed;
+                        LabelUpdateDate.Visibility = System.Windows.Visibility.Collapsed;
+                        ProgressBarUpdate.Visibility = System.Windows.Visibility.Visible;
+                        B_CheckUpdate.IsEnabled = false;
+                        break;
+
+                    case UpdateStatus.Ready:
+                        UpdateFile updateFile = (UpdateFile)value;
+                        LabelUpdate.Content = "Updates available";
+                        LabelUpdateName.Text = updateFile.filename;
+
+                        CurrentUpdate.Visibility = System.Windows.Visibility.Visible;
+                        break;
+
+                    case UpdateStatus.Downloading:
+                        LabelUpdatePercentage.Text = $"Downloading - {value}%";
+                        break;
+
+                    case UpdateStatus.Downloaded:
+                        ProgressBarUpdate.Visibility = System.Windows.Visibility.Collapsed;
+                        LabelUpdatePercentage.Visibility = System.Windows.Visibility.Hidden;
+                        ButtonInstall.Visibility = System.Windows.Visibility.Visible;
+                        break;
+                }
+            };
         }
 
         public SettingsPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
@@ -113,6 +162,16 @@ namespace HandheldCompanion.Views.Pages
             Properties.Settings.Default.Save();
 
             CloseMinimises = Toggle_CloseMinimizes.IsOn;
+        }
+
+        private void B_CheckUpdate_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            updateManager.StartProcess();
+        }
+
+        private void B_InstallUpdate_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            updateManager.InstallUpdate();
         }
 
         private void Toggle_ServiceShutdown_Toggled(object sender, System.Windows.RoutedEventArgs e)
