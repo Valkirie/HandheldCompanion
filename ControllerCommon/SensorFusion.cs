@@ -10,21 +10,18 @@ namespace ControllerCommon
         // Gravity Simple
         private Vector3 GravityVectorSimple;
 
-        // Device Angle
-        public Vector2 DeviceAngle;
-
         // Gravity Fancy
         private float Shakiness;
         private Vector3 SmoothAccel;
         private Vector3 GravityVectorFancy;
 
         // Player Space
-        private double CameraYaw;
-        private double CameraPitch;
         public double CameraYawDelta;
         public double CameraPitchDelta;
-        // Bring Player Space more on par with gyro only
-        private double AdditionalFactor = 30.0; 
+        private double AdditionalFactor = 30.0; // Bring more on par with gyro only
+
+        // Device Angle
+        public Vector2 DeviceAngle;
 
         // Time
         double UpdateTimePreviousMilliSeconds;
@@ -38,8 +35,7 @@ namespace ControllerCommon
 
         public void UpdateReport(double TotalMilliseconds, Vector3 AngularVelocity, Vector3 Acceleration)
         {
-            // Determine time
-            // Note Elapsed.TotalMilliseconds returns milliseconds including x.xxx precision i.e. microseconds.
+            // Determine time        
             double DeltaSeconds = (double)(TotalMilliseconds - UpdateTimePreviousMilliSeconds) / 1000L;
             UpdateTimePreviousMilliSeconds = TotalMilliseconds;
 
@@ -58,6 +54,7 @@ namespace ControllerCommon
 
             // Check for empty inputs, prevent NaN computes
             Vector3 EmptyVector = new(0f, 0f, 0f);
+
             if (AngularVelocity.Equals(EmptyVector) || Acceleration.Equals(EmptyVector))
             {
                 logger.LogDebug("Sensorfusion prevented from calculating with empty vectors.");
@@ -67,7 +64,7 @@ namespace ControllerCommon
             // Perform calculations 
             // Todo, kickstart gravity vector with = acceleration when calculation is either
             // run for the first time or is selcted to be run based on user profile?
-            // Todo, gravity is inverted acceleration but everything still works fine, figure out
+          
             CalculateGravitySimple(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
             //CalculateGravityFancy(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
             
@@ -83,16 +80,17 @@ namespace ControllerCommon
 
             // Convert to radian as per library spec
             Vector3 AngularVelocityRad = new Vector3(Utils.deg2rad(AngularVelocity.X), Utils.deg2rad(AngularVelocity.Y), Utils.deg2rad(AngularVelocity.Z));
+            
             // Normalize before creating quat from axis angle as per library spec
             AngularVelocityRad = Vector3.Normalize(AngularVelocityRad);
 
-            // convert gyro input to reverse rotation  
+            // Convert gyro input to reverse rotation  
             Quaternion reverseRotation = Quaternion.CreateFromAxisAngle(-AngularVelocityRad, AngularVelocityRad.Length() * (float)DeltaTimeSec);
 
-            // rotate gravity vector
+            // Rotate gravity vector
             GravityVectorSimple = Vector3.Transform(GravityVectorSimple, reverseRotation);
 
-            // nudge towards gravity according to current acceleration
+            // Nudge towards gravity according to current acceleration
             Vector3 newGravity = -Acceleration;
             Vector3 gravityDelta = Vector3.Subtract(newGravity, GravityVectorSimple);
 
@@ -272,10 +270,12 @@ namespace ControllerCommon
             // PlayerSpace
             Vector3 GravityNorm = Vector3.Normalize(GravityVector);
 
-            // use world yaw for yaw direction, local combined yaw for magnitude
-            double worldYaw = AngularVelocity.Y * GravityNorm.Y + AngularVelocity.Z * GravityNorm.Z; // dot product but just yaw and roll
-            
-            if (worldYaw == 0f) return; // handle NaN
+            // Yaw (Use world yaw for yaw direction, local combined yaw for magnitude)
+            // Dot product but just yaw and roll
+            double worldYaw = AngularVelocity.Y * GravityNorm.Y + AngularVelocity.Z * GravityNorm.Z; 
+
+            // Handle NaN
+            if (worldYaw == 0f) return; 
 
             double yawRelaxFactor = 1.41f;
             Vector2 AngularVelocityYZ = new(AngularVelocity.Y, AngularVelocity.Z);
@@ -284,14 +284,14 @@ namespace ControllerCommon
                                     * Math.Min(Math.Abs(worldYaw) * yawRelaxFactor, AngularVelocityYZ.Length())
                                     * AdditionalFactor * DeltaTimeSec;
 
-            CameraYaw -= CameraYawDelta;
-
-            // local pitch:
+            // Pitch (local space)
             CameraPitchDelta = AngularVelocity.X * AdditionalFactor * DeltaTimeSec;
 
-            CameraPitch += CameraPitchDelta;
-
-            logger?.LogDebug("CameraYawDelta {0}, CameraPitchDelta {1})", CameraYawDelta, CameraPitchDelta);
+            Task.Run(() =>
+            {
+                logger.LogDebug("Plot XInputSensorFusion_CameraYawDelta {0} {1}", TotalMilliseconds, CameraYawDelta);
+                logger.LogDebug("Plot XInputSensorFusion_CameraPitchDelta {0} {1}", TotalMilliseconds, CameraPitchDelta);
+            });
         }
 
         private void DeviceAngles(double TotalMilliseconds, Vector3 GravityVector)
@@ -299,8 +299,8 @@ namespace ControllerCommon
 
             // Calculate angles around Y and X axis (Theta and Psi) using all 3 directions of accelerometer
             // Based on: https://www.digikey.com/en/articles/using-an-accelerometer-for-inclination-sensing               
-            DeviceAngle.X = (float)(-1 * (Math.Atan(GravityVector.Y / (Math.Sqrt(Math.Pow(GravityVector.X, 2) + Math.Pow(GravityVector.Z, 2))))) * 180 / Math.PI);
-            DeviceAngle.Y = (float)(-1 * (Math.Atan(GravityVector.X / (Math.Sqrt(Math.Pow(GravityVector.Y, 2) + Math.Pow(GravityVector.Z, 2))))) * 180 / Math.PI);
+            DeviceAngle.X = (float)((Math.Atan(GravityVector.Y / (Math.Sqrt(Math.Pow(GravityVector.X, 2) + Math.Pow(GravityVector.Z, 2))))) * 180 / Math.PI);
+            DeviceAngle.Y = (float)((Math.Atan(GravityVector.X / (Math.Sqrt(Math.Pow(GravityVector.Y, 2) + Math.Pow(GravityVector.Z, 2))))) * 180 / Math.PI);
 
             Task.Run(() =>
             {
