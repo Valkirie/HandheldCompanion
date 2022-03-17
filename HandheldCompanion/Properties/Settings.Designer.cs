@@ -166,5 +166,17 @@ namespace HandheldCompanion.Properties {
                 this["HaltServiceWithCompanion"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2022-03-16")]
+        public global::System.DateTime UpdateLastChecked {
+            get {
+                return ((global::System.DateTime)(this["UpdateLastChecked"]));
+            }
+            set {
+                this["UpdateLastChecked"] = value;
+            }
+        }
     }
 }

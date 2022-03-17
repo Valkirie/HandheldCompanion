@@ -41,7 +41,7 @@
                             <ui:SimpleStackPanel Grid.Column="3" VerticalAlignment="Center" Spacing="6">
                                 <ComboBox SelectionChanged="cB_Profiles_SelectionChanged" Name="cB_Profiles" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="0"/>
                                 <!-- Create new profile -->
-                                <Button Click="b_CreateProfile_Click">
+                                <Button Click="b_CreateProfile_Click" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}">
                                     <ui:SimpleStackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="12">
                                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8E5;" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         <TextBlock Text="Create a new profile" FontSize="14" VerticalAlignment="Center"/>
