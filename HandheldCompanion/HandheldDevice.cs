@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Utils;
 using System.Diagnostics;
 using System.Linq;
 using Windows.Devices.Sensors;
@@ -35,9 +36,9 @@ namespace HandheldCompanion
                 hasInclinometer = true;
 
             Debug.WriteLine("DeviceId: {0}", gyrometer.DeviceId);
-            string ACPI = Utils.Between(gyrometer.DeviceId, "ACPI#", "#");
+            string ACPI = CommonUtils.Between(gyrometer.DeviceId, "ACPI#", "#");
 
-            USBDeviceInfo Sensor = Utils.GetUSBDevices().Where(device => device.DeviceId.Contains(ACPI)).FirstOrDefault();
+            ProcessUtils.USBDeviceInfo Sensor = ProcessUtils.GetUSBDevices().Where(device => device.DeviceId.Contains(ACPI)).FirstOrDefault();
 
             if (Sensor != null)
             {

@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+﻿using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;

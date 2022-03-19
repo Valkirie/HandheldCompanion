@@ -1,3 +1,4 @@
+using ControllerCommon.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -5,6 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace ControllerCommon
 {
+    // todo : use localization and an array
     public enum ProfileErrorCode
     {
         None = 0,
@@ -20,6 +22,7 @@ namespace ControllerCommon
         IsRunning = 5
     }
 
+    // todo : use localization and an array
     public enum Input
     {
         [Description("Joystick camera")]
@@ -30,6 +33,7 @@ namespace ControllerCommon
         PlayerSpace = 2
     }
 
+    // todo : use localization and an array
     public enum Output
     {
         [Description("Right joystick")]
@@ -56,6 +60,14 @@ namespace ControllerCommon
     [Serializable]
     public class Profile
     {
+
+        public static Dictionary<Input, string> InputDescription = new()
+        {
+            { Input.JoystickCamera, Properties.Resources.JoystickCamera },
+            { Input.JoystickSteering, Properties.Resources.JoystickSteering },
+            { Input.PlayerSpace, Properties.Resources.PlayerSpace }
+        };
+
         public string name { get; set; }
         public string path { get; set; }
         public string executable { get; set; }
@@ -66,7 +78,8 @@ namespace ControllerCommon
         public float gyrometer { get; set; } = 1.0f;                // gyroscope multiplicator (remove me)
         public float accelerometer { get; set; } = 1.0f;            // accelerometer multiplicator (remove me)
 
-        public int steering { get; set; } = 0;                      // 0 = Roll, 1 = Yaw          
+        public int steering { get; set; } = 0;                      // 0 = Roll, 1 = Yaw
+        public float antideadzone { get; set; } = 0.0f;             // todo: typeme
 
         public bool inverthorizontal { get; set; } = false;         // if true, invert horizontal axis
         public bool invertvertical { get; set; } = false;           // if false, invert vertical axis
@@ -85,7 +98,6 @@ namespace ControllerCommon
         public float steering_max_angle { get; set; } = 30.0f;
         public float steering_power { get; set; } = 1.0f;
         public float steering_deadzone { get; set; } = 0.0f;
-        public float steering_deadzone_compensation { get; set; } = 0.0f;
 
         // mousehook
         public bool mousehook_enabled { get; set; } = true;
@@ -116,7 +128,7 @@ namespace ControllerCommon
 
         public Profile(string path) : this()
         {
-            Dictionary<string, string> AppProperties = Utils.GetAppProperties(path);
+            Dictionary<string, string> AppProperties = ProcessUtils.GetAppProperties(path);
 
             string ProductName = AppProperties.ContainsKey("FileDescription") ? AppProperties["FileDescription"] : AppProperties["ItemFolderNameDisplay"];
             // string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";

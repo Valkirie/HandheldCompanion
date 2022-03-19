@@ -65,6 +65,7 @@ namespace ControllerCommon.Properties {
         ///  &quot;name&quot;: &quot;AYASpace&quot;,
         ///  &quot;path&quot;: &quot;AYASpace.exe&quot;,
         ///  &quot;executable&quot;: &quot;AYASpace.exe&quot;,
+        ///  &quot;enabled&quot;: true,
         ///  &quot;whitelisted&quot;: false
         ///}.
         /// </summary>
@@ -79,6 +80,7 @@ namespace ControllerCommon.Properties {
         ///  &quot;name&quot;: &quot;Cemu&quot;,
         ///  &quot;path&quot;: &quot;Cemu.exe&quot;,
         ///  &quot;executable&quot;: &quot;Cemu.exe&quot;,
+        ///  &quot;enabled&quot;: true,
         ///  &quot;whitelisted&quot;: false
         ///}.
         /// </summary>
@@ -93,6 +95,7 @@ namespace ControllerCommon.Properties {
         ///  &quot;name&quot;: &quot;ControllerCompanion&quot;,
         ///  &quot;path&quot;: &quot;ControllerCompanion.exe&quot;,
         ///  &quot;executable&quot;: &quot;ControllerCompanion.exe&quot;,
+        ///  &quot;enabled&quot;: true,
         ///  &quot;whitelisted&quot;: true
         ///}.
         /// </summary>
@@ -107,6 +110,7 @@ namespace ControllerCommon.Properties {
         ///  &quot;name&quot;: &quot;Default&quot;,
         ///  &quot;path&quot;: &quot;&quot;,
         ///  &quot;executable&quot;: &quot;Default.exe&quot;,
+        ///  &quot;enabled&quot;: true,
         ///  &quot;whitelisted&quot;: false
         ///}.
         /// </summary>
@@ -121,6 +125,7 @@ namespace ControllerCommon.Properties {
         ///  &quot;name&quot;: &quot;Aperture Deskjob&quot;,
         ///  &quot;path&quot;: &quot;deskjob.exe&quot;,
         ///  &quot;executable&quot;: &quot;deskjob.exe&quot;,
+        ///  &quot;enabled&quot;: true,
         ///  &quot;whitelisted&quot;: false,
         ///  &quot;mousehook_exclusive&quot;: true
         ///}.
@@ -136,6 +141,7 @@ namespace ControllerCommon.Properties {
         ///  &quot;name&quot;: &quot;Dolphin&quot;,
         ///  &quot;path&quot;: &quot;Dolphin.exe&quot;,
         ///  &quot;executable&quot;: &quot;Dolphin.exe&quot;,
+        ///  &quot;enabled&quot;: true,
         ///  &quot;whitelisted&quot;: true
         ///}.
         /// </summary>
@@ -150,6 +156,7 @@ namespace ControllerCommon.Properties {
         ///  &quot;name&quot;: &quot;HidHideCLI&quot;,
         ///  &quot;path&quot;: &quot;C:\\Program Files\\Nefarius Software Solutions e.U\\HidHideCLI\\HidHideCLI.exe&quot;,
         ///  &quot;executable&quot;: &quot;HidHideCLI.exe&quot;,
+        ///  &quot;enabled&quot;: true,
         ///  &quot;whitelisted&quot;: true
         ///}.
         /// </summary>
@@ -160,10 +167,29 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This input will operate as a simple joystick. This is intended for traditional joystick applications.
+        /// </summary>
+        public static string JoystickCamera {
+            get {
+                return ResourceManager.GetString("JoystickCamera", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a steering wheel or a racing game.
+        /// </summary>
+        public static string JoystickSteering {
+            get {
+                return ResourceManager.GetString("JoystickSteering", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {
         ///  &quot;name&quot;: &quot;Joyxoff&quot;,
         ///  &quot;path&quot;: &quot;Joyxoff.exe&quot;,
         ///  &quot;executable&quot;: &quot;Joyxoff.exe&quot;,
+        ///  &quot;enabled&quot;: true,
         ///  &quot;whitelisted&quot;: true
         ///}.
         /// </summary>
@@ -174,10 +200,20 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a first or third person camera.
+        /// </summary>
+        public static string PlayerSpace {
+            get {
+                return ResourceManager.GetString("PlayerSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {
         ///  &quot;name&quot;: &quot;Playnite.FullscreenApp&quot;,
         ///  &quot;path&quot;: &quot;Playnite.FullscreenApp.exe&quot;,
         ///  &quot;executable&quot;: &quot;Playnite.FullscreenApp.exe&quot;,
+        ///  &quot;enabled&quot;: true,
         ///  &quot;whitelisted&quot;: true
         ///}.
         /// </summary>
@@ -260,6 +296,7 @@ namespace ControllerCommon.Properties {
         ///  &quot;name&quot;: &quot;Yuzu&quot;,
         ///  &quot;path&quot;: &quot;yuzu.exe&quot;,
         ///  &quot;executable&quot;: &quot;yuzu.exe&quot;,
+        ///  &quot;enabled&quot;: true,
         ///  &quot;whitelisted&quot;: false
         ///}.
         /// </summary>

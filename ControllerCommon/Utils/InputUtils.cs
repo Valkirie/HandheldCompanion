@@ -81,20 +81,16 @@ namespace ControllerCommon.Utils
         public static float Steering(float DeviceAngle,
                                      float DeviceAngleMax,
                                      float ToThePowerOf,
-                                     float DeadzoneAngle,
-                                     float DeadzoneCompensation)
+                                     float DeadzoneAngle)
         {
             // Range angle y value (0 to user defined angle) into -1.0 to 1.0 position value taking into account deadzone angle
-            float JoystickPosCappedAngle = AngleToJoystickPos(DeviceAngle, DeviceAngleMax, DeadzoneAngle);
+            float Result = AngleToJoystickPos(DeviceAngle, DeviceAngleMax, DeadzoneAngle);
 
             // Apply user defined to the power of to joystick pos
-            float JoystickPosPowered = DirectionRespectingPowerOf(JoystickPosCappedAngle, ToThePowerOf);
-
-            // Apply user defined in game deadzone setting compensation
-            float JoystickPosInGameDeadzoneCompensated = InGameDeadZoneSettingCompensation(JoystickPosPowered, DeadzoneCompensation);
+            Result = DirectionRespectingPowerOf(Result, ToThePowerOf);
 
             // Scale joystick x pos -1 to 1 to joystick x range, send 0 for y.
-            return (float)-(JoystickPosInGameDeadzoneCompensated * short.MaxValue);
+            return (float)-(Result * short.MaxValue);
         }
 
         // Determine -1 to 1 joystick position given user defined max input angle and dead zone

@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Utils;
 using HandheldCompanion.Views.Pages;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
@@ -118,7 +119,7 @@ namespace HandheldCompanion.Views
             CurrentPathLogs = Path.Combine(CurrentPath, "Logs");
 
             // settings
-            IsElevated = Utils.IsAdministrator();
+            IsElevated = CommonUtils.IsAdministrator();
 
             // initialize title
             this.Title += $" ({fileVersionInfo.FileVersion}) ({(IsElevated ? Properties.Resources.Administrator : Properties.Resources.User)})";

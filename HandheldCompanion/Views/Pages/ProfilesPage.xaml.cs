@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using ModernWpf.Controls;
@@ -112,7 +113,7 @@ namespace HandheldCompanion.Views.Pages
                     panel.Children.Add(icon);
 
                 // create textblock
-                string description = Utils.GetDescriptionFromEnumValue(button);
+                string description = EnumUtils.GetDescriptionFromEnumValue(button);
                 TextBlock text = new TextBlock() { Text = description };
                 panel.Children.Add(text);
 
@@ -123,10 +124,10 @@ namespace HandheldCompanion.Views.Pages
             }
 
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
-                cB_Input.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
+                cB_Input.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
 
             foreach (Output mode in (Output[])Enum.GetValues(typeof(Output)))
-                cB_Output.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
+                cB_Output.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
 
             // select default profile
             cB_Profiles.SelectedItem = profileManager.GetDefault();
@@ -368,14 +369,14 @@ namespace HandheldCompanion.Views.Pages
                     case ProfileErrorCode.MissingPermission:
                     case ProfileErrorCode.IsDefault:
                         WarningBorder.Visibility = Visibility.Visible;
-                        WarningContent.Text = Utils.GetDescriptionFromEnumValue(currentError);
+                        WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentError);
                         cB_Whitelist.IsEnabled = false;     // you can't whitelist an application without path
                         cB_Wrapper.IsEnabled = false;       // you can't deploy wrapper on an application without path
                         break;
 
                     case ProfileErrorCode.IsRunning:
                         WarningBorder.Visibility = Visibility.Visible;
-                        WarningContent.Text = Utils.GetDescriptionFromEnumValue(currentError);
+                        WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentError);
                         cB_Whitelist.IsEnabled = true; // you can't whitelist an application without path
                         cB_Wrapper.IsEnabled = false;   // you can't deploy wrapper on a running application
                         break;
@@ -493,21 +494,11 @@ namespace HandheldCompanion.Views.Pages
             // do something
         }
 
-        private ComboBoxItem _currentItem = null;
-        private void ComboBoxItem_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var item = sender as ComboBoxItem;
-            if (!Equals(_currentItem, item))
-            {
-                _currentItem = item;
-
-                // code to update window
-            }
-        }
-
-        private void ComboBoxItem_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            _currentItem = null;
+            Input button = (Input)cB_Input.SelectedIndex;
+            // Grid_InputHint.Visibility = Visibility.Visible;
+            Text_InputHint.Text = Profile.InputDescription[button];
         }
     }
 }

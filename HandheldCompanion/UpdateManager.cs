@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+﻿using ControllerCommon.Utils;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -115,7 +115,7 @@ namespace HandheldCompanion
 
         private void ParseMETA(string Result)
         {
-            double asset_size = double.Parse(Utils.Between(Result, "asset-size-label\">", " MB</span>"), CultureInfo.InvariantCulture);
+            double asset_size = double.Parse(CommonUtils.Between(Result, "asset-size-label\">", " MB</span>"), CultureInfo.InvariantCulture);
 
             // something is wrong with the file
             if (asset_size != updateFile.filesize)

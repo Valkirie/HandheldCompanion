@@ -115,6 +115,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Style of input.
+        /// </summary>
+        public static string StyleofInput {
+            get {
+                return ResourceManager.GetString("StyleofInput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The physical inputs of the controller can be programmed to act like different types of devices.
+        /// </summary>
+        public static string StyleofInputTooltip {
+            get {
+                return ResourceManager.GetString("StyleofInputTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Output.
+        /// </summary>
+        public static string StyleofOutput {
+            get {
+                return ResourceManager.GetString("StyleofOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When sending analog joystick commands to the game, should those commands be a left or right joystick.
+        /// </summary>
+        public static string StyleofOutputTooltip {
+            get {
+                return ResourceManager.GetString("StyleofOutputTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User.
         /// </summary>
         public static string User {

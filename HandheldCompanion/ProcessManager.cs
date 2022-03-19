@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+﻿using ControllerCommon.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -80,7 +80,7 @@ namespace HandheldCompanion
                 string exec = string.Empty;
                 string path = string.Empty;
 
-                ProcessDiagnosticInfo process = new FindHostedProcess().Process;
+                ProcessDiagnosticInfo process = new ProcessUtils.FindHostedProcess().Process;
                 if (process == null)
                     return;
 
@@ -89,7 +89,7 @@ namespace HandheldCompanion
                 if (processId != CurrentProcess)
                 {
                     Process proc = Process.GetProcessById((int)processId);
-                    path = Utils.GetPathToApp(proc);
+                    path = ProcessUtils.GetPathToApp(proc);
                     exec = process.ExecutableFileName;
 
                     ForegroundChanged?.Invoke(processId, path, exec);
@@ -124,7 +124,7 @@ namespace HandheldCompanion
             {
                 uint processId = (uint)e.NewEvent.Properties["ProcessID"].Value;
                 Process proc = Process.GetProcessById((int)processId);
-                string path = Utils.GetPathToApp(proc);
+                string path = ProcessUtils.GetPathToApp(proc);
                 string exec = Path.GetFileName(path);
 
                 ProcessDetails details = new ProcessDetails()

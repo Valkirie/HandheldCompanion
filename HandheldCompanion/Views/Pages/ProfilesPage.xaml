@@ -6,6 +6,7 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:local="clr-namespace:HandheldCompanion" 
       xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
+      xmlns:prop="clr-namespace:HandheldCompanion.Properties"
       mc:Ignorable="d" 
       d:DesignHeight="2000" d:DesignWidth="1000"
       KeepAlive="True"
@@ -404,19 +405,21 @@
                                             </Grid.ColumnDefinitions>
 
                                             <ui:SimpleStackPanel Grid.Column="0">
-                                                <TextBlock Text="Style of input" FontSize="14"/>
-                                                <TextBlock Text="The physical inputs of the controller can be programmed to act like different types of devices" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{x:Static prop:Resources.StyleofInput}" FontSize="14" ToolTip="{x:Static prop:Resources.StyleofInputTooltip}"/>
+                                                <TextBlock Name="Text_InputHint" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
 
-                                            <ComboBox Name="cB_Input" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0">
-                                                <ComboBox.Resources>
-                                                    <Style TargetType="ComboBoxItem">
-                                                        <EventSetter Event="MouseEnter" Handler="ComboBoxItem_MouseEnter" />
-                                                        <EventSetter Event="MouseLeave" Handler="ComboBoxItem_MouseLeave" />
-                                                    </Style>
-                                                </ComboBox.Resources>
-                                            </ComboBox>
+                                            <ComboBox Name="cB_Input" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Input_SelectionChanged"/>
                                         </Grid>
+
+                                        <!--
+                                        <Grid Name="Grid_InputHint" Visibility="Collapsed">
+                                            <ui:SimpleStackPanel Spacing="12">
+                                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+                                                <TextBlock Name="Text_InputHint" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap" HorizontalAlignment="Right"/>
+                                            </ui:SimpleStackPanel>                                            
+                                        </Grid>
+                                        -->
 
                                         <!-- Separator -->
                                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
@@ -429,7 +432,7 @@
                                             </Grid.ColumnDefinitions>
 
                                             <ui:SimpleStackPanel Grid.Column="0">
-                                                <TextBlock Text="Output" FontSize="14"/>
+                                                <TextBlock Text="{x:Static prop:Resources.StyleofOutput}" ToolTip="{x:Static prop:Resources.StyleofOutputTooltip}" FontSize="14"/>
                                                 <TextBlock Text="When sending analog joystick commands to the game, should those commands be a left or right joystick" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
 

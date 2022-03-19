@@ -42,7 +42,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="60"></ColumnDefinition>
                                     <ColumnDefinition Width="3.5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
+                                    <ColumnDefinition Width="40" MinWidth="40"></ColumnDefinition>
                                     <ColumnDefinition Width="6*" MinWidth="120"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
@@ -105,8 +105,8 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="60"></ColumnDefinition>
-                                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="120"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE793;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
@@ -116,7 +116,7 @@
                                 <TextBlock Text="Change the physical controller visibility to other applications" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
 
-                            <ui:ToggleSwitch Name="Toggle_Cloaked" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Stretch" Toggled="Toggle_Cloaked_Toggled"/>
+                            <ui:ToggleSwitch Name="Toggle_Cloaked" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Cloaked_Toggled"/>
                         </Grid>
                     </Border>
 
@@ -129,8 +129,8 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="60"></ColumnDefinition>
-                                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="120"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7B3;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
@@ -140,7 +140,7 @@
                                 <TextBlock Text="Restore visibility of the physical controller to other applications on service exit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
 
-                            <ui:ToggleSwitch Name="Toggle_Uncloak" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Stretch" Toggled="Toggle_Uncloak_Toggled"/>
+                            <ui:ToggleSwitch Name="Toggle_Uncloak" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Uncloak_Toggled"/>
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>
