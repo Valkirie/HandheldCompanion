@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ControllerCommon
+namespace ControllerCommon.Utils
 {
     public enum HIDmode
     {
