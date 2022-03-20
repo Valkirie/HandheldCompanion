@@ -42,7 +42,6 @@ namespace HandheldCompanion.Views.Pages
             this.pipeClient.SendMessage(new PipeNavigation((string)this.Tag));
 
             SliderDeadzoneAngle.Value = profileCurrent.steering_deadzone;
-            SliderDeadzoneCompensation.Value = profileCurrent.antideadzone;
             SliderPower.Value = profileCurrent.steering_power;
             SliderSteeringAngle.Value = profileCurrent.steering_max_angle;
 
@@ -101,14 +100,6 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             profileCurrent.steering_deadzone = (float)SliderDeadzoneAngle.Value;
-        }
-
-        private void SliderDeadzoneCompensation_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (profileCurrent is null)
-                return;
-
-            profileCurrent.antideadzone = (float)SliderDeadzoneCompensation.Value;
         }
 
         private ChartValues<ObservablePoint> GeneratePoints(double Power)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 
 namespace ControllerCommon.Utils
 {
@@ -71,10 +72,10 @@ namespace ControllerCommon.Utils
             return (float)((Math.PI / 180) * degrees);
         }
 
-        public static byte NormalizeInput(short input)
+        public static byte NormalizeXboxInput(float input)
         {
             input = Math.Clamp(input, short.MinValue, short.MaxValue);
-            float output = (float)input / (float)ushort.MaxValue * (float)byte.MaxValue + (float)(byte.MaxValue / 2.0f);
+            float output = input / ushort.MaxValue * byte.MaxValue + (byte.MaxValue / 2.0f);
             return (byte)Math.Round(output);
         }
 
@@ -119,23 +120,22 @@ namespace ControllerCommon.Utils
         }
 
         // Compensation for in game deadzone
-        // Inputs: -1 to 1 joystick position and deadzone 0-100%
+        // Inputs: raw ThumbValue and deadzone 0-100%
         // Should not be used under normal circumstances, in game should be set to 0% if possible. Results in loss of resolution.
         // Use cases foreseen:
         // - Game has deadzone, but no way to configure or change it
         // - User does not want to change general emulator deadzone setting but want's it removed for specific game and use UMC Steering
-        public static float InGameDeadZoneSettingCompensation(float JoystickPos, float DeadzonePercentage)
+        public static Vector2 ApplyAntiDeadzone(Vector2 ThumbValue, float DeadzoneIn)
         {
-            // Use absolute value, apply uniform in both directions
-            // Map to new range i.e. remove bottom %
-            float Result = ((Math.Abs(JoystickPos)) / 1) * (1 - DeadzonePercentage / 100) + (DeadzonePercentage / 100);
+            float deadzone = DeadzoneIn / 100;
 
-            // Clamp deadzone remapped 0 to 1 value, prevents negative values when
-            // actual device angle is below dead zone percentage set
-            Result = Math.Clamp(Result, DeadzonePercentage / 100, 1);
+            Vector2 stickInput = new Vector2(ThumbValue.X, ThumbValue.Y);
+            stickInput /= short.MaxValue;
 
-            // Apply direction again
-            return (JoystickPos < 0.0) ? -Result : Result;
+            Vector2 vout = new Vector2(stickInput.X, stickInput.Y);
+            vout = stickInput * (1 + deadzone);
+
+            return vout * short.MaxValue;
         }
 
         // Custom sensitivity

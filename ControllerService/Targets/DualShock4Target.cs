@@ -177,10 +177,10 @@ namespace ControllerService.Targets
                 outDS4Report.bTriggerL = Gamepad.LeftTrigger;
                 outDS4Report.bTriggerR = Gamepad.RightTrigger;
 
-                outDS4Report.bThumbLX = InputUtils.NormalizeInput(LeftThumbX);
-                outDS4Report.bThumbLY = (byte)(byte.MaxValue - InputUtils.NormalizeInput(LeftThumbY));
-                outDS4Report.bThumbRX = InputUtils.NormalizeInput(RightThumbX);
-                outDS4Report.bThumbRY = (byte)(byte.MaxValue - InputUtils.NormalizeInput(RightThumbY));
+                outDS4Report.bThumbLX = InputUtils.NormalizeXboxInput(LeftThumb.X);
+                outDS4Report.bThumbLY = (byte)(byte.MaxValue - InputUtils.NormalizeXboxInput(LeftThumb.Y));
+                outDS4Report.bThumbRX = InputUtils.NormalizeXboxInput(RightThumb.X);
+                outDS4Report.bThumbRY = (byte)(byte.MaxValue - InputUtils.NormalizeXboxInput(RightThumb.Y));
             }
 
             unchecked

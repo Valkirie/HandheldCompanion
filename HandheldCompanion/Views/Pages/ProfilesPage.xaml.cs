@@ -334,6 +334,7 @@ namespace HandheldCompanion.Views.Pages
                 Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
                 tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
                 tb_ProfileAcceleroValue.Value = profileCurrent.accelerometer;
+                tb_ProfileAntiDeadzone.Value = profileCurrent.antideadzone;
                 cB_GyroSteering.SelectedIndex = profileCurrent.steering;
                 cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
                 cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
@@ -417,6 +418,7 @@ namespace HandheldCompanion.Views.Pages
 
             profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
             profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
+            profileCurrent.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
             profileCurrent.whitelisted = (bool)cB_Whitelist.IsChecked;
             profileCurrent.use_wrapper = (bool)cB_Wrapper.IsChecked;
 

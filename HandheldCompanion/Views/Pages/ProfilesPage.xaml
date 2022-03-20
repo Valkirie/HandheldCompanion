@@ -196,7 +196,26 @@
                                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                         <CheckBox Name="cB_Wrapper" Content="Translates DirectInput calls to XInput calls" Checked="cB_Wrapper_Checked" Unchecked="cB_Wrapper_Checked"></CheckBox>
+                                        
+                                        <!-- Separator -->
+                                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                                                <ColumnDefinition Width="0.5*" ></ColumnDefinition>
+                                                <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
+                                                <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+
+                                            <ui:SimpleStackPanel Grid.Column="0">
+                                                <TextBlock Text="Anti-deadzone" FontSize="14"/>
+                                                <TextBlock Text="Change the in-game anti-deadzone, in percentage" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                            </ui:SimpleStackPanel>
+
+                                            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAntiDeadzone, Mode=OneWay}" />
+                                            <Slider Name="tb_ProfileAntiDeadzone" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="10" AutoToolTipPrecision="1"/>
+                                        </Grid>
                                     </ui:SimpleStackPanel>
                                 </Grid>
                             </Expander.Content>

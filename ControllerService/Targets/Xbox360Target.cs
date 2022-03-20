@@ -97,10 +97,10 @@ namespace ControllerService.Targets
 
             base.UpdateReport(Gamepad);
 
-            virtualController.SetAxisValue(Xbox360Axis.LeftThumbX, LeftThumbX);
-            virtualController.SetAxisValue(Xbox360Axis.LeftThumbY, LeftThumbY);
-            virtualController.SetAxisValue(Xbox360Axis.RightThumbX, RightThumbX);
-            virtualController.SetAxisValue(Xbox360Axis.RightThumbY, RightThumbY);
+            virtualController.SetAxisValue(Xbox360Axis.LeftThumbX, (short)LeftThumb.X);
+            virtualController.SetAxisValue(Xbox360Axis.LeftThumbY, (short)LeftThumb.Y);
+            virtualController.SetAxisValue(Xbox360Axis.RightThumbX, (short)RightThumb.X);
+            virtualController.SetAxisValue(Xbox360Axis.RightThumbY, (short)RightThumb.Y);
 
             foreach (Xbox360Button button in ButtonMap)
             {
