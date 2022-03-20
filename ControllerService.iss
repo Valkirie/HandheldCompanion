@@ -654,6 +654,7 @@ end;
 #define MyAppURL 'https://github.com/Valkirie/ControllerService'
 #define MyAppExeName "HandheldCompanion.exe"
 #define MySerExeName "ControllerService.exe"
+#define MyConfiguration "Release"
 
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
@@ -695,8 +696,8 @@ Source: "netcorecheck.exe"; Flags: dontcopy noencryption
 Source: "netcorecheck_x64.exe"; Flags: dontcopy noencryption
 #endif
 
-Source: "{#SourcePath}\bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#SourcePath}\bin\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#SourcePath}\bin\{#MyConfiguration}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"
