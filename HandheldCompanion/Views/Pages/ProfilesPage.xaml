@@ -213,8 +213,8 @@
                                                 <TextBlock Text="Change the in-game anti-deadzone, in percentage" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
 
-                                            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAntiDeadzone, Mode=OneWay}" />
-                                            <Slider Name="tb_ProfileAntiDeadzone" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="10" AutoToolTipPrecision="1" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
+                                            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzone, Mode=OneWay}" />
+                                            <Slider Name="tb_ProfileAntiDeadzone" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="5" TickFrequency="5" IsSnapToTickEnabled="true" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
                                         </Grid>
                                     </ui:SimpleStackPanel>
                                 </Grid>
@@ -318,7 +318,7 @@
                                             </ui:SimpleStackPanel>
 
                                             <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileGyroValue, Mode=OneWay}" />
-                                            <Slider Name="tb_ProfileGyroValue" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3" TickFrequency="0.2" Value="10" TickPlacement="BottomRight" Minimum="0.1" AutoToolTipPrecision="1" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
+                                            <Slider Name="tb_ProfileGyroValue" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="3" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" Minimum="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
                                         </Grid>
 
                                         <!-- Separator -->
@@ -338,7 +338,7 @@
                                             </ui:SimpleStackPanel>
 
                                             <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAcceleroValue, Mode=OneWay}" />
-                                            <Slider Name="tb_ProfileAcceleroValue" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3" Minimum="0.1" TickFrequency="0.2" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
+                                            <Slider Name="tb_ProfileAcceleroValue" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="1" Maximum="3" Minimum="0.1" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
                                         </Grid>
 
                                         <!-- Separator -->

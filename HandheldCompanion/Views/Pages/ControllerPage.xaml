@@ -54,7 +54,7 @@
                                 </ui:SimpleStackPanel>
 
                                 <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderStrength, Mode=OneWay}" />
-                                <Slider Name="SliderStrength" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" Minimum="0" SmallChange="1" TickFrequency="10" Value="50" TickPlacement="BottomRight" ValueChanged="SliderStrength_ValueChanged" IsSnapToTickEnabled="True"></Slider>
+                                <Slider Name="SliderStrength" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" Minimum="0" SmallChange="5" TickFrequency="5" Value="50" TickPlacement="BottomRight" ValueChanged="SliderStrength_ValueChanged" IsSnapToTickEnabled="True" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
                             </Grid>
                         </ui:SimpleStackPanel>
                     </Grid>

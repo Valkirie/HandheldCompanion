@@ -156,7 +156,9 @@
                             <TextBlock Text="The application will be minimized instead of closed" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
 
-                        <ComboBox Name="cB_Theme" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_Theme_SelectionChanged">
+                        <ComboBox Name="cB_Theme" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_Theme_SelectionChanged"
+                                  MouseEnter="Scrolllock_MouseEnter"
+                                  MouseLeave="Scrolllock_MouseLeave">
                             <ComboBoxItem Content="Light"/>
                             <ComboBoxItem Content="Dark"/>
                         </ComboBox>
@@ -217,7 +219,9 @@
                             <TextBlock Text="Used by the service manager to define the service startup type " Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
 
-                        <ComboBox Name="cB_StartupType" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_StartupType_SelectionChanged" />
+                        <ComboBox Name="cB_StartupType" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_StartupType_SelectionChanged"
+                                  MouseEnter="Scrolllock_MouseEnter"
+                                  MouseLeave="Scrolllock_MouseLeave"/>
                     </Grid>
                 </Border>
 
