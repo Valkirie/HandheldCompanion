@@ -129,13 +129,17 @@ namespace ControllerCommon.Utils
         {
             float deadzone = DeadzoneIn / 100;
 
-            Vector2 stickInput = new Vector2(ThumbValue.X, ThumbValue.Y);
-            stickInput /= short.MaxValue;
+            Vector2 stickInput = new Vector2(ThumbValue.X, ThumbValue.Y) / short.MaxValue;
 
-            Vector2 vout = new Vector2(stickInput.X, stickInput.Y);
-            vout = stickInput * (1 + deadzone);
+            float magnitude = stickInput.Length();
 
-            return vout * short.MaxValue;
+            if (magnitude < deadzone)
+            {
+                float dist = Math.Abs(magnitude - deadzone);
+                stickInput = new Vector2(stickInput.X, stickInput.Y) * (1 + dist);
+            }
+
+            return stickInput * short.MaxValue;
         }
 
         // Custom sensitivity
