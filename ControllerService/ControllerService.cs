@@ -33,7 +33,7 @@ namespace ControllerService
         private DSUServer DSUServer;
         public HidHide Hidder;
 
-        public static string CurrentExe, CurrentPath, CurrentPathCli, CurrentPathDep;
+        public static string CurrentExe, CurrentPath, CurrentPathDep;
         public static string CurrentTag;
 
         private string DSUip;
@@ -60,7 +60,6 @@ namespace ControllerService
             // paths
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
-            CurrentPathCli = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
             CurrentPathDep = Path.Combine(CurrentPath, "dependencies");
 
             // settings
@@ -78,13 +77,6 @@ namespace ControllerService
             // initialize log
             logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
 
-            // verifying HidHide is installed
-            if (!File.Exists(CurrentPathCli))
-            {
-                logger.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
-                throw new InvalidOperationException();
-            }
-
             // verifying ViGEm is installed
             try
             {
@@ -97,7 +89,7 @@ namespace ControllerService
             }
 
             // initialize HidHide
-            Hidder = new HidHide(CurrentPathCli, logger, this);
+            Hidder = new HidHide(logger);
             Hidder.RegisterApplication(CurrentExe);
 
             // initialize PipeServer
@@ -234,7 +226,7 @@ namespace ControllerService
             switch (message.code)
             {
                 case PipeCode.FORCE_SHUTDOWN:
-                    Hidder?.SetCloaking(false);
+                    Hidder?.SetCloaking(false, XInputController.Instance.ProductName);
                     break;
 
                 case PipeCode.CLIENT_PROFILE:
@@ -393,7 +385,7 @@ namespace ControllerService
                 switch (name)
                 {
                     case "HIDcloaked":
-                        Hidder.SetCloaking((bool)value);
+                        Hidder.SetCloaking((bool)value, XInputController.Instance.ProductName);
                         HIDcloaked = (bool)value;
                         break;
                     case "HIDuncloakonclose":
@@ -438,7 +430,7 @@ namespace ControllerService
             lifetime.ApplicationStopped.Register(OnStopped);
 
             // turn on cloaking
-            Hidder.SetCloaking(HIDcloaked);
+            Hidder.SetCloaking(HIDcloaked, XInputController.Instance.ProductName);
 
             // start DSUClient
             if (DSUEnabled) DSUServer.Start();
@@ -463,7 +455,7 @@ namespace ControllerService
         public Task StopAsync(CancellationToken cancellationToken)
         {
             // turn off cloaking
-            Hidder?.SetCloaking(!HIDuncloakonclose);
+            Hidder?.SetCloaking(!HIDuncloakonclose, XInputController.Instance.ProductName);
 
             // update virtual controller
             SetControllerStatus(HIDstatus.Disconnected);

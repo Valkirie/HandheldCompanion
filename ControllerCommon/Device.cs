@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ControllerService
+namespace ControllerCommon
 {
     // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
     public class Device

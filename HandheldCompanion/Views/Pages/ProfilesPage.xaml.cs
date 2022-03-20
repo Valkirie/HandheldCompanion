@@ -3,6 +3,7 @@ using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using ModernWpf.Controls;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
+using GamepadButtonFlags = ControllerCommon.Utils.GamepadButtonFlags;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages

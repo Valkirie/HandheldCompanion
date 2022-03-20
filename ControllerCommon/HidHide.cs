@@ -3,11 +3,12 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Text.Json;
 
-namespace ControllerService
+namespace ControllerCommon
 {
     public class HidHide
     {
@@ -16,12 +17,18 @@ namespace ControllerService
         public List<Device> devices = new List<Device>();
 
         private readonly ILogger logger;
-        private readonly ControllerService service;
+        private readonly string path = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
 
-        public HidHide(string _path, ILogger logger, ControllerService service)
+        public HidHide(ILogger logger)
         {
             this.logger = logger;
-            this.service = service;
+
+            // verifying HidHide is installed
+            if (!File.Exists(path))
+            {
+                logger.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
+                throw new InvalidOperationException();
+            }
 
             process = new Process
             {
@@ -31,7 +38,7 @@ namespace ControllerService
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    FileName = _path,
+                    FileName = path,
                     Verb = "runas"
                 }
             };
@@ -109,14 +116,14 @@ namespace ControllerService
             devices = root.devices;
         }
 
-        public void SetCloaking(bool status)
+        public void SetCloaking(bool status, string ProductName)
         {
             process.StartInfo.Arguments = status ? $"--cloak-on" : $"--cloak-off";
             process.Start();
             process.WaitForExit();
             process.StandardOutput.ReadToEnd();
 
-            logger.LogInformation("{0} cloak status set to {1}", service.XInputController.Instance.ProductName, status);
+            logger.LogInformation("{0} cloak status set to {1}", ProductName, status);
         }
 
         public void RegisterDevice(string deviceInstancePath)
