@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+﻿using ControllerCommon.Utils;
 using Force.Crc32;
 using Microsoft.Extensions.Logging;
 using System;
@@ -115,7 +115,7 @@ namespace ControllerService
             this.ip = ipString;
             this.port = port;
 
-            if (!Utils.IsTextAValidIPAddress(ip))
+            if (!CommonUtils.IsTextAValidIPAddress(ip))
                 this.ip = "127.0.0.1";
 
             PadMacAddress = new PhysicalAddress(new byte[] { 0x10, 0x10, 0x10, 0x10, 0x10, 0x10 });
@@ -577,13 +577,13 @@ namespace ControllerService
                 outputData[++outIdx] = (byte)0; // (hidReport.TouchButton) ? (byte)1 : 
 
                 //Left stick
-                outputData[++outIdx] = Utils.NormalizeInput(hidReport.Gamepad.LeftThumbX);
-                outputData[++outIdx] = Utils.NormalizeInput(hidReport.Gamepad.LeftThumbY);
+                outputData[++outIdx] = InputUtils.NormalizeXboxInput(hidReport.Gamepad.LeftThumbX);
+                outputData[++outIdx] = InputUtils.NormalizeXboxInput(hidReport.Gamepad.LeftThumbY);
                 outputData[outIdx] = (byte)(byte.MaxValue - outputData[outIdx]); //invert Y by convention
 
                 //Right stick
-                outputData[++outIdx] = Utils.NormalizeInput(hidReport.Gamepad.RightThumbX);
-                outputData[++outIdx] = Utils.NormalizeInput(hidReport.Gamepad.RightThumbY);
+                outputData[++outIdx] = InputUtils.NormalizeXboxInput(hidReport.Gamepad.RightThumbX);
+                outputData[++outIdx] = InputUtils.NormalizeXboxInput(hidReport.Gamepad.RightThumbY);
                 outputData[outIdx] = (byte)(byte.MaxValue - outputData[outIdx]); //invert Y by convention
 
                 //we don't have analog buttons on DS4 :(

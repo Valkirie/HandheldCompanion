@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using ControllerCommon;
+using ControllerCommon.Utils;
 using HandheldCompanion.Views;
 using Microsoft.Extensions.Logging;
 using System;

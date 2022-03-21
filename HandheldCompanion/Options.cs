@@ -1,5 +1,5 @@
 ﻿using CommandLine;
-using ControllerCommon;
+using ControllerCommon.Utils;
 using System.ComponentModel;
 
 namespace HandheldCompanion

@@ -212,6 +212,16 @@ namespace HandheldCompanion.Views.Pages
             ThemeManager.Current.ApplicationTheme = Theme;
         }
 
+        private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            MainWindow.scrollLock = true;
+        }
+
+        private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            MainWindow.scrollLock = false;
+        }
+
         #region serviceManager
         private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {

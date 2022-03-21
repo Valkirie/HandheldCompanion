@@ -135,6 +135,18 @@
   <data name="ServiceName" xml:space="preserve">
     <value>Controller Service</value>
   </data>
+  <data name="StyleofInput" xml:space="preserve">
+    <value>Style of input</value>
+  </data>
+  <data name="StyleofInputTooltip" xml:space="preserve">
+    <value>The physical inputs of the controller can be programmed to act like different types of devices</value>
+  </data>
+  <data name="StyleofOutput" xml:space="preserve">
+    <value>Output</value>
+  </data>
+  <data name="StyleofOutputTooltip" xml:space="preserve">
+    <value>When sending analog joystick commands to the game, should those commands be a left or right joystick</value>
+  </data>
   <data name="User" xml:space="preserve">
     <value>User</value>
   </data>

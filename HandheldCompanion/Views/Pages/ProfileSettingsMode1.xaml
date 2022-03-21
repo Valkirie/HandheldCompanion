@@ -107,8 +107,10 @@
                         <TextBlock Text="Change the maximum steering angle value, in degree" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
-                    <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderSteeringAngle, Mode=OneWay}" />
-                    <Slider Name="SliderSteeringAngle" ValueChanged="SliderSteeringAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="80" Minimum="10" Value="35" TickPlacement="BottomRight" SmallChange="2" TickFrequency="10" AutoToolTipPrecision="1" />
+                    <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=SliderSteeringAngle, Mode=OneWay}" />
+                    <Slider Name="SliderSteeringAngle" ValueChanged="SliderSteeringAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="80" Minimum="10" Value="35" TickPlacement="BottomRight" SmallChange="5" TickFrequency="1" IsSnapToTickEnabled="True"
+                            MouseEnter="Scrolllock_MouseEnter"
+                            MouseLeave="Scrolllock_MouseLeave" />
                 </Grid>
             </Border>
 
@@ -135,7 +137,9 @@
                     </ui:SimpleStackPanel>
 
                     <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderPower, Mode=OneWay}" />
-                    <Slider Name="SliderPower" ValueChanged="SliderPower_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="5" Minimum="0.2" Value="1" TickPlacement="BottomRight" TickFrequency="0.2" AutoToolTipPrecision="1"/>
+                    <Slider Name="SliderPower" ValueChanged="SliderPower_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.5" Maximum="5" Minimum="0.2" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True"
+                            MouseEnter="Scrolllock_MouseEnter"
+                            MouseLeave="Scrolllock_MouseLeave"/>
                 </Grid>
             </Border>
 
@@ -161,35 +165,10 @@
                         <TextBlock Text="Change the steering deadzone, in degree. Improves steering straight." Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
 
-                    <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneAngle, Mode=OneWay}" />
-                    <Slider Name="SliderDeadzoneAngle" ValueChanged="SliderDeadzoneAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="5" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="1"/>
-                </Grid>
-            </Border>
-
-            <!-- Deadzone compensation -->
-            <Border                      
-                        Padding="0,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="60"></ColumnDefinition>
-                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                        <ColumnDefinition MinWidth="20"></ColumnDefinition>
-                        <ColumnDefinition Width="0.5*" MinWidth="40"></ColumnDefinition>
-                        <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-
-                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
-
-                    <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Deadzone compensation" FontSize="14"/>
-                        <TextBlock Text="Change the in-game steering deadzone compensation, in degree." Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                    </ui:SimpleStackPanel>
-
-                    <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderDeadzoneCompensation, Mode=OneWay}" />
-                    <Slider Name="SliderDeadzoneCompensation" ValueChanged="SliderDeadzoneCompensation_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="10" AutoToolTipPrecision="1"/>
+                    <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=SliderDeadzoneAngle, Mode=OneWay}" />
+                    <Slider Name="SliderDeadzoneAngle" ValueChanged="SliderDeadzoneAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="5" TickPlacement="BottomRight" SmallChange="1" IsSnapToTickEnabled="True"
+                            MouseEnter="Scrolllock_MouseEnter"
+                            MouseLeave="Scrolllock_MouseLeave"/>
                 </Grid>
             </Border>
         </ui:SimpleStackPanel>

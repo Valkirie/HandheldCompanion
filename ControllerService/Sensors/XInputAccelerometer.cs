@@ -1,9 +1,8 @@
-﻿using ControllerCommon;
+﻿using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Devices.Sensors;
-using static ControllerCommon.Utils;
 
 namespace ControllerService.Sensors
 {

@@ -1,7 +1,9 @@
 using ControllerCommon;
+using ControllerCommon.Utils;
 using HandheldCompanion.Views.Pages;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,7 +30,7 @@ namespace HandheldCompanion.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly ILogger microsoftLogger;
+        private readonly ILogger logger;
         private StartupEventArgs arguments;
         public HandheldDevice handheldDevice;
         public FileVersionInfo fileVersionInfo;
@@ -53,6 +55,8 @@ namespace HandheldCompanion.Views
         public PipeClient pipeClient;
         public PipeServer pipeServer;
 
+        public HidHide Hidder;
+
         public CmdParser cmdParser;
         public MouseHook mouseHook;
 
@@ -74,19 +78,19 @@ namespace HandheldCompanion.Views
             InitializeComponent();
             Name = this.Title;
 
-            this.microsoftLogger = microsoftLogger;
+            this.logger = microsoftLogger;
             this.arguments = arguments;
 
             handheldDevice = new HandheldDevice();
 
-            microsoftLogger.LogInformation("{0} ({1})", handheldDevice.ManufacturerName, handheldDevice.ProductName);
+            logger.LogInformation("{0} ({1})", handheldDevice.ManufacturerName, handheldDevice.ProductName);
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
             fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
 
             // initialize log
-            microsoftLogger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
+            logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
             // initialize notifyIcon
             ToolStripMenuItem notifyMenuItem = new("Exit");
@@ -117,8 +121,12 @@ namespace HandheldCompanion.Views
             CurrentPathService = Path.Combine(CurrentPath, "ControllerService.exe");
             CurrentPathLogs = Path.Combine(CurrentPath, "Logs");
 
+            // initialize HidHide
+            Hidder = new HidHide(logger);
+            Hidder.RegisterApplication(CurrentExe);
+
             // settings
-            IsElevated = Utils.IsAdministrator();
+            IsElevated = CommonUtils.IsAdministrator();
 
             // initialize title
             this.Title += $" ({fileVersionInfo.FileVersion}) ({(IsElevated ? Properties.Resources.Administrator : Properties.Resources.User)})";
@@ -126,25 +134,25 @@ namespace HandheldCompanion.Views
             // verifying HidHide is installed
             if (!File.Exists(CurrentPathService))
             {
-                microsoftLogger.LogCritical("Controller Service executable is missing");
+                logger.LogCritical("Controller Service executable is missing");
                 throw new InvalidOperationException();
             }
 
             // initialize pipe client
-            pipeClient = new PipeClient("ControllerService", microsoftLogger);
+            pipeClient = new PipeClient("ControllerService", logger);
             pipeClient.ServerMessage += OnServerMessage;
             pipeClient.Connected += OnClientConnected;
             pipeClient.Disconnected += OnClientDisconnected;
 
             // initialize pipe server
-            pipeServer = new PipeServer("HandheldCompanion", microsoftLogger);
+            pipeServer = new PipeServer("HandheldCompanion", logger);
             pipeServer.ClientMessage += OnClientMessage;
 
             // initialize Profile Manager
-            profileManager = new ProfileManager(microsoftLogger, pipeClient);
+            profileManager = new ProfileManager(logger, pipeClient);
 
             // initialize mouse hook
-            mouseHook = new MouseHook(pipeClient, microsoftLogger);
+            mouseHook = new MouseHook(pipeClient, logger);
 
             // initialize toast manager
             toastManager = new ToastManager("ControllerService");
@@ -156,7 +164,7 @@ namespace HandheldCompanion.Views
             processManager.ProcessStopped += ProcessManager_ProcessStopped;
 
             // initialize service manager
-            serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription, microsoftLogger);
+            serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription, logger);
             serviceManager.Updated += OnServiceUpdate;
             serviceManager.StartFailed += (status) =>
             {
@@ -173,13 +181,13 @@ namespace HandheldCompanion.Views
             taskManager = new TaskManager("ControllerService", CurrentExe);
 
             // initialize pages
-            controllerPage = new ControllerPage("controller", this, microsoftLogger);
-            profilesPage = new ProfilesPage("profiles", this, microsoftLogger);
-            settingsPage = new SettingsPage("settings", this, microsoftLogger);
-            aboutPage = new AboutPage("about", this, microsoftLogger);
+            controllerPage = new ControllerPage("controller", this, logger);
+            profilesPage = new ProfilesPage("profiles", this, logger);
+            settingsPage = new SettingsPage("settings", this, logger);
+            aboutPage = new AboutPage("about", this, logger);
 
             // initialize command parser
-            cmdParser = new CmdParser(pipeClient, this, microsoftLogger);
+            cmdParser = new CmdParser(pipeClient, this, logger);
             cmdParser.ParseArgs(arguments.Args, true);
 
             // initialize pages events
@@ -260,7 +268,7 @@ namespace HandheldCompanion.Views
                     pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
                     mouseHook.UpdateProfile(currentProfile);
 
-                    microsoftLogger.LogInformation("Profile {0} applied", currentProfile.name);
+                    logger.LogInformation("Profile {0} applied", currentProfile.name);
                 }
                 else
                 {

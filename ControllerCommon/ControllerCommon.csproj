@@ -5,7 +5,8 @@
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<PlatformTarget>x64</PlatformTarget>
 	<DebugType>portable</DebugType>
-	<Version>0.9.1.0</Version>
+	<Version>0.9.3.0</Version>
+    <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

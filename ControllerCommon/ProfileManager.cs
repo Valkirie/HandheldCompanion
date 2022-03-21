@@ -1,4 +1,5 @@
-﻿using Force.Crc32;
+﻿using ControllerCommon.Utils;
+using Force.Crc32;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
@@ -8,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Resources;
 using System.Text.Json;
-using static ControllerCommon.Utils;
+using static ControllerCommon.Utils.ProcessUtils;
 
 namespace ControllerCommon
 {
@@ -203,7 +204,7 @@ namespace ControllerCommon
                     return ProfileErrorCode.MissingPath;
                 else if (!File.Exists(profile.fullpath))
                     return ProfileErrorCode.MissingExecutable;
-                else if (!Utils.IsDirectoryWritable(processpath))
+                else if (!CommonUtils.IsDirectoryWritable(processpath))
                     return ProfileErrorCode.MissingPermission;
             }
 

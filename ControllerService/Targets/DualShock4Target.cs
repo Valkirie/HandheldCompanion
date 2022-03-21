@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+﻿using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
@@ -177,10 +177,10 @@ namespace ControllerService.Targets
                 outDS4Report.bTriggerL = Gamepad.LeftTrigger;
                 outDS4Report.bTriggerR = Gamepad.RightTrigger;
 
-                outDS4Report.bThumbLX = Utils.NormalizeInput(LeftThumbX);
-                outDS4Report.bThumbLY = (byte)(byte.MaxValue - Utils.NormalizeInput(LeftThumbY));
-                outDS4Report.bThumbRX = Utils.NormalizeInput(RightThumbX);
-                outDS4Report.bThumbRY = (byte)(byte.MaxValue - Utils.NormalizeInput(RightThumbY));
+                outDS4Report.bThumbLX = InputUtils.NormalizeXboxInput(LeftThumb.X);
+                outDS4Report.bThumbLY = (byte)(byte.MaxValue - InputUtils.NormalizeXboxInput(LeftThumb.Y));
+                outDS4Report.bThumbRX = InputUtils.NormalizeXboxInput(RightThumb.X);
+                outDS4Report.bThumbRY = (byte)(byte.MaxValue - InputUtils.NormalizeXboxInput(RightThumb.Y));
             }
 
             unchecked
@@ -200,13 +200,13 @@ namespace ControllerService.Targets
                 outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(Touch.TrackPadTouch2.Y >> 4); */
             }
 
-            outDS4Report.wGyroX = (short)Utils.rangeMap(xinputController.AngularVelocity.X, XInputGirometer.sensorSpec);    // gyroPitchFull
-            outDS4Report.wGyroY = (short)Utils.rangeMap(-xinputController.AngularVelocity.Y, XInputGirometer.sensorSpec);   // gyroYawFull
-            outDS4Report.wGyroZ = (short)Utils.rangeMap(xinputController.AngularVelocity.Z, XInputGirometer.sensorSpec);    // gyroRollFull
+            outDS4Report.wGyroX = (short)InputUtils.rangeMap(xinputController.AngularVelocity.X, XInputGirometer.sensorSpec);    // gyroPitchFull
+            outDS4Report.wGyroY = (short)InputUtils.rangeMap(-xinputController.AngularVelocity.Y, XInputGirometer.sensorSpec);   // gyroYawFull
+            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(xinputController.AngularVelocity.Z, XInputGirometer.sensorSpec);    // gyroRollFull
 
-            outDS4Report.wAccelX = (short)Utils.rangeMap(-xinputController.Acceleration.X, XInputAccelerometer.sensorSpec); // accelXFull
-            outDS4Report.wAccelY = (short)Utils.rangeMap(-xinputController.Acceleration.Y, XInputAccelerometer.sensorSpec); // accelYFull
-            outDS4Report.wAccelZ = (short)Utils.rangeMap(xinputController.Acceleration.Z, XInputAccelerometer.sensorSpec);  // accelZFull
+            outDS4Report.wAccelX = (short)InputUtils.rangeMap(-xinputController.Acceleration.X, XInputAccelerometer.sensorSpec); // accelXFull
+            outDS4Report.wAccelY = (short)InputUtils.rangeMap(-xinputController.Acceleration.Y, XInputAccelerometer.sensorSpec); // accelYFull
+            outDS4Report.wAccelZ = (short)InputUtils.rangeMap(xinputController.Acceleration.Z, XInputAccelerometer.sensorSpec);  // accelZFull
 
             outDS4Report.bBatteryLvlSpecial = 11;
 

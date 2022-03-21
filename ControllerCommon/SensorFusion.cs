@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using ControllerCommon.Utils;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -64,10 +65,10 @@ namespace ControllerCommon
             // Perform calculations 
             // Todo, kickstart gravity vector with = acceleration when calculation is either
             // run for the first time or is selcted to be run based on user profile?
-          
+
             CalculateGravitySimple(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
             //CalculateGravityFancy(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
-            
+
             DeviceAngles(TotalMilliseconds, GravityVectorSimple);
             PlayerSpace(TotalMilliseconds, DeltaSeconds, AngularVelocity, GravityVectorSimple);
 
@@ -79,8 +80,8 @@ namespace ControllerCommon
             // http://gyrowiki.jibbsmart.com/blog:finding-gravity-with-sensor-fusion
 
             // Convert to radian as per library spec
-            Vector3 AngularVelocityRad = new Vector3(Utils.deg2rad(AngularVelocity.X), Utils.deg2rad(AngularVelocity.Y), Utils.deg2rad(AngularVelocity.Z));
-            
+            Vector3 AngularVelocityRad = new Vector3(InputUtils.deg2rad(AngularVelocity.X), InputUtils.deg2rad(AngularVelocity.Y), InputUtils.deg2rad(AngularVelocity.Z));
+
             // Normalize before creating quat from axis angle as per library spec
             AngularVelocityRad = Vector3.Normalize(AngularVelocityRad);
 
@@ -137,7 +138,7 @@ namespace ControllerCommon
             // Isn't this always true with the default settings? if (ShakinessMaxThreshold > ShakinessMinThreshold)
 
             // Convert to radian as per library spec
-            Vector3 AngularVelocityRad = new Vector3(Utils.deg2rad(AngularVelocity.X), Utils.deg2rad(AngularVelocity.Y), Utils.deg2rad(AngularVelocity.Z));
+            Vector3 AngularVelocityRad = new Vector3(InputUtils.deg2rad(AngularVelocity.X), InputUtils.deg2rad(AngularVelocity.Y), InputUtils.deg2rad(AngularVelocity.Z));
             // Normalize before creating quat from axis angle as per library spec
             AngularVelocityRad = Vector3.Normalize(AngularVelocityRad);
 
@@ -272,10 +273,10 @@ namespace ControllerCommon
 
             // Yaw (Use world yaw for yaw direction, local combined yaw for magnitude)
             // Dot product but just yaw and roll
-            double worldYaw = AngularVelocity.Y * GravityNorm.Y + AngularVelocity.Z * GravityNorm.Z; 
+            double worldYaw = AngularVelocity.Y * GravityNorm.Y + AngularVelocity.Z * GravityNorm.Z;
 
             // Handle NaN
-            if (worldYaw == 0f) return; 
+            if (worldYaw == 0f) return;
 
             double yawRelaxFactor = 1.41f;
             Vector2 AngularVelocityYZ = new(AngularVelocity.Y, AngularVelocity.Z);

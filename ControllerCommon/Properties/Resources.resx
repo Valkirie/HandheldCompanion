@@ -139,8 +139,17 @@
   <data name="HidHideCLI.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HidHideCLI.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="JoystickCamera" xml:space="preserve">
+    <value>This input will operate as a simple joystick. This is intended for traditional joystick applications</value>
+  </data>
+  <data name="JoystickSteering" xml:space="preserve">
+    <value>This input will operate as a joystick optimized for controlling a steering wheel or a racing game</value>
+  </data>
   <data name="JoyXOff.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\JoyXOff.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="PlayerSpace" xml:space="preserve">
+    <value>This input will operate as a joystick optimized for controlling a first or third person camera</value>
   </data>
   <data name="Playnite.FullscreenApp.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Playnite.FullscreenApp.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>

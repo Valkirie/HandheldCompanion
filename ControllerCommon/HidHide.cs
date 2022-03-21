@@ -1,13 +1,14 @@
-﻿using ControllerCommon;
+﻿using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Text.Json;
 
-namespace ControllerService
+namespace ControllerCommon
 {
     public class HidHide
     {
@@ -16,12 +17,18 @@ namespace ControllerService
         public List<Device> devices = new List<Device>();
 
         private readonly ILogger logger;
-        private readonly ControllerService service;
+        private readonly string path = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
 
-        public HidHide(string _path, ILogger logger, ControllerService service)
+        public HidHide(ILogger logger)
         {
             this.logger = logger;
-            this.service = service;
+
+            // verifying HidHide is installed
+            if (!File.Exists(path))
+            {
+                logger.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
+                throw new InvalidOperationException();
+            }
 
             process = new Process
             {
@@ -31,7 +38,7 @@ namespace ControllerService
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    FileName = _path,
+                    FileName = path,
                     Verb = "runas"
                 }
             };
@@ -55,7 +62,7 @@ namespace ControllerService
                     break;
 
                 // --app-reg \"C:\\Program Files\\Nefarius Software Solutions e.U\\HidHideCLI\\HidHideCLI.exe\"
-                string path = Utils.Between(standard_output, "--app-reg \"", "\"");
+                string path = CommonUtils.Between(standard_output, "--app-reg \"", "\"");
                 whitelist.Add(path);
             }
             return whitelist;
@@ -85,7 +92,7 @@ namespace ControllerService
 
             string jsonString = process.StandardOutput.ReadToEnd();
 
-            if (jsonString == "")
+            if (jsonString == "" || jsonString == " [ ] \r\n\r\n")
                 return;
 
             try
@@ -98,7 +105,7 @@ namespace ControllerService
             }
             catch (Exception)
             {
-                string tempString = Utils.Between(jsonString, "symbolicLink", ",");
+                string tempString = CommonUtils.Between(jsonString, "symbolicLink", ",");
                 root = new RootDevice
                 {
                     friendlyName = "Unknown",
@@ -109,14 +116,14 @@ namespace ControllerService
             devices = root.devices;
         }
 
-        public void SetCloaking(bool status)
+        public void SetCloaking(bool status, string ProductName)
         {
             process.StartInfo.Arguments = status ? $"--cloak-on" : $"--cloak-off";
             process.Start();
             process.WaitForExit();
             process.StandardOutput.ReadToEnd();
 
-            logger.LogInformation("{0} cloak status set to {1}", service.XInputController.Instance.ProductName, status);
+            logger.LogInformation("{0} cloak status set to {1}", ProductName, status);
         }
 
         public void RegisterDevice(string deviceInstancePath)
@@ -139,8 +146,8 @@ namespace ControllerService
         {
             foreach (Device d in devices.Where(a => a.gamingDevice))
             {
-                string VID = Utils.Between(d.deviceInstancePath.ToLower(), "vid_", "&");
-                string PID = Utils.Between(d.deviceInstancePath.ToLower(), "pid_", "&");
+                string VID = CommonUtils.Between(d.deviceInstancePath.ToLower(), "vid_", "&");
+                string PID = CommonUtils.Between(d.deviceInstancePath.ToLower(), "pid_", "&");
 
                 string query = $"SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE \"%VID_{VID}&PID_{PID}%\"";
 

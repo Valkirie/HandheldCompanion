@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -39,7 +40,7 @@ namespace HandheldCompanion.Views.Pages
             InitializeComponent();
 
             foreach (HIDmode mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.None))
-                cB_HidMode.Items.Add(Utils.GetDescriptionFromEnumValue(mode));
+                cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
         }
 
         public ControllerPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
@@ -234,6 +235,16 @@ namespace HandheldCompanion.Views.Pages
         {
             PipeClientSettings settings = new PipeClientSettings("HIDstrength", SliderStrength.Value);
             pipeClient?.SendMessage(settings);
+        }
+
+        private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            MainWindow.scrollLock = true;
+        }
+
+        private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            MainWindow.scrollLock = false;
         }
     }
 }

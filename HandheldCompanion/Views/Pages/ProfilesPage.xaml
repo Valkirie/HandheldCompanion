@@ -6,6 +6,7 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:local="clr-namespace:HandheldCompanion" 
       xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
+      xmlns:prop="clr-namespace:HandheldCompanion.Properties"
       mc:Ignorable="d" 
       d:DesignHeight="2000" d:DesignWidth="1000"
       KeepAlive="True"
@@ -195,7 +196,26 @@
                                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                                         <CheckBox Name="cB_Wrapper" Content="Translates DirectInput calls to XInput calls" Checked="cB_Wrapper_Checked" Unchecked="cB_Wrapper_Checked"></CheckBox>
+                                        
+                                        <!-- Separator -->
+                                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                                                <ColumnDefinition Width="0.5*" ></ColumnDefinition>
+                                                <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
+                                                <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+
+                                            <ui:SimpleStackPanel Grid.Column="0">
+                                                <TextBlock Text="Anti-deadzone" FontSize="14"/>
+                                                <TextBlock Text="Change the in-game anti-deadzone, in percentage" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                            </ui:SimpleStackPanel>
+
+                                            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzone, Mode=OneWay}" />
+                                            <Slider Name="tb_ProfileAntiDeadzone" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="5" TickFrequency="5" IsSnapToTickEnabled="true" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
+                                        </Grid>
                                     </ui:SimpleStackPanel>
                                 </Grid>
                             </Expander.Content>
@@ -298,7 +318,7 @@
                                             </ui:SimpleStackPanel>
 
                                             <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileGyroValue, Mode=OneWay}" />
-                                            <Slider Name="tb_ProfileGyroValue" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3" TickFrequency="0.2" Value="10" TickPlacement="BottomRight" Minimum="0.1" AutoToolTipPrecision="1"/>
+                                            <Slider Name="tb_ProfileGyroValue" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="3" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" Minimum="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
                                         </Grid>
 
                                         <!-- Separator -->
@@ -318,7 +338,7 @@
                                             </ui:SimpleStackPanel>
 
                                             <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAcceleroValue, Mode=OneWay}" />
-                                            <Slider Name="tb_ProfileAcceleroValue" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3" Minimum="0.1" TickFrequency="0.2" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1"/>
+                                            <Slider Name="tb_ProfileAcceleroValue" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="1" Maximum="3" Minimum="0.1" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
                                         </Grid>
 
                                         <!-- Separator -->
@@ -336,7 +356,7 @@
                                                 <TextBlock Text="For controlling the horizontal movement of the controller, you can use either the yaw or roll axis" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
 
-                                            <ComboBox Name="cB_GyroSteering" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0">
+                                            <ComboBox Name="cB_GyroSteering" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave">
                                                 <ComboBoxItem Content="Yaw"/>
                                                 <ComboBoxItem Content="Roll"/>
                                             </ComboBox>
@@ -404,19 +424,21 @@
                                             </Grid.ColumnDefinitions>
 
                                             <ui:SimpleStackPanel Grid.Column="0">
-                                                <TextBlock Text="Style of input" FontSize="14"/>
-                                                <TextBlock Text="The physical inputs of the controller can be programmed to act like different types of devices" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{x:Static prop:Resources.StyleofInput}" FontSize="14" ToolTip="{x:Static prop:Resources.StyleofInputTooltip}"/>
+                                                <TextBlock Name="Text_InputHint" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
 
-                                            <ComboBox Name="cB_Input" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0">
-                                                <ComboBox.Resources>
-                                                    <Style TargetType="ComboBoxItem">
-                                                        <EventSetter Event="MouseEnter" Handler="ComboBoxItem_MouseEnter" />
-                                                        <EventSetter Event="MouseLeave" Handler="ComboBoxItem_MouseLeave" />
-                                                    </Style>
-                                                </ComboBox.Resources>
-                                            </ComboBox>
+                                            <ComboBox Name="cB_Input" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Input_SelectionChanged" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
                                         </Grid>
+
+                                        <!--
+                                        <Grid Name="Grid_InputHint" Visibility="Collapsed">
+                                            <ui:SimpleStackPanel Spacing="12">
+                                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+                                                <TextBlock Name="Text_InputHint" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap" HorizontalAlignment="Right"/>
+                                            </ui:SimpleStackPanel>                                            
+                                        </Grid>
+                                        -->
 
                                         <!-- Separator -->
                                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
@@ -429,11 +451,11 @@
                                             </Grid.ColumnDefinitions>
 
                                             <ui:SimpleStackPanel Grid.Column="0">
-                                                <TextBlock Text="Output" FontSize="14"/>
+                                                <TextBlock Text="{x:Static prop:Resources.StyleofOutput}" ToolTip="{x:Static prop:Resources.StyleofOutputTooltip}" FontSize="14"/>
                                                 <TextBlock Text="When sending analog joystick commands to the game, should those commands be a left or right joystick" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                             </ui:SimpleStackPanel>
 
-                                            <ComboBox Name="cB_Output" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0"/>
+                                            <ComboBox Name="cB_Output" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
                                         </Grid>
 
                                         <!-- Separator -->

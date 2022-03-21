@@ -1,11 +1,13 @@
 using ControllerCommon;
+using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
 using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
-using GamepadButtonFlags = ControllerCommon.GamepadButtonFlags;
+using GamepadButtonFlags = ControllerCommon.Utils.GamepadButtonFlags;
 
 namespace ControllerService.Targets
 {
@@ -48,7 +50,8 @@ namespace ControllerService.Targets
 
         protected int UserIndex;
 
-        protected short LeftThumbX, LeftThumbY, RightThumbX, RightThumbY;
+        protected Vector2 LeftThumb;
+        protected Vector2 RightThumb;
 
         public event ConnectedEventHandler Connected;
         public delegate void ConnectedEventHandler(ViGEmTarget target);
@@ -86,7 +89,7 @@ namespace ControllerService.Targets
 
         public override string ToString()
         {
-            return Utils.GetDescriptionFromEnumValue(this.HID);
+            return EnumUtils.GetDescriptionFromEnumValue(this.HID);
         }
 
         public virtual void Connect()
@@ -117,80 +120,91 @@ namespace ControllerService.Targets
             buttons |= xinputController.profile.umc_trigger.HasFlag(GamepadButtonFlags.AlwaysOn) ? GamepadButtonFlags.AlwaysOn : 0;
 
             // get sticks values
-            LeftThumbX = Gamepad.LeftThumbX;
-            LeftThumbY = Gamepad.LeftThumbY;
-            RightThumbX = Gamepad.RightThumbX;
-            RightThumbY = Gamepad.RightThumbY;
+            LeftThumb = new Vector2(Gamepad.LeftThumbX, Gamepad.LeftThumbY);
+            RightThumb = new Vector2(Gamepad.RightThumbX, Gamepad.RightThumbY);
 
             // update sensorFusion (todo: call only when needed ?)
             sensorFusion.UpdateReport(xinputController.totalmilliseconds, xinputController.AngularVelocity, xinputController.Acceleration);
 
-            if (xinputController.profile.umc_enabled && (xinputController.profile.umc_trigger & buttons) != 0)
+            if (xinputController.profile.umc_enabled)
             {
-                switch (xinputController.profile.umc_input)
+                if ((xinputController.profile.umc_trigger & buttons) != 0)
                 {
-                    case Input.PlayerSpace:
-                    case Input.JoystickCamera:
-                        {
-                            float AngularX, AngularY;
-
-                            switch (xinputController.profile.umc_input)
+                    switch (xinputController.profile.umc_input)
+                    {
+                        case Input.PlayerSpace:
+                        case Input.JoystickCamera:
                             {
-                                case Input.PlayerSpace:
-                                    AngularX = (float)sensorFusion.CameraYawDelta;
-                                    AngularY = (float)sensorFusion.CameraPitchDelta;
-                                    break;
+                                Vector2 Angular;
 
-                                default:
-                                case Input.JoystickCamera:
-                                    AngularX = -xinputController.AngularUniversal.Z;
-                                    AngularY = xinputController.AngularUniversal.X;
-                                    break;
+                                switch (xinputController.profile.umc_input)
+                                {
+                                    case Input.PlayerSpace:
+                                        Angular = new Vector2((float)sensorFusion.CameraYawDelta, (float)sensorFusion.CameraPitchDelta);
+                                        break;
+
+                                    default:
+                                    case Input.JoystickCamera:
+                                        Angular = new Vector2(-xinputController.AngularUniversal.Z, xinputController.AngularUniversal.X);
+                                        break;
+                                }
+
+                                // apply sensivity curve
+                                Angular.X *= InputUtils.ApplyCustomSensitivity(Angular.X, XInputGirometer.sensorSpec.maxIn, xinputController.profile.aiming_array);
+                                Angular.Y *= InputUtils.ApplyCustomSensitivity(Angular.Y, XInputGirometer.sensorSpec.maxIn, xinputController.profile.aiming_array);
+
+                                // apply sensivity
+                                Vector2 GamepadThumb = new Vector2(
+                                    Angular.X * xinputController.profile.GetSensiviy(),
+                                    Angular.Y * xinputController.profile.GetSensiviy());
+
+                                switch (xinputController.profile.umc_output)
+                                {
+                                    default:
+                                    case Output.RightStick:
+                                        RightThumb.X = (short)(Math.Clamp(RightThumb.X + GamepadThumb.X, short.MinValue, short.MaxValue));
+                                        RightThumb.Y = (short)(Math.Clamp(RightThumb.Y + GamepadThumb.Y, short.MinValue, short.MaxValue));
+                                        break;
+                                    case Output.LeftStick:
+                                        LeftThumb.X = (short)(Math.Clamp(LeftThumb.X + GamepadThumb.X, short.MinValue, short.MaxValue));
+                                        LeftThumb.Y = (short)(Math.Clamp(LeftThumb.Y + GamepadThumb.Y, short.MinValue, short.MaxValue));
+                                        break;
+                                }
                             }
+                            break;
 
-                            // apply sensivity curve
-                            AngularX *= Utils.ApplyCustomSensitivity(AngularX, XInputGirometer.sensorSpec.maxIn, xinputController.profile.aiming_array);
-                            AngularY *= Utils.ApplyCustomSensitivity(AngularY, XInputGirometer.sensorSpec.maxIn, xinputController.profile.aiming_array);
-
-                            // apply sensivity
-                            float GamepadThumbX = AngularX * xinputController.profile.GetSensiviy();
-                            float GamepadThumbY = AngularY * xinputController.profile.GetSensiviy();
-
-                            switch (xinputController.profile.umc_output)
+                        case Input.JoystickSteering:
                             {
-                                default:
-                                case Output.RightStick:
-                                    RightThumbX = (short)(Math.Clamp(RightThumbX + GamepadThumbX, short.MinValue, short.MaxValue));
-                                    RightThumbY = (short)(Math.Clamp(RightThumbY + GamepadThumbY, short.MinValue, short.MaxValue));
-                                    break;
-                                case Output.LeftStick:
-                                    LeftThumbX = (short)(Math.Clamp(LeftThumbX + GamepadThumbX, short.MinValue, short.MaxValue));
-                                    LeftThumbY = (short)(Math.Clamp(LeftThumbY + GamepadThumbY, short.MinValue, short.MaxValue));
-                                    break;
+                                float GamepadThumbX = InputUtils.Steering(
+                                    sensorFusion.DeviceAngle.Y,
+                                    xinputController.profile.steering_max_angle,
+                                    xinputController.profile.steering_power,
+                                    xinputController.profile.steering_deadzone);
+
+                                switch (xinputController.profile.umc_output)
+                                {
+                                    default:
+                                    case Output.RightStick:
+                                        RightThumb.X = (short)GamepadThumbX;
+                                        break;
+                                    case Output.LeftStick:
+                                        LeftThumb.X = (short)GamepadThumbX;
+                                        break;
+                                }
                             }
-                        }
+                            break;
+                    }
+                }
+
+                // Apply user defined in game deadzone setting compensation
+                switch (xinputController.profile.umc_output)
+                {
+                    default:
+                    case Output.RightStick:
+                        RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, xinputController.profile.antideadzone);
                         break;
-
-                    case Input.JoystickSteering:
-                        {
-                            float GamepadThumbX = Utils.Steering(
-                                sensorFusion.DeviceAngle.Y,
-                                xinputController.profile.steering_max_angle,
-                                xinputController.profile.steering_power,
-                                xinputController.profile.steering_deadzone,
-                                xinputController.profile.steering_deadzone_compensation);
-
-                            switch (xinputController.profile.umc_output)
-                            {
-                                default:
-                                case Output.RightStick:
-                                    RightThumbX = (short)GamepadThumbX;
-                                    break;
-                                case Output.LeftStick:
-                                    LeftThumbX = (short)GamepadThumbX;
-                                    break;
-                            }
-                        }
+                    case Output.LeftStick:
+                        LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, xinputController.profile.antideadzone);
                         break;
                 }
             }

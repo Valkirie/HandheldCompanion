@@ -1,7 +1,6 @@
-﻿using ControllerCommon;
+﻿using ControllerCommon.Utils;
 using System.Numerics;
 using System.Timers;
-using static ControllerCommon.Utils;
 
 namespace ControllerService.Sensors
 {
