@@ -35,7 +35,7 @@ namespace HandheldCompanion.Views.Pages
             this.handheldDevice = mainWindow.handheldDevice;
 
             VersionValue.Text = mainWindow.fileVersionInfo.FileVersion;
-            SensorName.Text = handheldDevice.sensorName;
+            SensorName.Text = handheldDevice.sensor.Name;
             GyrometerValue.Text = handheldDevice.hasGyrometer ? "Detected" : "N/A";
             AccelerometerValue.Text = handheldDevice.hasAccelerometer ? "Detected" : "N/A";
             InclinometerValue.Text = handheldDevice.hasInclinometer ? "Detected" : "N/A";
@@ -46,7 +46,7 @@ namespace HandheldCompanion.Views.Pages
 
             WarningBorder.Visibility = handheldDevice.sensorSupported ? Visibility.Collapsed : Visibility.Visible;
             if (!handheldDevice.sensorSupported)
-                WarningContent.Text = "Oups, it appears your device is not compatible.";
+                WarningContent.Text = "Oups, it appears your device is not supported yet. The software might not run as expected.";
 
             UpdateDevice();
         }

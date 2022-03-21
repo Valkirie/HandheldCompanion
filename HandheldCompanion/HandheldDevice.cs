@@ -3,13 +3,14 @@ using ControllerCommon.Utils;
 using System.Diagnostics;
 using System.Linq;
 using Windows.Devices.Sensors;
+using static ControllerCommon.Utils.ProcessUtils;
 
 namespace HandheldCompanion
 {
     public class HandheldDevice
     {
+        public USBDeviceInfo sensor;
         public bool sensorSupported;
-        public string sensorName;
 
         public string ManufacturerName;
         public string ProductName;
@@ -38,12 +39,11 @@ namespace HandheldCompanion
             Debug.WriteLine("DeviceId: {0}", gyrometer.DeviceId);
             string ACPI = CommonUtils.Between(gyrometer.DeviceId, "ACPI#", "#");
 
-            ProcessUtils.USBDeviceInfo Sensor = ProcessUtils.GetUSBDevices().Where(device => device.DeviceId.Contains(ACPI)).FirstOrDefault();
+            sensor = GetUSBDevices().FirstOrDefault(device => device.DeviceId.Contains(ACPI));
 
-            if (Sensor != null)
+            if (sensor != null)
             {
-                sensorName = Sensor.Name;
-                switch (Sensor.Name)
+                switch (sensor.Name)
                 {
                     case "BMI160":
                         sensorSupported = true;
