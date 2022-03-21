@@ -185,7 +185,7 @@ namespace HandheldCompanion
 
             UpdateTime();
 
-            if (updateFile.version == build)
+            if (updateFile.version <= build)
             {
                 Updated?.Invoke(UpdateStatus.Updated, null);
                 return;
