@@ -92,7 +92,7 @@ namespace ControllerCommon
 
             string jsonString = process.StandardOutput.ReadToEnd();
 
-            if (jsonString == "")
+            if (jsonString == "" || jsonString == " [ ] \r\n\r\n")
                 return;
 
             try
