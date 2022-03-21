@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 
@@ -144,6 +145,7 @@ namespace ControllerCommon.Utils
 
         // Custom sensitivity
         // Interpolation function (linear), takes list of nodes coordinates and gamepad joystick position returns game input
+        private static int SensivityIdx = 2;
         public static float ApplyCustomSensitivity(float AngularValue, float MaxValue, List<ProfileVector> Nodes)
         {
             int NodeAmount = Profile.array_size;
@@ -166,8 +168,12 @@ namespace ControllerCommon.Utils
             // Calculate custom sensitivty
             else
             {
-                ProfileVector vector = Nodes.Where(n => JoystickPosAbs <= n.x).FirstOrDefault();
-                JoystickPosAdjusted = (float)vector.y * 2.0f;
+                var closests = Nodes.Select(n => new { n, distance = Math.Abs(n.x - JoystickPosAbs) }).OrderBy(p => p.distance).Take(SensivityIdx);
+                foreach (var item in closests)
+                    JoystickPosAdjusted += (float)(item.n.y / (1.0f + item.distance));
+
+                JoystickPosAdjusted /= SensivityIdx;
+                JoystickPosAdjusted *= 2.0f; // a 1.0f vector means a 100% increase
             }
 
             // Apply direction
