@@ -25,12 +25,12 @@ namespace ControllerCommon
     // todo : use localization and an array
     public enum Input
     {
-        [Description("Joystick camera")]
-        JoystickCamera = 0,
-        [Description("Joystick steering")]
-        JoystickSteering = 1,
         [Description("Player space")]
-        PlayerSpace = 2
+        PlayerSpace = 0,
+        [Description("Joystick camera")]
+        JoystickCamera = 1,
+        [Description("Joystick steering")]
+        JoystickSteering = 2
     }
 
     // todo : use localization and an array
