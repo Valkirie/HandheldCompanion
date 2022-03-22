@@ -32,6 +32,9 @@ namespace HandheldCompanion.Views.Pages
             this.pipeClient.SendMessage(new PipeNavigation((string)this.Tag));
 
             SliderSensivity.Value = profileCurrent.aiming_sensivity;
+            Toggle_FlickStick.IsOn = profileCurrent.flickstick_enabled;
+            tb_ProfileFlickDuration.Value = profileCurrent.flick_duration;
+            tb_ProfileStickSensitivity.Value = profileCurrent.stick_sensivity;
 
             // temp
             StackCurve.Children.Clear();
@@ -202,6 +205,37 @@ namespace HandheldCompanion.Views.Pages
         private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             MainWindow.scrollLock = false;
+        }
+
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            ((Expander)sender).BringIntoView();
+        }
+
+        private void Toggle_FlickStick_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (profileCurrent == null)
+                return;
+
+             Expander_FlickStick.IsExpanded = Toggle_FlickStick.IsOn;
+            
+             profileCurrent.flickstick_enabled = (bool)Toggle_FlickStick.IsOn;
+        }
+
+        private void SliderFlickDuration_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (profileCurrent is null)
+                return;
+
+            profileCurrent.flick_duration = (uint)tb_ProfileFlickDuration.Value;
+        }
+
+        private void SliderStickSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (profileCurrent is null)
+                return;
+
+            profileCurrent.stick_sensivity = (float) tb_ProfileStickSensitivity.Value;
         }
     }
 }

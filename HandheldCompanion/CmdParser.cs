@@ -67,6 +67,8 @@ namespace HandheldCompanion
             profile.inverthorizontal = option.inverthorizontal;
             profile.invertvertical = option.invertvertical;
 
+            profile.flickstick_enabled = option.flickstick;
+
             mainWindow.profileManager.UpdateOrCreateProfile(profile);
             mainWindow.profileManager.SerializeProfile(profile);
 
