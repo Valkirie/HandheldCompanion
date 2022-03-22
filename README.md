@@ -48,4 +48,11 @@ Run the `install.exe` as administrator and you'll be set!
 - ViGEmBus: [Nefarius](https://github.com/ViGEm/ViGEmBus)
 - ViGEmClient : [Nefarius](https://github.com/ViGEm/ViGEmClient)
 - SharpDX : [https://github.com/sharpdx/SharpDX](https://github.com/sharpdx/SharpDX)
-- Icon : [Nikita Golubev](https://www.flaticon.com/authors/nikita-golubev)
+
+## Licensing
+
+![image](https://user-images.githubusercontent.com/934757/159507299-ee55ec0b-8c0a-41b6-8dab-a1c72589565e.png)![image](https://user-images.githubusercontent.com/934757/159507349-caf88e3f-508b-4293-ae69-9918d6ba3d75.png)![image](https://user-images.githubusercontent.com/934757/159507749-c6ce02f6-b428-4592-96ca-95084ac5669b.png)![image](https://user-images.githubusercontent.com/934757/159507875-9ee29e9d-9528-4345-9503-0e2a13faeb4c.png)
+
+This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+
+We believe in the fair use of open-source solutions. We expect OEMs to come forward before distributing our solution with their devices. This way we can work together to make your device and our solution compatible in the best possible way. We reserve the right to take any action necessary to block partial or full access to the application to any entities that do not comply with the license or fair use principle.
