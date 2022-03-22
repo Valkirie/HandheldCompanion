@@ -184,6 +184,8 @@ namespace ControllerCommon.Utils
         public class FlickStick
         {
             // Flickstick
+            // Based on: http://gyrowiki.jibbsmart.com/blog:good-gyro-controls-part-2:the-flick-stick
+
             private float FlickProgress = 0.0f;
             private float FlickSize = 0.0f;
             private double UpdateTimePreviousMilliSeconds;
@@ -223,8 +225,6 @@ namespace ControllerCommon.Utils
                 StickFiltered = new Vector2((float)JoystickFilter.axis1Filter.Filter(Stick.X, rate),
                                             (float)JoystickFilter.axis2Filter.Filter(Stick.Y, rate));
 
-                //logger.LogInformation("Plot Vigemtarget_FlickStickInputXFiltered {0} {1}", xinputController.totalmilliseconds, StickFiltered.X);
-
                 // Compare last frame to this, determine if flick occured
                 if (Length >= FlickThreshold)
                 {
@@ -233,8 +233,6 @@ namespace ControllerCommon.Utils
                         // Start flick
                         FlickProgress = 0.0f; // Reset flick timer
                         FlickSize = (float)Math.Atan2(-Stick.X, Stick.Y); // Stick angle from up/forward
-
-                        //logger.LogInformation("Plot Vigemtarget_FlickSize {0} {1}", xinputController.totalmilliseconds, FlickSize);
 
                         // Determine flick pulse duration
                         // Partial flick time based on flick size
@@ -254,9 +252,7 @@ namespace ControllerCommon.Utils
                         float AngleChange = (float)WrapMinMax(StickAngle - LastStickAngle, -Math.PI, Math.PI);
 
                         Result += GetTieredSmoothedStickRotation(AngleChange, TurnSmoothThreshold / 2.0f, TurnSmoothThreshold)
-                                  * StickSensitivity * 2;
-
-                        //logger.LogInformation("Plot Vigemtarget_FlickStickAngleChange {0} {1}", xinputController.totalmilliseconds, AngleChange);
+                                  * StickSensitivity * 2; 
                     }
 
                 }
@@ -298,14 +294,6 @@ namespace ControllerCommon.Utils
                     FlickProgress += (float)DeltaTimeSeconds;
                 }
 
-                /*
-                logger.LogInformation("Plot Vigemtarget_FlickStickDeltaTime {0} {1}", xinputController.totalmilliseconds, DeltaTime);
-                logger.LogInformation("Plot Vigemtarget_FlickStickProgress {0} {1}", xinputController.totalmilliseconds, FlickProgress);
-                logger.LogInformation("Plot Vigemtarget_FlickTime {0} {1}", xinputController.totalmilliseconds, FlickTime);
-                logger.LogInformation("Plot Vigemtarget_FlickTimePartial {0} {1}", xinputController.totalmilliseconds, FlickTimePartial);
-                logger.LogInformation("Plot Vigemtarget_FlickStickResult {0} {1}", xinputController.totalmilliseconds, Result);
-                */
-
                 LastStick = Stick;
                 LastStickFiltered = StickFiltered;
 
@@ -329,26 +317,21 @@ namespace ControllerCommon.Utils
             private float GetSmoothedStickRotation(float input)
             {
                 CurrentInputIndex = (CurrentInputIndex + 1) % InputBuffer.Length;
-                // logger.LogInformation("Plot Vigemtarget_CurrentInputIndex {0} {1}", xinputController.totalmilliseconds, CurrentInputIndex);
-
                 InputBuffer[CurrentInputIndex] = input;
-
-                // logger.LogInformation("InputBuffer GetSmoothed {0}", InputBuffer);
-
                 float Average = 0.0f;
+
                 foreach (float Sample in InputBuffer)
                 {
                     Average += Sample;
                 }
+
                 Average /= InputBuffer.Length;
 
                 return Average;
             }
 
-            private float GetTieredSmoothedStickRotation(float Input,
-               float Threshold1, float Threshold2)
+            private float GetTieredSmoothedStickRotation(float Input, float Threshold1, float Threshold2)
             {
-
                 float InputMagnitude = Math.Abs(Input);
 
                 float DirectWeight = (InputMagnitude - Threshold1) /
