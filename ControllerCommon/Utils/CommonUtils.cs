@@ -100,8 +100,8 @@ namespace ControllerCommon.Utils
 
         public class OneEuroFilterPair
         {
-            public const double DEFAULT_WHEEL_CUTOFF = 0.1;
-            public const double DEFAULT_WHEEL_BETA = 0.1;
+            public const double DEFAULT_WHEEL_CUTOFF = 0.005;
+            public const double DEFAULT_WHEEL_BETA = 0.004;
 
             public OneEuroFilter axis1Filter = new(minCutoff: DEFAULT_WHEEL_CUTOFF, beta: DEFAULT_WHEEL_BETA);
             public OneEuroFilter axis2Filter = new(minCutoff: DEFAULT_WHEEL_CUTOFF, beta: DEFAULT_WHEEL_BETA);
