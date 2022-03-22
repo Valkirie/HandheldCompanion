@@ -48,4 +48,6 @@ Run the `install.exe` as administrator and you'll be set!
 - ViGEmBus: [Nefarius](https://github.com/ViGEm/ViGEmBus)
 - ViGEmClient : [Nefarius](https://github.com/ViGEm/ViGEmClient)
 - SharpDX : [https://github.com/sharpdx/SharpDX](https://github.com/sharpdx/SharpDX)
-- Icon : [Nikita Golubev](https://www.flaticon.com/authors/nikita-golubev)
+
+## Licensing
+This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
