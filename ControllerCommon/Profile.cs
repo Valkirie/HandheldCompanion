@@ -105,7 +105,7 @@ namespace ControllerCommon
 
         // flickstick
         public bool flickstick_enabled { get; set; } = false;
-        public uint flick_duration { get; set; } = 100;
+        public float flick_duration { get; set; } = 0.1f;
         public float stick_sensivity { get; set; } = 3.0f;
 
         public GamepadButtonFlags umc_trigger { get; set; } = 0;

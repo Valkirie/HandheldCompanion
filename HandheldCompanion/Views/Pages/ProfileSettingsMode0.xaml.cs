@@ -33,7 +33,7 @@ namespace HandheldCompanion.Views.Pages
 
             SliderSensivity.Value = profileCurrent.aiming_sensivity;
             Toggle_FlickStick.IsOn = profileCurrent.flickstick_enabled;
-            tb_ProfileFlickDuration.Value = profileCurrent.flick_duration;
+            tb_ProfileFlickDuration.Value = profileCurrent.flick_duration * 1000;
             tb_ProfileStickSensitivity.Value = profileCurrent.stick_sensivity;
 
             // temp
@@ -227,7 +227,7 @@ namespace HandheldCompanion.Views.Pages
             if (profileCurrent is null)
                 return;
 
-            profileCurrent.flick_duration = (uint)tb_ProfileFlickDuration.Value;
+            profileCurrent.flick_duration = (float)tb_ProfileFlickDuration.Value / 1000;
         }
 
         private void SliderStickSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
