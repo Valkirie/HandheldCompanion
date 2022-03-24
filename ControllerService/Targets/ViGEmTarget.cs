@@ -36,7 +36,7 @@ namespace ControllerService.Targets
         public Controller physicalController;
         public XInputController xinputController;
         public SensorFusion sensorFusion;
-        public InputUtils.FlickStick flickStick;
+        public FlickStick flickStick;
 
         public HIDmode HID = HIDmode.None;
 
@@ -69,7 +69,7 @@ namespace ControllerService.Targets
 
             // initialize sensorfusion
             sensorFusion = new SensorFusion(logger);
-            flickStick = new InputUtils.FlickStick();
+            flickStick = new FlickStick(logger);
 
             // initialize secret state
             state_s = new();
