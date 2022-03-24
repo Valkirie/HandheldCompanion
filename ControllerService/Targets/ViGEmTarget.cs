@@ -36,6 +36,7 @@ namespace ControllerService.Targets
         public Controller physicalController;
         public XInputController xinputController;
         public SensorFusion sensorFusion;
+        public FlickStick flickStick;
 
         public HIDmode HID = HIDmode.None;
 
@@ -68,6 +69,7 @@ namespace ControllerService.Targets
 
             // initialize sensorfusion
             sensorFusion = new SensorFusion(logger);
+            flickStick = new FlickStick(logger);
 
             // initialize secret state
             state_s = new();
@@ -162,9 +164,30 @@ namespace ControllerService.Targets
                                 {
                                     default:
                                     case Output.RightStick:
-                                        RightThumb.X = (short)(Math.Clamp(RightThumb.X + GamepadThumb.X, short.MinValue, short.MaxValue));
-                                        RightThumb.Y = (short)(Math.Clamp(RightThumb.Y + GamepadThumb.Y, short.MinValue, short.MaxValue));
+
+                                        if (xinputController.profile.flickstick_enabled)
+                                        {
+                                            // Flick Stick:
+                                            // - Detect flicking
+                                            // - Filter stick input
+                                            // - Determine and compute either flick or stick output
+                                            float FlickStickX = flickStick.Handle(RightThumb,
+                                                                                  xinputController.profile.flick_duration,
+                                                                                  xinputController.profile.stick_sensivity,
+                                                                                  xinputController.totalmilliseconds);
+
+                                            // X input combines motion controls plus flick stick result
+                                            // Y input only from motion controls
+                                            RightThumb.X = (short)(Math.Clamp(GamepadThumb.X - FlickStickX, short.MinValue, short.MaxValue));
+                                            RightThumb.Y = (short)(Math.Clamp(GamepadThumb.Y, short.MinValue, short.MaxValue));
+                                        }
+                                        else
+                                        {
+                                            RightThumb.X = (short)(Math.Clamp(RightThumb.X + GamepadThumb.X, short.MinValue, short.MaxValue));
+                                            RightThumb.Y = (short)(Math.Clamp(RightThumb.Y + GamepadThumb.Y, short.MinValue, short.MaxValue));
+                                        }
                                         break;
+
                                     case Output.LeftStick:
                                         LeftThumb.X = (short)(Math.Clamp(LeftThumb.X + GamepadThumb.X, short.MinValue, short.MaxValue));
                                         LeftThumb.Y = (short)(Math.Clamp(LeftThumb.Y + GamepadThumb.Y, short.MinValue, short.MaxValue));

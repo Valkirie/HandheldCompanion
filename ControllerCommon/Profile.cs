@@ -103,6 +103,11 @@ namespace ControllerCommon
         public bool mousehook_enabled { get; set; } = true;
         public bool mousehook_exclusive { get; set; } = false;
 
+        // flickstick
+        public bool flickstick_enabled { get; set; } = false;
+        public float flick_duration { get; set; } = 0.1f;
+        public float stick_sensivity { get; set; } = 3.0f;
+
         public GamepadButtonFlags umc_trigger { get; set; } = 0;
 
         [JsonIgnore] public ProfileErrorCode error;
