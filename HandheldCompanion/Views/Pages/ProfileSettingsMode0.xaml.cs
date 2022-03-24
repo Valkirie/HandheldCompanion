@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -77,10 +78,21 @@ namespace HandheldCompanion.Views.Pages
                     {
                         case SensorType.Girometer:
                             Highlight_Thumb(Math.Max(Math.Max(Math.Abs(sensor.z), Math.Abs(sensor.x)), Math.Abs(sensor.y)));
+                            Rotate_Cube(sensor.x, sensor.y, sensor.z);
                             break;
                     }
                     break;
             }
+        }
+
+        private void Rotate_Cube(float x, float y, float z)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                var ax3d = new AxisAngleRotation3D(new Vector3D(x, y, z), 1);
+                RotateTransform3D myRotateTransform = new RotateTransform3D(ax3d);
+                MyModel.Transform = myRotateTransform;
+            });
         }
 
         private void SliderSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

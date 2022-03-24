@@ -124,7 +124,6 @@
                 </Expander>
             </Border>
 
-
             <!-- Chart -->
             <ui:SimpleStackPanel Spacing="6">
                 <Label Content="Custom response curve" FontWeight="SemiBold"></Label>
@@ -191,6 +190,50 @@
                                 </Label.LayoutTransform>
                             </Label>
                         </ui:SimpleStackPanel>
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
+
+            <!-- Viewport3D -->
+            <ui:SimpleStackPanel Spacing="6">
+                <Label Content="Viewport3D" FontWeight="SemiBold"></Label>
+                <Border                      
+                        Padding="0,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid Height="300">
+                        <Viewport3D Name="viewport3D1">
+                            <Viewport3D.Camera>
+                                <PerspectiveCamera x:Name="camMain" Position="6 5 4" LookDirection="-6 -5 -4">
+                                </PerspectiveCamera>
+                            </Viewport3D.Camera>
+                            <ModelVisual3D>
+                                <ModelVisual3D.Content>
+                                    <DirectionalLight x:Name="dirLightMain" Direction="-1,-1,-1">
+                                    </DirectionalLight>
+                                </ModelVisual3D.Content>
+                            </ModelVisual3D>
+                            <ModelVisual3D x:Name="MyModel">
+                                <ModelVisual3D.Content>
+                                    <GeometryModel3D>
+                                        <GeometryModel3D.Geometry>
+                                            <MeshGeometry3D x:Name="meshMain"
+		Positions="0 0 0  1 0 0  0 1 0  1 1 0  0 0 1  1 0 1  0 1 1  1 1 1"
+		TriangleIndices="2 3 1  2 1 0  7 1 3  7 5 1  6 5 7  6 4 5  6 2 0  2 0 4  2 7 3  2 6 7  0 1 5  0 5 4">
+                                            </MeshGeometry3D>
+                                        </GeometryModel3D.Geometry>
+                                        <GeometryModel3D.Material>
+                                            <DiffuseMaterial x:Name="matDiffuseMain">
+                                                <DiffuseMaterial.Brush>
+                                                    <SolidColorBrush Color="Red"/>
+                                                </DiffuseMaterial.Brush>
+                                            </DiffuseMaterial>
+                                        </GeometryModel3D.Material>
+                                    </GeometryModel3D>
+                                </ModelVisual3D.Content>
+                            </ModelVisual3D>
+                        </Viewport3D>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
