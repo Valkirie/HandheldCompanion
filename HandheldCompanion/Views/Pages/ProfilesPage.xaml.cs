@@ -321,6 +321,7 @@ namespace HandheldCompanion.Views.Pages
                 b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
                 tB_ProfileName.IsEnabled = !profileCurrent.IsDefault;
                 cB_ExclusiveHook.IsEnabled = !profileCurrent.IsDefault;
+                cB_Overlay.IsEnabled = !profileCurrent.IsDefault;
 
                 GlobalSettings.IsEnabled = GlobalDetails.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
                 b_ApplyProfile.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
@@ -332,6 +333,7 @@ namespace HandheldCompanion.Views.Pages
 
                 Toggle_EnableProfile.IsEnabled = !profileCurrent.IsDefault;
                 Toggle_EnableProfile.IsOn = profileCurrent.enabled;
+                cB_Overlay.IsChecked = profileCurrent.overlay;
 
                 Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
                 tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
@@ -417,6 +419,7 @@ namespace HandheldCompanion.Views.Pages
             profileCurrent.name = tB_ProfileName.Text;
             profileCurrent.fullpath = tB_ProfilePath.Text;
             profileCurrent.enabled = (bool)Toggle_EnableProfile.IsOn;
+            profileCurrent.overlay = (bool)cB_Overlay.IsChecked;
 
             profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
             profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
@@ -452,6 +455,11 @@ namespace HandheldCompanion.Views.Pages
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)
         {
             Expander_UMC.IsEnabled = (bool)!cB_Whitelist.IsChecked;
+        }
+
+        private void cB_Overlay_Checked(object sender, RoutedEventArgs e)
+        {
+            // do something
         }
 
         private void cB_Wrapper_Checked(object sender, RoutedEventArgs e)

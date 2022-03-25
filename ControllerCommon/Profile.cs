@@ -72,6 +72,7 @@ namespace ControllerCommon
         public string path { get; set; }
         public string executable { get; set; }
         public bool enabled { get; set; } = true;
+        public bool overlay { get; set; } = false;
 
         public bool whitelisted { get; set; } = false;              // if true, can see through the HidHide cloak
         public bool use_wrapper { get; set; } = false;              // if true, deploy xinput1_3.dll
@@ -110,6 +111,7 @@ namespace ControllerCommon
 
         public GamepadButtonFlags umc_trigger { get; set; } = 0;
 
+        // hidden settings
         [JsonIgnore] public ProfileErrorCode error;
         [JsonIgnore] public string fullpath { get; set; }
         [JsonIgnore] public string json { get; set; }

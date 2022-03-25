@@ -1,6 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
 using HandheldCompanion.Views.Pages;
+using HandheldCompanion.Views.Windows;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
 using SharpDX.XInput;
@@ -45,6 +46,9 @@ namespace HandheldCompanion.Views
         public SettingsPage settingsPage;
         public AboutPage aboutPage;
 
+        // overlay vars
+        private Overlay overlay;
+
         // touchscroll vars
         Point scrollPoint = new Point();
         double scrollOffset = 1;
@@ -61,7 +65,7 @@ namespace HandheldCompanion.Views
         public MouseHook mouseHook;
 
         // manager(s) vars
-        public static ToastManager toastManager;
+        public ToastManager toastManager;
         public ProcessManager processManager;
         public ServiceManager serviceManager;
         public ProfileManager profileManager;
@@ -156,6 +160,9 @@ namespace HandheldCompanion.Views
 
             // initialize toast manager
             toastManager = new ToastManager("ControllerService");
+
+            // initialize overlay
+            overlay = new Overlay(this, logger);
 
             // initialize process manager
             processManager = new ProcessManager();
@@ -256,27 +263,38 @@ namespace HandheldCompanion.Views
             try
             {
                 Profile currentProfile = profileManager.GetProfileFromExec(exec);
-                if (currentProfile != null && currentProfile.enabled)
+
+                if (currentProfile == null)
+                    currentProfile = profileManager.GetDefault();
+
+                if (!currentProfile.enabled)
+                    return;
+
+                currentProfile.fullpath = path;
+                currentProfile.IsRunning = true;
+
+                // update profile and inform settings page
+                profileManager.UpdateOrCreateProfile(currentProfile);
+
+                // inform service & mouseHook
+                pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
+                mouseHook.UpdateProfile(currentProfile);
+
+                // display overlay
+                this.Dispatcher.Invoke(() =>
                 {
-                    currentProfile.fullpath = path;
-                    currentProfile.IsRunning = true;
+                    switch (currentProfile.overlay)
+                    {
+                        case true:
+                            overlay.HookInto(processid);
+                            break;
+                        case false:
+                            overlay.Hide();
+                            break;
+                    }
+                });
 
-                    // update profile and inform settings page
-                    profileManager.UpdateOrCreateProfile(currentProfile);
-
-                    // inform service & mouseHook
-                    pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
-                    mouseHook.UpdateProfile(currentProfile);
-
-                    logger.LogInformation("Profile {0} applied", currentProfile.name);
-                }
-                else
-                {
-                    // inform service & mouseHook
-                    Profile defaultProfile = profileManager.GetDefault();
-                    pipeClient.SendMessage(new PipeClientProfile { profile = defaultProfile });
-                    mouseHook.UpdateProfile(defaultProfile);
-                }
+                logger.LogDebug("Profile {0} applied", currentProfile.name);
             }
             catch (Exception) { }
         }
@@ -289,7 +307,9 @@ namespace HandheldCompanion.Views
         private void OnClientConnected(object sender)
         {
             // start listening to mouse inputs
+#if !DEBUG
             mouseHook.Start();
+#endif
 
             if (IsElevated)
             {

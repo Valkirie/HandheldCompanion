@@ -79,9 +79,14 @@ namespace HandheldCompanion
                 uint processId;
                 string exec = string.Empty;
                 string path = string.Empty;
+                string name = string.Empty;
 
                 ProcessDiagnosticInfo process = new ProcessUtils.FindHostedProcess().Process;
                 if (process == null)
+                    return;
+
+                name = ProcessUtils.GetActiveWindowTitle();
+                if (name == "Overlay")
                     return;
 
                 processId = process.ProcessId;
