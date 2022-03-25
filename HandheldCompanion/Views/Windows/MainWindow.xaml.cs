@@ -287,6 +287,7 @@ namespace HandheldCompanion.Views
                     {
                         case true:
                             overlay.HookInto(processid);
+                            overlay.Show();
                             break;
                         case false:
                             overlay.Hide();

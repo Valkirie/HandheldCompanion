@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HandheldCompanion.Views.Windows"
         mc:Ignorable="d"
-        Title="Overlay" Height="300" Width="300" Topmost="True" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Left="0" Top="0" ShowInTaskbar="False">
-    <Grid Height="300">
+        Title="Overlay" Topmost="True" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Left="0" Top="0" ShowInTaskbar="False">
+    
+    <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="300" Width="300">
         <Viewport3D Name="viewport3D1">
             <Viewport3D.Camera>
-                <PerspectiveCamera x:Name="camMain" Position="6 5 4" LookDirection="-6 -5 -4">
+                <PerspectiveCamera x:Name="camMain" Position="2 2 2" LookDirection="-1 -1 -1">
                 </PerspectiveCamera>
             </Viewport3D.Camera>
             <ModelVisual3D>

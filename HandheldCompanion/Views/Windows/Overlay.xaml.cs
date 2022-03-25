@@ -96,7 +96,8 @@ namespace HandheldCompanion.Views.Windows
                 var rect = GetWindowRectangle(hWnd);
                 this.Top = rect.Top;
                 this.Left = rect.Left;
-                Debug.WriteLine($"Top:{Top}, Left:{Left}");
+                this.Width = rect.Right - rect.Left;
+                this.Height = rect.Bottom - rect.Top;
             }
         }
 
@@ -121,13 +122,11 @@ namespace HandheldCompanion.Views.Windows
                             WinEventDelegate, (uint)targetProc.Id, targetThreadId);
 
                         var rect = GetWindowRectangle(hWnd);
-                        // Of course, set the Form.StartPosition to Manual
+
                         this.Top = rect.Top;
                         this.Left = rect.Left;
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            this.Show();
-                        });
+                        this.Width = rect.Right - rect.Left;
+                        this.Height = rect.Bottom - rect.Top;
                     }
                 }
             }
