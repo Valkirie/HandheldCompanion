@@ -135,14 +135,18 @@ namespace ControllerService
                 // update MadgewickAHRS (todo: call only when needed ?)
                 if (profile.overlay)
                 {
-                    AngularVelocityRad.X = InputUtils.deg2rad(AngularUniversal.X);
-                    AngularVelocityRad.Y = InputUtils.deg2rad(AngularUniversal.Y);
-                    AngularVelocityRad.Z = InputUtils.deg2rad(AngularUniversal.Z);
+                    AngularVelocityRad.X = -InputUtils.deg2rad(AngularVelocity.X);
+                    AngularVelocityRad.Y = -InputUtils.deg2rad(AngularVelocity.Y);
+                    AngularVelocityRad.Z = -InputUtils.deg2rad(AngularVelocity.Z);
                     madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration.X, -Acceleration.Y, -Acceleration.Z, DeltaMilliseconds);
+                    //logger.LogInformation("Delta time milli sec {0}", DeltaMilliseconds);
 
                     // Share pose(s)
                     Quaternion PoseQuat = madgwickAHRS.GetQuaternion();
                     Vector3 PoseEuler = madgwickAHRS.ToEulerAngles(PoseQuat);
+
+                    //logger.LogInformation("madgwickAHRS.Vector3 {2} {1} {0}", InputUtils.rad2deg(PoseEuler.X), InputUtils.rad2deg(PoseEuler.Y), InputUtils.rad2deg(PoseEuler.Z));
+                    //logger.LogInformation("madgwickAHRS.Quaternion {0}", madgwickAHRS.Quaternion); 
 
                     Task.Run(() =>
                     {

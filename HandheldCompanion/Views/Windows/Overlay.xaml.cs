@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static HandheldCompanion.OverlayHook;
+using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Views.Windows
 {
@@ -59,6 +60,22 @@ namespace HandheldCompanion.Views.Windows
                     {
                         case SensorType.Quaternion:
                             // do something
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                var ax3d = new AxisAngleRotation3D(new Vector3D(sensor.x, sensor.y, sensor.z), 1);
+                                Quaternion endQuaternion = new Quaternion(sensor.q_x, sensor.q_y, sensor.q_z, sensor.q_w);
+                                var ax3dalt = new QuaternionRotation3D(endQuaternion);
+
+                                
+                                RotateTransform3D myRotateTransform = new RotateTransform3D(ax3dalt);
+                                myRotateTransform.CenterX = 0.5;
+                                myRotateTransform.CenterY = 0.5;
+                                myRotateTransform.CenterZ = 0.5;
+
+                                MyModel.Transform = myRotateTransform; 
+                            });
+
+
                             break;
                     }
                     break;
@@ -107,7 +124,10 @@ namespace HandheldCompanion.Views.Windows
                         // Of course, set the Form.StartPosition to Manual
                         this.Top = rect.Top;
                         this.Left = rect.Left;
-                        this.Show();
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            this.Show();
+                        });
                     }
                 }
             }
