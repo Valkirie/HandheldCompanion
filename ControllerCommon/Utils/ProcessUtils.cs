@@ -29,23 +29,20 @@ namespace ControllerCommon.Utils
         public static extern bool GetBinaryType(string lpApplicationName, out BinaryType lpBinaryType);
         [DllImport("Kernel32.dll")]
         static extern uint QueryFullProcessImageName(IntPtr hProcess, uint flags, StringBuilder text, out uint size);
+        [DllImport("user32.dll")]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
+        public delegate bool WindowEnumProc(IntPtr hwnd, IntPtr lparam);
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool EnumChildWindows(IntPtr hwnd, WindowEnumProc callback, IntPtr lParam);
         #endregion
 
         public class WinAPIFunctions
         {
-            //Used to get Handle for Foreground Window
-            [DllImport("user32.dll", CharSet = CharSet.Auto)]
-            private static extern IntPtr GetForegroundWindow();
-
-            //Used to get ID of any Window
-            [DllImport("user32.dll", CharSet = CharSet.Auto)]
-            private static extern int GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
-            public delegate bool WindowEnumProc(IntPtr hwnd, IntPtr lparam);
-
-            [DllImport("user32.dll")]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool EnumChildWindows(IntPtr hwnd, WindowEnumProc callback, IntPtr lParam);
-
             public static int GetWindowProcessId(IntPtr hwnd)
             {
                 int pid;
@@ -95,7 +92,7 @@ namespace ControllerCommon.Utils
 
                     // Get real process
                     if (Process.ExecutableFileName == "ApplicationFrameHost.exe")
-                        WinAPIFunctions.EnumChildWindows(foregroundProcessID, ChildWindowCallback, IntPtr.Zero);
+                        EnumChildWindows(foregroundProcessID, ChildWindowCallback, IntPtr.Zero);
                 }
                 catch (Exception)
                 {
@@ -112,6 +109,19 @@ namespace ControllerCommon.Utils
 
                 return true;
             }
+        }
+
+        public static string GetActiveWindowTitle()
+        {
+            const int nChars = 256;
+            StringBuilder Buff = new StringBuilder(nChars);
+            IntPtr handle = GetForegroundWindow();
+
+            if (GetWindowText(handle, Buff, nChars) > 0)
+            {
+                return Buff.ToString();
+            }
+            return null;
         }
 
         public static List<USBDeviceInfo> GetUSBDevices()

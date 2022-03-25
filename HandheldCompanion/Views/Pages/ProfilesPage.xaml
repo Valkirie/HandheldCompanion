@@ -200,6 +200,47 @@
                                         <!-- Separator -->
                                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
+                                        <CheckBox Name="cB_Overlay" Content="Toggle controller HUB" Checked="cB_Overlay_Checked" Unchecked="cB_Overlay_Checked"></CheckBox>
+                                    </ui:SimpleStackPanel>
+                                </Grid>
+                            </Expander.Content>
+                        </Expander>
+                    </Border>
+
+                    <!-- Controller settings -->
+                    <Border
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                        Padding="12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                        <Expander FlowDirection="RightToLeft" Expanded="Expander_Expanded">
+                            <Expander.Header>
+                                <DockPanel FlowDirection="LeftToRight"
+                                       Margin="-12,0,0,0"
+                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
+                                    <!-- Change the look inside header here -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50"></ColumnDefinition>
+                                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+
+                                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="Controller settings" FontSize="14"/>
+                                            <TextBlock Text="Change the controller settings" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                        </ui:SimpleStackPanel>
+                                    </Grid>
+                                </DockPanel>
+                            </Expander.Header>
+
+                            <Expander.Content>
+                                <Grid FlowDirection="LeftToRight" Margin="0,12,0,0">
+                                    <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
+                                        <!-- Separator -->
+                                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
