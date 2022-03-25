@@ -74,6 +74,11 @@ namespace ControllerCommon.Utils
             return (float)((Math.PI / 180) * degrees);
         }
 
+        public static float rad2deg(float rad)
+        {
+            return rad * (180 / (float)Math.PI);
+        }
+
         public static byte NormalizeXboxInput(float input)
         {
             input = Math.Clamp(input, short.MinValue, short.MaxValue);
