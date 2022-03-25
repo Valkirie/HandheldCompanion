@@ -321,6 +321,7 @@ namespace HandheldCompanion.Views.Pages
                 b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
                 tB_ProfileName.IsEnabled = !profileCurrent.IsDefault;
                 cB_ExclusiveHook.IsEnabled = !profileCurrent.IsDefault;
+                cB_Overlay.IsEnabled = !profileCurrent.IsDefault;
 
                 GlobalSettings.IsEnabled = GlobalDetails.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
                 b_ApplyProfile.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
