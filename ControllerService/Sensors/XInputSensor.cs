@@ -8,6 +8,7 @@ namespace ControllerService.Sensors
     {
         protected Vector3 reading = new();
         protected Vector3 reading_fixed = new();
+        protected Vector3 reading_rad = new();
 
         protected XInputController controller;
 
@@ -39,6 +40,11 @@ namespace ControllerService.Sensors
         protected virtual Vector3 GetCurrentReading(bool center = false)
         {
             return this.reading;
+        }
+
+        protected virtual Vector3 GetCurrentReadingRad()
+        {
+            return this.reading_rad;
         }
 
         public Vector3 GetCurrentReadingRaw()

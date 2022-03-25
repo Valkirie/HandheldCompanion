@@ -35,9 +35,6 @@ namespace ControllerService.Targets
 
         public Controller physicalController;
         public XInputController xinputController;
-        public SensorFusion sensorFusion;
-        public MadgwickAHRS madgwickAHRS;
-        double UpdateTimePreviousMilliSeconds;
         public FlickStick flickStick;
 
         public HIDmode HID = HIDmode.None;
@@ -69,10 +66,8 @@ namespace ControllerService.Targets
             this.logger = logger;
             this.xinputController = xinput;
 
-            // initialize sensorfusion
-            sensorFusion = new SensorFusion(logger);
+            // initialize flick stick
             flickStick = new FlickStick(logger);
-            madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
 
             // initialize secret state
             state_s = new();
@@ -129,27 +124,6 @@ namespace ControllerService.Targets
             LeftThumb = new Vector2(Gamepad.LeftThumbX, Gamepad.LeftThumbY);
             RightThumb = new Vector2(Gamepad.RightThumbX, Gamepad.RightThumbY);
 
-            // update sensorFusion (todo: call only when needed ?)
-            sensorFusion.UpdateReport(xinputController.totalmilliseconds, xinputController.AngularVelocity, xinputController.Acceleration);
-
-            // MadgewickAHRS
-
-            // Prepare input
-            Vector3 Gravity = -1 * xinputController.Acceleration;
-            Vector3 AngularVelocityRad = new Vector3(InputUtils.deg2rad(xinputController.AngularUniversal.X), InputUtils.deg2rad(xinputController.AngularUniversal.Y), InputUtils.deg2rad(xinputController.AngularUniversal.Z));     
-            double DeltaSeconds = (double)(xinputController.totalmilliseconds - UpdateTimePreviousMilliSeconds) / 1000L;
-            UpdateTimePreviousMilliSeconds = xinputController.totalmilliseconds;
-
-            // Update state
-            madgwickAHRS.SamplePeriod = (float)DeltaSeconds;
-            madgwickAHRS.Update(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, Gravity.X, Gravity.Y, Gravity.Z);
-
-            // Get pose
-            Quaternion PoseQuat = new Quaternion(madgwickAHRS.Quaternion[0], madgwickAHRS.Quaternion[1], madgwickAHRS.Quaternion[2], madgwickAHRS.Quaternion[3]);
-            Vector3 PoseEuler = madgwickAHRS.ToEulerAngles(PoseQuat);
-            //logger.LogInformation("madgwickAHRS.Vector3 {2} {1} {0}", InputUtils.rad2deg(Pose3D.X), InputUtils.rad2deg(Pose3D.Y), InputUtils.rad2deg(Pose3D.Z));
-            //logger.LogInformation("madgwickAHRS.Quaternion {0}", madgwickAHRS.Quaternion);
-
             if (xinputController.profile.umc_enabled)
             {
                 if ((xinputController.profile.umc_trigger & buttons) != 0)
@@ -164,7 +138,7 @@ namespace ControllerService.Targets
                                 switch (xinputController.profile.umc_input)
                                 {
                                     case Input.PlayerSpace:
-                                        Angular = new Vector2((float)sensorFusion.CameraYawDelta, (float)sensorFusion.CameraPitchDelta);
+                                        Angular = new Vector2((float)xinputController.sensorFusion.CameraYawDelta, (float)xinputController.sensorFusion.CameraPitchDelta);
                                         break;
 
                                     default:
@@ -196,7 +170,7 @@ namespace ControllerService.Targets
                                             float FlickStickX = flickStick.Handle(RightThumb,
                                                                                   xinputController.profile.flick_duration,
                                                                                   xinputController.profile.stick_sensivity,
-                                                                                  xinputController.totalmilliseconds);
+                                                                                  xinputController.TotalMilliseconds);
 
                                             // X input combines motion controls plus flick stick result
                                             // Y input only from motion controls
@@ -221,7 +195,7 @@ namespace ControllerService.Targets
                         case Input.JoystickSteering:
                             {
                                 float GamepadThumbX = InputUtils.Steering(
-                                    sensorFusion.DeviceAngle.Y,
+                                    xinputController.sensorFusion.DeviceAngle.Y,
                                     xinputController.profile.steering_max_angle,
                                     xinputController.profile.steering_power,
                                     xinputController.profile.steering_deadzone);

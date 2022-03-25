@@ -210,7 +210,7 @@ namespace ControllerService.Targets
 
             outDS4Report.bBatteryLvlSpecial = 11;
 
-            outDS4Report.wTimestamp = (ushort)(xinputController.microseconds);
+            outDS4Report.wTimestamp = (ushort)(xinputController.CurrentMicroseconds);
 
             DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
             virtualController.SubmitRawReport(rawOutReportEx);

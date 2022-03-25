@@ -49,6 +49,10 @@ namespace ControllerService.Sensors
             this.reading.Y = this.reading_fixed.Y = (float)reading.AngularVelocityZ;
             this.reading.Z = this.reading_fixed.Z = (float)reading.AngularVelocityY;
 
+            this.reading_rad.X = InputUtils.deg2rad(this.reading.X);
+            this.reading_rad.Y = InputUtils.deg2rad(this.reading.Y);
+            this.reading_rad.Z = InputUtils.deg2rad(this.reading.Z);
+
             // reset reading after inactivity
             updateTimer.Stop();
             updateTimer.Start();

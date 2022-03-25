@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
@@ -26,6 +27,7 @@ namespace ControllerService
         public Vector3 Angle;
         public Vector3 AngularUniversal;
         public Vector3 AngularVelocity;
+        public Vector3 AngularVelocityRad;
 
         public MultimediaTimer UpdateTimer;
         public float WidhtHeightRatio = 2.5f;
@@ -38,9 +40,15 @@ namespace ControllerService
         public XInputAccelerometer Accelerometer;
         public XInputInclinometer Inclinometer;
 
+        public SensorFusion sensorFusion;
+        public MadgwickAHRS madgwickAHRS;
+
         protected readonly Stopwatch stopwatch;
-        public long microseconds;
-        public double totalmilliseconds;
+        public long CurrentMicroseconds;
+
+        public double TotalMilliseconds;
+        public double UpdateTimePreviousMilliseconds;
+        public double DeltaMilliseconds;
 
         public DS4Touch Touch;
 
@@ -66,8 +74,13 @@ namespace ControllerService
 
             // initialize vectors
             AngularVelocity = new();
+            AngularVelocityRad = new();
             Acceleration = new();
             Angle = new();
+
+            // initialize sensorfusion and madgwick
+            sensorFusion = new SensorFusion(logger);
+            madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
 
             // initialize profile(s)
             profile = new();
@@ -96,8 +109,10 @@ namespace ControllerService
         private void UpdateTimer_Ticked(object sender, EventArgs e)
         {
             // update timestamp
-            microseconds = stopwatch.ElapsedMilliseconds * 1000L;
-            totalmilliseconds = stopwatch.Elapsed.TotalMilliseconds;
+            CurrentMicroseconds = stopwatch.ElapsedMilliseconds * 1000L;
+            TotalMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
+            DeltaMilliseconds = (TotalMilliseconds - UpdateTimePreviousMilliseconds) / 1000L;
+            UpdateTimePreviousMilliseconds = TotalMilliseconds;
 
             // get current gamepad state
             State state = physicalController.GetState();
@@ -110,6 +125,24 @@ namespace ControllerService
                 AngularUniversal = Gyrometer.GetCurrentReading(true);
                 Acceleration = Accelerometer.GetCurrentReading();
                 Angle = Inclinometer.GetCurrentReading();
+
+                // update sensorFusion (todo: call only when needed ?)
+                sensorFusion.UpdateReport(TotalMilliseconds, DeltaMilliseconds, AngularVelocity, Acceleration);
+
+                // update MadgewickAHRS (todo: call only when needed ?)
+                AngularVelocityRad.X = InputUtils.deg2rad(AngularUniversal.X);
+                AngularVelocityRad.Y = InputUtils.deg2rad(AngularUniversal.Y);
+                AngularVelocityRad.Z = InputUtils.deg2rad(AngularUniversal.Z);
+                madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration.X, -Acceleration.Y, -Acceleration.Z, DeltaMilliseconds);
+
+                // Share pose(s)
+                Quaternion PoseQuat = madgwickAHRS.GetQuaternion();
+                Vector3 PoseEuler = madgwickAHRS.ToEulerAngles(PoseQuat);
+
+                Task.Run(() =>
+                {
+                    // send values to UI if overlay is enabled
+                });
 
                 // async update client(s)
                 Task.Run(() =>
