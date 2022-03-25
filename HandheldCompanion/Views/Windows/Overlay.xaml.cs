@@ -18,6 +18,8 @@ using System.Windows.Shapes;
 using static HandheldCompanion.OverlayHook;
 using System.Windows.Media.Media3D;
 using HelixToolkit.Wpf;
+using System.Windows.Interop;
+using TouchEventSample;
 
 namespace HandheldCompanion.Views.Windows
 {
@@ -46,9 +48,24 @@ namespace HandheldCompanion.Views.Windows
 
         public Model3D Model { get; set; }
 
+        private TouchSourceWinTouch touchsource;
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        static extern bool SetCursorPos(int x, int y);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern void mouse_event(long dwFlags, long dx, long dy, long cButtons, long dwExtraInfo);
+
+        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
+        private const int MOUSEEVENTF_LEFTUP = 0x04;
+        private const int MOUSEEVENTF_MOVE = 0x0001;
+
         public Overlay()
         {
             InitializeComponent();
+
+            touchsource = new TouchSourceWinTouch(this);
+            touchsource.Touch += Touchsource_Touch;
 
             ModelImporter importer = new ModelImporter();
 
@@ -65,7 +82,30 @@ namespace HandheldCompanion.Views.Windows
             HandHeld.Children.Add(ShoulderButtonLeft);
             HandHeld.Children.Add(ShoulderButtonRight);
 
-            this.Model = HandHeld;
+            ModelVisual3D.Content = HandHeld;
+        }
+
+        private void Touchsource_Touch(TouchSourceWinTouch.TouchArgs args)
+        {
+            int X = (int)args.LocationX;
+            int Y = (int)args.LocationY;
+
+            SetCursorPos(X, Y);
+
+            switch (args.Status)
+            {
+                case CursorEvent.EventType.DOWN:
+                    mouse_event(MOUSEEVENTF_LEFTDOWN, X, Y, 0, 0);
+                    break;
+
+                case CursorEvent.EventType.MOVE:
+                    mouse_event(MOUSEEVENTF_MOVE, X, Y, 0, 0);
+                    break;
+
+                case CursorEvent.EventType.UP:
+                    mouse_event(MOUSEEVENTF_LEFTUP, X, Y, 0, 0);
+                    break;
+            }
         }
 
         public Overlay(MainWindow mainWindow, ILogger microsoftLogger, PipeClient pipeClient) : this()

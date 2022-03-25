@@ -51,7 +51,7 @@
             <HelixToolkit:SunLight/>
 
             <!-- The content of this visual is defined in MainViewModel.cs -->
-            <ModelVisual3D Content="{Binding Model}"/>
+            <ModelVisual3D x:Name="ModelVisual3D"/>
 
         </HelixToolkit:HelixViewport3D>
     </Grid>
