@@ -625,6 +625,11 @@ namespace HandheldCompanion.Views
             }
 
             notifyIcon.Visible = false;
+            notifyIcon = null;
+
+            overlay.Close();
+            overlay = null;
+
             Properties.Settings.Default.Save();
         }
 
