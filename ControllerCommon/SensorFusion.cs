@@ -24,9 +24,6 @@ namespace ControllerCommon
         // Device Angle
         public Vector2 DeviceAngle;
 
-        // Time
-        double UpdateTimePreviousMilliSeconds;
-
         private readonly ILogger logger;
 
         public SensorFusion(ILogger logger)
@@ -34,13 +31,9 @@ namespace ControllerCommon
             this.logger = logger;
         }
 
-        public void UpdateReport(double TotalMilliseconds, Vector3 AngularVelocity, Vector3 Acceleration)
+        public void UpdateReport(double TotalMilliseconds, double DeltaMilliseconds, Vector3 AngularVelocity, Vector3 Acceleration)
         {
-            // Determine time        
-            double DeltaSeconds = (double)(TotalMilliseconds - UpdateTimePreviousMilliSeconds) / 1000L;
-            UpdateTimePreviousMilliSeconds = TotalMilliseconds;
-
-            Task.Run(() => logger.LogDebug("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaSeconds));
+            Task.Run(() => logger.LogDebug("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaMilliseconds));
 
             Task.Run(() =>
             {
@@ -66,15 +59,14 @@ namespace ControllerCommon
             // Todo, kickstart gravity vector with = acceleration when calculation is either
             // run for the first time or is selcted to be run based on user profile?
 
-            CalculateGravitySimple(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
+            CalculateGravitySimple(TotalMilliseconds, DeltaMilliseconds, AngularVelocity, Acceleration);
             //CalculateGravityFancy(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
 
             DeviceAngles(TotalMilliseconds, GravityVectorSimple);
-            PlayerSpace(TotalMilliseconds, DeltaSeconds, AngularVelocity, GravityVectorSimple);
-
+            PlayerSpace(TotalMilliseconds, DeltaMilliseconds, AngularVelocity, GravityVectorSimple);
         }
 
-        public void CalculateGravitySimple(double TotalMilliseconds, double DeltaTimeSec, Vector3 AngularVelocity, Vector3 Acceleration)
+        public void CalculateGravitySimple(double TotalMilliseconds, double DeltaMilliseconds, Vector3 AngularVelocity, Vector3 Acceleration)
         {
             // Gravity determination using sensor fusion, "Something Simple" example from:
             // http://gyrowiki.jibbsmart.com/blog:finding-gravity-with-sensor-fusion
@@ -86,7 +78,7 @@ namespace ControllerCommon
             AngularVelocityRad = Vector3.Normalize(AngularVelocityRad);
 
             // Convert gyro input to reverse rotation  
-            Quaternion reverseRotation = Quaternion.CreateFromAxisAngle(-AngularVelocityRad, AngularVelocityRad.Length() * (float)DeltaTimeSec);
+            Quaternion reverseRotation = Quaternion.CreateFromAxisAngle(-AngularVelocityRad, AngularVelocityRad.Length() * (float)DeltaMilliseconds);
 
             // Rotate gravity vector
             GravityVectorSimple = Vector3.Transform(GravityVectorSimple, reverseRotation);
@@ -266,7 +258,7 @@ namespace ControllerCommon
             }
         }
 
-        private void PlayerSpace(double TotalMilliseconds, double DeltaTimeSec, Vector3 AngularVelocity, Vector3 GravityVector)
+        private void PlayerSpace(double TotalMilliseconds, double DeltaMilliseconds, Vector3 AngularVelocity, Vector3 GravityVector)
         {
             // PlayerSpace
             Vector3 GravityNorm = Vector3.Normalize(GravityVector);
@@ -283,10 +275,10 @@ namespace ControllerCommon
 
             CameraYawDelta = Math.Sign(worldYaw)
                                     * Math.Min(Math.Abs(worldYaw) * yawRelaxFactor, AngularVelocityYZ.Length())
-                                    * AdditionalFactor * DeltaTimeSec;
+                                    * AdditionalFactor * DeltaMilliseconds;
 
             // Pitch (local space)
-            CameraPitchDelta = AngularVelocity.X * AdditionalFactor * DeltaTimeSec;
+            CameraPitchDelta = AngularVelocity.X * AdditionalFactor * DeltaMilliseconds;
 
             Task.Run(() =>
             {

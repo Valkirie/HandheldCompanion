@@ -35,7 +35,6 @@ namespace ControllerService.Targets
 
         public Controller physicalController;
         public XInputController xinputController;
-        public SensorFusion sensorFusion;
         public FlickStick flickStick;
 
         public HIDmode HID = HIDmode.None;
@@ -67,8 +66,7 @@ namespace ControllerService.Targets
             this.logger = logger;
             this.xinputController = xinput;
 
-            // initialize sensorfusion
-            sensorFusion = new SensorFusion(logger);
+            // initialize flick stick
             flickStick = new FlickStick(logger);
 
             // initialize secret state
@@ -108,6 +106,7 @@ namespace ControllerService.Targets
             logger.LogInformation("Virtual {0} disconnected", ToString());
         }
 
+
         public virtual unsafe void UpdateReport(Gamepad Gamepad)
         {
             // get current gamepad state
@@ -125,9 +124,6 @@ namespace ControllerService.Targets
             LeftThumb = new Vector2(Gamepad.LeftThumbX, Gamepad.LeftThumbY);
             RightThumb = new Vector2(Gamepad.RightThumbX, Gamepad.RightThumbY);
 
-            // update sensorFusion (todo: call only when needed ?)
-            sensorFusion.UpdateReport(xinputController.totalmilliseconds, xinputController.AngularVelocity, xinputController.Acceleration);
-
             if (xinputController.profile.umc_enabled)
             {
                 if ((xinputController.profile.umc_trigger & buttons) != 0)
@@ -142,7 +138,7 @@ namespace ControllerService.Targets
                                 switch (xinputController.profile.umc_input)
                                 {
                                     case Input.PlayerSpace:
-                                        Angular = new Vector2((float)sensorFusion.CameraYawDelta, (float)sensorFusion.CameraPitchDelta);
+                                        Angular = new Vector2((float)xinputController.sensorFusion.CameraYawDelta, (float)xinputController.sensorFusion.CameraPitchDelta);
                                         break;
 
                                     default:
@@ -174,7 +170,7 @@ namespace ControllerService.Targets
                                             float FlickStickX = flickStick.Handle(RightThumb,
                                                                                   xinputController.profile.flick_duration,
                                                                                   xinputController.profile.stick_sensivity,
-                                                                                  xinputController.totalmilliseconds);
+                                                                                  xinputController.TotalMilliseconds);
 
                                             // X input combines motion controls plus flick stick result
                                             // Y input only from motion controls
@@ -199,7 +195,7 @@ namespace ControllerService.Targets
                         case Input.JoystickSteering:
                             {
                                 float GamepadThumbX = InputUtils.Steering(
-                                    sensorFusion.DeviceAngle.Y,
+                                    xinputController.sensorFusion.DeviceAngle.Y,
                                     xinputController.profile.steering_max_angle,
                                     xinputController.profile.steering_power,
                                     xinputController.profile.steering_deadzone);

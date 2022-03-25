@@ -619,7 +619,7 @@ namespace ControllerService
                 }
 
                 //motion timestamp
-                Array.Copy(BitConverter.GetBytes((ulong)hidReport.microseconds), 0, outputData, outIdx, 8);
+                Array.Copy(BitConverter.GetBytes((ulong)hidReport.CurrentMicroseconds), 0, outputData, outIdx, 8);
 
                 outIdx += 8;
 
@@ -758,7 +758,7 @@ namespace ControllerService
                 Array.Copy(BitConverter.GetBytes((uint)udpPacketCount++), 0, outputData, outIdx, 4);
                 outIdx += 4;
 
-                if (!ReportToBuffer(hidReport, outputData, hidReport.microseconds, ref outIdx))
+                if (!ReportToBuffer(hidReport, outputData, hidReport.CurrentMicroseconds, ref outIdx))
                     return;
                 else
                     FinishPacket(outputData);

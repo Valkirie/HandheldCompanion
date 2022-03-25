@@ -171,24 +171,48 @@ namespace ControllerCommon
     {
         Girometer = 0,
         Accelerometer = 1,
-        Inclinometer = 2
+        Inclinometer = 2,
+        Quaternion = 3
     }
 
     [Serializable]
     public partial class PipeSensor : PipeMessage
     {
         public float x, y, z;
+        public float q_x, q_y, q_z, q_w;
         public SensorType type;
 
-        public PipeSensor(Vector3 reading, SensorType type)
+        public PipeSensor(SensorType type)
         {
             code = PipeCode.SERVER_SENSOR;
+            this.type = type;
+        }
 
+        public PipeSensor(Vector3 reading, SensorType type) : this(type)
+        {
+            this.x = reading.X;
+            this.y = reading.Y;
+            this.z = reading.Z;
+        }
+
+        public PipeSensor(Quaternion qt, SensorType type) : this(type)
+        {
+            this.q_x = qt.X;
+            this.q_y = qt.Y;
+            this.q_z = qt.Z;
+            this.q_w = qt.W;
+        }
+
+        public PipeSensor(Vector3 reading, Quaternion qt, SensorType type) : this(type)
+        {
             this.x = reading.X;
             this.y = reading.Y;
             this.z = reading.Z;
 
-            this.type = type;
+            this.q_x = qt.X;
+            this.q_y = qt.Y;
+            this.q_z = qt.Z;
+            this.q_w = qt.W;
         }
     }
 

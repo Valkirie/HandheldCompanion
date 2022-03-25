@@ -162,7 +162,7 @@ namespace HandheldCompanion.Views
             toastManager = new ToastManager("ControllerService");
 
             // initialize overlay
-            overlay = new Overlay(this, logger);
+            overlay = new Overlay(this, logger, pipeClient);
 
             // initialize process manager
             processManager = new ProcessManager();

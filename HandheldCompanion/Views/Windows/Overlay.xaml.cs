@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using ControllerCommon;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -32,16 +33,36 @@ namespace HandheldCompanion.Views.Windows
 
         private MainWindow mainWindow;
         private ILogger microsoftLogger;
+        private PipeClient pipeClient;
 
         public Overlay()
         {
             InitializeComponent();
         }
 
-        public Overlay(MainWindow mainWindow, ILogger microsoftLogger) : this()
+        public Overlay(MainWindow mainWindow, ILogger microsoftLogger, PipeClient pipeClient) : this()
         {
             this.mainWindow = mainWindow;
             this.microsoftLogger = microsoftLogger;
+            this.pipeClient = pipeClient;
+            this.pipeClient.ServerMessage += OnServerMessage;
+        }
+
+        private void OnServerMessage(object sender, PipeMessage message)
+        {
+            switch (message.code)
+            {
+                case PipeCode.SERVER_SENSOR:
+                    PipeSensor sensor = (PipeSensor)message;
+
+                    switch (sensor.type)
+                    {
+                        case SensorType.Quaternion:
+                            // do something
+                            break;
+                    }
+                    break;
+            }
         }
 
         protected void WinEventCallback(
