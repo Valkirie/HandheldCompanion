@@ -45,6 +45,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="HelixToolkit.Wpf" Version="2.20.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.0" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2">

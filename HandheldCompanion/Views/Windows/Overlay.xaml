@@ -4,10 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HandheldCompanion.Views.Windows"
+        xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         mc:Ignorable="d"
         Title="Overlay" Topmost="True" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Left="0" Top="0" ShowInTaskbar="False">
     
     <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="300" Width="300">
+        <!--
         <Viewport3D Name="viewport3D1">
             <Viewport3D.Camera>
                 <PerspectiveCamera x:Name="camMain" Position="2 2 2" LookDirection="-1 -1 -1">
@@ -39,5 +41,18 @@
                 </ModelVisual3D.Content>
             </ModelVisual3D>
         </Viewport3D>
+        -->
+
+        <!-- The HelixViewport3D supports camera manipulation, and can be used just like the Viewport3D -->
+        <HelixToolkit:HelixViewport3D ZoomExtentsWhenLoaded="True" Margin="0,63,0,0" Name="m_helix_viewport">
+            <!-- ShowViewCube="False" -->
+
+            <!-- Remember to add light to the scene -->
+            <HelixToolkit:SunLight/>
+
+            <!-- The content of this visual is defined in MainViewModel.cs -->
+            <ModelVisual3D Content="{Binding Model}"/>
+
+        </HelixToolkit:HelixViewport3D>
     </Grid>
 </Window>

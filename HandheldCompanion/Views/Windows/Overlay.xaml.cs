@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static HandheldCompanion.OverlayHook;
 using System.Windows.Media.Media3D;
+using HelixToolkit.Wpf;
 
 namespace HandheldCompanion.Views.Windows
 {
@@ -36,9 +37,35 @@ namespace HandheldCompanion.Views.Windows
         private ILogger microsoftLogger;
         private PipeClient pipeClient;
 
+        Model3DGroup HandHeld;
+
+        Model3D MainBody;
+        Model3D Screen;
+        Model3D ShoulderButtonLeft;
+        Model3D ShoulderButtonRight;
+
+        public Model3D Model { get; set; }
+
         public Overlay()
         {
             InitializeComponent();
+
+            ModelImporter importer = new ModelImporter();
+
+            HandHeld = new Model3DGroup();
+
+            //load the files
+            MainBody = importer.Load(@"Resources/MainBody.obj");
+            Screen = importer.Load(@"Resources/Screen.obj");
+            ShoulderButtonLeft = importer.Load(@"Resources/ShoulderButtonLeft.obj");
+            ShoulderButtonRight = importer.Load(@"Resources/ShoulderButtonLeft.obj");
+
+            HandHeld.Children.Add(MainBody);
+            HandHeld.Children.Add(Screen);
+            HandHeld.Children.Add(ShoulderButtonLeft);
+            HandHeld.Children.Add(ShoulderButtonRight);
+
+            this.Model = HandHeld;
         }
 
         public Overlay(MainWindow mainWindow, ILogger microsoftLogger, PipeClient pipeClient) : this()
@@ -72,7 +99,13 @@ namespace HandheldCompanion.Views.Windows
                                 myRotateTransform.CenterY = 0.5;
                                 myRotateTransform.CenterZ = 0.5;
 
-                                MyModel.Transform = myRotateTransform; 
+                                //MyModel.Transform = myRotateTransform; 
+
+                                myRotateTransform.CenterX = 0.0;
+                                myRotateTransform.CenterY = 0.0;
+                                myRotateTransform.CenterZ = 0.0;
+
+                                this.Model.Transform = myRotateTransform;
                             });
 
 

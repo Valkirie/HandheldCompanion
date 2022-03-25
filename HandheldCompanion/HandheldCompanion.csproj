@@ -37,6 +37,14 @@
     <None Remove="Resources\device_aya_retro_power.png" />
     <None Remove="Resources\device_generic.png" />
     <None Remove="Resources\icon.png" />
+    <None Remove="Resources\MainBody.mtl" />
+    <None Remove="Resources\MainBody.obj" />
+    <None Remove="Resources\Screen.mtl" />
+    <None Remove="Resources\Screen.obj" />
+    <None Remove="Resources\ShoulderButtonLeft.mtl" />
+    <None Remove="Resources\ShoulderButtonLeft.obj" />
+    <None Remove="Resources\ShoulderButtonRight.mtl" />
+    <None Remove="Resources\ShoulderButtonRight.obj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -63,12 +71,37 @@
     <Resource Include="Resources\device_aya_next.png" />
     <Resource Include="Resources\device_aya_retro_power.png" />
     <Resource Include="Resources\icon.png" />
+    <Resource Include="Resources\MainBody.mtl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\MainBody.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Screen.mtl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Screen.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\ShoulderButtonLeft.mtl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\ShoulderButtonLeft.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\ShoulderButtonRight.mtl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\ShoulderButtonRight.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CodeHollow.FeedReader" Version="1.2.4" />
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="FluentWPF" Version="0.10.2" />
+    <PackageReference Include="HelixToolkit.Wpf" Version="2.20.2" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.0" />
