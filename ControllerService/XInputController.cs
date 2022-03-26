@@ -138,7 +138,7 @@ namespace ControllerService
                     AngularVelocityRad.X = -InputUtils.deg2rad(AngularVelocity.X);
                     AngularVelocityRad.Y = -InputUtils.deg2rad(AngularVelocity.Y);
                     AngularVelocityRad.Z = -InputUtils.deg2rad(AngularVelocity.Z);
-                    madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration.X, -Acceleration.Y, -Acceleration.Z, DeltaMilliseconds);
+                    madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration.X, Acceleration.Y, Acceleration.Z, DeltaMilliseconds);
                     //logger.LogInformation("Delta time milli sec {0}", DeltaMilliseconds);
 
                     // Share pose(s)
