@@ -38,19 +38,19 @@ namespace HandheldCompanion.Views.Windows
         private MainWindow mainWindow;
         private ILogger microsoftLogger;
         private PipeClient pipeClient;
+        private HandheldDevice handheldDevice;
 
-        Model3DGroup HandHeld;
-
+        // Model3D vars
+        Model3DGroup HandHeld = new Model3DGroup();
+        ModelImporter importer = new ModelImporter();
         Model3D MainBody;
         Model3D Screen;
         Model3D ShoulderButtonLeft;
         Model3D ShoulderButtonRight;
 
-        public Model3D Model { get; set; }
-
         private TouchSourceWinTouch touchsource;
 
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        [DllImport("user32.dll")]
         static extern bool SetCursorPos(int x, int y);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
@@ -66,27 +66,12 @@ namespace HandheldCompanion.Views.Windows
 
             touchsource = new TouchSourceWinTouch(this);
             touchsource.Touch += Touchsource_Touch;
-
-            ModelImporter importer = new ModelImporter();
-
-            HandHeld = new Model3DGroup();
-
-            //load the files
-            MainBody = importer.Load(@"Resources/MainBody.obj");
-            Screen = importer.Load(@"Resources/Screen.obj");
-            ShoulderButtonLeft = importer.Load(@"Resources/ShoulderButtonLeft.obj");
-            ShoulderButtonRight = importer.Load(@"Resources/ShoulderButtonRight.obj");
-
-            HandHeld.Children.Add(MainBody);
-            HandHeld.Children.Add(Screen);
-            HandHeld.Children.Add(ShoulderButtonLeft);
-            HandHeld.Children.Add(ShoulderButtonRight);
-
-            ModelVisual3D.Content = HandHeld;
         }
 
         private void Touchsource_Touch(TouchSourceWinTouch.TouchArgs args)
         {
+            return; // temp
+
             int X = (int)args.LocationX;
             int Y = (int)args.LocationY;
 
@@ -108,12 +93,27 @@ namespace HandheldCompanion.Views.Windows
             }
         }
 
-        public Overlay(MainWindow mainWindow, ILogger microsoftLogger, PipeClient pipeClient) : this()
+        public Overlay(MainWindow mainWindow, ILogger microsoftLogger, PipeClient pipeClient, HandheldDevice handheldDevice) : this()
         {
             this.mainWindow = mainWindow;
             this.microsoftLogger = microsoftLogger;
             this.pipeClient = pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
+
+            this.handheldDevice = handheldDevice;
+
+            // load 3D model
+            MainBody = importer.Load($"models/{handheldDevice.ModelName}/MainBody.obj");
+            Screen = importer.Load($"models/{handheldDevice.ModelName}/Screen.obj");
+            ShoulderButtonLeft = importer.Load($"models/{handheldDevice.ModelName}/ShoulderButtonLeft.obj");
+            ShoulderButtonRight = importer.Load($"models/{handheldDevice.ModelName}/ShoulderButtonRight.obj");
+
+            HandHeld.Children.Add(MainBody);
+            HandHeld.Children.Add(Screen);
+            HandHeld.Children.Add(ShoulderButtonLeft);
+            HandHeld.Children.Add(ShoulderButtonRight);
+
+            ModelVisual3D.Content = HandHeld;
         }
 
         private void OnServerMessage(object sender, PipeMessage message)

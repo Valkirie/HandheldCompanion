@@ -14,6 +14,7 @@ namespace HandheldCompanion
 
         public string ManufacturerName;
         public string ProductName;
+        public string ModelName;
 
         public bool hasGyrometer;
         public bool hasAccelerometer;
@@ -23,6 +24,25 @@ namespace HandheldCompanion
         {
             ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
             ProductName = MotherboardInfo.Product;
+
+            // improve me
+            switch (ProductName)
+            {
+                case "AYANEO 2021 Pro Retro Power":
+                    ModelName = "AYANEO 2021";
+                    break;
+                case "AYANEO 2021 Pro":
+                    ModelName = "AYANEO 2021";
+                    break;
+                case "AYANEO 2021":
+                    ModelName = "AYANEO 2021";
+                    break;
+                case "AYANEO NEXT Pro":
+                case "AYANEO NEXT Advance":
+                case "AYANEO NEXT":
+                    ModelName = "AYANEO NEXT";
+                    break;
+            }
 
             Gyrometer gyrometer = Gyrometer.GetDefault();
             if (gyrometer != null)

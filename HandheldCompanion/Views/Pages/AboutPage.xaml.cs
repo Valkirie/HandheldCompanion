@@ -75,6 +75,7 @@ namespace HandheldCompanion.Views.Pages
             // Device visual
             Uri ImageSource;
 
+            // todo: improve me
             switch (handheldDevice.ProductName)
             {
                 case "AYANEO 2021 Pro Retro Power":
