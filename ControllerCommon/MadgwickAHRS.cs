@@ -50,7 +50,7 @@ namespace ControllerCommon
         {
             SamplePeriod = samplePeriod;
             Beta = beta;
-            Quaternion = new float[] { 1f, 0f, 0f, 0f };
+            Quaternion = new float[] { 0f, 1f, 0f, 0f };
         }
 
         /// <summary>
