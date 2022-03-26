@@ -109,7 +109,6 @@ artifacts/
 *_i.h
 *.ilk
 *.meta
-*.obj
 *.pch
 *.pgc
 *.pgd
