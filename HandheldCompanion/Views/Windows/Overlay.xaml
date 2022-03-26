@@ -1,4 +1,4 @@
-﻿<Window x:Class="HandheldCompanion.Views.Windows.Overlay"
+<Window x:Class="HandheldCompanion.Views.Windows.Overlay"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -48,7 +48,7 @@
 
 
             <!-- Remember to add light to the scene -->
-            <HelixToolkit:SunLight/>
+            <HelixToolkit:DefaultLights/>
 
             <!-- The content of this visual is defined in MainViewModel.cs -->
             <ModelVisual3D x:Name="ModelVisual3D"/>
