@@ -75,7 +75,7 @@ namespace HandheldCompanion.Views.Windows
             MainBody = importer.Load(@"Resources/MainBody.obj");
             Screen = importer.Load(@"Resources/Screen.obj");
             ShoulderButtonLeft = importer.Load(@"Resources/ShoulderButtonLeft.obj");
-            ShoulderButtonRight = importer.Load(@"Resources/ShoulderButtonLeft.obj");
+            ShoulderButtonRight = importer.Load(@"Resources/ShoulderButtonRight.obj");
 
             HandHeld.Children.Add(MainBody);
             HandHeld.Children.Add(Screen);
@@ -130,7 +130,7 @@ namespace HandheldCompanion.Views.Windows
                             this.Dispatcher.Invoke(() =>
                             {
                                 var ax3d = new AxisAngleRotation3D(new Vector3D(sensor.x, sensor.y, sensor.z), 1);
-                                Quaternion endQuaternion = new Quaternion(sensor.q_x, sensor.q_y, sensor.q_z, sensor.q_w);
+                                Quaternion endQuaternion = new Quaternion(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z);
                                 var ax3dalt = new QuaternionRotation3D(endQuaternion);
 
                                 
@@ -145,7 +145,18 @@ namespace HandheldCompanion.Views.Windows
                                 myRotateTransform.CenterY = 0.0;
                                 myRotateTransform.CenterZ = 0.0;
 
-                                this.Model.Transform = myRotateTransform;
+                                  //this.Model.Transform = myRotateTransform;
+                                ModelVisual3D.Content.Transform = myRotateTransform;
+
+
+                                if (sensor.x > 45.0f)
+                                {
+                                    //ModelVisual3D.Children[0].
+                                }
+                                else
+                                {
+
+                                }
                             });
 
 
