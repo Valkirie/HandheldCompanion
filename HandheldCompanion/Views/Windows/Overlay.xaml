@@ -44,14 +44,21 @@
         -->
 
         <!-- The HelixViewport3D supports camera manipulation, and can be used just like the Viewport3D -->
-        <HelixToolkit:HelixViewport3D ZoomExtentsWhenLoaded="True" Margin="0,63,0,0" Name="m_helix_viewport" ShowViewCube="True">
-            <!-- ShowViewCube="False" -->
+        <HelixToolkit:HelixViewport3D ZoomExtentsWhenLoaded="True" Margin="10,20,10,20" Name="m_helix_viewport" ShowViewCube="False">
+
 
             <!-- Remember to add light to the scene -->
             <HelixToolkit:SunLight/>
 
             <!-- The content of this visual is defined in MainViewModel.cs -->
             <ModelVisual3D x:Name="ModelVisual3D"/>
+
+            <HelixToolkit:HelixViewport3D.Camera>
+                <PerspectiveCamera FieldOfView="45"
+                           LookDirection="0,-10,0"
+                           Position="0,10,0"
+                           UpDirection="0,0,1" />
+            </HelixToolkit:HelixViewport3D.Camera>
 
         </HelixToolkit:HelixViewport3D>
     </Grid>
