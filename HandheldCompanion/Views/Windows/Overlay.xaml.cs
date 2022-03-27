@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -44,10 +44,41 @@ namespace HandheldCompanion.Views.Windows
         // Model3D vars
         Model3DGroup HandHeld = new Model3DGroup();
         ModelImporter importer = new ModelImporter();
+
+        Model3DGroup DPadDown;
+        Model3DGroup DPadLeft;
+        Model3DGroup DPadRight;
+        Model3DGroup DPadUp;
+        Model3DGroup FaceButtonA;
+        Model3DGroup FaceButtonB;
+        Model3DGroup FaceButtonX;
+        Model3DGroup FaceButtonY;
+        Model3DGroup JoystickLeftRing;
+        Model3DGroup JoystickLeftStick;
+        Model3DGroup JoystickRightRing;
+        Model3DGroup JoystickRightStick;
         Model3DGroup MainBody;
         Model3DGroup Screen;
-        Model3DGroup ShoulderButtonLeft;
-        Model3DGroup ShoulderButtonRight;
+        Model3DGroup ShoulderLeftButton;
+        Model3DGroup ShoulderLeftMiddle;
+        Model3DGroup ShoulderLeftTrigger;
+        Model3DGroup ShoulderRightButton;
+        Model3DGroup ShoulderRightMiddle;
+        Model3DGroup ShoulderRightTrigger;
+        Model3DGroup WFBEsc;
+        Model3DGroup WFBH;
+        Model3DGroup WFBKB;
+        Model3DGroup WFBMenu;
+        Model3DGroup WFBRGB;
+        Model3DGroup WFBTM;
+        Model3DGroup WFBView;
+        Model3DGroup WFBWin;
+
+        // Default Materials
+        DiffuseMaterial MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(Colors.Black));
+        DiffuseMaterial MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(Colors.White));
+        DiffuseMaterial MaterialHighlight = new DiffuseMaterial(new SolidColorBrush(Colors.LightBlue));
+
 
         private TouchSourceWinTouch touchsource;
 
@@ -97,17 +128,66 @@ namespace HandheldCompanion.Views.Windows
             this.handheldDevice = handheldDevice;
 
             // load 3D model
+            DPadDown = importer.Load($"models/{handheldDevice.ModelName}/DPad-Down.obj");
+            DPadLeft = importer.Load($"models/{handheldDevice.ModelName}/DPad-Left.obj");
+            DPadRight = importer.Load($"models/{handheldDevice.ModelName}/DPad-Right.obj");
+            DPadUp = importer.Load($"models/{handheldDevice.ModelName}/DPad-Up.obj");
+            FaceButtonA = importer.Load($"models/{handheldDevice.ModelName}/FaceButton-A.obj");
+            FaceButtonB = importer.Load($"models/{handheldDevice.ModelName}/FaceButton-B.obj");
+            FaceButtonX = importer.Load($"models/{handheldDevice.ModelName}/FaceButton-X.obj");
+            FaceButtonY = importer.Load($"models/{handheldDevice.ModelName}/FaceButton-Y.obj");
+            JoystickLeftRing = importer.Load($"models/{handheldDevice.ModelName}/Joystick-Left-Ring.obj");
+            JoystickLeftStick = importer.Load($"models/{handheldDevice.ModelName}/Joystick-Left-Stick.obj");
+            JoystickRightRing = importer.Load($"models/{handheldDevice.ModelName}/Joystick-Right-Ring.obj");
+            JoystickRightStick = importer.Load($"models/{handheldDevice.ModelName}/Joystick-Right-Stick.obj");
             MainBody = importer.Load($"models/{handheldDevice.ModelName}/MainBody.obj");
             Screen = importer.Load($"models/{handheldDevice.ModelName}/Screen.obj");
-            ShoulderButtonLeft = importer.Load($"models/{handheldDevice.ModelName}/ShoulderButtonLeft.obj");
-            ShoulderButtonRight = importer.Load($"models/{handheldDevice.ModelName}/ShoulderButtonRight.obj");
+            ShoulderLeftButton = importer.Load($"models/{handheldDevice.ModelName}/Shoulder-Left-Button.obj");
+            ShoulderLeftMiddle = importer.Load($"models/{handheldDevice.ModelName}/Shoulder-Left-Middle.obj");
+            ShoulderLeftTrigger = importer.Load($"models/{handheldDevice.ModelName}/Shoulder-Left-Trigger.obj");
+            ShoulderRightButton = importer.Load($"models/{handheldDevice.ModelName}/Shoulder-Right-Button.obj");
+            ShoulderRightMiddle = importer.Load($"models/{handheldDevice.ModelName}/Shoulder-Right-Middle.obj");
+            ShoulderRightTrigger = importer.Load($"models/{handheldDevice.ModelName}/Shoulder-Right-Trigger.obj");
+            WFBEsc = importer.Load($"models/{handheldDevice.ModelName}/WFB-Esc.obj");
+            WFBH = importer.Load($"models/{handheldDevice.ModelName}/WFB-H.obj");
+            WFBKB = importer.Load($"models/{handheldDevice.ModelName}/WFB-KB.obj");
+            WFBMenu = importer.Load($"models/{handheldDevice.ModelName}/WFB-Menu.obj");
+            WFBRGB = importer.Load($"models/{handheldDevice.ModelName}/WFB-RGB.obj");
+            WFBTM = importer.Load($"models/{handheldDevice.ModelName}/WFB-TM.obj");
+            WFBView = importer.Load($"models/{handheldDevice.ModelName}/WFB-View.obj");
+            WFBWin = importer.Load($"models/{handheldDevice.ModelName}/WFB-Win.obj");
 
+            HandHeld.Children.Add(DPadDown);
+            HandHeld.Children.Add(DPadLeft);
+            HandHeld.Children.Add(DPadRight);
+            HandHeld.Children.Add(DPadUp);
+            HandHeld.Children.Add(FaceButtonA);
+            HandHeld.Children.Add(FaceButtonB);
+            HandHeld.Children.Add(FaceButtonX);
+            HandHeld.Children.Add(FaceButtonY);
+            HandHeld.Children.Add(JoystickLeftRing);
+            HandHeld.Children.Add(JoystickLeftStick);
+            HandHeld.Children.Add(JoystickRightRing);
+            HandHeld.Children.Add(JoystickRightStick);
             HandHeld.Children.Add(MainBody);
             HandHeld.Children.Add(Screen);
-            HandHeld.Children.Add(ShoulderButtonLeft);
-            HandHeld.Children.Add(ShoulderButtonRight);
+            HandHeld.Children.Add(ShoulderLeftButton);
+            HandHeld.Children.Add(ShoulderLeftMiddle);
+            HandHeld.Children.Add(ShoulderLeftTrigger);
+            HandHeld.Children.Add(ShoulderRightButton);
+            HandHeld.Children.Add(ShoulderRightMiddle);
+            HandHeld.Children.Add(ShoulderRightTrigger);
+            HandHeld.Children.Add(WFBEsc);
+            HandHeld.Children.Add(WFBH);
+            HandHeld.Children.Add(WFBKB);
+            HandHeld.Children.Add(WFBMenu);
+            HandHeld.Children.Add(WFBRGB);
+            HandHeld.Children.Add(WFBTM);
+            HandHeld.Children.Add(WFBView);
+            HandHeld.Children.Add(WFBWin);
 
             ModelVisual3D.Content = HandHeld;
+
         }
 
         #region ModelVisual3D
@@ -146,6 +226,212 @@ namespace HandheldCompanion.Views.Windows
                 gamepadTimer.Stop();
                 gamepadTimer.Start();
             }
+            this.Dispatcher.Invoke(() =>
+            {
+                // DPad
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp))
+                {
+                    GeometryModel3D model = DPadUp.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = DPadUp.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
+                {
+                    GeometryModel3D model = DPadRight.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = DPadRight.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
+                {
+                    GeometryModel3D model = DPadDown.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = DPadDown.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
+                {
+                    GeometryModel3D model = DPadLeft.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = DPadLeft.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                // Facebuttons
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.A))
+                {
+                    GeometryModel3D model = FaceButtonA.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = FaceButtonA.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.B))
+                {
+                    GeometryModel3D model = FaceButtonB.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = FaceButtonB.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.X))
+                {
+                    GeometryModel3D model = FaceButtonX.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = FaceButtonX.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Y))
+                {
+                    GeometryModel3D model = FaceButtonY.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = FaceButtonY.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                // Start / Select
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Start))
+                {
+                    GeometryModel3D model = WFBMenu.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = WFBMenu.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.Back))
+                {
+                    GeometryModel3D model = WFBView.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = WFBView.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                // Shoulder
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder))
+                {
+                    GeometryModel3D model = ShoulderLeftButton.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = ShoulderLeftButton.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                if (gamepad.LeftTrigger > 0)
+                {
+                    GeometryModel3D model = ShoulderLeftTrigger.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = ShoulderLeftTrigger.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder))
+                {
+                    GeometryModel3D model = ShoulderRightButton.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = ShoulderRightButton.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                if (gamepad.RightTrigger > 0)
+                {
+                    GeometryModel3D model = ShoulderRightTrigger.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = ShoulderRightTrigger.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                // Joysticks
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb))
+                {
+                    GeometryModel3D model = JoystickLeftStick.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = JoystickLeftStick.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                if (gamepad.LeftThumbX != 0 || gamepad.LeftThumbY != 0)
+                {
+                    GeometryModel3D model = JoystickLeftRing.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = JoystickLeftRing.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb))
+                {
+                    GeometryModel3D model = JoystickRightStick.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = JoystickRightStick.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+                if (gamepad.RightThumbX != 0 || gamepad.RightThumbY != 0)
+                {
+                    GeometryModel3D model = JoystickRightRing.Children[0] as GeometryModel3D;
+                    model.Material = MaterialHighlight;
+                }
+                else
+                {
+                    GeometryModel3D model = JoystickRightRing.Children[0] as GeometryModel3D;
+                    model.Material = MaterialPlasticBlack;
+                }
+
+            });
         }
 
         private void gamepadTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -166,9 +452,36 @@ namespace HandheldCompanion.Views.Windows
                             break;
                     }
 
-                    DiffuseMaterial material = new DiffuseMaterial(new SolidColorBrush(Colors.White));
-                    GeometryModel3D model = Screen.Children[0] as GeometryModel3D;
-                    model.Material = material;
+                    // Default colors for static models
+                    GeometryModel3D PlaceholderModel = Screen.Children[0] as GeometryModel3D;
+                    PlaceholderModel.Material = MaterialPlasticBlack;
+
+                    PlaceholderModel = MainBody.Children[0] as GeometryModel3D;
+                    PlaceholderModel.Material = MaterialPlasticWhite;
+
+                    PlaceholderModel = WFBEsc.Children[0] as GeometryModel3D;
+                    PlaceholderModel.Material = MaterialPlasticBlack;
+
+                    PlaceholderModel = WFBH.Children[0] as GeometryModel3D;
+                    PlaceholderModel.Material = MaterialPlasticBlack;
+
+                    PlaceholderModel = WFBKB.Children[0] as GeometryModel3D;
+                    PlaceholderModel.Material = MaterialPlasticBlack;
+
+                    PlaceholderModel = WFBRGB.Children[0] as GeometryModel3D;
+                    PlaceholderModel.Material = MaterialPlasticBlack;
+
+                    PlaceholderModel = WFBTM.Children[0] as GeometryModel3D;
+                    PlaceholderModel.Material = MaterialPlasticBlack;
+
+                    PlaceholderModel = WFBWin.Children[0] as GeometryModel3D;
+                    PlaceholderModel.Material = MaterialPlasticBlack;
+
+                    PlaceholderModel = ShoulderLeftMiddle.Children[0] as GeometryModel3D;
+                    PlaceholderModel.Material = MaterialPlasticBlack;
+
+                    PlaceholderModel = ShoulderRightMiddle.Children[0] as GeometryModel3D;
+                    PlaceholderModel.Material = MaterialPlasticBlack;
 
                     pipeClient.SendMessage(new PipeOverlay((int)this.Visibility));
                 });
