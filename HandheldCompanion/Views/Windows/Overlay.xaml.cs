@@ -44,10 +44,10 @@ namespace HandheldCompanion.Views.Windows
         // Model3D vars
         Model3DGroup HandHeld = new Model3DGroup();
         ModelImporter importer = new ModelImporter();
-        Model3D MainBody;
-        Model3D Screen;
-        Model3D ShoulderButtonLeft;
-        Model3D ShoulderButtonRight;
+        Model3DGroup MainBody;
+        Model3DGroup Screen;
+        Model3DGroup ShoulderButtonLeft;
+        Model3DGroup ShoulderButtonRight;
 
         private TouchSourceWinTouch touchsource;
 
@@ -165,6 +165,11 @@ namespace HandheldCompanion.Views.Windows
                             this.Visibility = Visibility.Visible;
                             break;
                     }
+
+                    DiffuseMaterial material = new DiffuseMaterial(new SolidColorBrush(Colors.White));
+                    GeometryModel3D model = Screen.Children[0] as GeometryModel3D;
+                    model.Material = material;
+
                     pipeClient.SendMessage(new PipeOverlay((int)this.Visibility));
                 });
             }
