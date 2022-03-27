@@ -284,12 +284,16 @@ namespace HandheldCompanion.Views
                 this.Dispatcher.Invoke(() =>
                 {
                     if (currentProfile.IsDefault)
-                        overlay.Hide();
+                    {
+                        overlay.Visibility = Visibility.Collapsed;
+                    }
                     else
                     {
                         overlay.HookInto(processid);
-                        overlay.Show();
+                        overlay.Visibility = Visibility.Visible;
                     }
+
+                    pipeClient.SendMessage(new PipeOverlay((int)overlay.Visibility));
                 });
 
                 logger.LogDebug("Profile {0} applied", currentProfile.name);

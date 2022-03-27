@@ -228,5 +228,18 @@ namespace ControllerCommon
             this.Tag = Tag;
         }
     }
+
+    [Serializable]
+    public partial class PipeOverlay : PipeMessage
+    {
+        public int Visibility;
+
+        public PipeOverlay(int Visibility)
+        {
+            code = PipeCode.CLIENT_OVERLAY;
+
+            this.Visibility = Visibility;
+        }
+    }
     #endregion
 }

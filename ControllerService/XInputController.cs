@@ -134,13 +134,6 @@ namespace ControllerService
                     sensorFusion.UpdateReport(TotalMilliseconds, DeltaMilliseconds, AngularVelocity, Acceleration);
                 }
 
-                // update madgwick
-                AngularVelocityRad.X = -InputUtils.deg2rad(AngularUniversal.X);
-                AngularVelocityRad.Y = -InputUtils.deg2rad(AngularUniversal.Y);
-                AngularVelocityRad.Z = -InputUtils.deg2rad(AngularUniversal.Z);
-                madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration.X, Acceleration.Y, Acceleration.Z, DeltaMilliseconds);
-                Quaternion PoseQuat = madgwickAHRS.GetQuaternion();
-
                 // async update client(s)
                 Task.Run(() =>
                 {
@@ -154,7 +147,20 @@ namespace ControllerService
                             pipeServer?.SendMessage(new PipeSensor(Angle, SensorType.Inclinometer));
                             break;
                     }
-                    pipeServer?.SendMessage(new PipeSensor(PoseQuat, SensorType.Quaternion));
+
+                    switch (ControllerService.CurrentOverlayStatus)
+                    {
+                        case 0: // Visibility.Visible
+
+                            // update madgwick
+                            AngularVelocityRad.X = -InputUtils.deg2rad(AngularUniversal.X);
+                            AngularVelocityRad.Y = -InputUtils.deg2rad(AngularUniversal.Y);
+                            AngularVelocityRad.Z = -InputUtils.deg2rad(AngularUniversal.Z);
+                            madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration.X, Acceleration.Y, Acceleration.Z, DeltaMilliseconds);
+                            Quaternion PoseQuat = madgwickAHRS.GetQuaternion();
+                            pipeServer?.SendMessage(new PipeSensor(PoseQuat, SensorType.Quaternion));
+                            break;
+                    }
                 });
 
                 // update virtual controller

@@ -35,6 +35,7 @@ namespace ControllerService
 
         public static string CurrentExe, CurrentPath, CurrentPathDep;
         public static string CurrentTag;
+        public static int CurrentOverlayStatus;
 
         private string DSUip;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
@@ -291,6 +292,11 @@ namespace ControllerService
                             break;
                     }
 
+                    break;
+
+                case PipeCode.CLIENT_OVERLAY:
+                    PipeOverlay overlay = (PipeOverlay)message;
+                    CurrentOverlayStatus = overlay.Visibility;
                     break;
             }
         }

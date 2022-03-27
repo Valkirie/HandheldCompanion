@@ -48,6 +48,9 @@ namespace ControllerCommon
 
         CLIENT_NAVIGATED = 15,              // Sent to server to share current navigated page
                                             // args: ...
+
+        CLIENT_OVERLAY = 16,                // Sent to server to share current overlay status
+                                            // args: ...
     }
 
     public class PipeServer
