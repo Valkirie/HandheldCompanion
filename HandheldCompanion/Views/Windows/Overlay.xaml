@@ -6,60 +6,54 @@
         xmlns:local="clr-namespace:HandheldCompanion.Views.Windows"
         xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         mc:Ignorable="d"
-        Title="Overlay" Topmost="True" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Left="0" Top="0" ShowInTaskbar="False">
-    
-    <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="300" Width="300">
-        <!--
-        <Viewport3D Name="viewport3D1">
-            <Viewport3D.Camera>
-                <PerspectiveCamera x:Name="camMain" Position="2 2 2" LookDirection="-1 -1 -1">
-                </PerspectiveCamera>
-            </Viewport3D.Camera>
-            <ModelVisual3D>
-                <ModelVisual3D.Content>
-                    <DirectionalLight x:Name="dirLightMain" Direction="-1,-1,-1">
-                    </DirectionalLight>
-                </ModelVisual3D.Content>
-            </ModelVisual3D>
-            <ModelVisual3D x:Name="MyModel">
-                <ModelVisual3D.Content>
-                    <GeometryModel3D>
-                        <GeometryModel3D.Geometry>
-                            <MeshGeometry3D x:Name="meshMain" 
-		Positions="0 0 0  1 0 0  0 1 0  1 1 0  0 0 1  1 0 1  0 1 1  1 1 1" 
-		TriangleIndices="2 3 1  2 1 0  7 1 3  7 5 1  6 5 7  6 4 5  6 2 0  2 0 4  2 7 3  2 6 7  0 1 5  0 5 4">
-                            </MeshGeometry3D>
-                        </GeometryModel3D.Geometry>
-                        <GeometryModel3D.Material>
-                            <DiffuseMaterial x:Name="matDiffuseMain">
-                                <DiffuseMaterial.Brush>
-                                    <SolidColorBrush Color="Blue"/>
-                                </DiffuseMaterial.Brush>
-                            </DiffuseMaterial>
-                        </GeometryModel3D.Material>
-                    </GeometryModel3D>
-                </ModelVisual3D.Content>
-            </ModelVisual3D>
-        </Viewport3D>
-        -->
+        Title="Overlay" Topmost="True" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Left="0" Top="0" ShowInTaskbar="False" Width="1280" Height="800">
 
-        <!-- The HelixViewport3D supports camera manipulation, and can be used just like the Viewport3D -->
-        <HelixToolkit:HelixViewport3D ZoomExtentsWhenLoaded="True" Margin="10,20,10,20" Name="m_helix_viewport" ShowViewCube="False">
+    <Grid>
+        <!-- Trackpad -->
+        <Grid VerticalAlignment="Center" Margin="20">
+            
+            <!-- Left Trackpad -->
+            <Border
+                Name="LeftTrackpad"
+                CornerRadius="10"
+                Background="#75000000"
+                HorizontalAlignment="Left" Height="250" Width="250">
+                <Grid>
 
+                </Grid>
+            </Border>
 
-            <!-- Remember to add light to the scene -->
-            <HelixToolkit:DefaultLights/>
+            <!-- Right Trackpad -->
+            <Border
+                Name="RightTrackpad"
+                CornerRadius="10"
+                Background="#75000000"
+                HorizontalAlignment="Right" Height="250" Width="250">
+                <Grid>
 
-            <!-- The content of this visual is defined in MainViewModel.cs -->
-            <ModelVisual3D x:Name="ModelVisual3D"/>
+                </Grid>
+            </Border>
+        </Grid>
+        
+        <!-- Virtual Controller -->
+        <Grid Name="VirtualController" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="200" Width="200">
+            <!-- The HelixViewport3D supports camera manipulation, and can be used just like the Viewport3D -->
+            <HelixToolkit:HelixViewport3D ZoomExtentsWhenLoaded="True" Name="m_helix_viewport" ShowViewCube="False">
 
-            <HelixToolkit:HelixViewport3D.Camera>
-                <PerspectiveCamera FieldOfView="45"
-                           LookDirection="0,-10,0"
-                           Position="0,10,0"
-                           UpDirection="0,0,1" />
-            </HelixToolkit:HelixViewport3D.Camera>
+                <!-- Remember to add light to the scene -->
+                <HelixToolkit:DefaultLights/>
 
-        </HelixToolkit:HelixViewport3D>
+                <!-- The content of this visual is defined in MainViewModel.cs -->
+                <ModelVisual3D x:Name="ModelVisual3D"/>
+
+                <HelixToolkit:HelixViewport3D.Camera>
+                    <PerspectiveCamera FieldOfView="45"
+                               LookDirection="0,-2,0"
+                               Position="0,2,0"
+                               UpDirection="0,0,1" />
+                </HelixToolkit:HelixViewport3D.Camera>
+
+            </HelixToolkit:HelixViewport3D>
+        </Grid>
     </Grid>
 </Window>

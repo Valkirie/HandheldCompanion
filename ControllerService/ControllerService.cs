@@ -35,7 +35,7 @@ namespace ControllerService
 
         public static string CurrentExe, CurrentPath, CurrentPathDep;
         public static string CurrentTag;
-        public static int CurrentOverlayStatus;
+        public static int CurrentOverlayStatus = -1;
 
         private string DSUip;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;

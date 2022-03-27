@@ -1,6 +1,8 @@
-﻿using System;
+﻿using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Text.Json;
 using WindowsHook;
 
 namespace ControllerCommon
@@ -239,6 +241,46 @@ namespace ControllerCommon
             code = PipeCode.CLIENT_OVERLAY;
 
             this.Visibility = Visibility;
+        }
+    }
+
+    [Serializable]
+    public partial class PipeGamepad : PipeMessage
+    {
+        public int Buttons;
+        public byte LeftTrigger;
+        public byte RightTrigger;
+
+        public short LeftThumbX;
+        public short LeftThumbY;
+        public short RightThumbX;
+        public short RightThumbY;
+
+        public PipeGamepad(Gamepad gamepad)
+        {
+            code = PipeCode.SERVER_GAMEPAD;
+            Buttons = (int)gamepad.Buttons;
+            LeftTrigger = gamepad.LeftTrigger;
+            RightTrigger = gamepad.RightTrigger;
+
+            LeftThumbX = gamepad.LeftThumbX;
+            LeftThumbY = gamepad.LeftThumbY;
+            RightThumbX = gamepad.RightThumbX;
+            RightThumbY = gamepad.RightThumbY;
+        }
+
+        public Gamepad ToGamepad()
+        {
+            return new Gamepad()
+            {
+                Buttons = (GamepadButtonFlags)this.Buttons,
+                LeftTrigger = this.LeftTrigger,
+                RightTrigger = this.RightTrigger,
+                LeftThumbX = this.LeftThumbX,
+                LeftThumbY = this.LeftThumbY,
+                RightThumbX = this.RightThumbX,
+                RightThumbY = this.RightThumbY
+            };
         }
     }
     #endregion

@@ -62,7 +62,6 @@ namespace HandheldCompanion.Views
         public HidHide Hidder;
 
         public CmdParser cmdParser;
-        public MouseHook mouseHook;
 
         // manager(s) vars
         public ToastManager toastManager;
@@ -155,14 +154,11 @@ namespace HandheldCompanion.Views
             // initialize Profile Manager
             profileManager = new ProfileManager(logger, pipeClient);
 
-            // initialize mouse hook
-            mouseHook = new MouseHook(pipeClient, logger);
-
             // initialize toast manager
             toastManager = new ToastManager("ControllerService");
 
             // initialize overlay
-            overlay = new Overlay(this, logger, pipeClient, handheldDevice);
+            overlay = new Overlay(logger, pipeClient, handheldDevice);
 
             // initialize process manager
             processManager = new ProcessManager();
@@ -278,22 +274,12 @@ namespace HandheldCompanion.Views
 
                 // inform service & mouseHook
                 pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
-                mouseHook.UpdateProfile(currentProfile);
 
                 // display overlay
                 this.Dispatcher.Invoke(() =>
                 {
-                    if (currentProfile.IsDefault)
-                    {
-                        overlay.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
+                    if (!currentProfile.IsDefault)
                         overlay.HookInto(processid);
-                        overlay.Visibility = Visibility.Visible;
-                    }
-
-                    pipeClient.SendMessage(new PipeOverlay((int)overlay.Visibility));
                 });
 
                 logger.LogDebug("Profile {0} applied", currentProfile.name);
@@ -308,11 +294,6 @@ namespace HandheldCompanion.Views
 
         private void OnClientConnected(object sender)
         {
-            // start listening to mouse inputs
-#if !DEBUG
-            mouseHook.Start();
-#endif
-
             if (IsElevated)
             {
                 // start process manager
@@ -329,9 +310,6 @@ namespace HandheldCompanion.Views
 
         private void OnClientDisconnected(object sender)
         {
-            // stop listening to mouse inputs
-            mouseHook.Stop();
-
             // stop process manager
             processManager.Stop();
         }
@@ -497,7 +475,6 @@ namespace HandheldCompanion.Views
         #endregion
 
         #region UI
-
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             if (args.IsSettingsInvoked == true)
@@ -593,8 +570,6 @@ namespace HandheldCompanion.Views
                 pipeServer.Stop();
 
             profileManager.Stop();
-
-            mouseHook.Stop();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)

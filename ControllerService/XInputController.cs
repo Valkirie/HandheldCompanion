@@ -21,6 +21,7 @@ namespace ControllerService
         public ViGEmTarget virtualTarget;
 
         public Gamepad Gamepad;
+        private Gamepad prevGamepad;
 
         public Profile profile;
         private Profile defaultProfile;
@@ -133,10 +134,7 @@ namespace ControllerService
                 Angle = Inclinometer.GetCurrentReading();
 
                 // update sensorFusion (todo: call only when needed ?)
-                if (profile.flickstick_enabled)
-                {
-                    sensorFusion.UpdateReport(TotalMilliseconds, DeltaMilliseconds, AngularVelocity, Acceleration);
-                }
+                sensorFusion.UpdateReport(TotalMilliseconds, DeltaMilliseconds, AngularVelocity, Acceleration);
 
                 // async update client(s)
                 Task.Run(() =>
@@ -167,6 +165,10 @@ namespace ControllerService
                             break;
                     }
                 });
+
+                if (prevGamepad.ToString() != Gamepad.ToString())
+                    pipeServer?.SendMessage(new PipeGamepad(Gamepad));
+                prevGamepad = Gamepad;
 
                 // update virtual controller
                 virtualTarget?.UpdateReport(Gamepad);

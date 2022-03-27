@@ -51,6 +51,9 @@ namespace ControllerCommon
 
         CLIENT_OVERLAY = 16,                // Sent to server to share current overlay status
                                             // args: ...
+
+        SERVER_GAMEPAD = 17,                // Sent to client to share gamepad values
+                                            // args: ...
     }
 
     public class PipeServer

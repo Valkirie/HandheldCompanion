@@ -20,6 +20,8 @@ using System.Windows.Media.Media3D;
 using HelixToolkit.Wpf;
 using System.Windows.Interop;
 using TouchEventSample;
+using SharpDX.XInput;
+using System.Timers;
 
 namespace HandheldCompanion.Views.Windows
 {
@@ -35,7 +37,6 @@ namespace HandheldCompanion.Views.Windows
         protected WinEventDelegate WinEventDelegate;
         static GCHandle GCSafetyHandle;
 
-        private MainWindow mainWindow;
         private ILogger microsoftLogger;
         private PipeClient pipeClient;
         private HandheldDevice handheldDevice;
@@ -50,15 +51,12 @@ namespace HandheldCompanion.Views.Windows
 
         private TouchSourceWinTouch touchsource;
 
-        [DllImport("user32.dll")]
-        static extern bool SetCursorPos(int x, int y);
+        // Gamepad vars
+        private Gamepad gamepad;
+        private Timer gamepadTimer;
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern void mouse_event(long dwFlags, long dx, long dy, long cButtons, long dwExtraInfo);
-
-        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
-        private const int MOUSEEVENTF_LEFTUP = 0x04;
-        private const int MOUSEEVENTF_MOVE = 0x0001;
+        [DllImport("USER32.DLL")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
 
         public Overlay()
         {
@@ -66,37 +64,33 @@ namespace HandheldCompanion.Views.Windows
 
             touchsource = new TouchSourceWinTouch(this);
             touchsource.Touch += Touchsource_Touch;
+
+            this.gamepadTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 1000 };
+            this.gamepadTimer.Elapsed += gamepadTimer_Elapsed;
         }
 
         private void Touchsource_Touch(TouchSourceWinTouch.TouchArgs args)
         {
-            return; // temp
-
             int X = (int)args.LocationX;
             int Y = (int)args.LocationY;
-
-            SetCursorPos(X, Y);
 
             switch (args.Status)
             {
                 case CursorEvent.EventType.DOWN:
-                    mouse_event(MOUSEEVENTF_LEFTDOWN, X, Y, 0, 0);
                     break;
 
                 case CursorEvent.EventType.MOVE:
-                    mouse_event(MOUSEEVENTF_MOVE, X, Y, 0, 0);
                     break;
 
                 case CursorEvent.EventType.UP:
-                    mouse_event(MOUSEEVENTF_LEFTUP, X, Y, 0, 0);
                     break;
             }
         }
 
-        public Overlay(MainWindow mainWindow, ILogger microsoftLogger, PipeClient pipeClient, HandheldDevice handheldDevice) : this()
+        public Overlay(ILogger microsoftLogger, PipeClient pipeClient, HandheldDevice handheldDevice) : this()
         {
-            this.mainWindow = mainWindow;
             this.microsoftLogger = microsoftLogger;
+
             this.pipeClient = pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
 
@@ -116,6 +110,7 @@ namespace HandheldCompanion.Views.Windows
             ModelVisual3D.Content = HandHeld;
         }
 
+        #region ModelVisual3D
         private RotateTransform3D myRotateTransform;
         private int m_ModelVisualUpdate;
         private void OnServerMessage(object sender, PipeMessage message)
@@ -133,6 +128,45 @@ namespace HandheldCompanion.Views.Windows
                             break;
                     }
                     break;
+
+                case PipeCode.SERVER_GAMEPAD:
+                    PipeGamepad pipeGamepad = (PipeGamepad)message;
+                    gamepad = pipeGamepad.ToGamepad();
+                    UpdateReport();
+                    break;
+            }
+        }
+
+        private bool isTriggered;
+        private void UpdateReport()
+        {
+            isTriggered = gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb) && gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
+            if (isTriggered)
+            {
+                gamepadTimer.Stop();
+                gamepadTimer.Start();
+            }
+        }
+
+        private void gamepadTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            var isTriggered = gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb) && gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
+            if (isTriggered && this.isTriggered)
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    switch (this.Visibility)
+                    {
+                        case Visibility.Visible:
+                            this.Visibility = Visibility.Collapsed;
+                            break;
+                        case Visibility.Hidden:
+                        case Visibility.Collapsed:
+                            this.Visibility = Visibility.Visible;
+                            break;
+                    }
+                    pipeClient.SendMessage(new PipeOverlay((int)this.Visibility));
+                });
             }
         }
 
@@ -140,8 +174,8 @@ namespace HandheldCompanion.Views.Windows
         {
             m_ModelVisualUpdate++;
 
-            // reduce CPU usage by drawing every 6 calls
-            if (m_ModelVisualUpdate % 6 != 0)
+            // reduce CPU usage by drawing every x calls
+            if (m_ModelVisualUpdate % 2 != 0)
                 return;
 
             this.Dispatcher.Invoke(() =>
@@ -150,12 +184,12 @@ namespace HandheldCompanion.Views.Windows
                 var ax3dalt = new QuaternionRotation3D(endQuaternion);
 
                 myRotateTransform = new RotateTransform3D(ax3dalt);
-                myRotateTransform.CenterX = myRotateTransform.CenterY = myRotateTransform.CenterZ = 0.0;
-
                 ModelVisual3D.Content.Transform = myRotateTransform;
             });
         }
+        #endregion
 
+        #region Hook
         protected void WinEventCallback(
             IntPtr hWinEventHook,
             NativeMethods.SWEH_Events eventType,
@@ -201,10 +235,13 @@ namespace HandheldCompanion.Views.Windows
                         this.Left = rect.Left;
                         this.Width = rect.Right - rect.Left;
                         this.Height = rect.Bottom - rect.Top;
+
+                        SetForegroundWindow(hWnd);
                     }
                 }
             }
             catch (Exception ex) { }
         }
+        #endregion
     }
 }
