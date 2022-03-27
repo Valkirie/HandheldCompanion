@@ -9,7 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace ControllerService
 {
@@ -132,28 +134,12 @@ namespace ControllerService
                     sensorFusion.UpdateReport(TotalMilliseconds, DeltaMilliseconds, AngularVelocity, Acceleration);
                 }
 
-                // update MadgewickAHRS (todo: call only when needed ?)
-                if (profile.overlay)
-                {
-                    AngularVelocityRad.X = -InputUtils.deg2rad(AngularUniversal.X);
-                    AngularVelocityRad.Y = -InputUtils.deg2rad(AngularUniversal.Y);
-                    AngularVelocityRad.Z = -InputUtils.deg2rad(AngularUniversal.Z);
-                    madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration.X, Acceleration.Y, Acceleration.Z, DeltaMilliseconds);
-                    //logger.LogInformation("Delta time milli sec {0}", DeltaMilliseconds);
-
-                    // Share pose(s)
-                    Quaternion PoseQuat = madgwickAHRS.GetQuaternion();
-                    Vector3 PoseEuler = madgwickAHRS.ToEulerAngles(PoseQuat);
-
-                    //logger.LogInformation("AngularVelocityRad {0} {1} {2}", AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z);
-                    //logger.LogInformation("madgwickAHRS.Vector3 {2} {1} {0}", InputUtils.rad2deg(PoseEuler.X), InputUtils.rad2deg(PoseEuler.Y), InputUtils.rad2deg(PoseEuler.Z));
-                    //logger.LogInformation("madgwickAHRS.Quaternion {0}", madgwickAHRS.Quaternion); 
-
-                    Task.Run(() =>
-                    {
-                        pipeServer?.SendMessage(new PipeSensor(PoseEuler, PoseQuat, SensorType.Quaternion));
-                    });
-                }
+                // update madgwick
+                AngularVelocityRad.X = -InputUtils.deg2rad(AngularUniversal.X);
+                AngularVelocityRad.Y = -InputUtils.deg2rad(AngularUniversal.Y);
+                AngularVelocityRad.Z = -InputUtils.deg2rad(AngularUniversal.Z);
+                madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration.X, Acceleration.Y, Acceleration.Z, DeltaMilliseconds);
+                Quaternion PoseQuat = madgwickAHRS.GetQuaternion();
 
                 // async update client(s)
                 Task.Run(() =>
@@ -168,6 +154,7 @@ namespace ControllerService
                             pipeServer?.SendMessage(new PipeSensor(Angle, SensorType.Inclinometer));
                             break;
                     }
+                    pipeServer?.SendMessage(new PipeSensor(PoseQuat, SensorType.Quaternion));
                 });
 
                 // update virtual controller

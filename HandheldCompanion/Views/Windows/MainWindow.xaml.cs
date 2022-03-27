@@ -283,15 +283,12 @@ namespace HandheldCompanion.Views
                 // display overlay
                 this.Dispatcher.Invoke(() =>
                 {
-                    switch (currentProfile.overlay)
+                    if (currentProfile.IsDefault)
+                        overlay.Hide();
+                    else
                     {
-                        case true:
-                            overlay.HookInto(processid);
-                            overlay.Show();
-                            break;
-                        case false:
-                            overlay.Hide();
-                            break;
+                        overlay.HookInto(processid);
+                        overlay.Show();
                     }
                 });
 

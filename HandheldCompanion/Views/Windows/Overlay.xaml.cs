@@ -116,6 +116,8 @@ namespace HandheldCompanion.Views.Windows
             ModelVisual3D.Content = HandHeld;
         }
 
+        private RotateTransform3D myRotateTransform;
+        private int m_ModelVisualUpdate;
         private void OnServerMessage(object sender, PipeMessage message)
         {
             switch (message.code)
@@ -126,44 +128,32 @@ namespace HandheldCompanion.Views.Windows
                     switch (sensor.type)
                     {
                         case SensorType.Quaternion:
-                            // do something
-                            this.Dispatcher.Invoke(() =>
-                            {
-                                var ax3d = new AxisAngleRotation3D(new Vector3D(sensor.x, sensor.y, sensor.z), 1);
-                                Quaternion endQuaternion = new Quaternion(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z);
-                                var ax3dalt = new QuaternionRotation3D(endQuaternion);
-
-                                
-                                RotateTransform3D myRotateTransform = new RotateTransform3D(ax3dalt);
-                                myRotateTransform.CenterX = 0.5;
-                                myRotateTransform.CenterY = 0.5;
-                                myRotateTransform.CenterZ = 0.5;
-
-                                //MyModel.Transform = myRotateTransform; 
-
-                                myRotateTransform.CenterX = 0.0;
-                                myRotateTransform.CenterY = 0.0;
-                                myRotateTransform.CenterZ = 0.0;
-
-                                  //this.Model.Transform = myRotateTransform;
-                                ModelVisual3D.Content.Transform = myRotateTransform;
-
-
-                                if (sensor.x > 45.0f)
-                                {
-                                    //ModelVisual3D.Children[0].
-                                }
-                                else
-                                {
-
-                                }
-                            });
-
-
+                            // update ModelVisual3D
+                            UpdateModelVisual3D(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z);
                             break;
                     }
                     break;
             }
+        }
+
+        private void UpdateModelVisual3D(float q_w, float q_x, float q_y, float q_z)
+        {
+            m_ModelVisualUpdate++;
+
+            // reduce CPU usage by drawing every 6 calls
+            if (m_ModelVisualUpdate % 6 != 0)
+                return;
+
+            this.Dispatcher.Invoke(() =>
+            {
+                Quaternion endQuaternion = new Quaternion(q_w, q_x, q_y, q_z);
+                var ax3dalt = new QuaternionRotation3D(endQuaternion);
+
+                myRotateTransform = new RotateTransform3D(ax3dalt);
+                myRotateTransform.CenterX = myRotateTransform.CenterY = myRotateTransform.CenterZ = 0.0;
+
+                ModelVisual3D.Content.Transform = myRotateTransform;
+            });
         }
 
         protected void WinEventCallback(
