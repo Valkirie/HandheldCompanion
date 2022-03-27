@@ -158,6 +158,7 @@ namespace ControllerService
                             AngularVelocityRad.Z = -InputUtils.deg2rad(AngularUniversal.Z);
                             madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration.X, Acceleration.Y, Acceleration.Z, DeltaMilliseconds);
                             Quaternion PoseQuat = madgwickAHRS.GetQuaternion();
+
                             pipeServer?.SendMessage(new PipeSensor(PoseQuat, SensorType.Quaternion));
                             break;
                     }

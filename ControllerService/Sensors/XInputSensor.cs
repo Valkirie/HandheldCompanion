@@ -38,7 +38,7 @@ namespace ControllerService.Sensors
 
         protected virtual Vector3 GetCurrentReading(bool center = false)
         {
-            return this.reading;
+            return center ? this.reading_fixed : this.reading;
         }
 
         public Vector3 GetCurrentReadingRaw()

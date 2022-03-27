@@ -54,21 +54,25 @@ namespace ControllerService.Sensors
 
             if (controller.virtualTarget != null)
             {
-                reading.Z = controller.profile.steering == 0 ? this.reading.Z : this.reading.Y;
-                reading.Y = controller.profile.steering == 0 ? this.reading.Y : -this.reading.Z;
-                reading.X = controller.profile.steering == 0 ? this.reading.X : this.reading.X;
+                var readingZ = controller.profile.steering == 0 ? reading.Z : reading.Y;
+                var readingY = controller.profile.steering == 0 ? reading.Y : -reading.Z;
+                var readingX = controller.profile.steering == 0 ? reading.X : reading.X;
 
                 if (controller.profile.inverthorizontal)
                 {
-                    reading.Y *= -1.0f;
-                    reading.Z *= -1.0f;
+                    readingY *= -1.0f;
+                    readingZ *= -1.0f;
                 }
 
                 if (controller.profile.invertvertical)
                 {
-                    reading.Y *= -1.0f;
-                    reading.X *= -1.0f;
+                    readingY *= -1.0f;
+                    readingX *= -1.0f;
                 }
+
+                reading.X = readingX;
+                reading.Y = readingY;
+                reading.Z = readingZ;
             }
 
             // Calculate angles around Y and X axis (Theta and Psi) using all 3 directions of accelerometer
