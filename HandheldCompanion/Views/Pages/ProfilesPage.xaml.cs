@@ -389,16 +389,17 @@ namespace HandheldCompanion.Views.Pages
 
         private async void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
         {
-            Profile profile = (Profile)cB_Profiles.SelectedItem;
+            if (profileCurrent == null)
+                return;
 
             // todo: implement localized strings
-            Task<ContentDialogResult> result = Dialog.ShowAsync($"Are you sure you want to delete \"{profile.name}\"?", "This item will be deleted immediatly. You can't undo this action.", ContentDialogButton.Primary, "Cancel", "Delete");
+            Task<ContentDialogResult> result = Dialog.ShowAsync($"Are you sure you want to delete \"{profileCurrent.name}\"?", "This item will be deleted immediatly. You can't undo this action.", ContentDialogButton.Primary, "Cancel", "Delete");
             await result; // sync call
 
             switch (result.Result)
             {
                 case ContentDialogResult.Primary:
-                    profileManager.DeleteProfile(profile);
+                    profileManager.DeleteProfile(profileCurrent);
                     cB_Profiles.SelectedIndex = 0;
                     break;
                 default:
