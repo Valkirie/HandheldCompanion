@@ -275,12 +275,12 @@ namespace HandheldCompanion.Views
                 // inform service & mouseHook
                 pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
 
-                // hide overlay on profile switch
-                overlay.Visibility = Visibility.Collapsed;
-
                 // change overlay hook
                 this.Dispatcher.Invoke(() =>
                 {
+                    // hide overlay on profile switch
+                    overlay.Visibility = Visibility.Collapsed;
+
                     if (!currentProfile.IsDefault)
                         overlay.HookInto(processid);
                 });
