@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:HandheldCompanion.Views.Windows"
         xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         mc:Ignorable="d"
-        Title="Overlay" Topmost="True" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Left="0" Top="0" ShowInTaskbar="False" Width="1280" Height="800">
+        Title="Overlay" Topmost="True" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Left="0" Top="0" ShowInTaskbar="False" Width="1280" Height="800" Visibility="Collapsed">
 
     <Grid>
         <!-- Trackpad -->

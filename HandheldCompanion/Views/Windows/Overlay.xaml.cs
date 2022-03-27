@@ -65,7 +65,7 @@ namespace HandheldCompanion.Views.Windows
             touchsource = new TouchSourceWinTouch(this);
             touchsource.Touch += Touchsource_Touch;
 
-            this.gamepadTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 1000 };
+            this.gamepadTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 500 };
             this.gamepadTimer.Elapsed += gamepadTimer_Elapsed;
         }
 
