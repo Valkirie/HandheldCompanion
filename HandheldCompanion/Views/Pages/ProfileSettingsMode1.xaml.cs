@@ -39,7 +39,6 @@ namespace HandheldCompanion.Views.Pages
             this.profileCurrent = profileCurrent;
             this.pipeClient = pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
-            this.pipeClient.SendMessage(new PipeNavigation((string)this.Tag));
 
             SliderDeadzoneAngle.Value = profileCurrent.steering_deadzone;
             SliderPower.Value = profileCurrent.steering_power;

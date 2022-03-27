@@ -29,7 +29,6 @@ namespace HandheldCompanion.Views.Pages
             this.profileCurrent = profileCurrent;
             this.pipeClient = pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
-            this.pipeClient.SendMessage(new PipeNavigation((string)this.Tag));
 
             SliderSensivity.Value = profileCurrent.aiming_sensivity;
             Toggle_FlickStick.IsOn = profileCurrent.flickstick_enabled;
