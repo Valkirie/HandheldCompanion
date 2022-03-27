@@ -143,7 +143,7 @@ namespace ControllerService.Targets
 
                                     default:
                                     case Input.JoystickCamera:
-                                        Angular = new Vector2(-xinputController.AngularUniversal.Z, xinputController.AngularUniversal.X);
+                                        Angular = new Vector2(-xinputController.AngularVelocityC.Z, xinputController.AngularVelocityC.X);
                                         break;
                                 }
 

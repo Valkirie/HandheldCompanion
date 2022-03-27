@@ -41,9 +41,9 @@ namespace ControllerService.Sensors
             return center ? this.reading_fixed : this.reading;
         }
 
-        public Vector3 GetCurrentReadingRaw()
+        public Vector3 GetCurrentReadingRaw(bool center = false)
         {
-            return this.reading;
+            return center ? this.reading_fixed : this.reading;
         }
     }
 }

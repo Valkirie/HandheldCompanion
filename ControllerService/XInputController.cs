@@ -27,9 +27,10 @@ namespace ControllerService
 
         public Vector3 Acceleration;
         public Vector3 Angle;
-        public Vector3 AngularUniversal;
+        public Vector3 AngularVelocityC;
         public Vector3 AngularVelocity;
         public Vector3 AngularVelocityRad;
+        public Vector3 AngularRawC;
 
         public MultimediaTimer UpdateTimer;
         public float WidhtHeightRatio = 2.5f;
@@ -77,6 +78,7 @@ namespace ControllerService
             // initialize vectors
             AngularVelocity = new();
             AngularVelocityRad = new();
+            AngularRawC = new();
             Acceleration = new();
             Angle = new();
 
@@ -124,7 +126,9 @@ namespace ControllerService
             {
                 // update reading(s)
                 AngularVelocity = Gyrometer.GetCurrentReading();
-                AngularUniversal = Gyrometer.GetCurrentReading(true);
+                AngularVelocityC = Gyrometer.GetCurrentReading(true);
+                AngularRawC = Gyrometer.GetCurrentReadingRaw(true);
+
                 Acceleration = Accelerometer.GetCurrentReading();
                 Angle = Inclinometer.GetCurrentReading();
 
@@ -140,7 +144,7 @@ namespace ControllerService
                     switch (ControllerService.CurrentTag)
                     {
                         case "ProfileSettingsMode0":
-                            pipeServer?.SendMessage(new PipeSensor(AngularUniversal, SensorType.Girometer));
+                            pipeServer?.SendMessage(new PipeSensor(AngularVelocityC, SensorType.Girometer));
                             break;
 
                         case "ProfileSettingsMode1":
@@ -153,9 +157,9 @@ namespace ControllerService
                         case 0: // Visibility.Visible
 
                             // update madgwick
-                            AngularVelocityRad.X = -InputUtils.deg2rad(AngularUniversal.X);
-                            AngularVelocityRad.Y = -InputUtils.deg2rad(AngularUniversal.Y);
-                            AngularVelocityRad.Z = -InputUtils.deg2rad(AngularUniversal.Z);
+                            AngularVelocityRad.X = -InputUtils.deg2rad(AngularRawC.X);
+                            AngularVelocityRad.Y = -InputUtils.deg2rad(AngularRawC.Y);
+                            AngularVelocityRad.Z = -InputUtils.deg2rad(AngularRawC.Z);
                             madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration.X, Acceleration.Y, Acceleration.Z, DeltaMilliseconds);
                             Quaternion PoseQuat = madgwickAHRS.GetQuaternion();
 
