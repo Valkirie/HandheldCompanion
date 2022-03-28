@@ -254,7 +254,9 @@ namespace HandheldCompanion.Views.Windows
         }
 
         #region ModelVisual3D
-        private RotateTransform3D myRotateTransform;
+        private RotateTransform3D DeviceRotateTransform;
+        private RotateTransform3D LeftJoystickRotateTransform;
+        private RotateTransform3D RightJoystickRotateTransform;
         private int m_ModelVisualUpdate;
         private void OnServerMessage(object sender, PipeMessage message)
         {
@@ -466,13 +468,52 @@ namespace HandheldCompanion.Views.Windows
 
                 if (gamepad.LeftThumbX != 0 || gamepad.LeftThumbY != 0)
                 {
+                    // Adjust color
                     GeometryModel3D model = JoystickLeftRing.Children[0] as GeometryModel3D;
                     model.Material = MaterialHighlight;
+
+
+
+                    // Define rotation amount
+                    float x = 30.0f * short.MaxValue / gamepad.LeftThumbX;
+                    float y = 30.0f * short.MaxValue / gamepad.LeftThumbY;
+                    var ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 1);
+                    ax3d.Angle = x;
+                    LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
+
+                    // TODO most likely define a transformation group here for both X and Y see:
+                    // https://docs.microsoft.com/en-us/dotnet/desktop/wpf/graphics-multimedia/how-to-apply-multiple-transformations-to-a-3-d-model?view=netframeworkdesktop-4.8
+
+                    // Define rotation point
+                    LeftJoystickRotateTransform.CenterX = 0.0;
+                    LeftJoystickRotateTransform.CenterY = -12.0;
+                    LeftJoystickRotateTransform.CenterZ = 24.0;
+
+                    // Transform joystick
+                    JoystickLeftRing.Transform = LeftJoystickRotateTransform;
+                    JoystickLeftStick.Transform = LeftJoystickRotateTransform;
                 }
                 else
                 {
                     GeometryModel3D model = JoystickLeftRing.Children[0] as GeometryModel3D;
                     model.Material = MaterialPlasticBlack;
+
+                    // Rotate to default
+                    var ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 1);
+                    ax3d.Angle = 0.0f;
+                    LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
+
+                    // TODO most likely define a transformation group here for both X and Y see:
+                    // https://docs.microsoft.com/en-us/dotnet/desktop/wpf/graphics-multimedia/how-to-apply-multiple-transformations-to-a-3-d-model?view=netframeworkdesktop-4.8
+
+                    // Define rotation point
+                    LeftJoystickRotateTransform.CenterX = 0.0;
+                    LeftJoystickRotateTransform.CenterY = -12.0;
+                    LeftJoystickRotateTransform.CenterZ = 24.0;
+
+                    // Transform joystick
+                    JoystickLeftRing.Transform = LeftJoystickRotateTransform;
+                    JoystickLeftStick.Transform = LeftJoystickRotateTransform;
                 }
 
                 if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb))
@@ -569,8 +610,8 @@ namespace HandheldCompanion.Views.Windows
                 Quaternion endQuaternion = new Quaternion(q_w, q_x, q_y, q_z);
                 var ax3dalt = new QuaternionRotation3D(endQuaternion);
 
-                myRotateTransform = new RotateTransform3D(ax3dalt);
-                ModelVisual3D.Content.Transform = myRotateTransform;
+                DeviceRotateTransform = new RotateTransform3D(ax3dalt);
+                ModelVisual3D.Content.Transform = DeviceRotateTransform;
             });
         }
         #endregion
