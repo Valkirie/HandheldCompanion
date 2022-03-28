@@ -302,13 +302,6 @@ namespace HandheldCompanion.Views
                 // start process manager
                 processManager.Start();
             }
-
-            // update service screen size
-            pipeClient.SendMessage(new PipeClientScreen
-            {
-                width = Screen.PrimaryScreen.Bounds.Width,
-                height = Screen.PrimaryScreen.Bounds.Height
-            });
         }
 
         private void OnClientDisconnected(object sender)
