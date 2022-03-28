@@ -335,7 +335,7 @@ namespace TouchEventSample
             if (msg == WM_TOUCH)
             {
                 handled = HandleTouch(wParam, lParam);
-                return new IntPtr(1);
+                return new IntPtr(0x0003); // NOACTIVE
             }
 
             return IntPtr.Zero;

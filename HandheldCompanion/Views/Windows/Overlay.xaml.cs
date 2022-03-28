@@ -37,6 +37,15 @@ namespace HandheldCompanion.Views.Windows
         protected WinEventDelegate WinEventDelegate;
         static GCHandle GCSafetyHandle;
 
+        private const int GWL_EXSTYLE = -20;
+        private const int WS_EX_NOACTIVATE = 0x08000000;
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll")]
+        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
         private ILogger microsoftLogger;
         private PipeClient pipeClient;
         private HandheldDevice handheldDevice;
@@ -79,15 +88,11 @@ namespace HandheldCompanion.Views.Windows
         DiffuseMaterial MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(Colors.White));
         DiffuseMaterial MaterialHighlight = new DiffuseMaterial(new SolidColorBrush(Colors.LightBlue));
 
-
         private TouchSourceWinTouch touchsource;
 
         // Gamepad vars
         private Gamepad gamepad;
         private Timer gamepadTimer;
-
-        [DllImport("USER32.DLL")]
-        public static extern bool SetForegroundWindow(IntPtr hWnd);
 
         public Overlay()
         {
@@ -96,8 +101,18 @@ namespace HandheldCompanion.Views.Windows
             touchsource = new TouchSourceWinTouch(this);
             touchsource.Touch += Touchsource_Touch;
 
+            this.SourceInitialized += Overlay_SourceInitialized;
+
             this.gamepadTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 500 };
             this.gamepadTimer.Elapsed += gamepadTimer_Elapsed;
+        }
+
+        private void Overlay_SourceInitialized(object? sender, EventArgs e)
+        {
+            //Set the window style to noactivate.
+            WindowInteropHelper helper = new WindowInteropHelper(this);
+            SetWindowLong(helper.Handle, GWL_EXSTYLE,
+                GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
         }
 
         private void Touchsource_Touch(TouchSourceWinTouch.TouchArgs args)
@@ -218,14 +233,17 @@ namespace HandheldCompanion.Views.Windows
         }
 
         private bool isTriggered;
+        private bool isReleased = true;
         private void UpdateReport()
         {
             isTriggered = gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb) && gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
-            if (isTriggered)
+            if (isTriggered && isReleased)
             {
                 gamepadTimer.Stop();
                 gamepadTimer.Start();
+                isReleased = false;
             }
+
             this.Dispatcher.Invoke(() =>
             {
                 // DPad
@@ -486,6 +504,8 @@ namespace HandheldCompanion.Views.Windows
                     pipeClient.SendMessage(new PipeOverlay((int)this.Visibility));
                 });
             }
+
+            isReleased = true;
         }
 
         private void UpdateModelVisual3D(float q_w, float q_x, float q_y, float q_z)
@@ -553,8 +573,6 @@ namespace HandheldCompanion.Views.Windows
                         this.Left = rect.Left;
                         this.Width = rect.Right - rect.Left;
                         this.Height = rect.Bottom - rect.Top;
-
-                        SetForegroundWindow(hWnd);
                     }
                 }
             }
