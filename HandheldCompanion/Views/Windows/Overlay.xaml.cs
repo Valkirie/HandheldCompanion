@@ -232,7 +232,7 @@ namespace HandheldCompanion.Views.Windows
             }
         }
 
-        private bool isTriggered;
+        private bool isTriggered = false;
         private bool isReleased = true;
         private void UpdateReport()
         {
