@@ -146,19 +146,19 @@ namespace TouchEventSample
         /// <summary>
         ///
         /// </summary>
-        /// <param name="w"></param>
-        public TouchSourceWinTouch(Window w)
+        /// <param name="win"></param>
+        public TouchSourceWinTouch(Window win)
         {
-            win = w;
+            this.win = win;
             _idMapping = new Dictionary<int, uint>(100);
 
             DisableWPFTabletSupport();
 
             //win.SourceInitialized += OnSourceInitialized;
-            if (win.IsLoaded)
+            if (this.win.IsLoaded)
                 OnSourceInitialized(this, new EventArgs());
             else
-                win.Loaded += OnSourceInitialized;
+                this.win.Loaded += OnSourceInitialized;
             //win.SourceInitialized += OnSourceInitialized;
         }
 
@@ -263,32 +263,7 @@ namespace TouchEventSample
         }
 
         public event TouchEventHandler Touch;
-        public delegate void TouchEventHandler(TouchArgs args);
-
-        private void ProcessTouchArg(TouchArgs e, long time)
-        {
-            Touch?.Invoke(e);
-            switch (e.Status)
-            {
-                case CursorEvent.EventType.DOWN:
-                    {
-                        Debug.WriteLine(string.Format(" id {0} event {1}", e.Id, "down"));
-                    }
-                    break;
-
-                case CursorEvent.EventType.MOVE:
-                    {
-                        Debug.WriteLine(string.Format(" id {0} event {1}", e.Id, "move"));
-                    }
-                    break;
-
-                case CursorEvent.EventType.UP:
-                    {
-                        Debug.WriteLine(string.Format(" id {0} event {1}", e.Id, "up"));
-                    }
-                    break;
-            }
-        }
+        public delegate void TouchEventHandler(TouchArgs args, long time);
 
         private bool RegisterTouchEvent(IntPtr handle)
         {
@@ -542,7 +517,7 @@ namespace TouchEventSample
                         Status = status
                     };
 
-                    ProcessTouchArg(e, time);
+                    Touch?.Invoke(e, time);
                 }
                 else
                 {

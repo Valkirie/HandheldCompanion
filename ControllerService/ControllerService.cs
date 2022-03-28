@@ -16,7 +16,6 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using WindowsHook;
 
 namespace ControllerService
 {
@@ -241,20 +240,15 @@ namespace ControllerService
                     switch (cursor.action)
                     {
                         case CursorAction.CursorUp:
-                            XInputController.Touch.OnMouseUp((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.Touch.OnMouseUp(cursor.x, cursor.y, cursor.button, cursor.flags);
                             break;
                         case CursorAction.CursorDown:
-                            XInputController.Touch.OnMouseDown((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.Touch.OnMouseDown(cursor.x, cursor.y, cursor.button, cursor.flags);
                             break;
                         case CursorAction.CursorMove:
-                            XInputController.Touch.OnMouseMove((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.Touch.OnMouseMove(cursor.x, cursor.y, cursor.button, cursor.flags);
                             break;
                     }
-                    break;
-
-                case PipeCode.CLIENT_SCREEN:
-                    PipeClientScreen screen = (PipeClientScreen)message;
-                    XInputController.Touch.UpdateRatio(screen.width, screen.height);
                     break;
 
                 case PipeCode.CLIENT_SETTINGS:
@@ -303,8 +297,8 @@ namespace ControllerService
 
         private void OnClientDisconnected(object sender)
         {
-            XInputController.Touch.OnMouseUp(0, 0, MouseButtons.Left);
-            XInputController.Touch.OnMouseUp(0, 0, MouseButtons.Right);
+            XInputController.Touch.OnMouseUp(0, 0, CursorButton.TouchLeft, 26);
+            XInputController.Touch.OnMouseUp(0, 0, CursorButton.TouchRight, 26);
         }
 
         private void OnClientConnected(object sender)

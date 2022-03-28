@@ -36,6 +36,7 @@ namespace ControllerCommon
 
         CLIENT_SCREEN = 11,                 // Sent to server to update screen details
                                             // args: width, height
+                                            // OBSOLETE, REUSEME
 
         CLIENT_CONSOLE = 12,                // Sent from client to client to pass parameters
                                             // args: string[] parameters

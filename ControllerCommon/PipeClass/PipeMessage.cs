@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text.Json;
-using WindowsHook;
 
 namespace ControllerCommon
 {
@@ -80,18 +79,6 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public partial class PipeClientScreen : PipeMessage
-    {
-        public int width;
-        public int height;
-
-        public PipeClientScreen()
-        {
-            code = PipeCode.CLIENT_SCREEN;
-        }
-    }
-
-    [Serializable]
     public partial class PipeClientSettings : PipeMessage
     {
         public Dictionary<string, object> settings = new();
@@ -116,12 +103,21 @@ namespace ControllerCommon
     }
 
     [Serializable]
+    public enum CursorButton
+    {
+        None = 0,
+        TouchLeft = 1,
+        TouchRight = 2
+    }
+
+    [Serializable]
     public partial class PipeClientCursor : PipeMessage
     {
         public CursorAction action;
-        public float x;
-        public float y;
-        public MouseButtons button;
+        public double x;
+        public double y;
+        public CursorButton button;
+        public int flags;
 
         public PipeClientCursor()
         {

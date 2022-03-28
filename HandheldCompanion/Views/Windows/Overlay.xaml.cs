@@ -37,6 +37,7 @@ namespace HandheldCompanion.Views.Windows
         protected WinEventDelegate WinEventDelegate;
         static GCHandle GCSafetyHandle;
 
+        #region import
         private const int GWL_EXSTYLE = -20;
         private const int WS_EX_NOACTIVATE = 0x08000000;
 
@@ -45,10 +46,15 @@ namespace HandheldCompanion.Views.Windows
 
         [DllImport("user32.dll")]
         public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        #endregion
 
         private ILogger microsoftLogger;
         private PipeClient pipeClient;
         private HandheldDevice handheldDevice;
+
+        private Point OverlayPosition;
+        private Point LeftTrackPadPosition;
+        private Point RightTrackPadPosition;
 
         // Model3D vars
         Model3DGroup HandHeld = new Model3DGroup();
@@ -107,32 +113,6 @@ namespace HandheldCompanion.Views.Windows
             this.gamepadTimer.Elapsed += gamepadTimer_Elapsed;
         }
 
-        private void Overlay_SourceInitialized(object? sender, EventArgs e)
-        {
-            //Set the window style to noactivate.
-            WindowInteropHelper helper = new WindowInteropHelper(this);
-            SetWindowLong(helper.Handle, GWL_EXSTYLE,
-                GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
-        }
-
-        private void Touchsource_Touch(TouchSourceWinTouch.TouchArgs args)
-        {
-            int X = (int)args.LocationX;
-            int Y = (int)args.LocationY;
-
-            switch (args.Status)
-            {
-                case CursorEvent.EventType.DOWN:
-                    break;
-
-                case CursorEvent.EventType.MOVE:
-                    break;
-
-                case CursorEvent.EventType.UP:
-                    break;
-            }
-        }
-
         public Overlay(ILogger microsoftLogger, PipeClient pipeClient, HandheldDevice handheldDevice) : this()
         {
             this.microsoftLogger = microsoftLogger;
@@ -142,7 +122,7 @@ namespace HandheldCompanion.Views.Windows
 
             this.handheldDevice = handheldDevice;
 
-            // load 3D model
+            // load 3D model (should be moved to handheldDevice)
             DPadDown = importer.Load($"models/{handheldDevice.ModelName}/DPad-Down.obj");
             DPadLeft = importer.Load($"models/{handheldDevice.ModelName}/DPad-Left.obj");
             DPadRight = importer.Load($"models/{handheldDevice.ModelName}/DPad-Right.obj");
@@ -202,7 +182,75 @@ namespace HandheldCompanion.Views.Windows
             HandHeld.Children.Add(WFBWin);
 
             ModelVisual3D.Content = HandHeld;
+        }
 
+        private void Overlay_SourceInitialized(object? sender, EventArgs e)
+        {
+            //Set the window style to noactivate.
+            WindowInteropHelper helper = new WindowInteropHelper(this);
+            SetWindowLong(helper.Handle, GWL_EXSTYLE,
+                GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
+
+            this.LeftTrackPadPosition = LeftTrackpad.PointToScreen(new Point(0, 0));
+            this.RightTrackPadPosition = RightTrackpad.PointToScreen(new Point(0, 0));
+        }
+
+        private void Touchsource_Touch(TouchSourceWinTouch.TouchArgs args, long time)
+        {
+            double X = args.LocationX - this.OverlayPosition.X;
+            double Y = args.LocationY - this.OverlayPosition.Y;
+
+            double CenterX = this.ActualWidth / 2;
+            bool isLeft = X < CenterX;
+            CursorButton Button;
+            Point CurrentPoint = new Point(0, 0);
+
+            switch (isLeft)
+            {
+                // left trackpad
+                default:
+                case true:
+                    Button = CursorButton.TouchLeft;
+                    CurrentPoint = LeftTrackPadPosition;
+                    break;
+
+                // right trackpad
+                case false:
+                    Button = CursorButton.TouchRight;
+                    CurrentPoint = RightTrackPadPosition;
+                    break;
+            }
+
+            // normalized
+            var relativeX = Math.Clamp(args.LocationX - CurrentPoint.X, 0, LeftTrackpad.ActualWidth);
+            var relativeY = Math.Clamp(args.LocationY - CurrentPoint.Y, 0, LeftTrackpad.ActualHeight);
+
+            var normalizedX = relativeX / LeftTrackpad.ActualWidth / 2.0d;
+            var normalizedY = relativeY / LeftTrackpad.ActualHeight;
+
+            switch (isLeft)
+            {
+                // left trackpad
+                default:
+                case true:
+                    break;
+
+                // right trackpad
+                case false:
+                    normalizedX += 0.5d;
+                    break;
+            }
+
+            Debug.WriteLine(string.Format($"Id:{args.Id}, Status:{args.Status}, Button:{Button}, Flags:{args.Flags}, PadRelative.X:{normalizedX}, PadRelative.Y:{normalizedY}"));
+
+            this.pipeClient.SendMessage(new PipeClientCursor
+            {
+                action = args.Status == CursorEvent.EventType.DOWN ? CursorAction.CursorDown : args.Status == CursorEvent.EventType.UP ? CursorAction.CursorUp : CursorAction.CursorMove,
+                x = normalizedX,
+                y = normalizedY,
+                button = Button,
+                flags = args.Flags
+            });
         }
 
         #region ModelVisual3D
@@ -544,6 +592,10 @@ namespace HandheldCompanion.Views.Windows
                 this.Left = rect.Left;
                 this.Width = rect.Right - rect.Left;
                 this.Height = rect.Bottom - rect.Top;
+
+                this.OverlayPosition = new Point(rect.Left, rect.Top);
+                this.LeftTrackPadPosition = LeftTrackpad.PointToScreen(new Point(0,0));
+                this.RightTrackPadPosition = RightTrackpad.PointToScreen(new Point(0, 0));
             }
         }
 
@@ -573,6 +625,8 @@ namespace HandheldCompanion.Views.Windows
                         this.Left = rect.Left;
                         this.Width = rect.Right - rect.Left;
                         this.Height = rect.Bottom - rect.Top;
+
+                        this.OverlayPosition = new Point(rect.Left, rect.Top);
                     }
                 }
             }

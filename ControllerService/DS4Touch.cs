@@ -1,13 +1,10 @@
-﻿using System.Windows.Forms;
-using MouseButtons = WindowsHook.MouseButtons;
+﻿using ControllerCommon;
+using System.Windows.Forms;
 
 namespace ControllerService
 {
     public class DS4Touch
     {
-        private float RatioWidth;
-        private float RatioHeight;
-
         private const int TOUCHPAD_WIDTH = 1920;
         private const int TOUCHPAD_HEIGHT = 943;
 
@@ -35,70 +32,74 @@ namespace ControllerService
 
         public DS4Touch()
         {
-            // default ratio (not dpi aware)
-            UpdateRatio(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-
             // default values
             TrackPadTouch1.RawTrackingNum |= TOUCH0_ID + TOUCH_DISABLE;
             TrackPadTouch2.RawTrackingNum |= TOUCH1_ID + TOUCH_DISABLE;
         }
 
-        public void UpdateRatio(float w, float h)
+        public void OnMouseUp(double X, double Y, CursorButton Button, int flags = 20)
         {
-            BoundsWidth = w;
-            BoundsHeight = h;
+            TouchX = (short)(X * TOUCHPAD_WIDTH);
+            TouchY = (short)(Y * TOUCHPAD_HEIGHT);
 
-            RatioWidth = (float)TOUCHPAD_WIDTH / BoundsWidth;
-            RatioHeight = (float)TOUCHPAD_HEIGHT / BoundsHeight;
-        }
-
-        public void OnMouseUp(short X, short Y, MouseButtons Button)
-        {
-            TouchX = (short)(X * RatioWidth);
-            TouchY = (short)(Y * RatioHeight);
-
-            TrackPadTouch1.X = TouchX;
-            TrackPadTouch1.Y = TouchY;
-
-            // TrackPadTouch2.X = TouchX;
-            // TrackPadTouch2.Y = TouchY;
+            switch(Button)
+            {
+                case CursorButton.TouchLeft:
+                    TrackPadTouch1.X = TouchX;
+                    TrackPadTouch1.Y = TouchY;
+                    TrackPadTouch1.RawTrackingNum |= TOUCH_DISABLE;
+                    break;
+                case CursorButton.TouchRight:
+                    TrackPadTouch2.X = TouchX;
+                    TrackPadTouch2.Y = TouchY;
+                    TrackPadTouch2.RawTrackingNum |= TOUCH_DISABLE;
+                    break;
+            }
 
             OutputClickButton = false;
-
-            TrackPadTouch1.RawTrackingNum |= TOUCH_DISABLE;
-            // TrackPadTouch2.RawTrackingNum |= TOUCH_DISABLE;
         }
 
-        public void OnMouseDown(short X, short Y, MouseButtons Button)
+        public void OnMouseDown(double X, double Y, CursorButton Button, int flags = 20)
         {
-            TouchX = (short)(X * RatioWidth);
-            TouchY = (short)(Y * RatioHeight);
+            TouchX = (short)(X * TOUCHPAD_WIDTH);
+            TouchY = (short)(Y * TOUCHPAD_HEIGHT);
 
-            TrackPadTouch1.X = TouchX;
-            TrackPadTouch1.Y = TouchY;
+            switch (Button)
+            {
+                case CursorButton.TouchLeft:
+                    TrackPadTouch1.X = TouchX;
+                    TrackPadTouch1.Y = TouchY;
+                    TrackPadTouch1.RawTrackingNum &= ~TOUCH_DISABLE;
+                    break;
+                case CursorButton.TouchRight:
+                    TrackPadTouch2.X = TouchX;
+                    TrackPadTouch2.Y = TouchY;
+                    TrackPadTouch2.RawTrackingNum &= ~TOUCH_DISABLE;
+                    break;
+            }
 
-            // TrackPadTouch2.X = TouchX;
-            // TrackPadTouch2.Y = TouchY;
-
-            if (Button == MouseButtons.Right)
+            if (flags > 26) // double tap
                 OutputClickButton = true;
-
-            TrackPadTouch1.RawTrackingNum &= ~TOUCH_DISABLE;
-            // TrackPadTouch2.RawTrackingNum &= ~TOUCH_DISABLE;
 
             TouchPacketCounter++;
         }
 
-        public void OnMouseMove(short X, short Y, MouseButtons Button)
+        public void OnMouseMove(double X, double Y, CursorButton Button, int flags = 20)
         {
-            TouchX = (short)(X * RatioWidth);
-            TouchY = (short)(Y * RatioHeight);
+            TouchX = (short)(X * TOUCHPAD_WIDTH);
+            TouchY = (short)(Y * TOUCHPAD_HEIGHT);
 
-            TrackPadTouch1.X = TouchX;
-            TrackPadTouch1.Y = TouchY;
-
-            // TrackPadTouch2.X = TouchX;
-            // TrackPadTouch2.Y = TouchY;
+            switch (Button)
+            {
+                case CursorButton.TouchLeft:
+                    TrackPadTouch1.X = TouchX;
+                    TrackPadTouch1.Y = TouchY;
+                    break;
+                case CursorButton.TouchRight:
+                    TrackPadTouch2.X = TouchX;
+                    TrackPadTouch2.Y = TouchY;
+                    break;
+            }
         }
     }
 }
