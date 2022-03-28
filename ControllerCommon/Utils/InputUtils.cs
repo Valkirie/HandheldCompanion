@@ -134,16 +134,22 @@ namespace ControllerCommon.Utils
         // - User does not want to change general emulator deadzone setting but want's it removed for specific game and use UMC Steering
         public static Vector2 ApplyAntiDeadzone(Vector2 ThumbValue, float DeadzoneIn)
         {
+            // todo: move this somewhere else
             float deadzone = DeadzoneIn / 100;
 
             Vector2 stickInput = new Vector2(ThumbValue.X, ThumbValue.Y) / short.MaxValue;
+
+            if (stickInput == Vector2.Zero)
+                return stickInput;
 
             float magnitude = stickInput.Length();
 
             if (magnitude < deadzone)
             {
                 float dist = Math.Abs(magnitude - deadzone);
-                stickInput = new Vector2(stickInput.X, stickInput.Y) * (1 + dist);
+                float mult = deadzone / magnitude;
+
+                return stickInput * mult * short.MaxValue;
             }
 
             return stickInput * short.MaxValue;
