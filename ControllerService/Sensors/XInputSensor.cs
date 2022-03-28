@@ -1,5 +1,7 @@
 ﻿using ControllerCommon.Utils;
+using Microsoft.Extensions.Logging;
 using System.Numerics;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace ControllerService.Sensors
@@ -16,14 +18,25 @@ namespace ControllerService.Sensors
         protected Timer updateTimer;
         protected int updateInterval;
 
-        protected XInputSensor(XInputController controller)
+        protected readonly ILogger logger;
+
+        protected XInputSensor(XInputController controller, ILogger logger)
         {
             this.controller = controller;
 
             this.updateInterval = controller.updateInterval;
 
-            this.updateTimer = new Timer() { Enabled = false, AutoReset = false };
+            this.updateTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 100 };
             this.updateTimer.Elapsed += Timer_Elapsed;
+        }
+
+        protected virtual void ReadingChanged()
+        {
+            // reset reading after inactivity
+            updateTimer.Stop();
+            updateTimer.Start();
+
+            Task.Run(() => logger?.LogDebug("{0}.ReadingChanged({1:00.####}, {2:00.####}, {3:00.####})", this.GetType().Name, this.reading.X, this.reading.Y, this.reading.Z));
         }
 
         protected virtual void Timer_Elapsed(object sender, ElapsedEventArgs e)

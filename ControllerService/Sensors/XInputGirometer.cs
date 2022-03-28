@@ -17,12 +17,8 @@ namespace ControllerService.Sensors
             maxOut = 2048.0f,
         };
 
-        private readonly ILogger logger;
-
-        public XInputGirometer(XInputController controller, ILogger logger) : base(controller)
+        public XInputGirometer(XInputController controller, ILogger logger) : base(controller, logger)
         {
-            this.logger = logger;
-
             sensor = Gyrometer.GetDefault();
             if (sensor != null)
             {
@@ -32,7 +28,7 @@ namespace ControllerService.Sensors
                 // (re)center
                 updateTimer.Interval = updateInterval * 6;
 
-                sensor.ReadingChanged += ReadingHasChanged;
+                sensor.ReadingChanged += ReadingChanged;
             }
             else
             {
@@ -40,7 +36,7 @@ namespace ControllerService.Sensors
             }
         }
 
-        private void ReadingHasChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
+        private void ReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
         {
             GyrometerReading reading = args.Reading;
 
@@ -49,11 +45,7 @@ namespace ControllerService.Sensors
             this.reading.Y = this.reading_fixed.Y = (float)reading.AngularVelocityZ;
             this.reading.Z = this.reading_fixed.Z = (float)reading.AngularVelocityY;
 
-            // reset reading after inactivity
-            updateTimer.Stop();
-            updateTimer.Start();
-
-            Task.Run(() => logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
+            base.ReadingChanged();
         }
 
         public new Vector3 GetCurrentReading(bool center = false)

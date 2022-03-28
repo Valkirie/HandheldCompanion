@@ -13,12 +13,8 @@ namespace ControllerService.Sensors
         public event ReadingChangedEventHandler ReadingHasChanged;
         public delegate void ReadingChangedEventHandler(XInputInclinometer sender, Vector3 e);
 
-        private readonly ILogger logger;
-
-        public XInputInclinometer(XInputController controller, ILogger logger) : base(controller)
+        public XInputInclinometer(XInputController controller, ILogger logger) : base(controller, logger)
         {
-            this.logger = logger;
-
             sensor = Accelerometer.GetDefault();
             if (sensor != null)
             {
@@ -36,11 +32,11 @@ namespace ControllerService.Sensors
         {
             AccelerometerReading reading = args.Reading;
 
-            this.reading.X = (float)reading.AccelerationX;
-            this.reading.Y = (float)reading.AccelerationZ;
-            this.reading.Z = (float)reading.AccelerationY;
+            this.reading.X = this.reading_fixed.X = (float)reading.AccelerationX;
+            this.reading.Y = this.reading_fixed.Y = (float)reading.AccelerationZ;
+            this.reading.Z = this.reading_fixed.Z = (float)reading.AccelerationY;
 
-            Task.Run(() => logger?.LogDebug("XInputInclinometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
+            base.ReadingChanged();
         }
 
         public new Vector3 GetCurrentReading(bool center = false)
