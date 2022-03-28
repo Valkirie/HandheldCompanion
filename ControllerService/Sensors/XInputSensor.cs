@@ -20,6 +20,9 @@ namespace ControllerService.Sensors
 
         protected readonly ILogger logger;
 
+        public event ReadingChangedEventHandler ReadingHasChanged;
+        public delegate void ReadingChangedEventHandler(XInputSensor sender, Vector3 e);
+
         protected XInputSensor(XInputController controller, ILogger logger)
         {
             this.controller = controller;
@@ -35,6 +38,9 @@ namespace ControllerService.Sensors
             // reset reading after inactivity
             updateTimer.Stop();
             updateTimer.Start();
+
+            // raise event
+            ReadingHasChanged?.Invoke(this, this.reading);
 
             Task.Run(() => logger?.LogDebug("{0}.ReadingChanged({1:00.####}, {2:00.####}, {3:00.####})", this.GetType().Name, this.reading.X, this.reading.Y, this.reading.Z));
         }

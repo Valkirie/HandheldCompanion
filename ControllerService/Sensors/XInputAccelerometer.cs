@@ -17,9 +17,6 @@ namespace ControllerService.Sensors
             maxOut = short.MaxValue,
         };
 
-        public event ReadingChangedEventHandler ReadingHasChanged;
-        public delegate void ReadingChangedEventHandler(XInputAccelerometer sender, Vector3 e);
-
         public XInputAccelerometer(XInputController controller, ILogger logger) : base(controller, logger)
         {
             sensor = Accelerometer.GetDefault();

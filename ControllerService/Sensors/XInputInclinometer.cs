@@ -10,9 +10,6 @@ namespace ControllerService.Sensors
     {
         public Accelerometer sensor;
 
-        public event ReadingChangedEventHandler ReadingHasChanged;
-        public delegate void ReadingChangedEventHandler(XInputInclinometer sender, Vector3 e);
-
         public XInputInclinometer(XInputController controller, ILogger logger) : base(controller, logger)
         {
             sensor = Accelerometer.GetDefault();
