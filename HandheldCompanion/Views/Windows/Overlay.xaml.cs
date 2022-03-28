@@ -90,9 +90,9 @@ namespace HandheldCompanion.Views.Windows
         Model3DGroup WFBWin;
 
         // Default Materials
-        DiffuseMaterial MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(Colors.Black));
-        DiffuseMaterial MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(Colors.White));
-        DiffuseMaterial MaterialHighlight = new DiffuseMaterial(new SolidColorBrush(Colors.LightBlue));
+        DiffuseMaterial MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#333333")));
+        DiffuseMaterial MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F0EFF0"))); 
+        DiffuseMaterial MaterialHighlight = new DiffuseMaterial(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#76B9ED")));
 
         private TouchSourceWinTouch touchsource;
 
