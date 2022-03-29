@@ -225,7 +225,7 @@ namespace HandheldCompanion.Views.Windows
             var relativeX = Math.Clamp(args.LocationX - CurrentPoint.X, 0, LeftTrackpad.ActualWidth);
             var relativeY = Math.Clamp(args.LocationY - CurrentPoint.Y, 0, LeftTrackpad.ActualHeight);
 
-            var normalizedX = relativeX / LeftTrackpad.ActualWidth / 2.0d;
+            var normalizedX = (relativeX / LeftTrackpad.ActualWidth) / 2.0d;
             var normalizedY = relativeY / LeftTrackpad.ActualHeight;
 
             switch (isLeft)
@@ -622,30 +622,34 @@ namespace HandheldCompanion.Views.Windows
             NativeMethods.SWEH_ObjectId idObject,
             long idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            if (hWnd == this.hWnd &&
+            try
+            {
+                if (hWnd == this.hWnd &&
                 eventType == NativeMethods.SWEH_Events.EVENT_OBJECT_LOCATIONCHANGE &&
                 idObject == (NativeMethods.SWEH_ObjectId)NativeMethods.SWEH_CHILDID_SELF)
-            {
-                var rect = GetWindowRectangle(hWnd);
-                this.Top = rect.Top;
-                this.Left = rect.Left;
-                this.Width = rect.Right - rect.Left;
-                this.Height = rect.Bottom - rect.Top;
+                {
+                    var rect = GetWindowRectangle(hWnd);
+                    this.Top = rect.Top;
+                    this.Left = rect.Left;
+                    this.Width = rect.Right - rect.Left;
+                    this.Height = rect.Bottom - rect.Top;
 
-                this.OverlayPosition = new Point(rect.Left, rect.Top);
-                this.LeftTrackPadPosition = LeftTrackpad.PointToScreen(new Point(0,0));
-                this.RightTrackPadPosition = RightTrackpad.PointToScreen(new Point(0, 0));
+                    this.OverlayPosition = new Point(rect.Left, rect.Top);
+                    this.LeftTrackPadPosition = LeftTrackpad.PointToScreen(new Point(0, 0));
+                    this.RightTrackPadPosition = RightTrackpad.PointToScreen(new Point(0, 0));
+                }
             }
+            catch (Exception ex) { }
         }
 
         public void HookInto(uint processid)
         {
-            WinEventDelegate = new WinEventDelegate(WinEventCallback);
-            GCSafetyHandle = GCHandle.Alloc(WinEventDelegate);
-            targetProc = Process.GetProcessById((int)processid);
-
             try
             {
+                WinEventDelegate = new WinEventDelegate(WinEventCallback);
+                GCSafetyHandle = GCHandle.Alloc(WinEventDelegate);
+                targetProc = Process.GetProcessById((int)processid);
+
                 if (targetProc != null)
                 {
                     hWnd = targetProc.MainWindowHandle;
