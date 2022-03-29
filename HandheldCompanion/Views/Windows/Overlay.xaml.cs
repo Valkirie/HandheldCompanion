@@ -92,7 +92,15 @@ namespace HandheldCompanion.Views.Windows
         // Default Materials
         DiffuseMaterial MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#333333")));
         DiffuseMaterial MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F0EFF0"))); 
-        DiffuseMaterial MaterialHighlight = new DiffuseMaterial(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#76B9ED")));
+        DiffuseMaterial MaterialHighlight = new DiffuseMaterial((Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"]);
+
+        // Rotation Points
+        Vector3D JoystickRotationPointCenterLeftMillimeter = new Vector3D(-109.0f, -8.0f, 23.0f);
+        Vector3D JoystickRotationPointCenterRightMillimeter = new Vector3D(104.0f, -8.0f, -6.0f);
+        float JoystickMaxAngleDeg = 19.0f;
+        Vector3D ShoulderTriggerRotationPointCenterLeftMillimeter = new Vector3D(-105.951f, 1.25f, 46.814f);
+        Vector3D ShoulderTriggerRotationPointCenterRightMillimeter = new Vector3D(105.951f, 1.25f, 46.814f);
+        float TriggerMaxAngleDeg = 16.0f;
 
         private TouchSourceWinTouch touchsource;
 
@@ -257,6 +265,9 @@ namespace HandheldCompanion.Views.Windows
         private RotateTransform3D DeviceRotateTransform;
         private RotateTransform3D LeftJoystickRotateTransform;
         private RotateTransform3D RightJoystickRotateTransform;
+        private RotateTransform3D LeftTriggerRotateTransform;
+        private RotateTransform3D RightTriggerRotateTransform;
+
         private int m_ModelVisualUpdate;
         private void OnServerMessage(object sender, PipeMessage message)
         {
@@ -425,11 +436,38 @@ namespace HandheldCompanion.Views.Windows
                 {
                     GeometryModel3D model = ShoulderLeftTrigger.Children[0] as GeometryModel3D;
                     model.Material = MaterialHighlight;
+
+                    // Define and compute
+                    float Angle = -1 * TriggerMaxAngleDeg * (float)gamepad.LeftTrigger / (float)byte.MaxValue;
+
+                    // Rotation
+                    var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, 7.27), Angle);
+                    LeftTriggerRotateTransform = new RotateTransform3D(ax3d);
+
+                    // Define rotation point
+                    LeftTriggerRotateTransform.CenterX = ShoulderTriggerRotationPointCenterLeftMillimeter.X;
+                    LeftTriggerRotateTransform.CenterY = ShoulderTriggerRotationPointCenterLeftMillimeter.Y;
+                    LeftTriggerRotateTransform.CenterZ = ShoulderTriggerRotationPointCenterLeftMillimeter.Z;
+
+                    // Transform trigger
+                    ShoulderLeftTrigger.Transform = LeftTriggerRotateTransform;
                 }
                 else
                 {
                     GeometryModel3D model = ShoulderLeftTrigger.Children[0] as GeometryModel3D;
                     model.Material = MaterialPlasticBlack;
+
+                    // Rotation reset
+                    var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, 7.27), 0);
+                    LeftTriggerRotateTransform = new RotateTransform3D(ax3d);
+
+                    // Define rotation point
+                    LeftTriggerRotateTransform.CenterX = ShoulderTriggerRotationPointCenterLeftMillimeter.X;
+                    LeftTriggerRotateTransform.CenterY = ShoulderTriggerRotationPointCenterLeftMillimeter.Y;
+                    LeftTriggerRotateTransform.CenterZ = ShoulderTriggerRotationPointCenterLeftMillimeter.Z;
+
+                    // Transform trigger
+                    ShoulderLeftTrigger.Transform = LeftTriggerRotateTransform;
                 }
 
                 if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder))
@@ -447,11 +485,38 @@ namespace HandheldCompanion.Views.Windows
                 {
                     GeometryModel3D model = ShoulderRightTrigger.Children[0] as GeometryModel3D;
                     model.Material = MaterialHighlight;
+
+                    // Define and compute
+                    float Angle = -1 * TriggerMaxAngleDeg * (float)gamepad.RightTrigger / (float)byte.MaxValue;
+
+                    // Rotation
+                    var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, -7.27), Angle);
+                    RightTriggerRotateTransform = new RotateTransform3D(ax3d);
+
+                    // Define rotation point
+                    RightTriggerRotateTransform.CenterX = ShoulderTriggerRotationPointCenterRightMillimeter.X;
+                    RightTriggerRotateTransform.CenterY = ShoulderTriggerRotationPointCenterRightMillimeter.Y;
+                    RightTriggerRotateTransform.CenterZ = ShoulderTriggerRotationPointCenterRightMillimeter.Z;
+
+                    // Transform trigger
+                    ShoulderRightTrigger.Transform = RightTriggerRotateTransform;
                 }
                 else
                 {
                     GeometryModel3D model = ShoulderRightTrigger.Children[0] as GeometryModel3D;
                     model.Material = MaterialPlasticBlack;
+
+                    // Rotation reset
+                    var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, -7.27), 0);
+                    RightTriggerRotateTransform = new RotateTransform3D(ax3d);
+
+                    // Define rotation point
+                    RightTriggerRotateTransform.CenterX = ShoulderTriggerRotationPointCenterRightMillimeter.X;
+                    RightTriggerRotateTransform.CenterY = ShoulderTriggerRotationPointCenterRightMillimeter.Y;
+                    RightTriggerRotateTransform.CenterZ = ShoulderTriggerRotationPointCenterRightMillimeter.Z;
+
+                    // Transform trigger
+                    ShoulderRightTrigger.Transform = RightTriggerRotateTransform;
                 }
 
                 // Joysticks
@@ -472,46 +537,53 @@ namespace HandheldCompanion.Views.Windows
                     GeometryModel3D model = JoystickLeftRing.Children[0] as GeometryModel3D;
                     model.Material = MaterialHighlight;
 
-
-
-                    // Define rotation amount
-                    float x = 30.0f * (float)gamepad.LeftThumbX / (float)short.MaxValue;
-                    float y = 30.0f * (float)gamepad.LeftThumbY / (float)short.MaxValue;
-                    var ax3dX = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
-                    LeftJoystickRotateTransform = new RotateTransform3D(ax3dX);
-
-                    // TODO most likely define a transformation group here for both X and Y see:
-                    // https://docs.microsoft.com/en-us/dotnet/desktop/wpf/graphics-multimedia/how-to-apply-multiple-transformations-to-a-3-d-model?view=netframeworkdesktop-4.8
+                    // Define and compute
+                    Transform3DGroup Transform3DGroupJoystickLeft = new Transform3DGroup();
+                    float x = JoystickMaxAngleDeg * (float)gamepad.LeftThumbX / (float)short.MaxValue;
+                    float y = -1 * JoystickMaxAngleDeg * (float)gamepad.LeftThumbY / (float)short.MaxValue;
+                    
+                    // Rotation X
+                    var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
+                    LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
 
                     // Define rotation point
-                    LeftJoystickRotateTransform.CenterX = -110.0;
-                    LeftJoystickRotateTransform.CenterY = -12.0;
-                    LeftJoystickRotateTransform.CenterZ = 24.0;
+                    LeftJoystickRotateTransform.CenterX = JoystickRotationPointCenterLeftMillimeter.X;
+                    LeftJoystickRotateTransform.CenterY = JoystickRotationPointCenterLeftMillimeter.Y;
+                    LeftJoystickRotateTransform.CenterZ = JoystickRotationPointCenterLeftMillimeter.Z;
 
-                    // Transform joystick
-                    JoystickLeftRing.Transform = LeftJoystickRotateTransform;
-                    JoystickLeftStick.Transform = LeftJoystickRotateTransform;
+                    Transform3DGroupJoystickLeft.Children.Add(LeftJoystickRotateTransform);
+
+                    // Rotation Y
+                    ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), y);
+                    LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
+
+                    // Define rotation point
+                    LeftJoystickRotateTransform.CenterX = JoystickRotationPointCenterLeftMillimeter.X;
+                    LeftJoystickRotateTransform.CenterY = JoystickRotationPointCenterLeftMillimeter.Y;
+                    LeftJoystickRotateTransform.CenterZ = JoystickRotationPointCenterLeftMillimeter.Z;
+
+                    Transform3DGroupJoystickLeft.Children.Add(LeftJoystickRotateTransform);
+
+                    // Transform joystick group
+                    JoystickLeftRing.Transform = JoystickLeftStick.Transform = Transform3DGroupJoystickLeft;
                 }
                 else
                 {
+                    // Default material color, no highlight
                     GeometryModel3D model = JoystickLeftRing.Children[0] as GeometryModel3D;
                     model.Material = MaterialPlasticBlack;
 
-                    // Rotate to default
+                    // Define and compute, back to default position
                     var ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0);
                     LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
 
-                    // TODO most likely define a transformation group here for both X and Y see:
-                    // https://docs.microsoft.com/en-us/dotnet/desktop/wpf/graphics-multimedia/how-to-apply-multiple-transformations-to-a-3-d-model?view=netframeworkdesktop-4.8
-
                     // Define rotation point
-                    LeftJoystickRotateTransform.CenterX = 0.0;
-                    LeftJoystickRotateTransform.CenterY = -12.0;
-                    LeftJoystickRotateTransform.CenterZ = 24.0;
+                    LeftJoystickRotateTransform.CenterX = JoystickRotationPointCenterLeftMillimeter.X;
+                    LeftJoystickRotateTransform.CenterY = JoystickRotationPointCenterLeftMillimeter.Y;
+                    LeftJoystickRotateTransform.CenterZ = JoystickRotationPointCenterLeftMillimeter.Z;
 
                     // Transform joystick
-                    JoystickLeftRing.Transform = LeftJoystickRotateTransform;
-                    JoystickLeftStick.Transform = LeftJoystickRotateTransform;
+                    JoystickLeftRing.Transform = JoystickLeftStick.Transform = LeftJoystickRotateTransform;
                 }
 
                 if (gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb))
@@ -529,11 +601,54 @@ namespace HandheldCompanion.Views.Windows
                 {
                     GeometryModel3D model = JoystickRightRing.Children[0] as GeometryModel3D;
                     model.Material = MaterialHighlight;
+
+                    // Define and compute
+                    Transform3DGroup Transform3DGroupJoystickRight = new Transform3DGroup();
+                    float x = JoystickMaxAngleDeg * (float)gamepad.RightThumbX / (float)short.MaxValue;
+                    float y = -1 * JoystickMaxAngleDeg * (float)gamepad.RightThumbY / (float)short.MaxValue;
+
+                    // Rotation X
+                    var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
+                    RightJoystickRotateTransform = new RotateTransform3D(ax3d);
+
+                    // Define rotation point
+                    RightJoystickRotateTransform.CenterX = JoystickRotationPointCenterRightMillimeter.X;
+                    RightJoystickRotateTransform.CenterY = JoystickRotationPointCenterRightMillimeter.Y;
+                    RightJoystickRotateTransform.CenterZ = JoystickRotationPointCenterRightMillimeter.Z;
+
+                    Transform3DGroupJoystickRight.Children.Add(RightJoystickRotateTransform);
+
+                    // Rotation Y
+                    ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), y);
+                    RightJoystickRotateTransform = new RotateTransform3D(ax3d);
+
+                    // Define rotation point
+                    RightJoystickRotateTransform.CenterX = JoystickRotationPointCenterRightMillimeter.X;
+                    RightJoystickRotateTransform.CenterY = JoystickRotationPointCenterRightMillimeter.Y;
+                    RightJoystickRotateTransform.CenterZ = JoystickRotationPointCenterRightMillimeter.Z;
+
+                    Transform3DGroupJoystickRight.Children.Add(RightJoystickRotateTransform);
+
+                    // Transform joystick group
+                    JoystickRightRing.Transform = JoystickRightStick.Transform = Transform3DGroupJoystickRight;
+
                 }
                 else
                 {
                     GeometryModel3D model = JoystickRightRing.Children[0] as GeometryModel3D;
                     model.Material = MaterialPlasticBlack;
+
+                    // Define and compute, back to default position
+                    var ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0);
+                    RightJoystickRotateTransform = new RotateTransform3D(ax3d);
+
+                    // Define rotation point
+                    RightJoystickRotateTransform.CenterX = JoystickRotationPointCenterRightMillimeter.X;
+                    RightJoystickRotateTransform.CenterY = JoystickRotationPointCenterRightMillimeter.Y;
+                    RightJoystickRotateTransform.CenterZ = JoystickRotationPointCenterRightMillimeter.Z;
+
+                    // Transform joystick
+                    JoystickRightRing.Transform = JoystickRightStick.Transform = RightJoystickRotateTransform;
                 }
 
             });
