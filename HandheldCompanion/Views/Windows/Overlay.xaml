@@ -31,15 +31,23 @@
         <!-- Virtual Controller -->
         <Grid Name="VirtualController" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="300" Width="400">
             <!-- The HelixViewport3D supports camera manipulation, and can be used just like the Viewport3D -->
-            <HelixToolkit:HelixViewport3D ZoomExtentsWhenLoaded="True" Name="m_helix_viewport" ShowViewCube="False">
+            <HelixToolkit:HelixViewport3D 
+                ZoomExtentsWhenLoaded="True" 
+                Name="m_helix_viewport" 
+                ShowViewCube="False"
+                IsRotationEnabled="False"
+                IsMoveEnabled="False"
+                IsPanEnabled="False"          
+                >
 
-                <!-- Remember to add light to the scene -->
+                <!-- Lighting -->
                 <HelixToolkit:SunLight/>
                 <HelixToolkit:DirectionalHeadLight/>
 
-                <!-- The content of this visual is defined in MainViewModel.cs -->
+                <!-- 3D Content -->
                 <ModelVisual3D x:Name="ModelVisual3D"/>
 
+                <!-- Camera -->
                 <HelixToolkit:HelixViewport3D.Camera>
                     <PerspectiveCamera FieldOfView="45"
                                LookDirection="0,-2,0"
