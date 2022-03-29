@@ -475,17 +475,16 @@ namespace HandheldCompanion.Views.Windows
 
 
                     // Define rotation amount
-                    float x = 30.0f * short.MaxValue / gamepad.LeftThumbX;
-                    float y = 30.0f * short.MaxValue / gamepad.LeftThumbY;
-                    var ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 1);
-                    ax3d.Angle = x;
-                    LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
+                    float x = 30.0f * (float)gamepad.LeftThumbX / (float)short.MaxValue;
+                    float y = 30.0f * (float)gamepad.LeftThumbY / (float)short.MaxValue;
+                    var ax3dX = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
+                    LeftJoystickRotateTransform = new RotateTransform3D(ax3dX);
 
                     // TODO most likely define a transformation group here for both X and Y see:
                     // https://docs.microsoft.com/en-us/dotnet/desktop/wpf/graphics-multimedia/how-to-apply-multiple-transformations-to-a-3-d-model?view=netframeworkdesktop-4.8
 
                     // Define rotation point
-                    LeftJoystickRotateTransform.CenterX = 0.0;
+                    LeftJoystickRotateTransform.CenterX = -110.0;
                     LeftJoystickRotateTransform.CenterY = -12.0;
                     LeftJoystickRotateTransform.CenterZ = 24.0;
 
@@ -499,8 +498,7 @@ namespace HandheldCompanion.Views.Windows
                     model.Material = MaterialPlasticBlack;
 
                     // Rotate to default
-                    var ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 1);
-                    ax3d.Angle = 0.0f;
+                    var ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0);
                     LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
 
                     // TODO most likely define a transformation group here for both X and Y see:
