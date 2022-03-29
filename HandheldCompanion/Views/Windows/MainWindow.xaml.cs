@@ -557,6 +557,14 @@ namespace HandheldCompanion.Views
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            processManager.Stop();
+
+            notifyIcon.Visible = false;
+            notifyIcon = null;
+
+            overlay.Close();
+            overlay = null;
+
             serviceManager.Stop();
 
             if (pipeClient.connected)
@@ -596,12 +604,6 @@ namespace HandheldCompanion.Views
                 if (settingsPage.HaltServiceWithCompanion)
                     serviceManager.StopServiceAsync();
             }
-
-            notifyIcon.Visible = false;
-            notifyIcon = null;
-
-            overlay.Close();
-            overlay = null;
 
             Properties.Settings.Default.Save();
         }
