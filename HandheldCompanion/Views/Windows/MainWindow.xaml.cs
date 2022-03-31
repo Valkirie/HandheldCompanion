@@ -319,7 +319,7 @@ namespace HandheldCompanion.Views
                 this.Dispatcher.Invoke(() =>
                 {
                     // hide overlay on profile switch
-                    overlay.Visibility = Visibility.Collapsed;
+                    overlay.UpdateVisibility(Visibility.Collapsed);
 
                     if (!currentProfile.IsDefault)
                         overlay.HookInto(processid);

@@ -406,24 +406,29 @@ namespace HandheldCompanion.Views.Windows
             var isTriggered = gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb) && gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
             if (isTriggered && this.isTriggered)
             {
-                this.Dispatcher.Invoke(() =>
+                switch (this.Visibility)
                 {
-                    switch (this.Visibility)
-                    {
-                        case Visibility.Visible:
-                            this.Visibility = Visibility.Collapsed;
-                            break;
-                        case Visibility.Hidden:
-                        case Visibility.Collapsed:
-                            this.Visibility = Visibility.Visible;
-                            break;
-                    }
-
-                    pipeClient.SendMessage(new PipeOverlay((int)this.Visibility));
-                });
+                    case Visibility.Visible:
+                        UpdateVisibility(Visibility.Collapsed);
+                        break;
+                    case Visibility.Hidden:
+                    case Visibility.Collapsed:
+                        UpdateVisibility(Visibility.Visible);
+                        break;
+                }
             }
 
             isReleased = true;
+        }
+
+        public void UpdateVisibility(Visibility visibility)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.Visibility = visibility;
+                pipeClient.SendMessage(new PipeOverlay((int)this.Visibility));
+            });
+
         }
 
         private void UpdateModelVisual3D(float q_w, float q_x, float q_y, float q_z)
