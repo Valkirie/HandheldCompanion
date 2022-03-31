@@ -202,6 +202,9 @@ namespace HandheldCompanion.Views.Windows
                 isReleased = false;
             }
 
+            if (this.Visibility != Visibility.Visible)
+                return;
+
             this.Dispatcher.Invoke(() =>
             {
                 GeometryModel3D model = null;
