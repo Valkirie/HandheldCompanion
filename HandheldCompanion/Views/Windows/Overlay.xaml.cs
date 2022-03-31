@@ -26,6 +26,7 @@ namespace HandheldCompanion.Views.Windows
 
         protected WinEventDelegate WinEventDelegate;
         static GCHandle GCSafetyHandle;
+        private bool isHooked;
 
         #region import
         private const int GWL_EXSTYLE = -20;
@@ -55,6 +56,9 @@ namespace HandheldCompanion.Views.Windows
         public Overlay()
         {
             InitializeComponent();
+
+            WinEventDelegate = new WinEventDelegate(WinEventCallback);
+            GCSafetyHandle = GCHandle.Alloc(WinEventDelegate);
 
             touchsource = new TouchSourceWinTouch(this);
             touchsource.Touch += Touchsource_Touch;
@@ -186,7 +190,7 @@ namespace HandheldCompanion.Views.Windows
         private void UpdateReport()
         {
             isTriggered = gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb) && gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
-            if (isTriggered && isReleased)
+            if (isTriggered && isReleased && isHooked)
             {
                 gamepadTimer.Stop();
                 gamepadTimer.Start();
@@ -482,8 +486,6 @@ namespace HandheldCompanion.Views.Windows
         {
             try
             {
-                WinEventDelegate = new WinEventDelegate(WinEventCallback);
-                GCSafetyHandle = GCHandle.Alloc(WinEventDelegate);
                 targetProc = Process.GetProcessById((int)processid);
 
                 if (targetProc != null)
@@ -493,6 +495,7 @@ namespace HandheldCompanion.Views.Windows
                     if (hWnd != IntPtr.Zero)
                     {
                         uint targetThreadId = GetWindowThread(hWnd);
+                        isHooked = true;
 
                         hWinEventHook = WinEventHookOne(
                             NativeMethods.SWEH_Events.EVENT_OBJECT_LOCATIONCHANGE,
@@ -509,7 +512,16 @@ namespace HandheldCompanion.Views.Windows
                     }
                 }
             }
-            catch (Exception ex) { }
+            catch (Exception ex) { UnHook(); }
+        }
+
+        public void UnHook()
+        {
+            UpdateVisibility(Visibility.Collapsed);
+
+            targetProc = null;
+            hWnd = IntPtr.Zero;
+            isHooked = false;
         }
         #endregion
     }
