@@ -20,7 +20,7 @@ namespace HandheldCompanion.Devices
         Model3DGroup XBoxButton;
         Model3DGroup XboxButtonRing;
 
-        public XBOX360(string ManufacturerName, string ProductName) : base(ManufacturerName, ProductName, "AYANEO 2021")
+        public XBOX360(string ManufacturerName, string ProductName) : base(ManufacturerName, ProductName, "XBOX360")
         {
             // colors
             ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#333333");
@@ -40,13 +40,13 @@ namespace HandheldCompanion.Devices
             TriggerMaxAngleDeg = 16.0f;
 
             // load model(s)
-            ALetter = modelImporter.Load($"models/{ModelName}A-Letter.obj");
-            BLetter = modelImporter.Load($"models/{ModelName}B-Letter.obj");
-            XLetter = modelImporter.Load($"models/{ModelName}X-Letter.obj");
-            YLetter = modelImporter.Load($"models/{ModelName}Y-Letter.obj");
-            MainBodyCharger = modelImporter.Load($"models/{ModelName}MainBody-Charger.obj");
-            XBoxButton = modelImporter.Load($"models/{ModelName}XBoxButton.obj");
-            XboxButtonRing = modelImporter.Load($"models/{ModelName}XboxButtonRing.obj");
+            ALetter = modelImporter.Load($"models/{ModelName}/A-Letter.obj");
+            BLetter = modelImporter.Load($"models/{ModelName}/B-Letter.obj");
+            XLetter = modelImporter.Load($"models/{ModelName}/X-Letter.obj");
+            YLetter = modelImporter.Load($"models/{ModelName}/Y-Letter.obj");
+            MainBodyCharger = modelImporter.Load($"models/{ModelName}/MainBody-Charger.obj");
+            XBoxButton = modelImporter.Load($"models/{ModelName}/XBoxButton.obj");
+            XboxButtonRing = modelImporter.Load($"models/{ModelName}/XboxButtonRing.obj");
 
             // pull model(s)
             model3DGroup.Children.Add(ALetter);
