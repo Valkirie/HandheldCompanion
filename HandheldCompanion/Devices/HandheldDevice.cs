@@ -37,16 +37,16 @@ namespace HandheldCompanion.Devices
         protected ModelImporter modelImporter = new ModelImporter();
 
         // Common groups
-        public Model3DGroup JoystickLeftRing;
-        public Model3DGroup JoystickRightRing;
+        public Model3DGroup LeftThumb;
+        public Model3DGroup RightThumb;
+        public Model3DGroup LeftThumbRing;
+        public Model3DGroup RightThumbRing;
         public Model3DGroup MainBody;
         public Model3DGroup Screen;
-        public Model3DGroup ShoulderLeftMiddle;
-        public Model3DGroup ShoulderLeftTrigger;
-        public Model3DGroup ShoulderRightMiddle;
-        public Model3DGroup ShoulderRightTrigger;
+        public Model3DGroup LeftShoulderTrigger;
+        public Model3DGroup RightShoulderTrigger;
 
-        public Dictionary<GamepadButtonFlags, Model3DGroup> ButtonMap = new();
+        public Dictionary<GamepadButtonFlags, List<Model3DGroup>> ButtonMap = new();
 
         // Rotation Points
         public Vector3D JoystickRotationPointCenterLeftMillimeter;
@@ -72,12 +72,12 @@ namespace HandheldCompanion.Devices
             this.ModelName = ModelName;
 
             // load model(s)
-            JoystickLeftRing = modelImporter.Load($"models/{ModelName}/Joystick-Left-Ring.obj");
-            JoystickRightRing = modelImporter.Load($"models/{ModelName}/Joystick-Right-Ring.obj");
+            LeftThumbRing = modelImporter.Load($"models/{ModelName}/Joystick-Left-Ring.obj");
+            RightThumbRing = modelImporter.Load($"models/{ModelName}/Joystick-Right-Ring.obj");
             MainBody = modelImporter.Load($"models/{ModelName}/MainBody.obj");
             Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
-            ShoulderLeftTrigger = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Trigger.obj");
-            ShoulderRightTrigger = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Trigger.obj");
+            LeftShoulderTrigger = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Trigger.obj");
+            RightShoulderTrigger = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Trigger.obj");
 
             // map model(s)
             foreach(GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
@@ -86,7 +86,18 @@ namespace HandheldCompanion.Devices
                 if (File.Exists(filename))
                 {
                     Model3DGroup model = modelImporter.Load(filename);
-                    ButtonMap.Add(button, model);
+                    ButtonMap.Add(button, new List<Model3DGroup>() { model });
+
+                    switch(button)
+                    {
+                        // specific case, being both a button and a trigger
+                        case GamepadButtonFlags.LeftThumb:
+                            LeftThumb = model;
+                            break;
+                        case GamepadButtonFlags.RightThumb:
+                            RightThumb = model;
+                            break;
+                    }
 
                     // pull model
                     model3DGroup.Children.Add(model);
@@ -94,12 +105,12 @@ namespace HandheldCompanion.Devices
             }
 
             // pull model(s)
-            model3DGroup.Children.Add(JoystickLeftRing);
-            model3DGroup.Children.Add(JoystickRightRing);
+            model3DGroup.Children.Add(LeftThumbRing);
+            model3DGroup.Children.Add(RightThumbRing);
             model3DGroup.Children.Add(MainBody);
             model3DGroup.Children.Add(Screen);
-            model3DGroup.Children.Add(ShoulderLeftTrigger);
-            model3DGroup.Children.Add(ShoulderRightTrigger);
+            model3DGroup.Children.Add(LeftShoulderTrigger);
+            model3DGroup.Children.Add(RightShoulderTrigger);
 
             Gyrometer gyrometer = Gyrometer.GetDefault();
             if (gyrometer != null)

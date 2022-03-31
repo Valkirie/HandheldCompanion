@@ -213,15 +213,18 @@ namespace HandheldCompanion.Views.Windows
                     if (!handheldDevice.ButtonMap.ContainsKey(button))
                         continue;
 
-                    model = (GeometryModel3D)handheldDevice.ButtonMap[button].Children.FirstOrDefault();
-                    if (gamepad.Buttons.HasFlag(button))
-                        model.Material = handheldDevice.MaterialHighlight;
-                    else
-                        model.Material = handheldDevice.MaterialPlasticBlack;
+                    foreach (Model3DGroup modelgroup in handheldDevice.ButtonMap[button])
+                    {
+                        model = (GeometryModel3D)modelgroup.Children.FirstOrDefault();
+                        if (gamepad.Buttons.HasFlag(button))
+                            model.Material = handheldDevice.MaterialHighlight;
+                        else
+                            model.Material = handheldDevice.MaterialPlasticBlack;
+                    }
                 }
 
                 // ShoulderLeftTrigger
-                model = handheldDevice.ShoulderLeftTrigger.Children[0] as GeometryModel3D;
+                model = handheldDevice.LeftShoulderTrigger.Children[0] as GeometryModel3D;
                 if (gamepad.LeftTrigger > 0)
                 {
                     model.Material = handheldDevice.MaterialHighlight;
@@ -239,7 +242,7 @@ namespace HandheldCompanion.Views.Windows
                     LeftTriggerRotateTransform.CenterZ = handheldDevice.ShoulderTriggerRotationPointCenterLeftMillimeter.Z;
 
                     // Transform trigger
-                    handheldDevice.ShoulderLeftTrigger.Transform = LeftTriggerRotateTransform;
+                    handheldDevice.LeftShoulderTrigger.Transform = LeftTriggerRotateTransform;
                 }
                 else
                 {
@@ -255,11 +258,11 @@ namespace HandheldCompanion.Views.Windows
                     LeftTriggerRotateTransform.CenterZ = handheldDevice.ShoulderTriggerRotationPointCenterLeftMillimeter.Z;
 
                     // Transform trigger
-                    handheldDevice.ShoulderLeftTrigger.Transform = LeftTriggerRotateTransform;
+                    handheldDevice.LeftShoulderTrigger.Transform = LeftTriggerRotateTransform;
                 }
 
                 // ShoulderRightTrigger
-                model = handheldDevice.ShoulderRightTrigger.Children[0] as GeometryModel3D;
+                model = handheldDevice.RightShoulderTrigger.Children[0] as GeometryModel3D;
                 if (gamepad.RightTrigger > 0)
                 {
                     model.Material = handheldDevice.MaterialHighlight;
@@ -277,7 +280,7 @@ namespace HandheldCompanion.Views.Windows
                     RightTriggerRotateTransform.CenterZ = handheldDevice.ShoulderTriggerRotationPointCenterRightMillimeter.Z;
 
                     // Transform trigger
-                    handheldDevice.ShoulderRightTrigger.Transform = RightTriggerRotateTransform;
+                    handheldDevice.RightShoulderTrigger.Transform = RightTriggerRotateTransform;
                 }
                 else
                 {
@@ -293,11 +296,11 @@ namespace HandheldCompanion.Views.Windows
                     RightTriggerRotateTransform.CenterZ = handheldDevice.ShoulderTriggerRotationPointCenterRightMillimeter.Z;
 
                     // Transform trigger
-                    handheldDevice.ShoulderRightTrigger.Transform = RightTriggerRotateTransform;
+                    handheldDevice.RightShoulderTrigger.Transform = RightTriggerRotateTransform;
                 }
 
                 // JoystickLeftRing
-                model = handheldDevice.JoystickLeftRing.Children[0] as GeometryModel3D;
+                model = handheldDevice.LeftThumbRing.Children[0] as GeometryModel3D;
                 if (gamepad.LeftThumbX != 0 || gamepad.LeftThumbY != 0)
                 {
                     // Adjust color
@@ -331,7 +334,7 @@ namespace HandheldCompanion.Views.Windows
                     Transform3DGroupJoystickLeft.Children.Add(LeftJoystickRotateTransform);
 
                     // Transform joystick group
-                    handheldDevice.JoystickLeftRing.Transform = handheldDevice.JoystickLeftRing.Transform = Transform3DGroupJoystickLeft;
+                    handheldDevice.LeftThumbRing.Transform = handheldDevice.LeftThumb.Transform = Transform3DGroupJoystickLeft;
                 }
                 else
                 {
@@ -348,11 +351,11 @@ namespace HandheldCompanion.Views.Windows
                     LeftJoystickRotateTransform.CenterZ = handheldDevice.JoystickRotationPointCenterLeftMillimeter.Z;
 
                     // Transform joystick
-                    handheldDevice.JoystickLeftRing.Transform = handheldDevice.JoystickLeftRing.Transform = LeftJoystickRotateTransform;
+                    handheldDevice.LeftThumbRing.Transform = handheldDevice.LeftThumb.Transform = LeftJoystickRotateTransform;
                 }
 
                 // JoystickRightRing
-                model = handheldDevice.JoystickRightRing.Children[0] as GeometryModel3D;
+                model = handheldDevice.RightThumbRing.Children[0] as GeometryModel3D;
                 if (gamepad.RightThumbX != 0 || gamepad.RightThumbY != 0)
                 {
                     model.Material = handheldDevice.MaterialHighlight;
@@ -385,7 +388,7 @@ namespace HandheldCompanion.Views.Windows
                     Transform3DGroupJoystickRight.Children.Add(RightJoystickRotateTransform);
 
                     // Transform joystick group
-                    handheldDevice.JoystickRightRing.Transform = handheldDevice.JoystickRightRing.Transform = Transform3DGroupJoystickRight;
+                    handheldDevice.RightThumbRing.Transform = handheldDevice.RightThumb.Transform = Transform3DGroupJoystickRight;
 
                 }
                 else
@@ -402,7 +405,7 @@ namespace HandheldCompanion.Views.Windows
                     RightJoystickRotateTransform.CenterZ = handheldDevice.JoystickRotationPointCenterRightMillimeter.Z;
 
                     // Transform joystick
-                    handheldDevice.JoystickRightRing.Transform = handheldDevice.JoystickRightRing.Transform = RightJoystickRotateTransform;
+                    handheldDevice.RightThumbRing.Transform = handheldDevice.RightThumb.Transform = RightJoystickRotateTransform;
                 }
             });
         }
