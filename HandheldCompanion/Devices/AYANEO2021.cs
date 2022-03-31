@@ -61,6 +61,9 @@ namespace HandheldCompanion.Devices
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
                 ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
+
+            // specific color(s)
+            ((GeometryModel3D)MainBody.Children[0]).Material = MaterialPlasticWhite;
         }
     }
 }

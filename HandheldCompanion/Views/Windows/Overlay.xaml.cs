@@ -425,13 +425,6 @@ namespace HandheldCompanion.Views.Windows
                             break;
                     }
 
-                    // Default colors for static models
-                    GeometryModel3D PlaceholderModel = handheldDevice.Screen.Children[0] as GeometryModel3D;
-                    PlaceholderModel.Material = handheldDevice.MaterialPlasticBlack;
-
-                    PlaceholderModel = handheldDevice.MainBody.Children[0] as GeometryModel3D;
-                    PlaceholderModel.Material = handheldDevice.MaterialPlasticWhite;
-
                     pipeClient.SendMessage(new PipeOverlay((int)this.Visibility));
                 });
             }
