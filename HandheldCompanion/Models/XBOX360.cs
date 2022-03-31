@@ -1,4 +1,4 @@
-﻿using SharpDX.XInput;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,8 +23,8 @@ namespace HandheldCompanion.Models
             this.ModelLocked = false;
 
             // colors
-            ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#333333");
-            ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#F0EFF0");
+            ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#707477");
+            ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#D4D4D4");
             ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
             
             MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
