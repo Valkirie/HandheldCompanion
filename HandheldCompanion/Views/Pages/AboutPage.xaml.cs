@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using HandheldCompanion.Devices;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Windows;

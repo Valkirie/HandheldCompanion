@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using Microsoft.Extensions.Logging;
@@ -33,7 +34,6 @@ namespace HandheldCompanion.Views
     {
         private readonly ILogger logger;
         private StartupEventArgs arguments;
-        public HandheldDevice handheldDevice;
         public FileVersionInfo fileVersionInfo;
         public static new string Name;
 
@@ -59,9 +59,15 @@ namespace HandheldCompanion.Views
         public PipeClient pipeClient;
         public PipeServer pipeServer;
 
+        // Hidder vars
         public HidHide Hidder;
 
+        // Command parser vars
         public CmdParser cmdParser;
+
+        // Handheld devices vars
+        public HandheldDevice handheldDevice;
+
 
         // manager(s) vars
         public ToastManager toastManager;
@@ -84,9 +90,30 @@ namespace HandheldCompanion.Views
             this.logger = microsoftLogger;
             this.arguments = arguments;
 
-            handheldDevice = new HandheldDevice();
+            // get the actual handheld device
+            var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
+            var ProductName = MotherboardInfo.Product;
 
-            logger.LogInformation("{0} ({1})", handheldDevice.ManufacturerName, handheldDevice.ProductName);
+            // improve me
+            switch (ProductName)
+            {
+                case "AYANEO 2021":
+                case "AYANEO 2021 Pro":
+                case "AYANEO 2021 Pro Retro Power":
+                    handheldDevice = new AYANEO2021(ManufacturerName, ProductName);
+                    break;
+                case "AYANEO NEXT Pro":
+                case "AYANEO NEXT Advance":
+                case "AYANEO NEXT":
+                    handheldDevice = new AYANEO2021(ManufacturerName, ProductName); // todo: implement NEXT model
+                    break;
+                default:
+                    // do nothing ?
+                    // use xbox360 as default ?
+                    break;
+            }
+
+            logger.LogInformation("{0} ({1})", ManufacturerName, ProductName);
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
@@ -355,6 +382,9 @@ namespace HandheldCompanion.Views
                     case "DSUip":
                         break;
                     case "DSUport":
+                        break;
+                    case "HIDmode":
+                        var controllerMode = (HIDmode)Enum.Parse(typeof(HIDmode), property);
                         break;
                 }
             }
