@@ -3,7 +3,6 @@ using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using ModernWpf.Controls;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.IO;

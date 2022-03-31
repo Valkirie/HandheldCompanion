@@ -3,9 +3,6 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -51,7 +48,7 @@ namespace HandheldCompanion
         protected HandheldModels(string ModelName)
         {
             this.ModelName = ModelName;
-            
+
             // load model(s)
             LeftThumbRing = modelImporter.Load($"models/{ModelName}/Joystick-Left-Ring.obj");
             RightThumbRing = modelImporter.Load($"models/{ModelName}/Joystick-Right-Ring.obj");

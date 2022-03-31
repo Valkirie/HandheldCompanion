@@ -5,7 +5,6 @@ using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

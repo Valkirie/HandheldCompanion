@@ -1,27 +1,16 @@
 using ControllerCommon;
 using Microsoft.Extensions.Logging;
+using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using static HandheldCompanion.OverlayHook;
-using System.Windows.Media.Media3D;
-using HelixToolkit.Wpf;
-using System.Windows.Interop;
-using TouchEventSample;
-using SharpDX.XInput;
 using System.Timers;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media.Media3D;
+using TouchEventSample;
+using static HandheldCompanion.OverlayHook;
 using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
 
 namespace HandheldCompanion.Views.Windows
@@ -312,7 +301,7 @@ namespace HandheldCompanion.Views.Windows
                     Transform3DGroup Transform3DGroupJoystickLeft = new Transform3DGroup();
                     float x = ProductModel.JoystickMaxAngleDeg * (float)gamepad.LeftThumbX / (float)short.MaxValue;
                     float y = -1 * ProductModel.JoystickMaxAngleDeg * (float)gamepad.LeftThumbY / (float)short.MaxValue;
-                    
+
                     // Rotation X
                     var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
                     LeftJoystickRotateTransform = new RotateTransform3D(ax3d);

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -30,7 +25,7 @@ namespace HandheldCompanion.Models
             ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#333333");
             ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#F0EFF0");
             ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
-            
+
             MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
             MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
             MaterialHighlight = new DiffuseMaterial(ColorHighlight);

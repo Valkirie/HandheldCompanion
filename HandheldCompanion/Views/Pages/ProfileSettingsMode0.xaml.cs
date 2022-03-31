@@ -216,9 +216,9 @@ namespace HandheldCompanion.Views.Pages
             if (profileCurrent == null)
                 return;
 
-             Expander_FlickStick.IsExpanded = Toggle_FlickStick.IsOn;
-            
-             profileCurrent.flickstick_enabled = (bool)Toggle_FlickStick.IsOn;
+            Expander_FlickStick.IsExpanded = Toggle_FlickStick.IsOn;
+
+            profileCurrent.flickstick_enabled = (bool)Toggle_FlickStick.IsOn;
         }
 
         private void SliderFlickDuration_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -234,7 +234,7 @@ namespace HandheldCompanion.Views.Pages
             if (profileCurrent is null)
                 return;
 
-            profileCurrent.stick_sensivity = (float) tb_ProfileStickSensitivity.Value;
+            profileCurrent.stick_sensivity = (float)tb_ProfileStickSensitivity.Value;
         }
     }
 }

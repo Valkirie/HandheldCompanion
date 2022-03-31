@@ -1,5 +1,4 @@
 ﻿using ControllerCommon;
-using System.Windows.Forms;
 
 namespace ControllerService
 {
@@ -42,7 +41,7 @@ namespace ControllerService
             TouchX = (short)(X * TOUCHPAD_WIDTH);
             TouchY = (short)(Y * TOUCHPAD_HEIGHT);
 
-            switch(Button)
+            switch (Button)
             {
                 case CursorButton.TouchLeft:
                     TrackPadTouch1.X = TouchX;

@@ -1,22 +1,8 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Utils;
-using HelixToolkit.Wpf;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.ProcessUtils;
-using Brush = System.Windows.Media.Brush;
-using Color = System.Windows.Media.Color;
-using ColorConverter = System.Drawing.ColorConverter;
-using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
-using Models = HandheldCompanion.Models;
 
 namespace HandheldCompanion
 {
@@ -30,7 +16,7 @@ namespace HandheldCompanion
 
         public bool hasGyrometer;
         public bool hasAccelerometer;
-        public bool hasInclinometer;        
+        public bool hasInclinometer;
 
         public HandheldDevice()
         {
