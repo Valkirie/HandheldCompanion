@@ -37,31 +37,16 @@ namespace HandheldCompanion.Devices
         protected ModelImporter modelImporter = new ModelImporter();
 
         // Common groups
-        public Model3DGroup DPadDown;
-        public Model3DGroup DPadLeft;
-        public Model3DGroup DPadRight;
-        public Model3DGroup DPadUp;
-        public Model3DGroup FaceButtonA;
-        public Model3DGroup FaceButtonB;
-        public Model3DGroup FaceButtonX;
-        public Model3DGroup FaceButtonY;
         public Model3DGroup JoystickLeftRing;
-        public Model3DGroup JoystickLeftStick;
         public Model3DGroup JoystickRightRing;
-        public Model3DGroup JoystickRightStick;
         public Model3DGroup MainBody;
         public Model3DGroup Screen;
-        public Model3DGroup ShoulderLeftButton;
         public Model3DGroup ShoulderLeftMiddle;
         public Model3DGroup ShoulderLeftTrigger;
-        public Model3DGroup ShoulderRightButton;
         public Model3DGroup ShoulderRightMiddle;
         public Model3DGroup ShoulderRightTrigger;
-        public Model3DGroup Start;
-        public Model3DGroup Back;
 
-        public Dictionary<GamepadButtonFlags, Model3DGroup> ButtonMap;
-        protected Dictionary<Model3DGroup, string> ModelMap;
+        public Dictionary<GamepadButtonFlags, Model3DGroup> ButtonMap = new();
 
         // Rotation Points
         public Vector3D JoystickRotationPointCenterLeftMillimeter;
@@ -86,23 +71,7 @@ namespace HandheldCompanion.Devices
             this.ProductName = ProductName;
             this.ModelName = ModelName;
 
-            // load models
-            DPadDown = modelImporter.Load($"models/{ModelName}/DPad-Down.obj");
-            DPadLeft = modelImporter.Load($"models/{ModelName}/DPad-Left.obj");
-            DPadRight = modelImporter.Load($"models/{ModelName}/DPad-Right.obj");
-            DPadUp = modelImporter.Load($"models/{ModelName}/DPad-Up.obj");
-            FaceButtonA = modelImporter.Load($"models/{ModelName}/FaceButton-A.obj");
-            FaceButtonB = modelImporter.Load($"models/{ModelName}/FaceButton-B.obj");
-            FaceButtonX = modelImporter.Load($"models/{ModelName}/FaceButton-X.obj");
-            FaceButtonY = modelImporter.Load($"models/{ModelName}/FaceButton-Y.obj");
-            JoystickLeftStick = modelImporter.Load($"models/{ModelName}/Joystick-Left-Stick.obj");
-            JoystickRightStick = modelImporter.Load($"models/{ModelName}/Joystick-Right-Stick.obj");
-            ShoulderLeftButton = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Button.obj");
-            ShoulderRightButton = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Button.obj");
-            Back = modelImporter.Load($"models/{ModelName}/WFB-View.obj");
-            Start = modelImporter.Load($"models/{ModelName}/WFB-Menu.obj");
-
-            // load models
+            // load model(s)
             JoystickLeftRing = modelImporter.Load($"models/{ModelName}/Joystick-Left-Ring.obj");
             JoystickRightRing = modelImporter.Load($"models/{ModelName}/Joystick-Right-Ring.obj");
             MainBody = modelImporter.Load($"models/{ModelName}/MainBody.obj");
@@ -110,50 +79,27 @@ namespace HandheldCompanion.Devices
             ShoulderLeftTrigger = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Trigger.obj");
             ShoulderRightTrigger = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Trigger.obj");
 
-            // map models
-            ButtonMap = new Dictionary<GamepadButtonFlags, Model3DGroup>
+            // map model(s)
+            foreach(GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
             {
-                { GamepadButtonFlags.DPadUp, DPadUp },
-                { GamepadButtonFlags.DPadLeft, DPadLeft },
-                { GamepadButtonFlags.DPadRight, DPadRight },
-                { GamepadButtonFlags.DPadDown, DPadDown },
+                string filename = $"models/{ModelName}/{button}.obj";
+                if (File.Exists(filename))
+                {
+                    Model3DGroup model = modelImporter.Load(filename);
+                    ButtonMap.Add(button, model);
 
-                { GamepadButtonFlags.A, FaceButtonA },
-                { GamepadButtonFlags.B, FaceButtonB },
-                { GamepadButtonFlags.X, FaceButtonX },
-                { GamepadButtonFlags.Y, FaceButtonY },
+                    // pull model
+                    model3DGroup.Children.Add(model);
+                }
+            }
 
-                { GamepadButtonFlags.LeftThumb, JoystickLeftStick },
-                { GamepadButtonFlags.RightThumb, JoystickRightStick },
-
-                { GamepadButtonFlags.LeftShoulder, ShoulderLeftButton },
-                { GamepadButtonFlags.RightShoulder, ShoulderRightButton },
-
-                { GamepadButtonFlags.Start, Start },
-                { GamepadButtonFlags.Back, Back },
-            };
-
-            // pull models
-            model3DGroup.Children.Add(DPadDown);
-            model3DGroup.Children.Add(DPadLeft);
-            model3DGroup.Children.Add(DPadRight);
-            model3DGroup.Children.Add(DPadUp);
-            model3DGroup.Children.Add(FaceButtonA);
-            model3DGroup.Children.Add(FaceButtonB);
-            model3DGroup.Children.Add(FaceButtonX);
-            model3DGroup.Children.Add(FaceButtonY);
+            // pull model(s)
             model3DGroup.Children.Add(JoystickLeftRing);
-            model3DGroup.Children.Add(JoystickLeftStick);
             model3DGroup.Children.Add(JoystickRightRing);
-            model3DGroup.Children.Add(JoystickRightStick);
             model3DGroup.Children.Add(MainBody);
             model3DGroup.Children.Add(Screen);
-            model3DGroup.Children.Add(ShoulderLeftButton);
             model3DGroup.Children.Add(ShoulderLeftTrigger);
-            model3DGroup.Children.Add(ShoulderRightButton);
             model3DGroup.Children.Add(ShoulderRightTrigger);
-            model3DGroup.Children.Add(Start);
-            model3DGroup.Children.Add(Back);
 
             Gyrometer gyrometer = Gyrometer.GetDefault();
             if (gyrometer != null)

@@ -114,16 +114,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="models\AYANEO 2021\DPad-Down.obj">
+    <None Update="models\AYANEO 2021\DPadDown.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\DPad-Left.obj">
+    <None Update="models\AYANEO 2021\DPadLeft.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\DPad-Right.obj">
+    <None Update="models\AYANEO 2021\DPadRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\DPad-Up.obj">
+    <None Update="models\AYANEO 2021\DPadUp.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\AYANEO 2021\DPadDown.obj">
@@ -144,40 +144,40 @@
     <None Update="models\AYANEO 2021\B.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\FaceButton-A.obj">
+    <None Update="models\AYANEO 2021\A.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\FaceButton-B.obj">
+    <None Update="models\AYANEO 2021\B.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\FaceButton-X.obj">
+    <None Update="models\AYANEO 2021\X.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\FaceButton-Y.obj">
+    <None Update="models\AYANEO 2021\Y.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Joystick-Left-Stick.obj">
+    <None Update="models\AYANEO 2021\LeftThumb.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Joystick-Right-Stick.obj">
+    <None Update="models\AYANEO 2021\RightThumb.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Shoulder-Left-Button.obj">
+    <None Update="models\AYANEO 2021\LeftShoulder.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\AYANEO 2021\Shoulder-Left-Trigger.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Shoulder-Right-Button.obj">
+    <None Update="models\AYANEO 2021\RightShoulder.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\AYANEO 2021\Shoulder-Right-Trigger.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\WFB-Menu.obj">
+    <None Update="models\AYANEO 2021\Start.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\WFB-View.obj">
+    <None Update="models\AYANEO 2021\Back.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\AYANEO 2021\X.obj">

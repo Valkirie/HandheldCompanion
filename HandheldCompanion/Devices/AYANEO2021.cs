@@ -39,7 +39,7 @@ namespace HandheldCompanion.Devices
             ShoulderTriggerRotationPointCenterLeftMillimeter = new Vector3D(-105.951f, 1.25f, 46.814f);
             ShoulderTriggerRotationPointCenterRightMillimeter = new Vector3D(105.951f, 1.25f, 46.814f);
 
-            // load models
+            // load model(s)
             WFBEsc = modelImporter.Load($"models/{ModelName}/WFB-Esc.obj");
             WFBH = modelImporter.Load($"models/{ModelName}/WFB-H.obj");
             WFBKB = modelImporter.Load($"models/{ModelName}/WFB-KB.obj");
@@ -49,7 +49,7 @@ namespace HandheldCompanion.Devices
             ShoulderLeftMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Middle.obj");
             ShoulderRightMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Middle.obj");
 
-            // pull models
+            // pull model(s)
             model3DGroup.Children.Add(WFBEsc);
             model3DGroup.Children.Add(WFBH);
             model3DGroup.Children.Add(WFBKB);
