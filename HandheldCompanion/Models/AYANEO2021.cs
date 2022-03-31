@@ -7,9 +7,9 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace HandheldCompanion.Devices
+namespace HandheldCompanion.Models
 {
-    internal class AYANEO2021 : HandheldDevice
+    internal class AYANEO2021 : HandheldModels
     {
         // Specific groups (move me)
         Model3DGroup WFBEsc;
@@ -22,8 +22,10 @@ namespace HandheldCompanion.Devices
         Model3DGroup RightShoulderMiddle;
         Model3DGroup Screen;
 
-        public AYANEO2021(string ManufacturerName, string ProductName) : base(ManufacturerName, ProductName, "AYANEO 2021")
+        public AYANEO2021() : base("AYANEO 2021")
         {
+            this.ModelLocked = true;
+
             // colors
             ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#333333");
             ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#F0EFF0");

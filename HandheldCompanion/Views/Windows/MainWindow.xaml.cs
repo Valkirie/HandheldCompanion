@@ -1,6 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
-using HandheldCompanion.Devices;
+using HandheldCompanion.Models;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using Microsoft.Extensions.Logging;
@@ -66,8 +66,8 @@ namespace HandheldCompanion.Views
         public CmdParser cmdParser;
 
         // Handheld devices vars
-        public HandheldDevice handheldDevice;
-
+        private HandheldDevice handheldDevice;
+        private HandheldModels handheldModels;
 
         // manager(s) vars
         public ToastManager toastManager;
@@ -91,29 +91,22 @@ namespace HandheldCompanion.Views
             this.arguments = arguments;
 
             // get the actual handheld device
-            var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
-            var ProductName = MotherboardInfo.Product;
+            handheldDevice = new HandheldDevice();
 
             // improve me
-            switch (ProductName)
+            switch (handheldDevice.ProductName)
             {
                 case "AYANEO 2021":
                 case "AYANEO 2021 Pro":
                 case "AYANEO 2021 Pro Retro Power":
-                    handheldDevice = new AYANEO2021(ManufacturerName, ProductName);
-                    break;
-                case "AYANEO NEXT Pro":
-                case "AYANEO NEXT Advance":
-                case "AYANEO NEXT":
-                    handheldDevice = new AYANEO2021(ManufacturerName, ProductName); // todo: implement NEXT model
+                    handheldModels = new AYANEO2021();
                     break;
                 default:
-                    // do nothing ?
-                    // use xbox360 as default ?
+                    handheldModels = new XBOX360();
                     break;
             }
 
-            logger.LogInformation("{0} ({1})", ManufacturerName, ProductName);
+            logger.LogInformation("{0} ({1})", handheldDevice.ManufacturerName, handheldDevice.ProductName);
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
@@ -185,7 +178,8 @@ namespace HandheldCompanion.Views
             toastManager = new ToastManager("ControllerService");
 
             // initialize overlay
-            overlay = new Overlay(logger, pipeClient, handheldDevice);
+            overlay = new Overlay(logger, pipeClient);
+            overlay.SetHandheldModel(handheldModels);
 
             // initialize process manager
             processManager = new ProcessManager();
@@ -212,9 +206,29 @@ namespace HandheldCompanion.Views
 
             // initialize pages
             controllerPage = new ControllerPage("controller", this, logger);
+            controllerPage.Updated += (controllerMode) =>
+            {
+                if (handheldModels.ModelLocked)
+                    return;
+
+                this.Dispatcher.Invoke(() =>
+                {
+                    switch (controllerMode)
+                    {
+                        default:
+                        case HIDmode.DualShock4Controller: // implement me
+                        case HIDmode.Xbox360Controller:
+                            handheldModels = new XBOX360();
+                            break;
+                    }
+
+                    overlay.SetHandheldModel(handheldModels);
+                });
+            };
+
             profilesPage = new ProfilesPage("profiles", this, logger);
             settingsPage = new SettingsPage("settings", this, logger);
-            aboutPage = new AboutPage("about", this, logger);
+            aboutPage = new AboutPage("about", this, logger, handheldDevice);
 
             // initialize command parser
             cmdParser = new CmdParser(pipeClient, this, logger);
@@ -384,7 +398,6 @@ namespace HandheldCompanion.Views
                     case "DSUport":
                         break;
                     case "HIDmode":
-                        var controllerMode = (HIDmode)Enum.Parse(typeof(HIDmode), property);
                         break;
                 }
             }

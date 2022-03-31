@@ -9,17 +9,19 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace HandheldCompanion.Devices
+namespace HandheldCompanion.Models
 {
-    internal class XBOX360 : HandheldDevice
+    internal class XBOX360 : HandheldModels
     {
         // Specific groups (move me)
         Model3DGroup MainBodyCharger;
         Model3DGroup XBoxButton;
         Model3DGroup XboxButtonRing;
 
-        public XBOX360(string ManufacturerName, string ProductName) : base(ManufacturerName, ProductName, "XBOX360")
+        public XBOX360() : base("XBOX360")
         {
+            this.ModelLocked = false;
+
             // colors
             ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#333333");
             ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#F0EFF0");

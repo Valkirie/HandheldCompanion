@@ -114,115 +114,115 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="models\AYANEO 2021\DPadDown.obj">
+    <None Update="Models\AYANEO 2021\DPadDown.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\DPadLeft.obj">
+    <None Update="Models\AYANEO 2021\DPadLeft.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\DPadRight.obj">
+    <None Update="Models\AYANEO 2021\DPadRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\DPadUp.obj">
+    <None Update="Models\AYANEO 2021\DPadUp.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\DPadDown.obj">
+    <None Update="Models\AYANEO 2021\DPadDown.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\DPadLeft.obj">
+    <None Update="Models\AYANEO 2021\DPadLeft.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\DPadRight.obj">
+    <None Update="Models\AYANEO 2021\DPadRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\DPadUp.obj">
+    <None Update="Models\AYANEO 2021\DPadUp.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\A.obj">
+    <None Update="Models\AYANEO 2021\A.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\B.obj">
+    <None Update="Models\AYANEO 2021\B.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\A.obj">
+    <None Update="Models\AYANEO 2021\A.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\B.obj">
+    <None Update="Models\AYANEO 2021\B.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\X.obj">
+    <None Update="Models\AYANEO 2021\X.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Y.obj">
+    <None Update="Models\AYANEO 2021\Y.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\LeftThumb.obj">
+    <None Update="Models\AYANEO 2021\LeftThumb.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\RightThumb.obj">
+    <None Update="Models\AYANEO 2021\RightThumb.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\LeftShoulder.obj">
+    <None Update="Models\AYANEO 2021\LeftShoulder.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Shoulder-Left-Trigger.obj">
+    <None Update="Models\AYANEO 2021\Shoulder-Left-Trigger.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\RightShoulder.obj">
+    <None Update="Models\AYANEO 2021\RightShoulder.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Shoulder-Right-Trigger.obj">
+    <None Update="Models\AYANEO 2021\Shoulder-Right-Trigger.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Start.obj">
+    <None Update="Models\AYANEO 2021\Start.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Back.obj">
+    <None Update="Models\AYANEO 2021\Back.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\X.obj">
+    <None Update="Models\AYANEO 2021\X.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Y.obj">
+    <None Update="Models\AYANEO 2021\Y.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Joystick-Left-Ring.obj">
+    <None Update="Models\AYANEO 2021\Joystick-Left-Ring.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\LeftThumb.obj">
+    <None Update="Models\AYANEO 2021\LeftThumb.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Joystick-Right-Ring.obj">
+    <None Update="Models\AYANEO 2021\Joystick-Right-Ring.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\RightThumb.obj">
+    <None Update="Models\AYANEO 2021\RightThumb.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\AYANEO 2021\MainBody.mtl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\MainBody.obj">
+    <None Update="Models\AYANEO 2021\MainBody.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\AYANEO 2021\Screen.mtl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Screen.obj">
+    <None Update="Models\AYANEO 2021\Screen.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\LeftShoulder.obj">
+    <None Update="Models\AYANEO 2021\LeftShoulder.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Shoulder-Left-Middle.obj">
+    <None Update="Models\AYANEO 2021\Shoulder-Left-Middle.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\AYANEO 2021\LeftTrigger.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\RightShoulder.obj">
+    <None Update="Models\AYANEO 2021\RightShoulder.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Shoulder-Right-Middle.obj">
+    <None Update="Models\AYANEO 2021\Shoulder-Right-Middle.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\AYANEO 2021\RightTrigger.obj">
@@ -240,28 +240,28 @@
     <None Update="models\AYANEO 2021\ShoulderButtonRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\WFB-Esc.obj">
+    <None Update="Models\AYANEO 2021\WFB-Esc.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\WFB-H.obj">
+    <None Update="Models\AYANEO 2021\WFB-H.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\WFB-KB.obj">
+    <None Update="Models\AYANEO 2021\WFB-KB.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Start.obj">
+    <None Update="Models\AYANEO 2021\Start.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\WFB-RGB.obj">
+    <None Update="Models\AYANEO 2021\WFB-RGB.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\WFB-TM.obj">
+    <None Update="Models\AYANEO 2021\WFB-TM.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\Back.obj">
+    <None Update="Models\AYANEO 2021\Back.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO 2021\WFB-Win.obj">
+    <None Update="Models\AYANEO 2021\WFB-Win.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\NEO\MainBody.mtl">
@@ -288,82 +288,82 @@
     <None Update="models\NEO\ShoulderButtonRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\A-Letter.obj">
+    <None Update="Models\XBOX360\A-Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\A.obj">
+    <None Update="Models\XBOX360\A.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\B-Letter.obj">
+    <None Update="Models\XBOX360\B-Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\B.obj">
+    <None Update="Models\XBOX360\B.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\Back.obj">
+    <None Update="Models\XBOX360\Back.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\DPadDown.obj">
+    <None Update="Models\XBOX360\DPadDown.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\DPadLeft.obj">
+    <None Update="Models\XBOX360\DPadLeft.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\DPadRight.obj">
+    <None Update="Models\XBOX360\DPadRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\DPadUp.obj">
+    <None Update="Models\XBOX360\DPadUp.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\Joystick-Left-Ring.obj">
+    <None Update="Models\XBOX360\Joystick-Left-Ring.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\Joystick-Right-Ring.obj">
+    <None Update="Models\XBOX360\Joystick-Right-Ring.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\LeftThumb.obj">
+    <None Update="Models\XBOX360\LeftThumb.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\LeftShoulder.obj">
+    <None Update="Models\XBOX360\LeftShoulder.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\MainBody-Charger.obj">
+    <None Update="Models\XBOX360\MainBody-Charger.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\MainBody.obj">
+    <None Update="Models\XBOX360\MainBody.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\RightThumb.obj">
+    <None Update="Models\XBOX360\RightThumb.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\RightShoulder.obj">
+    <None Update="Models\XBOX360\RightShoulder.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\Shoulder-Left-Trigger.obj">
+    <None Update="Models\XBOX360\Shoulder-Left-Trigger.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\Shoulder-Right-Trigger.obj">
+    <None Update="Models\XBOX360\Shoulder-Right-Trigger.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\Start.obj">
+    <None Update="Models\XBOX360\Start.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\X-Letter.obj">
+    <None Update="Models\XBOX360\X-Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\X.obj">
+    <None Update="Models\XBOX360\X.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\XboxButton.obj">
+    <None Update="Models\XBOX360\XboxButton.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\XboxButtonRing.obj">
+    <None Update="Models\XBOX360\XboxButtonRing.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\Y-Letter.obj">
+    <None Update="Models\XBOX360\Y-Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\Y.obj">
+    <None Update="Models\XBOX360\Y.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="profiles\AYASpace.json">

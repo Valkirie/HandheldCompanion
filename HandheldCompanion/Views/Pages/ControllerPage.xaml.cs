@@ -35,6 +35,9 @@ namespace HandheldCompanion.Views.Pages
         private HIDmode controllerMode = HIDmode.None;
         private HIDstatus controllerStatus = HIDstatus.Disconnected;
 
+        public event UpdatedEventHandler Updated;
+        public delegate void UpdatedEventHandler(HIDmode controllerMode);
+
         public ControllerPage()
         {
             InitializeComponent();
@@ -205,6 +208,8 @@ namespace HandheldCompanion.Views.Pages
 
             PipeClientSettings settings = new PipeClientSettings("HIDmode", controllerMode);
             mainWindow.pipeClient.SendMessage(settings);
+
+            Updated?.Invoke(controllerMode);
 
             UpdateController();
         }

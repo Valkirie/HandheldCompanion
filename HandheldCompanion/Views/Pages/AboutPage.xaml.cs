@@ -1,5 +1,4 @@
 ﻿using ControllerCommon;
-using HandheldCompanion.Devices;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Windows;
@@ -25,7 +24,7 @@ namespace HandheldCompanion.Views.Pages
             InitializeComponent();
         }
 
-        public AboutPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
+        public AboutPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger, HandheldDevice handheldDevice) : this()
         {
             this.Tag = Tag;
             this.mainWindow = mainWindow;
@@ -33,7 +32,7 @@ namespace HandheldCompanion.Views.Pages
 
             this.pipeClient = mainWindow.pipeClient;
 
-            this.handheldDevice = mainWindow.handheldDevice;
+            this.handheldDevice = handheldDevice;
 
             VersionValue.Text = mainWindow.fileVersionInfo.FileVersion;
             SensorName.Text = handheldDevice.sensor.Name;
