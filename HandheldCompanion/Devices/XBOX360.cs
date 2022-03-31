@@ -1,5 +1,7 @@
-﻿using System;
+﻿using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,10 +14,6 @@ namespace HandheldCompanion.Devices
     internal class XBOX360 : HandheldDevice
     {
         // Specific groups (move me)
-        Model3DGroup ALetter;
-        Model3DGroup BLetter;
-        Model3DGroup XLetter;
-        Model3DGroup YLetter;
         Model3DGroup MainBodyCharger;
         Model3DGroup XBoxButton;
         Model3DGroup XboxButtonRing;
@@ -40,19 +38,35 @@ namespace HandheldCompanion.Devices
             TriggerMaxAngleDeg = 16.0f;
 
             // load model(s)
-            ALetter = modelImporter.Load($"models/{ModelName}/A-Letter.obj");
-            BLetter = modelImporter.Load($"models/{ModelName}/B-Letter.obj");
-            XLetter = modelImporter.Load($"models/{ModelName}/X-Letter.obj");
-            YLetter = modelImporter.Load($"models/{ModelName}/Y-Letter.obj");
             MainBodyCharger = modelImporter.Load($"models/{ModelName}/MainBody-Charger.obj");
             XBoxButton = modelImporter.Load($"models/{ModelName}/XBoxButton.obj");
             XboxButtonRing = modelImporter.Load($"models/{ModelName}/XboxButtonRing.obj");
 
+            // map model(s)
+            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            {
+                switch(button)
+                {
+                    case GamepadButtonFlags.A:
+                    case GamepadButtonFlags.B:
+                    case GamepadButtonFlags.X:
+                    case GamepadButtonFlags.Y:
+
+                        string filename = $"models/{ModelName}/{button}-Letter.obj";
+                        if (File.Exists(filename))
+                        {
+                            Model3DGroup model = modelImporter.Load(filename);
+                            ButtonMap[button].Add(model);
+
+                            // pull model
+                            model3DGroup.Children.Add(model);
+                        }
+
+                        break;
+                }
+            }
+
             // pull model(s)
-            model3DGroup.Children.Add(ALetter);
-            model3DGroup.Children.Add(BLetter);
-            model3DGroup.Children.Add(XLetter);
-            model3DGroup.Children.Add(YLetter);
             model3DGroup.Children.Add(MainBodyCharger);
             model3DGroup.Children.Add(XBoxButton);
             model3DGroup.Children.Add(XboxButtonRing);

@@ -20,6 +20,7 @@ namespace HandheldCompanion.Devices
         Model3DGroup WFBWin;
         Model3DGroup LeftShoulderMiddle;
         Model3DGroup RightShoulderMiddle;
+        Model3DGroup Screen;
 
         public AYANEO2021(string ManufacturerName, string ProductName) : base(ManufacturerName, ProductName, "AYANEO 2021")
         {
@@ -49,6 +50,7 @@ namespace HandheldCompanion.Devices
             WFBWin = modelImporter.Load($"models/{ModelName}/WFB-Win.obj");
             LeftShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Middle.obj");
             RightShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Middle.obj");
+            Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
 
             // pull model(s)
             model3DGroup.Children.Add(WFBEsc);
@@ -59,6 +61,7 @@ namespace HandheldCompanion.Devices
             model3DGroup.Children.Add(WFBWin);
             model3DGroup.Children.Add(LeftShoulderMiddle);
             model3DGroup.Children.Add(RightShoulderMiddle);
+            model3DGroup.Children.Add(Screen);
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
                 ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;

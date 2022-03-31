@@ -42,7 +42,6 @@ namespace HandheldCompanion.Devices
         public Model3DGroup LeftThumbRing;
         public Model3DGroup RightThumbRing;
         public Model3DGroup MainBody;
-        public Model3DGroup Screen;
         public Model3DGroup LeftShoulderTrigger;
         public Model3DGroup RightShoulderTrigger;
 
@@ -75,7 +74,6 @@ namespace HandheldCompanion.Devices
             LeftThumbRing = modelImporter.Load($"models/{ModelName}/Joystick-Left-Ring.obj");
             RightThumbRing = modelImporter.Load($"models/{ModelName}/Joystick-Right-Ring.obj");
             MainBody = modelImporter.Load($"models/{ModelName}/MainBody.obj");
-            Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
             LeftShoulderTrigger = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Trigger.obj");
             RightShoulderTrigger = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Trigger.obj");
 
@@ -108,7 +106,6 @@ namespace HandheldCompanion.Devices
             model3DGroup.Children.Add(LeftThumbRing);
             model3DGroup.Children.Add(RightThumbRing);
             model3DGroup.Children.Add(MainBody);
-            model3DGroup.Children.Add(Screen);
             model3DGroup.Children.Add(LeftShoulderTrigger);
             model3DGroup.Children.Add(RightShoulderTrigger);
 
