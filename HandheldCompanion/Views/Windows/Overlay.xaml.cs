@@ -164,14 +164,14 @@ namespace HandheldCompanion.Views.Windows
                     {
                         if (args.Status == CursorEvent.EventType.DOWN)
                         {
-                            LeftTrackpad.Opacity = 0.75;
+                            LeftTrackpad.Opacity = 0.5;
                             var elapsed = time - prevLeftTrackPadTime;
                             if (elapsed < 200)
                                 args.Flags = 30; // double tap
                             prevLeftTrackPadTime = time;
                         }
                         else if (args.Status == CursorEvent.EventType.UP)
-                            LeftTrackpad.Opacity = 0.5;
+                            LeftTrackpad.Opacity = 0.25;
                     }
                     break;
 
@@ -179,14 +179,14 @@ namespace HandheldCompanion.Views.Windows
                     {
                         if (args.Status == CursorEvent.EventType.DOWN)
                         {
-                            RightTrackpad.Opacity = 0.75;
+                            RightTrackpad.Opacity = 0.5;
                             var elapsed = time - prevRightTrackPadTime;
                             if (elapsed < 200)
                                 args.Flags = 30; // double tap
                             prevRightTrackPadTime = time;
                         }
                         else if (args.Status == CursorEvent.EventType.UP)
-                            RightTrackpad.Opacity = 0.5;
+                            RightTrackpad.Opacity = 0.25;
 
                         normalizedX += 0.5d;
                     }
