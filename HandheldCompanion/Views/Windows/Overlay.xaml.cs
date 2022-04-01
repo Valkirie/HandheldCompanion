@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using TouchEventSample;
 using static HandheldCompanion.OverlayHook;
@@ -138,26 +139,32 @@ namespace HandheldCompanion.Views.Windows
                 default:
                 case true:
 
-                    if (args.Flags == 26)
+                    if (args.Status == CursorEvent.EventType.DOWN)
                     {
+                        LeftTrackpad.Opacity = 0.75;
                         var elapsed = time - prevLeftTrackPadTime;
                         if (elapsed < 200)
                             args.Flags = 30; // double tap
                         prevLeftTrackPadTime = time;
                     }
+                    else if (args.Status == CursorEvent.EventType.UP)
+                        LeftTrackpad.Opacity = 0.5;
 
                     break;
 
                 // right trackpad
                 case false:
 
-                    if (args.Flags == 26)
+                    if (args.Status == CursorEvent.EventType.DOWN)
                     {
+                        RightTrackpad.Opacity = 0.75;
                         var elapsed = time - prevRightTrackPadTime;
                         if (elapsed < 200)
                             args.Flags = 30; // double tap
                         prevRightTrackPadTime = time;
                     }
+                    else if (args.Status == CursorEvent.EventType.UP)
+                        RightTrackpad.Opacity = 0.5;
 
                     normalizedX += 0.5d;
                     break;

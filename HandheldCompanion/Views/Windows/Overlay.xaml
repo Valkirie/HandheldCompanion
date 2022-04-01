@@ -15,7 +15,8 @@
             <Border
                 Name="LeftTrackpad"
                 CornerRadius="10"
-                Background="#75000000"
+                Background="Black"
+                Opacity="0.5"
                 HorizontalAlignment="Left" Height="250" Width="250">
             </Border>
 
@@ -23,7 +24,8 @@
             <Border
                 Name="RightTrackpad"
                 CornerRadius="10"
-                Background="#75000000"
+                Background="Black"
+                Opacity="0.5"
                 HorizontalAlignment="Right" Height="250" Width="250">
             </Border>
         </Grid>
