@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -16,6 +16,10 @@ namespace HandheldCompanion.Models
         Model3DGroup LeftShoulderMiddle;
         Model3DGroup RightShoulderMiddle;
         Model3DGroup Screen;
+        Model3DGroup MainBodyLeft;
+        Model3DGroup MainBodyRight;
+        Model3DGroup JoystickLeftCover;
+        Model3DGroup JoystickRightCover;
 
         public AYANEO2021() : base("AYANEO 2021")
         {
@@ -31,11 +35,11 @@ namespace HandheldCompanion.Models
             MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
             // Rotation Points
-            JoystickRotationPointCenterLeftMillimeter = new Vector3D(-36.0f, -8.0f, 23.0f);
-            JoystickRotationPointCenterRightMillimeter = new Vector3D(31.0f, -8.0f, -6.0f);
+            JoystickRotationPointCenterLeftMillimeter = new Vector3D(-109.0f, -8.0f, 23.0f);
+            JoystickRotationPointCenterRightMillimeter = new Vector3D(104.0f, -8.0f, -6.0f);
             JoystickMaxAngleDeg = 19.0f;
-            ShoulderTriggerRotationPointCenterLeftMillimeter = new Vector3D(-32.951f, 1.25f, 46.814f);
-            ShoulderTriggerRotationPointCenterRightMillimeter = new Vector3D(32.951f, 1.25f, 46.814f);
+            ShoulderTriggerRotationPointCenterLeftMillimeter = new Vector3D(-105.951f, 1.25f, 46.814f);
+            ShoulderTriggerRotationPointCenterRightMillimeter = new Vector3D(105.951f, 1.25f, 46.814f);
             TriggerMaxAngleDeg = 16.0f;
 
             // load model(s)
@@ -48,6 +52,10 @@ namespace HandheldCompanion.Models
             LeftShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Middle.obj");
             RightShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Middle.obj");
             Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
+            MainBodyLeft = modelImporter.Load($"models/{ModelName}/MainBodyLeft.obj");
+            MainBodyRight = modelImporter.Load($"models/{ModelName}/MainBodyRight.obj");
+            JoystickLeftCover = modelImporter.Load($"models/{ModelName}/Joystick-Left-Cover.obj");
+            JoystickRightCover = modelImporter.Load($"models/{ModelName}/Joystick-Right-Cover.obj");
 
             // pull model(s)
             model3DGroup.Children.Add(WFBEsc);
@@ -58,6 +66,10 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(WFBWin);
             model3DGroup.Children.Add(LeftShoulderMiddle);
             model3DGroup.Children.Add(RightShoulderMiddle);
+            model3DGroup.Children.Add(MainBodyLeft);
+            model3DGroup.Children.Add(MainBodyRight);
+            model3DGroup.Children.Add(JoystickLeftCover);
+            model3DGroup.Children.Add(JoystickRightCover);
             model3DGroup.Children.Add(Screen);
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
@@ -65,6 +77,8 @@ namespace HandheldCompanion.Models
 
             // specific color(s)
             ((GeometryModel3D)MainBody.Children[0]).Material = MaterialPlasticWhite;
+            ((GeometryModel3D)MainBodyLeft.Children[0]).Material = MaterialPlasticWhite;
+            ((GeometryModel3D)MainBodyRight.Children[0]).Material = MaterialPlasticWhite;
         }
     }
 }
