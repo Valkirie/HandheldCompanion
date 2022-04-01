@@ -109,7 +109,6 @@ namespace ControllerService
             Inclinometer = new XInputInclinometer(this, logger);
         }
 
-        private Quaternion defaultQuaternion = new();
         private void UpdateTimer_Ticked(object sender, EventArgs e)
         {
             // update timestamp
@@ -152,8 +151,6 @@ namespace ControllerService
                     switch (ControllerService.CurrentOverlayStatus)
                     {
                         case 0: // Visible
-
-                            // update madgwick
                             AngularVelocityRad.X = -InputUtils.deg2rad(AngularRawC.X);
                             AngularVelocityRad.Y = -InputUtils.deg2rad(AngularRawC.Y);
                             AngularVelocityRad.Z = -InputUtils.deg2rad(AngularRawC.Z);
@@ -163,7 +160,8 @@ namespace ControllerService
                             break;
                         case 1: // Hidden
                         case 2: // Collapsed
-                            pipeServer?.SendMessage(new PipeSensor(defaultQuaternion, SensorType.Quaternion));
+                            madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
+                            pipeServer?.SendMessage(new PipeSensor(madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
                             ControllerService.CurrentOverlayStatus = 3; // leave the loop
                             break;
                     }
