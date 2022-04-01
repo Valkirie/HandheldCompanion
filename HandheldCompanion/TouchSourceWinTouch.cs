@@ -492,7 +492,7 @@ namespace TouchEventSample
                     status = CursorEvent.EventType.MOVE;
                 }
 
-                long time = Stopwatch.GetTimestamp(); ;
+                long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
                 // Convert message parameters into touch event arguments and handle the event.
                 if (validFlag)

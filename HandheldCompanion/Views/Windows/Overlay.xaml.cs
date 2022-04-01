@@ -48,6 +48,8 @@ namespace HandheldCompanion.Views.Windows
         private Point RightTrackPadPosition;
 
         private TouchSourceWinTouch touchsource;
+        private long prevLeftTrackPadTime;
+        private long prevRightTrackPadTime;
 
         // Gamepad vars
         private Gamepad gamepad;
@@ -57,9 +59,11 @@ namespace HandheldCompanion.Views.Windows
         {
             InitializeComponent();
 
+            // hook vars
             WinEventDelegate = new WinEventDelegate(WinEventCallback);
             GCSafetyHandle = GCHandle.Alloc(WinEventDelegate);
 
+            // touch vars
             touchsource = new TouchSourceWinTouch(this);
             touchsource.Touch += Touchsource_Touch;
 
@@ -133,10 +137,28 @@ namespace HandheldCompanion.Views.Windows
                 // left trackpad
                 default:
                 case true:
+
+                    if (args.Flags == 26)
+                    {
+                        var elapsed = time - prevLeftTrackPadTime;
+                        if (elapsed < 200)
+                            args.Flags = 30; // double tap
+                        prevLeftTrackPadTime = time;
+                    }
+
                     break;
 
                 // right trackpad
                 case false:
+
+                    if (args.Flags == 26)
+                    {
+                        var elapsed = time - prevRightTrackPadTime;
+                        if (elapsed < 200)
+                            args.Flags = 30; // double tap
+                        prevRightTrackPadTime = time;
+                    }
+
                     normalizedX += 0.5d;
                     break;
             }
