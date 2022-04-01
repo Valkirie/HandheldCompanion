@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using TouchEventSample;
 using static HandheldCompanion.OverlayHook;
+using static TouchEventSample.TouchSourceWinTouch;
 using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
 
 namespace HandheldCompanion.Views.Windows
@@ -27,7 +28,7 @@ namespace HandheldCompanion.Views.Windows
 
         protected WinEventDelegate WinEventDelegate;
         static GCHandle GCSafetyHandle;
-        private bool isHooked;
+        private bool isHooked = true; // hack
 
         #region import
         private const int GWL_EXSTYLE = -20;
@@ -48,9 +49,18 @@ namespace HandheldCompanion.Views.Windows
         private Point LeftTrackPadPosition;
         private Point RightTrackPadPosition;
 
+        private enum TouchTarget
+        {
+            SwipeTop = 0,
+            TrackpadLeft = 1,
+            TrackpadRight = 2
+        }
+
         private TouchSourceWinTouch touchsource;
         private long prevLeftTrackPadTime;
         private long prevRightTrackPadTime;
+        private TouchTarget target;
+        private TouchArgs swipe;
 
         // Gamepad vars
         private Gamepad gamepad;
@@ -100,30 +110,44 @@ namespace HandheldCompanion.Views.Windows
             this.RightTrackPadPosition = RightTrackpad.PointToScreen(new Point(0, 0));
         }
 
-        private void Touchsource_Touch(TouchSourceWinTouch.TouchArgs args, long time)
+        private void Touchsource_Touch(TouchArgs args, long time)
         {
+            // handle top screen swipe
+            if (swipe != null && args.Id == swipe.Id)
+            {
+                if (args.Status == CursorEvent.EventType.MOVE)
+                    if (args.LocationY - swipe.LocationY > 40) // hardcoded
+                    {
+                        swipe = null;
+                        UpdateVisibility();
+                    }
+                return;
+            }
+
             double X = args.LocationX - this.OverlayPosition.X;
             double Y = args.LocationY - this.OverlayPosition.Y;
 
             double CenterX = this.ActualWidth / 2;
-            bool isLeft = X < CenterX;
-            CursorButton Button;
-            Point CurrentPoint = new Point(0, 0);
+            target = Y < SwipeGrid.ActualHeight ? TouchTarget.SwipeTop : X < CenterX ? TouchTarget.TrackpadLeft : TouchTarget.TrackpadRight;
 
-            switch (isLeft)
+            CursorButton Button = CursorButton.None;
+            Point CurrentPoint;
+
+            switch (target)
             {
-                // left trackpad
                 default:
-                case true:
+                case TouchTarget.TrackpadLeft:
                     Button = CursorButton.TouchLeft;
                     CurrentPoint = LeftTrackPadPosition;
                     break;
-
-                // right trackpad
-                case false:
+                case TouchTarget.TrackpadRight:
                     Button = CursorButton.TouchRight;
                     CurrentPoint = RightTrackPadPosition;
                     break;
+                case TouchTarget.SwipeTop:
+                    if (args.Status == CursorEvent.EventType.DOWN)
+                        swipe = args;
+                    return;
             }
 
             // normalized
@@ -133,44 +157,41 @@ namespace HandheldCompanion.Views.Windows
             var normalizedX = (relativeX / LeftTrackpad.ActualWidth) / 2.0d;
             var normalizedY = relativeY / LeftTrackpad.ActualHeight;
 
-            switch (isLeft)
+            switch (target)
             {
-                // left trackpad
                 default:
-                case true:
-
-                    if (args.Status == CursorEvent.EventType.DOWN)
+                case TouchTarget.TrackpadLeft:
                     {
-                        LeftTrackpad.Opacity = 0.75;
-                        var elapsed = time - prevLeftTrackPadTime;
-                        if (elapsed < 200)
-                            args.Flags = 30; // double tap
-                        prevLeftTrackPadTime = time;
+                        if (args.Status == CursorEvent.EventType.DOWN)
+                        {
+                            LeftTrackpad.Opacity = 0.75;
+                            var elapsed = time - prevLeftTrackPadTime;
+                            if (elapsed < 200)
+                                args.Flags = 30; // double tap
+                            prevLeftTrackPadTime = time;
+                        }
+                        else if (args.Status == CursorEvent.EventType.UP)
+                            LeftTrackpad.Opacity = 0.5;
                     }
-                    else if (args.Status == CursorEvent.EventType.UP)
-                        LeftTrackpad.Opacity = 0.5;
-
                     break;
 
-                // right trackpad
-                case false:
-
-                    if (args.Status == CursorEvent.EventType.DOWN)
+                case TouchTarget.TrackpadRight:
                     {
-                        RightTrackpad.Opacity = 0.75;
-                        var elapsed = time - prevRightTrackPadTime;
-                        if (elapsed < 200)
-                            args.Flags = 30; // double tap
-                        prevRightTrackPadTime = time;
-                    }
-                    else if (args.Status == CursorEvent.EventType.UP)
-                        RightTrackpad.Opacity = 0.5;
+                        if (args.Status == CursorEvent.EventType.DOWN)
+                        {
+                            RightTrackpad.Opacity = 0.75;
+                            var elapsed = time - prevRightTrackPadTime;
+                            if (elapsed < 200)
+                                args.Flags = 30; // double tap
+                            prevRightTrackPadTime = time;
+                        }
+                        else if (args.Status == CursorEvent.EventType.UP)
+                            RightTrackpad.Opacity = 0.5;
 
-                    normalizedX += 0.5d;
+                        normalizedX += 0.5d;
+                    }
                     break;
             }
-
-            Debug.WriteLine(string.Format($"Id:{args.Id}, Status:{args.Status}, Button:{Button}, Flags:{args.Flags}, PadRelative.X:{normalizedX}, PadRelative.Y:{normalizedY}"));
 
             this.pipeClient.SendMessage(new PipeClientCursor
             {
@@ -226,7 +247,7 @@ namespace HandheldCompanion.Views.Windows
                 isReleased = false;
             }
 
-            if (this.Visibility != Visibility.Visible)
+            if (ControlsGrid.Visibility != Visibility.Visible)
                 return;
 
             this.Dispatcher.Invoke(() =>
@@ -438,28 +459,28 @@ namespace HandheldCompanion.Views.Windows
         {
             var isTriggered = gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb) && gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
             if (isTriggered && this.isTriggered)
-            {
-                switch (this.Visibility)
-                {
-                    case Visibility.Visible:
-                        UpdateVisibility(Visibility.Collapsed);
-                        break;
-                    case Visibility.Hidden:
-                    case Visibility.Collapsed:
-                        UpdateVisibility(Visibility.Visible);
-                        break;
-                }
-            }
-
+                UpdateVisibility();
+            
             isReleased = true;
         }
 
-        public void UpdateVisibility(Visibility visibility)
+        public void UpdateVisibility()
         {
             this.Dispatcher.Invoke(() =>
             {
-                this.Visibility = visibility;
-                pipeClient.SendMessage(new PipeOverlay((int)this.Visibility));
+                Visibility visibility = Visibility.Visible;
+                switch (ControlsGrid.Visibility)
+                {
+                    case Visibility.Visible:
+                        visibility = Visibility.Hidden;
+                        break;
+                    case Visibility.Hidden:
+                    case Visibility.Collapsed:
+                        visibility = Visibility.Visible;
+                        break;
+                }
+                ControlsGrid.Visibility = visibility;
+                pipeClient.SendMessage(new PipeOverlay((int)visibility));
             });
 
         }
@@ -546,7 +567,7 @@ namespace HandheldCompanion.Views.Windows
 
         public void UnHook()
         {
-            UpdateVisibility(Visibility.Collapsed);
+            UpdateVisibility();
 
             targetProc = null;
             hWnd = IntPtr.Zero;

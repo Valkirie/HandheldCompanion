@@ -179,6 +179,7 @@ namespace HandheldCompanion.Views
             // initialize overlay
             overlay = new Overlay(logger, pipeClient);
             overlay.SetHandheldModel(handheldModels);
+            overlay.Show();
 
             // initialize process manager
             processManager = new ProcessManager();
@@ -316,14 +317,14 @@ namespace HandheldCompanion.Views
                 pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
 
                 // change overlay hook
-                this.Dispatcher.Invoke(() =>
+                /* this.Dispatcher.Invoke(() =>
                 {
                     // hide overlay on profile switch
                     overlay.UnHook();
 
                     if (!currentProfile.IsDefault)
                         overlay.HookInto(processid);
-                });
+                }); */
 
                 logger.LogDebug("Profile {0} applied", currentProfile.name);
             }
