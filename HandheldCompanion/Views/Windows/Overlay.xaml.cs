@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using SharpDX.XInput;
 using System;
@@ -65,6 +66,8 @@ namespace HandheldCompanion.Views.Windows
         // Gamepad vars
         private Gamepad gamepad;
         private Timer gamepadTimer;
+
+        private Vector3D FaceCameraObjectAlignment;
 
         public Overlay()
         {
@@ -205,6 +208,7 @@ namespace HandheldCompanion.Views.Windows
 
         #region ModelVisual3D
         private RotateTransform3D DeviceRotateTransform;
+        private RotateTransform3D DeviceRotateTransformFaceCamera;
         private RotateTransform3D LeftJoystickRotateTransform;
         private RotateTransform3D RightJoystickRotateTransform;
         private RotateTransform3D LeftTriggerRotateTransform;
@@ -222,7 +226,7 @@ namespace HandheldCompanion.Views.Windows
                     {
                         case SensorType.Quaternion:
                             // update ModelVisual3D
-                            UpdateModelVisual3D(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z);
+                            UpdateModelVisual3D(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z, sensor.x, sensor.y, sensor.z);
                             break;
                     }
                     break;
@@ -485,7 +489,7 @@ namespace HandheldCompanion.Views.Windows
 
         }
 
-        private void UpdateModelVisual3D(float q_w, float q_x, float q_y, float q_z)
+        private void UpdateModelVisual3D(float q_w, float q_x, float q_y, float q_z, float x, float y, float z)
         {
             m_ModelVisualUpdate++;
 
@@ -495,11 +499,36 @@ namespace HandheldCompanion.Views.Windows
 
             this.Dispatcher.Invoke(() =>
             {
-                Quaternion endQuaternion = new Quaternion(q_w, q_x, q_y, q_z);
-                var ax3dalt = new QuaternionRotation3D(endQuaternion);
+                Transform3DGroup Transform3DGroupModel = new Transform3DGroup();
 
-                DeviceRotateTransform = new RotateTransform3D(ax3dalt);
-                ModelVisual3D.Content.Transform = DeviceRotateTransform;
+                Quaternion endQuaternion = new Quaternion(q_w, q_x, q_y, q_z);
+                
+                var ax3d = new QuaternionRotation3D(endQuaternion);
+                DeviceRotateTransform = new RotateTransform3D(ax3d);
+                Transform3DGroupModel.Children.Add(DeviceRotateTransform);
+
+                // Note TODO make sure with euler angles that rotation is applied in correct order!!! 
+
+                // Angles
+                Vector3D DesiredAngle = new Vector3D(-90, -180, 0);
+                Vector3D DiffAngle = new Vector3D(0, 0, 0);
+
+                DiffAngle.X = (InputUtils.rad2deg(x) - (float)FaceCameraObjectAlignment.X) - (float)DesiredAngle.X;
+                DiffAngle.Y = (InputUtils.rad2deg(y) - (float)FaceCameraObjectAlignment.Y) - (float)DesiredAngle.Y;
+                DiffAngle.Z = (InputUtils.rad2deg(z) - (float)FaceCameraObjectAlignment.Z) - (float)DesiredAngle.Z;
+
+                FaceCameraObjectAlignment.X += DiffAngle.X * 0.0015; // ~90 degrees in 30 seconds
+                FaceCameraObjectAlignment.Y += DiffAngle.Y * 0.0015; // ~90 degrees in 30 seconds
+                FaceCameraObjectAlignment.Z += DiffAngle.Z * 0.0015; // ~90 degrees in 30 seconds
+
+                //var ax3dalt = new AxisAngleRotation3D(new Vector3D(1, 0, 0), -FaceCameraObjectAlignment.X);
+                //var ax3dalt = new AxisAngleRotation3D(new Vector3D(0, 1, 0), -FaceCameraObjectAlignment.Y);
+                var ax3dalt = new AxisAngleRotation3D(new Vector3D(0, 0, 1), -FaceCameraObjectAlignment.Z);
+                DeviceRotateTransformFaceCamera = new RotateTransform3D(ax3dalt);
+                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCamera);
+
+                // Transform mode with group
+                ModelVisual3D.Content.Transform = Transform3DGroupModel;
             });
         }
         #endregion

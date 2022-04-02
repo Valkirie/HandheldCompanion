@@ -158,12 +158,12 @@ namespace ControllerService
                             AngularVelocityRad.Z = -InputUtils.deg2rad(AngularRawC.Z);
                             madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -AccelerationRaw.X, AccelerationRaw.Y, AccelerationRaw.Z, DeltaMilliseconds);
 
-                            pipeServer?.SendMessage(new PipeSensor(madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
+                            pipeServer?.SendMessage(new PipeSensor(madgwickAHRS.GetEuler(), madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
                             break;
                         case 1: // Hidden
                         case 2: // Collapsed
                             madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
-                            pipeServer?.SendMessage(new PipeSensor(madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
+                            pipeServer?.SendMessage(new PipeSensor(madgwickAHRS.GetEuler(), madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
                             ControllerService.CurrentOverlayStatus = 3; // leave the loop
                             break;
                     }
