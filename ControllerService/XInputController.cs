@@ -25,6 +25,7 @@ namespace ControllerService
         private Profile defaultProfile;
 
         public Vector3 Acceleration;
+        public Vector3 AccelerationRaw;
         public Vector3 Angle;
         public Vector3 AngularVelocityC;
         public Vector3 AngularVelocity;
@@ -129,6 +130,7 @@ namespace ControllerService
                 AngularRawC = Gyrometer.GetCurrentReadingRaw(true);
 
                 Acceleration = Accelerometer.GetCurrentReading();
+                AccelerationRaw = Accelerometer.GetCurrentReadingRaw(false);
                 Angle = Inclinometer.GetCurrentReading();
 
                 // update sensorFusion (todo: call only when needed ?)
@@ -154,7 +156,7 @@ namespace ControllerService
                             AngularVelocityRad.X = -InputUtils.deg2rad(AngularRawC.X);
                             AngularVelocityRad.Y = -InputUtils.deg2rad(AngularRawC.Y);
                             AngularVelocityRad.Z = -InputUtils.deg2rad(AngularRawC.Z);
-                            madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration.X, Acceleration.Y, Acceleration.Z, DeltaMilliseconds);
+                            madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -AccelerationRaw.X, AccelerationRaw.Y, AccelerationRaw.Z, DeltaMilliseconds);
 
                             pipeServer?.SendMessage(new PipeSensor(madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
                             break;
