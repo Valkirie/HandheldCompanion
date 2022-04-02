@@ -186,5 +186,10 @@ namespace ControllerCommon
         {
             return new Quaternion(Quaternion[0], Quaternion[1], Quaternion[2], Quaternion[3]);
         }
+
+        public Vector3 GetEuler()
+        {
+            return ToEulerAngles(new Quaternion(Quaternion[0], Quaternion[1], Quaternion[2], Quaternion[3]));
+        }
     }
 }

@@ -169,6 +169,18 @@ namespace ControllerService
                     }
                 });
 
+                //logger.LogInformation("Plot AccelerationRawX {0} {1}", TotalMilliseconds, AccelerationRaw.X);
+                //logger.LogInformation("Plot AccelerationRawY {0} {1}", TotalMilliseconds, AccelerationRaw.Y);
+                //logger.LogInformation("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, AccelerationRaw.Z);
+
+                //logger.LogInformation("Plot GyroRawCX {0} {1}", TotalMilliseconds, AngularRawC.X);
+                //logger.LogInformation("Plot GyroRawCY {0} {1}", TotalMilliseconds, AngularRawC.Y);
+                //logger.LogInformation("Plot GyroRawCZ {0} {1}", TotalMilliseconds, AngularRawC.Z);
+
+                //logger.LogInformation("Plot PoseX {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().X);
+                //logger.LogInformation("Plot PoseY {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Y);
+                //logger.LogInformation("Plot PoseZ {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Z);
+
                 if (prevGamepad.ToString() != Gamepad.ToString())
                     pipeServer?.SendMessage(new PipeGamepad(Gamepad));
                 prevGamepad = Gamepad;
