@@ -510,7 +510,7 @@ namespace HandheldCompanion.Views.Windows
                 // Note TODO make sure with euler angles that rotation is applied in correct order!!! 
 
                 // Angles
-                Vector3D DesiredAngle = new Vector3D(-90, -180, 0);
+                Vector3D DesiredAngle = new Vector3D(0, -180, 0);
                 Vector3D DiffAngle = new Vector3D(0, 0, 0);
 
                 DiffAngle.X = (InputUtils.rad2deg(x) - (float)FaceCameraObjectAlignment.X) - (float)DesiredAngle.X;
@@ -521,7 +521,7 @@ namespace HandheldCompanion.Views.Windows
                 FaceCameraObjectAlignment.Y += DiffAngle.Y * 0.0015; // ~90 degrees in 30 seconds
                 FaceCameraObjectAlignment.Z += DiffAngle.Z * 0.0015; // ~90 degrees in 30 seconds
 
-                //var ax3dalt = new AxisAngleRotation3D(new Vector3D(1, 0, 0), -FaceCameraObjectAlignment.X);
+                //var ax3dalt = new AxisAngleRotation3D(new Vector3D(1, 0, 0), FaceCameraObjectAlignment.X);
                 //var ax3dalt = new AxisAngleRotation3D(new Vector3D(0, 1, 0), -FaceCameraObjectAlignment.Y);
                 var ax3dalt = new AxisAngleRotation3D(new Vector3D(0, 0, 1), -FaceCameraObjectAlignment.Z);
                 DeviceRotateTransformFaceCamera = new RotateTransform3D(ax3dalt);
