@@ -68,6 +68,7 @@ namespace HandheldCompanion.Views.Windows
         private Timer gamepadTimer;
 
         private Vector3D FaceCameraObjectAlignment;
+        private Quaternion FaceCameraObjectAlignmentQuat;
 
         public Overlay()
         {
@@ -208,7 +209,9 @@ namespace HandheldCompanion.Views.Windows
 
         #region ModelVisual3D
         private RotateTransform3D DeviceRotateTransform;
-        private RotateTransform3D DeviceRotateTransformFaceCamera;
+        private RotateTransform3D DeviceRotateTransformFaceCameraX;
+        private RotateTransform3D DeviceRotateTransformFaceCameraY;
+        private RotateTransform3D DeviceRotateTransformFaceCameraZ;
         private RotateTransform3D LeftJoystickRotateTransform;
         private RotateTransform3D RightJoystickRotateTransform;
         private RotateTransform3D LeftTriggerRotateTransform;
@@ -501,31 +504,39 @@ namespace HandheldCompanion.Views.Windows
             {
                 Transform3DGroup Transform3DGroupModel = new Transform3DGroup();
 
-                Quaternion endQuaternion = new Quaternion(q_w, q_x, q_y, q_z);
-                
-                var ax3d = new QuaternionRotation3D(endQuaternion);
-                DeviceRotateTransform = new RotateTransform3D(ax3d);
+                // Device transformation based on pose
+                Quaternion DevicePose = new Quaternion(q_w, q_x, q_y, q_z);
+                var Ax3DDevicePose = new QuaternionRotation3D(DevicePose);
+                DeviceRotateTransform = new RotateTransform3D(Ax3DDevicePose);
                 Transform3DGroupModel.Children.Add(DeviceRotateTransform);
 
-                // Note TODO make sure with euler angles that rotation is applied in correct order!!! 
-
                 // Angles
-                Vector3D DesiredAngle = new Vector3D(0, -180, 0);
+                Vector3D DesiredAngle = new Vector3D(0, 0, 0);
                 Vector3D DiffAngle = new Vector3D(0, 0, 0);
 
-                DiffAngle.X = (InputUtils.rad2deg(x) - (float)FaceCameraObjectAlignment.X) - (float)DesiredAngle.X;
-                DiffAngle.Y = (InputUtils.rad2deg(y) - (float)FaceCameraObjectAlignment.Y) - (float)DesiredAngle.Y;
+                // Determine diff angles
+                DiffAngle.X = (InputUtils.rad2deg(x) - (float)FaceCameraObjectAlignment.X) - (float)DesiredAngle.X;           
+                DiffAngle.Y = (InputUtils.rad2deg(y) - (float)FaceCameraObjectAlignment.Y) - (float)DesiredAngle.Y;              
                 DiffAngle.Z = (InputUtils.rad2deg(z) - (float)FaceCameraObjectAlignment.Z) - (float)DesiredAngle.Z;
+                
+                // Handle wrap around at -180 +180 position which is horizontal for steering
+                DiffAngle.Y = (y < 0.0) ? DiffAngle.Y += 180.0f : DiffAngle.Y -= 180.0f;
 
-                FaceCameraObjectAlignment.X += DiffAngle.X * 0.0015; // ~90 degrees in 30 seconds
-                FaceCameraObjectAlignment.Y += DiffAngle.Y * 0.0015; // ~90 degrees in 30 seconds
-                FaceCameraObjectAlignment.Z += DiffAngle.Z * 0.0015; // ~90 degrees in 30 seconds
+                // Correction amount for camera, increase slowly
+                FaceCameraObjectAlignment += DiffAngle * 0.0015; // 0.0015 = ~90 degrees in 30 seconds
 
-                //var ax3dalt = new AxisAngleRotation3D(new Vector3D(1, 0, 0), FaceCameraObjectAlignment.X);
-                //var ax3dalt = new AxisAngleRotation3D(new Vector3D(0, 1, 0), -FaceCameraObjectAlignment.Y);
-                var ax3dalt = new AxisAngleRotation3D(new Vector3D(0, 0, 1), -FaceCameraObjectAlignment.Z);
-                DeviceRotateTransformFaceCamera = new RotateTransform3D(ax3dalt);
-                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCamera);
+                // Transform YZX
+                var Ax3DFaceCameraY = new AxisAngleRotation3D(new Vector3D(0, 1, 0), FaceCameraObjectAlignment.Y);
+                DeviceRotateTransformFaceCameraY = new RotateTransform3D(Ax3DFaceCameraY);
+                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraY);
+
+                var Ax3DFaceCameraZ = new AxisAngleRotation3D(new Vector3D(0, 0, 1), -FaceCameraObjectAlignment.Z);
+                DeviceRotateTransformFaceCameraZ = new RotateTransform3D(Ax3DFaceCameraZ);
+                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraZ);
+
+                var Ax3DFaceCameraX = new AxisAngleRotation3D(new Vector3D(1, 0, 0), FaceCameraObjectAlignment.X);
+                DeviceRotateTransformFaceCameraX = new RotateTransform3D(Ax3DFaceCameraX);
+                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraX);
 
                 // Transform mode with group
                 ModelVisual3D.Content.Transform = Transform3DGroupModel;
