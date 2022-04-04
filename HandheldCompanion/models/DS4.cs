@@ -29,8 +29,8 @@ namespace HandheldCompanion.Models
             MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
             // Rotation Points
-            JoystickRotationPointCenterLeftMillimeter = new Vector3D(-25.5f, -7.286f, -21.582f);
-            JoystickRotationPointCenterRightMillimeter = new Vector3D(25.5f, -7.286f, -21.582f);
+            JoystickRotationPointCenterLeftMillimeter = new Vector3D(-25.5f, -5.086f, -21.582f);
+            JoystickRotationPointCenterRightMillimeter = new Vector3D(25.5f, -5.086f, -21.582f);
             JoystickMaxAngleDeg = 19.0f;
             ShoulderTriggerRotationPointCenterLeftMillimeter = new Vector3D(-38.061f, 3.09f, 26.842f);
             ShoulderTriggerRotationPointCenterRightMillimeter = new Vector3D(38.061f, 3.09f, 26.842f);
@@ -60,6 +60,7 @@ namespace HandheldCompanion.Models
 
             // specific color(s)
             ((GeometryModel3D)MainBody.Children[0]).Material = MaterialPlasticWhite;
+            ((GeometryModel3D)Triangle.Children[0]).Material = MaterialPlasticWhite;
         }
     }
 }
