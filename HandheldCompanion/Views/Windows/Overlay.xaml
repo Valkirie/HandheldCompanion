@@ -9,7 +9,7 @@
         Title="Overlay" Visibility="Collapsed" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" Focusable="False" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" >
 
     <Grid Name="MainGrid">
-        <Grid Name="ControlsGrid" Margin="20" Visibility="Hidden">
+        <Grid Name="ControlsGrid" Margin="20">
             <!-- Trackpad -->
             <Grid>
                 <!-- Left Trackpad -->

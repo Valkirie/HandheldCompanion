@@ -476,7 +476,7 @@ namespace HandheldCompanion.Views.Windows
             this.Dispatcher.Invoke(() =>
             {
                 Visibility visibility = Visibility.Visible;
-                switch (ControlsGrid.Visibility)
+                switch (this.Visibility)
                 {
                     case Visibility.Visible:
                         visibility = Visibility.Collapsed;
@@ -486,7 +486,7 @@ namespace HandheldCompanion.Views.Windows
                         visibility = Visibility.Visible;
                         break;
                 }
-                ControlsGrid.Visibility = visibility;
+                this.Visibility = visibility;
                 pipeClient.SendMessage(new PipeOverlay((int)visibility));
             });
 
