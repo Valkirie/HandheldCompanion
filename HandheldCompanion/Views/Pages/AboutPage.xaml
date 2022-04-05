@@ -16,11 +16,12 @@
 
             <!-- Warning -->
             <Border
-                        Name="WarningBorder"
-                        Background="#F09D6500"
-                        Padding="12,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
+                Name="WarningBorder"
+                Background="#F09D6500"
+                Padding="12,12,12,12"
+                Visibility="Collapsed"
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
 
                 <Grid>
                     <ui:SimpleStackPanel HorizontalAlignment="Stretch" Spacing="12" Grid.Column="0">

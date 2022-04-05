@@ -32,9 +32,7 @@
     <None Remove="Resources\controller_1_1.png" />
     <None Remove="Resources\controller_2_0.png" />
     <None Remove="Resources\device_aya_2021.png" />
-    <None Remove="Resources\device_aya_2021_pro.png" />
     <None Remove="Resources\device_aya_next.png" />
-    <None Remove="Resources\device_aya_retro_power.png" />
     <None Remove="Resources\device_generic.png" />
     <None Remove="Resources\icon.png" />
     <None Remove="Resources\MainBody.mtl" />
@@ -62,14 +60,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\device_aya_2021_pro.png" />
     <Resource Include="Resources\device_aya_2021.png" />
     <Resource Include="Resources\controller_0_1.png" />
     <Resource Include="Resources\controller_0_0.png" />
     <Resource Include="Resources\controller_1_1.png" />
     <Resource Include="Resources\controller_1_0.png" />
     <Resource Include="Resources\device_aya_next.png" />
-    <Resource Include="Resources\device_aya_retro_power.png" />
     <Resource Include="Resources\icon.png" />
   </ItemGroup>
 

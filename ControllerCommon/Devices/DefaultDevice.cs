@@ -8,9 +8,9 @@ using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerCommon.Devices
 {
-    public class OXPAMDMini : Device
+    public class DefaultDevice : Device
     {
-        public OXPAMDMini(string ManufacturerName, string ProductName) : base(ManufacturerName, ProductName, new DeviceController(0x045E, 0x028E))
+        public DefaultDevice(string ManufacturerName, string ProductName) : base(ManufacturerName, ProductName, null)
         {
         }
     }

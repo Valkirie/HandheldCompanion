@@ -7,6 +7,7 @@ using Windows.Devices.HumanInterfaceDevice;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.DeviceUtils;
 using HidSharp;
+using System;
 
 namespace ControllerCommon.Devices
 {
@@ -32,6 +33,7 @@ namespace ControllerCommon.Devices
 
         private HidDeviceLoader loader;
         public DeviceController Controller;
+        public bool controllerSupported = false;
 
         public string ManufacturerName;
         public string ProductName;
@@ -45,7 +47,9 @@ namespace ControllerCommon.Devices
         protected Inclinometer inclinometer;
         public bool hasInclinometer;
 
-        protected Device(string ManufacturerName, string ProductName, string sensorName, DeviceController Controller)
+        public Uri ImageSource { get; set; }
+
+        protected Device(string ManufacturerName, string ProductName, DeviceController Controller, string ImageString = null)
         {
             this.ManufacturerName = ManufacturerName;
             this.ProductName = ProductName;
@@ -63,12 +67,33 @@ namespace ControllerCommon.Devices
             if (inclinometer != null)
                 hasInclinometer = true;
 
+            // check visual
+            switch (ImageString)
+            {
+                case null:
+                    ImageSource = new Uri($"pack://application:,,,/Resources/device_generic.png");
+                    break;
+                default:
+                    ImageSource = new Uri($"pack://application:,,,/Resources/{ImageString}.png");
+                    break;
+            }
+
             // check sensor
             string ACPI = CommonUtils.Between(gyrometer.DeviceId, "ACPI#", "#");
-
             sensor = GetUSBDevices().FirstOrDefault(device => device.DeviceId.Contains(ACPI));
-            if (sensor != null && sensorName == sensor.Name)
-                sensorSupported = true;
+            if (sensor != null)
+            {
+                sensorName = sensor.Name;
+                if (SupportedSensors.Contains(sensor.Name))
+                    sensorSupported = true;
+            }
+
+            if (Controller == null)
+                return;
+            else if (Controller.VendorID == 0)
+                return;
+            else if (Controller.ProductID == 0)
+                return;
 
             // load HID
             loader = new HidDeviceLoader();
@@ -90,6 +115,8 @@ namespace ControllerCommon.Devices
                     Controller.DeviceID = DeviceID;
                 break;
             }
+
+            controllerSupported = true;
         }
     }
 }

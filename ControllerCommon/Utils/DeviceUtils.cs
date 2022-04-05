@@ -52,5 +52,10 @@ namespace ControllerCommon.Utils
 
             return devices;
         }
+
+        public static List<string> SupportedSensors = new List<string>()
+        {
+            "BMI160"
+        };
     }
 }

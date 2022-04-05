@@ -103,10 +103,11 @@ namespace HandheldCompanion.Views
                     handheldDevice = new AYANEO2021(ManufacturerName, ProductName);
                     handheldModels = new ModelAYANEO2021();
                     break;
-                case "OXPAMDMini":
+                case "ONE XPLAYER":
                     handheldDevice = new OXPAMDMini(ManufacturerName, ProductName);
                     break;
                 default:
+                    handheldDevice = new DefaultDevice(ManufacturerName, ProductName);
                     handheldModels = new ModelXBOX360();
                     break;
             }
