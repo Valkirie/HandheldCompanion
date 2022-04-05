@@ -28,29 +28,29 @@ namespace ControllerCommon.Utils
             }
         }
 
-        public static List<USBDeviceInfo> GetUSBDevices()
+        private static List<USBDeviceInfo> USBDevices = new();
+        public static List<USBDeviceInfo> GetUSBDevices(string DeviceId)
         {
-            var devices = new List<USBDeviceInfo>();
-
-            using (var mos = new ManagementObjectSearcher(@"Select * From Win32_PnPEntity"))
+            try
             {
-                using (ManagementObjectCollection collection = mos.Get())
+                using (var mos = new ManagementObjectSearcher($"Select * From Win32_PnPEntity WHERE DeviceId LIKE '%{DeviceId}%'"))
                 {
-                    foreach (var device in collection)
+                    using (ManagementObjectCollection collection = mos.Get())
                     {
-                        try
+                        foreach (var device in collection)
                         {
+
                             var id = device.GetPropertyValue("DeviceId").ToString();
                             var name = device.GetPropertyValue("Name").ToString();
                             var description = device.GetPropertyValue("Description").ToString();
-                            devices.Add(new USBDeviceInfo(id, name, description));
+                            USBDevices.Add(new USBDeviceInfo(id, name, description));
                         }
-                        catch (Exception ex) { }
                     }
                 }
             }
+            catch (Exception) { }
 
-            return devices;
+            return USBDevices;
         }
 
         public static List<string> SupportedSensors = new List<string>()

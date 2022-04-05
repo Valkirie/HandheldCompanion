@@ -69,7 +69,7 @@ namespace ControllerCommon.Devices
             {
                 // check sensor
                 string ACPI = CommonUtils.Between(gyrometer.DeviceId, "ACPI#", "#");
-                sensor = GetUSBDevices().FirstOrDefault(device => device.DeviceId.Contains(ACPI));
+                sensor = GetUSBDevices(ACPI).FirstOrDefault();
                 if (sensor != null)
                 {
                     sensorName = sensor.Name;
