@@ -28,8 +28,7 @@ namespace ControllerCommon.Utils
             }
         }
 
-        private static List<USBDeviceInfo> USBDevices = new();
-        public static List<USBDeviceInfo> GetUSBDevices(string DeviceId)
+        public static USBDeviceInfo GetUSBDevice(string DeviceId)
         {
             try
             {
@@ -43,14 +42,14 @@ namespace ControllerCommon.Utils
                             var id = device.GetPropertyValue("DeviceId").ToString();
                             var name = device.GetPropertyValue("Name").ToString();
                             var description = device.GetPropertyValue("Description").ToString();
-                            USBDevices.Add(new USBDeviceInfo(id, name, description));
+                            return new USBDeviceInfo(id, name, description);
                         }
                     }
                 }
             }
             catch (Exception) { }
 
-            return USBDevices;
+            return null;
         }
 
         public static List<string> SupportedSensors = new List<string>()
