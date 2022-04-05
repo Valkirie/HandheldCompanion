@@ -63,9 +63,5 @@
                 </HelixToolkit:HelixViewport3D>
             </Grid>
         </Grid>
-        <!-- Footer -->
-        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Center">
-            <TextBlock Foreground="Red" FontSize="18">Preview "OXAMDMini" build, do not distribute</TextBlock>
-        </Grid>
     </Grid>
 </Window>

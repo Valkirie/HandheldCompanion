@@ -103,6 +103,8 @@ namespace HandheldCompanion.Views
                     handheldDevice = new AYANEO2021(ManufacturerName, ProductName);
                     handheldModels = new ModelAYANEO2021();
                     break;
+                case "NEXT Pro":
+                case "NEXT Advance":
                 case "NEXT":
                     handheldDevice = new AYANEONEXT(ManufacturerName, ProductName);
                     break;

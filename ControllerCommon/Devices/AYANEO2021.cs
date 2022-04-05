@@ -10,7 +10,7 @@ namespace ControllerCommon.Devices
 {
     public class AYANEO2021 : Device
     {
-        public AYANEO2021(string ManufacturerName, string ProductName) : base(ManufacturerName, ProductName, new DeviceController(0x045E, 0x028E), "device_aya_2021")
+        public AYANEO2021(string ManufacturerName, string ProductName) : base(ManufacturerName, ProductName, new DeviceController(0x045E, 0x028E))
         {
         }
     }

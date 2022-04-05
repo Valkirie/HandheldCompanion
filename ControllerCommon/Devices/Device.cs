@@ -47,9 +47,7 @@ namespace ControllerCommon.Devices
         protected Inclinometer inclinometer;
         public bool hasInclinometer;
 
-        public Uri ImageSource { get; set; }
-
-        protected Device(string ManufacturerName, string ProductName, DeviceController Controller, string ImageString = null)
+        protected Device(string ManufacturerName, string ProductName, DeviceController Controller)
         {
             this.ManufacturerName = ManufacturerName;
             this.ProductName = ProductName;
@@ -66,17 +64,6 @@ namespace ControllerCommon.Devices
             inclinometer = Inclinometer.GetDefault();
             if (inclinometer != null)
                 hasInclinometer = true;
-
-            // check visual
-            switch (ImageString)
-            {
-                case null:
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_generic.png");
-                    break;
-                default:
-                    ImageSource = new Uri($"pack://application:,,,/Resources/{ImageString}.png");
-                    break;
-            }
 
             // check sensor
             string ACPI = CommonUtils.Between(gyrometer.DeviceId, "ACPI#", "#");
