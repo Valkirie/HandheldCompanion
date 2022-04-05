@@ -59,18 +59,8 @@ namespace HandheldCompanion.Views.Pages
             // do something
         }
 
-
         private void UpdateDevice()
         {
-            /* List of supported devices
-               - AYANEO 2021 Pro Retro Power
-               - AYANEO 2021 Pro
-               - AYANEO 2021
-               - AYANEO NEXT Pro
-               - AYANEO NEXT Advance
-               - AYANEO NEXT
-           */
-
             // Device visual
             Uri ImageSource;
 

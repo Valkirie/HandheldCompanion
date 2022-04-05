@@ -489,10 +489,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Cache\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="Microsoft.Win32.TaskScheduler">
       <HintPath>..\dependencies\Microsoft.Win32.TaskScheduler.dll</HintPath>
     </Reference>

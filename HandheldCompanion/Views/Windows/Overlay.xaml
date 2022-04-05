@@ -6,11 +6,9 @@
         xmlns:local="clr-namespace:HandheldCompanion.Views.Windows"
         xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         mc:Ignorable="d"
-        Title="Overlay" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" Focusable="False" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" >
+        Title="Overlay" Visibility="Collapsed" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" Focusable="False" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" >
 
     <Grid Name="MainGrid">
-        <!-- Edge swipe -->
-        <Grid Name="SwipeGrid" VerticalAlignment="Top" Height="5" Background="#01000000"/>
         <Grid Name="ControlsGrid" Margin="20" Visibility="Hidden">
             <!-- Trackpad -->
             <Grid>

@@ -132,7 +132,7 @@ namespace HandheldCompanion.Views.Windows
             double Y = args.LocationY - this.OverlayPosition.Y;
 
             double CenterX = this.ActualWidth / 2;
-            target = Y < SwipeGrid.ActualHeight ? TouchTarget.SwipeTop : X < CenterX ? TouchTarget.TrackpadLeft : TouchTarget.TrackpadRight;
+            target = X < CenterX ? TouchTarget.TrackpadLeft : TouchTarget.TrackpadRight;
 
             CursorButton Button = CursorButton.None;
             Point CurrentPoint;

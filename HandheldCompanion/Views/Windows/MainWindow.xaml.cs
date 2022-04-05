@@ -67,7 +67,7 @@ namespace HandheldCompanion.Views
 
         // Handheld devices vars
         private Device handheldDevice;
-        private Model handheldModels = new ModelXBOX360();
+        private Model handheldModels;
 
         // manager(s) vars
         public ToastManager toastManager;
@@ -107,12 +107,15 @@ namespace HandheldCompanion.Views
                 case "NEXT Advance":
                 case "NEXT":
                     handheldDevice = new AYANEONEXT(ManufacturerName, ProductName);
+                    handheldModels = new ModelXBOX360(); // temp
                     break;
                 case "ONE XPLAYER":
                     handheldDevice = new OXPAMDMini(ManufacturerName, ProductName);
+                    handheldModels = new ModelXBOX360(); // temp
                     break;
                 default:
                     handheldDevice = new DefaultDevice(ManufacturerName, ProductName);
+                    handheldModels = new ModelXBOX360();
                     break;
             }
 
@@ -190,7 +193,6 @@ namespace HandheldCompanion.Views
             // initialize overlay
             overlay = new Overlay(logger, pipeClient);
             overlay.SetHandheldModel(handheldModels);
-            overlay.Show();
 
             // initialize process manager
             processManager = new ProcessManager();
