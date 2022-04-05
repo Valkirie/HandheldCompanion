@@ -44,7 +44,7 @@ namespace HandheldCompanion.Views.Windows
 
         private ILogger microsoftLogger;
         private PipeClient pipeClient;
-        private HandheldModels ProductModel;
+        private Model ProductModel;
 
         private Point OverlayPosition;
         private Point LeftTrackPadPosition;
@@ -96,7 +96,7 @@ namespace HandheldCompanion.Views.Windows
             this.pipeClient.ServerMessage += OnServerMessage;
         }
 
-        public void SetHandheldModel(HandheldModels ProductModel)
+        public void SetHandheldModel(Model ProductModel)
         {
             // do something
             this.ProductModel = ProductModel;

@@ -4,7 +4,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class DS4 : HandheldModels
+    internal class ModelDS4 : Model
     {
         // Specific groups (move me)
         Model3DGroup LeftShoulderMiddle;
@@ -15,7 +15,7 @@ namespace HandheldCompanion.Models
         Model3DGroup AuxPort;
         Model3DGroup Triangle;
 
-        public DS4() : base("DS4")
+        public ModelDS4() : base("DS4")
         {
             this.ModelLocked = true;
 

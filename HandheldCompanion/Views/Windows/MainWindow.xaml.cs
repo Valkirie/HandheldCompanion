@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using HandheldCompanion.Models;
 using HandheldCompanion.Views.Pages;
@@ -65,8 +66,8 @@ namespace HandheldCompanion.Views
         public CmdParser cmdParser;
 
         // Handheld devices vars
-        private HandheldDevice handheldDevice;
-        private HandheldModels handheldModels;
+        private Device handheldDevice;
+        private Model handheldModels;
 
         // manager(s) vars
         public ToastManager toastManager;
@@ -90,22 +91,27 @@ namespace HandheldCompanion.Views
             this.arguments = arguments;
 
             // get the actual handheld device
-            handheldDevice = new HandheldDevice();
+            var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
+            var ProductName = MotherboardInfo.Product;
 
-            // improve me
-            switch (handheldDevice.ProductName)
+            // pull me from service ?
+            switch (ProductName)
             {
                 case "AYANEO 2021":
                 case "AYANEO 2021 Pro":
                 case "AYANEO 2021 Pro Retro Power":
-                    handheldModels = new AYANEO2021();
+                    handheldDevice = new AYANEO2021(ManufacturerName, ProductName);
+                    handheldModels = new ModelAYANEO2021();
+                    break;
+                case "OXPAMDMini":
+                    handheldDevice = new OXPAMDMini(ManufacturerName, ProductName);
                     break;
                 default:
-                    handheldModels = new XBOX360();
+                    handheldModels = new ModelXBOX360();
                     break;
             }
 
-            logger.LogInformation("{0} ({1})", handheldDevice.ManufacturerName, handheldDevice.ProductName);
+            logger.LogInformation("{0} ({1})", ManufacturerName, ProductName);
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
@@ -218,7 +224,7 @@ namespace HandheldCompanion.Views
                         default:
                         case HIDmode.DualShock4Controller: // implement me
                         case HIDmode.Xbox360Controller:
-                            handheldModels = new XBOX360();
+                            handheldModels = new ModelXBOX360();
                             break;
                     }
 

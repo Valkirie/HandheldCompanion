@@ -8,7 +8,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion
 {
-    public abstract class HandheldModels
+    public abstract class Model
     {
         // Model3D vars
         public Model3DGroup model3DGroup = new Model3DGroup();
@@ -45,7 +45,7 @@ namespace HandheldCompanion
         public string ModelName;
         public bool ModelLocked;
 
-        protected HandheldModels(string ModelName)
+        protected Model(string ModelName)
         {
             this.ModelName = ModelName;
 

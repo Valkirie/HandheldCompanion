@@ -7,14 +7,14 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class XBOX360 : HandheldModels
+    internal class ModelXBOX360 : Model
     {
         // Specific groups (move me)
         Model3DGroup MainBodyCharger;
         Model3DGroup XBoxButton;
         Model3DGroup XboxButtonRing;
 
-        public XBOX360() : base("XBOX360")
+        public ModelXBOX360() : base("XBOX360")
         {
             this.ModelLocked = false;
 

@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Devices;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Windows;
@@ -17,14 +18,14 @@ namespace HandheldCompanion.Views.Pages
         private ILogger microsoftLogger;
         private PipeClient pipeClient;
 
-        private HandheldDevice handheldDevice;
+        private Device handheldDevice;
 
         public AboutPage()
         {
             InitializeComponent();
         }
 
-        public AboutPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger, HandheldDevice handheldDevice) : this()
+        public AboutPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger, Device handheldDevice) : this()
         {
             this.Tag = Tag;
             this.mainWindow = mainWindow;
@@ -35,7 +36,7 @@ namespace HandheldCompanion.Views.Pages
             this.handheldDevice = handheldDevice;
 
             VersionValue.Text = mainWindow.fileVersionInfo.FileVersion;
-            SensorName.Text = handheldDevice.sensor.Name;
+            SensorName.Text = handheldDevice.sensorName;
             GyrometerValue.Text = handheldDevice.hasGyrometer ? "Detected" : "N/A";
             AccelerometerValue.Text = handheldDevice.hasAccelerometer ? "Detected" : "N/A";
             InclinometerValue.Text = handheldDevice.hasInclinometer ? "Detected" : "N/A";

@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
@@ -16,6 +17,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Device = ControllerCommon.Devices.Device;
 
 namespace ControllerService
 {
@@ -31,6 +33,9 @@ namespace ControllerService
         private ProfileManager profileManager;
         private DSUServer DSUServer;
         public HidHide Hidder;
+
+        // Handheld devices vars
+        private Device handheldDevice;
 
         public static string CurrentExe, CurrentPath, CurrentPathDep;
         public static string CurrentTag;
@@ -88,9 +93,29 @@ namespace ControllerService
                 throw new InvalidOperationException();
             }
 
+            // get the actual handheld device
+            var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
+            var ProductName = MotherboardInfo.Product;
+
+            switch (ProductName)
+            {
+                case "AYANEO 2021":
+                case "AYANEO 2021 Pro":
+                case "AYANEO 2021 Pro Retro Power":
+                    handheldDevice = new AYANEO2021(ManufacturerName, ProductName);
+                    break;
+                case "OXPAMDMini":
+                    handheldDevice = new OXPAMDMini(ManufacturerName, ProductName);
+                    break;
+                default:
+                    logger.LogCritical($"{ProductName} from {ManufacturerName} is not yet supported.");
+                    throw new InvalidOperationException();
+            }
+
             // initialize HidHide
             Hidder = new HidHide(logger);
             Hidder.RegisterApplication(CurrentExe);
+            Hidder.RegisterDevice(handheldDevice.Controller);
 
             // initialize PipeServer
             pipeServer = new PipeServer("ControllerService", logger);

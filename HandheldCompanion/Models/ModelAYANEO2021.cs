@@ -4,7 +4,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class AYANEO2021 : HandheldModels
+    internal class ModelAYANEO2021 : Model
     {
         // Specific groups (move me)
         Model3DGroup WFBEsc;
@@ -21,7 +21,7 @@ namespace HandheldCompanion.Models
         Model3DGroup JoystickLeftCover;
         Model3DGroup JoystickRightCover;
 
-        public AYANEO2021() : base("AYANEO 2021")
+        public ModelAYANEO2021() : base("AYANEO 2021")
         {
             this.ModelLocked = true;
 

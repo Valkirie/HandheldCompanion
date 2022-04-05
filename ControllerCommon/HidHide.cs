@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon.Devices;
+using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,6 @@ namespace ControllerCommon
     public class HidHide
     {
         private Process process;
-        public RootDevice root;
-        public List<Device> devices = new List<Device>();
 
         private readonly ILogger logger;
         private readonly string path = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
@@ -42,10 +41,6 @@ namespace ControllerCommon
                     Verb = "runas"
                 }
             };
-
-            // update and register devices list
-            ListDevices();
-            RegisterDevices();
         }
 
         public List<string> GetRegisteredApplications()
@@ -84,7 +79,7 @@ namespace ControllerCommon
             process.StandardOutput.ReadToEnd();
         }
 
-        private void ListDevices()
+        /* private void ListDevices()
         {
             process.StartInfo.Arguments = $"--dev-gaming";
             process.Start();
@@ -114,7 +109,7 @@ namespace ControllerCommon
             }
 
             devices = root.devices;
-        }
+        } */
 
         public void SetCloaking(bool status, string ProductName)
         {
@@ -126,7 +121,7 @@ namespace ControllerCommon
             logger.LogInformation("{0} cloak status set to {1}", ProductName, status);
         }
 
-        public void RegisterDevice(string deviceInstancePath)
+        private void RegisterController(string deviceInstancePath)
         {
             process.StartInfo.Arguments = $"--dev-hide \"{deviceInstancePath}\"";
             process.Start();
@@ -142,33 +137,11 @@ namespace ControllerCommon
             process.StandardOutput.ReadToEnd();
         }
 
-        private void RegisterDevices()
+        public void RegisterDevice(DeviceController controller)
         {
-            foreach (Device d in devices.Where(a => a.gamingDevice))
-            {
-                string VID = CommonUtils.Between(d.deviceInstancePath.ToLower(), "vid_", "&");
-                string PID = CommonUtils.Between(d.deviceInstancePath.ToLower(), "pid_", "&");
-
-                string query = $"SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE \"%VID_{VID}&PID_{PID}%\"";
-
-                var moSearch = new ManagementObjectSearcher(query);
-                var moCollection = moSearch.Get();
-
-                foreach (ManagementObject mo in moCollection)
-                {
-                    foreach (var item in mo.Properties)
-                    {
-                        if (item.Name == "DeviceID")
-                        {
-                            string DeviceID = ((string)item.Value);
-                            RegisterDevice(DeviceID);
-                            RegisterDevice(d.deviceInstancePath);
-                            logger.LogInformation("HideDevice hiding {0}", DeviceID);
-                            break;
-                        }
-                    }
-                }
-            }
+            RegisterController(controller.DeviceID);
+            RegisterController(controller.HID);
+            logger.LogInformation("HideDevice hiding DeviceID: {0}, HID: {1}", controller.DeviceID, controller.HID);
         }
     }
 }
