@@ -67,7 +67,7 @@ namespace HandheldCompanion.Views
 
         // Handheld devices vars
         private Device handheldDevice;
-        private Model handheldModels;
+        private Model handheldModels = new ModelXBOX360();
 
         // manager(s) vars
         public ToastManager toastManager;
@@ -103,12 +103,14 @@ namespace HandheldCompanion.Views
                     handheldDevice = new AYANEO2021(ManufacturerName, ProductName);
                     handheldModels = new ModelAYANEO2021();
                     break;
+                case "NEXT":
+                    handheldDevice = new AYANEONEXT(ManufacturerName, ProductName);
+                    break;
                 case "ONE XPLAYER":
                     handheldDevice = new OXPAMDMini(ManufacturerName, ProductName);
                     break;
                 default:
                     handheldDevice = new DefaultDevice(ManufacturerName, ProductName);
-                    handheldModels = new ModelXBOX360();
                     break;
             }
 

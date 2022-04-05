@@ -104,6 +104,9 @@ namespace ControllerService
                 case "AYANEO 2021 Pro Retro Power":
                     handheldDevice = new AYANEO2021(ManufacturerName, ProductName);
                     break;
+                case "NEXT":
+                    handheldDevice = new AYANEONEXT(ManufacturerName, ProductName);
+                    break;
                 case "ONE XPLAYER":
                     handheldDevice = new OXPAMDMini(ManufacturerName, ProductName);
                     break;
