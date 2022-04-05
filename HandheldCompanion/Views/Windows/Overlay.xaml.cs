@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using TouchEventSample;
 using static HandheldCompanion.OverlayHook;
@@ -467,7 +466,7 @@ namespace HandheldCompanion.Views.Windows
             var isTriggered = gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb) && gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
             if (isTriggered && this.isTriggered)
                 UpdateVisibility();
-            
+
             isReleased = true;
         }
 
@@ -515,10 +514,10 @@ namespace HandheldCompanion.Views.Windows
                 Vector3D DiffAngle = new Vector3D(0, 0, 0);
 
                 // Determine diff angles
-                DiffAngle.X = (InputUtils.rad2deg(x) - (float)FaceCameraObjectAlignment.X) - (float)DesiredAngle.X;           
-                DiffAngle.Y = (InputUtils.rad2deg(y) - (float)FaceCameraObjectAlignment.Y) - (float)DesiredAngle.Y;              
+                DiffAngle.X = (InputUtils.rad2deg(x) - (float)FaceCameraObjectAlignment.X) - (float)DesiredAngle.X;
+                DiffAngle.Y = (InputUtils.rad2deg(y) - (float)FaceCameraObjectAlignment.Y) - (float)DesiredAngle.Y;
                 DiffAngle.Z = (InputUtils.rad2deg(z) - (float)FaceCameraObjectAlignment.Z) - (float)DesiredAngle.Z;
-                
+
                 // Handle wrap around at -180 +180 position which is horizontal for steering
                 DiffAngle.Y = (y < 0.0) ? DiffAngle.Y += 180.0f : DiffAngle.Y -= 180.0f;
 

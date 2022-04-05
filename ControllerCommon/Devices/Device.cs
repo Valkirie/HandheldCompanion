@@ -1,14 +1,10 @@
 ﻿using ControllerCommon.Utils;
-using System.Diagnostics;
+using HidSharp;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management;
-using Windows.Devices.Enumeration;
-using Windows.Devices.HumanInterfaceDevice;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.DeviceUtils;
-using HidSharp;
-using System;
-using System.Collections.Generic;
 
 namespace ControllerCommon.Devices
 {
@@ -55,7 +51,7 @@ namespace ControllerCommon.Devices
 
             gyrometer = Gyrometer.GetDefault();
             if (gyrometer != null)
-                hasGyrometer = true;               
+                hasGyrometer = true;
 
             accelerometer = Accelerometer.GetDefault();
             if (accelerometer != null)
