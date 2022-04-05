@@ -65,14 +65,17 @@ namespace ControllerCommon.Devices
             if (inclinometer != null)
                 hasInclinometer = true;
 
-            // check sensor
-            string ACPI = CommonUtils.Between(gyrometer.DeviceId, "ACPI#", "#");
-            sensor = GetUSBDevices().FirstOrDefault(device => device.DeviceId.Contains(ACPI));
-            if (sensor != null)
+            if (hasGyrometer)
             {
-                sensorName = sensor.Name;
-                if (SupportedSensors.Contains(sensor.Name))
-                    sensorSupported = true;
+                // check sensor
+                string ACPI = CommonUtils.Between(gyrometer.DeviceId, "ACPI#", "#");
+                sensor = GetUSBDevices().FirstOrDefault(device => device.DeviceId.Contains(ACPI));
+                if (sensor != null)
+                {
+                    sensorName = sensor.Name;
+                    if (SupportedSensors.Contains(sensor.Name))
+                        sensorSupported = true;
+                }
             }
 
             if (Controller == null)
