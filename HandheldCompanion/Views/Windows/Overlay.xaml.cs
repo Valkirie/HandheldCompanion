@@ -479,7 +479,7 @@ namespace HandheldCompanion.Views.Windows
                 switch (ControlsGrid.Visibility)
                 {
                     case Visibility.Visible:
-                        visibility = Visibility.Hidden;
+                        visibility = Visibility.Collapsed;
                         break;
                     case Visibility.Hidden:
                     case Visibility.Collapsed:

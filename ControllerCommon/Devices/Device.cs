@@ -8,6 +8,7 @@ using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.DeviceUtils;
 using HidSharp;
 using System;
+using System.Collections.Generic;
 
 namespace ControllerCommon.Devices
 {
@@ -31,7 +32,6 @@ namespace ControllerCommon.Devices
         public string sensorName = "N/A";
         public bool sensorSupported = false;
 
-        private HidDeviceLoader loader;
         public DeviceController Controller;
         public bool controllerSupported = false;
 
@@ -86,10 +86,11 @@ namespace ControllerCommon.Devices
                 return;
 
             // load HID
-            loader = new HidDeviceLoader();
-            var device = loader.GetDevices(Controller.VendorID, Controller.ProductID).First();
-            if (device != null)
+            HidDeviceLoader loader = new HidDeviceLoader();
+            IEnumerable<HidSharp.HidDevice> devices = loader.GetDevices(Controller.VendorID, Controller.ProductID);
+            if (devices.Count() != 0)
             {
+                var device = devices.FirstOrDefault();
                 var DevicePath = CommonUtils.Between(device.DevicePath, @"?\", "#{");
                 Controller.HID = DevicePath.ToUpper().Replace("#", @"\");
             }
