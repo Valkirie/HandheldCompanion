@@ -92,7 +92,7 @@ namespace ControllerCommon.Devices
             }
 
             // load USB
-            string query = $"SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE \"%VID_0{Controller.VendorID.ToString("X2")}&PID_0{Controller.ProductID.ToString("X2")}%\"";
+            string query = $"SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE \"%VID_0{Controller.VendorID.ToString("X2")}&PID_0{Controller.ProductID.ToString("X2")}\\\\%\"";
             var moSearch = new ManagementObjectSearcher(query);
             var moCollection = moSearch.Get();
             foreach (ManagementObject mo in moCollection)
