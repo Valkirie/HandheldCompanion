@@ -229,7 +229,9 @@ namespace HandheldCompanion.Views
                     switch (controllerMode)
                     {
                         default:
-                        case HIDmode.DualShock4Controller: // implement me
+                        case HIDmode.DualShock4Controller:
+                            handheldModels = new ModelDS4();
+                            break;
                         case HIDmode.Xbox360Controller:
                             handheldModels = new ModelXBOX360();
                             break;

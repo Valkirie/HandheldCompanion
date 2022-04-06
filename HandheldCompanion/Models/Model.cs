@@ -43,7 +43,7 @@ namespace HandheldCompanion
         public DiffuseMaterial MaterialHighlight;
 
         public string ModelName;
-        public bool ModelLocked;
+        public bool ModelLocked = false;
 
         protected Model(string ModelName)
         {

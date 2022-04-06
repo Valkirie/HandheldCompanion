@@ -16,8 +16,6 @@ namespace HandheldCompanion.Models
 
         public ModelXBOX360() : base("XBOX360")
         {
-            this.ModelLocked = false;
-
             // colors
             ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#707477");
             ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#D4D4D4");

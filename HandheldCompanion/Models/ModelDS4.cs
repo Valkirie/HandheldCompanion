@@ -17,8 +17,6 @@ namespace HandheldCompanion.Models
 
         public ModelDS4() : base("DS4")
         {
-            this.ModelLocked = true;
-
             // colors
             ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#38383A");
             ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#E0E0E0");
