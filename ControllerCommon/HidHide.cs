@@ -136,10 +136,11 @@ namespace ControllerCommon
 
         public void RegisterDevice(DeviceController controller)
         {
-            RegisterController(controller.DeviceID);
-            RegisterController(controller.HID);
-            logger.LogInformation("HideDevice hiding DeviceID: {0}", controller.DeviceID);
-            logger.LogInformation("HideDevice hiding HID: {0}", controller.HID);
+            foreach (string DeviceID in controller.DeviceID)
+            {
+                RegisterController(DeviceID);
+                logger.LogInformation("HideDevice hiding DeviceID: {0}", DeviceID);
+            }
         }
     }
 }

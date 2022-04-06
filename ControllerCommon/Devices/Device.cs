@@ -10,8 +10,7 @@ namespace ControllerCommon.Devices
 {
     public class DeviceController
     {
-        public string DeviceID;
-        public string HID;
+        public List<string> DeviceID = new();
         public ushort VendorID;
         public ushort ProductID;
 
@@ -81,7 +80,7 @@ namespace ControllerCommon.Devices
             else if (Controller.ProductID == 0)
                 return;
 
-            // load HID
+            /* load HID
             HidDeviceLoader loader = new HidDeviceLoader();
             IEnumerable<HidSharp.HidDevice> devices = loader.GetDevices(Controller.VendorID, Controller.ProductID);
             if (devices.Count() != 0)
@@ -89,18 +88,17 @@ namespace ControllerCommon.Devices
                 var device = devices.FirstOrDefault();
                 var DevicePath = CommonUtils.Between(device.DevicePath, @"?\", "#{");
                 Controller.HID = DevicePath.ToUpper().Replace("#", @"\");
-            }
+            } */
 
             // load USB
-            string query = $"SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE \"%VID_0{Controller.VendorID.ToString("X2")}&PID_0{Controller.ProductID.ToString("X2")}\\\\%\"";
+            string query = $"SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE \"%VID_0{Controller.VendorID.ToString("X2")}&PID_0{Controller.ProductID.ToString("X2")}%\"";
             var moSearch = new ManagementObjectSearcher(query);
             var moCollection = moSearch.Get();
             foreach (ManagementObject mo in moCollection)
             {
                 string DeviceID = (string)mo.Properties["DeviceID"].Value;
-                if (DeviceID != null)
-                    Controller.DeviceID = DeviceID;
-                break;
+                if (DeviceID != null && !Controller.DeviceID.Contains(DeviceID))
+                    Controller.DeviceID.Add(DeviceID);
             }
 
             controllerSupported = true;
