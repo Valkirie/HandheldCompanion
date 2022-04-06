@@ -138,7 +138,8 @@ namespace ControllerCommon
         {
             RegisterController(controller.DeviceID);
             RegisterController(controller.HID);
-            logger.LogInformation("HideDevice hiding DeviceID: {0}, HID: {1}", controller.DeviceID, controller.HID);
+            logger.LogInformation("HideDevice hiding DeviceID: {0}", controller.DeviceID);
+            logger.LogInformation("HideDevice hiding HID: {0}", controller.HID);
         }
     }
 }
