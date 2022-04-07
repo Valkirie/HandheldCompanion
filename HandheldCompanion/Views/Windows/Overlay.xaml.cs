@@ -43,7 +43,11 @@ namespace HandheldCompanion.Views.Windows
 
         private ILogger microsoftLogger;
         private PipeClient pipeClient;
+
+        private Model CurrentModel;
         private Model ProductModel;
+        private Model VirtualModel;
+        private OverlayModelMode ModelMode;
 
         private Point OverlayPosition;
         private Point LeftTrackPadPosition;
@@ -64,10 +68,15 @@ namespace HandheldCompanion.Views.Windows
 
         // Gamepad vars
         private Gamepad gamepad;
-        private Timer gamepadTimer;
 
         private Vector3D FaceCameraObjectAlignment;
         private Quaternion FaceCameraObjectAlignmentQuat;
+
+        public enum OverlayModelMode
+        {
+            OEM = 0,
+            Virtual = 1
+        }
 
         public Overlay()
         {
@@ -82,9 +91,6 @@ namespace HandheldCompanion.Views.Windows
             touchsource.Touch += Touchsource_Touch;
 
             this.SourceInitialized += Overlay_SourceInitialized;
-
-            this.gamepadTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 500 };
-            this.gamepadTimer.Elapsed += gamepadTimer_Elapsed;
         }
 
         public Overlay(ILogger microsoftLogger, PipeClient pipeClient) : this()
@@ -95,11 +101,44 @@ namespace HandheldCompanion.Views.Windows
             this.pipeClient.ServerMessage += OnServerMessage;
         }
 
-        public void SetHandheldModel(Model ProductModel)
+        public void UpdateProductModel(Model ProductModel)
         {
-            // do something
             this.ProductModel = ProductModel;
-            ModelVisual3D.Content = ProductModel.model3DGroup;
+            UpdateModel();
+        }
+
+        public void UpdateVirtualModel(Model VirtualModel)
+        {
+            this.VirtualModel = VirtualModel;
+            UpdateModel();
+        }
+
+        public void UpdateModelMode(OverlayModelMode ModelMode)
+        {
+            this.ModelMode = ModelMode;
+            UpdateModel();
+        }
+
+        public void UpdateModel()
+        {
+            switch (this.ModelMode)
+            {
+                case OverlayModelMode.OEM:
+                    if (ProductModel != null)
+                    {
+                        CurrentModel = ProductModel;
+                        ModelVisual3D.Content = ProductModel.model3DGroup;
+                    }
+                    else goto case OverlayModelMode.Virtual;
+                    break;
+                case OverlayModelMode.Virtual:
+                    if (VirtualModel != null)
+                    {
+                        CurrentModel = VirtualModel;
+                        ModelVisual3D.Content = VirtualModel.model3DGroup;
+                    }
+                    break;
+            }
         }
 
         private void Overlay_SourceInitialized(object? sender, EventArgs e)
@@ -115,17 +154,17 @@ namespace HandheldCompanion.Views.Windows
 
         private void Touchsource_Touch(TouchArgs args, long time)
         {
-            // handle top screen swipe
+            /* handle top screen swipe
             if (swipe != null && args.Id == swipe.Id)
             {
                 if (args.Status == CursorEvent.EventType.MOVE)
                     if (args.LocationY - swipe.LocationY > 40) // hardcoded
                     {
                         swipe = null;
-                        UpdateVisibility();
+                        UpdateControllerVisibility();
                     }
                 return;
-            }
+            } */
 
             double X = args.LocationX - this.OverlayPosition.X;
             double Y = args.LocationY - this.OverlayPosition.Y;
@@ -167,14 +206,14 @@ namespace HandheldCompanion.Views.Windows
                     {
                         if (args.Status == CursorEvent.EventType.DOWN)
                         {
-                            LeftTrackpad.Opacity = 0.5;
+                            LeftTrackpad.Opacity += 0.25;
                             var elapsed = time - prevLeftTrackPadTime;
                             if (elapsed < 200)
                                 args.Flags = 30; // double tap
                             prevLeftTrackPadTime = time;
                         }
                         else if (args.Status == CursorEvent.EventType.UP)
-                            LeftTrackpad.Opacity = 0.25;
+                            LeftTrackpad.Opacity -= 0.25;
                     }
                     break;
 
@@ -182,14 +221,14 @@ namespace HandheldCompanion.Views.Windows
                     {
                         if (args.Status == CursorEvent.EventType.DOWN)
                         {
-                            RightTrackpad.Opacity = 0.5;
+                            RightTrackpad.Opacity += 0.25;
                             var elapsed = time - prevRightTrackPadTime;
                             if (elapsed < 200)
                                 args.Flags = 30; // double tap
                             prevRightTrackPadTime = time;
                         }
                         else if (args.Status == CursorEvent.EventType.UP)
-                            RightTrackpad.Opacity = 0.25;
+                            RightTrackpad.Opacity -= 0.25;
 
                         normalizedX += 0.5d;
                     }
@@ -242,18 +281,31 @@ namespace HandheldCompanion.Views.Windows
         }
 
         private bool isTriggered = false;
-        private bool isReleased = true;
+        public GamepadButtonFlags mainTrigger = GamepadButtonFlags.Back;
+        public GamepadButtonFlags controllerTrigger = GamepadButtonFlags.DPadUp;
+        public GamepadButtonFlags trackpadTrigger = GamepadButtonFlags.DPadDown;
+
         private void UpdateReport()
         {
-            isTriggered = gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb) && gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
-            if (isTriggered && isReleased && isHooked)
+            // Handle triggers
+            if ((gamepad.Buttons & mainTrigger) != 0)
             {
-                gamepadTimer.Stop();
-                gamepadTimer.Start();
-                isReleased = false;
-            }
+                if (!isTriggered)
+                    isTriggered = true;
+                else
+                {
+                    if (gamepad.Buttons.HasFlag(controllerTrigger))
+                        UpdateControllerVisibility();
+                    if (gamepad.Buttons.HasFlag(trackpadTrigger))
+                        UpdateTrackpadsVisibility();
 
-            if (ControlsGrid.Visibility != Visibility.Visible)
+                    UpdateVisibility();
+                }
+            }
+            else if (isTriggered)
+                isTriggered = false;
+
+            if (VirtualController.Visibility != Visibility.Visible)
                 return;
 
             this.Dispatcher.Invoke(() =>
@@ -261,115 +313,115 @@ namespace HandheldCompanion.Views.Windows
                 GeometryModel3D model = null;
                 foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
                 {
-                    if (!ProductModel.ButtonMap.ContainsKey(button))
+                    if (!CurrentModel.ButtonMap.ContainsKey(button))
                         continue;
 
-                    foreach (Model3DGroup modelgroup in ProductModel.ButtonMap[button])
+                    foreach (Model3DGroup modelgroup in CurrentModel.ButtonMap[button])
                     {
                         model = (GeometryModel3D)modelgroup.Children.FirstOrDefault();
                         if (gamepad.Buttons.HasFlag(button))
-                            model.Material = ProductModel.MaterialHighlight;
+                            model.Material = CurrentModel.MaterialHighlight;
                         else
-                            model.Material = ProductModel.MaterialPlasticBlack;
+                            model.Material = CurrentModel.MaterialPlasticBlack;
                     }
                 }
 
                 // ShoulderLeftTrigger
-                model = ProductModel.LeftShoulderTrigger.Children[0] as GeometryModel3D;
+                model = CurrentModel.LeftShoulderTrigger.Children[0] as GeometryModel3D;
                 if (gamepad.LeftTrigger > 0)
                 {
-                    model.Material = ProductModel.MaterialHighlight;
+                    model.Material = CurrentModel.MaterialHighlight;
 
                     // Define and compute
-                    float Angle = -1 * ProductModel.TriggerMaxAngleDeg * (float)gamepad.LeftTrigger / (float)byte.MaxValue;
+                    float Angle = -1 * CurrentModel.TriggerMaxAngleDeg * (float)gamepad.LeftTrigger / (float)byte.MaxValue;
 
                     // Rotation
                     var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, 7.27), Angle);
                     LeftTriggerRotateTransform = new RotateTransform3D(ax3d);
 
                     // Define rotation point
-                    LeftTriggerRotateTransform.CenterX = ProductModel.ShoulderTriggerRotationPointCenterLeftMillimeter.X;
-                    LeftTriggerRotateTransform.CenterY = ProductModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Y;
-                    LeftTriggerRotateTransform.CenterZ = ProductModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Z;
+                    LeftTriggerRotateTransform.CenterX = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.X;
+                    LeftTriggerRotateTransform.CenterY = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Y;
+                    LeftTriggerRotateTransform.CenterZ = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Z;
 
                     // Transform trigger
-                    ProductModel.LeftShoulderTrigger.Transform = LeftTriggerRotateTransform;
+                    CurrentModel.LeftShoulderTrigger.Transform = LeftTriggerRotateTransform;
                 }
                 else
                 {
-                    model.Material = ProductModel.MaterialPlasticBlack;
+                    model.Material = CurrentModel.MaterialPlasticBlack;
 
                     // Rotation reset
                     var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, 7.27), 0);
                     LeftTriggerRotateTransform = new RotateTransform3D(ax3d);
 
                     // Define rotation point
-                    LeftTriggerRotateTransform.CenterX = ProductModel.ShoulderTriggerRotationPointCenterLeftMillimeter.X;
-                    LeftTriggerRotateTransform.CenterY = ProductModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Y;
-                    LeftTriggerRotateTransform.CenterZ = ProductModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Z;
+                    LeftTriggerRotateTransform.CenterX = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.X;
+                    LeftTriggerRotateTransform.CenterY = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Y;
+                    LeftTriggerRotateTransform.CenterZ = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Z;
 
                     // Transform trigger
-                    ProductModel.LeftShoulderTrigger.Transform = LeftTriggerRotateTransform;
+                    CurrentModel.LeftShoulderTrigger.Transform = LeftTriggerRotateTransform;
                 }
 
                 // ShoulderRightTrigger
-                model = ProductModel.RightShoulderTrigger.Children[0] as GeometryModel3D;
+                model = CurrentModel.RightShoulderTrigger.Children[0] as GeometryModel3D;
                 if (gamepad.RightTrigger > 0)
                 {
-                    model.Material = ProductModel.MaterialHighlight;
+                    model.Material = CurrentModel.MaterialHighlight;
 
                     // Define and compute
-                    float Angle = -1 * ProductModel.TriggerMaxAngleDeg * (float)gamepad.RightTrigger / (float)byte.MaxValue;
+                    float Angle = -1 * CurrentModel.TriggerMaxAngleDeg * (float)gamepad.RightTrigger / (float)byte.MaxValue;
 
                     // Rotation
                     var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, -7.27), Angle);
                     RightTriggerRotateTransform = new RotateTransform3D(ax3d);
 
                     // Define rotation point
-                    RightTriggerRotateTransform.CenterX = ProductModel.ShoulderTriggerRotationPointCenterRightMillimeter.X;
-                    RightTriggerRotateTransform.CenterY = ProductModel.ShoulderTriggerRotationPointCenterRightMillimeter.Y;
-                    RightTriggerRotateTransform.CenterZ = ProductModel.ShoulderTriggerRotationPointCenterRightMillimeter.Z;
+                    RightTriggerRotateTransform.CenterX = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.X;
+                    RightTriggerRotateTransform.CenterY = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.Y;
+                    RightTriggerRotateTransform.CenterZ = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.Z;
 
                     // Transform trigger
-                    ProductModel.RightShoulderTrigger.Transform = RightTriggerRotateTransform;
+                    CurrentModel.RightShoulderTrigger.Transform = RightTriggerRotateTransform;
                 }
                 else
                 {
-                    model.Material = ProductModel.MaterialPlasticBlack;
+                    model.Material = CurrentModel.MaterialPlasticBlack;
 
                     // Rotation reset
                     var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, -7.27), 0);
                     RightTriggerRotateTransform = new RotateTransform3D(ax3d);
 
                     // Define rotation point
-                    RightTriggerRotateTransform.CenterX = ProductModel.ShoulderTriggerRotationPointCenterRightMillimeter.X;
-                    RightTriggerRotateTransform.CenterY = ProductModel.ShoulderTriggerRotationPointCenterRightMillimeter.Y;
-                    RightTriggerRotateTransform.CenterZ = ProductModel.ShoulderTriggerRotationPointCenterRightMillimeter.Z;
+                    RightTriggerRotateTransform.CenterX = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.X;
+                    RightTriggerRotateTransform.CenterY = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.Y;
+                    RightTriggerRotateTransform.CenterZ = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.Z;
 
                     // Transform trigger
-                    ProductModel.RightShoulderTrigger.Transform = RightTriggerRotateTransform;
+                    CurrentModel.RightShoulderTrigger.Transform = RightTriggerRotateTransform;
                 }
 
                 // JoystickLeftRing
-                model = ProductModel.LeftThumbRing.Children[0] as GeometryModel3D;
+                model = CurrentModel.LeftThumbRing.Children[0] as GeometryModel3D;
                 if (gamepad.LeftThumbX != 0 || gamepad.LeftThumbY != 0)
                 {
                     // Adjust color
-                    model.Material = ProductModel.MaterialHighlight;
+                    model.Material = CurrentModel.MaterialHighlight;
 
                     // Define and compute
                     Transform3DGroup Transform3DGroupJoystickLeft = new Transform3DGroup();
-                    float x = ProductModel.JoystickMaxAngleDeg * (float)gamepad.LeftThumbX / (float)short.MaxValue;
-                    float y = -1 * ProductModel.JoystickMaxAngleDeg * (float)gamepad.LeftThumbY / (float)short.MaxValue;
+                    float x = CurrentModel.JoystickMaxAngleDeg * (float)gamepad.LeftThumbX / (float)short.MaxValue;
+                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)gamepad.LeftThumbY / (float)short.MaxValue;
 
                     // Rotation X
                     var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
                     LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
 
                     // Define rotation point
-                    LeftJoystickRotateTransform.CenterX = ProductModel.JoystickRotationPointCenterLeftMillimeter.X;
-                    LeftJoystickRotateTransform.CenterY = ProductModel.JoystickRotationPointCenterLeftMillimeter.Y;
-                    LeftJoystickRotateTransform.CenterZ = ProductModel.JoystickRotationPointCenterLeftMillimeter.Z;
+                    LeftJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterLeftMillimeter.X;
+                    LeftJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Y;
+                    LeftJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Z;
 
                     Transform3DGroupJoystickLeft.Children.Add(LeftJoystickRotateTransform);
 
@@ -378,52 +430,52 @@ namespace HandheldCompanion.Views.Windows
                     LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
 
                     // Define rotation point
-                    LeftJoystickRotateTransform.CenterX = ProductModel.JoystickRotationPointCenterLeftMillimeter.X;
-                    LeftJoystickRotateTransform.CenterY = ProductModel.JoystickRotationPointCenterLeftMillimeter.Y;
-                    LeftJoystickRotateTransform.CenterZ = ProductModel.JoystickRotationPointCenterLeftMillimeter.Z;
+                    LeftJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterLeftMillimeter.X;
+                    LeftJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Y;
+                    LeftJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Z;
 
                     Transform3DGroupJoystickLeft.Children.Add(LeftJoystickRotateTransform);
 
                     // Transform joystick group
-                    ProductModel.LeftThumbRing.Transform = ProductModel.LeftThumb.Transform = Transform3DGroupJoystickLeft;
+                    CurrentModel.LeftThumbRing.Transform = CurrentModel.LeftThumb.Transform = Transform3DGroupJoystickLeft;
                 }
                 else
                 {
                     // Default material color, no highlight
-                    model.Material = ProductModel.MaterialPlasticBlack;
+                    model.Material = CurrentModel.MaterialPlasticBlack;
 
                     // Define and compute, back to default position
                     var ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0);
                     LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
 
                     // Define rotation point
-                    LeftJoystickRotateTransform.CenterX = ProductModel.JoystickRotationPointCenterLeftMillimeter.X;
-                    LeftJoystickRotateTransform.CenterY = ProductModel.JoystickRotationPointCenterLeftMillimeter.Y;
-                    LeftJoystickRotateTransform.CenterZ = ProductModel.JoystickRotationPointCenterLeftMillimeter.Z;
+                    LeftJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterLeftMillimeter.X;
+                    LeftJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Y;
+                    LeftJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Z;
 
                     // Transform joystick
-                    ProductModel.LeftThumbRing.Transform = ProductModel.LeftThumb.Transform = LeftJoystickRotateTransform;
+                    CurrentModel.LeftThumbRing.Transform = CurrentModel.LeftThumb.Transform = LeftJoystickRotateTransform;
                 }
 
                 // JoystickRightRing
-                model = ProductModel.RightThumbRing.Children[0] as GeometryModel3D;
+                model = CurrentModel.RightThumbRing.Children[0] as GeometryModel3D;
                 if (gamepad.RightThumbX != 0 || gamepad.RightThumbY != 0)
                 {
-                    model.Material = ProductModel.MaterialHighlight;
+                    model.Material = CurrentModel.MaterialHighlight;
 
                     // Define and compute
                     Transform3DGroup Transform3DGroupJoystickRight = new Transform3DGroup();
-                    float x = ProductModel.JoystickMaxAngleDeg * (float)gamepad.RightThumbX / (float)short.MaxValue;
-                    float y = -1 * ProductModel.JoystickMaxAngleDeg * (float)gamepad.RightThumbY / (float)short.MaxValue;
+                    float x = CurrentModel.JoystickMaxAngleDeg * (float)gamepad.RightThumbX / (float)short.MaxValue;
+                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)gamepad.RightThumbY / (float)short.MaxValue;
 
                     // Rotation X
                     var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
                     RightJoystickRotateTransform = new RotateTransform3D(ax3d);
 
                     // Define rotation point
-                    RightJoystickRotateTransform.CenterX = ProductModel.JoystickRotationPointCenterRightMillimeter.X;
-                    RightJoystickRotateTransform.CenterY = ProductModel.JoystickRotationPointCenterRightMillimeter.Y;
-                    RightJoystickRotateTransform.CenterZ = ProductModel.JoystickRotationPointCenterRightMillimeter.Z;
+                    RightJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterRightMillimeter.X;
+                    RightJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterRightMillimeter.Y;
+                    RightJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterRightMillimeter.Z;
 
                     Transform3DGroupJoystickRight.Children.Add(RightJoystickRotateTransform);
 
@@ -432,50 +484,41 @@ namespace HandheldCompanion.Views.Windows
                     RightJoystickRotateTransform = new RotateTransform3D(ax3d);
 
                     // Define rotation point
-                    RightJoystickRotateTransform.CenterX = ProductModel.JoystickRotationPointCenterRightMillimeter.X;
-                    RightJoystickRotateTransform.CenterY = ProductModel.JoystickRotationPointCenterRightMillimeter.Y;
-                    RightJoystickRotateTransform.CenterZ = ProductModel.JoystickRotationPointCenterRightMillimeter.Z;
+                    RightJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterRightMillimeter.X;
+                    RightJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterRightMillimeter.Y;
+                    RightJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterRightMillimeter.Z;
 
                     Transform3DGroupJoystickRight.Children.Add(RightJoystickRotateTransform);
 
                     // Transform joystick group
-                    ProductModel.RightThumbRing.Transform = ProductModel.RightThumb.Transform = Transform3DGroupJoystickRight;
+                    CurrentModel.RightThumbRing.Transform = CurrentModel.RightThumb.Transform = Transform3DGroupJoystickRight;
 
                 }
                 else
                 {
-                    model.Material = ProductModel.MaterialPlasticBlack;
+                    model.Material = CurrentModel.MaterialPlasticBlack;
 
                     // Define and compute, back to default position
                     var ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0);
                     RightJoystickRotateTransform = new RotateTransform3D(ax3d);
 
                     // Define rotation point
-                    RightJoystickRotateTransform.CenterX = ProductModel.JoystickRotationPointCenterRightMillimeter.X;
-                    RightJoystickRotateTransform.CenterY = ProductModel.JoystickRotationPointCenterRightMillimeter.Y;
-                    RightJoystickRotateTransform.CenterZ = ProductModel.JoystickRotationPointCenterRightMillimeter.Z;
+                    RightJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterRightMillimeter.X;
+                    RightJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterRightMillimeter.Y;
+                    RightJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterRightMillimeter.Z;
 
                     // Transform joystick
-                    ProductModel.RightThumbRing.Transform = ProductModel.RightThumb.Transform = RightJoystickRotateTransform;
+                    CurrentModel.RightThumbRing.Transform = CurrentModel.RightThumb.Transform = RightJoystickRotateTransform;
                 }
             });
         }
 
-        private void gamepadTimer_Elapsed(object? sender, ElapsedEventArgs e)
-        {
-            var isTriggered = gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb) && gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
-            if (isTriggered && this.isTriggered)
-                UpdateVisibility();
-
-            isReleased = true;
-        }
-
-        public void UpdateVisibility()
+        public void UpdateControllerVisibility()
         {
             this.Dispatcher.Invoke(() =>
             {
                 Visibility visibility = Visibility.Visible;
-                switch (this.Visibility)
+                switch (VirtualController.Visibility)
                 {
                     case Visibility.Visible:
                         visibility = Visibility.Collapsed;
@@ -485,10 +528,36 @@ namespace HandheldCompanion.Views.Windows
                         visibility = Visibility.Visible;
                         break;
                 }
-                this.Visibility = visibility;
-                pipeClient.SendMessage(new PipeOverlay((int)visibility));
+                VirtualController.Visibility = visibility;
             });
+        }
 
+        public void UpdateTrackpadsVisibility()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                Visibility visibility = Visibility.Visible;
+                switch (VirtualTrackpads.Visibility)
+                {
+                    case Visibility.Visible:
+                        visibility = Visibility.Collapsed;
+                        break;
+                    case Visibility.Hidden:
+                    case Visibility.Collapsed:
+                        visibility = Visibility.Visible;
+                        break;
+                }
+                VirtualTrackpads.Visibility = visibility;
+            });
+        }
+
+        private void UpdateVisibility()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.Visibility = (VirtualController.Visibility == Visibility.Visible || VirtualTrackpads.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
+            });
+            pipeClient.SendMessage(new PipeOverlay((int)VirtualController.Visibility));
         }
 
         private void UpdateModelVisual3D(float q_w, float q_x, float q_y, float q_z, float x, float y, float z)
@@ -606,7 +675,7 @@ namespace HandheldCompanion.Views.Windows
 
         public void UnHook()
         {
-            UpdateVisibility();
+            UpdateControllerVisibility();
 
             targetProc = null;
             hWnd = IntPtr.Zero;

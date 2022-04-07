@@ -23,8 +23,6 @@ namespace HandheldCompanion.Models
 
         public ModelAYANEO2021() : base("AYANEO 2021")
         {
-            this.ModelLocked = true;
-
             // colors
             ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#333333");
             ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#F0EFF0");

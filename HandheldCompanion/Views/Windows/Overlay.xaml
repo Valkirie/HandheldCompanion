@@ -9,9 +9,10 @@
         Title="Overlay" Visibility="Collapsed" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" Focusable="False" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" >
 
     <Grid Name="MainGrid">
-        <Grid Name="ControlsGrid" Margin="20">
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Foreground="Red">ONE NETBOOK REVIEW BUILD, DO NOT DISTRIBUTE</TextBlock>
+        <Grid Margin="20">
             <!-- Trackpad -->
-            <Grid>
+            <Grid Name="VirtualTrackpads" Visibility="Collapsed">
                 <!-- Left Trackpad -->
                 <Border
                     Name="LeftTrackpad"
@@ -32,7 +33,7 @@
             </Grid>
         
             <!-- Virtual Controller -->
-            <Grid Name="VirtualController" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="300" Width="400">
+            <Grid Name="VirtualController" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="300" Width="400" Visibility="Collapsed">
                 <!-- The HelixViewport3D supports camera manipulation, and can be used just like the Viewport3D -->
                 <HelixToolkit:HelixViewport3D 
                     ZoomExtentsWhenLoaded="True" 

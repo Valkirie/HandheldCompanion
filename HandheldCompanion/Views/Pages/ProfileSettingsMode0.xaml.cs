@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerService.Sensors;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +15,7 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class ProfileSettingsMode0 : Page
     {
+        private ILogger microsoftLogger;
         private Profile profileCurrent;
         private PipeClient pipeClient;
 
@@ -22,9 +24,10 @@ namespace HandheldCompanion.Views.Pages
             InitializeComponent();
         }
 
-        public ProfileSettingsMode0(string Tag, Profile profileCurrent, PipeClient pipeClient) : this()
+        public ProfileSettingsMode0(string Tag, Profile profileCurrent, PipeClient pipeClient, ILogger microsoftLogger) : this()
         {
             this.Tag = Tag;
+            this.microsoftLogger = microsoftLogger;
 
             this.profileCurrent = profileCurrent;
             this.pipeClient = pipeClient;

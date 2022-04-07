@@ -43,6 +43,7 @@
     <None Remove="Resources\ShoulderButtonLeft.obj" />
     <None Remove="Resources\ShoulderButtonRight.mtl" />
     <None Remove="Resources\ShoulderButtonRight.obj" />
+    <None Remove="Views\Pages\overlay_back.webp" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,6 +68,7 @@
     <Resource Include="Resources\controller_1_0.png" />
     <Resource Include="Resources\device_aya_next.png" />
     <Resource Include="Resources\icon.png" />
+    <Resource Include="Resources\overlay_back.webp" />
   </ItemGroup>
 
   <ItemGroup>

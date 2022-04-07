@@ -45,6 +45,7 @@ namespace HandheldCompanion.Views
         public ProfilesPage profilesPage;
         public SettingsPage settingsPage;
         public AboutPage aboutPage;
+        public OverlayPage overlayPage;
 
         // overlay vars
         private Overlay overlay;
@@ -67,7 +68,8 @@ namespace HandheldCompanion.Views
 
         // Handheld devices vars
         private Device handheldDevice;
-        private Model handheldModels;
+        private Model VirtualModel;
+        private Model ProductModel;
 
         // manager(s) vars
         public ToastManager toastManager;
@@ -94,30 +96,29 @@ namespace HandheldCompanion.Views
             var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
             var ProductName = MotherboardInfo.Product;
 
-            // pull me from service ?
             switch (ProductName)
             {
                 case "AYANEO 2021":
                 case "AYANEO 2021 Pro":
                 case "AYANEO 2021 Pro Retro Power":
                     handheldDevice = new AYANEO2021(ManufacturerName, ProductName);
-                    handheldModels = new ModelAYANEO2021();
+                    ProductModel = new ModelAYANEO2021();
                     break;
                 case "NEXT Pro":
                 case "NEXT Advance":
                 case "NEXT":
                     handheldDevice = new AYANEONEXT(ManufacturerName, ProductName);
-                    handheldModels = new ModelXBOX360(); // temp
                     break;
                 case "ONE XPLAYER":
                     handheldDevice = new OXPAMDMini(ManufacturerName, ProductName);
-                    handheldModels = new ModelXBOX360(); // temp
                     break;
                 default:
                     handheldDevice = new DefaultDevice(ManufacturerName, ProductName);
-                    handheldModels = new ModelXBOX360();
                     break;
             }
+
+            // default model before connecting to the service
+            VirtualModel = new ModelXBOX360();
 
             logger.LogInformation("{0} ({1})", ManufacturerName, ProductName);
 
@@ -192,7 +193,8 @@ namespace HandheldCompanion.Views
 
             // initialize overlay
             overlay = new Overlay(logger, pipeClient);
-            overlay.SetHandheldModel(handheldModels);
+            overlay.UpdateProductModel(ProductModel);
+            overlay.UpdateVirtualModel(VirtualModel);
 
             // initialize process manager
             processManager = new ProcessManager();
@@ -221,29 +223,27 @@ namespace HandheldCompanion.Views
             controllerPage = new ControllerPage("controller", this, logger);
             controllerPage.Updated += (controllerMode) =>
             {
-                if (handheldModels.ModelLocked)
-                    return;
-
                 this.Dispatcher.Invoke(() =>
                 {
                     switch (controllerMode)
                     {
                         default:
                         case HIDmode.DualShock4Controller:
-                            handheldModels = new ModelDS4();
+                            VirtualModel = new ModelDS4();
                             break;
                         case HIDmode.Xbox360Controller:
-                            handheldModels = new ModelXBOX360();
+                            VirtualModel = new ModelXBOX360();
                             break;
                     }
 
-                    overlay.SetHandheldModel(handheldModels);
+                    overlay.UpdateVirtualModel(VirtualModel);
                 });
             };
 
             profilesPage = new ProfilesPage("profiles", this, logger);
             settingsPage = new SettingsPage("settings", this, logger);
             aboutPage = new AboutPage("about", this, logger, handheldDevice);
+            overlayPage = new OverlayPage("overlay", overlay, logger);
 
             // initialize command parser
             cmdParser = new CmdParser(pipeClient, this, logger);
@@ -266,6 +266,7 @@ namespace HandheldCompanion.Views
             _pages.Add("ControllerPage", controllerPage);
             _pages.Add("ProfilesPage", profilesPage);
             _pages.Add("AboutPage", aboutPage);
+            _pages.Add("OverlayPage", overlayPage);
 
             if (!IsElevated)
             {

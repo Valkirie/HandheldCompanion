@@ -166,33 +166,6 @@
                 </Border>
             </ui:SimpleStackPanel>
 
-            <!-- Overlay options -->
-            <ui:SimpleStackPanel Spacing="6">
-                <Label Content="Overlay options" FontWeight="SemiBold"></Label>
-                <Button HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        Padding="0,12,12,12"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE78B;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
-
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Overlay options" FontSize="14"/>
-                            <TextBlock Text="Controller shortcuts and dimensions" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
-
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE76C;" FontSize="12" Grid.Column="2" HorizontalAlignment="Right"/>
-                    </Grid>
-                </Button>
-            </ui:SimpleStackPanel>
-
             <!-- Notification options -->
             <ui:SimpleStackPanel Spacing="6">
                 <Label Content="Notification options" FontWeight="SemiBold"></Label>

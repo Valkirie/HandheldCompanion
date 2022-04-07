@@ -47,6 +47,13 @@
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
+            <!-- Overlay icon -->
+            <ui:NavigationViewItem Name="navOverlay" Content="{x:Static resx:Resources.navOverlay}" Tag="OverlayPage">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE78B;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
             <!-- About icon -->
             <ui:NavigationViewItem Name="navAbout" Content="{x:Static resx:Resources.navAbout}" Tag="AboutPage">
                 <ui:NavigationViewItem.Icon>
