@@ -279,7 +279,7 @@
                         </ui:SimpleStackPanel>
 
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderTrackpadsOpacity, Mode=OneWay}" />
-                        <Slider Name="SliderTrackpadsOpacity" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="1" Minimum="0" Value="0.5" TickPlacement="BottomRight" SmallChange="0.1" TickFrequency="0.1" ValueChanged="SliderTrackpadsOpacity_ValueChanged" IsSnapToTickEnabled="True"
+                        <Slider Name="SliderTrackpadsOpacity" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="1" Minimum="0" Value="0.5" TickPlacement="BottomRight" SmallChange="0.1" TickFrequency="0.1" AutoToolTipPrecision="1" ValueChanged="SliderTrackpadsOpacity_ValueChanged" IsSnapToTickEnabled="True"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave"/>
                     </Grid>

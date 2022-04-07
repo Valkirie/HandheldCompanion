@@ -259,7 +259,7 @@ namespace HandheldCompanion.Views.Pages
             overlay.RightTrackpad.Opacity = SliderTrackpadsOpacity.Value;
 
             // save settings
-            Properties.Settings.Default.OverlayTrackpadsOpacity = (int)SliderTrackpadsOpacity.Value;
+            Properties.Settings.Default.OverlayTrackpadsOpacity = SliderTrackpadsOpacity.Value;
             Properties.Settings.Default.Save();
         }
 
