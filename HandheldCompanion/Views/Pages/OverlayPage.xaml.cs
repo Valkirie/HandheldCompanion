@@ -164,7 +164,7 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             overlay.VirtualController.Width = SliderControllerSize.Value;
-            overlay.VirtualController.Height = SliderControllerSize.Value * (9.0d / 16.0d);
+            overlay.VirtualController.Height = SliderControllerSize.Value;// * (18.0d / 16.0d);
 
             // save settings
             Properties.Settings.Default.OverlayControllerSize = (int)SliderControllerSize.Value;
