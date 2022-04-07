@@ -9,7 +9,6 @@
         Title="Overlay" Visibility="Collapsed" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" Focusable="False" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" >
 
     <Grid Name="MainGrid">
-        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Foreground="Red">ONE NETBOOK REVIEW BUILD, DO NOT DISTRIBUTE</TextBlock>
         <Grid Margin="20">
             <!-- Trackpad -->
             <Grid Name="VirtualTrackpads" Visibility="Collapsed">
