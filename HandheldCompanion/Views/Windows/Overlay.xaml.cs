@@ -521,10 +521,9 @@ namespace HandheldCompanion.Views.Windows
                 switch (VirtualController.Visibility)
                 {
                     case Visibility.Visible:
-                        visibility = Visibility.Collapsed;
+                        visibility = Visibility.Hidden;
                         break;
                     case Visibility.Hidden:
-                    case Visibility.Collapsed:
                         visibility = Visibility.Visible;
                         break;
                 }
@@ -540,10 +539,9 @@ namespace HandheldCompanion.Views.Windows
                 switch (VirtualTrackpads.Visibility)
                 {
                     case Visibility.Visible:
-                        visibility = Visibility.Collapsed;
+                        visibility = Visibility.Hidden;
                         break;
                     case Visibility.Hidden:
-                    case Visibility.Collapsed:
                         visibility = Visibility.Visible;
                         break;
                 }
@@ -555,8 +553,8 @@ namespace HandheldCompanion.Views.Windows
         {
             this.Dispatcher.Invoke(() =>
             {
-                this.Visibility = (VirtualController.Visibility == Visibility.Visible || VirtualTrackpads.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
             });
+                this.Visibility = (VirtualController.Visibility == Visibility.Visible || VirtualTrackpads.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Hidden;
             pipeClient.SendMessage(new PipeOverlay((int)VirtualController.Visibility));
         }
 
