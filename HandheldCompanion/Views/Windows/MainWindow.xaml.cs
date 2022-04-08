@@ -108,6 +108,7 @@ namespace HandheldCompanion.Views
                 case "NEXT Advance":
                 case "NEXT":
                     handheldDevice = new AYANEONEXT(ManufacturerName, ProductName);
+                    ProductModel = new ModelAYANEONext();
                     break;
                 case "ONE XPLAYER":
                     handheldDevice = new OXPAMDMini(ManufacturerName, ProductName);
