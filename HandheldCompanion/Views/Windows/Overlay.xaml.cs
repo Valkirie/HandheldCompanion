@@ -553,8 +553,8 @@ namespace HandheldCompanion.Views.Windows
         {
             this.Dispatcher.Invoke(() =>
             {
-            });
                 this.Visibility = (VirtualController.Visibility == Visibility.Visible || VirtualTrackpads.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Hidden;
+            });
             pipeClient.SendMessage(new PipeOverlay((int)VirtualController.Visibility));
         }
 
