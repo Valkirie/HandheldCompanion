@@ -67,7 +67,6 @@ namespace HandheldCompanion.Views
         public CmdParser cmdParser;
 
         // Handheld devices vars
-        private Device handheldDevice;
         private Model VirtualModel;
         private Model ProductModel;
 
@@ -101,20 +100,17 @@ namespace HandheldCompanion.Views
                 case "AYANEO 2021":
                 case "AYANEO 2021 Pro":
                 case "AYANEO 2021 Pro Retro Power":
-                    handheldDevice = new AYANEO2021(ManufacturerName, ProductName);
                     ProductModel = new ModelAYANEO2021();
                     break;
                 case "NEXT Pro":
                 case "NEXT Advance":
                 case "NEXT":
-                    handheldDevice = new AYANEONEXT(ManufacturerName, ProductName);
                     ProductModel = new ModelAYANEONext();
                     break;
                 case "ONE XPLAYER":
-                    handheldDevice = new OXPAMDMini(ManufacturerName, ProductName);
+                    // not yet implemented (SEND SAMPLE !)
                     break;
                 default:
-                    handheldDevice = new DefaultDevice(ManufacturerName, ProductName);
                     break;
             }
 
@@ -243,7 +239,7 @@ namespace HandheldCompanion.Views
 
             profilesPage = new ProfilesPage("profiles", this, logger);
             settingsPage = new SettingsPage("settings", this, logger);
-            aboutPage = new AboutPage("about", this, logger, handheldDevice);
+            aboutPage = new AboutPage("about", this, logger);
             overlayPage = new OverlayPage("overlay", overlay, logger);
 
             // initialize command parser

@@ -134,12 +134,12 @@ namespace ControllerCommon
             process.StandardOutput.ReadToEnd();
         }
 
-        public void RegisterDevice(DeviceController controller)
+        public void RegisterDevice(List<string> ControllerIDs)
         {
-            foreach (string DeviceID in controller.DeviceID)
+            foreach (string ControllerID in ControllerIDs)
             {
-                RegisterController(DeviceID);
-                logger.LogInformation("HideDevice hiding DeviceID: {0}", DeviceID);
+                RegisterController(ControllerID);
+                logger.LogInformation("HideDevice hiding DeviceID: {0}", ControllerID);
             }
         }
     }

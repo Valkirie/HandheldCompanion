@@ -8,14 +8,110 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Management;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace ControllerService
 {
     public class XInputController
     {
+        #region imports
+        [StructLayout(LayoutKind.Explicit)]
+        public struct XInputGamepad
+        {
+            [MarshalAs(UnmanagedType.I2)]
+            [FieldOffset(0)]
+            public short wButtons;
+
+            [MarshalAs(UnmanagedType.I1)]
+            [FieldOffset(2)]
+            public byte bLeftTrigger;
+
+            [MarshalAs(UnmanagedType.I1)]
+            [FieldOffset(3)]
+            public byte bRightTrigger;
+
+            [MarshalAs(UnmanagedType.I2)]
+            [FieldOffset(4)]
+            public short sThumbLX;
+
+            [MarshalAs(UnmanagedType.I2)]
+            [FieldOffset(6)]
+            public short sThumbLY;
+
+            [MarshalAs(UnmanagedType.I2)]
+            [FieldOffset(8)]
+            public short sThumbRX;
+
+            [MarshalAs(UnmanagedType.I2)]
+            [FieldOffset(10)]
+            public short sThumbRY;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct XInputVibration
+        {
+            [MarshalAs(UnmanagedType.I2)]
+            public ushort LeftMotorSpeed;
+
+            [MarshalAs(UnmanagedType.I2)]
+            public ushort RightMotorSpeed;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        public struct XInputCapabilities
+        {
+            [MarshalAs(UnmanagedType.I1)]
+            [FieldOffset(0)]
+            byte Type;
+
+            [MarshalAs(UnmanagedType.I1)]
+            [FieldOffset(1)]
+            public byte SubType;
+
+            [MarshalAs(UnmanagedType.I2)]
+            [FieldOffset(2)]
+            public short Flags;
+
+            [FieldOffset(4)]
+            public XInputGamepad Gamepad;
+
+            [FieldOffset(16)]
+            public XInputVibration Vibration;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct XInputCapabilitiesEx
+        {
+            public XInputCapabilities Capabilities;
+            [MarshalAs(UnmanagedType.U2)]
+            public UInt16 VID;
+            [MarshalAs(UnmanagedType.U2)]
+            public UInt16 PID;
+            [MarshalAs(UnmanagedType.U2)]
+            public UInt16 REV;
+            [MarshalAs(UnmanagedType.U4)]
+            public UInt32 XID;
+        };
+
+        [DllImport("xinput1_4.dll", EntryPoint = "#108")]
+        public static extern int XInputGetCapabilitiesEx
+        (
+            int a1,            // [in] unknown, should probably be 1
+            int dwUserIndex,   // [in] Index of the gamer associated with the device
+            int dwFlags,       // [in] Input flags that identify the device type
+            ref XInputCapabilitiesEx pCapabilities  // [out] Receives the capabilities
+        );
+        #endregion
+
         public Controller physicalController;
+        public string ProductName = "XInput Controller for Windows";
+
+        public XInputCapabilitiesEx XInputData;
+        public List<string> ControllerIDs = new();
+
         public ViGEmTarget virtualTarget;
 
         public Gamepad Gamepad;
@@ -35,8 +131,6 @@ namespace ControllerService
         public MultimediaTimer UpdateTimer;
         public double vibrationStrength = 100.0d;
         public int updateInterval = 10;
-
-        public DeviceInstance Instance;
 
         public XInputGirometer Gyrometer;
         public XInputAccelerometer Accelerometer;
@@ -70,6 +164,14 @@ namespace ControllerService
             // initilize controller
             this.physicalController = controller;
             this.UserIndex = index;
+
+            // pull data from xinput
+            XInputData = new XInputCapabilitiesEx();
+            if (XInputGetCapabilitiesEx(1, (int)index, 0, ref XInputData) != 0)
+                logger.LogWarning($"Failed to retrive XInputData.");
+
+            // initialize ID(s)
+            UpdateIDs();
 
             // initialize sensor(s)
             UpdateSensors();
@@ -107,6 +209,26 @@ namespace ControllerService
             Gyrometer = new XInputGirometer(this, logger);
             Accelerometer = new XInputAccelerometer(this, logger);
             Inclinometer = new XInputInclinometer(this, logger);
+        }
+
+        private void UpdateIDs()
+        {
+            string query = $"SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE \"%VID_0{XInputData.VID.ToString("X2")}&PID_0{XInputData.PID.ToString("X2")}%\"";
+            var moSearch = new ManagementObjectSearcher(query);
+            var moCollection = moSearch.Get();
+
+            int idx = 0;
+            foreach (ManagementObject mo in moCollection)
+            {
+                if (idx == 0)
+                    ProductName = (string)mo.Properties["Description"].Value;
+
+                string DeviceID = (string)mo.Properties["DeviceID"].Value;
+                if (DeviceID != null && !ControllerIDs.Contains(DeviceID))
+                    ControllerIDs.Add(DeviceID);
+
+                idx++;
+            }
         }
 
         private void UpdateTimer_Ticked(object sender, EventArgs e)
@@ -194,16 +316,6 @@ namespace ControllerService
             }
         }
 
-        public Dictionary<string, string> ToArgs()
-        {
-            return new Dictionary<string, string>() {
-                { "ProductName", Instance.ProductName },
-                { "InstanceGuid", $"{Instance.InstanceGuid}" },
-                { "ProductGuid", $"{Instance.ProductGuid}" },
-                { "ProductIndex", $"{(int)UserIndex}" }
-            };
-        }
-
         public void SetProfile(Profile profile)
         {
             // skip if current profile
@@ -242,7 +354,7 @@ namespace ControllerService
             SetPollRate(updateInterval);
             SetVibrationStrength(vibrationStrength);
 
-            logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, Instance.InstanceName, UserIndex);
+            logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, ProductName, UserIndex);
         }
     }
 }

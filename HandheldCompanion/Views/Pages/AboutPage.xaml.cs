@@ -18,40 +18,35 @@ namespace HandheldCompanion.Views.Pages
         private ILogger microsoftLogger;
         private PipeClient pipeClient;
 
-        private Device handheldDevice;
-
         public AboutPage()
         {
             InitializeComponent();
         }
 
-        public AboutPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger, Device handheldDevice) : this()
+        public AboutPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
         {
             this.Tag = Tag;
             this.mainWindow = mainWindow;
             this.microsoftLogger = microsoftLogger;
 
             this.pipeClient = mainWindow.pipeClient;
+            this.pipeClient.ServerMessage += OnServerMessage;
+        }
 
-            this.handheldDevice = handheldDevice;
-
-            VersionValue.Text = mainWindow.fileVersionInfo.FileVersion;
-            SensorName.Text = handheldDevice.sensorName;
-            GyrometerValue.Text = handheldDevice.hasGyrometer ? "Detected" : "N/A";
-            AccelerometerValue.Text = handheldDevice.hasAccelerometer ? "Detected" : "N/A";
-            InclinometerValue.Text = handheldDevice.hasInclinometer ? "Detected" : "N/A";
-
-            if (!handheldDevice.sensorSupported || !handheldDevice.controllerSupported)
+        private void OnServerMessage(object sender, PipeMessage message)
+        {
+            switch (message.code)
             {
-                WarningBorder.Visibility = Visibility.Visible;
-                WarningContent.Text = "Oups, it appears your device is not supported yet. The software might not run as expected.";
+                case PipeCode.SERVER_CONTROLLER:
+                    PipeServerHandheld handheldDevice = (PipeServerHandheld)message;
+                    UpdateDevice(handheldDevice);
+                    break;
             }
-
-            UpdateDevice();
         }
 
         private void cB_AccelDetected_Checked(object sender, RoutedEventArgs e)
         {
+            // do something
         }
 
         private void cB_GyroDetected_Checked(object sender, RoutedEventArgs e)
@@ -59,7 +54,7 @@ namespace HandheldCompanion.Views.Pages
             // do something
         }
 
-        private void UpdateDevice()
+        public void UpdateDevice(PipeServerHandheld handheldDevice)
         {
             // Device visual
             Uri ImageSource;
@@ -88,6 +83,23 @@ namespace HandheldCompanion.Views.Pages
                 // Motherboard properties
                 LabelManufacturer.Content = handheldDevice.ManufacturerName;
                 LabelProductName.Content = handheldDevice.ProductName;
+                HandheldGrid.Visibility = Visibility.Visible;
+
+                VersionValue.Text = mainWindow.fileVersionInfo.FileVersion;
+                SensorName.Text = handheldDevice.SensorName;
+                GyrometerValue.Text = handheldDevice.hasGyrometer ? "Detected" : "N/A";
+                AccelerometerValue.Text = handheldDevice.hasAccelerometer ? "Detected" : "N/A";
+                InclinometerValue.Text = handheldDevice.hasInclinometer ? "Detected" : "N/A";
+
+                if (!handheldDevice.SensorSupported || !handheldDevice.ControllerSupported)
+                {
+                    WarningBorder.Visibility = Visibility.Visible;
+                    WarningContent.Text = "Oups, it appears your device is not supported yet. The software might not run as expected.";
+                }
+                else
+                {
+                    WarningBorder.Visibility = Visibility.Collapsed;
+                }
 
                 ImageDevice.Source = new BitmapImage(ImageSource);
             });

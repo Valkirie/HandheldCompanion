@@ -42,10 +42,12 @@
             </Border>
 
             <!-- Device details -->
-            <Border                      
-                        Padding="20,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <Border      
+                Name = "HandheldGrid"
+                Visibility="Collapsed"
+                Padding="20,12,12,12"
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                 <Grid>
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">

@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Device = ControllerCommon.Devices.Device;
@@ -92,6 +93,38 @@ namespace ControllerService
                 throw new InvalidOperationException();
             }
 
+            // initialize HidHide
+            Hidder = new HidHide(logger);
+            Hidder.RegisterApplication(CurrentExe);
+
+            // initialize PipeServer
+            pipeServer = new PipeServer("ControllerService", logger);
+            pipeServer.Connected += OnClientConnected;
+            pipeServer.Disconnected += OnClientDisconnected;
+            pipeServer.ClientMessage += OnClientMessage;
+
+            // prepare physical controller
+            foreach (UserIndex idx in (UserIndex[])Enum.GetValues(typeof(UserIndex)))
+            {
+                Controller controller = new Controller(idx);
+                if (!controller.IsConnected)
+                    continue;
+
+                XInputController = new XInputController(controller, idx, logger, pipeServer);
+                break;
+            }
+
+            if (XInputController == null)
+            {
+                logger.LogCritical("No physical controller detected. Application will stop");
+                throw new InvalidOperationException();
+            }
+
+            // XInputController settings
+            XInputController.SetVibrationStrength(HIDstrength);
+            XInputController.SetPollRate(HIDrate);
+            XInputController.Updated += OnTargetSubmited;
+
             // get the actual handheld device
             var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
             var ProductName = MotherboardInfo.Product;
@@ -112,46 +145,11 @@ namespace ControllerService
                     handheldDevice = new OXPAMDMini(ManufacturerName, ProductName);
                     break;
                 default:
-                    logger.LogCritical($"{ProductName} from {ManufacturerName} is not yet supported.");
-                    throw new InvalidOperationException();
+                    handheldDevice = new DefaultDevice(ManufacturerName, ProductName);
+                    logger.LogWarning($"{ProductName} from {ManufacturerName} is not yet supported. The behavior of the application will be unpredictable.");
+                    break;
             }
-
-            // initialize HidHide
-            Hidder = new HidHide(logger);
-            Hidder.RegisterApplication(CurrentExe);
-            Hidder.RegisterDevice(handheldDevice.Controller);
-
-            // initialize PipeServer
-            pipeServer = new PipeServer("ControllerService", logger);
-            pipeServer.Connected += OnClientConnected;
-            pipeServer.Disconnected += OnClientDisconnected;
-            pipeServer.ClientMessage += OnClientMessage;
-
-            // prepare physical controller
-            DirectInput dinput = new DirectInput();
-            IList<DeviceInstance> dinstances = dinput.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly);
-
-            foreach (UserIndex idx in (UserIndex[])Enum.GetValues(typeof(UserIndex)))
-            {
-                Controller controller = new Controller(idx);
-                if (!controller.IsConnected)
-                    continue;
-
-                XInputController = new XInputController(controller, idx, logger, pipeServer);
-                XInputController.Instance = dinstances[(int)idx];
-                break;
-            }
-
-            if (XInputController == null)
-            {
-                logger.LogCritical("No physical controller detected. Application will stop");
-                throw new InvalidOperationException();
-            }
-
-            // XInputController settings
-            XInputController.SetVibrationStrength(HIDstrength);
-            XInputController.SetPollRate(HIDrate);
-            XInputController.Updated += OnTargetSubmited;
+            Hidder.RegisterDevice(XInputController.ControllerIDs);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
@@ -254,7 +252,7 @@ namespace ControllerService
             switch (message.code)
             {
                 case PipeCode.FORCE_SHUTDOWN:
-                    Hidder?.SetCloaking(false, XInputController.Instance.ProductName);
+                    Hidder?.SetCloaking(false, XInputController.ProductName);
                     break;
 
                 case PipeCode.CLIENT_PROFILE:
@@ -332,12 +330,23 @@ namespace ControllerService
         private void OnClientConnected(object sender)
         {
             // send controller details
-            pipeServer.SendMessage(new PipeServerController()
+            pipeServer.SendMessage(new PipeServerHandheld()
             {
-                ProductName = XInputController.Instance.ProductName,
-                InstanceGuid = XInputController.Instance.InstanceGuid,
-                ProductGuid = XInputController.Instance.ProductGuid,
-                ProductIndex = (int)XInputController.UserIndex
+                ManufacturerName = handheldDevice.ManufacturerName,
+                ProductName = handheldDevice.ProductName,
+
+                SensorName = handheldDevice.sensorName,
+                SensorSupported = handheldDevice.sensorSupported,
+
+                hasAccelerometer = handheldDevice.hasAccelerometer,
+                hasGyrometer = handheldDevice.hasGyrometer,
+                hasInclinometer = handheldDevice.hasInclinometer,
+
+                ControllerName = XInputController.ProductName,
+                ControllerVID = XInputController.XInputData.VID,
+                ControllerPID = XInputController.XInputData.PID,
+                ControllerIdx = (int)XInputController.UserIndex,
+                ControllerSupported = handheldDevice.controllerSupported
             });
 
             // send server settings
@@ -413,7 +422,7 @@ namespace ControllerService
                 switch (name)
                 {
                     case "HIDcloaked":
-                        Hidder.SetCloaking((bool)value, XInputController.Instance.ProductName);
+                        Hidder.SetCloaking((bool)value, XInputController.ProductName);
                         HIDcloaked = (bool)value;
                         break;
                     case "HIDuncloakonclose":
@@ -455,7 +464,7 @@ namespace ControllerService
             lifetime.ApplicationStopped.Register(OnStopped);
 
             // turn on cloaking
-            Hidder.SetCloaking(HIDcloaked, XInputController.Instance.ProductName);
+            Hidder.SetCloaking(HIDcloaked, XInputController.ProductName);
 
             // start DSUClient
             if (DSUEnabled) DSUServer.Start();
@@ -480,7 +489,7 @@ namespace ControllerService
         public Task StopAsync(CancellationToken cancellationToken)
         {
             // turn off cloaking
-            Hidder?.SetCloaking(!HIDuncloakonclose, XInputController.Instance.ProductName);
+            Hidder?.SetCloaking(!HIDuncloakonclose, XInputController.ProductName);
 
             // update virtual controller
             SetControllerStatus(HIDstatus.Disconnected);

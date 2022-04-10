@@ -35,14 +35,25 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public partial class PipeServerController : PipeMessage
+    public partial class PipeServerHandheld : PipeMessage
     {
+        public string ManufacturerName;
         public string ProductName;
-        public Guid InstanceGuid;
-        public Guid ProductGuid;
-        public int ProductIndex;
 
-        public PipeServerController()
+        public string SensorName;
+        public bool SensorSupported;
+
+        public bool hasGyrometer;
+        public bool hasAccelerometer;
+        public bool hasInclinometer;
+
+        public string ControllerName;
+        public ushort ControllerVID;
+        public ushort ControllerPID;
+        public int ControllerIdx;
+        public bool ControllerSupported;
+
+        public PipeServerHandheld()
         {
             code = PipeCode.SERVER_CONTROLLER;
         }
