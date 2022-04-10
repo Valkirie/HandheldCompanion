@@ -141,9 +141,6 @@ namespace ControllerService
                 case "NEXT":
                     handheldDevice = new AYANEONEXT(ManufacturerName, ProductName);
                     break;
-                case "ONE XPLAYER":
-                    handheldDevice = new OXPAMDMini(ManufacturerName, ProductName);
-                    break;
                 default:
                     handheldDevice = new DefaultDevice(ManufacturerName, ProductName);
                     logger.LogWarning($"{ProductName} from {ManufacturerName} is not yet supported. The behavior of the application will be unpredictable.");
@@ -334,9 +331,10 @@ namespace ControllerService
             {
                 ManufacturerName = handheldDevice.ManufacturerName,
                 ProductName = handheldDevice.ProductName,
+                ProductIllustration = handheldDevice.ProductIllustration,
 
                 SensorName = handheldDevice.sensorName,
-                SensorSupported = handheldDevice.sensorSupported,
+                ProductSupported = handheldDevice.ProductSupported,
 
                 hasAccelerometer = handheldDevice.hasAccelerometer,
                 hasGyrometer = handheldDevice.hasGyrometer,
@@ -345,8 +343,7 @@ namespace ControllerService
                 ControllerName = XInputController.ProductName,
                 ControllerVID = XInputController.XInputData.VID,
                 ControllerPID = XInputController.XInputData.PID,
-                ControllerIdx = (int)XInputController.UserIndex,
-                ControllerSupported = handheldDevice.controllerSupported
+                ControllerIdx = (int)XInputController.UserIndex
             });
 
             // send server settings

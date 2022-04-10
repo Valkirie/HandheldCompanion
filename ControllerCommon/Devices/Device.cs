@@ -13,12 +13,11 @@ namespace ControllerCommon.Devices
     {
         protected USBDeviceInfo sensor = new USBDeviceInfo("0", "N/A", "");
         public string sensorName = "N/A";
-        public bool sensorSupported = false;
-
-        public bool controllerSupported = false;
+        public bool ProductSupported = false;
 
         public string ManufacturerName;
         public string ProductName;
+        public string ProductIllustration = "device_generic";
 
         protected Gyrometer gyrometer;
         public bool hasGyrometer;
@@ -54,14 +53,8 @@ namespace ControllerCommon.Devices
                 string ACPI = CommonUtils.Between(gyrometer.DeviceId, "ACPI#", "#");
                 sensor = GetUSBDevice(ACPI);
                 if (sensor != null)
-                {
                     sensorName = sensor.Name;
-                    if (SupportedSensors.Contains(sensor.Name))
-                        sensorSupported = true;
-                }
             }
-
-            controllerSupported = true;
         }
     }
 }

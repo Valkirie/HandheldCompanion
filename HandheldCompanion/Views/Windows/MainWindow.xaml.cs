@@ -107,9 +107,6 @@ namespace HandheldCompanion.Views
                 case "NEXT":
                     ProductModel = new ModelAYANEONext();
                     break;
-                case "ONE XPLAYER":
-                    // not yet implemented (SEND SAMPLE !)
-                    break;
                 default:
                     break;
             }

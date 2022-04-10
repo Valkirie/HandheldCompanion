@@ -57,25 +57,7 @@ namespace HandheldCompanion.Views.Pages
         public void UpdateDevice(PipeServerHandheld handheldDevice)
         {
             // Device visual
-            Uri ImageSource;
-
-            // todo: improve me
-            switch (handheldDevice.ProductName)
-            {
-                case "AYANEO 2021 Pro Retro Power":
-                case "AYANEO 2021 Pro":
-                case "AYANEO 2021":
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_2021.png");
-                    break;
-                case "NEXT Pro":
-                case "NEXT Advance":
-                case "NEXT":
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_next.png");
-                    break;
-                default:
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_generic.png");
-                    break;
-            }
+            Uri ImageSource = new Uri($"pack://application:,,,/Resources/{handheldDevice.ProductIllustration}.png");
 
             // threaded call to update UI
             this.Dispatcher.Invoke(() =>
@@ -91,14 +73,10 @@ namespace HandheldCompanion.Views.Pages
                 AccelerometerValue.Text = handheldDevice.hasAccelerometer ? "Detected" : "N/A";
                 InclinometerValue.Text = handheldDevice.hasInclinometer ? "Detected" : "N/A";
 
-                if (!handheldDevice.SensorSupported || !handheldDevice.ControllerSupported)
+                if (!handheldDevice.ProductSupported)
                 {
                     WarningBorder.Visibility = Visibility.Visible;
                     WarningContent.Text = "Oups, it appears your device is not supported yet. The software might not run as expected.";
-                }
-                else
-                {
-                    WarningBorder.Visibility = Visibility.Collapsed;
                 }
 
                 ImageDevice.Source = new BitmapImage(ImageSource);

@@ -48,10 +48,5 @@ namespace ControllerCommon.Utils
 
             return null;
         }
-
-        public static List<string> SupportedSensors = new List<string>()
-        {
-            "BMI160"
-        };
     }
 }

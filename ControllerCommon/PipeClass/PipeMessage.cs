@@ -39,9 +39,10 @@ namespace ControllerCommon
     {
         public string ManufacturerName;
         public string ProductName;
+        public string ProductIllustration;
+        public bool ProductSupported;
 
         public string SensorName;
-        public bool SensorSupported;
 
         public bool hasGyrometer;
         public bool hasAccelerometer;
@@ -51,7 +52,6 @@ namespace ControllerCommon
         public ushort ControllerVID;
         public ushort ControllerPID;
         public int ControllerIdx;
-        public bool ControllerSupported;
 
         public PipeServerHandheld()
         {
