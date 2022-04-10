@@ -58,7 +58,7 @@ namespace HandheldCompanion
             profile.umc_enabled = option.umc;
             profile.use_wrapper = option.wrapper;
             profile.whitelisted = option.whitelist;
-            profile.umc_trigger = (GamepadButtonFlags)option.trigger;
+            profile.umc_trigger = (GamepadButtonFlagsExt)option.trigger;
 
             profile.umc_input = (Input)option.input;
             profile.umc_output = (Output)option.output;

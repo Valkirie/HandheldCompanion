@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
-using GamepadButtonFlags = ControllerCommon.Utils.GamepadButtonFlags;
+using GamepadButtonFlagsExt = ControllerCommon.Utils.GamepadButtonFlagsExt;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
@@ -26,7 +26,7 @@ namespace HandheldCompanion.Views.Pages
         private ProfileManager profileManager;
         private Profile profileCurrent;
 
-        private Dictionary<GamepadButtonFlags, CheckBox> activators = new();
+        private Dictionary<GamepadButtonFlagsExt, CheckBox> activators = new();
 
         // pipe vars
         PipeClient pipeClient;
@@ -54,61 +54,14 @@ namespace HandheldCompanion.Views.Pages
             profileManager.Loaded += ProfileLoaded;
 
             // draw buttons
-            foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
+            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
             {
                 // create panel
                 SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
 
                 // create icon
                 FontIcon icon = new FontIcon() { FontSize = 24 };
-                switch (button)
-                {
-                    case GamepadButtonFlags.A:
-                        icon.Glyph = "\uF093";
-                        break;
-                    case GamepadButtonFlags.B:
-                        icon.Glyph = "\uF094";
-                        break;
-                    case GamepadButtonFlags.Y:
-                        icon.Glyph = "\uF095";
-                        break;
-                    case GamepadButtonFlags.X:
-                        icon.Glyph = "\uF096";
-                        break;
-                    case GamepadButtonFlags.DPadRight:
-                    case GamepadButtonFlags.DPadDown:
-                    case GamepadButtonFlags.DPadUp:
-                    case GamepadButtonFlags.DPadLeft:
-                        icon.Glyph = "\uF10E";
-                        break;
-                    case GamepadButtonFlags.LeftTrigger:
-                        icon.Glyph = "\uF10A";
-                        break;
-                    case GamepadButtonFlags.RightTrigger:
-                        icon.Glyph = "\uF10B";
-                        break;
-                    case GamepadButtonFlags.LeftShoulder:
-                        icon.Glyph = "\uF10C";
-                        break;
-                    case GamepadButtonFlags.RightShoulder:
-                        icon.Glyph = "\uF10D";
-                        break;
-                    case GamepadButtonFlags.LeftThumb:
-                        icon.Glyph = "\uF108";
-                        break;
-                    case GamepadButtonFlags.RightThumb:
-                        icon.Glyph = "\uF109";
-                        break;
-                    case GamepadButtonFlags.Start:
-                        icon.Glyph = "\uEDE3";      // ButtonMenu
-                        break;
-                    case GamepadButtonFlags.Back:
-                        icon.Glyph = "\uEECA";      // ButtonView2
-                        break;
-                    default:
-                        icon.Glyph = "\uE7E8";
-                        break;
-                }
+                icon.Glyph = InputUtils.GamepadButtonToGlyph(button);
 
                 if (icon.Glyph != "")
                     panel.Children.Add(icon);
@@ -346,7 +299,7 @@ namespace HandheldCompanion.Views.Pages
                 cB_Whitelist.IsChecked = profileCurrent.whitelisted;
                 cB_Wrapper.IsChecked = profileCurrent.use_wrapper;
 
-                foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
+                foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
                     if (profileCurrent.umc_trigger.HasFlag(button))
                         activators[button].IsChecked = true;
                     else
@@ -440,7 +393,7 @@ namespace HandheldCompanion.Views.Pages
 
             profileCurrent.umc_trigger = 0;
 
-            foreach (GamepadButtonFlags button in (GamepadButtonFlags[])Enum.GetValues(typeof(GamepadButtonFlags)))
+            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
                 if ((bool)activators[button].IsChecked)
                     profileCurrent.umc_trigger |= button;
 

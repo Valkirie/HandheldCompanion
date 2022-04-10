@@ -108,7 +108,7 @@ namespace ControllerCommon
         public float flick_duration { get; set; } = 0.1f;
         public float stick_sensivity { get; set; } = 3.0f;
 
-        public GamepadButtonFlags umc_trigger { get; set; } = 0;
+        public GamepadButtonFlagsExt umc_trigger { get; set; } = 0;
 
         // hidden settings
         [JsonIgnore] public ProfileErrorCode error;

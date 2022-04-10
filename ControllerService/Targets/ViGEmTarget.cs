@@ -7,7 +7,7 @@ using SharpDX.XInput;
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using GamepadButtonFlags = ControllerCommon.Utils.GamepadButtonFlags;
+using GamepadButtonFlagsExt = ControllerCommon.Utils.GamepadButtonFlagsExt;
 
 namespace ControllerService.Targets
 {
@@ -113,12 +113,12 @@ namespace ControllerService.Targets
             XInputGetStateSecret13(UserIndex, out state_s);
 
             // get buttons values
-            GamepadButtonFlags buttons = (GamepadButtonFlags)Gamepad.Buttons;
-            buttons |= (Gamepad.LeftTrigger > 0 ? GamepadButtonFlags.LeftTrigger : 0);
-            buttons |= (Gamepad.RightTrigger > 0 ? GamepadButtonFlags.RightTrigger : 0);
+            GamepadButtonFlagsExt buttons = (GamepadButtonFlagsExt)Gamepad.Buttons;
+            buttons |= (Gamepad.LeftTrigger > 0 ? GamepadButtonFlagsExt.LeftTrigger : 0);
+            buttons |= (Gamepad.RightTrigger > 0 ? GamepadButtonFlagsExt.RightTrigger : 0);
 
             // get custom buttons values
-            buttons |= xinputController.profile.umc_trigger.HasFlag(GamepadButtonFlags.AlwaysOn) ? GamepadButtonFlags.AlwaysOn : 0;
+            buttons |= xinputController.profile.umc_trigger.HasFlag(GamepadButtonFlagsExt.AlwaysOn) ? GamepadButtonFlagsExt.AlwaysOn : 0;
 
             // get sticks values
             LeftThumb = new Vector2(Gamepad.LeftThumbX, Gamepad.LeftThumbY);

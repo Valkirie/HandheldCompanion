@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Views.Windows;
+﻿using ControllerCommon.Utils;
+using HandheldCompanion.Views.Windows;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
 using SharpDX.XInput;
@@ -18,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static HandheldCompanion.Views.Windows.Overlay;
 using Page = System.Windows.Controls.Page;
+using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -38,6 +40,9 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Tag = Tag;
             this.overlay = overlay;
+            this.overlay.ControllerTriggerUpdated += Overlay_ControllerTriggerUpdated;
+            this.overlay.TrackpadsTriggerUpdated += Overlay_TrackpadsTriggerUpdated;
+
             this.microsoftLogger = microsoftLogger;
 
             // overlay trigger
@@ -57,8 +62,10 @@ namespace HandheldCompanion.Views.Pages
             SliderControllerSize_ValueChanged(this, null);
 
             // controller trigger
-            OverlayControllerTrigger.SelectedIndex = Properties.Settings.Default.OverlayControllerTrigger;
-            OverlayControllerTrigger_SelectionChanged(this, null);
+            GamepadButtonFlagsExt ControllerButton = (GamepadButtonFlagsExt)Properties.Settings.Default.OverlayControllerTrigger;
+            ControllerTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph(ControllerButton);
+            ControllerTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(ControllerButton);
+            overlay.controllerTrigger = (GamepadButtonFlags)ControllerButton;
 
             // trackpads alignment
             var TrackpadsAlignment = Properties.Settings.Default.OverlayTrackpadsAlignment;
@@ -69,8 +76,10 @@ namespace HandheldCompanion.Views.Pages
             SliderTrackpadsOpacity_ValueChanged(this, null);
 
             // trackpads trigger
-            OverlayTrackpadsTrigger.SelectedIndex = Properties.Settings.Default.OverlayTrackpadsTrigger;
-            OverlayTrackpadsTrigger_SelectionChanged(this, null);
+            GamepadButtonFlagsExt TrackpadsButton = (GamepadButtonFlagsExt)Properties.Settings.Default.OverlayTrackpadsTrigger;
+            TrackpadsTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph(TrackpadsButton);
+            TrackpadsTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(TrackpadsButton);
+            overlay.trackpadTrigger = (GamepadButtonFlags)TrackpadsButton;
         }
 
         private void UpdateUI_TrackpadsPosition(int trackpadsAlignment)
@@ -217,29 +226,6 @@ namespace HandheldCompanion.Views.Pages
             Properties.Settings.Default.Save();
         }
 
-        private void OverlayControllerTrigger_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            switch (OverlayControllerTrigger.SelectedIndex)
-            {
-                case 0: // up
-                    overlay.controllerTrigger = GamepadButtonFlags.DPadUp;
-                    break;
-                case 1: // down
-                    overlay.controllerTrigger = GamepadButtonFlags.DPadDown;
-                    break;
-                case 2: // left
-                    overlay.controllerTrigger = GamepadButtonFlags.DPadLeft;
-                    break;
-                case 3: // right
-                    overlay.controllerTrigger = GamepadButtonFlags.DPadRight;
-                    break;
-            }
-
-            // save settings
-            Properties.Settings.Default.OverlayControllerTrigger = OverlayControllerTrigger.SelectedIndex;
-            Properties.Settings.Default.Save();
-        }
-
         private void TrackpadsAlignment_Click(object sender, RoutedEventArgs e)
         {
             int Tag = int.Parse((string)((Button)sender).Tag);
@@ -263,26 +249,43 @@ namespace HandheldCompanion.Views.Pages
             Properties.Settings.Default.Save();
         }
 
-        private void OverlayTrackpadsTrigger_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ControllerTriggerButton_Click(object sender, RoutedEventArgs e)
         {
-            switch (OverlayTrackpadsTrigger.SelectedIndex)
+            overlay.ControllerTriggerClicked();
+            ControllerTriggerText.Text = "Listening..."; // todo: localization
+        }
+
+        private void Overlay_ControllerTriggerUpdated(GamepadButtonFlags button)
+        {
+            this.Dispatcher.Invoke(() =>
             {
-                case 0: // up
-                    overlay.trackpadTrigger = GamepadButtonFlags.DPadUp;
-                    break;
-                case 1: // down
-                    overlay.trackpadTrigger = GamepadButtonFlags.DPadDown;
-                    break;
-                case 2: // left
-                    overlay.trackpadTrigger = GamepadButtonFlags.DPadLeft;
-                    break;
-                case 3: // right
-                    overlay.trackpadTrigger = GamepadButtonFlags.DPadRight;
-                    break;
-            }
+                ControllerTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph((GamepadButtonFlagsExt)button);
+                ControllerTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(button);
+            });
+            overlay.controllerTrigger = button;
 
             // save settings
-            Properties.Settings.Default.OverlayTrackpadsTrigger = OverlayTrackpadsTrigger.SelectedIndex;
+            Properties.Settings.Default.OverlayControllerTrigger = (int)button;
+            Properties.Settings.Default.Save();
+        }
+
+        private void TrackpadsTriggerButton_Click(object sender, RoutedEventArgs e)
+        {
+            overlay.TrackpadsTriggerClicked();
+            TrackpadsTriggerText.Text = "Listening..."; // todo: localization
+        }
+
+        private void Overlay_TrackpadsTriggerUpdated(GamepadButtonFlags button)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                TrackpadsTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph((GamepadButtonFlagsExt)button);
+                TrackpadsTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(button);
+            });
+            overlay.trackpadTrigger = button;
+
+            // save settings
+            Properties.Settings.Default.OverlayTrackpadsTrigger = (int)button;
             Properties.Settings.Default.Save();
         }
     }

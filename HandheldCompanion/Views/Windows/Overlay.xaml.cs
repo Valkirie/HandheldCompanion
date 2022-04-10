@@ -72,11 +72,11 @@ namespace HandheldCompanion.Views.Windows
         private Vector3D FaceCameraObjectAlignment;
         private Quaternion FaceCameraObjectAlignmentQuat;
 
-        public enum OverlayModelMode
-        {
-            OEM = 0,
-            Virtual = 1
-        }
+        public event ControllerTriggerUpdatedEventHandler ControllerTriggerUpdated;
+        public delegate void ControllerTriggerUpdatedEventHandler(GamepadButtonFlags button);
+
+        public event TrackpadsTriggerUpdatedEventHandler TrackpadsTriggerUpdated;
+        public delegate void TrackpadsTriggerUpdatedEventHandler(GamepadButtonFlags button);
 
         public Overlay()
         {
@@ -309,6 +309,19 @@ namespace HandheldCompanion.Views.Windows
             else if (isTriggered)
                 isTriggered = false;
 
+            // handle triggers update
+            if (ControllerTriggerListening)
+            {
+                ControllerTriggerUpdated?.Invoke(gamepad.Buttons);
+                ControllerTriggerListening = false;
+            }
+
+            if (TrackpadsTriggerListening)
+            {
+                TrackpadsTriggerUpdated?.Invoke(gamepad.Buttons);
+                TrackpadsTriggerListening = false;
+            }
+
             if (VirtualController.Visibility != Visibility.Visible)
                 return;
 
@@ -515,6 +528,18 @@ namespace HandheldCompanion.Views.Windows
                     CurrentModel.RightThumbRing.Transform = CurrentModel.RightThumb.Transform = RightJoystickRotateTransform;
                 }
             });
+        }
+
+        private bool ControllerTriggerListening = false;
+        public void ControllerTriggerClicked()
+        {
+            ControllerTriggerListening = true;
+        }
+
+        private bool TrackpadsTriggerListening = false;
+        public void TrackpadsTriggerClicked()
+        {
+            TrackpadsTriggerListening = true;
         }
 
         public void UpdateControllerVisibility()

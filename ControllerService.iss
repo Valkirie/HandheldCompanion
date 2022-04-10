@@ -654,7 +654,7 @@ end;
 #define MyAppURL 'https://github.com/Valkirie/ControllerService'
 #define MyAppExeName "HandheldCompanion.exe"
 #define MySerExeName "ControllerService.exe"
-#define MyConfiguration "Debug"
+#define MyConfiguration "Release"
 
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}

@@ -201,24 +201,12 @@
                             <TextBlock Text="Change the 3D overlay controller trigger" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
 
-                        <ui:RadioButtons Name="OverlayControllerTrigger" Grid.Column="2" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="OverlayControllerTrigger_SelectionChanged">
-                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                <ui:FontIcon Glyph="&#xF10E;"/>
-                                <Label>DPad Up</Label>
+                        <Button Name="ControllerTriggerButton" Grid.Column="2" Height="50" HorizontalAlignment="Right" VerticalAlignment="Center" Click="ControllerTriggerButton_Click">
+                            <ui:SimpleStackPanel Name="ControllerTriggerStack" Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                                <ui:FontIcon Name="ControllerTriggerIcon"/>
+                                <TextBlock Name="ControllerTriggerText"/>
                             </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                <ui:FontIcon Glyph="&#xF10E;"/>
-                                <Label>DPad Down</Label>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                <ui:FontIcon Glyph="&#xF10E;"/>
-                                <Label>DPad Left</Label>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                <ui:FontIcon Glyph="&#xF10E;"/>
-                                <Label>DPad Right</Label>
-                            </ui:SimpleStackPanel>
-                        </ui:RadioButtons>
+                        </Button>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
@@ -305,24 +293,12 @@
                             <TextBlock Text="Change the overlay trackpads trigger" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
 
-                        <ui:RadioButtons Name="OverlayTrackpadsTrigger" Grid.Column="2" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="OverlayTrackpadsTrigger_SelectionChanged">
-                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                <ui:FontIcon Glyph="&#xF10E;"/>
-                                <Label>DPad Up</Label>
+                        <Button Name="TrackpadsTriggerButton" Grid.Column="2" Height="50" HorizontalAlignment="Right" VerticalAlignment="Center" Click="TrackpadsTriggerButton_Click">
+                            <ui:SimpleStackPanel Name="TrackpadsTriggerStack" Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                                <ui:FontIcon Name="TrackpadsTriggerIcon"/>
+                                <TextBlock Name="TrackpadsTriggerText"/>
                             </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                <ui:FontIcon Glyph="&#xF10E;"/>
-                                <Label>DPad Down</Label>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                <ui:FontIcon Glyph="&#xF10E;"/>
-                                <Label>DPad Left</Label>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                <ui:FontIcon Glyph="&#xF10E;"/>
-                                <Label>DPad Right</Label>
-                            </ui:SimpleStackPanel>
-                        </ui:RadioButtons>
+                        </Button>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>

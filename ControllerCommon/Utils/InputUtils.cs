@@ -14,8 +14,10 @@ namespace ControllerCommon.Utils
         public float maxOut;
     }
 
-    public enum GamepadButtonFlags : uint
+    public enum GamepadButtonFlagsExt : uint
     {
+        [Description("None")]
+        None = 0,
         [Description("DPad Up")]
         DPadUp = 1,
         [Description("DPad Down")]
@@ -52,8 +54,53 @@ namespace ControllerCommon.Utils
         AlwaysOn = 65536        // specific
     }
 
+    public enum OverlayModelMode
+    {
+        OEM = 0,
+        Virtual = 1
+    }
+
     public static class InputUtils
     {
+        public static string GamepadButtonToGlyph(GamepadButtonFlagsExt button)
+        {
+            switch (button)
+            {
+                case GamepadButtonFlagsExt.A:
+                    return "\uF093";
+                case GamepadButtonFlagsExt.B:
+                    return "\uF094";
+                case GamepadButtonFlagsExt.Y:
+                    return "\uF095";
+                case GamepadButtonFlagsExt.X:
+                    return "\uF096";
+                case GamepadButtonFlagsExt.DPadRight:
+                case GamepadButtonFlagsExt.DPadDown:
+                case GamepadButtonFlagsExt.DPadUp:
+                case GamepadButtonFlagsExt.DPadLeft:
+                    return "\uF10E";
+                case GamepadButtonFlagsExt.LeftTrigger:
+                    return "\uF10A";
+                case GamepadButtonFlagsExt.RightTrigger:
+                    return "\uF10B";
+                case GamepadButtonFlagsExt.LeftShoulder:
+                    return "\uF10C";
+                case GamepadButtonFlagsExt.RightShoulder:
+                    return "\uF10D";
+                case GamepadButtonFlagsExt.LeftThumb:
+                    return "\uF108";
+                case GamepadButtonFlagsExt.RightThumb:
+                    return "\uF109";
+                case GamepadButtonFlagsExt.Start:
+                    return "\uEDE3";
+                case GamepadButtonFlagsExt.Back:
+                    return "\uEECA";
+                case GamepadButtonFlagsExt.AlwaysOn:
+                    return "\uE7E8";
+                default:
+                    return "\uE783";
+            }
+        }
 
         public static float Clamp(float value, float min, float max)
         {
