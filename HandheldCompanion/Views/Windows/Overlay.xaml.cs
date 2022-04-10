@@ -138,7 +138,11 @@ namespace HandheldCompanion.Views.Windows
                         ModelVisual3D.Content = VirtualModel.model3DGroup;
                     }
                     break;
+
+
             }
+
+            ModelViewPort.ZoomExtents(); 
         }
 
         private void Overlay_SourceInitialized(object? sender, EventArgs e)
