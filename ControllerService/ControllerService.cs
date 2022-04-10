@@ -43,7 +43,7 @@ namespace ControllerService
 
         private string DSUip;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
-        private int DSUport, HIDrate, DeviceWidthHeightRatio;
+        private int DSUport, HIDrate;
         private double HIDstrength;
 
         private HIDmode HIDmode = HIDmode.None;
@@ -70,7 +70,6 @@ namespace ControllerService
             // settings
             HIDcloaked = Properties.Settings.Default.HIDcloaked;
             HIDuncloakonclose = Properties.Settings.Default.HIDuncloakonclose;
-            DeviceWidthHeightRatio = Properties.Settings.Default.DeviceWidthHeightRatio;
             HIDmode = (HIDmode)Properties.Settings.Default.HIDmode;
             HIDstatus = (HIDstatus)Properties.Settings.Default.HIDstatus;
             DSUEnabled = Properties.Settings.Default.DSUEnabled;
@@ -150,7 +149,6 @@ namespace ControllerService
             }
 
             // XInputController settings
-            XInputController.SetWidthHeightRatio(DeviceWidthHeightRatio);
             XInputController.SetVibrationStrength(HIDstrength);
             XInputController.SetPollRate(HIDrate);
             XInputController.Updated += OnTargetSubmited;
@@ -426,9 +424,6 @@ namespace ControllerService
                         break;
                     case "HIDstatus":
                         SetControllerStatus((HIDstatus)value);
-                        break;
-                    case "DeviceWidthHeightRatio":
-                        XInputController.SetWidthHeightRatio((int)value);
                         break;
                     case "HIDrate":
                         XInputController.SetPollRate((int)value);

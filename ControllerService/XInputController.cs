@@ -33,7 +33,6 @@ namespace ControllerService
         public Vector3 AngularRawC;
 
         public MultimediaTimer UpdateTimer;
-        public float WidhtHeightRatio = 2.5f;
         public double vibrationStrength = 100.0d;
         public int updateInterval = 10;
 
@@ -222,12 +221,6 @@ namespace ControllerService
                 defaultProfile = profile;
             else
                 logger.LogInformation("Profile {0} applied.", profile.name);
-        }
-
-        public void SetWidthHeightRatio(int ratio)
-        {
-            WidhtHeightRatio = ((float)ratio) / 10;
-            logger.LogInformation("Device width height ratio set to {0}", WidhtHeightRatio);
         }
 
         public void SetPollRate(int HIDrate)

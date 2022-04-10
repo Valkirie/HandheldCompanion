@@ -42,6 +42,8 @@ namespace ControllerCommon.Devices
         protected Inclinometer inclinometer;
         public bool hasInclinometer;
 
+        public double WidthHeightRatio = 1.0d;
+
         protected Device(string ManufacturerName, string ProductName, DeviceController Controller)
         {
             this.ManufacturerName = ManufacturerName;
