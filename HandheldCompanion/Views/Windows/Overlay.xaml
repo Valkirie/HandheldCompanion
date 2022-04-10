@@ -32,17 +32,15 @@
             </Grid>
         
             <!-- Virtual Controller -->
-            <Grid Name="VirtualController" Height="100" Width="100" Visibility="Hidden">
+            <Grid Name="VirtualController" Margin="-15" Height="100" Width="100" Visibility="Hidden">
                 <!-- The HelixViewport3D supports camera manipulation, and can be used just like the Viewport3D -->
                 <HelixToolkit:HelixViewport3D 
                     ZoomExtentsWhenLoaded="True" 
-                    Name="m_helix_viewport" 
+                    Name="ModelViewPort" 
                     ShowViewCube="False"
                     IsRotationEnabled="False"
                     IsMoveEnabled="False"
-                    IsPanEnabled="False"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch">
+                    IsPanEnabled="False">
 
                     <!-- Lighting -->
                     <HelixToolkit:SunLight/>
