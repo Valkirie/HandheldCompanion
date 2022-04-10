@@ -57,7 +57,7 @@
                             </Image.Source>
                         </Image>
                         <ui:SimpleStackPanel Orientation="Vertical" VerticalAlignment="Center">
-                            <Label Name="LabelManufacturer" Content="Manufacturer" FontWeight="SemiBold" FontSize="20"></Label>
+                            <Label Name="LabelManufacturer" Content="Manufacturer" FontWeight="SemiBold" FontSize="20" Foreground="{DynamicResource SystemControlBackgroundAccentBrush}"></Label>
                             <Label Name="LabelProductName" Content="Product name" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" ></Label>
                             </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
