@@ -31,11 +31,11 @@ namespace ControllerCommon
             this.logger = logger;
         }
 
-        public void UpdateReport(double TotalMilliseconds, double DeltaMilliseconds, Vector3 AngularVelocity, Vector3 Acceleration)
+        public void UpdateReport(double TotalMilliseconds, double DeltaSeconds, Vector3 AngularVelocity, Vector3 Acceleration)
         {
             Task.Run(() =>
             {
-                logger.LogDebug("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaMilliseconds);
+                logger.LogDebug("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaSeconds);
 
                 logger.LogDebug("Plot XInputSensorFusion_AngularVelocityX {0} {1}", TotalMilliseconds, AngularVelocity.X);
                 logger.LogDebug("Plot XInputSensorFusion_AngularVelocityY {0} {1}", TotalMilliseconds, AngularVelocity.Y);
@@ -59,11 +59,11 @@ namespace ControllerCommon
             // Todo, kickstart gravity vector with = acceleration when calculation is either
             // run for the first time or is selcted to be run based on user profile?
 
-            CalculateGravitySimple(TotalMilliseconds, DeltaMilliseconds, AngularVelocity, Acceleration);
+            CalculateGravitySimple(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
             //CalculateGravityFancy(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
 
             DeviceAngles(TotalMilliseconds, GravityVectorSimple);
-            PlayerSpace(TotalMilliseconds, DeltaMilliseconds, AngularVelocity, GravityVectorSimple);
+            PlayerSpace(TotalMilliseconds, DeltaSeconds, AngularVelocity, GravityVectorSimple);
         }
 
         public void CalculateGravitySimple(double TotalMilliseconds, double DeltaMilliseconds, Vector3 AngularVelocity, Vector3 Acceleration)
@@ -257,7 +257,7 @@ namespace ControllerCommon
             }
         }
 
-        private void PlayerSpace(double TotalMilliseconds, double DeltaMilliseconds, Vector3 AngularVelocity, Vector3 GravityVector)
+        private void PlayerSpace(double TotalMilliseconds, double DeltaSeconds, Vector3 AngularVelocity, Vector3 GravityVector)
         {
             // PlayerSpace
             Vector3 GravityNorm = Vector3.Normalize(GravityVector);
@@ -274,10 +274,10 @@ namespace ControllerCommon
 
             CameraYawDelta = Math.Sign(worldYaw)
                                     * Math.Min(Math.Abs(worldYaw) * yawRelaxFactor, AngularVelocityYZ.Length())
-                                    * AdditionalFactor * DeltaMilliseconds;
+                                    * AdditionalFactor * DeltaSeconds;
 
             // Pitch (local space)
-            CameraPitchDelta = AngularVelocity.X * AdditionalFactor * DeltaMilliseconds;
+            CameraPitchDelta = AngularVelocity.X * AdditionalFactor * DeltaSeconds;
 
             Task.Run(() =>
             {

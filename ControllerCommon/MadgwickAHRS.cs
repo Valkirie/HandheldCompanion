@@ -81,9 +81,9 @@ namespace ControllerCommon
         /// Total /: 3
         /// Total sqrt: 3
         /// </remarks>
-        public void UpdateReport(float gx, float gy, float gz, float ax, float ay, float az, double DeltaMilliseconds)
+        public void UpdateReport(float gx, float gy, float gz, float ax, float ay, float az, double DeltaSeconds)
         {
-            SamplePeriod = (float)DeltaMilliseconds;
+            SamplePeriod = (float)DeltaSeconds;
 
             float q1 = Quaternion[0], q2 = Quaternion[1], q3 = Quaternion[2], q4 = Quaternion[3];   // short name local variable for readability
             float norm;
