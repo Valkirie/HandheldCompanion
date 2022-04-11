@@ -40,8 +40,8 @@
                                 Width="80" Height="80"></Border>
                         </Grid>
                         <Grid Name="ControllerPositionUI">
-                            <ui:FontIcon Glyph="&#xE7FC;" Foreground="Black" Opacity="0.5" FontSize="60" Margin="4,4,0,0"/>
-                            <ui:FontIcon Glyph="&#xE7FC;" Foreground="{DynamicResource SystemControlBackgroundAccentBrush}" FontSize="60"/>
+                            <ui:FontIcon Glyph="&#xF158;" Foreground="Black" Opacity="0.5" FontSize="60" Margin="4,4,0,0"/>
+                            <ui:FontIcon Glyph="&#xF158;" Foreground="{DynamicResource SystemControlBackgroundAccentBrush}" FontSize="60"/>
                         </Grid>
                     </Grid>
                 </Border>
@@ -97,11 +97,11 @@
                             <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF158;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="3D Model" FontSize="14"/>
-                            <TextBlock Text="Change the 3D overlay controller model" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock Text="Overlay model" FontSize="14"/>
+                            <TextBlock Text="Change the overlay controller model" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
 
                         <ui:RadioButtons Name="OverlayModel" Grid.Column="2" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="OverlayModel_SelectionChanged">
@@ -259,7 +259,7 @@
                             <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE75C;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="Opacity" FontSize="14"/>
