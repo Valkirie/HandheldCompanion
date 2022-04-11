@@ -16,8 +16,6 @@ namespace ControllerCommon.Utils
 
     public enum GamepadButtonFlagsExt : uint
     {
-        [Description("None")]
-        None = 0,
         [Description("DPad Up")]
         DPadUp = 1,
         [Description("DPad Down")]

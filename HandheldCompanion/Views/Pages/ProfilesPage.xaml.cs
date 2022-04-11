@@ -272,7 +272,6 @@ namespace HandheldCompanion.Views.Pages
                 // disable button if is default profile
                 b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
                 tB_ProfileName.IsEnabled = !profileCurrent.IsDefault;
-                cB_ExclusiveHook.IsEnabled = !profileCurrent.IsDefault;
 
                 GlobalSettings.IsEnabled = GlobalDetails.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
                 b_ApplyProfile.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
@@ -294,8 +293,6 @@ namespace HandheldCompanion.Views.Pages
                 cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
                 cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
                 cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
-                cB_EnableHook.IsChecked = profileCurrent.mousehook_enabled;
-                cB_ExclusiveHook.IsChecked = profileCurrent.mousehook_exclusive;
                 cB_Whitelist.IsChecked = profileCurrent.whitelisted;
                 cB_Wrapper.IsChecked = profileCurrent.use_wrapper;
 
@@ -386,10 +383,6 @@ namespace HandheldCompanion.Views.Pages
 
             profileCurrent.umc_input = (Input)cB_Input.SelectedIndex;
             profileCurrent.umc_output = (Output)cB_Output.SelectedIndex;
-
-            // Touch settings
-            profileCurrent.mousehook_enabled = (bool)cB_EnableHook.IsChecked;
-            profileCurrent.mousehook_exclusive = (bool)cB_ExclusiveHook.IsChecked;
 
             profileCurrent.umc_trigger = 0;
 

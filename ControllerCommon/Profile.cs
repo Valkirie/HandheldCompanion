@@ -99,10 +99,6 @@ namespace ControllerCommon
         public float steering_power { get; set; } = 1.0f;
         public float steering_deadzone { get; set; } = 0.0f;
 
-        // mousehook
-        public bool mousehook_enabled { get; set; } = true;
-        public bool mousehook_exclusive { get; set; } = false;
-
         // flickstick
         public bool flickstick_enabled { get; set; } = false;
         public float flick_duration { get; set; } = 0.1f;

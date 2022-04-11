@@ -202,109 +202,6 @@
                         </Expander>
                     </Border>
 
-                    <!-- Controller settings -->
-                    <Border
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                        Padding="12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                        <Expander FlowDirection="RightToLeft" Expanded="Expander_Expanded">
-                            <Expander.Header>
-                                <DockPanel FlowDirection="LeftToRight"
-                                       Margin="-12,0,0,0"
-                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
-                                    <!-- Change the look inside header here -->
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="50"></ColumnDefinition>
-                                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-
-                                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
-
-                                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="Controller settings" FontSize="14"/>
-                                            <TextBlock Text="Change the controller settings" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                        </ui:SimpleStackPanel>
-                                    </Grid>
-                                </DockPanel>
-                            </Expander.Header>
-
-                            <Expander.Content>
-                                <Grid FlowDirection="LeftToRight" Margin="0,12,0,0">
-                                    <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
-                                        <!-- Separator -->
-                                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
-
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
-                                                <ColumnDefinition Width="0.5*" ></ColumnDefinition>
-                                                <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
-                                                <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
-                                            </Grid.ColumnDefinitions>
-
-                                            <ui:SimpleStackPanel Grid.Column="0">
-                                                <TextBlock Text="Anti-deadzone" FontSize="14"/>
-                                                <TextBlock Text="Change the in-game anti-deadzone, in percentage" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                            </ui:SimpleStackPanel>
-
-                                            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzone, Mode=OneWay}" />
-                                            <Slider Name="tb_ProfileAntiDeadzone" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="5" TickFrequency="5" IsSnapToTickEnabled="true" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
-                                        </Grid>
-                                    </ui:SimpleStackPanel>
-                                </Grid>
-                            </Expander.Content>
-                        </Expander>
-                    </Border>
-
-                    <!-- Touch settings -->
-                    <Border
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                        Padding="12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                        <Expander FlowDirection="RightToLeft" Expanded="Expander_Expanded">
-                            <Expander.Header>
-                                <DockPanel FlowDirection="LeftToRight"
-                                       Margin="-12,0,0,0"
-                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
-                                    <!-- Change the look inside header here -->
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="50"></ColumnDefinition>
-                                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-
-                                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEDA4;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
-
-                                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="Touch settings" FontSize="14"/>
-                                            <TextBlock Text="Change the touch settings" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                        </ui:SimpleStackPanel>
-                                    </Grid>
-                                </DockPanel>
-                            </Expander.Header>
-
-                            <Expander.Content>
-                                <Grid FlowDirection="LeftToRight" Margin="0,12,0,0">
-                                    <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
-                                        <!-- Separator -->
-                                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
-
-                                        <CheckBox Name="cB_EnableHook" Content="Share touch inputs with virtual controller" Checked="cB_EnableHook_Checked" Unchecked="cB_EnableHook_Checked"></CheckBox>
-
-                                        <!-- Separator -->
-                                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
-
-                                        <CheckBox Name="cB_ExclusiveHook" Content="Give virtual controller exclusive access to touch inputs" Checked="cB_ExclusiveHook_Checked" Unchecked="cB_ExclusiveHook_Checked"></CheckBox>
-
-                                    </ui:SimpleStackPanel>
-                                </Grid>
-                            </Expander.Content>
-                        </Expander>
-                    </Border>
-
                     <!-- Motion control settings -->
                     <Border
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
@@ -411,7 +308,7 @@
                                 </Grid>
                             </Expander.Content>
                         </Expander>
-                    </Border>
+                    </Border>                   
 
                     <!-- Universal motion control settings -->
                     <Border
@@ -492,6 +389,26 @@
                                             </ui:SimpleStackPanel>
 
                                             <ComboBox Name="cB_Output" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
+                                        </Grid>
+                                        
+                                        <!-- Separator -->
+                                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                                                <ColumnDefinition Width="0.5*" ></ColumnDefinition>
+                                                <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
+                                                <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+
+                                            <ui:SimpleStackPanel Grid.Column="0">
+                                                <TextBlock Text="Anti-deadzone" FontSize="14"/>
+                                                <TextBlock Text="Change the in-game anti-deadzone, in percentage" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                            </ui:SimpleStackPanel>
+
+                                            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzone, Mode=OneWay}" />
+                                            <Slider Name="tb_ProfileAntiDeadzone" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="5" TickFrequency="5" IsSnapToTickEnabled="true" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
                                         </Grid>
 
                                         <!-- Separator -->
