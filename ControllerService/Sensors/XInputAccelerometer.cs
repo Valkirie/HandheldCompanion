@@ -1,7 +1,6 @@
-﻿using ControllerCommon.Utils;
+using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System.Numerics;
-using System.Threading.Tasks;
 using Windows.Devices.Sensors;
 
 namespace ControllerService.Sensors
@@ -17,15 +16,8 @@ namespace ControllerService.Sensors
             maxOut = short.MaxValue,
         };
 
-        public event ReadingChangedEventHandler ReadingHasChanged;
-        public delegate void ReadingChangedEventHandler(XInputAccelerometer sender, Vector3 e);
-
-        private readonly ILogger logger;
-
-        public XInputAccelerometer(XInputController controller, ILogger logger) : base(controller)
+        public XInputAccelerometer(XInputController controller, ILogger logger) : base(controller, logger)
         {
-            this.logger = logger;
-
             sensor = Accelerometer.GetDefault();
             if (sensor != null)
             {
@@ -45,11 +37,11 @@ namespace ControllerService.Sensors
         {
             AccelerometerReading reading = args.Reading;
 
-            this.reading.X = (float)reading.AccelerationX;
-            this.reading.Y = (float)reading.AccelerationZ;
-            this.reading.Z = (float)reading.AccelerationY;
+            this.reading.X = this.reading_fixed.X = (float)reading.AccelerationX;
+            this.reading.Y = this.reading_fixed.Y = (float)reading.AccelerationZ;
+            this.reading.Z = this.reading_fixed.Z = (float)reading.AccelerationY;
 
-            Task.Run(() => logger?.LogDebug("XInputAccelerometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
+            base.ReadingChanged();
         }
 
         private void Shaken(Accelerometer sender, AccelerometerShakenEventArgs args)
@@ -70,21 +62,25 @@ namespace ControllerService.Sensors
             {
                 reading *= controller.profile.accelerometer;
 
-                reading.Z = controller.profile.steering == 0 ? this.reading.Z : this.reading.Y;
-                reading.Y = controller.profile.steering == 0 ? this.reading.Y : -this.reading.Z;
-                reading.X = controller.profile.steering == 0 ? this.reading.X : this.reading.X;
+                var readingZ = controller.profile.steering == 0 ? reading.Z : reading.Y;
+                var readingY = controller.profile.steering == 0 ? reading.Y : -reading.Z;
+                var readingX = controller.profile.steering == 0 ? reading.X : reading.X;
 
                 if (controller.profile.inverthorizontal)
                 {
-                    reading.Y *= -1.0f;
-                    reading.Z *= -1.0f;
+                    readingY *= -1.0f;
+                    readingZ *= -1.0f;
                 }
 
                 if (controller.profile.invertvertical)
                 {
-                    reading.Y *= -1.0f;
-                    reading.X *= -1.0f;
+                    readingY *= -1.0f;
+                    readingX *= -1.0f;
                 }
+
+                reading.X = readingX;
+                reading.Y = readingY;
+                reading.Z = readingZ;
             }
 
             return reading;

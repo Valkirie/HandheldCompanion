@@ -48,7 +48,7 @@ namespace HandheldCompanion
 
             [Option("invertvertical", Required = false)]
             public bool invertvertical { get; set; }            // if false, invert vertical axis
-       
+
             [Option("flickstick", Required = false)]
             public bool flickstick { get; set; }
         }

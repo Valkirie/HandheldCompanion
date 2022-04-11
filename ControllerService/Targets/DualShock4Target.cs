@@ -193,11 +193,11 @@ namespace ControllerService.Targets
                     (byte)(((Touch.TrackPadTouch1.X >> 8) & 0x0F) | ((Touch.TrackPadTouch1.Y << 4) & 0xF0));
                 outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(Touch.TrackPadTouch1.Y >> 4);
 
-                /* outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = (byte)Touch.TrackPadTouch2.RawTrackingNum;
+                outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = (byte)Touch.TrackPadTouch2.RawTrackingNum;
                 outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(Touch.TrackPadTouch2.X & 0xFF);
                 outDS4Report.sCurrentTouch.bTouchData2[1] =
                     (byte)(((Touch.TrackPadTouch2.X >> 8) & 0x0F) | ((Touch.TrackPadTouch2.Y << 4) & 0xF0));
-                outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(Touch.TrackPadTouch2.Y >> 4); */
+                outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(Touch.TrackPadTouch2.Y >> 4);
             }
 
             outDS4Report.wGyroX = (short)InputUtils.rangeMap(xinputController.AngularVelocity.X, XInputGirometer.sensorSpec);    // gyroPitchFull

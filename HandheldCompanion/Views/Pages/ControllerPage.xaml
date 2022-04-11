@@ -71,15 +71,15 @@
 
                         <ui:SimpleStackPanel Spacing="10">
                             <TextBox
-                                ui:ControlHelper.Header="Device name"
+                                ui:ControlHelper.Header="Name"
                                 Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
                                 Name = "DeviceName"
                                 Text=""
                                 IsReadOnly="True" />
                             <TextBox
-                                ui:ControlHelper.Header="Instance ID"
+                                ui:ControlHelper.Header="Vendor ID"
                                 Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                                Name = "DeviceInstanceID"
+                                Name = "DeviceVendorID"
                                 Text=""
                                 IsReadOnly="True" />
                             <TextBox

@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Devices;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Windows;
@@ -17,8 +18,6 @@ namespace HandheldCompanion.Views.Pages
         private ILogger microsoftLogger;
         private PipeClient pipeClient;
 
-        private HandheldDevice handheldDevice;
-
         public AboutPage()
         {
             InitializeComponent();
@@ -31,28 +30,23 @@ namespace HandheldCompanion.Views.Pages
             this.microsoftLogger = microsoftLogger;
 
             this.pipeClient = mainWindow.pipeClient;
+            this.pipeClient.ServerMessage += OnServerMessage;
+        }
 
-            this.handheldDevice = mainWindow.handheldDevice;
-
-            VersionValue.Text = mainWindow.fileVersionInfo.FileVersion;
-            SensorName.Text = handheldDevice.sensor.Name;
-            GyrometerValue.Text = handheldDevice.hasGyrometer ? "Detected" : "N/A";
-            AccelerometerValue.Text = handheldDevice.hasAccelerometer ? "Detected" : "N/A";
-            InclinometerValue.Text = handheldDevice.hasInclinometer ? "Detected" : "N/A";
-
-            /* List of supported sensors
-                - BMI160
-            */
-
-            WarningBorder.Visibility = handheldDevice.sensorSupported ? Visibility.Collapsed : Visibility.Visible;
-            if (!handheldDevice.sensorSupported)
-                WarningContent.Text = "Oups, it appears your device is not supported yet. The software might not run as expected.";
-
-            UpdateDevice();
+        private void OnServerMessage(object sender, PipeMessage message)
+        {
+            switch (message.code)
+            {
+                case PipeCode.SERVER_CONTROLLER:
+                    PipeServerHandheld handheldDevice = (PipeServerHandheld)message;
+                    UpdateDevice(handheldDevice);
+                    break;
+            }
         }
 
         private void cB_AccelDetected_Checked(object sender, RoutedEventArgs e)
         {
+            // do something
         }
 
         private void cB_GyroDetected_Checked(object sender, RoutedEventArgs e)
@@ -60,41 +54,10 @@ namespace HandheldCompanion.Views.Pages
             // do something
         }
 
-
-        private void UpdateDevice()
+        public void UpdateDevice(PipeServerHandheld handheldDevice)
         {
-            /* List of supported devices
-                - AYANEO 2021 Pro Retro Power
-                - AYANEO 2021 Pro
-                - AYANEO 2021
-                - AYANEO NEXT Pro
-                - AYANEO NEXT Advance
-                - AYANEO NEXT
-            */
-
             // Device visual
-            Uri ImageSource;
-
-            switch (handheldDevice.ProductName)
-            {
-                case "AYANEO 2021 Pro Retro Power":
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_retro_power.png");
-                    break;
-                case "AYANEO 2021 Pro":
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_2021_pro.png");
-                    break;
-                case "AYANEO 2021":
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_2021.png");
-                    break;
-                case "AYANEO NEXT Pro":
-                case "AYANEO NEXT Advance":
-                case "AYANEO NEXT":
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_aya_next.png");
-                    break;
-                default:
-                    ImageSource = new Uri($"pack://application:,,,/Resources/device_generic.png");
-                    break;
-            }
+            Uri ImageSource = new Uri($"pack://application:,,,/Resources/{handheldDevice.ProductIllustration}.png");
 
             // threaded call to update UI
             this.Dispatcher.Invoke(() =>
@@ -102,6 +65,19 @@ namespace HandheldCompanion.Views.Pages
                 // Motherboard properties
                 LabelManufacturer.Content = handheldDevice.ManufacturerName;
                 LabelProductName.Content = handheldDevice.ProductName;
+                HandheldGrid.Visibility = Visibility.Visible;
+
+                VersionValue.Text = mainWindow.fileVersionInfo.FileVersion;
+                SensorName.Text = handheldDevice.SensorName;
+                GyrometerValue.Text = handheldDevice.hasGyrometer ? "Detected" : "N/A";
+                AccelerometerValue.Text = handheldDevice.hasAccelerometer ? "Detected" : "N/A";
+                InclinometerValue.Text = handheldDevice.hasInclinometer ? "Detected" : "N/A";
+
+                if (!handheldDevice.ProductSupported)
+                {
+                    WarningBorder.Visibility = Visibility.Visible;
+                    WarningContent.Text = "Oups, it appears your device is not supported yet. The software might not run as expected.";
+                }
 
                 ImageDevice.Source = new BitmapImage(ImageSource);
             });

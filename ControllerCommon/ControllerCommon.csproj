@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <PackageReference Include="Crc32.NET" Version="1.2.0" />
+    <PackageReference Include="HelixToolkit.Wpf" Version="2.20.2" />
+    <PackageReference Include="HidSharp" Version="2.1.0" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
@@ -28,7 +30,6 @@
     <PackageReference Include="System.IO.Pipes.AccessControl" Version="5.0.0" />
     <PackageReference Include="System.Management" Version="6.0.0" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="6.0.0" />
-    <PackageReference Include="WindowsHook" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>

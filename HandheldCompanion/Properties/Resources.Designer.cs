@@ -88,6 +88,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Overlay.
+        /// </summary>
+        public static string navOverlay {
+            get {
+                return ResourceManager.GetString("navOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Profiles.
         /// </summary>
         public static string navProfiles {

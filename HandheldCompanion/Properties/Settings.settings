@@ -41,5 +41,29 @@
     <Setting Name="UpdateLastChecked" Type="System.DateTime" Scope="User">
       <Value Profile="(Default)">2022-03-16</Value>
     </Setting>
+    <Setting Name="OverlayTrigger" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="OverlayModel" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="OverlayControllerAlignment" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">7</Value>
+    </Setting>
+    <Setting Name="OverlayControllerSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">400</Value>
+    </Setting>
+    <Setting Name="OverlayControllerTrigger" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="OverlayTrackpadsAlignment" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="OverlayTrackpadsTrigger" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="OverlayTrackpadsOpacity" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0.25</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

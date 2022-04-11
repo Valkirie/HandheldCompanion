@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 
@@ -15,8 +14,10 @@ namespace ControllerCommon.Utils
         public float maxOut;
     }
 
-    public enum GamepadButtonFlags : uint
+    public enum GamepadButtonFlagsExt : uint
     {
+        [Description("None")]
+        None = 0,
         [Description("DPad Up")]
         DPadUp = 1,
         [Description("DPad Down")]
@@ -53,8 +54,53 @@ namespace ControllerCommon.Utils
         AlwaysOn = 65536        // specific
     }
 
+    public enum OverlayModelMode
+    {
+        OEM = 0,
+        Virtual = 1
+    }
+
     public static class InputUtils
     {
+        public static string GamepadButtonToGlyph(GamepadButtonFlagsExt button)
+        {
+            switch (button)
+            {
+                case GamepadButtonFlagsExt.A:
+                    return "\uF093";
+                case GamepadButtonFlagsExt.B:
+                    return "\uF094";
+                case GamepadButtonFlagsExt.Y:
+                    return "\uF095";
+                case GamepadButtonFlagsExt.X:
+                    return "\uF096";
+                case GamepadButtonFlagsExt.DPadRight:
+                case GamepadButtonFlagsExt.DPadDown:
+                case GamepadButtonFlagsExt.DPadUp:
+                case GamepadButtonFlagsExt.DPadLeft:
+                    return "\uF10E";
+                case GamepadButtonFlagsExt.LeftTrigger:
+                    return "\uF10A";
+                case GamepadButtonFlagsExt.RightTrigger:
+                    return "\uF10B";
+                case GamepadButtonFlagsExt.LeftShoulder:
+                    return "\uF10C";
+                case GamepadButtonFlagsExt.RightShoulder:
+                    return "\uF10D";
+                case GamepadButtonFlagsExt.LeftThumb:
+                    return "\uF108";
+                case GamepadButtonFlagsExt.RightThumb:
+                    return "\uF109";
+                case GamepadButtonFlagsExt.Start:
+                    return "\uEDE3";
+                case GamepadButtonFlagsExt.Back:
+                    return "\uEECA";
+                case GamepadButtonFlagsExt.AlwaysOn:
+                    return "\uE7E8";
+                default:
+                    return "\uE783";
+            }
+        }
 
         public static float Clamp(float value, float min, float max)
         {
@@ -134,16 +180,22 @@ namespace ControllerCommon.Utils
         // - User does not want to change general emulator deadzone setting but want's it removed for specific game and use UMC Steering
         public static Vector2 ApplyAntiDeadzone(Vector2 ThumbValue, float DeadzoneIn)
         {
+            // todo: move this somewhere else
             float deadzone = DeadzoneIn / 100;
 
             Vector2 stickInput = new Vector2(ThumbValue.X, ThumbValue.Y) / short.MaxValue;
+
+            if (stickInput == Vector2.Zero)
+                return stickInput;
 
             float magnitude = stickInput.Length();
 
             if (magnitude < deadzone)
             {
                 float dist = Math.Abs(magnitude - deadzone);
-                stickInput = new Vector2(stickInput.X, stickInput.Y) * (1 + dist);
+                float mult = deadzone / magnitude;
+
+                return stickInput * mult * short.MaxValue;
             }
 
             return stickInput * short.MaxValue;

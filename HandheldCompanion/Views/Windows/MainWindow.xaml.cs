@@ -1,10 +1,11 @@
 using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Utils;
+using HandheldCompanion.Models;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,7 +34,6 @@ namespace HandheldCompanion.Views
     {
         private readonly ILogger logger;
         private StartupEventArgs arguments;
-        public HandheldDevice handheldDevice;
         public FileVersionInfo fileVersionInfo;
         public static new string Name;
 
@@ -45,6 +45,7 @@ namespace HandheldCompanion.Views
         public ProfilesPage profilesPage;
         public SettingsPage settingsPage;
         public AboutPage aboutPage;
+        public OverlayPage overlayPage;
 
         // overlay vars
         private Overlay overlay;
@@ -59,10 +60,15 @@ namespace HandheldCompanion.Views
         public PipeClient pipeClient;
         public PipeServer pipeServer;
 
+        // Hidder vars
         public HidHide Hidder;
 
+        // Command parser vars
         public CmdParser cmdParser;
-        public MouseHook mouseHook;
+
+        // Handheld devices vars
+        private Model VirtualModel;
+        private Model ProductModel;
 
         // manager(s) vars
         public ToastManager toastManager;
@@ -85,9 +91,30 @@ namespace HandheldCompanion.Views
             this.logger = microsoftLogger;
             this.arguments = arguments;
 
-            handheldDevice = new HandheldDevice();
+            // get the actual handheld device
+            var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
+            var ProductName = MotherboardInfo.Product;
 
-            logger.LogInformation("{0} ({1})", handheldDevice.ManufacturerName, handheldDevice.ProductName);
+            switch (ProductName)
+            {
+                case "AYANEO 2021":
+                case "AYANEO 2021 Pro":
+                case "AYANEO 2021 Pro Retro Power":
+                    ProductModel = new ModelAYANEO2021();
+                    break;
+                case "NEXT Pro":
+                case "NEXT Advance":
+                case "NEXT":
+                    ProductModel = new ModelAYANEONext();
+                    break;
+                default:
+                    break;
+            }
+
+            // default model before connecting to the service
+            VirtualModel = new ModelXBOX360();
+
+            logger.LogInformation("{0} ({1})", ManufacturerName, ProductName);
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
@@ -155,14 +182,13 @@ namespace HandheldCompanion.Views
             // initialize Profile Manager
             profileManager = new ProfileManager(logger, pipeClient);
 
-            // initialize mouse hook
-            mouseHook = new MouseHook(pipeClient, logger);
-
             // initialize toast manager
             toastManager = new ToastManager("ControllerService");
 
             // initialize overlay
-            overlay = new Overlay(this, logger, pipeClient);
+            overlay = new Overlay(logger, pipeClient);
+            overlay.UpdateProductModel(ProductModel);
+            overlay.UpdateVirtualModel(VirtualModel);
 
             // initialize process manager
             processManager = new ProcessManager();
@@ -189,9 +215,29 @@ namespace HandheldCompanion.Views
 
             // initialize pages
             controllerPage = new ControllerPage("controller", this, logger);
+            controllerPage.Updated += (controllerMode) =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    switch (controllerMode)
+                    {
+                        default:
+                        case HIDmode.DualShock4Controller:
+                            VirtualModel = new ModelDS4();
+                            break;
+                        case HIDmode.Xbox360Controller:
+                            VirtualModel = new ModelXBOX360();
+                            break;
+                    }
+
+                    overlay.UpdateVirtualModel(VirtualModel);
+                });
+            };
+
             profilesPage = new ProfilesPage("profiles", this, logger);
             settingsPage = new SettingsPage("settings", this, logger);
             aboutPage = new AboutPage("about", this, logger);
+            overlayPage = new OverlayPage("overlay", overlay, logger);
 
             // initialize command parser
             cmdParser = new CmdParser(pipeClient, this, logger);
@@ -214,6 +260,7 @@ namespace HandheldCompanion.Views
             _pages.Add("ControllerPage", controllerPage);
             _pages.Add("ProfilesPage", profilesPage);
             _pages.Add("AboutPage", aboutPage);
+            _pages.Add("OverlayPage", overlayPage);
 
             if (!IsElevated)
             {
@@ -278,21 +325,16 @@ namespace HandheldCompanion.Views
 
                 // inform service & mouseHook
                 pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
-                mouseHook.UpdateProfile(currentProfile);
 
-                // display overlay
-                this.Dispatcher.Invoke(() =>
+                // change overlay hook
+                /* this.Dispatcher.Invoke(() =>
                 {
-                    switch (currentProfile.overlay)
-                    {
-                        case true:
-                            overlay.HookInto(processid);
-                            break;
-                        case false:
-                            overlay.Hide();
-                            break;
-                    }
-                });
+                    // hide overlay on profile switch
+                    overlay.UnHook();
+
+                    if (!currentProfile.IsDefault)
+                        overlay.HookInto(processid);
+                }); */
 
                 logger.LogDebug("Profile {0} applied", currentProfile.name);
             }
@@ -306,30 +348,15 @@ namespace HandheldCompanion.Views
 
         private void OnClientConnected(object sender)
         {
-            // start listening to mouse inputs
-#if !DEBUG
-            mouseHook.Start();
-#endif
-
             if (IsElevated)
             {
                 // start process manager
                 processManager.Start();
             }
-
-            // update service screen size
-            pipeClient.SendMessage(new PipeClientScreen
-            {
-                width = Screen.PrimaryScreen.Bounds.Width,
-                height = Screen.PrimaryScreen.Bounds.Height
-            });
         }
 
         private void OnClientDisconnected(object sender)
         {
-            // stop listening to mouse inputs
-            mouseHook.Stop();
-
             // stop process manager
             processManager.Stop();
         }
@@ -379,6 +406,8 @@ namespace HandheldCompanion.Views
                     case "DSUip":
                         break;
                     case "DSUport":
+                        break;
+                    case "HIDmode":
                         break;
                 }
             }
@@ -495,7 +524,6 @@ namespace HandheldCompanion.Views
         #endregion
 
         #region UI
-
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             if (args.IsSettingsInvoked == true)
@@ -582,6 +610,14 @@ namespace HandheldCompanion.Views
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            processManager.Stop();
+
+            notifyIcon.Visible = false;
+            notifyIcon = null;
+
+            overlay.Close();
+            overlay = null;
+
             serviceManager.Stop();
 
             if (pipeClient.connected)
@@ -591,8 +627,6 @@ namespace HandheldCompanion.Views
                 pipeServer.Stop();
 
             profileManager.Stop();
-
-            mouseHook.Stop();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -624,7 +658,6 @@ namespace HandheldCompanion.Views
                     serviceManager.StopServiceAsync();
             }
 
-            notifyIcon.Visible = false;
             Properties.Settings.Default.Save();
         }
 
@@ -689,6 +722,7 @@ namespace HandheldCompanion.Views
             {
                 var preNavPageType = ContentFrame.CurrentSourcePageType;
                 var preNavPageName = preNavPageType.Name;
+                this.pipeClient.SendMessage(new PipeNavigation((string)preNavPageName));
 
                 var NavViewItem = navView.MenuItems
                     .OfType<NavigationViewItem>()

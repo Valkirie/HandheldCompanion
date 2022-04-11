@@ -1,7 +1,7 @@
-﻿using System;
+﻿using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
-using WindowsHook;
 
 namespace ControllerCommon
 {
@@ -35,14 +35,25 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public partial class PipeServerController : PipeMessage
+    public partial class PipeServerHandheld : PipeMessage
     {
+        public string ManufacturerName;
         public string ProductName;
-        public Guid InstanceGuid;
-        public Guid ProductGuid;
-        public int ProductIndex;
+        public string ProductIllustration;
+        public bool ProductSupported;
 
-        public PipeServerController()
+        public string SensorName;
+
+        public bool hasGyrometer;
+        public bool hasAccelerometer;
+        public bool hasInclinometer;
+
+        public string ControllerName;
+        public ushort ControllerVID;
+        public ushort ControllerPID;
+        public int ControllerIdx;
+
+        public PipeServerHandheld()
         {
             code = PipeCode.SERVER_CONTROLLER;
         }
@@ -78,18 +89,6 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public partial class PipeClientScreen : PipeMessage
-    {
-        public int width;
-        public int height;
-
-        public PipeClientScreen()
-        {
-            code = PipeCode.CLIENT_SCREEN;
-        }
-    }
-
-    [Serializable]
     public partial class PipeClientSettings : PipeMessage
     {
         public Dictionary<string, object> settings = new();
@@ -114,12 +113,21 @@ namespace ControllerCommon
     }
 
     [Serializable]
+    public enum CursorButton
+    {
+        None = 0,
+        TouchLeft = 1,
+        TouchRight = 2
+    }
+
+    [Serializable]
     public partial class PipeClientCursor : PipeMessage
     {
         public CursorAction action;
-        public float x;
-        public float y;
-        public MouseButtons button;
+        public double x;
+        public double y;
+        public CursorButton button;
+        public int flags;
 
         public PipeClientCursor()
         {
@@ -226,6 +234,59 @@ namespace ControllerCommon
             code = PipeCode.CLIENT_NAVIGATED;
 
             this.Tag = Tag;
+        }
+    }
+
+    [Serializable]
+    public partial class PipeOverlay : PipeMessage
+    {
+        public int Visibility;
+
+        public PipeOverlay(int Visibility)
+        {
+            code = PipeCode.CLIENT_OVERLAY;
+
+            this.Visibility = Visibility;
+        }
+    }
+
+    [Serializable]
+    public partial class PipeGamepad : PipeMessage
+    {
+        public int Buttons;
+        public byte LeftTrigger;
+        public byte RightTrigger;
+
+        public short LeftThumbX;
+        public short LeftThumbY;
+        public short RightThumbX;
+        public short RightThumbY;
+
+        public PipeGamepad(Gamepad gamepad)
+        {
+            code = PipeCode.SERVER_GAMEPAD;
+            Buttons = (int)gamepad.Buttons;
+            LeftTrigger = gamepad.LeftTrigger;
+            RightTrigger = gamepad.RightTrigger;
+
+            LeftThumbX = gamepad.LeftThumbX;
+            LeftThumbY = gamepad.LeftThumbY;
+            RightThumbX = gamepad.RightThumbX;
+            RightThumbY = gamepad.RightThumbY;
+        }
+
+        public Gamepad ToGamepad()
+        {
+            return new Gamepad()
+            {
+                Buttons = (GamepadButtonFlags)this.Buttons,
+                LeftTrigger = this.LeftTrigger,
+                RightTrigger = this.RightTrigger,
+                LeftThumbX = this.LeftThumbX,
+                LeftThumbY = this.LeftThumbY,
+                RightThumbX = this.RightThumbX,
+                RightThumbY = this.RightThumbY
+            };
         }
     }
     #endregion

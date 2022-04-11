@@ -36,6 +36,7 @@ namespace ControllerCommon
 
         CLIENT_SCREEN = 11,                 // Sent to server to update screen details
                                             // args: width, height
+                                            // OBSOLETE, REUSEME
 
         CLIENT_CONSOLE = 12,                // Sent from client to client to pass parameters
                                             // args: string[] parameters
@@ -47,6 +48,12 @@ namespace ControllerCommon
                                             // args: ...
 
         CLIENT_NAVIGATED = 15,              // Sent to server to share current navigated page
+                                            // args: ...
+
+        CLIENT_OVERLAY = 16,                // Sent to server to share current overlay status
+                                            // args: ...
+
+        SERVER_GAMEPAD = 17,                // Sent to client to share gamepad values
                                             // args: ...
     }
 

@@ -1,7 +1,6 @@
 using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System.Numerics;
-using System.Threading.Tasks;
 using Windows.Devices.Sensors;
 
 namespace ControllerService.Sensors
@@ -17,12 +16,8 @@ namespace ControllerService.Sensors
             maxOut = 2048.0f,
         };
 
-        private readonly ILogger logger;
-
-        public XInputGirometer(XInputController controller, ILogger logger) : base(controller)
+        public XInputGirometer(XInputController controller, ILogger logger) : base(controller, logger)
         {
-            this.logger = logger;
-
             sensor = Gyrometer.GetDefault();
             if (sensor != null)
             {
@@ -32,7 +27,7 @@ namespace ControllerService.Sensors
                 // (re)center
                 updateTimer.Interval = updateInterval * 6;
 
-                sensor.ReadingChanged += ReadingHasChanged;
+                sensor.ReadingChanged += ReadingChanged;
             }
             else
             {
@@ -40,7 +35,7 @@ namespace ControllerService.Sensors
             }
         }
 
-        private void ReadingHasChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
+        private void ReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
         {
             GyrometerReading reading = args.Reading;
 
@@ -49,11 +44,7 @@ namespace ControllerService.Sensors
             this.reading.Y = this.reading_fixed.Y = (float)reading.AngularVelocityZ;
             this.reading.Z = this.reading_fixed.Z = (float)reading.AngularVelocityY;
 
-            // reset reading after inactivity
-            updateTimer.Stop();
-            updateTimer.Start();
-
-            Task.Run(() => logger?.LogDebug("XInputGirometer.ReadingChanged({0:00.####}, {1:00.####}, {2:00.####})", this.reading.X, this.reading.Y, this.reading.Z));
+            base.ReadingChanged();
         }
 
         public new Vector3 GetCurrentReading(bool center = false)
@@ -72,21 +63,25 @@ namespace ControllerService.Sensors
                 // Todo, can't have this with player space
                 //reading.Y *= controller.WidhtHeightRatio;
 
-                reading.Z = controller.profile.steering == 0 ? this.reading.Z : this.reading.Y;
-                reading.Y = controller.profile.steering == 0 ? this.reading.Y : this.reading.Z;
-                reading.X = controller.profile.steering == 0 ? this.reading.X : this.reading.X;
+                var readingZ = controller.profile.steering == 0 ? reading.Z : reading.Y;
+                var readingY = controller.profile.steering == 0 ? reading.Y : reading.Z;
+                var readingX = controller.profile.steering == 0 ? reading.X : reading.X;
 
                 if (controller.profile.inverthorizontal)
                 {
-                    reading.Y *= -1.0f;
-                    reading.Z *= -1.0f;
+                    readingY *= -1.0f;
+                    readingZ *= -1.0f;
                 }
 
                 if (controller.profile.invertvertical)
                 {
-                    reading.Y *= -1.0f;
-                    reading.X *= -1.0f;
+                    readingY *= -1.0f;
+                    readingX *= -1.0f;
                 }
+
+                reading.X = readingX;
+                reading.Y = readingY;
+                reading.Z = readingZ;
             }
 
             return reading;

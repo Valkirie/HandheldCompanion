@@ -31,9 +31,11 @@ namespace HandheldCompanion.Views.Pages
         bool hasSettings;
 
         // controllers vars
-        private XInputDevice mainController;
         private HIDmode controllerMode = HIDmode.None;
         private HIDstatus controllerStatus = HIDstatus.Disconnected;
+
+        public event UpdatedEventHandler Updated;
+        public delegate void UpdatedEventHandler(HIDmode controllerMode);
 
         public ControllerPage()
         {
@@ -124,18 +126,17 @@ namespace HandheldCompanion.Views.Pages
             switch (message.code)
             {
                 case PipeCode.SERVER_CONTROLLER:
-                    PipeServerController controller = (PipeServerController)message;
-                    mainController = new XInputDevice(controller.ProductName, controller.InstanceGuid, controller.ProductGuid, controller.ProductIndex);
+                    PipeServerHandheld controller = (PipeServerHandheld)message;
 
                     // threaded call to update UI
                     this.Dispatcher.Invoke(() =>
                     {
-                        DeviceName.Text = mainController.ProductName;
-                        DeviceInstanceID.Text = mainController.InstanceGuid.ToString();
-                        DeviceProductID.Text = mainController.ProductGuid.ToString();
+                        DeviceName.Text = controller.ControllerName;
+                        DeviceVendorID.Text = $"0{controller.ControllerVID.ToString("X2")}";
+                        DeviceProductID.Text = $"0{controller.ControllerPID.ToString("X2")}";
                     });
 
-                    microsoftLogger.LogInformation("{0} connected on port {1}", controller.ProductName, controller.ProductIndex);
+                    microsoftLogger.LogInformation("{0} connected on port {1}", controller.ControllerName, controller.ControllerIdx);
                     break;
 
                 case PipeCode.SERVER_SETTINGS:
@@ -205,6 +206,8 @@ namespace HandheldCompanion.Views.Pages
 
             PipeClientSettings settings = new PipeClientSettings("HIDmode", controllerMode);
             mainWindow.pipeClient.SendMessage(settings);
+
+            Updated?.Invoke(controllerMode);
 
             UpdateController();
         }

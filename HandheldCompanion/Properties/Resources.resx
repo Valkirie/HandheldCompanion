@@ -126,6 +126,9 @@
   <data name="navController" xml:space="preserve">
     <value>Controller</value>
   </data>
+  <data name="navOverlay" xml:space="preserve">
+    <value>Overlay</value>
+  </data>
   <data name="navProfiles" xml:space="preserve">
     <value>Profiles</value>
   </data>

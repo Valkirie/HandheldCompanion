@@ -50,7 +50,7 @@ namespace ControllerCommon
         {
             SamplePeriod = samplePeriod;
             Beta = beta;
-            Quaternion = new float[] { 1f, 0f, 0f, 0f };
+            Quaternion = new float[] { 0f, 1f, 0f, 0f };
         }
 
         /// <summary>
@@ -185,6 +185,11 @@ namespace ControllerCommon
         public Quaternion GetQuaternion()
         {
             return new Quaternion(Quaternion[0], Quaternion[1], Quaternion[2], Quaternion[3]);
+        }
+
+        public Vector3 GetEuler()
+        {
+            return ToEulerAngles(new Quaternion(Quaternion[0], Quaternion[1], Quaternion[2], Quaternion[3]));
         }
     }
 }

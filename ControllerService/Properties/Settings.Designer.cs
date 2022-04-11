@@ -130,17 +130,5 @@ namespace ControllerService.Properties {
                 this["HIDstatus"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("25")]
-        public int DeviceWidthHeightRatio {
-            get {
-                return ((int)(this["DeviceWidthHeightRatio"]));
-            }
-            set {
-                this["DeviceWidthHeightRatio"] = value;
-            }
-        }
     }
 }

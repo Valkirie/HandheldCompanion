@@ -33,10 +33,10 @@ namespace ControllerCommon
 
         public void UpdateReport(double TotalMilliseconds, double DeltaMilliseconds, Vector3 AngularVelocity, Vector3 Acceleration)
         {
-            Task.Run(() => logger.LogDebug("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaMilliseconds));
-
             Task.Run(() =>
             {
+                logger.LogDebug("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaMilliseconds);
+
                 logger.LogDebug("Plot XInputSensorFusion_AngularVelocityX {0} {1}", TotalMilliseconds, AngularVelocity.X);
                 logger.LogDebug("Plot XInputSensorFusion_AngularVelocityY {0} {1}", TotalMilliseconds, AngularVelocity.Y);
                 logger.LogDebug("Plot XInputSensorFusion_AngularVelocityZ {0} {1}", TotalMilliseconds, AngularVelocity.Z);
@@ -139,7 +139,6 @@ namespace ControllerCommon
 
             Task.Run(() =>
             {
-
                 logger.LogDebug("Plot vigemtarget_reverseRotationy.X {0} {1}", TotalMilliseconds, reverseRotation.X);
                 logger.LogDebug("Plot vigemtarget_reverseRotationy.Y {0} {1}", TotalMilliseconds, reverseRotation.Y);
                 logger.LogDebug("Plot vigemtarget_reverseRotationy.Z {0} {1}", TotalMilliseconds, reverseRotation.Z);

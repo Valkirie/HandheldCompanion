@@ -178,5 +178,101 @@ namespace HandheldCompanion.Properties {
                 this["UpdateLastChecked"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int OverlayTrigger {
+            get {
+                return ((int)(this["OverlayTrigger"]));
+            }
+            set {
+                this["OverlayTrigger"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OverlayModel {
+            get {
+                return ((int)(this["OverlayModel"]));
+            }
+            set {
+                this["OverlayModel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("7")]
+        public int OverlayControllerAlignment {
+            get {
+                return ((int)(this["OverlayControllerAlignment"]));
+            }
+            set {
+                this["OverlayControllerAlignment"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("400")]
+        public int OverlayControllerSize {
+            get {
+                return ((int)(this["OverlayControllerSize"]));
+            }
+            set {
+                this["OverlayControllerSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int OverlayControllerTrigger {
+            get {
+                return ((int)(this["OverlayControllerTrigger"]));
+            }
+            set {
+                this["OverlayControllerTrigger"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int OverlayTrackpadsAlignment {
+            get {
+                return ((int)(this["OverlayTrackpadsAlignment"]));
+            }
+            set {
+                this["OverlayTrackpadsAlignment"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int OverlayTrackpadsTrigger {
+            get {
+                return ((int)(this["OverlayTrackpadsTrigger"]));
+            }
+            set {
+                this["OverlayTrackpadsTrigger"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.25")]
+        public double OverlayTrackpadsOpacity {
+            get {
+                return ((double)(this["OverlayTrackpadsOpacity"]));
+            }
+            set {
+                this["OverlayTrackpadsOpacity"] = value;
+            }
+        }
     }
 }

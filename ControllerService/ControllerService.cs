@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
@@ -14,9 +15,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using WindowsHook;
+using Device = ControllerCommon.Devices.Device;
 
 namespace ControllerService
 {
@@ -33,12 +35,16 @@ namespace ControllerService
         private DSUServer DSUServer;
         public HidHide Hidder;
 
+        // Handheld devices vars
+        private Device handheldDevice;
+
         public static string CurrentExe, CurrentPath, CurrentPathDep;
         public static string CurrentTag;
+        public static int CurrentOverlayStatus = -1;
 
         private string DSUip;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
-        private int DSUport, HIDrate, DeviceWidthHeightRatio;
+        private int DSUport, HIDrate;
         private double HIDstrength;
 
         private HIDmode HIDmode = HIDmode.None;
@@ -65,7 +71,6 @@ namespace ControllerService
             // settings
             HIDcloaked = Properties.Settings.Default.HIDcloaked;
             HIDuncloakonclose = Properties.Settings.Default.HIDuncloakonclose;
-            DeviceWidthHeightRatio = Properties.Settings.Default.DeviceWidthHeightRatio;
             HIDmode = (HIDmode)Properties.Settings.Default.HIDmode;
             HIDstatus = (HIDstatus)Properties.Settings.Default.HIDstatus;
             DSUEnabled = Properties.Settings.Default.DSUEnabled;
@@ -99,9 +104,6 @@ namespace ControllerService
             pipeServer.ClientMessage += OnClientMessage;
 
             // prepare physical controller
-            DirectInput dinput = new DirectInput();
-            IList<DeviceInstance> dinstances = dinput.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly);
-
             foreach (UserIndex idx in (UserIndex[])Enum.GetValues(typeof(UserIndex)))
             {
                 Controller controller = new Controller(idx);
@@ -109,7 +111,6 @@ namespace ControllerService
                     continue;
 
                 XInputController = new XInputController(controller, idx, logger, pipeServer);
-                XInputController.Instance = dinstances[(int)idx];
                 break;
             }
 
@@ -120,10 +121,32 @@ namespace ControllerService
             }
 
             // XInputController settings
-            XInputController.SetWidthHeightRatio(DeviceWidthHeightRatio);
             XInputController.SetVibrationStrength(HIDstrength);
             XInputController.SetPollRate(HIDrate);
             XInputController.Updated += OnTargetSubmited;
+
+            // get the actual handheld device
+            var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
+            var ProductName = MotherboardInfo.Product;
+
+            switch (ProductName)
+            {
+                case "AYANEO 2021":
+                case "AYANEO 2021 Pro":
+                case "AYANEO 2021 Pro Retro Power":
+                    handheldDevice = new AYANEO2021(ManufacturerName, ProductName);
+                    break;
+                case "NEXT Pro":
+                case "NEXT Advance":
+                case "NEXT":
+                    handheldDevice = new AYANEONEXT(ManufacturerName, ProductName);
+                    break;
+                default:
+                    handheldDevice = new DefaultDevice(ManufacturerName, ProductName);
+                    logger.LogWarning($"{ProductName} from {ManufacturerName} is not yet supported. The behavior of the application will be unpredictable.");
+                    break;
+            }
+            Hidder.RegisterDevice(XInputController.ControllerIDs);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
@@ -226,7 +249,7 @@ namespace ControllerService
             switch (message.code)
             {
                 case PipeCode.FORCE_SHUTDOWN:
-                    Hidder?.SetCloaking(false, XInputController.Instance.ProductName);
+                    Hidder?.SetCloaking(false, XInputController.ProductName);
                     break;
 
                 case PipeCode.CLIENT_PROFILE:
@@ -240,20 +263,15 @@ namespace ControllerService
                     switch (cursor.action)
                     {
                         case CursorAction.CursorUp:
-                            XInputController.Touch.OnMouseUp((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.Touch.OnMouseUp(cursor.x, cursor.y, cursor.button, cursor.flags);
                             break;
                         case CursorAction.CursorDown:
-                            XInputController.Touch.OnMouseDown((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.Touch.OnMouseDown(cursor.x, cursor.y, cursor.button, cursor.flags);
                             break;
                         case CursorAction.CursorMove:
-                            XInputController.Touch.OnMouseMove((short)cursor.x, (short)cursor.y, cursor.button);
+                            XInputController.Touch.OnMouseMove(cursor.x, cursor.y, cursor.button, cursor.flags);
                             break;
                     }
-                    break;
-
-                case PipeCode.CLIENT_SCREEN:
-                    PipeClientScreen screen = (PipeClientScreen)message;
-                    XInputController.Touch.UpdateRatio(screen.width, screen.height);
                     break;
 
                 case PipeCode.CLIENT_SETTINGS:
@@ -292,24 +310,40 @@ namespace ControllerService
                     }
 
                     break;
+
+                case PipeCode.CLIENT_OVERLAY:
+                    PipeOverlay overlay = (PipeOverlay)message;
+                    CurrentOverlayStatus = overlay.Visibility;
+                    break;
             }
         }
 
         private void OnClientDisconnected(object sender)
         {
-            XInputController.Touch.OnMouseUp(0, 0, MouseButtons.Left);
-            XInputController.Touch.OnMouseUp(0, 0, MouseButtons.Right);
+            XInputController.Touch.OnMouseUp(0, 0, CursorButton.TouchLeft, 26);
+            XInputController.Touch.OnMouseUp(0, 0, CursorButton.TouchRight, 26);
         }
 
         private void OnClientConnected(object sender)
         {
             // send controller details
-            pipeServer.SendMessage(new PipeServerController()
+            pipeServer.SendMessage(new PipeServerHandheld()
             {
-                ProductName = XInputController.Instance.ProductName,
-                InstanceGuid = XInputController.Instance.InstanceGuid,
-                ProductGuid = XInputController.Instance.ProductGuid,
-                ProductIndex = (int)XInputController.UserIndex
+                ManufacturerName = handheldDevice.ManufacturerName,
+                ProductName = handheldDevice.ProductName,
+                ProductIllustration = handheldDevice.ProductIllustration,
+
+                SensorName = handheldDevice.sensorName,
+                ProductSupported = handheldDevice.ProductSupported,
+
+                hasAccelerometer = handheldDevice.hasAccelerometer,
+                hasGyrometer = handheldDevice.hasGyrometer,
+                hasInclinometer = handheldDevice.hasInclinometer,
+
+                ControllerName = XInputController.ProductName,
+                ControllerVID = XInputController.XInputData.VID,
+                ControllerPID = XInputController.XInputData.PID,
+                ControllerIdx = (int)XInputController.UserIndex
             });
 
             // send server settings
@@ -385,7 +419,7 @@ namespace ControllerService
                 switch (name)
                 {
                     case "HIDcloaked":
-                        Hidder.SetCloaking((bool)value, XInputController.Instance.ProductName);
+                        Hidder.SetCloaking((bool)value, XInputController.ProductName);
                         HIDcloaked = (bool)value;
                         break;
                     case "HIDuncloakonclose":
@@ -396,9 +430,6 @@ namespace ControllerService
                         break;
                     case "HIDstatus":
                         SetControllerStatus((HIDstatus)value);
-                        break;
-                    case "DeviceWidthHeightRatio":
-                        XInputController.SetWidthHeightRatio((int)value);
                         break;
                     case "HIDrate":
                         XInputController.SetPollRate((int)value);
@@ -430,7 +461,7 @@ namespace ControllerService
             lifetime.ApplicationStopped.Register(OnStopped);
 
             // turn on cloaking
-            Hidder.SetCloaking(HIDcloaked, XInputController.Instance.ProductName);
+            Hidder.SetCloaking(HIDcloaked, XInputController.ProductName);
 
             // start DSUClient
             if (DSUEnabled) DSUServer.Start();
@@ -455,7 +486,7 @@ namespace ControllerService
         public Task StopAsync(CancellationToken cancellationToken)
         {
             // turn off cloaking
-            Hidder?.SetCloaking(!HIDuncloakonclose, XInputController.Instance.ProductName);
+            Hidder?.SetCloaking(!HIDuncloakonclose, XInputController.ProductName);
 
             // update virtual controller
             SetControllerStatus(HIDstatus.Disconnected);

@@ -49,7 +49,7 @@ namespace HandheldCompanion
         public void Start()
         {
             // start processes monitor
-            MonitorTimer = new Timer(1000) { AutoReset = true };
+            MonitorTimer = new Timer(250) { AutoReset = true };
             MonitorTimer.Elapsed += MonitorHelper;
             MonitorTimer.Start();
 

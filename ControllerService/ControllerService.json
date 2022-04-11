@@ -13,7 +13,7 @@
       {
         "Name": "File",
         "Args": {
-          "path": "Logs\\ControllerService.log",
+          "path": "logs\\ControllerService.log",
           "rollingInterval": "Day"
         }
       },

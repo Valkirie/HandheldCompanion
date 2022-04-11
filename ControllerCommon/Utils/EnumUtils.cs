@@ -7,7 +7,7 @@ namespace ControllerCommon.Utils
 {
     public static class EnumUtils
     {
-        public static string GetDescriptionFromEnumValue(System.Enum value)
+        public static string GetDescriptionFromEnumValue(Enum value)
         {
             // return localized string if available
             string key = $"Enum.{value.GetType().Name}.{value}";
@@ -17,10 +17,16 @@ namespace ControllerCommon.Utils
                 return root;
 
             // return description otherwise
-            DescriptionAttribute attribute = value.GetType()
+            DescriptionAttribute attribute = null;
+
+            try
+            {
+                attribute = value.GetType()
                 .GetField(value.ToString())
                 .GetCustomAttributes(typeof(DescriptionAttribute), false)
                 .SingleOrDefault() as DescriptionAttribute;
+            }
+            catch (Exception) { }
             return attribute == null ? value.ToString() : attribute.Description;
         }
 
