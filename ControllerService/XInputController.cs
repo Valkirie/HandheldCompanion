@@ -144,7 +144,7 @@ namespace ControllerService
 
         public double TotalMilliseconds;
         public double UpdateTimePreviousMilliseconds;
-        public double DeltaMilliseconds;
+        public double DeltaSeconds;
 
         public DS4Touch Touch;
 
@@ -236,7 +236,7 @@ namespace ControllerService
             // update timestamp
             CurrentMicroseconds = stopwatch.ElapsedMilliseconds * 1000L;
             TotalMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
-            DeltaMilliseconds = (TotalMilliseconds - UpdateTimePreviousMilliseconds) / 1000L;
+            DeltaSeconds = (TotalMilliseconds - UpdateTimePreviousMilliseconds) / 1000L;
             UpdateTimePreviousMilliseconds = TotalMilliseconds;
 
             // get current gamepad state
@@ -255,7 +255,7 @@ namespace ControllerService
                 Angle = Inclinometer.GetCurrentReading();
 
                 // update sensorFusion (todo: call only when needed ?)
-                sensorFusion.UpdateReport(TotalMilliseconds, DeltaMilliseconds, AngularVelocity, Acceleration);
+                sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
 
                 // async update client(s)
                 Task.Run(() =>
@@ -277,7 +277,7 @@ namespace ControllerService
                             AngularVelocityRad.X = -InputUtils.deg2rad(AngularRawC.X);
                             AngularVelocityRad.Y = -InputUtils.deg2rad(AngularRawC.Y);
                             AngularVelocityRad.Z = -InputUtils.deg2rad(AngularRawC.Z);
-                            madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -AccelerationRaw.X, AccelerationRaw.Y, AccelerationRaw.Z, DeltaMilliseconds);
+                            madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -AccelerationRaw.X, AccelerationRaw.Y, AccelerationRaw.Z, DeltaSeconds);
 
                             pipeServer?.SendMessage(new PipeSensor(madgwickAHRS.GetEuler(), madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
                             break;
