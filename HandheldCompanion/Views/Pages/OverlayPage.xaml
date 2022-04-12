@@ -21,7 +21,7 @@
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
                     <Border.Background>
-                        <ImageBrush ImageSource="/Resources/overlay_back.webp" Stretch="UniformToFill"/>
+                        <ImageBrush Stretch="UniformToFill" ImageSource="/Resources/overlay_back.jpg"/>
                     </Border.Background>
 
                     <Grid Height="250">
