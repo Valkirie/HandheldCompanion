@@ -124,10 +124,6 @@ namespace HandheldCompanion.Views
             logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
             // initialize notifyIcon
-            ToolStripMenuItem notifyMenuItem = new("Exit");
-            ContextMenu notifyMenu = new();
-            notifyMenu.Items.Add(notifyMenuItem);
-
             notifyIcon = new()
             {
                 Text = Name,
