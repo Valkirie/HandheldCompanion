@@ -19,6 +19,7 @@
 !/*/Resources/*/*.dll
 # Include dlls if they're in the CommonReferences directory
 !*CommonReferences/*.dll
+!/src/*.exe
 ####################
 # VS Upgrade stuff #
 ####################
