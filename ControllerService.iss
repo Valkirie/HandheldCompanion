@@ -632,7 +632,7 @@ end;
 #define UseVC2015To2019
 
 ; requires dxwebsetup.exe (see download link below)
-; #define UseDirectX
+#define UseDirectX
 
 ; requires HidHideMSI.msi
 #define UseHideHide
