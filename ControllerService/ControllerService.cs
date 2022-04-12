@@ -143,7 +143,7 @@ namespace ControllerService
                     break;
                 default:
                     handheldDevice = new DefaultDevice(ManufacturerName, ProductName);
-                    logger.LogWarning($"{ProductName} from {ManufacturerName} is not yet supported. The behavior of the application will be unpredictable.");
+                    logger.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
                     break;
             }
             Hidder.RegisterDevice(XInputController.ControllerIDs);
