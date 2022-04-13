@@ -205,9 +205,59 @@ namespace ControllerService.Targets
                                     default:
                                     case Output.RightStick:
                                         RightThumb.X = (short)GamepadThumbX;
+
                                         break;
                                     case Output.LeftStick:
                                         LeftThumb.X = (short)GamepadThumbX;
+
+                                        logger.LogInformation("Vibrate motor {0} {1}", xinputController.sensorFusion.DeviceAngle.Y, xinputController.profile.steering_max_angle);
+
+                                        // Turn right is negative angle, turn left is postive angle
+                                        // Default to 0
+                                        // TODO take existing from game in to account
+                                        // TODO take multiplier into account
+                                        Vibration inputMotor = new()
+                                        {
+                                            LeftMotorSpeed = 0,
+                                            RightMotorSpeed = 0,
+                                        };
+
+                                        if (xinputController.sensorFusion.DeviceAngle.Y > xinputController.profile.steering_max_angle)
+                                        {
+                                            inputMotor = new()
+                                            {
+                                                LeftMotorSpeed = (ushort)(ushort.MaxValue * 0.3),
+                                                RightMotorSpeed = 0,
+                                            };
+                                            logger.LogInformation("Vibrate motor left");
+
+                                        }
+
+                                        if (xinputController.sensorFusion.DeviceAngle.Y < xinputController.profile.steering_max_angle)
+                                        {
+                                            inputMotor = new()
+                                            {
+                                                LeftMotorSpeed = 0,
+                                                RightMotorSpeed = (ushort)(ushort.MaxValue * 0.3),
+                                            };
+                                            logger.LogInformation("Vibrate motor right");
+
+                                        }
+
+                                        // Within normal range
+                                        if (Math.Abs(xinputController.sensorFusion.DeviceAngle.Y) < xinputController.profile.steering_max_angle)
+                                        {
+                                            inputMotor = new()
+                                            {
+                                                LeftMotorSpeed = 0,
+                                                RightMotorSpeed = 0,
+                                            };
+                                            logger.LogInformation("No vibration, in abs max range");
+
+                                        }
+
+                                        physicalController.SetVibration(inputMotor);
+
                                         break;
                                 }
                             }
