@@ -72,6 +72,8 @@ namespace HandheldCompanion.Models
 
             // specific color(s)
             ((GeometryModel3D)MainBody.Children[0]).Material = MaterialPlasticWhite;
+            ((GeometryModel3D)LeftMotor.Children[0]).Material = MaterialPlasticWhite;
+            ((GeometryModel3D)RightMotor.Children[0]).Material = MaterialPlasticWhite;
         }
     }
 }
