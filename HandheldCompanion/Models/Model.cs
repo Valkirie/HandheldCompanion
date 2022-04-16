@@ -22,6 +22,8 @@ namespace HandheldCompanion
         public Model3DGroup MainBody;
         public Model3DGroup LeftShoulderTrigger;
         public Model3DGroup RightShoulderTrigger;
+        public Model3DGroup LeftMotor;
+        public Model3DGroup RightMotor;
 
         public Dictionary<GamepadButtonFlags, List<Model3DGroup>> ButtonMap = new();
 
@@ -51,6 +53,8 @@ namespace HandheldCompanion
             // load model(s)
             LeftThumbRing = modelImporter.Load($"models/{ModelName}/Joystick-Left-Ring.obj");
             RightThumbRing = modelImporter.Load($"models/{ModelName}/Joystick-Right-Ring.obj");
+            LeftMotor = modelImporter.Load($"models/{ModelName}/MotorLeft.obj");
+            RightMotor = modelImporter.Load($"models/{ModelName}/MotorRight.obj");
             MainBody = modelImporter.Load($"models/{ModelName}/MainBody.obj");
             LeftShoulderTrigger = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Trigger.obj");
             RightShoulderTrigger = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Trigger.obj");
@@ -83,6 +87,8 @@ namespace HandheldCompanion
             // pull model(s)
             model3DGroup.Children.Add(LeftThumbRing);
             model3DGroup.Children.Add(RightThumbRing);
+            model3DGroup.Children.Add(LeftMotor);
+            model3DGroup.Children.Add(RightMotor);
             model3DGroup.Children.Add(MainBody);
             model3DGroup.Children.Add(LeftShoulderTrigger);
             model3DGroup.Children.Add(RightShoulderTrigger);

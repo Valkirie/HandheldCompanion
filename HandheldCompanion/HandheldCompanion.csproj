@@ -161,6 +161,12 @@
     <None Update="models\AYANEO 2021\MainBodyRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="models\AYANEO 2021\MotorLeft.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="models\AYANEO 2021\MotorRight.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Models\AYANEO 2021\X.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -317,6 +323,12 @@
     <None Update="models\AYANEO NEXT\MainBody.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="models\AYANEO NEXT\MotorLeft.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="models\AYANEO NEXT\MotorRight.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="models\AYANEO NEXT\RightShoulder.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -393,6 +405,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\DS4\MainBodyBack.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="models\DS4\MotorLeft.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="models\DS4\MotorRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\DS4\Playstation-Button.obj">
@@ -498,6 +516,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\XBOX360\MainBody.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="models\XBOX360\MotorLeft.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="models\XBOX360\MotorRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\XBOX360\RightThumb.obj">
