@@ -16,8 +16,6 @@ namespace HandheldCompanion.Models
         Model3DGroup LeftShoulderMiddle;
         Model3DGroup RightShoulderMiddle;
         Model3DGroup Screen;
-        Model3DGroup MainBodyLeft;
-        Model3DGroup MainBodyRight;
         Model3DGroup JoystickLeftCover;
         Model3DGroup JoystickRightCover;
 
@@ -50,8 +48,6 @@ namespace HandheldCompanion.Models
             LeftShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Middle.obj");
             RightShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Middle.obj");
             Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
-            MainBodyLeft = modelImporter.Load($"models/{ModelName}/MainBodyLeft.obj");
-            MainBodyRight = modelImporter.Load($"models/{ModelName}/MainBodyRight.obj");
             JoystickLeftCover = modelImporter.Load($"models/{ModelName}/Joystick-Left-Cover.obj");
             JoystickRightCover = modelImporter.Load($"models/{ModelName}/Joystick-Right-Cover.obj");
 
@@ -64,8 +60,6 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(WFBWin);
             model3DGroup.Children.Add(LeftShoulderMiddle);
             model3DGroup.Children.Add(RightShoulderMiddle);
-            model3DGroup.Children.Add(MainBodyLeft);
-            model3DGroup.Children.Add(MainBodyRight);
             model3DGroup.Children.Add(JoystickLeftCover);
             model3DGroup.Children.Add(JoystickRightCover);
             model3DGroup.Children.Add(Screen);
@@ -75,8 +69,8 @@ namespace HandheldCompanion.Models
 
             // specific color(s)
             ((GeometryModel3D)MainBody.Children[0]).Material = MaterialPlasticWhite;
-            ((GeometryModel3D)MainBodyLeft.Children[0]).Material = MaterialPlasticWhite;
-            ((GeometryModel3D)MainBodyRight.Children[0]).Material = MaterialPlasticWhite;
+            ((GeometryModel3D)LeftMotor.Children[0]).Material = MaterialPlasticWhite;
+            ((GeometryModel3D)RightMotor.Children[0]).Material = MaterialPlasticWhite;
         }
     }
 }

@@ -78,6 +78,10 @@ namespace HandheldCompanion.Views.Windows
         public event TrackpadsTriggerUpdatedEventHandler TrackpadsTriggerUpdated;
         public delegate void TrackpadsTriggerUpdatedEventHandler(GamepadButtonFlags button);
 
+        // TODO Dummy variables, placeholder and for testing 
+        short MotorLeftPlaceholder;
+        short MotorRightPlaceholder;
+
         public Overlay()
         {
             InitializeComponent();
@@ -272,6 +276,21 @@ namespace HandheldCompanion.Views.Windows
                         case SensorType.Quaternion:
                             // update ModelVisual3D
                             UpdateModelVisual3D(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z, sensor.x, sensor.y, sensor.z);
+
+                            // TODO remove, for testing only!
+                            if (InputUtils.rad2deg(sensor.y) < 165.0 && InputUtils.rad2deg(sensor.y) > 0)
+                            {
+                                MotorLeftPlaceholder = (short)1;
+                            }
+                            else { MotorLeftPlaceholder = (short)0; }
+
+                            // TODO remove, for testing only!
+                            if (InputUtils.rad2deg(sensor.y) > -165.0 && InputUtils.rad2deg(sensor.y) < 0)
+                            {
+                                MotorRightPlaceholder = (short)1;
+                            }
+                            else { MotorRightPlaceholder = (short)0; }
+
                             break;
                     }
                     break;
@@ -341,6 +360,29 @@ namespace HandheldCompanion.Views.Windows
                         else
                             model.Material = CurrentModel.MaterialPlasticBlack;
                     }
+                }
+
+                // TODO update motor placeholders!
+                // Motor Left
+                model = CurrentModel.LeftMotor.Children[0] as GeometryModel3D;
+                if (MotorLeftPlaceholder > 0)
+                {
+                    model.Material = CurrentModel.MaterialHighlight;
+                }
+                else
+                {
+                    model.Material = CurrentModel.MaterialPlasticWhite;
+                }
+
+                // Motor Right
+                model = CurrentModel.RightMotor.Children[0] as GeometryModel3D;
+                if (MotorRightPlaceholder > 0)
+                {
+                    model.Material = CurrentModel.MaterialHighlight;
+                }
+                else
+                {
+                    model.Material = CurrentModel.MaterialPlasticWhite;
                 }
 
                 // ShoulderLeftTrigger
