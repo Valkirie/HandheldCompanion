@@ -671,7 +671,7 @@ namespace ControllerService
                 return;
 
             // update status
-            padMeta.IsActive = hidReport.physicalController.IsConnected;
+            padMeta.IsActive = hidReport.controllerEx.IsConnected();
 
             var clientsList = new List<IPEndPoint>();
             var now = DateTime.UtcNow;

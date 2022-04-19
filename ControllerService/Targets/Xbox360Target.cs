@@ -46,7 +46,7 @@ namespace ControllerService.Targets
 
         private new IXbox360Controller virtualController;
 
-        public Xbox360Target(XInputController xinput, ViGEmClient client, Controller controller, int index, ILogger logger) : base(xinput, client, controller, index, logger)
+        public Xbox360Target(XInputController xinput, ViGEmClient client, ILogger logger) : base(xinput, client, logger)
         {
             // initialize controller
             HID = HIDmode.Xbox360Controller;

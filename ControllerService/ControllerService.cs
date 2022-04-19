@@ -45,6 +45,7 @@ namespace ControllerService
         private string DSUip;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
         private int DSUport, HIDrate;
+        private UserIndex HIDidx;
         private double HIDstrength;
 
         private HIDmode HIDmode = HIDmode.None;
@@ -78,6 +79,7 @@ namespace ControllerService
             DSUport = Properties.Settings.Default.DSUport;
             HIDrate = Properties.Settings.Default.HIDrate;
             HIDstrength = Properties.Settings.Default.HIDstrength;
+            HIDidx = (UserIndex)Properties.Settings.Default.HIDidx;
 
             // initialize log
             logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
@@ -103,27 +105,14 @@ namespace ControllerService
             pipeServer.Disconnected += OnClientDisconnected;
             pipeServer.ClientMessage += OnClientMessage;
 
-            // prepare physical controller
-            foreach (UserIndex idx in (UserIndex[])Enum.GetValues(typeof(UserIndex)))
-            {
-                Controller controller = new Controller(idx);
-                if (!controller.IsConnected)
-                    continue;
-
-                XInputController = new XInputController(controller, idx, logger, pipeServer);
-                break;
-            }
-
-            if (XInputController == null)
-            {
-                logger.LogCritical("No physical controller detected. Application will stop");
-                throw new InvalidOperationException();
-            }
-
             // XInputController settings
+            XInputController = new XInputController(logger, pipeServer);
             XInputController.SetVibrationStrength(HIDstrength);
             XInputController.SetPollRate(HIDrate);
             XInputController.Updated += OnTargetSubmited;
+
+            // prepare physical controller
+            SetControllerIdx(HIDidx);
 
             // get the actual handheld device
             var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
@@ -146,7 +135,6 @@ namespace ControllerService
                     logger.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
                     break;
             }
-            Hidder.RegisterDevice(XInputController.ControllerIDs);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
@@ -156,6 +144,23 @@ namespace ControllerService
             // initialize Profile Manager
             profileManager = new ProfileManager(logger);
             profileManager.Updated += ProfileUpdated;
+        }
+
+        private void SetControllerIdx(UserIndex idx)
+        {
+            ControllerEx controller = new ControllerEx(idx, logger);
+            XInputController.SetController(controller); // set even if disconnected
+
+            if (!controller.IsConnected())
+            {
+                logger.LogWarning("No physical controller detected on UserIndex: {0}", idx);
+                return;
+            }
+            
+            logger.LogInformation("Listening to physical controller on UserIndex: {0}", idx);
+            controller.PullCapabilitiesEx();
+
+            Hidder.RegisterDevice(XInputController.controllerEx.DeviceIDs);
         }
 
         private void SetControllerMode(HIDmode mode)
@@ -170,10 +175,10 @@ namespace ControllerService
                     VirtualTarget = null;
                     break;
                 case HIDmode.DualShock4Controller:
-                    VirtualTarget = new DualShock4Target(XInputController, VirtualClient, XInputController.physicalController, (int)XInputController.UserIndex, logger);
+                    VirtualTarget = new DualShock4Target(XInputController, VirtualClient, logger);
                     break;
                 case HIDmode.Xbox360Controller:
-                    VirtualTarget = new Xbox360Target(XInputController, VirtualClient, XInputController.physicalController, (int)XInputController.UserIndex, logger);
+                    VirtualTarget = new Xbox360Target(XInputController, VirtualClient, logger);
                     break;
             }
 
@@ -341,9 +346,9 @@ namespace ControllerService
                 hasInclinometer = handheldDevice.hasInclinometer,
 
                 ControllerName = XInputController.ProductName,
-                ControllerVID = XInputController.XInputData.VID,
-                ControllerPID = XInputController.XInputData.PID,
-                ControllerIdx = (int)XInputController.UserIndex
+                ControllerVID = XInputController.controllerEx.GetVID(),
+                ControllerPID = XInputController.controllerEx.GetVID(),
+                ControllerIdx = (int)XInputController.controllerEx.UserIndex
             });
 
             // send server settings

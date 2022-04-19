@@ -1,6 +1,8 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
+using ModernWpf.Controls;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -34,6 +36,8 @@ namespace HandheldCompanion.Views.Pages
         private HIDmode controllerMode = HIDmode.None;
         private HIDstatus controllerStatus = HIDstatus.Disconnected;
 
+        private ControllerManager controllerManager;
+
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(HIDmode controllerMode);
 
@@ -51,6 +55,12 @@ namespace HandheldCompanion.Views.Pages
 
             this.mainWindow = mainWindow;
             this.microsoftLogger = microsoftLogger;
+
+            // initialize controller manager
+            controllerManager = new ControllerManager(microsoftLogger);
+            controllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
+            controllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
+            controllerManager.Start();
 
             this.pipeClient = mainWindow.pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
@@ -94,7 +104,27 @@ namespace HandheldCompanion.Views.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void ControllerManager_ControllerUnplugged(UserIndex idx, ControllerEx controller)
+        {
             // implement me
+            this.Dispatcher.Invoke(() =>
+            {
+                RadioControllers.Items.RemoveAt((int)idx);
+                if (RadioControllers.Items.Count == 0)
+                    InputDevices.Visibility = Visibility.Collapsed;
+            });
+        }
+
+        private void ControllerManager_ControllerPlugged(UserIndex idx, ControllerEx controller)
+        {
+            // implement me
+            this.Dispatcher.Invoke(() =>
+            {
+                RadioControllers.Items.Insert((int)idx, controller);
+                InputDevices.Visibility = Visibility.Visible;
+            });
         }
 
         private void UpdateController()
@@ -131,9 +161,11 @@ namespace HandheldCompanion.Views.Pages
                     // threaded call to update UI
                     this.Dispatcher.Invoke(() =>
                     {
+                        /*
                         DeviceName.Text = controller.ControllerName;
                         DeviceVendorID.Text = $"0{controller.ControllerVID.ToString("X2")}";
                         DeviceProductID.Text = $"0{controller.ControllerPID.ToString("X2")}";
+                        */
                     });
 
                     microsoftLogger.LogInformation("{0} connected on port {1}", controller.ControllerName, controller.ControllerIdx);
@@ -248,6 +280,23 @@ namespace HandheldCompanion.Views.Pages
         private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             MainWindow.scrollLock = false;
+        }
+
+        private void RadioControllers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (RadioControllers.SelectedIndex == -1)
+                return;
+
+            ControllerEx controllerEx = (ControllerEx)RadioControllers.SelectedItem;
+
+            if (controllerEx == null)
+                return;
+
+            if (!controllerEx.IsConnected())
+                return;
+
+            // vibrate controller
+            controllerEx.Identify();
         }
     }
 }

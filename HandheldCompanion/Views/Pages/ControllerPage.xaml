@@ -60,35 +60,17 @@
                     </Grid>
                 </Border>
 
-                <!-- Device details -->
-                <ui:SimpleStackPanel Spacing="6">
-                    <Label Content="Device details" FontWeight="SemiBold"></Label>
+                <!-- Input devices -->
+                <ui:SimpleStackPanel Spacing="6" Name="InputDevices" Visibility="Collapsed">
+                    <Label Content="Input devices" FontWeight="SemiBold"></Label>
                     <Border
                         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
 
-                        <ui:SimpleStackPanel Spacing="10">
-                            <TextBox
-                                ui:ControlHelper.Header="Name"
-                                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                                Name = "DeviceName"
-                                Text=""
-                                IsReadOnly="True" />
-                            <TextBox
-                                ui:ControlHelper.Header="Vendor ID"
-                                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                                Name = "DeviceVendorID"
-                                Text=""
-                                IsReadOnly="True" />
-                            <TextBox
-                                ui:ControlHelper.Header="Product ID"
-                                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                                Name = "DeviceProductID"
-                                Text=""
-                                IsReadOnly="True" />
-                        </ui:SimpleStackPanel>
+                        <ui:RadioButtons Name="RadioControllers" SelectionChanged="RadioControllers_SelectionChanged">
+                        </ui:RadioButtons>
                     </Border>
                 </ui:SimpleStackPanel>
 

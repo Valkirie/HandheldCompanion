@@ -48,8 +48,6 @@ namespace ControllerService.Targets
 
         protected double vibrationStrength;
 
-        protected int UserIndex;
-
         protected Vector2 LeftThumb;
         protected Vector2 RightThumb;
 
@@ -61,10 +59,9 @@ namespace ControllerService.Targets
 
         protected bool IsConnected;
 
-        protected ViGEmTarget(XInputController xinput, ViGEmClient client, Controller controller, int index, ILogger logger)
+        protected ViGEmTarget(XInputController xinput, ViGEmClient client, ILogger logger)
         {
             this.logger = logger;
-            this.xinputController = xinput;
 
             // initialize flick stick
             flickStick = new FlickStick(logger);
@@ -74,7 +71,8 @@ namespace ControllerService.Targets
 
             // initialize controller
             this.client = client;
-            this.physicalController = controller;
+            this.xinputController = xinput;
+            this.physicalController = xinput.controllerEx.Controller;
         }
 
         protected void FeedbackReceived(object sender, EventArgs e)
@@ -110,7 +108,7 @@ namespace ControllerService.Targets
         public virtual unsafe void UpdateReport(Gamepad Gamepad)
         {
             // get current gamepad state
-            XInputGetStateSecret13(UserIndex, out state_s);
+            XInputGetStateSecret13((int)physicalController.UserIndex, out state_s);
 
             // get buttons values
             GamepadButtonFlagsExt buttons = (GamepadButtonFlagsExt)Gamepad.Buttons;

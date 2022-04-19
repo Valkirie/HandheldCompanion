@@ -48,7 +48,7 @@ namespace ControllerService.Targets
 
         private new IDualShock4Controller virtualController;
 
-        public DualShock4Target(XInputController xinput, ViGEmClient client, Controller controller, int index, ILogger logger) : base(xinput, client, controller, index, logger)
+        public DualShock4Target(XInputController xinput, ViGEmClient client, ILogger logger) : base(xinput, client, logger)
         {
             // initialize controller
             HID = HIDmode.DualShock4Controller;
