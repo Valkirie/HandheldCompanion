@@ -24,7 +24,7 @@
                 <!-- Controller -->
                 <Border
                     Height="300"
-                    Padding="0,12,12,12"
+                    Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
@@ -38,24 +38,27 @@
                                 <Button Name="B_ServiceSwitch" Content="Connect" Width="Auto" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" Click="B_ServiceSwitch_Click"/>
                                 <ComboBox Name="cB_HidMode" Width="Auto" SelectionChanged="cB_HidMode_SelectionChanged" BorderThickness="0"/>
                             </ui:SimpleStackPanel>
+                            
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="60"></ColumnDefinition>
-                                    <ColumnDefinition Width="3.5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="40" MinWidth="40"></ColumnDefinition>
-                                    <ColumnDefinition Width="6*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE877;" Grid.Column="0" HorizontalAlignment="Center"/>
+                                <DockPanel>
+                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE877;" Height="40" HorizontalAlignment="Center"/>
 
-                                <ui:SimpleStackPanel Grid.Column="1">
-                                    <TextBlock Text="Vibration strength" FontSize="14"/>
-                                    <TextBlock Text="Change controller vibration strength" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                </ui:SimpleStackPanel>
+                                    <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                        <TextBlock Text="Vibration strength" FontSize="14"/>
+                                        <TextBlock Text="Change controller vibration strength" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    </ui:SimpleStackPanel>
+                                </DockPanel>
 
-                                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderStrength, Mode=OneWay}" />
-                                <Slider Name="SliderStrength" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" Minimum="0" SmallChange="5" TickFrequency="5" Value="50" TickPlacement="BottomRight" ValueChanged="SliderStrength_ValueChanged" IsSnapToTickEnabled="True" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
-                            </Grid>
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderStrength, Mode=OneWay}" />
+                                    <Slider Margin="6,0,0,0" Name="SliderStrength" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" Minimum="0" SmallChange="5" TickFrequency="5" Value="50" TickPlacement="BottomRight" ValueChanged="SliderStrength_ValueChanged" IsSnapToTickEnabled="True" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
+                                </DockPanel>
+                                </Grid>
                         </ui:SimpleStackPanel>
                     </Grid>
                 </Border>
@@ -80,49 +83,51 @@
 
                     <!-- Cloak device -->
                     <Border                      
-                        Padding="0,12,12,12"
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="60"></ColumnDefinition>
-                                <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                                <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE793;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                            <DockPanel>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE793;" Height="40" HorizontalAlignment="Center"/>
 
-                            <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="Cloak device" FontSize="14"/>
-                                <TextBlock Text="Change the physical controller visibility to other applications" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
+                                <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <TextBlock Text="Cloak device" FontSize="14"/>
+                                    <TextBlock Text="Change the physical controller visibility to other applications" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
 
-                            <ui:ToggleSwitch Name="Toggle_Cloaked" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Cloaked_Toggled"/>
+                            <ui:ToggleSwitch Name="Toggle_Cloaked" Grid.Column="1" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Cloaked_Toggled"/>
                         </Grid>
                     </Border>
 
                     <!-- Uncloak on close -->
                     <Border  
-                        Padding="0,12,12,12"
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="60"></ColumnDefinition>
-                                <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                                <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7B3;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                            <DockPanel>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7B3;" Height="40" HorizontalAlignment="Center"/>
 
-                            <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="Uncloak on close" FontSize="14"/>
-                                <TextBlock Text="Restore visibility of the physical controller to other applications on service exit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
+                                <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <TextBlock Text="Uncloak on close" FontSize="14"/>
+                                    <TextBlock Text="Restore visibility of the physical controller to other applications on service exit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
 
-                            <ui:ToggleSwitch Name="Toggle_Uncloak" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Uncloak_Toggled"/>
+                            <ui:ToggleSwitch Name="Toggle_Uncloak" Grid.Column="1" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Uncloak_Toggled"/>
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>

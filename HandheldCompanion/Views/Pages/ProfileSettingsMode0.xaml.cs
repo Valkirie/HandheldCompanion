@@ -219,8 +219,6 @@ namespace HandheldCompanion.Views.Pages
             if (profileCurrent == null)
                 return;
 
-            Expander_FlickStick.IsExpanded = Toggle_FlickStick.IsOn;
-
             profileCurrent.flickstick_enabled = (bool)Toggle_FlickStick.IsOn;
         }
 

@@ -426,7 +426,6 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !profileCurrent.IsDefault;
-            Expander_UMC.IsExpanded = Toggle_UniversalMotion.IsOn;
         }
 
         private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)

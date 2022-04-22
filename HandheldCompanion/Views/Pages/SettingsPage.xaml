@@ -24,7 +24,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Column="0">
-                    <ui:FontIcon FontSize="80" FontFamily="{DynamicResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}" Glyph="&#xECC5;" Grid.Column="0" HorizontalAlignment="Center"/>
+                    <ui:FontIcon FontSize="80" FontFamily="{DynamicResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}" Glyph="&#xECC5;" HorizontalAlignment="Center"/>
                     <Grid Name="GridUpdateSymbol" Visibility="Collapsed">
                         <ui:FontIcon FontSize="30" FontFamily="{DynamicResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemAccentColorLight2Brush}" Glyph="&#xE91F;" Margin="50,50,0,0"/>
                         <ui:FontIcon FontSize="20" FontFamily="{DynamicResource SymbolThemeFontFamily}" Foreground="White" Glyph="&#xE73E;" Margin="50,50,0,0"/>
@@ -54,7 +54,7 @@
                         <ColumnDefinition MinWidth="120"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Name="LabelUpdateName" Text="Handheld Companion (Version 0.9.2.0)" FontSize="14" Grid.Column="0" VerticalAlignment="Center"/>
+                    <TextBlock Name="LabelUpdateName" Text="Handheld Companion (Version 0.9.2.0)" FontSize="14" VerticalAlignment="Center"/>
                     <TextBlock Name="LabelUpdatePercentage" Text="Downloading - 100%" Grid.Column="1" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     <Button Visibility="Hidden" Name="ButtonInstall" Content="Install now" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Click="B_InstallUpdate_Click"/>
                 </Grid>
@@ -77,7 +77,7 @@
                             <ColumnDefinition MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xED35;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xED35;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="Auto-start application" FontSize="14"/>
@@ -101,7 +101,7 @@
                             <ColumnDefinition MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEE40;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEE40;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="Open application in background" FontSize="14"/>
@@ -125,7 +125,7 @@
                             <ColumnDefinition MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE921;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE921;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="Close minimizes" FontSize="14"/>
@@ -149,7 +149,7 @@
                             <ColumnDefinition MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="Application theme" FontSize="14"/>
@@ -183,7 +183,7 @@
                             <ColumnDefinition MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7E7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7E7;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="Toast notification" FontSize="14"/>
@@ -212,7 +212,7 @@
                             <ColumnDefinition MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="Startup type" FontSize="14"/>
@@ -238,7 +238,7 @@
                             <ColumnDefinition MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEDB5;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEDB5;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="Start with Companion" FontSize="14"/>
@@ -264,7 +264,7 @@
                             <ColumnDefinition MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE71A;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE71A;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="Halt with Companion" FontSize="14"/>

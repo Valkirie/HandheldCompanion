@@ -82,7 +82,7 @@
                                     <ColumnDefinition MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" HorizontalAlignment="Center"/>
 
                                 <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                     <TextBlock Text="Sensor specifications" FontSize="14"/>
@@ -103,7 +103,7 @@
                                         <ColumnDefinition MinWidth="200"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
-                                    <ui:SimpleStackPanel Grid.Column="0" Spacing="12">
+                                    <ui:SimpleStackPanel Spacing="12">
                                         <TextBlock Text="Sensor name" FontSize="14"/>
                                         <TextBlock Text="Gyrometer" FontSize="14"/>
                                         <TextBlock Text="Accelerometer" FontSize="14"/>
@@ -141,7 +141,7 @@
                                     <ColumnDefinition MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE74C;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE74C;" Height="40" HorizontalAlignment="Center"/>
 
                                 <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
                                     <TextBlock Text="Service" FontSize="14"/>
@@ -162,7 +162,7 @@
                                         <ColumnDefinition MinWidth="200"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
-                                    <ui:SimpleStackPanel Grid.Column="0" Spacing="12">
+                                    <ui:SimpleStackPanel Spacing="12">
                                         <TextBlock Text="Version" FontSize="14"/>
                                         <TextBlock Text="Author" FontSize="14"/>
                                         <TextBlock Text="Contributors" FontSize="14"/>
