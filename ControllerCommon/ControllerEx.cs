@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using static ControllerCommon.Utils.DeviceUtils;
 using System.Timers;
+using Windows.Devices.Usb;
+using Nefarius.Utilities.DeviceManagement.PnP;
+using System.Diagnostics;
 
 namespace ControllerCommon
 {
@@ -17,16 +20,26 @@ namespace ControllerCommon
         private ILogger logger;
 
         public Controller Controller;
-        public string ControllerName;
+        public string Manufacturer, DeviceDesc;
         public UserIndex UserIndex;
 
         private XInputCapabilitiesEx CapabilitiesEx;
-        public List<string> DeviceIDs = new();
+
+        public bool isVirtual;
+        public string ProductId, VendorId, XID;
+
+        public string deviceInstancePath;
+        public string baseContainerDeviceInstancePath;
 
         private Vibration IdentifyVibration = new Vibration() { LeftMotorSpeed = ushort.MaxValue, RightMotorSpeed = ushort.MaxValue };
         private Timer IdentifyTimer;
 
-        public ControllerEx(UserIndex index, ILogger logger = null)
+        [DllImport("hid.dll", EntryPoint = "HidD_GetHidGuid")]
+        static internal extern void HidD_GetHidGuidMethod(out Guid hidGuid);
+
+        private readonly Guid hidClassInterfaceGuid;
+
+        public ControllerEx(UserIndex index, ILogger logger)
         {
             this.logger = logger;
 
@@ -36,41 +49,67 @@ namespace ControllerCommon
             // initialize timers
             IdentifyTimer = new Timer(200) { AutoReset= false };
             IdentifyTimer.Elapsed += IdentifyTimer_Tick;
-        }
 
-        public void PullCapabilitiesEx()
-        {
             // pull data from xinput
             CapabilitiesEx = new XInputCapabilitiesEx();
 
-            if (XInputGetCapabilitiesEx(1, (int)UserIndex, 0, ref CapabilitiesEx) != 0)
-                logger?.LogWarning($"Failed to retrive XInputData on UserIndex:{0}", UserIndex);
-            else
+            if (XInputGetCapabilitiesEx(1, (int)UserIndex, 0, ref CapabilitiesEx) == 0)
             {
-                // initialize ID(s)
-                string query = $"SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE \"%VID_0{CapabilitiesEx.VID.ToString("X2")}&PID_0{CapabilitiesEx.PID.ToString("X2")}%\"";
-                var moSearch = new ManagementObjectSearcher(query);
-                var moCollection = moSearch.Get();
+                ProductId = CapabilitiesEx.ProductId.ToString("X4");
+                VendorId = CapabilitiesEx.VendorId.ToString("X4");
+            }
+        }
 
-                Dictionary<string, string> DeviceDetails = new();
-                foreach (ManagementObject mo in moCollection)
+        public ControllerEx(UserIndex index, ILogger logger, ref List<PnPDevice> devices) : this(index, logger)
+        {
+            if (ProductId is null || VendorId is null)
+                return;
+
+            for (int i = 0; i < devices.Count; i++)
+            {
+                PnPDevice device = devices[i];
+
+                if (!device.DeviceId.Contains($"PID_{ProductId}", StringComparison.OrdinalIgnoreCase) || !device.DeviceId.Contains($"VID_{VendorId}", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                // update HID
+                deviceInstancePath = device.DeviceId;
+
+                while (device is not null && device.DeviceId.Contains($"VID_{VendorId}"))
                 {
-                    string DeviceID = (string)mo.Properties["DeviceID"].Value;
-                    string DeviceName = (string)mo.Properties["Description"].Value;
-                    DeviceDetails.Add(DeviceID, DeviceName);
+                    // update device details
+                    DeviceDesc = device.GetProperty<string>(DevicePropertyDevice.DeviceDesc);
+                    Manufacturer = device.GetProperty<string>(DevicePropertyDevice.Manufacturer);
 
-                    if (DeviceID != null && !DeviceIDs.Contains(DeviceID))
-                        DeviceIDs.Add(DeviceID);
+                    baseContainerDeviceInstancePath = device.DeviceId;
+                    devices.Remove(device);
+
+                    var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+
+                    if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
+                        return;
+
+                    if (parentId.Contains(@"USB\ROOT", StringComparison.OrdinalIgnoreCase))
+                        return;
+
+                    if (parentId.Contains(@"HID\", StringComparison.OrdinalIgnoreCase))
+                        return;
+
+                    if (parentId.StartsWith(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase) ||
+                        parentId.StartsWith(@"ROOT\USB", StringComparison.OrdinalIgnoreCase))
+                    {
+                        isVirtual = true;
+                        return;
+                    }
+
+                    device = PnPDevice.GetDeviceByInstanceId(parentId, false ? DeviceLocationFlags.Phantom : DeviceLocationFlags.Normal);
                 }
-
-                // shorter key should contain true device name
-                ControllerName = DeviceDetails.OrderBy(x => x.Key.Length).FirstOrDefault().Value;
             }
         }
 
         public override string ToString()
         {
-            return ControllerName;
+            return DeviceDesc;
         }
 
         public State GetState()
@@ -85,12 +124,12 @@ namespace ControllerCommon
 
         public ushort GetPID()
         {
-            return CapabilitiesEx.PID;
+            return CapabilitiesEx.ProductId;
         }
 
         public ushort GetVID()
         {
-            return CapabilitiesEx.VID;
+            return CapabilitiesEx.VendorId;
         }
 
         public void Identify()

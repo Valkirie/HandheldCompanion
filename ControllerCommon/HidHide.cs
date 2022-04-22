@@ -118,8 +118,9 @@ namespace ControllerCommon
             logger.LogInformation("{0} cloak status set to {1}", ProductName, status);
         }
 
-        private void RegisterController(string deviceInstancePath)
+        public void RegisterController(string deviceInstancePath)
         {
+            logger.LogInformation("HideDevice hiding DeviceID: {0}", deviceInstancePath);
             process.StartInfo.Arguments = $"--dev-hide \"{deviceInstancePath}\"";
             process.Start();
             process.WaitForExit();
@@ -132,15 +133,6 @@ namespace ControllerCommon
             process.Start();
             process.WaitForExit();
             process.StandardOutput.ReadToEnd();
-        }
-
-        public void RegisterDevice(List<string> ControllerIDs)
-        {
-            foreach (string ControllerID in ControllerIDs)
-            {
-                RegisterController(ControllerID);
-                logger.LogInformation("HideDevice hiding DeviceID: {0}", ControllerID);
-            }
         }
     }
 }

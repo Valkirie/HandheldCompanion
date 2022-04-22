@@ -77,13 +77,15 @@ namespace ControllerCommon.Utils
         {
             public XInputCapabilities Capabilities;
             [MarshalAs(UnmanagedType.U2)]
-            public UInt16 VID;
+            public ushort VendorId;
             [MarshalAs(UnmanagedType.U2)]
-            public UInt16 PID;
+            public ushort ProductId;
             [MarshalAs(UnmanagedType.U2)]
-            public UInt16 REV;
+            public ushort VersionNumber;
+            [MarshalAs(UnmanagedType.U2)]
+            public ushort unk1;
             [MarshalAs(UnmanagedType.U4)]
-            public UInt32 XID;
+            public uint unk2;
         };
 
         [DllImport("xinput1_4.dll", EntryPoint = "#108")]

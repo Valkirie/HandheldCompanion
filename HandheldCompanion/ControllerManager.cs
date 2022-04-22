@@ -1,11 +1,13 @@
 ﻿using ControllerCommon;
 using Microsoft.Extensions.Logging;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -14,6 +16,11 @@ namespace HandheldCompanion
 {
     public class ControllerManager
     {
+        #region import
+        [DllImport("hid.dll", EntryPoint = "HidD_GetHidGuid")]
+        static internal extern void HidD_GetHidGuidMethod(out Guid hidGuid);
+        #endregion
+
         private ILogger logger;
 
         private ManagementEventWatcher insertWatcher;
@@ -21,7 +28,10 @@ namespace HandheldCompanion
         private Timer watcherTimer;
 
         private Dictionary<UserIndex, ControllerEx> controllers;
-        private Dictionary<UserIndex, bool> controllersStatus;
+        private List<bool> controllersStatus;
+
+        private readonly Guid hidClassInterfaceGuid;
+        private List<PnPDevice> devices = new();
 
         public event ControllerPluggedEventHandler ControllerPlugged;
         public delegate void ControllerPluggedEventHandler(UserIndex idx, ControllerEx controller);
@@ -33,11 +43,15 @@ namespace HandheldCompanion
         {
             this.logger = logger;
             this.controllers = new();
-            this.controllersStatus = new();
+            this.controllersStatus = new() { false, false, false, false };
 
             // initialize timers
             watcherTimer = new Timer(1000) { AutoReset = false };
             watcherTimer.Elapsed += WatcherTimer_Tick;
+
+            // initialize hid
+            HidD_GetHidGuidMethod(out var interfaceGuid);
+            hidClassInterfaceGuid = interfaceGuid;
         }
 
         public ControllerEx ElementAt(UserIndex idx)
@@ -55,56 +69,46 @@ namespace HandheldCompanion
             removeWatcher.EventArrived += new EventArrivedEventHandler(DeviceEvent);
             removeWatcher.Start();
 
-            foreach (UserIndex idx in (UserIndex[])Enum.GetValues(typeof(UserIndex)))
-            {
-                if (idx == UserIndex.Any)
-                    break;
-
-                ControllerEx controllerEx = new ControllerEx(idx);
-                controllers[idx] = controllerEx;
-                controllersStatus[idx] = controllers[idx].IsConnected();
-
-                if (controllerEx.IsConnected())
-                {
-                    controllerEx.PullCapabilitiesEx();
-                    ControllerPlugged?.Invoke(idx, controllerEx);
-                }
-            }
+            WatcherTimer_Tick(null, null);
         }
 
         private void WatcherTimer_Tick(object? sender, EventArgs e)
         {
-            foreach (UserIndex idx in (UserIndex[])Enum.GetValues(typeof(UserIndex)))
+            // refresh devices
+            int deviceIndex = 0;
+            devices.Clear();
+
+            while (Devcon.Find(hidClassInterfaceGuid, out var path, out var instanceId, deviceIndex++))
+                devices.Add(PnPDevice.GetDeviceByInterfaceId(path));
+            
+            for(int idx = 0; idx < 4; idx++)
             {
-                if (idx == UserIndex.Any)
-                    break;
+                UserIndex userIndex = (UserIndex)idx;
+                ControllerEx controllerEx = new ControllerEx(userIndex, null, ref devices);
 
-                Controller controller = new Controller(idx);
-                ControllerEx controllerEx = controllers[idx];
-                bool WasConnected = controllersStatus[idx];
-
-                if (controllerEx.IsConnected())
-                {
-                    if (WasConnected)
-                    {
-                        // do nothing
-                    }
-                    else
-                    {
-                        // controller was plugged
-                        controllerEx.PullCapabilitiesEx();
-                        ControllerPlugged?.Invoke(idx, controllerEx);
-                    }
-                }
-                else if (WasConnected)
-                {
-                    // controller was unplugged
-                    ControllerUnplugged?.Invoke(idx, controllerEx);
-                }
+                bool isConnected = controllerEx.IsConnected();
+                bool wasConnected = controllersStatus[idx];
 
                 // update status
-                controllers[idx] = new ControllerEx(idx);
-                controllersStatus[idx] = controllers[idx].IsConnected();
+                controllers[userIndex] = controllerEx;
+                controllersStatus[idx] = controllers[userIndex].IsConnected();
+
+                if (controllerEx.isVirtual)
+                    return;
+
+                if (isConnected)
+                {
+                    if (!wasConnected)
+                    {
+                        // controller was plugged
+                        ControllerPlugged?.Invoke(userIndex, controllerEx);
+                    }
+                }
+                else if (wasConnected)
+                {
+                    // controller was unplugged
+                    ControllerUnplugged?.Invoke(userIndex, controllerEx);
+                }
             }
         }
 

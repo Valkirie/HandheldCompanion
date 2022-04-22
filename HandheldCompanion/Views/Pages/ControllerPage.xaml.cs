@@ -111,7 +111,16 @@ namespace HandheldCompanion.Views.Pages
             // implement me
             this.Dispatcher.Invoke(() =>
             {
-                RadioControllers.Items.RemoveAt((int)idx);
+                ControllerEx removeme = null;
+                foreach (ControllerEx ctrl in RadioControllers.Items)
+                {
+                    if (ctrl.Controller.UserIndex == idx)
+                        removeme = ctrl;
+                }
+
+                if(removeme != null)
+                    RadioControllers.Items.Remove(removeme);
+
                 if (RadioControllers.Items.Count == 0)
                     InputDevices.Visibility = Visibility.Collapsed;
             });
@@ -122,7 +131,7 @@ namespace HandheldCompanion.Views.Pages
             // implement me
             this.Dispatcher.Invoke(() =>
             {
-                RadioControllers.Items.Insert((int)idx, controller);
+                RadioControllers.Items.Add(controller);
                 InputDevices.Visibility = Visibility.Visible;
             });
         }

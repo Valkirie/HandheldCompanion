@@ -158,9 +158,11 @@ namespace ControllerService
             }
             
             logger.LogInformation("Listening to physical controller on UserIndex: {0}", idx);
-            controller.PullCapabilitiesEx();
 
-            Hidder.RegisterDevice(XInputController.controllerEx.DeviceIDs);
+            // move me to UI ?
+            // we need to unhide all unselected controllers
+            Hidder.RegisterController(XInputController.controllerEx.deviceInstancePath);
+            Hidder.RegisterController(XInputController.controllerEx.baseContainerDeviceInstancePath);
         }
 
         private void SetControllerMode(HIDmode mode)
