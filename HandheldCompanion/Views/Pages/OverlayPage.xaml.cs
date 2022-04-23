@@ -2,24 +2,11 @@
 using HandheldCompanion.Views.Windows;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
-using SharpDX.XInput;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static HandheldCompanion.Views.Windows.Overlay;
-using Page = System.Windows.Controls.Page;
 using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
+using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -92,7 +79,7 @@ namespace HandheldCompanion.Views.Pages
                     button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
             }
 
-            switch(trackpadsAlignment)
+            switch (trackpadsAlignment)
             {
                 case 0:
                     overlay.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Top;
@@ -192,7 +179,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void OverlayTrigger_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            switch(OverlayTrigger.SelectedIndex)
+            switch (OverlayTrigger.SelectedIndex)
             {
                 case 0: // start
                     overlay.mainTrigger = GamepadButtonFlags.Start;

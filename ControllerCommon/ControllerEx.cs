@@ -1,17 +1,11 @@
-﻿using SharpDX.XInput;
+﻿using Microsoft.Extensions.Logging;
+using Nefarius.Utilities.DeviceManagement.PnP;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Management;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using static ControllerCommon.Utils.DeviceUtils;
 using System.Timers;
-using Windows.Devices.Usb;
-using Nefarius.Utilities.DeviceManagement.PnP;
-using System.Diagnostics;
+using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerCommon
 {
@@ -47,7 +41,7 @@ namespace ControllerCommon
             this.UserIndex = index;
 
             // initialize timers
-            IdentifyTimer = new Timer(200) { AutoReset= false };
+            IdentifyTimer = new Timer(200) { AutoReset = false };
             IdentifyTimer.Elapsed += IdentifyTimer_Tick;
 
             // pull data from xinput

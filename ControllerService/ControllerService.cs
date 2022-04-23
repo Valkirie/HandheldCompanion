@@ -165,7 +165,7 @@ namespace ControllerService
                 logger.LogWarning("No physical controller detected on UserIndex: {0}", idx);
                 return;
             }
-            
+
             logger.LogInformation("Listening to physical controller on UserIndex: {0}", idx);
 
             // clear previous values

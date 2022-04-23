@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Timers;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Media3D;
@@ -146,7 +145,7 @@ namespace HandheldCompanion.Views.Windows
 
             }
 
-            ModelViewPort.ZoomExtents(); 
+            ModelViewPort.ZoomExtents();
         }
 
         private void Overlay_SourceInitialized(object? sender, EventArgs e)

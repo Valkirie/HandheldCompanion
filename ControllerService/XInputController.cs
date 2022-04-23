@@ -3,14 +3,10 @@ using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
-using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Management;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace ControllerService

@@ -4,12 +4,8 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace HandheldCompanion
@@ -80,8 +76,8 @@ namespace HandheldCompanion
 
             while (Devcon.Find(hidClassInterfaceGuid, out var path, out var instanceId, deviceIndex++))
                 devices.Add(PnPDevice.GetDeviceByInterfaceId(path));
-            
-            for(int idx = 0; idx < 4; idx++)
+
+            for (int idx = 0; idx < 4; idx++)
             {
                 UserIndex userIndex = (UserIndex)idx;
                 ControllerEx controllerEx = new ControllerEx(userIndex, null, ref devices);

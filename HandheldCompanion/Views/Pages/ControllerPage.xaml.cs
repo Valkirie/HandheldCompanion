@@ -1,7 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
-using ModernWpf.Controls;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -122,7 +121,7 @@ namespace HandheldCompanion.Views.Pages
                         removeme = ctrl;
                 }
 
-                if(removeme != null)
+                if (removeme != null)
                     RadioControllers.Items.Remove(removeme);
 
                 if (RadioControllers.Items.Count == 0)

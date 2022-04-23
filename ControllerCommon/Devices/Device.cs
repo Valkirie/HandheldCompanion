@@ -1,9 +1,4 @@
 ﻿using ControllerCommon.Utils;
-using HidSharp;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management;
-using System.Runtime.InteropServices;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.DeviceUtils;
 

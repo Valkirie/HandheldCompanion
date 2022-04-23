@@ -1,5 +1,4 @@
-﻿using ControllerCommon.Devices;
-using ControllerCommon.Utils;
+﻿using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

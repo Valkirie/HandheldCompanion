@@ -1,5 +1,4 @@
 using ControllerCommon;
-using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using HandheldCompanion.Models;
 using HandheldCompanion.Views.Pages;
@@ -17,7 +16,6 @@ using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
