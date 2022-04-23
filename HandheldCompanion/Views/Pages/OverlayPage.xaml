@@ -72,12 +72,12 @@
                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <ui:RadioButtons Name="OverlayTrigger" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="OverlayTrigger_SelectionChanged">
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <ui:FontIcon Glyph="&#xEDE3;"/>
-                                    <Label>Start</Label>
-                                </ui:SimpleStackPanel>
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <ui:FontIcon Glyph="&#xEECA;"/>
                                     <Label>Back</Label>
+                                </ui:SimpleStackPanel>
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="&#xEDE3;"/>
+                                    <Label>Start</Label>
                                 </ui:SimpleStackPanel>
                             </ui:RadioButtons>
                         </DockPanel>
