@@ -102,7 +102,7 @@
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 
-                            <ui:ToggleSwitch Name="Toggle_Cloaked" Grid.Column="1" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Cloaked_Toggled"/>
+                            <ui:ToggleSwitch Name="Toggle_Cloaked" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_Cloaked_Toggled"/>
                         </Grid>
                     </Border>
 
@@ -127,7 +127,7 @@
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 
-                            <ui:ToggleSwitch Name="Toggle_Uncloak" Grid.Column="1" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Uncloak_Toggled"/>
+                            <ui:ToggleSwitch Name="Toggle_Uncloak" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_Uncloak_Toggled"/>
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>

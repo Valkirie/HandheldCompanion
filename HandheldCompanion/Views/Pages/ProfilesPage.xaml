@@ -42,7 +42,7 @@
                             <ui:SimpleStackPanel Grid.Column="1" Margin="12,0,0,0" Spacing="6">
                                 <ComboBox SelectionChanged="cB_Profiles_SelectionChanged" Name="cB_Profiles" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="0"/>
                                 <!-- Create new profile -->
-                                <Button Click="b_CreateProfile_Click" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}">
+                                <Button Click="b_CreateProfile_Click">
                                     <ui:SimpleStackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="12">
                                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8E5;" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         <TextBlock Text="Create a new profile" FontSize="14" VerticalAlignment="Center"/>
@@ -129,7 +129,7 @@
 
                             <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="2">
                                 <ui:AppBarButton Click="b_DeleteProfile_Click" Name="b_DeleteProfile" Label="Delete profile" Icon="Delete" Width="Auto" IsEnabled="False"/>
-                                <ui:AppBarButton Foreground="{DynamicResource SystemControlBackgroundAccentBrush}" Click="b_ApplyProfile_Click" Name="b_ApplyProfile" Label="Update profile" Icon="Save" Width="Auto" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100" IsEnabled="False"/>
+                                <ui:AppBarButton Click="b_ApplyProfile_Click" Name="b_ApplyProfile" Label="Update profile" Icon="Save" Width="Auto" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100" IsEnabled="False"/>
                             </ui:SimpleStackPanel>
                         </ui:SimpleStackPanel>
                     </Border>
@@ -154,8 +154,8 @@
                                     <TextBlock Text="The profile will be automatically applied when the associated application is detected" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </ui:SimpleStackPanel>
                             </DockPanel>
-                            
-                            <ui:ToggleSwitch Grid.Column="1" Name="Toggle_EnableProfile" FlowDirection="RightToLeft" HorizontalAlignment="Stretch" Toggled="Toggle_EnableProfile_Toggled"/>                           
+
+                            <ui:ToggleSwitch Grid.Column="1" Name="Toggle_EnableProfile" Width="40" HorizontalAlignment="Right" Toggled="Toggle_EnableProfile_Toggled"/>                           
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>
@@ -314,7 +314,7 @@
                                         <TextBlock Text="Lorem ipsum" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </ui:SimpleStackPanel>
 
-                                    <ui:ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" Name="Toggle_UniversalMotion" Toggled="Toggle_UniversalMotion_Toggled"/>
+                                    <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="Toggle_UniversalMotion" Toggled="Toggle_UniversalMotion_Toggled"/>
                                 </Grid>
 
                                 <!-- Separator -->

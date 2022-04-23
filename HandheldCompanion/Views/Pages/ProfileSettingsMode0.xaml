@@ -74,7 +74,7 @@
                                     <TextBlock Text="Lorem ipsum" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </ui:SimpleStackPanel>
 
-                                <ui:ToggleSwitch Grid.Column="1" DockPanel.Dock="Right" HorizontalAlignment="Right" Name="Toggle_FlickStick" Toggled="Toggle_FlickStick_Toggled"/>
+                                <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="Toggle_FlickStick" Toggled="Toggle_FlickStick_Toggled"/>
                             </Grid>
 
                             <!-- Separator -->

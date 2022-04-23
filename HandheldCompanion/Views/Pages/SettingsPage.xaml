@@ -84,8 +84,8 @@
                                 <TextBlock Text="The application will start automatically when I sign in to Windows" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
-                        
-                        <ui:ToggleSwitch Name="Toggle_AutoStart" Grid.Column="1" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_AutoStart_Toggled"/>
+
+                        <ui:ToggleSwitch Name="Toggle_AutoStart" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_AutoStart_Toggled"/>
                     </Grid>
                 </Border>
 
@@ -110,7 +110,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_Background" Grid.Column="1" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Background_Toggled"/>
+                        <ui:ToggleSwitch Name="Toggle_Background" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_Background_Toggled"/>
                     </Grid>
                 </Border>
 
@@ -135,7 +135,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_CloseMinimizes" Grid.Column="1" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_CloseMinimizes_Toggled"/>
+                        <ui:ToggleSwitch Name="Toggle_CloseMinimizes" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_CloseMinimizes_Toggled"/>
                     </Grid>
                 </Border>
 
@@ -195,7 +195,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_Notification" Grid.Column="1" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Notification_Toggled"/>
+                        <ui:ToggleSwitch Name="Toggle_Notification" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_Notification_Toggled"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
@@ -252,7 +252,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_ServiceStartup" Grid.Column="1" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_ServiceStartup_Toggled" IsEnabled="False">
+                        <ui:ToggleSwitch Name="Toggle_ServiceStartup" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceStartup_Toggled" IsEnabled="False">
 
                         </ui:ToggleSwitch>
                     </Grid>
@@ -279,7 +279,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_ServiceShutdown" Grid.Column="1" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_ServiceShutdown_Toggled" IsEnabled="False"/>
+                        <ui:ToggleSwitch Name="Toggle_ServiceShutdown" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceShutdown_Toggled" IsEnabled="False"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
