@@ -84,7 +84,7 @@ namespace ControllerService
             DSUip = configuration.AppSettings.Settings["DSUip"].Value; // Properties.Settings.Default.DSUip;
             DSUport = int.Parse(configuration.AppSettings.Settings["DSUport"].Value); // Properties.Settings.Default.DSUport;
             HIDrate = int.Parse(configuration.AppSettings.Settings["HIDrate"].Value); // Properties.Settings.Default.HIDrate;
-            HIDstrength = int.Parse(configuration.AppSettings.Settings["HIDstrength"].Value); // Properties.Settings.Default.HIDstrength;
+            HIDstrength = double.Parse(configuration.AppSettings.Settings["HIDstrength"].Value); // Properties.Settings.Default.HIDstrength;
 
             HIDidx = Enum.Parse<UserIndex>(configuration.AppSettings.Settings["HIDidx"].Value); // Properties.Settings.Default.HIDidx;
             deviceInstancePath = configuration.AppSettings.Settings["deviceInstancePath"].Value; // Properties.Settings.Default.deviceInstancePath;
@@ -410,41 +410,68 @@ namespace ControllerService
             }
         }
 
-        private void ApplySetting(string name, object value)
+        private void ApplySetting(string name, string property)
         {
             switch (name)
             {
                 case "HIDcloaked":
-                    Hidder.SetCloaking((bool)value, XInputController.ProductName);
-                    HIDcloaked = (bool)value;
+                    {
+                        bool value = bool.Parse(property);
+                        Hidder.SetCloaking(value, XInputController.ProductName);
+                        HIDcloaked = value;
+                    }
                     break;
                 case "HIDuncloakonclose":
-                    HIDuncloakonclose = (bool)value;
+                    {
+                        bool value = bool.Parse(property);
+                        HIDuncloakonclose = value;
+                    }
                     break;
                 case "HIDmode":
-                    SetControllerMode((HIDmode)value);
+                    {
+                        HIDmode value = Enum.Parse<HIDmode>(property);
+                        SetControllerMode(value);
+                    }
                     break;
                 case "HIDstatus":
-                    SetControllerStatus((HIDstatus)value);
+                    {
+                        HIDstatus value = Enum.Parse<HIDstatus>(property);
+                        SetControllerStatus(value);
+                    }
                     break;
                 case "HIDrate":
-                    XInputController.SetPollRate((int)value);
+                    {
+                        int value = int.Parse(property);
+                        XInputController.SetPollRate(value);
+                    }
                     break;
                 case "HIDstrength":
-                    XInputController.SetVibrationStrength((double)value);
+                    {
+                        double value = double.Parse(property);
+                        XInputController.SetVibrationStrength(value);
+                    }
                     break;
                 case "DSUEnabled":
-                    switch ((bool)value)
                     {
-                        case true: DSUServer.Start(); break;
-                        case false: DSUServer.Stop(); break;
+                        bool value = bool.Parse(property);
+                        switch (value)
+                        {
+                            case true: DSUServer.Start(); break;
+                            case false: DSUServer.Stop(); break;
+                        }
                     }
                     break;
                 case "DSUip":
-                    DSUServer.ip = (string)value;
+                    {
+                        string value = property;
+                        DSUServer.ip = value;
+                    }
                     break;
                 case "DSUport":
-                    DSUServer.port = (int)value;
+                    {
+                        int value = int.Parse(property);
+                        DSUServer.port = value;
+                    }
                     break;
             }
         }
