@@ -36,10 +36,10 @@ namespace ControllerCommon
     // todo : use localization and an array
     public enum Output
     {
-        [Description("Right joystick")]
-        RightStick = 0,
         [Description("Left Joystick")]
-        LeftStick = 1,
+        LeftStick = 0,
+        [Description("Right joystick")]
+        RightStick = 1,
         /* [Description("Mouse")]
         Mouse = 2 */
     }
