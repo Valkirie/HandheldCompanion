@@ -168,20 +168,6 @@ namespace HandheldCompanion.Views.Pages
         {
             switch (message.code)
             {
-                case PipeCode.SERVER_CONTROLLER:
-                    PipeServerHandheld controller = (PipeServerHandheld)message;
-
-                    // threaded call to update UI
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        int index = (int)controller.ControllerIdx;
-                        if (RadioControllers.Items.Count > index)
-                            RadioControllers.SelectedIndex = index;
-                    });
-
-                    microsoftLogger.LogInformation("{0} connected on port {1}", controller.ControllerName, controller.ControllerIdx);
-                    break;
-
                 case PipeCode.SERVER_SETTINGS:
                     PipeServerSettings settings = (PipeServerSettings)message;
                     UpdateSettings(settings.settings);
@@ -209,6 +195,14 @@ namespace HandheldCompanion.Views.Pages
 
                 switch (name)
                 {
+                    case "HIDidx":
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            int index = int.Parse(property);
+                            if (RadioControllers.Items.Count > index)
+                                RadioControllers.SelectedIndex = index;
+                        });
+                        break;
                     case "HIDmode":
                         controllerMode = (HIDmode)Enum.Parse(typeof(HIDmode), property);
                         UpdateController();
