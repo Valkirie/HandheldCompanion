@@ -69,10 +69,7 @@
                                     <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <ui:SimpleStackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="Enable flick stick" FontSize="14"/>
-                                    <TextBlock Text="Lorem ipsum" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                </ui:SimpleStackPanel>
+                                <TextBlock Text="Enable flick stick" FontSize="14" VerticalAlignment="Center"/>
 
                                 <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="Toggle_FlickStick" Toggled="Toggle_FlickStick_Toggled"/>
                             </Grid>

@@ -60,7 +60,7 @@ namespace HandheldCompanion.Views.Pages
                 SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
 
                 // create icon
-                FontIcon icon = new FontIcon() { FontSize = 24 };
+                FontIcon icon = new FontIcon() { Glyph = "" };
                 icon.Glyph = InputUtils.GamepadButtonToGlyph(button);
 
                 if (icon.Glyph != "")
@@ -78,10 +78,67 @@ namespace HandheldCompanion.Views.Pages
             }
 
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
-                cB_Input.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
+            {
+                // create panel
+                SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+
+                // create icon
+                FontIcon icon = new FontIcon() { Glyph = "" };
+
+                switch(mode)
+                {
+                    default:
+                    case Input.PlayerSpace:
+                        icon.Glyph = "\uF119";
+                        break;
+                    case Input.JoystickCamera:
+                        icon.Glyph = "\uE714";
+                        break;
+                    case Input.JoystickSteering:
+                        icon.Glyph = "\uEC47";
+                        break;
+                }
+
+                if (icon.Glyph != "")
+                    panel.Children.Add(icon);
+
+                // create textblock
+                string description = EnumUtils.GetDescriptionFromEnumValue(mode);
+                TextBlock text = new TextBlock() { Text = description };
+                panel.Children.Add(text);
+
+                cB_Input.Items.Add(panel);
+            }
 
             foreach (Output mode in (Output[])Enum.GetValues(typeof(Output)))
-                cB_Output.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
+            {
+                // create panel
+                SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+
+                // create icon
+                FontIcon icon = new FontIcon() { Glyph = "" };
+
+                switch (mode)
+                {
+                    default:
+                    case Output.RightStick:
+                        icon.Glyph = "\uF109";
+                        break;
+                    case Output.LeftStick:
+                        icon.Glyph = "\uF108";
+                        break;
+                }
+
+                if (icon.Glyph != "")
+                    panel.Children.Add(icon);
+
+                // create textblock
+                string description = EnumUtils.GetDescriptionFromEnumValue(mode);
+                TextBlock text = new TextBlock() { Text = description };
+                panel.Children.Add(text);
+
+                cB_Output.Items.Add(panel);
+            }
 
             // select default profile
             cB_Profiles.SelectedItem = profileManager.GetDefault();
@@ -450,6 +507,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (cB_Input.SelectedIndex == -1)
+                return;
+
             Input button = (Input)cB_Input.SelectedIndex;
             // Grid_InputHint.Visibility = Visibility.Visible;
             Text_InputHint.Text = Profile.InputDescription[button];

@@ -261,10 +261,18 @@
                                             <TextBlock Text="For controlling the horizontal movement of the controller, you can use either the yaw or roll axis" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                         </StackPanel>
 
-                                        <ComboBox Grid.Column="1" Margin="12,0,0,0" Name="cB_GyroSteering" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave">
-                                            <ComboBoxItem Content="Yaw"/>
-                                            <ComboBoxItem Content="Roll"/>
-                                        </ComboBox>
+                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                            <ui:RadioButtons Name="cB_GyroSteering" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2">
+                                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                    <ui:FontIcon Glyph="&#xE8B4;"/>
+                                                    <Label>Yaw</Label>
+                                                </ui:SimpleStackPanel>
+                                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                    <ui:FontIcon Glyph="&#xE8B4;"/>
+                                                    <Label>Roll</Label>
+                                                </ui:SimpleStackPanel>
+                                            </ui:RadioButtons>
+                                        </DockPanel>
                                     </Grid>
 
                                     <!-- Separator -->
@@ -309,10 +317,7 @@
                                         <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
-                                    <ui:SimpleStackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="Enable universal motion controler" FontSize="14"/>
-                                        <TextBlock Text="Lorem ipsum" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                    </ui:SimpleStackPanel>
+                                    <TextBlock Text="Enable universal motion controler" FontSize="14" VerticalAlignment="Center"/>
 
                                     <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="Toggle_UniversalMotion" Toggled="Toggle_UniversalMotion_Toggled"/>
                                 </Grid>
@@ -331,7 +336,7 @@
                                         <TextBlock Name="Text_InputHint" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
-                                    <ComboBox Margin="6,0,0,0" Name="cB_Input" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Input_SelectionChanged" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
+                                    <ui:RadioButtons Margin="6,0,0,0" Name="cB_Input" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Input_SelectionChanged"/>
                                 </Grid>
 
                                 <!-- Separator -->
@@ -348,7 +353,7 @@
                                         <TextBlock Text="When sending analog joystick commands to the game, should those commands be a left or right joystick" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
-                                    <ComboBox Margin="6,0,0,0" Name="cB_Output" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectedIndex="0" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
+                                    <ui:RadioButtons Margin="6,0,0,0" Name="cB_Output" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" VerticalAlignment="Center" SelectedIndex="0"/>
                                 </Grid>
 
                                 <!-- Separator -->
