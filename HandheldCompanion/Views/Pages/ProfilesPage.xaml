@@ -290,7 +290,7 @@
                     </Expander>
 
                     <!-- Universal motion control settings -->
-                    <Expander Name="Expander_UMC" HorizontalAlignment="Stretch">
+                    <Expander Name="Expander_UMC" Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
                         <Expander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
