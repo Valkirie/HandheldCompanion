@@ -23,6 +23,8 @@ namespace HandheldCompanion.Views.Pages
     public partial class ControllerPage : Page
     {
         private MainWindow mainWindow;
+        private HidHide Hidder;
+
         private readonly ILogger microsoftLogger;
         private ServiceManager serviceManager;
 
@@ -47,6 +49,12 @@ namespace HandheldCompanion.Views.Pages
 
             foreach (HIDmode mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.None))
                 cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
+
+            // initialize controller manager
+            controllerManager = new ControllerManager(microsoftLogger);
+            controllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
+            controllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
+            controllerManager.Start();
         }
 
         public ControllerPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
@@ -54,13 +62,9 @@ namespace HandheldCompanion.Views.Pages
             this.Tag = Tag;
 
             this.mainWindow = mainWindow;
-            this.microsoftLogger = microsoftLogger;
+            this.Hidder = mainWindow.Hidder;
 
-            // initialize controller manager
-            controllerManager = new ControllerManager(microsoftLogger);
-            controllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
-            controllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
-            controllerManager.Start();
+            this.microsoftLogger = microsoftLogger;
 
             this.pipeClient = mainWindow.pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
@@ -170,11 +174,9 @@ namespace HandheldCompanion.Views.Pages
                     // threaded call to update UI
                     this.Dispatcher.Invoke(() =>
                     {
-                        /*
-                        DeviceName.Text = controller.ControllerName;
-                        DeviceVendorID.Text = $"0{controller.ControllerVID.ToString("X2")}";
-                        DeviceProductID.Text = $"0{controller.ControllerPID.ToString("X2")}";
-                        */
+                        int index = (int)controller.ControllerIdx;
+                        if (RadioControllers.Items.Count > index)
+                            RadioControllers.SelectedIndex = index;
                     });
 
                     microsoftLogger.LogInformation("{0} connected on port {1}", controller.ControllerName, controller.ControllerIdx);
@@ -303,6 +305,9 @@ namespace HandheldCompanion.Views.Pages
 
             if (!controllerEx.IsConnected())
                 return;
+
+            PipeControllerIndex settings = new PipeControllerIndex((int)controllerEx.UserIndex, controllerEx.deviceInstancePath, controllerEx.baseContainerDeviceInstancePath);
+            pipeClient?.SendMessage(settings);
 
             // vibrate controller
             controllerEx.Identify();

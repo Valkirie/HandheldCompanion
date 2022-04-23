@@ -74,6 +74,46 @@ namespace ControllerCommon
             this.settings.Add(key, value);
         }
     }
+
+    [Serializable]
+    public partial class PipeGamepad : PipeMessage
+    {
+        public int Buttons;
+        public byte LeftTrigger;
+        public byte RightTrigger;
+
+        public short LeftThumbX;
+        public short LeftThumbY;
+        public short RightThumbX;
+        public short RightThumbY;
+
+        public PipeGamepad(Gamepad gamepad)
+        {
+            code = PipeCode.SERVER_GAMEPAD;
+            Buttons = (int)gamepad.Buttons;
+            LeftTrigger = gamepad.LeftTrigger;
+            RightTrigger = gamepad.RightTrigger;
+
+            LeftThumbX = gamepad.LeftThumbX;
+            LeftThumbY = gamepad.LeftThumbY;
+            RightThumbX = gamepad.RightThumbX;
+            RightThumbY = gamepad.RightThumbY;
+        }
+
+        public Gamepad ToGamepad()
+        {
+            return new Gamepad()
+            {
+                Buttons = (GamepadButtonFlags)this.Buttons,
+                LeftTrigger = this.LeftTrigger,
+                RightTrigger = this.RightTrigger,
+                LeftThumbX = this.LeftThumbX,
+                LeftThumbY = this.LeftThumbY,
+                RightThumbX = this.RightThumbX,
+                RightThumbY = this.RightThumbY
+            };
+        }
+    }
     #endregion
 
     #region clientpipe
@@ -251,42 +291,19 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public partial class PipeGamepad : PipeMessage
+    public partial class PipeControllerIndex : PipeMessage
     {
-        public int Buttons;
-        public byte LeftTrigger;
-        public byte RightTrigger;
+        public int UserIndex;
+        public string deviceInstancePath;
+        public string baseContainerDeviceInstancePath;
 
-        public short LeftThumbX;
-        public short LeftThumbY;
-        public short RightThumbX;
-        public short RightThumbY;
-
-        public PipeGamepad(Gamepad gamepad)
+        public PipeControllerIndex(int UserIndex, string deviceInstancePath, string baseContainerDeviceInstancePath)
         {
-            code = PipeCode.SERVER_GAMEPAD;
-            Buttons = (int)gamepad.Buttons;
-            LeftTrigger = gamepad.LeftTrigger;
-            RightTrigger = gamepad.RightTrigger;
+            code = PipeCode.CLIENT_CONTROLLERINDEX;
 
-            LeftThumbX = gamepad.LeftThumbX;
-            LeftThumbY = gamepad.LeftThumbY;
-            RightThumbX = gamepad.RightThumbX;
-            RightThumbY = gamepad.RightThumbY;
-        }
-
-        public Gamepad ToGamepad()
-        {
-            return new Gamepad()
-            {
-                Buttons = (GamepadButtonFlags)this.Buttons,
-                LeftTrigger = this.LeftTrigger,
-                RightTrigger = this.RightTrigger,
-                LeftThumbX = this.LeftThumbX,
-                LeftThumbY = this.LeftThumbY,
-                RightThumbX = this.RightThumbX,
-                RightThumbY = this.RightThumbY
-            };
+            this.UserIndex = UserIndex;
+            this.deviceInstancePath = deviceInstancePath;
+            this.baseContainerDeviceInstancePath = baseContainerDeviceInstancePath;
         }
     }
     #endregion
