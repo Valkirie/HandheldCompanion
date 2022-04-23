@@ -184,11 +184,11 @@ namespace HandheldCompanion.Views.Pages
         {
             switch (OverlayTrigger.SelectedIndex)
             {
-                case 0: // start
-                    overlay.mainTrigger = GamepadButtonFlags.Start;
-                    break;
-                case 1: // back
+                case 0:
                     overlay.mainTrigger = GamepadButtonFlags.Back;
+                    break;
+                case 1:
+                    overlay.mainTrigger = GamepadButtonFlags.Start;
                     break;
             }
 
