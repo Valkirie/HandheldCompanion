@@ -82,12 +82,15 @@ namespace HandheldCompanion.Views.Pages
             switch (trackpadsAlignment)
             {
                 case 0:
+                    TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Top;
                     overlay.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Top;
                     break;
                 case 1:
+                    TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Center;
                     overlay.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Center;
                     break;
                 case 2:
+                    TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Bottom;
                     overlay.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Bottom;
                     break;
             }
