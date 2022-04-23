@@ -393,7 +393,7 @@
                                     </StackPanel>
                                 </Grid>
 
-                                <ui:LayoutPanel Name="cB_Buttons">
+                                <ui:LayoutPanel Name="cB_Buttons" HorizontalAlignment="Center">
                                     <ui:LayoutPanel.Layout>
                                         <ui:UniformGridLayout/>
                                     </ui:LayoutPanel.Layout>

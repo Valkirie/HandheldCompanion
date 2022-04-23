@@ -511,7 +511,6 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             Input button = (Input)cB_Input.SelectedIndex;
-            // Grid_InputHint.Visibility = Visibility.Visible;
             Text_InputHint.Text = Profile.InputDescription[button];
         }
     }
