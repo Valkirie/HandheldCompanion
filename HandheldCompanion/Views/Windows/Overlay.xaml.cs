@@ -275,21 +275,6 @@ namespace HandheldCompanion.Views.Windows
                         case SensorType.Quaternion:
                             // update ModelVisual3D
                             UpdateModelVisual3D(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z, sensor.x, sensor.y, sensor.z);
-
-                            // TODO remove, for testing only!
-                            if (InputUtils.rad2deg(sensor.y) < 165.0 && InputUtils.rad2deg(sensor.y) > 0)
-                            {
-                                MotorLeftPlaceholder = (short)1;
-                            }
-                            else { MotorLeftPlaceholder = (short)0; }
-
-                            // TODO remove, for testing only!
-                            if (InputUtils.rad2deg(sensor.y) > -165.0 && InputUtils.rad2deg(sensor.y) < 0)
-                            {
-                                MotorRightPlaceholder = (short)1;
-                            }
-                            else { MotorRightPlaceholder = (short)0; }
-
                             break;
                     }
                     break;
