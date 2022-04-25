@@ -23,7 +23,7 @@ namespace ControllerCommon.Devices
         protected Inclinometer inclinometer;
         public bool hasInclinometer;
 
-        public double WidthHeightRatio = 1.0d;
+        public float WidthHeightRatio = 1.0f;
 
         protected Device(string ManufacturerName, string ProductName)
         {

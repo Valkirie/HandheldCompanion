@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using ControllerService.Targets;
@@ -27,8 +28,11 @@ namespace ControllerService
 
         public Vector3 Acceleration;
         public Vector3 AccelerationRaw;
+        public Vector3 AccelerationRatio;
+
         public Vector3 Angle;
         public Vector3 AngularVelocityC;
+        public Vector3 AngularVelocityRatio;
         public Vector3 AngularVelocity;
         public Vector3 AngularVelocityRad;
         public Vector3 AngularRawC;
@@ -43,6 +47,8 @@ namespace ControllerService
 
         public SensorFusion sensorFusion;
         public MadgwickAHRS madgwickAHRS;
+
+        public Device handheldDevice;
 
         protected readonly Stopwatch stopwatch;
         public long CurrentMicroseconds;
@@ -122,10 +128,13 @@ namespace ControllerService
                 // update reading(s)
                 AngularVelocity = Gyrometer.GetCurrentReading();
                 AngularVelocityC = Gyrometer.GetCurrentReading(true);
+                AngularVelocityRatio = Gyrometer.GetCurrentReading(false, true);
                 AngularRawC = Gyrometer.GetCurrentReadingRaw(true);
 
                 Acceleration = Accelerometer.GetCurrentReading();
                 AccelerationRaw = Accelerometer.GetCurrentReadingRaw(false);
+                AccelerationRatio = Accelerometer.GetCurrentReading(false, true);
+
                 Angle = Inclinometer.GetCurrentReading();
 
                 // update sensorFusion (todo: call only when needed ?)
@@ -195,6 +204,11 @@ namespace ControllerService
 
                 Updated?.Invoke(this);
             }
+        }
+
+        internal void SetDevice(Device handheldDevice)
+        {
+            this.handheldDevice = handheldDevice;
         }
 
         public void SetProfile(Profile profile)

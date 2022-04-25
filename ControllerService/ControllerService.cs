@@ -144,6 +144,7 @@ namespace ControllerService
                     logger.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
                     break;
             }
+            XInputController.SetDevice(handheldDevice);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
