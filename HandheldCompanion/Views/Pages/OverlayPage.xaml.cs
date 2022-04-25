@@ -48,6 +48,10 @@ namespace HandheldCompanion.Views.Pages
             SliderControllerSize.Value = Properties.Settings.Default.OverlayControllerSize;
             SliderControllerSize_ValueChanged(this, null);
 
+            // trackpads size
+            SliderTrackpadsSize.Value = Properties.Settings.Default.OverlayTrackpadsSize;
+            SliderTrackpadsSize_ValueChanged(this, null);
+
             // controller trigger
             GamepadButtonFlagsExt ControllerButton = (GamepadButtonFlagsExt)Properties.Settings.Default.OverlayControllerTrigger;
             ControllerTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph(ControllerButton);
@@ -163,10 +167,23 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             overlay.VirtualController.Width = SliderControllerSize.Value;
-            overlay.VirtualController.Height = SliderControllerSize.Value;// * 0.6d;
+            overlay.VirtualController.Height = SliderControllerSize.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerSize = (int)SliderControllerSize.Value;
+            Properties.Settings.Default.Save();
+        }
+
+        private void SliderTrackpadsSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (overlay == null)
+                return;
+
+            overlay.LeftTrackpad.Height = overlay.LeftTrackpad.Width = SliderTrackpadsSize.Value;
+            overlay.RightTrackpad.Height = overlay.RightTrackpad.Width = SliderTrackpadsSize.Value;
+
+            // save settings
+            Properties.Settings.Default.OverlayTrackpadsSize = (int)SliderTrackpadsSize.Value;
             Properties.Settings.Default.Save();
         }
 
