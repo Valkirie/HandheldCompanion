@@ -171,8 +171,7 @@ namespace HandheldCompanion.Views.Pages
                 else
                     cB_Profiles.Items.Add(profile);
 
-                if (!backgroundtask)
-                    cB_Profiles.SelectedItem = profile;
+                cB_Profiles.SelectedItem = profile;
             });
         }
 
