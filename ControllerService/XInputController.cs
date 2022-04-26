@@ -224,7 +224,7 @@ namespace ControllerService
             this.profile = profile;
 
             // update default profile
-            if (profile.IsDefault)
+            if (profile.isDefault)
                 defaultProfile = profile;
             else
                 logger.LogInformation("Profile {0} applied.", profile.name);

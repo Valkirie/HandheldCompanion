@@ -139,9 +139,6 @@ namespace HandheldCompanion.Views.Pages
 
                 cB_Output.Items.Add(panel);
             }
-
-            // select default profile
-            cB_Profiles.SelectedItem = profileManager.GetDefault();
         }
 
         private void PipeClient_ServerMessage(object sender, PipeMessage e)
@@ -156,7 +153,7 @@ namespace HandheldCompanion.Views.Pages
         public void ProfileUpdated(Profile profile, bool backgroundtask)
         {
             // inform Service we have a new default profile
-            if (profile.IsDefault)
+            if (profile.isDefault)
                 pipeClient.SendMessage(new PipeClientProfile() { profile = profile });
 
             this.Dispatcher.Invoke(async () =>
@@ -327,8 +324,8 @@ namespace HandheldCompanion.Views.Pages
             Dispatcher.BeginInvoke(() =>
             {
                 // disable button if is default profile
-                b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
-                tB_ProfileName.IsEnabled = !profileCurrent.IsDefault;
+                b_DeleteProfile.IsEnabled = !profileCurrent.isDefault;
+                tB_ProfileName.IsEnabled = !profileCurrent.isDefault;
 
                 GlobalSettings.IsEnabled = GlobalDetails.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
                 b_ApplyProfile.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
@@ -338,8 +335,8 @@ namespace HandheldCompanion.Views.Pages
                 tB_ProfileName.Text = profileCurrent.name;
                 tB_ProfilePath.Text = profileCurrent.fullpath;
 
-                Toggle_EnableProfile.IsEnabled = !profileCurrent.IsDefault;
-                Toggle_EnableProfile.IsOn = profileCurrent.enabled;
+                Toggle_EnableProfile.IsEnabled = !profileCurrent.isDefault;
+                Toggle_EnableProfile.IsOn = profileCurrent.isEnabled;
 
                 Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
                 tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
@@ -361,7 +358,7 @@ namespace HandheldCompanion.Views.Pages
 
                 // display warnings
                 ProfileErrorCode currentError = profileCurrent.error;
-                if (profileCurrent.IsRunning)
+                if (profileCurrent.isApplied)
                     currentError = ProfileErrorCode.IsRunning;
 
                 switch (currentError)
@@ -423,7 +420,7 @@ namespace HandheldCompanion.Views.Pages
 
             profileCurrent.name = tB_ProfileName.Text;
             profileCurrent.fullpath = tB_ProfilePath.Text;
-            profileCurrent.enabled = (bool)Toggle_EnableProfile.IsOn;
+            profileCurrent.isEnabled = (bool)Toggle_EnableProfile.IsOn;
 
             profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
             profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
@@ -482,7 +479,7 @@ namespace HandheldCompanion.Views.Pages
             if (profileCurrent == null)
                 return;
 
-            cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !profileCurrent.IsDefault;
+            cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !profileCurrent.isDefault;
         }
 
         private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)

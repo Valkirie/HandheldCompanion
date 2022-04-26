@@ -273,7 +273,7 @@ namespace HandheldCompanion.Views
                     return;
 
                 currentProfile.fullpath = path;
-                currentProfile.IsRunning = false;
+                currentProfile.isApplied = false;
 
                 // update profile and inform settings page
                 profileManager.UpdateOrCreateProfile(currentProfile);
@@ -291,7 +291,7 @@ namespace HandheldCompanion.Views
                     return;
 
                 currentProfile.fullpath = path;
-                currentProfile.IsRunning = true;
+                currentProfile.isApplied = true;
 
                 // update profile and inform settings page
                 profileManager.UpdateOrCreateProfile(currentProfile);
@@ -308,14 +308,19 @@ namespace HandheldCompanion.Views
                 if (currentProfile == null)
                     currentProfile = profileManager.GetDefault();
 
-                if (!currentProfile.enabled)
+                if (!currentProfile.isEnabled)
                     return;
 
-                currentProfile.fullpath = path;
-                currentProfile.IsRunning = true;
+                currentProfile.isApplied = true;
 
-                // update profile and inform settings page
-                profileManager.UpdateOrCreateProfile(currentProfile);
+                // do not update default profile path
+                if (!currentProfile.isDefault)
+                {
+                    currentProfile.fullpath = path;
+
+                    // update profile and inform settings page
+                    profileManager.UpdateOrCreateProfile(currentProfile);
+                }
 
                 // inform service & mouseHook
                 pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
