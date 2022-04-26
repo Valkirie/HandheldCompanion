@@ -21,7 +21,7 @@ namespace HandheldCompanion.Views.Pages
     public partial class ProfilesPage : Page
     {
         private MainWindow mainWindow;
-        private ILogger microsoftLogger;
+        private ILogger logger;
 
         private ProfileManager profileManager;
         private Profile profileCurrent;
@@ -36,12 +36,12 @@ namespace HandheldCompanion.Views.Pages
             InitializeComponent();
         }
 
-        public ProfilesPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
+        public ProfilesPage(string Tag, MainWindow mainWindow, ILogger logger) : this()
         {
             this.Tag = Tag;
 
             this.mainWindow = mainWindow;
-            this.microsoftLogger = microsoftLogger;
+            this.logger = logger;
 
             this.pipeClient = mainWindow.pipeClient;
             this.pipeClient.ServerMessage += PipeClient_ServerMessage;
@@ -247,7 +247,7 @@ namespace HandheldCompanion.Views.Pages
                             }
                             catch (Exception ex)
                             {
-                                microsoftLogger.LogError(ex.Message, true);
+                                logger.LogError(ex.Message, true);
                             }
                             break;
                     }
@@ -281,7 +281,7 @@ namespace HandheldCompanion.Views.Pages
                 }
                 catch (Exception ex)
                 {
-                    microsoftLogger.LogError(ex.Message);
+                    logger.LogError(ex.Message);
                 }
             }
         }
@@ -297,10 +297,10 @@ namespace HandheldCompanion.Views.Pages
                 default:
                 case Input.JoystickCamera:
                 case Input.PlayerSpace:
-                    page = new ProfileSettingsMode0("ProfileSettingsMode0", profileCurrent, pipeClient, microsoftLogger);
+                    page = new ProfileSettingsMode0("ProfileSettingsMode0", profileCurrent, pipeClient, logger);
                     break;
                 case Input.JoystickSteering:
-                    page = new ProfileSettingsMode1("ProfileSettingsMode1", profileCurrent, pipeClient, microsoftLogger);
+                    page = new ProfileSettingsMode1("ProfileSettingsMode1", profileCurrent, pipeClient, logger);
                     break;
             }
             mainWindow.NavView_Navigate(page);

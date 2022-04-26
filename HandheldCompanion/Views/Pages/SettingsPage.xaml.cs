@@ -15,7 +15,7 @@ namespace HandheldCompanion.Views.Pages
     public partial class SettingsPage : Page
     {
         private MainWindow mainWindow;
-        private ILogger microsoftLogger;
+        private ILogger logger;
         private PipeClient pipeClient;
         private ServiceManager serviceManager;
 
@@ -101,11 +101,11 @@ namespace HandheldCompanion.Views.Pages
             };
         }
 
-        public SettingsPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
+        public SettingsPage(string Tag, MainWindow mainWindow, ILogger logger) : this()
         {
             this.Tag = Tag;
             this.mainWindow = mainWindow;
-            this.microsoftLogger = microsoftLogger;
+            this.logger = logger;
 
             this.pipeClient = mainWindow.pipeClient;
             this.serviceManager = mainWindow.serviceManager;

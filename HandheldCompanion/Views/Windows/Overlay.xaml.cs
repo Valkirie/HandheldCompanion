@@ -40,7 +40,7 @@ namespace HandheldCompanion.Views.Windows
         public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
         #endregion
 
-        private ILogger microsoftLogger;
+        private ILogger logger;
         private PipeClient pipeClient;
 
         private Model CurrentModel;
@@ -96,9 +96,9 @@ namespace HandheldCompanion.Views.Windows
             this.SourceInitialized += Overlay_SourceInitialized;
         }
 
-        public Overlay(ILogger microsoftLogger, PipeClient pipeClient) : this()
+        public Overlay(ILogger logger, PipeClient pipeClient) : this()
         {
-            this.microsoftLogger = microsoftLogger;
+            this.logger = logger;
 
             this.pipeClient = pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;

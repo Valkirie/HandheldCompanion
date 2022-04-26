@@ -15,7 +15,7 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class ProfileSettingsMode0 : Page
     {
-        private ILogger microsoftLogger;
+        private ILogger logger;
         private Profile profileCurrent;
         private PipeClient pipeClient;
 
@@ -24,10 +24,10 @@ namespace HandheldCompanion.Views.Pages
             InitializeComponent();
         }
 
-        public ProfileSettingsMode0(string Tag, Profile profileCurrent, PipeClient pipeClient, ILogger microsoftLogger) : this()
+        public ProfileSettingsMode0(string Tag, Profile profileCurrent, PipeClient pipeClient, ILogger logger) : this()
         {
             this.Tag = Tag;
-            this.microsoftLogger = microsoftLogger;
+            this.logger = logger;
 
             this.profileCurrent = profileCurrent;
             this.pipeClient = pipeClient;

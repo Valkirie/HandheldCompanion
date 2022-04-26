@@ -15,7 +15,7 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class OverlayPage : Page
     {
-        private ILogger microsoftLogger;
+        private ILogger logger;
         private Overlay overlay;
 
         public OverlayPage()
@@ -23,14 +23,14 @@ namespace HandheldCompanion.Views.Pages
             InitializeComponent();
         }
 
-        public OverlayPage(string Tag, Overlay overlay, ILogger microsoftLogger) : this()
+        public OverlayPage(string Tag, Overlay overlay, ILogger logger) : this()
         {
             this.Tag = Tag;
             this.overlay = overlay;
             this.overlay.ControllerTriggerUpdated += Overlay_ControllerTriggerUpdated;
             this.overlay.TrackpadsTriggerUpdated += Overlay_TrackpadsTriggerUpdated;
 
-            this.microsoftLogger = microsoftLogger;
+            this.logger = logger;
 
             // overlay trigger
             OverlayTrigger.SelectedIndex = Properties.Settings.Default.OverlayTrigger;

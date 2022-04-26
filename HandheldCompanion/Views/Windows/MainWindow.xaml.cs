@@ -81,12 +81,12 @@ namespace HandheldCompanion.Views
         public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
         private bool FirstStart, appClosing;
 
-        public MainWindow(StartupEventArgs arguments, ILogger microsoftLogger)
+        public MainWindow(StartupEventArgs arguments, ILogger logger)
         {
             InitializeComponent();
             Name = this.Title;
 
-            this.logger = microsoftLogger;
+            this.logger = logger;
             this.arguments = arguments;
 
             // get the actual handheld device

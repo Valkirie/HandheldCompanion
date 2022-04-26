@@ -24,7 +24,7 @@ namespace HandheldCompanion.Views.Pages
         private MainWindow mainWindow;
         private HidHide Hidder;
 
-        private readonly ILogger microsoftLogger;
+        private readonly ILogger logger;
         private ServiceManager serviceManager;
 
         // pipe vars
@@ -50,20 +50,20 @@ namespace HandheldCompanion.Views.Pages
                 cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
 
             // initialize controller manager
-            controllerManager = new ControllerManager(microsoftLogger);
+            controllerManager = new ControllerManager(logger);
             controllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
             controllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
             controllerManager.Start();
         }
 
-        public ControllerPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
+        public ControllerPage(string Tag, MainWindow mainWindow, ILogger logger) : this()
         {
             this.Tag = Tag;
 
             this.mainWindow = mainWindow;
             this.Hidder = mainWindow.Hidder;
 
-            this.microsoftLogger = microsoftLogger;
+            this.logger = logger;
 
             this.pipeClient = mainWindow.pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
