@@ -62,14 +62,17 @@ namespace HandheldCompanion
 
         private double GetFileSize(Uri uriPath)
         {
-            var webRequest = HttpWebRequest.Create(uriPath);
-            webRequest.Method = "HEAD";
-
-            using (var webResponse = webRequest.GetResponse())
+            try
             {
-                var fileSize = webResponse.Headers.Get("Content-Length");
-                return Math.Round(Convert.ToDouble(fileSize) / 1024.0 / 1024.0, 2); // MB
-            }
+                var webRequest = HttpWebRequest.Create(uriPath);
+                webRequest.Method = "HEAD";
+
+                using (var webResponse = webRequest.GetResponse())
+                {
+                    var fileSize = webResponse.Headers.Get("Content-Length");
+                    return Math.Round(Convert.ToDouble(fileSize) / 1024.0 / 1024.0, 2); // MB
+                }
+            }catch (Exception ex) { return 0.0d; }
         }
 
         private void WebClient_DownloadFileCompleted(object? sender, System.ComponentModel.AsyncCompletedEventArgs e)
