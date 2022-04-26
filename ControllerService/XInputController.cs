@@ -6,6 +6,7 @@ using ControllerService.Targets;
 using Microsoft.Extensions.Logging;
 using SharpDX.XInput;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -26,16 +27,10 @@ namespace ControllerService
         public Profile profile;
         private Profile defaultProfile;
 
-        public Vector3 Acceleration;
-        public Vector3 AccelerationRaw;
-        public Vector3 AccelerationRatio;
+        public Dictionary<XInputSensorFlags, Vector3> Accelerations = new();
+        public Dictionary<XInputSensorFlags, Vector3> AngularVelocities = new();
 
         public Vector3 Angle;
-        public Vector3 AngularVelocityC;
-        public Vector3 AngularVelocityRatio;
-        public Vector3 AngularVelocity;
-        public Vector3 AngularVelocityRad;
-        public Vector3 AngularRawC;
 
         public MultimediaTimer UpdateTimer;
         public double vibrationStrength = 100.0d;
@@ -75,10 +70,8 @@ namespace ControllerService
             UpdateSensors();
 
             // initialize vectors
-            AngularVelocity = new();
-            AngularVelocityRad = new();
-            AngularRawC = new();
-            Acceleration = new();
+            Accelerations = new();
+            AngularVelocities = new();
             Angle = new();
 
             // initialize sensorfusion and madgwick
@@ -126,19 +119,46 @@ namespace ControllerService
             lock (updateLock)
             {
                 // update reading(s)
-                AngularVelocity = Gyrometer.GetCurrentReading();
-                AngularVelocityC = Gyrometer.GetCurrentReading(true);
-                AngularVelocityRatio = Gyrometer.GetCurrentReading(false, true);
-                AngularRawC = Gyrometer.GetCurrentReadingRaw(true);
+                foreach (XInputSensorFlags flags in (XInputSensorFlags[])Enum.GetValues(typeof(XInputSensorFlags)))
+                {
+                    switch(flags)
+                    {
+                        case XInputSensorFlags.Default:
+                            AngularVelocities[flags] = Gyrometer.GetCurrentReading();
+                            Accelerations[flags] = Accelerometer.GetCurrentReading();
+                            break;
 
-                Acceleration = Accelerometer.GetCurrentReading();
-                AccelerationRaw = Accelerometer.GetCurrentReadingRaw(false);
-                AccelerationRatio = Accelerometer.GetCurrentReading(false, true);
+                        case XInputSensorFlags.RawValue:
+                            AngularVelocities[flags] = Gyrometer.GetCurrentReadingRaw();
+                            Accelerations[flags] = Accelerometer.GetCurrentReadingRaw();
+                            break;
+
+                        case XInputSensorFlags.Centered:
+                            AngularVelocities[flags] = Gyrometer.GetCurrentReading(true);
+                            Accelerations[flags] = Accelerometer.GetCurrentReading(true);
+                            break;
+
+                        case XInputSensorFlags.WithRatio:
+                            AngularVelocities[flags] = Gyrometer.GetCurrentReading(false, true);
+                            Accelerations[flags] = Accelerometer.GetCurrentReading(false, true);
+                            break;
+
+                        case XInputSensorFlags.CenteredRatio:
+                            AngularVelocities[flags] = Gyrometer.GetCurrentReading(true, true);
+                            Accelerations[flags] = Accelerometer.GetCurrentReading(true, true);
+                            break;
+
+                        case XInputSensorFlags.CenteredRaw:
+                            AngularVelocities[flags] = Gyrometer.GetCurrentReadingRaw(true);
+                            Accelerations[flags] = Accelerometer.GetCurrentReadingRaw(true);
+                            break;
+                    }
+                }
 
                 Angle = Inclinometer.GetCurrentReading();
 
                 // update sensorFusion (todo: call only when needed ?)
-                sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocity, Acceleration);
+                sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocities[XInputSensorFlags.Default], Accelerations[XInputSensorFlags.Default]);
 
                 // async update client(s)
                 Task.Run(() =>
@@ -146,7 +166,7 @@ namespace ControllerService
                     switch (ControllerService.CurrentTag)
                     {
                         case "ProfileSettingsMode0":
-                            pipeServer?.SendMessage(new PipeSensor(AngularVelocityC, SensorType.Girometer));
+                            pipeServer?.SendMessage(new PipeSensor(AngularVelocities[XInputSensorFlags.Centered], SensorType.Girometer));
                             break;
 
                         case "ProfileSettingsMode1":
@@ -157,10 +177,11 @@ namespace ControllerService
                     switch (ControllerService.CurrentOverlayStatus)
                     {
                         case 0: // Visible
-                            AngularVelocityRad.X = -InputUtils.deg2rad(AngularRawC.X);
-                            AngularVelocityRad.Y = -InputUtils.deg2rad(AngularRawC.Y);
-                            AngularVelocityRad.Z = -InputUtils.deg2rad(AngularRawC.Z);
-                            madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -AccelerationRaw.X, AccelerationRaw.Y, AccelerationRaw.Z, DeltaSeconds);
+                            var AngularVelocityRad = new Vector3();
+                            AngularVelocityRad.X = -InputUtils.deg2rad(AngularVelocities[XInputSensorFlags.CenteredRaw].X);
+                            AngularVelocityRad.Y = -InputUtils.deg2rad(AngularVelocities[XInputSensorFlags.CenteredRaw].Y);
+                            AngularVelocityRad.Z = -InputUtils.deg2rad(AngularVelocities[XInputSensorFlags.CenteredRaw].Z);
+                            madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Accelerations[XInputSensorFlags.RawValue].X, Accelerations[XInputSensorFlags.RawValue].Y, Accelerations[XInputSensorFlags.RawValue].Z, DeltaSeconds);
 
                             pipeServer?.SendMessage(new PipeSensor(madgwickAHRS.GetEuler(), madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
                             break;
@@ -175,13 +196,13 @@ namespace ControllerService
 
                 Task.Run(() =>
                 {
-                    logger.LogDebug("Plot AccelerationRawX {0} {1}", TotalMilliseconds, AccelerationRaw.X);
-                    logger.LogDebug("Plot AccelerationRawY {0} {1}", TotalMilliseconds, AccelerationRaw.Y);
-                    logger.LogDebug("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, AccelerationRaw.Z);
+                    logger.LogDebug("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
+                    logger.LogDebug("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
+                    logger.LogDebug("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Z);
 
-                    logger.LogDebug("Plot GyroRawCX {0} {1}", TotalMilliseconds, AngularRawC.X);
-                    logger.LogDebug("Plot GyroRawCY {0} {1}", TotalMilliseconds, AngularRawC.Y);
-                    logger.LogDebug("Plot GyroRawCZ {0} {1}", TotalMilliseconds, AngularRawC.Z);
+                    logger.LogDebug("Plot GyroRawCX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].X);
+                    logger.LogDebug("Plot GyroRawCY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Y);
+                    logger.LogDebug("Plot GyroRawCZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Z);
 
                     logger.LogDebug("Plot PoseX {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().X);
                     logger.LogDebug("Plot PoseY {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Y);

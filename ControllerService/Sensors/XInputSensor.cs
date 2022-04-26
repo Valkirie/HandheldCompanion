@@ -1,11 +1,24 @@
 ﻿using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Timers;
 
 namespace ControllerService.Sensors
 {
+    [Flags]
+    public enum XInputSensorFlags
+    {
+        Default         =   0000,
+        RawValue        =   0001,
+        Centered        =   0010,
+        WithRatio       =   0100,
+        CenteredRaw     =   RawValue | Centered,
+        CenteredRatio   =   RawValue | WithRatio,
+    }
+
     public abstract class XInputSensor
     {
         protected Vector3 reading = new();
@@ -55,12 +68,12 @@ namespace ControllerService.Sensors
             return this.GetType().Name;
         }
 
-        protected virtual Vector3 GetCurrentReading(bool center = false)
+        protected virtual Vector3 GetCurrentReading(bool center = false, bool ratio = false)
         {
             return center ? this.reading_fixed : this.reading;
         }
 
-        public Vector3 GetCurrentReadingRaw(bool center = false)
+        public Vector3 GetCurrentReadingRaw(bool center = false, bool ratio = false)
         {
             return center ? this.reading_fixed : this.reading;
         }

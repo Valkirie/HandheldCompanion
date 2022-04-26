@@ -141,13 +141,16 @@ namespace ControllerService.Targets
 
                                     default:
                                     case Input.JoystickCamera:
-                                        Angular = new Vector2(-xinputController.AngularVelocityRatio.Z, xinputController.AngularVelocityRatio.X);
+                                        Angular = new Vector2(-xinputController.AngularVelocities[XInputSensorFlags.WithRatio].Z, xinputController.AngularVelocities[XInputSensorFlags.WithRatio].X);
                                         break;
                                 }
 
                                 // apply sensivity curve
                                 Angular.X *= InputUtils.ApplyCustomSensitivity(Angular.X, XInputGirometer.sensorSpec.maxIn, xinputController.profile.aiming_array);
                                 Angular.Y *= InputUtils.ApplyCustomSensitivity(Angular.Y, XInputGirometer.sensorSpec.maxIn, xinputController.profile.aiming_array);
+                                
+                                // apply device width ratio
+                                Angular.Y *= xinputController.handheldDevice.WidthHeightRatio;
 
                                 // apply sensivity
                                 Vector2 GamepadThumb = new Vector2(
