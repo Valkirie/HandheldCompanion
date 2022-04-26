@@ -22,7 +22,8 @@ namespace HandheldCompanion.Views.Pages
     public partial class ControllerPage : Page
     {
         private MainWindow mainWindow;
-        private HidHide Hidder;
+        private readonly HidHide Hidder;
+        private readonly ToastManager toastManager;
 
         private readonly ILogger logger;
         private ServiceManager serviceManager;
@@ -62,6 +63,7 @@ namespace HandheldCompanion.Views.Pages
 
             this.mainWindow = mainWindow;
             this.Hidder = mainWindow.Hidder;
+            this.toastManager = mainWindow.toastManager;
 
             this.logger = logger;
 
@@ -299,11 +301,13 @@ namespace HandheldCompanion.Views.Pages
             if (!controllerEx.IsConnected())
                 return;
 
+            // notify user
+            toastManager.SendToast(controllerEx.ToString(), "Now hidden and inputs are sent to virtual controller.");
+            controllerEx.Identify();
+
+            // notify service
             PipeControllerIndex settings = new PipeControllerIndex((int)controllerEx.UserIndex, controllerEx.deviceInstancePath, controllerEx.baseContainerDeviceInstancePath);
             pipeClient?.SendMessage(settings);
-
-            // vibrate controller
-            controllerEx.Identify();
         }
     }
 }
