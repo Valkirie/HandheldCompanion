@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Administrator" xml:space="preserve">
     <value>Administrator</value>
@@ -132,11 +132,23 @@
   <data name="navProfiles" xml:space="preserve">
     <value>Profiles</value>
   </data>
+  <data name="serviceDeploy" xml:space="preserve">
+    <value>Deploy Service</value>
+  </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>Provides gyroscope and accelerometer support to the AYA NEO 2020, 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled.</value>
   </data>
   <data name="ServiceName" xml:space="preserve">
     <value>Controller Service</value>
+  </data>
+  <data name="serviceRemove" xml:space="preserve">
+    <value>Remove Service</value>
+  </data>
+  <data name="serviceStart" xml:space="preserve">
+    <value>Start Service</value>
+  </data>
+  <data name="serviceStop" xml:space="preserve">
+    <value>Stop Service</value>
   </data>
   <data name="StyleofInput" xml:space="preserve">
     <value>Style of input</value>

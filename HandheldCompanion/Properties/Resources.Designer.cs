@@ -106,6 +106,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deploy Service.
+        /// </summary>
+        public static string serviceDeploy {
+            get {
+                return ResourceManager.GetString("serviceDeploy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Provides gyroscope and accelerometer support to the AYA NEO 2020, 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled..
         /// </summary>
         public static string ServiceDescription {
@@ -120,6 +129,33 @@ namespace HandheldCompanion.Properties {
         public static string ServiceName {
             get {
                 return ResourceManager.GetString("ServiceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Service.
+        /// </summary>
+        public static string serviceRemove {
+            get {
+                return ResourceManager.GetString("serviceRemove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start Service.
+        /// </summary>
+        public static string serviceStart {
+            get {
+                return ResourceManager.GetString("serviceStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop Service.
+        /// </summary>
+        public static string serviceStop {
+            get {
+                return ResourceManager.GetString("serviceStop", resourceCulture);
             }
         }
         

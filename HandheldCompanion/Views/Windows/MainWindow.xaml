@@ -65,16 +65,16 @@
         <ui:NavigationView.FooterMenuItems>
             <ui:NavigationViewItem
                 ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100"
-                Icon="Stop" Content="Halt service" Name="b_ServiceStop" Tag="ServiceStop" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" Visibility="Hidden" />
+                Icon="Stop" Content="{x:Static resx:Resources.serviceStop}" Name="b_ServiceStop" Tag="ServiceStop" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" Visibility="Hidden" />
             <ui:NavigationViewItem
                 ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100"
-                Icon="Play" Content="Start service" Name="b_ServiceStart" Tag="ServiceStart" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" Visibility="Hidden" />
+                Icon="Play" Content="{x:Static resx:Resources.serviceStart}" Name="b_ServiceStart" Tag="ServiceStart" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" Visibility="Hidden" />
             <ui:NavigationViewItem
                 ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100"
-                Icon="Refresh" Content="Deploy service" Name="b_ServiceInstall" Tag="ServiceInstall" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" Visibility="Hidden" />
+                Icon="Refresh" Content="{x:Static resx:Resources.serviceDeploy}" Name="b_ServiceInstall" Tag="ServiceInstall" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" Visibility="Hidden" />
             <ui:NavigationViewItem
                 ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100"
-                Icon="Delete" Content="Remove service" Name="b_ServiceDelete" Tag="ServiceDelete" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" Visibility="Hidden" />
+                Icon="Delete" Content="{x:Static resx:Resources.serviceRemove}" Name="b_ServiceDelete" Tag="ServiceDelete" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" Visibility="Hidden" />
         </ui:NavigationView.FooterMenuItems>
 
         <ui:ScrollViewerEx
