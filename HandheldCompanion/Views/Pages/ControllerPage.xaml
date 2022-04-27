@@ -7,6 +7,7 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:HandheldCompanion" 
     xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     mc:Ignorable="d" 
     d:DesignHeight="1000" d:DesignWidth="1000"
@@ -35,7 +36,7 @@
                         <ui:ProgressRing Name="navLoad" IsActive="True" Width="50" Height="50" Visibility="Hidden"/>
                         <ui:SimpleStackPanel Spacing="18" VerticalAlignment="Bottom">
                             <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal">
-                                <Button Name="B_ServiceSwitch" Content="Connect" Width="Auto" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" Click="B_ServiceSwitch_Click"/>
+                                <Button Name="B_ServiceSwitch" Content="{x:Static resx:Resources.Connect}" Width="Auto" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" Click="B_ServiceSwitch_Click"/>
                                 <ComboBox Name="cB_HidMode" Width="Auto" SelectionChanged="cB_HidMode_SelectionChanged" BorderThickness="0"/>
                             </ui:SimpleStackPanel>
                             
@@ -49,8 +50,8 @@
                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE877;" Height="40" HorizontalAlignment="Center"/>
 
                                     <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                        <TextBlock Text="Vibration strength" FontSize="14"/>
-                                        <TextBlock Text="Change controller vibration strength" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{x:Static resx:Resources.VibrationStrength}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.VibrationStrengthExpl}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </ui:SimpleStackPanel>
                                 </DockPanel>
 
@@ -65,7 +66,7 @@
 
                 <!-- Input devices -->
                 <ui:SimpleStackPanel Spacing="6" Name="InputDevices" Visibility="Collapsed">
-                    <Label Content="Input devices" FontWeight="SemiBold"></Label>
+                    <Label Content="{x:Static resx:Resources.InputDevices}" FontWeight="SemiBold"></Label>
                     <Border
                         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
                         Padding="12"
@@ -79,7 +80,7 @@
 
                 <!-- Device cloaking -->
                 <ui:SimpleStackPanel Spacing="6">
-                    <Label Content="Device cloaking" FontWeight="SemiBold"></Label>
+                    <Label Content="{x:Static resx:Resources.DeviceCloaking}" FontWeight="SemiBold"></Label>
 
                     <!-- Cloak device -->
                     <Border                      
@@ -97,8 +98,8 @@
                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE793;" Height="40" HorizontalAlignment="Center"/>
 
                                 <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                    <TextBlock Text="Cloak device" FontSize="14"/>
-                                    <TextBlock Text="Change the physical controller visibility to other applications" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{x:Static resx:Resources.CloakDevice}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.CloakDeviceDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 
@@ -122,8 +123,8 @@
                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7B3;" Height="40" HorizontalAlignment="Center"/>
 
                                 <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                    <TextBlock Text="Uncloak on close" FontSize="14"/>
-                                    <TextBlock Text="Restore visibility of the physical controller to other applications on service exit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{x:Static resx:Resources.UncloakOnClose}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.UncloakOnCloseDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 
