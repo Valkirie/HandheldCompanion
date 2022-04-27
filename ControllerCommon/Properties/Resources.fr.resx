@@ -117,22 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="AYASpace.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AYASpace.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="Cemu.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Cemu.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="ControllerCompanion.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ControllerCompanion.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="Default.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Default.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="Dolphin.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Dolphin.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
     <value>Toujours activé</value>
   </data>
@@ -221,34 +205,13 @@
   <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
     <value>Rien à voir ici.</value>
   </data>
-  <data name="HidHideCLI.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HidHideCLI.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="JoystickCameraDesc" xml:space="preserve">
     <value>Cette entrée fonctionnera comme un simple joystick. Elle est destinée aux applications traditionnelles de joystick</value>
   </data>
   <data name="JoystickSteeringDesc" xml:space="preserve">
     <value>Cette entrée fonctionnera comme un joystick optimisé pour le contrôle d'un volant ou d'un jeu de course.</value>
   </data>
-  <data name="JoyXOff.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\JoyXOff.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="PlayerSpaceDesc" xml:space="preserve">
     <value>Cette entrée fonctionnera comme un joystick optimisé pour le contrôle d'une caméra à la première ou à la troisième personne.</value>
-  </data>
-  <data name="Playnite.FullscreenApp.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Playnite.FullscreenApp.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xinput1_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="xinput1_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xinput1_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="XInputPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Yuzu.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Yuzu.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>
