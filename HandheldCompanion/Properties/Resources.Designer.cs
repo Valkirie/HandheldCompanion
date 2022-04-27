@@ -88,6 +88,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alignment.
+        /// </summary>
+        public static string Alignment {
+            get {
+                return ResourceManager.GetString("Alignment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the 3D overlay controller alignment.
+        /// </summary>
+        public static string AlignmentDesc {
+            get {
+                return ResourceManager.GetString("AlignmentDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the trackpads overlay alignment.
+        /// </summary>
+        public static string AlignmentTrackpadDesc {
+            get {
+                return ResourceManager.GetString("AlignmentTrackpadDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Author.
         /// </summary>
         public static string Author {
@@ -133,6 +160,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Controller options.
+        /// </summary>
+        public static string ControllerOptions {
+            get {
+                return ResourceManager.GetString("ControllerOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
         public static string Description {
@@ -160,6 +196,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Emulated controller.
+        /// </summary>
+        public static string EmulatedController {
+            get {
+                return ResourceManager.GetString("EmulatedController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Gyrometer.
         /// </summary>
         public static string Gyrometer {
@@ -183,6 +228,24 @@ namespace HandheldCompanion.Properties {
         public static string InputDevices {
             get {
                 return ResourceManager.GetString("InputDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main trigger.
+        /// </summary>
+        public static string MainTrigger {
+            get {
+                return ResourceManager.GetString("MainTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the overlay main trigger.
+        /// </summary>
+        public static string MainTriggerDesc {
+            get {
+                return ResourceManager.GetString("MainTriggerDesc", resourceCulture);
             }
         }
         
@@ -232,11 +295,101 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to OEM controller.
+        /// </summary>
+        public static string OEMController {
+            get {
+                return ResourceManager.GetString("OEMController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opacity.
+        /// </summary>
+        public static string Opacity {
+            get {
+                return ResourceManager.GetString("Opacity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the overlay trackpads opacity.
+        /// </summary>
+        public static string OpacityTrackpadDesc {
+            get {
+                return ResourceManager.GetString("OpacityTrackpadDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overlay.
+        /// </summary>
+        public static string Overlay {
+            get {
+                return ResourceManager.GetString("Overlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overlay model.
+        /// </summary>
+        public static string OverlayModel {
+            get {
+                return ResourceManager.GetString("OverlayModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the overlay controller model.
+        /// </summary>
+        public static string OverlayModelDesc {
+            get {
+                return ResourceManager.GetString("OverlayModelDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overlay preview.
+        /// </summary>
+        public static string OverlayPreview {
+            get {
+                return ResourceManager.GetString("OverlayPreview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Related Links.
         /// </summary>
         public static string RelatedLinks {
             get {
                 return ResourceManager.GetString("RelatedLinks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Secondary trigger.
+        /// </summary>
+        public static string SecondaryTrigger {
+            get {
+                return ResourceManager.GetString("SecondaryTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the 3D overlay controller trigger.
+        /// </summary>
+        public static string SecondaryTriggerDesc {
+            get {
+                return ResourceManager.GetString("SecondaryTriggerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the overlay trackpads trigger.
+        /// </summary>
+        public static string SecondaryTriggerOverlayDesc {
+            get {
+                return ResourceManager.GetString("SecondaryTriggerOverlayDesc", resourceCulture);
             }
         }
         
@@ -313,6 +466,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Size.
+        /// </summary>
+        public static string Size {
+            get {
+                return ResourceManager.GetString("Size", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the 3D overlay controller size.
+        /// </summary>
+        public static string SizeDesc {
+            get {
+                return ResourceManager.GetString("SizeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the overlay trackpads size.
+        /// </summary>
+        public static string SizeOverlayDesc {
+            get {
+                return ResourceManager.GetString("SizeOverlayDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Source Code.
         /// </summary>
         public static string SourceCode {
@@ -354,6 +534,15 @@ namespace HandheldCompanion.Properties {
         public static string StyleofOutputTooltip {
             get {
                 return ResourceManager.GetString("StyleofOutputTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trackpads options.
+        /// </summary>
+        public static string TrackpadsOptions {
+            get {
+                return ResourceManager.GetString("TrackpadsOptions", resourceCulture);
             }
         }
         
