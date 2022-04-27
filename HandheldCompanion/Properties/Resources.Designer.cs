@@ -97,6 +97,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cloak device.
+        /// </summary>
+        public static string CloakDevice {
+            get {
+                return ResourceManager.GetString("CloakDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the physical controller visibility to other applications.
+        /// </summary>
+        public static string CloakDeviceDesc {
+            get {
+                return ResourceManager.GetString("CloakDeviceDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connect.
+        /// </summary>
+        public static string Connect {
+            get {
+                return ResourceManager.GetString("Connect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Contributors.
         /// </summary>
         public static string Contributors {
@@ -111,6 +138,15 @@ namespace HandheldCompanion.Properties {
         public static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Device cloaking.
+        /// </summary>
+        public static string DeviceCloaking {
+            get {
+                return ResourceManager.GetString("DeviceCloaking", resourceCulture);
             }
         }
         
@@ -138,6 +174,15 @@ namespace HandheldCompanion.Properties {
         public static string Inclinometer {
             get {
                 return ResourceManager.GetString("Inclinometer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input devices.
+        /// </summary>
+        public static string InputDevices {
+            get {
+                return ResourceManager.GetString("InputDevices", resourceCulture);
             }
         }
         
@@ -313,6 +358,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Uncloak on close.
+        /// </summary>
+        public static string UncloakOnClose {
+            get {
+                return ResourceManager.GetString("UncloakOnClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore visibility of the physical controller to other applications on service exit.
+        /// </summary>
+        public static string UncloakOnCloseDesc {
+            get {
+                return ResourceManager.GetString("UncloakOnCloseDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User.
         /// </summary>
         public static string User {
@@ -327,6 +390,24 @@ namespace HandheldCompanion.Properties {
         public static string Version {
             get {
                 return ResourceManager.GetString("Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vibration strength.
+        /// </summary>
+        public static string VibrationStrength {
+            get {
+                return ResourceManager.GetString("VibrationStrength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change controller vibration strength.
+        /// </summary>
+        public static string VibrationStrengthExpl {
+            get {
+                return ResourceManager.GetString("VibrationStrengthExpl", resourceCulture);
             }
         }
         
