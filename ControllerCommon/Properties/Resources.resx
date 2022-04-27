@@ -133,6 +133,9 @@
   <data name="Dolphin.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Dolphin.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
+    <value>Emulated DualShock 4 Controller</value>
+  </data>
   <data name="HidHideCLI.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HidHideCLI.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>

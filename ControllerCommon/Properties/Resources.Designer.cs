@@ -131,6 +131,15 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Emulated DualShock 4 Controller.
+        /// </summary>
+        public static string Enum_HIDmode_DualShock4Controller {
+            get {
+                return ResourceManager.GetString("Enum.HIDmode.DualShock4Controller", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {
         ///  &quot;name&quot;: &quot;HidHideCLI&quot;,
         ///  &quot;path&quot;: &quot;C:\\Program Files\\Nefarius Software Solutions e.U\\HidHideCLI\\HidHideCLI.exe&quot;,
