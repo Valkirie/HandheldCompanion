@@ -112,13 +112,37 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AboutDescription" xml:space="preserve">
+    <value>Handheld Companion provides gyroscope and accelerometer support to the AYA NEO 2020 and 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible information on the GyroWiki.</value>
+  </data>
+  <data name="Accelerometer" xml:space="preserve">
+    <value>Accelerometer</value>
+  </data>
   <data name="Administrator" xml:space="preserve">
     <value>Administrator</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="Contributors" xml:space="preserve">
+    <value>Contributors</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Donate" xml:space="preserve">
+    <value>Donate</value>
+  </data>
+  <data name="Gyrometer" xml:space="preserve">
+    <value>Gyrometer</value>
+  </data>
+  <data name="Inclinometer" xml:space="preserve">
+    <value>Inclinometer</value>
   </data>
   <data name="navAbout" xml:space="preserve">
     <value>About</value>
@@ -132,11 +156,38 @@
   <data name="navProfiles" xml:space="preserve">
     <value>Profiles</value>
   </data>
+  <data name="NotApplicable" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="RelatedLinks" xml:space="preserve">
+    <value>Related Links</value>
+  </data>
+  <data name="SensorName" xml:space="preserve">
+    <value>Sensor Name</value>
+  </data>
+  <data name="SensorSpecification" xml:space="preserve">
+    <value>Sensor Specification</value>
+  </data>
+  <data name="serviceDeploy" xml:space="preserve">
+    <value>Deploy Service</value>
+  </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>Provides gyroscope and accelerometer support to the AYA NEO 2020, 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled.</value>
   </data>
   <data name="ServiceName" xml:space="preserve">
     <value>Controller Service</value>
+  </data>
+  <data name="serviceRemove" xml:space="preserve">
+    <value>Remove Service</value>
+  </data>
+  <data name="serviceStart" xml:space="preserve">
+    <value>Start Service</value>
+  </data>
+  <data name="serviceStop" xml:space="preserve">
+    <value>Stop Service</value>
+  </data>
+  <data name="SourceCode" xml:space="preserve">
+    <value>Source Code</value>
   </data>
   <data name="StyleofInput" xml:space="preserve">
     <value>Style of input</value>
@@ -153,7 +204,13 @@
   <data name="User" xml:space="preserve">
     <value>User</value>
   </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
   <data name="WarningElevated" xml:space="preserve">
     <value>Run this tool as Administrator to unlock these settings.</value>
+  </data>
+  <data name="Wiki" xml:space="preserve">
+    <value>Wiki</value>
   </data>
 </root>
