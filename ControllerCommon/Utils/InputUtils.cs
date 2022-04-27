@@ -14,42 +14,40 @@ namespace ControllerCommon.Utils
         public float maxOut;
     }
 
+    public enum Input
+    {
+        PlayerSpace = 0,
+        JoystickCamera = 1,
+        JoystickSteering = 2
+    }
+
+    public enum Output
+    {
+        LeftStick = 0,
+        RightStick = 1,
+        /* [Description("Mouse")]
+        Mouse = 2 */
+    }
+
     public enum GamepadButtonFlagsExt : uint
     {
-        [Description("DPad Up")]
         DPadUp = 1,
-        [Description("DPad Down")]
         DPadDown = 2,
-        [Description("DPad Left")]
         DPadLeft = 4,
-        [Description("DPad Right")]
         DPadRight = 8,
-        [Description("Start")]
         Start = 16,
-        [Description("Back")]
         Back = 32,
-        [Description("Left Thumb")]
         LeftThumb = 64,
-        [Description("Right Thumb")]
         RightThumb = 128,
-        [Description("Left Shoulder")]
         LeftShoulder = 256,
-        [Description("Right Shoulder")]
         RightShoulder = 512,
-        [Description("Left Trigger")]
-        LeftTrigger = 1024,     // specific
-        [Description("Right Trigger")]
-        RightTrigger = 2048,    // specific
-        [Description("A")]
+        LeftTrigger = 1024,
+        RightTrigger = 2048,
         A = 4096,
-        [Description("B")]
         B = 8192,
-        [Description("X")]
         X = 16384,
-        [Description("Y")]
         Y = 32768,
-        [Description("Always On")]
-        AlwaysOn = 65536        // specific
+        AlwaysOn = 65536
     }
 
     public enum OverlayModelMode

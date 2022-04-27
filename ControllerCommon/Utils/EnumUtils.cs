@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -15,6 +16,8 @@ namespace ControllerCommon.Utils
 
             if (root != null)
                 return root;
+
+            Debug.WriteLine("Missing localization value for enum: {0}", value);
 
             // return description otherwise
             DescriptionAttribute attribute = null;

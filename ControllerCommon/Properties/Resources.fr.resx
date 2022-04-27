@@ -117,137 +117,101 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="AYASpace.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AYASpace.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="Cemu.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Cemu.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="ControllerCompanion.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ControllerCompanion.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="Default.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Default.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="Dolphin.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Dolphin.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
-    <value>Always On</value>
+    <value>Toujours activé</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
-    <value>Back</value>
+    <value>Affichage</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.DPadDown" xml:space="preserve">
-    <value>DPad Down</value>
+    <value>DPAD - Bas</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.DPadLeft" xml:space="preserve">
-    <value>DPad Left</value>
+    <value>DPAD - Gauche</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.DPadRight" xml:space="preserve">
-    <value>DPad Right</value>
+    <value>DPAD - Droit</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.DPadUp" xml:space="preserve">
-    <value>DPad Up</value>
+    <value>DPAD - Bas</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.LeftShoulder" xml:space="preserve">
-    <value>Left Shoulder</value>
+    <value>Gâchette haute gauche</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
-    <value>Left Thumb</value>
+    <value>Clic stick gauche</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
-    <value>Left Trigger</value>
+    <value>Gâchette gauche</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.RightShoulder" xml:space="preserve">
-    <value>Right Shoulder</value>
+    <value>Gâchette haute droite</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
-    <value>Right Thumb</value>
+    <value>Clic stick droit</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
-    <value>Right Trigger</value>
+    <value>Gâchette droite</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
-    <value>Start</value>
+    <value>Menu</value>
   </data>
   <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
-    <value>Emulated DualShock 4 controller</value>
+    <value>Contrôleur DualShock 4 émulé</value>
   </data>
   <data name="Enum.HIDmode.NoController" xml:space="preserve">
-    <value>No emulated controller</value>
+    <value>Aucun contrôleur émulé</value>
   </data>
   <data name="Enum.HIDmode.Xbox360Controller" xml:space="preserve">
-    <value>Emulated XBOX 360 controller</value>
+    <value>Contrôleur XBOX 360 émulé</value>
   </data>
   <data name="Enum.HIDstatus.Connected" xml:space="preserve">
-    <value>Connected</value>
+    <value>Connecté</value>
   </data>
   <data name="Enum.HIDstatus.Disconnected" xml:space="preserve">
-    <value>Disconnected</value>
+    <value>Déconnecté</value>
   </data>
   <data name="Enum.Input.JoystickCamera" xml:space="preserve">
-    <value>Joystick camera</value>
+    <value>Caméra joystick</value>
   </data>
   <data name="Enum.Input.JoystickSteering" xml:space="preserve">
-    <value>Joystick steering</value>
+    <value>Conduite par joystick</value>
   </data>
   <data name="Enum.Input.PlayerSpace" xml:space="preserve">
     <value>Player space</value>
+    <comment>A traduire...</comment>
   </data>
   <data name="Enum.Output.LeftStick" xml:space="preserve">
-    <value>Left joystick</value>
+    <value>Joystick gauche</value>
   </data>
   <data name="Enum.Output.RightStick" xml:space="preserve">
-    <value>Right joystick</value>
+    <value>Joystick droit</value>
   </data>
   <data name="Enum.ProfileErrorCode.IsDefault" xml:space="preserve">
-    <value>This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled.</value>
+    <value>Il s'agit de votre profil de contrôleur par défaut. Ce profil sera appliqué pour toutes vos applications qui n'ont pas de profil spécifique. Certaines options nécessitant un exécutable peuvent être désactivées.</value>
   </data>
   <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
-    <value>Oops. It seems this profile excutable is running. Some options requiring an executable might be disabled.</value>
+    <value>Oups. Il semble que ce profil soit en cours d'exécution. Certaines options nécessitant un exécutable pourraient être désactivées.</value>
   </data>
   <data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
-    <value>Oops. It seems this profile does not have an executable. How is this even possible?</value>
+    <value>Oups. Il semble que ce profil n'ait pas d'exécutable. Comment cela est-il possible ?</value>
   </data>
   <data name="Enum.ProfileErrorCode.MissingPath" xml:space="preserve">
-    <value>Oops. It seems this profile does not have a path to the application. Some options requiring an executable might be disabled.</value>
+    <value>Oups. Il semble que ce profil ne dispose pas d'un chemin vers l'application. Certaines options nécessitant un exécutable pourraient être désactivées.</value>
   </data>
   <data name="Enum.ProfileErrorCode.MissingPermission" xml:space="preserve">
-    <value>Oops. It seems you do not have the necessary permission level to modify the content of this application. Make sure you have started this program in administrator mode.</value>
+    <value>Oups. Il semble que vous n'ayez pas le niveau de permission nécessaire pour modifier le contenu de cette application. Assurez-vous que vous avez lancé ce programme en mode administrateur.</value>
   </data>
   <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
-    <value>Nothing to see here.</value>
-  </data>
-  <data name="HidHideCLI.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HidHideCLI.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>Rien à voir ici.</value>
   </data>
   <data name="JoystickCameraDesc" xml:space="preserve">
-    <value>This input will operate as a simple joystick. This is intended for traditional joystick applications</value>
+    <value>Cette entrée fonctionnera comme un simple joystick. Elle est destinée aux applications traditionnelles de joystick</value>
   </data>
   <data name="JoystickSteeringDesc" xml:space="preserve">
-    <value>This input will operate as a joystick optimized for controlling a steering wheel or a racing game</value>
-  </data>
-  <data name="JoyXOff.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\JoyXOff.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>Cette entrée fonctionnera comme un joystick optimisé pour le contrôle d'un volant ou d'un jeu de course.</value>
   </data>
   <data name="PlayerSpaceDesc" xml:space="preserve">
-    <value>This input will operate as a joystick optimized for controlling a first or third person camera</value>
-  </data>
-  <data name="Playnite.FullscreenApp.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Playnite.FullscreenApp.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xinput1_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="xinput1_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xinput1_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="XInputPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Yuzu.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Yuzu.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>Cette entrée fonctionnera comme un joystick optimisé pour le contrôle d'une caméra à la première ou à la troisième personne.</value>
   </data>
 </root>

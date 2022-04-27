@@ -6,42 +6,14 @@ using System.Text.Json.Serialization;
 
 namespace ControllerCommon
 {
-    // todo : use localization and an array
     public enum ProfileErrorCode
     {
         None = 0,
-        [Description("Oops. It seems this profile does not have an executable. How is this even possible?")]
         MissingExecutable = 1,
-        [Description("Oops. It seems this profile does not have a path to the application. Some options requiring an executable might be disabled.")]
         MissingPath = 2,
-        [Description("Oops. It seems you do not have the necessary permission level to modify the content of this application. Make sure you have started this program in administrator mode.")]
         MissingPermission = 3,
-        [Description("This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled.")]
         IsDefault = 4,
-        [Description("Oops. It seems this profile excutable is running. Some options requiring an executable might be disabled.")]
         IsRunning = 5
-    }
-
-    // todo : use localization and an array
-    public enum Input
-    {
-        [Description("Player space")]
-        PlayerSpace = 0,
-        [Description("Joystick camera")]
-        JoystickCamera = 1,
-        [Description("Joystick steering")]
-        JoystickSteering = 2
-    }
-
-    // todo : use localization and an array
-    public enum Output
-    {
-        [Description("Left Joystick")]
-        LeftStick = 0,
-        [Description("Right joystick")]
-        RightStick = 1,
-        /* [Description("Mouse")]
-        Mouse = 2 */
     }
 
     [Serializable]
@@ -60,12 +32,12 @@ namespace ControllerCommon
     [Serializable]
     public class Profile
     {
-
+        // move me to HandheldCompanion ?
         public static Dictionary<Input, string> InputDescription = new()
         {
-            { Input.JoystickCamera, Properties.Resources.JoystickCamera },
-            { Input.JoystickSteering, Properties.Resources.JoystickSteering },
-            { Input.PlayerSpace, Properties.Resources.PlayerSpace }
+            { Input.JoystickCamera, Properties.Resources.JoystickCameraDesc },
+            { Input.JoystickSteering, Properties.Resources.JoystickSteeringDesc },
+            { Input.PlayerSpace, Properties.Resources.PlayerSpaceDesc }
         };
 
         public string name { get; set; }

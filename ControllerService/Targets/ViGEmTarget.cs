@@ -37,7 +37,7 @@ namespace ControllerService.Targets
         public XInputController xinputController;
         public FlickStick flickStick;
 
-        public HIDmode HID = HIDmode.None;
+        public HIDmode HID = HIDmode.NoController;
 
         protected readonly ILogger logger;
 
