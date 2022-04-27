@@ -1,6 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -21,7 +22,10 @@ namespace HandheldCompanion.Views.Pages
     public partial class ControllerPage : Page
     {
         private MainWindow mainWindow;
-        private readonly ILogger microsoftLogger;
+        private readonly HidHide Hidder;
+        private readonly ToastManager toastManager;
+
+        private readonly ILogger logger;
         private ServiceManager serviceManager;
 
         // pipe vars
@@ -34,6 +38,8 @@ namespace HandheldCompanion.Views.Pages
         private HIDmode controllerMode = HIDmode.None;
         private HIDstatus controllerStatus = HIDstatus.Disconnected;
 
+        private ControllerManager controllerManager;
+
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(HIDmode controllerMode);
 
@@ -43,14 +49,23 @@ namespace HandheldCompanion.Views.Pages
 
             foreach (HIDmode mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.None))
                 cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
+
+            // initialize controller manager
+            controllerManager = new ControllerManager(logger);
+            controllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
+            controllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
+            controllerManager.Start();
         }
 
-        public ControllerPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
+        public ControllerPage(string Tag, MainWindow mainWindow, ILogger logger) : this()
         {
             this.Tag = Tag;
 
             this.mainWindow = mainWindow;
-            this.microsoftLogger = microsoftLogger;
+            this.Hidder = mainWindow.Hidder;
+            this.toastManager = mainWindow.toastManager;
+
+            this.logger = logger;
 
             this.pipeClient = mainWindow.pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
@@ -94,7 +109,36 @@ namespace HandheldCompanion.Views.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void ControllerManager_ControllerUnplugged(UserIndex idx, ControllerEx controller)
+        {
             // implement me
+            this.Dispatcher.Invoke(() =>
+            {
+                ControllerEx removeme = null;
+                foreach (ControllerEx ctrl in RadioControllers.Items)
+                {
+                    if (ctrl.Controller.UserIndex == idx)
+                        removeme = ctrl;
+                }
+
+                if (removeme != null)
+                    RadioControllers.Items.Remove(removeme);
+
+                if (RadioControllers.Items.Count == 0)
+                    InputDevices.Visibility = Visibility.Collapsed;
+            });
+        }
+
+        private void ControllerManager_ControllerPlugged(UserIndex idx, ControllerEx controller)
+        {
+            // implement me
+            this.Dispatcher.Invoke(() =>
+            {
+                RadioControllers.Items.Add(controller);
+                InputDevices.Visibility = Visibility.Visible;
+            });
         }
 
         private void UpdateController()
@@ -125,20 +169,6 @@ namespace HandheldCompanion.Views.Pages
         {
             switch (message.code)
             {
-                case PipeCode.SERVER_CONTROLLER:
-                    PipeServerHandheld controller = (PipeServerHandheld)message;
-
-                    // threaded call to update UI
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        DeviceName.Text = controller.ControllerName;
-                        DeviceVendorID.Text = $"0{controller.ControllerVID.ToString("X2")}";
-                        DeviceProductID.Text = $"0{controller.ControllerPID.ToString("X2")}";
-                    });
-
-                    microsoftLogger.LogInformation("{0} connected on port {1}", controller.ControllerName, controller.ControllerIdx);
-                    break;
-
                 case PipeCode.SERVER_SETTINGS:
                     PipeServerSettings settings = (PipeServerSettings)message;
                     UpdateSettings(settings.settings);
@@ -166,6 +196,14 @@ namespace HandheldCompanion.Views.Pages
 
                 switch (name)
                 {
+                    case "HIDidx":
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            int index = int.Parse(property);
+                            if (RadioControllers.Items.Count > index)
+                                RadioControllers.SelectedIndex = index;
+                        });
+                        break;
                     case "HIDmode":
                         controllerMode = (HIDmode)Enum.Parse(typeof(HIDmode), property);
                         UpdateController();
@@ -248,6 +286,28 @@ namespace HandheldCompanion.Views.Pages
         private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             MainWindow.scrollLock = false;
+        }
+
+        private void RadioControllers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (RadioControllers.SelectedIndex == -1)
+                return;
+
+            ControllerEx controllerEx = (ControllerEx)RadioControllers.SelectedItem;
+
+            if (controllerEx == null)
+                return;
+
+            if (!controllerEx.IsConnected())
+                return;
+
+            // notify user
+            toastManager.SendToast(controllerEx.ToString(), "Now hidden and inputs are sent to virtual controller.");
+            controllerEx.Identify();
+
+            // notify service
+            PipeControllerIndex settings = new PipeControllerIndex((int)controllerEx.UserIndex, controllerEx.deviceInstancePath, controllerEx.baseContainerDeviceInstancePath);
+            pipeClient?.SendMessage(settings);
         }
     }
 }

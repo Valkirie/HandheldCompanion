@@ -21,7 +21,7 @@ namespace HandheldCompanion.Views.Pages
     public partial class ProfilesPage : Page
     {
         private MainWindow mainWindow;
-        private ILogger microsoftLogger;
+        private ILogger logger;
 
         private ProfileManager profileManager;
         private Profile profileCurrent;
@@ -36,12 +36,12 @@ namespace HandheldCompanion.Views.Pages
             InitializeComponent();
         }
 
-        public ProfilesPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
+        public ProfilesPage(string Tag, MainWindow mainWindow, ILogger logger) : this()
         {
             this.Tag = Tag;
 
             this.mainWindow = mainWindow;
-            this.microsoftLogger = microsoftLogger;
+            this.logger = logger;
 
             this.pipeClient = mainWindow.pipeClient;
             this.pipeClient.ServerMessage += PipeClient_ServerMessage;
@@ -60,7 +60,7 @@ namespace HandheldCompanion.Views.Pages
                 SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
 
                 // create icon
-                FontIcon icon = new FontIcon() { FontSize = 24 };
+                FontIcon icon = new FontIcon() { Glyph = "" };
                 icon.Glyph = InputUtils.GamepadButtonToGlyph(button);
 
                 if (icon.Glyph != "")
@@ -78,13 +78,67 @@ namespace HandheldCompanion.Views.Pages
             }
 
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
-                cB_Input.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
+            {
+                // create panel
+                SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+
+                // create icon
+                FontIcon icon = new FontIcon() { Glyph = "" };
+
+                switch(mode)
+                {
+                    default:
+                    case Input.PlayerSpace:
+                        icon.Glyph = "\uF119";
+                        break;
+                    case Input.JoystickCamera:
+                        icon.Glyph = "\uE714";
+                        break;
+                    case Input.JoystickSteering:
+                        icon.Glyph = "\uEC47";
+                        break;
+                }
+
+                if (icon.Glyph != "")
+                    panel.Children.Add(icon);
+
+                // create textblock
+                string description = EnumUtils.GetDescriptionFromEnumValue(mode);
+                TextBlock text = new TextBlock() { Text = description };
+                panel.Children.Add(text);
+
+                cB_Input.Items.Add(panel);
+            }
 
             foreach (Output mode in (Output[])Enum.GetValues(typeof(Output)))
-                cB_Output.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
+            {
+                // create panel
+                SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
 
-            // select default profile
-            cB_Profiles.SelectedItem = profileManager.GetDefault();
+                // create icon
+                FontIcon icon = new FontIcon() { Glyph = "" };
+
+                switch (mode)
+                {
+                    default:
+                    case Output.RightStick:
+                        icon.Glyph = "\uF109";
+                        break;
+                    case Output.LeftStick:
+                        icon.Glyph = "\uF108";
+                        break;
+                }
+
+                if (icon.Glyph != "")
+                    panel.Children.Add(icon);
+
+                // create textblock
+                string description = EnumUtils.GetDescriptionFromEnumValue(mode);
+                TextBlock text = new TextBlock() { Text = description };
+                panel.Children.Add(text);
+
+                cB_Output.Items.Add(panel);
+            }
         }
 
         private void PipeClient_ServerMessage(object sender, PipeMessage e)
@@ -99,7 +153,7 @@ namespace HandheldCompanion.Views.Pages
         public void ProfileUpdated(Profile profile, bool backgroundtask)
         {
             // inform Service we have a new default profile
-            if (profile.IsDefault)
+            if (profile.isDefault)
                 pipeClient.SendMessage(new PipeClientProfile() { profile = profile });
 
             this.Dispatcher.Invoke(async () =>
@@ -117,8 +171,7 @@ namespace HandheldCompanion.Views.Pages
                 else
                     cB_Profiles.Items.Add(profile);
 
-                if (!backgroundtask)
-                    cB_Profiles.SelectedItem = profile;
+                cB_Profiles.SelectedItem = profile;
             });
         }
 
@@ -194,7 +247,7 @@ namespace HandheldCompanion.Views.Pages
                             }
                             catch (Exception ex)
                             {
-                                microsoftLogger.LogError(ex.Message, true);
+                                logger.LogError(ex.Message, true);
                             }
                             break;
                     }
@@ -228,7 +281,7 @@ namespace HandheldCompanion.Views.Pages
                 }
                 catch (Exception ex)
                 {
-                    microsoftLogger.LogError(ex.Message);
+                    logger.LogError(ex.Message);
                 }
             }
         }
@@ -244,10 +297,10 @@ namespace HandheldCompanion.Views.Pages
                 default:
                 case Input.JoystickCamera:
                 case Input.PlayerSpace:
-                    page = new ProfileSettingsMode0("ProfileSettingsMode0", profileCurrent, pipeClient, microsoftLogger);
+                    page = new ProfileSettingsMode0("ProfileSettingsMode0", profileCurrent, pipeClient, logger);
                     break;
                 case Input.JoystickSteering:
-                    page = new ProfileSettingsMode1("ProfileSettingsMode1", profileCurrent, pipeClient, microsoftLogger);
+                    page = new ProfileSettingsMode1("ProfileSettingsMode1", profileCurrent, pipeClient, logger);
                     break;
             }
             mainWindow.NavView_Navigate(page);
@@ -270,8 +323,8 @@ namespace HandheldCompanion.Views.Pages
             Dispatcher.BeginInvoke(() =>
             {
                 // disable button if is default profile
-                b_DeleteProfile.IsEnabled = !profileCurrent.IsDefault;
-                tB_ProfileName.IsEnabled = !profileCurrent.IsDefault;
+                b_DeleteProfile.IsEnabled = !profileCurrent.isDefault;
+                tB_ProfileName.IsEnabled = !profileCurrent.isDefault;
 
                 GlobalSettings.IsEnabled = GlobalDetails.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
                 b_ApplyProfile.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
@@ -281,8 +334,8 @@ namespace HandheldCompanion.Views.Pages
                 tB_ProfileName.Text = profileCurrent.name;
                 tB_ProfilePath.Text = profileCurrent.fullpath;
 
-                Toggle_EnableProfile.IsEnabled = !profileCurrent.IsDefault;
-                Toggle_EnableProfile.IsOn = profileCurrent.enabled;
+                Toggle_EnableProfile.IsEnabled = !profileCurrent.isDefault;
+                Toggle_EnableProfile.IsOn = profileCurrent.isEnabled;
 
                 Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
                 tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
@@ -304,7 +357,7 @@ namespace HandheldCompanion.Views.Pages
 
                 // display warnings
                 ProfileErrorCode currentError = profileCurrent.error;
-                if (profileCurrent.IsRunning)
+                if (profileCurrent.isApplied)
                     currentError = ProfileErrorCode.IsRunning;
 
                 switch (currentError)
@@ -366,7 +419,7 @@ namespace HandheldCompanion.Views.Pages
 
             profileCurrent.name = tB_ProfileName.Text;
             profileCurrent.fullpath = tB_ProfilePath.Text;
-            profileCurrent.enabled = (bool)Toggle_EnableProfile.IsOn;
+            profileCurrent.isEnabled = (bool)Toggle_EnableProfile.IsOn;
 
             profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
             profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
@@ -425,8 +478,7 @@ namespace HandheldCompanion.Views.Pages
             if (profileCurrent == null)
                 return;
 
-            cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !profileCurrent.IsDefault;
-            Expander_UMC.IsExpanded = Toggle_UniversalMotion.IsOn;
+            cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !profileCurrent.isDefault;
         }
 
         private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -451,8 +503,10 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (cB_Input.SelectedIndex == -1)
+                return;
+
             Input button = (Input)cB_Input.SelectedIndex;
-            // Grid_InputHint.Visibility = Visibility.Visible;
             Text_InputHint.Text = Profile.InputDescription[button];
         }
     }

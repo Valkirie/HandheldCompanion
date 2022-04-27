@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Utils;
+using ControllerService.Sensors;
 using Force.Crc32;
 using Microsoft.Extensions.Logging;
 using System;
@@ -624,16 +625,16 @@ namespace ControllerService
                 outIdx += 8;
 
                 //accelerometer
-                if (hidReport.Acceleration != empty)
+                if (hidReport.Accelerations[XInputSensorFlags.Centered] != empty)
                 {
                     // accelXG
-                    Array.Copy(BitConverter.GetBytes(hidReport.Acceleration.X), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(hidReport.Accelerations[XInputSensorFlags.Centered].X), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // accelYG
-                    Array.Copy(BitConverter.GetBytes(hidReport.Acceleration.Y), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(hidReport.Accelerations[XInputSensorFlags.Centered].Y), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // accelZG
-                    Array.Copy(BitConverter.GetBytes(-hidReport.Acceleration.Z), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(-hidReport.Accelerations[XInputSensorFlags.Centered].Z), 0, outputData, outIdx, 4);
                     outIdx += 4;
                 }
                 else
@@ -643,16 +644,16 @@ namespace ControllerService
                 }
 
                 //gyroscope
-                if (hidReport.AngularVelocity != empty)
+                if (hidReport.AngularVelocities[XInputSensorFlags.Centered] != empty)
                 {
                     // angVelPitch
-                    Array.Copy(BitConverter.GetBytes(hidReport.AngularVelocity.X), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(hidReport.AngularVelocities[XInputSensorFlags.Centered].X), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // angVelYaw
-                    Array.Copy(BitConverter.GetBytes(hidReport.AngularVelocity.Y), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(hidReport.AngularVelocities[XInputSensorFlags.Centered].Y), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // angVelRoll
-                    Array.Copy(BitConverter.GetBytes(-hidReport.AngularVelocity.Z), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(-hidReport.AngularVelocities[XInputSensorFlags.Centered].Z), 0, outputData, outIdx, 4);
                     outIdx += 4;
                 }
                 else
@@ -671,7 +672,7 @@ namespace ControllerService
                 return;
 
             // update status
-            padMeta.IsActive = hidReport.physicalController.IsConnected;
+            padMeta.IsActive = hidReport.controllerEx.IsConnected();
 
             var clientsList = new List<IPEndPoint>();
             var now = DateTime.UtcNow;

@@ -2,24 +2,11 @@
 using HandheldCompanion.Views.Windows;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
-using SharpDX.XInput;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static HandheldCompanion.Views.Windows.Overlay;
-using Page = System.Windows.Controls.Page;
 using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
+using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -28,7 +15,7 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class OverlayPage : Page
     {
-        private ILogger microsoftLogger;
+        private ILogger logger;
         private Overlay overlay;
 
         public OverlayPage()
@@ -36,14 +23,14 @@ namespace HandheldCompanion.Views.Pages
             InitializeComponent();
         }
 
-        public OverlayPage(string Tag, Overlay overlay, ILogger microsoftLogger) : this()
+        public OverlayPage(string Tag, Overlay overlay, ILogger logger) : this()
         {
             this.Tag = Tag;
             this.overlay = overlay;
             this.overlay.ControllerTriggerUpdated += Overlay_ControllerTriggerUpdated;
             this.overlay.TrackpadsTriggerUpdated += Overlay_TrackpadsTriggerUpdated;
 
-            this.microsoftLogger = microsoftLogger;
+            this.logger = logger;
 
             // overlay trigger
             OverlayTrigger.SelectedIndex = Properties.Settings.Default.OverlayTrigger;
@@ -60,6 +47,10 @@ namespace HandheldCompanion.Views.Pages
             // controller size
             SliderControllerSize.Value = Properties.Settings.Default.OverlayControllerSize;
             SliderControllerSize_ValueChanged(this, null);
+
+            // trackpads size
+            SliderTrackpadsSize.Value = Properties.Settings.Default.OverlayTrackpadsSize;
+            SliderTrackpadsSize_ValueChanged(this, null);
 
             // controller trigger
             GamepadButtonFlagsExt ControllerButton = (GamepadButtonFlagsExt)Properties.Settings.Default.OverlayControllerTrigger;
@@ -92,15 +83,18 @@ namespace HandheldCompanion.Views.Pages
                     button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
             }
 
-            switch(trackpadsAlignment)
+            switch (trackpadsAlignment)
             {
                 case 0:
+                    TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Top;
                     overlay.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Top;
                     break;
                 case 1:
+                    TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Center;
                     overlay.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Center;
                     break;
                 case 2:
+                    TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Bottom;
                     overlay.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Bottom;
                     break;
             }
@@ -173,10 +167,23 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             overlay.VirtualController.Width = SliderControllerSize.Value;
-            overlay.VirtualController.Height = SliderControllerSize.Value;// * 0.6d;
+            overlay.VirtualController.Height = SliderControllerSize.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerSize = (int)SliderControllerSize.Value;
+            Properties.Settings.Default.Save();
+        }
+
+        private void SliderTrackpadsSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (overlay == null)
+                return;
+
+            overlay.LeftTrackpad.Height = overlay.LeftTrackpad.Width = SliderTrackpadsSize.Value;
+            overlay.RightTrackpad.Height = overlay.RightTrackpad.Width = SliderTrackpadsSize.Value;
+
+            // save settings
+            Properties.Settings.Default.OverlayTrackpadsSize = (int)SliderTrackpadsSize.Value;
             Properties.Settings.Default.Save();
         }
 
@@ -192,13 +199,13 @@ namespace HandheldCompanion.Views.Pages
 
         private void OverlayTrigger_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            switch(OverlayTrigger.SelectedIndex)
+            switch (OverlayTrigger.SelectedIndex)
             {
-                case 0: // start
-                    overlay.mainTrigger = GamepadButtonFlags.Start;
-                    break;
-                case 1: // back
+                case 0:
                     overlay.mainTrigger = GamepadButtonFlags.Back;
+                    break;
+                case 1:
+                    overlay.mainTrigger = GamepadButtonFlags.Start;
                     break;
             }
 

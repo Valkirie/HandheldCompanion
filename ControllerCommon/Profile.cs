@@ -36,10 +36,10 @@ namespace ControllerCommon
     // todo : use localization and an array
     public enum Output
     {
-        [Description("Right joystick")]
-        RightStick = 0,
         [Description("Left Joystick")]
-        LeftStick = 1,
+        LeftStick = 0,
+        [Description("Right joystick")]
+        RightStick = 1,
         /* [Description("Mouse")]
         Mouse = 2 */
     }
@@ -71,7 +71,7 @@ namespace ControllerCommon
         public string name { get; set; }
         public string path { get; set; }
         public string executable { get; set; }
-        public bool enabled { get; set; } = true;
+        public bool isEnabled { get; set; } = true;
 
         public bool whitelisted { get; set; } = false;              // if true, can see through the HidHide cloak
         public bool use_wrapper { get; set; } = false;              // if true, deploy xinput1_3.dll
@@ -110,8 +110,8 @@ namespace ControllerCommon
         [JsonIgnore] public ProfileErrorCode error;
         [JsonIgnore] public string fullpath { get; set; }
         [JsonIgnore] public string json { get; set; }
-        [JsonIgnore] public bool IsDefault { get; set; } = false;
-        [JsonIgnore] public bool IsRunning { get; set; } = false;
+        [JsonIgnore] public bool isDefault { get; set; } = false;
+        [JsonIgnore] public bool isApplied { get; set; } = false;
         [JsonIgnore] public static int array_size = 49;             // x + 1 (hidden)
 
         public Profile()

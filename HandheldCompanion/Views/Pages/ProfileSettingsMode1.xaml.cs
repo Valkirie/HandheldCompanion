@@ -13,7 +13,7 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class ProfileSettingsMode1 : Page
     {
-        private ILogger microsoftLogger;
+        private ILogger logger;
         private Profile profileCurrent;
         private PipeClient pipeClient;
 
@@ -34,10 +34,10 @@ namespace HandheldCompanion.Views.Pages
             lvLineSeriesDefault.Values = new ChartValues<double>() { 0, 1 };
         }
 
-        public ProfileSettingsMode1(string Tag, Profile profileCurrent, PipeClient pipeClient, ILogger microsoftLogger) : this()
+        public ProfileSettingsMode1(string Tag, Profile profileCurrent, PipeClient pipeClient, ILogger logger) : this()
         {
             this.Tag = Tag;
-            this.microsoftLogger = microsoftLogger;
+            this.logger = logger;
 
             this.profileCurrent = profileCurrent;
             this.pipeClient = pipeClient;

@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Timers;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Media3D;
@@ -41,7 +40,7 @@ namespace HandheldCompanion.Views.Windows
         public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
         #endregion
 
-        private ILogger microsoftLogger;
+        private ILogger logger;
         private PipeClient pipeClient;
 
         private Model CurrentModel;
@@ -97,9 +96,9 @@ namespace HandheldCompanion.Views.Windows
             this.SourceInitialized += Overlay_SourceInitialized;
         }
 
-        public Overlay(ILogger microsoftLogger, PipeClient pipeClient) : this()
+        public Overlay(ILogger logger, PipeClient pipeClient) : this()
         {
-            this.microsoftLogger = microsoftLogger;
+            this.logger = logger;
 
             this.pipeClient = pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
@@ -146,7 +145,7 @@ namespace HandheldCompanion.Views.Windows
 
             }
 
-            ModelViewPort.ZoomExtents(); 
+            ModelViewPort.ZoomExtents();
         }
 
         private void Overlay_SourceInitialized(object? sender, EventArgs e)
@@ -276,21 +275,6 @@ namespace HandheldCompanion.Views.Windows
                         case SensorType.Quaternion:
                             // update ModelVisual3D
                             UpdateModelVisual3D(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z, sensor.x, sensor.y, sensor.z);
-
-                            // TODO remove, for testing only!
-                            if (InputUtils.rad2deg(sensor.y) < 165.0 && InputUtils.rad2deg(sensor.y) > 0)
-                            {
-                                MotorLeftPlaceholder = (short)1;
-                            }
-                            else { MotorLeftPlaceholder = (short)0; }
-
-                            // TODO remove, for testing only!
-                            if (InputUtils.rad2deg(sensor.y) > -165.0 && InputUtils.rad2deg(sensor.y) < 0)
-                            {
-                                MotorRightPlaceholder = (short)1;
-                            }
-                            else { MotorRightPlaceholder = (short)0; }
-
                             break;
                     }
                     break;

@@ -49,7 +49,7 @@ namespace ControllerService.Sensors
             // throw new NotImplementedException();
         }
 
-        public new Vector3 GetCurrentReading(bool center = false)
+        public new Vector3 GetCurrentReading(bool center = false, bool ratio = false)
         {
             Vector3 reading = new Vector3()
             {
@@ -61,6 +61,9 @@ namespace ControllerService.Sensors
             if (controller.virtualTarget != null)
             {
                 reading *= controller.profile.accelerometer;
+
+                if (ratio)
+                    reading.Y *= controller.handheldDevice.WidthHeightRatio;
 
                 var readingZ = controller.profile.steering == 0 ? reading.Z : reading.Y;
                 var readingY = controller.profile.steering == 0 ? reading.Y : -reading.Z;

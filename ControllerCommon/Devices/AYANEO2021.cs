@@ -6,7 +6,7 @@
         {
             this.ProductSupported = true;
 
-            this.WidthHeightRatio = 2.4d;
+            this.WidthHeightRatio = 2.4f;
             this.ProductIllustration = "device_aya_2021";
         }
     }

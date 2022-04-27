@@ -47,7 +47,7 @@ namespace ControllerService.Sensors
             base.ReadingChanged();
         }
 
-        public new Vector3 GetCurrentReading(bool center = false)
+        public new Vector3 GetCurrentReading(bool center = false, bool ratio = false)
         {
             Vector3 reading = new Vector3()
             {
@@ -60,8 +60,8 @@ namespace ControllerService.Sensors
             {
                 reading *= controller.profile.gyrometer;
 
-                // Todo, can't have this with player space
-                //reading.Y *= controller.WidhtHeightRatio;
+                if (ratio)
+                    reading.Y *= controller.handheldDevice.WidthHeightRatio;
 
                 var readingZ = controller.profile.steering == 0 ? reading.Z : reading.Y;
                 var readingY = controller.profile.steering == 0 ? reading.Y : reading.Z;

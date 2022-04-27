@@ -1,5 +1,4 @@
 using ControllerCommon;
-using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using HandheldCompanion.Models;
 using HandheldCompanion.Views.Pages;
@@ -17,7 +16,6 @@ using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
@@ -83,12 +81,12 @@ namespace HandheldCompanion.Views
         public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
         private bool FirstStart, appClosing;
 
-        public MainWindow(StartupEventArgs arguments, ILogger microsoftLogger)
+        public MainWindow(StartupEventArgs arguments, ILogger logger)
         {
             InitializeComponent();
             Name = this.Title;
 
-            this.logger = microsoftLogger;
+            this.logger = logger;
             this.arguments = arguments;
 
             // get the actual handheld device
@@ -275,7 +273,7 @@ namespace HandheldCompanion.Views
                     return;
 
                 currentProfile.fullpath = path;
-                currentProfile.IsRunning = false;
+                currentProfile.isApplied = false;
 
                 // update profile and inform settings page
                 profileManager.UpdateOrCreateProfile(currentProfile);
@@ -293,7 +291,7 @@ namespace HandheldCompanion.Views
                     return;
 
                 currentProfile.fullpath = path;
-                currentProfile.IsRunning = true;
+                currentProfile.isApplied = true;
 
                 // update profile and inform settings page
                 profileManager.UpdateOrCreateProfile(currentProfile);
@@ -310,14 +308,19 @@ namespace HandheldCompanion.Views
                 if (currentProfile == null)
                     currentProfile = profileManager.GetDefault();
 
-                if (!currentProfile.enabled)
+                if (!currentProfile.isEnabled)
                     return;
 
-                currentProfile.fullpath = path;
-                currentProfile.IsRunning = true;
+                currentProfile.isApplied = true;
 
-                // update profile and inform settings page
-                profileManager.UpdateOrCreateProfile(currentProfile);
+                // do not update default profile path
+                if (!currentProfile.isDefault)
+                {
+                    currentProfile.fullpath = path;
+
+                    // update profile and inform settings page
+                    profileManager.UpdateOrCreateProfile(currentProfile);
+                }
 
                 // inform service & mouseHook
                 pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });

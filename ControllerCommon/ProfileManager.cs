@@ -163,7 +163,7 @@ namespace ControllerCommon
             }
 
             if (profile.name == "Default")
-                profile.IsDefault = true;
+                profile.isDefault = true;
 
             UpdateOrCreateProfile(profile);
         }
@@ -196,7 +196,7 @@ namespace ControllerCommon
         {
             string processpath = Path.GetDirectoryName(profile.fullpath);
 
-            if (profile.IsDefault)
+            if (profile.isDefault)
                 return ProfileErrorCode.IsDefault;
             else
             {
@@ -226,7 +226,7 @@ namespace ControllerCommon
             // warn owner
             Updated?.Invoke(profile, backgroundtask);
 
-            if (profile.error != ProfileErrorCode.None && !profile.IsDefault)
+            if (profile.error != ProfileErrorCode.None && !profile.isDefault)
             {
                 logger.LogError("Profile {0} returned error code {1}", profile.name, profile.error);
                 return;
@@ -255,7 +255,7 @@ namespace ControllerCommon
             string[] fullpaths = new string[] { profile.fullpath };
 
             // for testing purposes, this should not happen!
-            if (profile.IsDefault)
+            if (profile.isDefault)
             {
                 fullpaths = new string[]
                 {

@@ -55,6 +55,12 @@ namespace ControllerCommon
 
         SERVER_GAMEPAD = 17,                // Sent to client to share gamepad values
                                             // args: ...
+
+        CLIENT_CONTROLLERINDEX = 18,              // Sent to server to share details on controller
+                                                  // args: ...
+
+        CLIENT_CLEARINDEX = 19,             // Sent to server to clear all hidden controllers
+                                            // args: ...
     }
 
     public class PipeServer

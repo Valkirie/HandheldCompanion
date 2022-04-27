@@ -24,7 +24,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Column="0">
-                    <ui:FontIcon FontSize="80" FontFamily="{DynamicResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}" Glyph="&#xECC5;" Grid.Column="0" HorizontalAlignment="Center"/>
+                    <ui:FontIcon FontSize="80" FontFamily="{DynamicResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}" Glyph="&#xECC5;" HorizontalAlignment="Center"/>
                     <Grid Name="GridUpdateSymbol" Visibility="Collapsed">
                         <ui:FontIcon FontSize="30" FontFamily="{DynamicResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemAccentColorLight2Brush}" Glyph="&#xE91F;" Margin="50,50,0,0"/>
                         <ui:FontIcon FontSize="20" FontFamily="{DynamicResource SymbolThemeFontFamily}" Foreground="White" Glyph="&#xE73E;" Margin="50,50,0,0"/>
@@ -50,11 +50,11 @@
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Name="LabelUpdateName" Text="Handheld Companion (Version 0.9.2.0)" FontSize="14" Grid.Column="0" VerticalAlignment="Center"/>
+                    <TextBlock Name="LabelUpdateName" Text="Handheld Companion (Version 0.9.2.0)" FontSize="14" VerticalAlignment="Center"/>
                     <TextBlock Name="LabelUpdatePercentage" Text="Downloading - 100%" Grid.Column="1" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     <Button Visibility="Hidden" Name="ButtonInstall" Content="Install now" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Click="B_InstallUpdate_Click"/>
                 </Grid>
@@ -66,97 +66,101 @@
 
                 <!-- Auto-start application -->
                 <Border                      
-                        Padding="0,12,12,12"
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xED35;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xED35;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Auto-start application" FontSize="14"/>
-                            <TextBlock Text="The application will start automatically when I sign in to Windows" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Auto-start application" FontSize="14"/>
+                                <TextBlock Text="The application will start automatically when I sign in to Windows" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_AutoStart" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_AutoStart_Toggled"/>
+                        <ui:ToggleSwitch Name="Toggle_AutoStart" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_AutoStart_Toggled"/>
                     </Grid>
                 </Border>
 
                 <!-- Open application in background -->
                 <Border  
-                        Padding="0,12,12,12"
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEE40;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEE40;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Open application in background" FontSize="14"/>
-                            <TextBlock Text="The application will initially start minimized and appear on the taskbar" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Open application in background" FontSize="14"/>
+                                <TextBlock Text="The application will initially start minimized and appear on the taskbar" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_Background" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Background_Toggled"/>
+                        <ui:ToggleSwitch Name="Toggle_Background" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_Background_Toggled"/>
                     </Grid>
                 </Border>
 
                 <!-- Close minimizes -->
                 <Border  
-                        Padding="0,12,12,12"
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE921;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE921;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Close minimizes" FontSize="14"/>
-                            <TextBlock Text="The application will be minimized instead of closed" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Close minimizes" FontSize="14"/>
+                                <TextBlock Text="The application will be minimized instead of closed" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_CloseMinimizes" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_CloseMinimizes_Toggled"/>
+                        <ui:ToggleSwitch Name="Toggle_CloseMinimizes" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_CloseMinimizes_Toggled"/>
                     </Grid>
                 </Border>
 
                 <!-- Application theme -->
                 <Border  
-                        Padding="0,12,12,12"
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Application theme" FontSize="14"/>
-                            <TextBlock Text="The application will be minimized instead of closed" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Application theme" FontSize="14"/>
+                                <TextBlock Text="The application will be minimized instead of closed" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <ComboBox Name="cB_Theme" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_Theme_SelectionChanged"
+                        <ComboBox Name="cB_Theme" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_Theme_SelectionChanged"
                                   MouseEnter="Scrolllock_MouseEnter"
                                   MouseLeave="Scrolllock_MouseLeave">
                             <ComboBoxItem Content="Light"/>
@@ -172,25 +176,26 @@
 
                 <!-- Toast notification -->
                 <Border                      
-                        Padding="0,12,12,12"
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7E7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7E7;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Toast notification" FontSize="14"/>
-                            <TextBlock Text="Get notifications from the application in the action center" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Toast notification" FontSize="14"/>
+                                <TextBlock Text="Get notifications from the application in the action center" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_Notification" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_Notification_Toggled"/>
+                        <ui:ToggleSwitch Name="Toggle_Notification" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_Notification_Toggled"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
@@ -201,25 +206,26 @@
 
                 <!-- Toast notification -->
                 <Border                      
-                        Padding="0,12,12,12"
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Startup type" FontSize="14"/>
-                            <TextBlock Text="Used by the service manager to define the service startup type " Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Startup type" FontSize="14"/>
+                                <TextBlock Text="Used by the service manager to define the service startup type " Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <ComboBox Name="cB_StartupType" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_StartupType_SelectionChanged"
+                        <ComboBox Name="cB_StartupType" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_StartupType_SelectionChanged"
                                   MouseEnter="Scrolllock_MouseEnter"
                                   MouseLeave="Scrolllock_MouseLeave"/>
                     </Grid>
@@ -227,25 +233,26 @@
 
                 <!-- Start with Companion -->
                 <Border                      
-                            Padding="0,12,12,12"
+                            Padding="15,12,12,12"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEDB5;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEDB5;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Start with Companion" FontSize="14"/>
-                            <TextBlock Text="Automatically turn on service when companion starts" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Start with Companion" FontSize="14"/>
+                                <TextBlock Text="Automatically turn on service when companion starts" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_ServiceStartup" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_ServiceStartup_Toggled" IsEnabled="False">
+                        <ui:ToggleSwitch Name="Toggle_ServiceStartup" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceStartup_Toggled" IsEnabled="False">
 
                         </ui:ToggleSwitch>
                     </Grid>
@@ -253,25 +260,26 @@
 
                 <!-- Stop with Companion -->
                 <Border                      
-                            Padding="0,12,12,12"
+                            Padding="15,12,12,12"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE71A;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE71A;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Halt with Companion" FontSize="14"/>
-                            <TextBlock Text="Automatically turn off service when companion is closed" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Halt with Companion" FontSize="14"/>
+                                <TextBlock Text="Automatically turn off service when companion is closed" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_ServiceShutdown" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_ServiceShutdown_Toggled" IsEnabled="False"/>
+                        <ui:ToggleSwitch Name="Toggle_ServiceShutdown" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceShutdown_Toggled" IsEnabled="False"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>

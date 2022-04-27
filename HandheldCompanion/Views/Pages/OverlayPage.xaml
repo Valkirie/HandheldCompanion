@@ -15,7 +15,9 @@
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="24">
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="Preview" FontWeight="SemiBold"></Label>
+                
+                <!-- Overlay preview -->
+                <Label Content="Overlay preview" FontWeight="SemiBold"></Label>
                 <Border
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
@@ -48,34 +50,37 @@
                 
                 <!-- Main trigger -->
                 <Border                      
-                            Padding="0,12,12,12"
+                            Padding="15,12,12,12"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Main trigger" FontSize="14"/>
-                            <TextBlock Text="Change the overlay main trigger" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Main trigger" FontSize="14"/>
+                                <TextBlock Text="Change the overlay main trigger" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <ui:RadioButtons Name="OverlayTrigger" Grid.Column="2" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="OverlayTrigger_SelectionChanged">
-                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                <ui:FontIcon Glyph="&#xEDE3;"/>
-                                <Label>Start</Label>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                <ui:FontIcon Glyph="&#xEECA;"/>
-                                <Label>Back</Label>
-                            </ui:SimpleStackPanel>
-                        </ui:RadioButtons>
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                            <ui:RadioButtons Name="OverlayTrigger" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="OverlayTrigger_SelectionChanged">
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="&#xEECA;"/>
+                                    <Label>Back</Label>
+                                </ui:SimpleStackPanel>
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="&#xEDE3;"/>
+                                    <Label>Start</Label>
+                                </ui:SimpleStackPanel>
+                            </ui:RadioButtons>
+                        </DockPanel>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
@@ -86,25 +91,26 @@
                 
                 <!-- Controller model -->
                 <Border                      
-                            Padding="0,12,12,12"
+                            Padding="15,12,12,12"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF158;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF158;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Overlay model" FontSize="14"/>
-                            <TextBlock Text="Change the overlay controller model" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Overlay model" FontSize="14"/>
+                                <TextBlock Text="Change the overlay controller model" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <ui:RadioButtons Name="OverlayModel" Grid.Column="2" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="OverlayModel_SelectionChanged">
+                        <ui:RadioButtons Name="OverlayModel" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="OverlayModel_SelectionChanged">
                             <Label>OEM controller</Label>
                             <Label>Emulated controller</Label>
                         </ui:RadioButtons>
@@ -113,25 +119,26 @@
 
                 <!-- Controller Alignment -->
                 <Border                      
-                        Padding="0,12,12,12"
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE80A;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE80A;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Alignment" FontSize="14"/>
-                            <TextBlock Text="Change the 3D overlay controller Alignment" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Alignment" FontSize="14"/>
+                                <TextBlock Text="Change the 3D overlay controller alignment" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <Grid Grid.Column="2">
+                        <Grid Grid.Column="1">
                             <ui:SimpleStackPanel Name="OverlayControllerAlignment" Spacing="6" HorizontalAlignment="Right">
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <Button Tag="0" Width="50" Height="50" Click="ControllerAlignment_Click"></Button>
@@ -155,53 +162,56 @@
                 
                 <!-- Size -->
                 <Border                      
-                        Padding="0,12,12,12"
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
-                            <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECC6;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Size" FontSize="14"/>
-                            <TextBlock Text="Change the 3D overlay controller size" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Size" FontSize="14"/>
+                                <TextBlock Text="Change the 3D overlay controller size" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderControllerSize, Mode=OneWay}" />
-                        <Slider Name="SliderControllerSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="200" Value="400" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderControllerSize_ValueChanged"  IsSnapToTickEnabled="True"
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderControllerSize, Mode=OneWay}" />
+                            <Slider Margin="6,0,0,0" Name="SliderControllerSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="200" Value="400" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderControllerSize_ValueChanged"  IsSnapToTickEnabled="True"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave"/>
+                        </DockPanel>
                     </Grid>
                 </Border>
 
                 <!-- Trigger -->
                 <Border                      
-                            Padding="0,12,12,12"
+                            Padding="15,12,12,12"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Secondary trigger" FontSize="14"/>
-                            <TextBlock Text="Change the 3D overlay controller trigger" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Secondary trigger" FontSize="14"/>
+                                <TextBlock Text="Change the 3D overlay controller trigger" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <Button Name="ControllerTriggerButton" Grid.Column="2" Height="50" HorizontalAlignment="Right" VerticalAlignment="Center" Click="ControllerTriggerButton_Click">
+                        <Button Name="ControllerTriggerButton" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Click="ControllerTriggerButton_Click">
                             <ui:SimpleStackPanel Name="ControllerTriggerStack" Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
                                 <ui:FontIcon Name="ControllerTriggerIcon"/>
                                 <TextBlock Name="ControllerTriggerText"/>
@@ -217,25 +227,26 @@
 
                 <!-- Controller Alignment -->
                 <Border                      
-                        Padding="0,12,12,12"
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE80A;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE80A;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Alignment" FontSize="14"/>
-                            <TextBlock Text="Change the overlay trackpads alignment" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Alignment" FontSize="14"/>
+                                <TextBlock Text="Change the trackpads overlay alignment" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <Grid Grid.Column="2">
+                        <Grid Grid.Column="1">
                             <ui:SimpleStackPanel Name="OverlayTrackpadsAlignment" Spacing="6" HorizontalAlignment="Right">
                                 <Button Tag="0" Width="50" Height="50" Click="TrackpadsAlignment_Click"></Button>
                                 <Button Tag="1" Width="50" Height="50" Click="TrackpadsAlignment_Click"></Button>
@@ -245,55 +256,88 @@
                     </Grid>
                 </Border>
 
-                <!-- Opacity -->
+                <!-- Size -->
                 <Border                      
-                        Padding="0,12,12,12"
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
-                            <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE75C;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECC6;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Opacity" FontSize="14"/>
-                            <TextBlock Text="Change the overlay trackpads opacity" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Size" FontSize="14"/>
+                                <TextBlock Text="Change the overlay trackpads size" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderTrackpadsOpacity, Mode=OneWay}" />
-                        <Slider Name="SliderTrackpadsOpacity" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="1" Minimum="0" Value="0.5" TickPlacement="BottomRight" SmallChange="0.1" TickFrequency="0.1" AutoToolTipPrecision="1" ValueChanged="SliderTrackpadsOpacity_ValueChanged" IsSnapToTickEnabled="True"
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderTrackpadsSize, Mode=OneWay}" />
+                            <Slider Margin="6,0,0,0" Name="SliderTrackpadsSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="100" Value="250" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderTrackpadsSize_ValueChanged"  IsSnapToTickEnabled="True"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave"/>
+                        </DockPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Opacity -->
+                <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE75C;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Opacity" FontSize="14"/>
+                                <TextBlock Text="Change the overlay trackpads opacity" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderTrackpadsOpacity, Mode=OneWay}" />
+                            <Slider Margin="6,0,0,0" Name="SliderTrackpadsOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="1" Minimum="0" Value="0.5" TickPlacement="BottomRight" SmallChange="0.1" TickFrequency="0.1" AutoToolTipPrecision="1" ValueChanged="SliderTrackpadsOpacity_ValueChanged" IsSnapToTickEnabled="True"
+                            MouseEnter="Scrolllock_MouseEnter"
+                            MouseLeave="Scrolllock_MouseLeave"/>
+                        </DockPanel>
                     </Grid>
                 </Border>
 
                 <!-- Trigger -->
                 <Border                      
-                            Padding="0,12,12,12"
+                            Padding="15,12,12,12"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"></ColumnDefinition>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
 
-                        <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Secondary trigger" FontSize="14"/>
-                            <TextBlock Text="Change the overlay trackpads trigger" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                        </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Secondary trigger" FontSize="14"/>
+                                <TextBlock Text="Change the overlay trackpads trigger" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <Button Name="TrackpadsTriggerButton" Grid.Column="2" Height="50" HorizontalAlignment="Right" VerticalAlignment="Center" Click="TrackpadsTriggerButton_Click">
+                        <Button Name="TrackpadsTriggerButton" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Click="TrackpadsTriggerButton_Click">
                             <ui:SimpleStackPanel Name="TrackpadsTriggerStack" Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
                                 <ui:FontIcon Name="TrackpadsTriggerIcon"/>
                                 <TextBlock Name="TrackpadsTriggerText"/>

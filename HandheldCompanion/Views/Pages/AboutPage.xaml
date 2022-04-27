@@ -57,7 +57,7 @@
                             </Image.Source>
                         </Image>
                         <ui:SimpleStackPanel Orientation="Vertical" VerticalAlignment="Center">
-                            <Label Name="LabelManufacturer" Content="Manufacturer" FontWeight="SemiBold" FontSize="20" Foreground="{DynamicResource SystemControlBackgroundAccentBrush}"></Label>
+                            <Label Name="LabelManufacturer" Content="Manufacturer" FontWeight="SemiBold" FontSize="20"></Label>
                             <Label Name="LabelProductName" Content="Product name" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" ></Label>
                             </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
@@ -65,133 +65,96 @@
             </Border>
 
             <!-- Sensor specifications -->
-            <Border
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                        Padding="12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+            <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <DockPanel Margin="-10,12,12,12">
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" HorizontalAlignment="Center"/>
 
-                <Expander FlowDirection="RightToLeft" Expanded="Expander_Expanded" IsExpanded="True">
-                    <Expander.Header>
-                        <DockPanel FlowDirection="LeftToRight"
-                                       Margin="-12,0,0,0"
-                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
-                            <!-- Change the look inside header here -->
+                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="Sensor specifications" FontSize="14"/>
+                        </ui:SimpleStackPanel>
+                    </DockPanel>
+                </Expander.Header>
+
+                <Expander.Content>
+                    <Grid FlowDirection="LeftToRight">
+                        <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50"></ColumnDefinition>
-                                    <ColumnDefinition MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                                <ui:SimpleStackPanel Spacing="12">
+                                    <TextBlock Text="Sensor name" FontSize="14"/>
+                                    <TextBlock Text="Gyrometer" FontSize="14"/>
+                                    <TextBlock Text="Accelerometer" FontSize="14"/>
+                                    <TextBlock Text="Inclinometer" FontSize="14"/>
+                                </ui:SimpleStackPanel>
 
-                                <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="Sensor specifications" FontSize="14"/>
+                                <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
+                                    <TextBlock Name="SensorName" Text="N/A" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Name="GyrometerValue" Text="N/A" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Name="AccelerometerValue" Text="N/A" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Name="InclinometerValue" Text="N/A" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
-                        </DockPanel>
-                    </Expander.Header>
-
-                    <Expander.Content>
-                        <Grid FlowDirection="LeftToRight" Margin="0,12,0,0">
-                            <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
-                                <!-- Separator -->
-                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
-
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="120"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-
-                                    <ui:SimpleStackPanel Grid.Column="0" Spacing="12">
-                                        <TextBlock Text="Sensor name" FontSize="14"/>
-                                        <TextBlock Text="Gyrometer" FontSize="14"/>
-                                        <TextBlock Text="Accelerometer" FontSize="14"/>
-                                        <TextBlock Text="Inclinometer" FontSize="14"/>
-                                    </ui:SimpleStackPanel>
-
-                                    <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
-                                        <TextBlock Name="SensorName" Text="N/A" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                        <TextBlock Name="GyrometerValue" Text="N/A" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                        <TextBlock Name="AccelerometerValue" Text="N/A" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                        <TextBlock Name="InclinometerValue" Text="N/A" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    </ui:SimpleStackPanel>
-                                </Grid>
-                            </ui:SimpleStackPanel>
-                        </Grid>
-                    </Expander.Content>
-                </Expander>
-            </Border>
+                        </ui:SimpleStackPanel>
+                    </Grid>
+                </Expander.Content>
+            </Expander>
 
             <!-- Service -->
-            <Border
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                        Padding="12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+            <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <DockPanel Margin="-10,12,12,12">
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE74C;" Height="40" HorizontalAlignment="Center"/>
 
-                <Expander FlowDirection="RightToLeft" Expanded="Expander_Expanded" IsExpanded="True">
-                    <Expander.Header>
-                        <DockPanel FlowDirection="LeftToRight"
-                                       Margin="-12,0,0,0"
-                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
-                            <!-- Change the look inside header here -->
+                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="Service" FontSize="14"/>
+                        </ui:SimpleStackPanel>
+                    </DockPanel>
+                </Expander.Header>
+
+                <Expander.Content>
+                    <Grid FlowDirection="LeftToRight">
+                        <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
+
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50"></ColumnDefinition>
-                                    <ColumnDefinition MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE74C;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                                <ui:SimpleStackPanel Spacing="12">
+                                    <TextBlock Text="Version" FontSize="14"/>
+                                    <TextBlock Text="Author" FontSize="14"/>
+                                    <TextBlock Text="Contributors" FontSize="14"/>
+                                    <TextBlock Text="Description" FontSize="14"/>
+                                </ui:SimpleStackPanel>
 
-                                <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="Service" FontSize="14"/>
+                                <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
+                                    <TextBlock Name="VersionValue" Text="N/A" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Text="BenjaminLSR" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Text="Nefarius, CasperH20" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock TextWrapping="Wrap" Text="Handheld Companion provides gyroscope and accelerometer support to the AYA NEO 2020 and 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible information on the GyroWiki." Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
-                        </DockPanel>
-                    </Expander.Header>
 
-                    <Expander.Content>
-                        <Grid FlowDirection="LeftToRight" Margin="0,12,0,0">
-                            <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
-                                <!-- Separator -->
-                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="120"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="200"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-
-                                    <ui:SimpleStackPanel Grid.Column="0" Spacing="12">
-                                        <TextBlock Text="Version" FontSize="14"/>
-                                        <TextBlock Text="Author" FontSize="14"/>
-                                        <TextBlock Text="Contributors" FontSize="14"/>
-                                        <TextBlock Text="Description" FontSize="14"/>
-                                    </ui:SimpleStackPanel>
-
-                                    <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
-                                        <TextBlock Name="VersionValue" Text="N/A" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                        <TextBlock Text="BenjaminLSR" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                        <TextBlock Text="Nefarius, CasperH20" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                        <TextBlock TextWrapping="Wrap" Text="Handheld Companion provides gyroscope and accelerometer support to the AYA NEO 2020 and 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible information on the GyroWiki." Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    </ui:SimpleStackPanel>
-                                </Grid>
-                                
-                                <!-- Separator -->
-                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
-
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
-                                    <TextBlock Text="Related links"/>
-                                    <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/ControllerService" RequestNavigate="Hyperlink_RequestNavigate">Source Code</Hyperlink></TextBlock>
-                                    <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/ControllerService/wiki" RequestNavigate="Hyperlink_RequestNavigate">Wiki</Hyperlink></TextBlock>
-                                    <TextBlock><Hyperlink NavigateUri="https://www.paypal.com/paypalme/BenjaminLSR" RequestNavigate="Hyperlink_RequestNavigate">Donate</Hyperlink></TextBlock>
-                                </ui:SimpleStackPanel>
-
+                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="Related links"/>
+                                <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/ControllerService" RequestNavigate="Hyperlink_RequestNavigate">Source Code</Hyperlink></TextBlock>
+                                <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/ControllerService/wiki" RequestNavigate="Hyperlink_RequestNavigate">Wiki</Hyperlink></TextBlock>
+                                <TextBlock><Hyperlink NavigateUri="https://www.paypal.com/paypalme/BenjaminLSR" RequestNavigate="Hyperlink_RequestNavigate">Donate</Hyperlink></TextBlock>
                             </ui:SimpleStackPanel>
-                        </Grid>
-                    </Expander.Content>
-                </Expander>
-            </Border>
+
+                        </ui:SimpleStackPanel>
+                    </Grid>
+                </Expander.Content>
+            </Expander>
 
         </ui:SimpleStackPanel>
     </Grid>

@@ -6,7 +6,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using Nefarius.ViGEm.Client;
-using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Device = ControllerCommon.Devices.Device;
@@ -35,12 +33,18 @@ namespace ControllerService
         private DSUServer DSUServer;
         public HidHide Hidder;
 
-        // Handheld devices vars
+        // devices vars
         private Device handheldDevice;
+        private UserIndex HIDidx;
+        private string deviceInstancePath;
+        private string baseContainerDeviceInstancePath;
 
         public static string CurrentExe, CurrentPath, CurrentPathDep;
         public static string CurrentTag;
         public static int CurrentOverlayStatus = -1;
+
+        // settings vars
+        Configuration configuration;
 
         private string DSUip;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
@@ -69,15 +73,22 @@ namespace ControllerService
             CurrentPathDep = Path.Combine(CurrentPath, "dependencies");
 
             // settings
-            HIDcloaked = Properties.Settings.Default.HIDcloaked;
-            HIDuncloakonclose = Properties.Settings.Default.HIDuncloakonclose;
-            HIDmode = (HIDmode)Properties.Settings.Default.HIDmode;
-            HIDstatus = (HIDstatus)Properties.Settings.Default.HIDstatus;
-            DSUEnabled = Properties.Settings.Default.DSUEnabled;
-            DSUip = Properties.Settings.Default.DSUip;
-            DSUport = Properties.Settings.Default.DSUport;
-            HIDrate = Properties.Settings.Default.HIDrate;
-            HIDstrength = Properties.Settings.Default.HIDstrength;
+            // todo: move me to a specific class
+            configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            HIDcloaked = bool.Parse(configuration.AppSettings.Settings["HIDcloaked"].Value);
+            HIDuncloakonclose = bool.Parse(configuration.AppSettings.Settings["HIDuncloakonclose"].Value); // Properties.Settings.Default.HIDuncloakonclose;
+            HIDmode = Enum.Parse<HIDmode>(configuration.AppSettings.Settings["HIDmode"].Value); // Properties.Settings.Default.HIDmode;
+            HIDstatus = Enum.Parse<HIDstatus>(configuration.AppSettings.Settings["HIDstatus"].Value); // Properties.Settings.Default.HIDstatus;
+            DSUEnabled = bool.Parse(configuration.AppSettings.Settings["DSUEnabled"].Value); // Properties.Settings.Default.DSUEnabled;
+            DSUip = configuration.AppSettings.Settings["DSUip"].Value; // Properties.Settings.Default.DSUip;
+            DSUport = int.Parse(configuration.AppSettings.Settings["DSUport"].Value); // Properties.Settings.Default.DSUport;
+            HIDrate = int.Parse(configuration.AppSettings.Settings["HIDrate"].Value); // Properties.Settings.Default.HIDrate;
+            HIDstrength = double.Parse(configuration.AppSettings.Settings["HIDstrength"].Value); // Properties.Settings.Default.HIDstrength;
+
+            HIDidx = Enum.Parse<UserIndex>(configuration.AppSettings.Settings["HIDidx"].Value); // Properties.Settings.Default.HIDidx;
+            deviceInstancePath = configuration.AppSettings.Settings["deviceInstancePath"].Value; // Properties.Settings.Default.deviceInstancePath;
+            baseContainerDeviceInstancePath = configuration.AppSettings.Settings["baseContainerDeviceInstancePath"].Value; // Properties.Settings.Default.baseContainerDeviceInstancePath;
 
             // initialize log
             logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
@@ -103,27 +114,14 @@ namespace ControllerService
             pipeServer.Disconnected += OnClientDisconnected;
             pipeServer.ClientMessage += OnClientMessage;
 
-            // prepare physical controller
-            foreach (UserIndex idx in (UserIndex[])Enum.GetValues(typeof(UserIndex)))
-            {
-                Controller controller = new Controller(idx);
-                if (!controller.IsConnected)
-                    continue;
-
-                XInputController = new XInputController(controller, idx, logger, pipeServer);
-                break;
-            }
-
-            if (XInputController == null)
-            {
-                logger.LogCritical("No physical controller detected. Application will stop");
-                throw new InvalidOperationException();
-            }
-
             // XInputController settings
+            XInputController = new XInputController(logger, pipeServer);
             XInputController.SetVibrationStrength(HIDstrength);
             XInputController.SetPollRate(HIDrate);
             XInputController.Updated += OnTargetSubmited;
+
+            // prepare physical controller
+            SetControllerIdx(HIDidx, deviceInstancePath, baseContainerDeviceInstancePath);
 
             // get the actual handheld device
             var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
@@ -146,7 +144,7 @@ namespace ControllerService
                     logger.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
                     break;
             }
-            Hidder.RegisterDevice(XInputController.ControllerIDs);
+            XInputController.SetDevice(handheldDevice);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
@@ -156,6 +154,40 @@ namespace ControllerService
             // initialize Profile Manager
             profileManager = new ProfileManager(logger);
             profileManager.Updated += ProfileUpdated;
+        }
+
+        private void SetControllerIdx(UserIndex idx, string deviceInstancePath, string baseContainerDeviceInstancePath)
+        {
+            ControllerEx controller = new ControllerEx(idx, logger);
+            XInputController.SetController(controller); // set even if disconnected
+
+            if (!controller.IsConnected())
+            {
+                logger.LogWarning("No physical controller detected on UserIndex: {0}", idx);
+                return;
+            }
+
+            logger.LogInformation("Listening to physical controller on UserIndex: {0}", idx);
+
+            // clear previous values
+            List<string> deviceInstancePaths = Hidder.GetRegisteredDevices();
+
+            // exclude controller
+            deviceInstancePaths.Remove(deviceInstancePath);
+            deviceInstancePaths.Remove(baseContainerDeviceInstancePath);
+
+            foreach (string instancePath in deviceInstancePaths)
+                Hidder.UnregisterController(instancePath);
+
+            // register controller
+            Hidder.RegisterController(deviceInstancePath);
+            Hidder.RegisterController(baseContainerDeviceInstancePath);
+
+            // update settings
+            configuration.AppSettings.Settings["HIDidx"].Value = ((int)idx).ToString();
+            configuration.AppSettings.Settings["deviceInstancePath"].Value = deviceInstancePath;
+            configuration.AppSettings.Settings["baseContainerDeviceInstancePath"].Value = baseContainerDeviceInstancePath;
+            configuration.Save(ConfigurationSaveMode.Modified);
         }
 
         private void SetControllerMode(HIDmode mode)
@@ -170,10 +202,10 @@ namespace ControllerService
                     VirtualTarget = null;
                     break;
                 case HIDmode.DualShock4Controller:
-                    VirtualTarget = new DualShock4Target(XInputController, VirtualClient, XInputController.physicalController, (int)XInputController.UserIndex, logger);
+                    VirtualTarget = new DualShock4Target(XInputController, VirtualClient, logger);
                     break;
                 case HIDmode.Xbox360Controller:
-                    VirtualTarget = new Xbox360Target(XInputController, VirtualClient, XInputController.physicalController, (int)XInputController.UserIndex, logger);
+                    VirtualTarget = new Xbox360Target(XInputController, VirtualClient, logger);
                     break;
             }
 
@@ -207,7 +239,7 @@ namespace ControllerService
             pipeServer?.SendMessage(new PipeServerToast
             {
                 title = $"{target}",
-                content = "Virtual device is now disconnected",
+                content = "Virtual controller is now disconnected",
                 image = $"HIDmode{(uint)target.HID}"
             });
         }
@@ -218,7 +250,7 @@ namespace ControllerService
             pipeServer?.SendMessage(new PipeServerToast
             {
                 title = $"{target}",
-                content = "Virtual device is now connected",
+                content = "Virtual controller is now connected",
                 image = $"HIDmode{(uint)target.HID}"
             });
         }
@@ -228,26 +260,35 @@ namespace ControllerService
             DSUServer?.SubmitReport(controller);
         }
 
+        // deprecated
         private void OnDSUStopped(DSUServer server)
         {
-            DSUEnabled = Properties.Settings.Default.DSUEnabled = false;
+            /* DSUEnabled = false;
+            configuration.GetSection("Settings:DSUEnabled").Value = false.ToString();
 
             PipeServerSettings settings = new PipeServerSettings("DSUEnabled", DSUEnabled.ToString());
-            pipeServer.SendMessage(settings);
+            pipeServer.SendMessage(settings); */
         }
 
+        // deprecated
         private void OnDSUStarted(DSUServer server)
         {
-            DSUEnabled = Properties.Settings.Default.DSUEnabled = true;
+            /* DSUEnabled = true;
+            configuration.GetSection("Settings:DSUEnabled").Value = true.ToString();
 
             PipeServerSettings settings = new PipeServerSettings("DSUEnabled", DSUEnabled.ToString());
-            pipeServer.SendMessage(settings);
+            pipeServer.SendMessage(settings); */
         }
 
         private void OnClientMessage(object sender, PipeMessage message)
         {
             switch (message.code)
             {
+                case PipeCode.CLIENT_CONTROLLERINDEX:
+                    PipeControllerIndex pipeControllerIndex = (PipeControllerIndex)message;
+                    SetControllerIdx((UserIndex)pipeControllerIndex.UserIndex, pipeControllerIndex.deviceInstancePath, pipeControllerIndex.baseContainerDeviceInstancePath);
+                    break;
+
                 case PipeCode.FORCE_SHUTDOWN:
                     Hidder?.SetCloaking(false, XInputController.ProductName);
                     break;
@@ -341,9 +382,9 @@ namespace ControllerService
                 hasInclinometer = handheldDevice.hasInclinometer,
 
                 ControllerName = XInputController.ProductName,
-                ControllerVID = XInputController.XInputData.VID,
-                ControllerPID = XInputController.XInputData.PID,
-                ControllerIdx = (int)XInputController.UserIndex
+                ControllerVID = XInputController.controllerEx.GetVID(),
+                ControllerPID = XInputController.controllerEx.GetVID(),
+                ControllerIdx = (int)XInputController.controllerEx.UserIndex
             });
 
             // send server settings
@@ -360,97 +401,79 @@ namespace ControllerService
             foreach (KeyValuePair<string, object> pair in args)
             {
                 string name = pair.Key;
-                object property = pair.Value;
+                string property = pair.Value.ToString();
 
-                SettingsProperty setting = Properties.Settings.Default.Properties[name];
-                if (setting != null)
-                {
-                    object prev_value = Properties.Settings.Default[name];
-                    object value = property;
+                configuration.AppSettings.Settings[name].Value = property;
+                configuration.Save(ConfigurationSaveMode.Modified);
 
-                    TypeCode typeCode = Type.GetTypeCode(setting.PropertyType);
-                    switch (typeCode)
-                    {
-                        case TypeCode.Boolean:
-                            value = (bool)value;
-                            prev_value = (bool)prev_value;
-                            break;
-                        case TypeCode.Single:
-                        case TypeCode.Decimal:
-                            value = (float)value;
-                            prev_value = (float)prev_value;
-                            break;
-                        case TypeCode.Double:
-                            value = (double)value;
-                            prev_value = (double)prev_value;
-                            break;
-                        case TypeCode.Int16:
-                        case TypeCode.Int32:
-                        case TypeCode.Int64:
-                            value = (int)value;
-                            prev_value = (int)prev_value;
-                            break;
-                        case TypeCode.UInt16:
-                        case TypeCode.UInt32:
-                        case TypeCode.UInt64:
-                            value = (uint)value;
-                            prev_value = (uint)prev_value;
-                            break;
-                        default:
-                            value = (string)value;
-                            prev_value = (string)prev_value;
-                            break;
-                    }
-
-                    Properties.Settings.Default[name] = value;
-                    ApplySetting(name, prev_value, value);
-
-                    logger.LogDebug("{0} set to {1}", name, property.ToString());
-                }
+                ApplySetting(name, property);
+                logger.LogDebug("{0} set to {1}", name, property);
             }
-
-            Properties.Settings.Default.Save();
         }
 
-        private void ApplySetting(string name, object prev_value, object value)
+        private void ApplySetting(string name, string property)
         {
-            if (prev_value.ToString() != value.ToString())
+            switch (name)
             {
-                switch (name)
-                {
-                    case "HIDcloaked":
-                        Hidder.SetCloaking((bool)value, XInputController.ProductName);
-                        HIDcloaked = (bool)value;
-                        break;
-                    case "HIDuncloakonclose":
-                        HIDuncloakonclose = (bool)value;
-                        break;
-                    case "HIDmode":
-                        SetControllerMode((HIDmode)value);
-                        break;
-                    case "HIDstatus":
-                        SetControllerStatus((HIDstatus)value);
-                        break;
-                    case "HIDrate":
-                        XInputController.SetPollRate((int)value);
-                        break;
-                    case "HIDstrength":
-                        XInputController.SetVibrationStrength((double)value);
-                        break;
-                    case "DSUEnabled":
-                        switch ((bool)value)
+                case "HIDcloaked":
+                    {
+                        bool value = bool.Parse(property);
+                        Hidder.SetCloaking(value, XInputController.ProductName);
+                        HIDcloaked = value;
+                    }
+                    break;
+                case "HIDuncloakonclose":
+                    {
+                        bool value = bool.Parse(property);
+                        HIDuncloakonclose = value;
+                    }
+                    break;
+                case "HIDmode":
+                    {
+                        HIDmode value = Enum.Parse<HIDmode>(property);
+                        SetControllerMode(value);
+                    }
+                    break;
+                case "HIDstatus":
+                    {
+                        HIDstatus value = Enum.Parse<HIDstatus>(property);
+                        SetControllerStatus(value);
+                    }
+                    break;
+                case "HIDrate":
+                    {
+                        int value = int.Parse(property);
+                        XInputController.SetPollRate(value);
+                    }
+                    break;
+                case "HIDstrength":
+                    {
+                        double value = double.Parse(property);
+                        XInputController.SetVibrationStrength(value);
+                    }
+                    break;
+                case "DSUEnabled":
+                    {
+                        bool value = bool.Parse(property);
+                        switch (value)
                         {
                             case true: DSUServer.Start(); break;
                             case false: DSUServer.Stop(); break;
                         }
-                        break;
-                    case "DSUip":
-                        DSUServer.ip = (string)value;
-                        break;
-                    case "DSUport":
-                        DSUServer.port = (int)value;
-                        break;
-                }
+                    }
+                    break;
+                case "DSUip":
+                    {
+                        string value = property;
+                        DSUServer.ip = value;
+                    }
+                    break;
+                case "DSUport":
+                    {
+                        int value = int.Parse(property);
+                        DSUServer.port = value;
+                    }
+                    break;
             }
         }
 
@@ -540,8 +563,8 @@ namespace ControllerService
         {
             Dictionary<string, string> settings = new Dictionary<string, string>();
 
-            foreach (SettingsProperty s in Properties.Settings.Default.Properties)
-                settings.Add(s.Name, Properties.Settings.Default[s.Name].ToString());
+            foreach (string key in configuration.AppSettings.Settings.AllKeys)
+                settings.Add(key, configuration.AppSettings.Settings[key].Value);
 
             return settings;
         }

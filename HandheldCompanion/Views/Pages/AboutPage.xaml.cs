@@ -1,5 +1,4 @@
 ﻿using ControllerCommon;
-using ControllerCommon.Devices;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Windows;
@@ -15,7 +14,7 @@ namespace HandheldCompanion.Views.Pages
     public partial class AboutPage : Page
     {
         private MainWindow mainWindow;
-        private ILogger microsoftLogger;
+        private ILogger logger;
         private PipeClient pipeClient;
 
         public AboutPage()
@@ -23,11 +22,11 @@ namespace HandheldCompanion.Views.Pages
             InitializeComponent();
         }
 
-        public AboutPage(string Tag, MainWindow mainWindow, ILogger microsoftLogger) : this()
+        public AboutPage(string Tag, MainWindow mainWindow, ILogger logger) : this()
         {
             this.Tag = Tag;
             this.mainWindow = mainWindow;
-            this.microsoftLogger = microsoftLogger;
+            this.logger = logger;
 
             this.pipeClient = mainWindow.pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;

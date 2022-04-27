@@ -12,120 +12,117 @@
       Loaded="Page_Loaded">
 
     <Grid Name="MainGrid" Margin="20">
-        <ui:SimpleStackPanel Spacing="6">
-            <Label Content="Joystick camera options" FontWeight="SemiBold"></Label>
+        <ui:SimpleStackPanel Spacing="12">
+            
+            <!-- Joystick camera options -->
+            <ui:SimpleStackPanel Spacing="6">
+                <Label Content="Joystick camera options" FontWeight="SemiBold"></Label>
 
-            <!-- Sensivity -->
-            <Border                      
-                        Padding="0,12,12,12"
+                <!-- Sensivity -->
+                <Border                      
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="60"></ColumnDefinition>
-                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
-                        <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
 
-                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" HorizontalAlignment="Center"/>
 
-                    <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Sensivity" FontSize="14"/>
-                        <TextBlock Text="Change the motion sensivity of the vertical and horizontal axis" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                    </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Sensivity" FontSize="14"/>
+                                <TextBlock Text="Change the motion sensivity of the vertical and horizontal axis" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderSensivity, Mode=OneWay}" />
-                    <Slider Name="SliderSensivity" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderSensivity_ValueChanged" IsSnapToTickEnabled="True"
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderSensivity, Mode=OneWay}" />
+                            <Slider Margin="6,0,0,0" Name="SliderSensivity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderSensivity_ValueChanged" IsSnapToTickEnabled="True"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave"/>
-                </Grid>
-            </Border>
+                        </DockPanel>
+                    </Grid>
+                </Border>
 
-            <!-- Flick Stick settings -->
-            <Border
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                        Padding="12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                <Expander Name="Expander_FlickStick" FlowDirection="RightToLeft" Expanded="Expander_Expanded">
+                <!-- Flick Stick settings -->
+                <Expander Name="Expander_FlickStick" Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
                     <Expander.Header>
-                        <DockPanel FlowDirection="LeftToRight"
-                                       Margin="-12,0,0,0"
-                                       Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
-                            <!-- Change the look inside header here -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50"></ColumnDefinition>
-                                    <ColumnDefinition Width="8*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="2*" MinWidth="120"></ColumnDefinition>
-                                    <ColumnDefinition Width="0.25*" MinWidth="20"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
+                        <DockPanel Margin="-10,12,12,12">
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE759;" Height="40"/>
 
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE759;" Height="40" Grid.Column="0" HorizontalAlignment="Center"/>
-
-                                <ui:SimpleStackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="Flick Stick (Experimental)" FontSize="14"/>
-                                    <TextBlock Text="Point camera in direction of (right) joystick flick, rotate camera purely in horizontal plane by rotating" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                </ui:SimpleStackPanel>
-
-                                <ui:ToggleSwitch Name="Toggle_FlickStick" Grid.Column="2" FlowDirection="RightToLeft" HorizontalAlignment="Right" Toggled="Toggle_FlickStick_Toggled"/>
-                            </Grid>
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="Flick Stick (Experimental)" FontSize="14"/>
+                                <TextBlock Text="Point camera in direction of (right) joystick flick, rotate camera purely in horizontal plane by rotating" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
                         </DockPanel>
                     </Expander.Header>
 
                     <Expander.Content>
-                        <Grid FlowDirection="LeftToRight" Margin="0,12,0,0">
-                            <ui:SimpleStackPanel Spacing="12" Margin="40,0,0,0">
+                        <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
 
-                                <!-- Separator -->
-                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+                                <TextBlock Text="Enable flick stick" FontSize="14" VerticalAlignment="Center"/>
 
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="0.5*" ></ColumnDefinition>
-                                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
-                                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
+                                <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="Toggle_FlickStick" Toggled="Toggle_FlickStick_Toggled"/>
+                            </Grid>
 
-                                    <ui:SimpleStackPanel Grid.Column="0">
-                                        <TextBlock Text="Flick Duration" FontSize="14"/>
-                                        <TextBlock Text="Change the flick duration, calibrate to 180 degree turn, in milliseconds" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                    </ui:SimpleStackPanel>
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
-                                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=tb_ProfileFlickDuration, Mode=OneWay}" />
-                                    <Slider Name="tb_ProfileFlickDuration" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="1000" Minimum="100" TickFrequency="100" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="0" ValueChanged="SliderFlickDuration_ValueChanged"/>
-                                </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
 
-                                <!-- Separator -->
-                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Flick Duration" FontSize="14"/>
+                                    <TextBlock Text="Change the flick duration, calibrate to 180 degree turn, in milliseconds" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </StackPanel>
 
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="0.5*" ></ColumnDefinition>
-                                        <ColumnDefinition Width="0.5*" MinWidth="20"></ColumnDefinition>
-                                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=tb_ProfileFlickDuration, Mode=OneWay}" />
+                                    <Slider Margin="6,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="tb_ProfileFlickDuration" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="1000" Minimum="100" TickFrequency="100" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" ValueChanged="SliderFlickDuration_ValueChanged"
+                                            MouseEnter="Scrolllock_MouseEnter"
+                                            MouseLeave="Scrolllock_MouseLeave"/>
+                                </DockPanel>
+                            </Grid>
 
-                                    <ui:SimpleStackPanel Grid.Column="0">
-                                        <TextBlock Text="Stick Sensitivtity" FontSize="14"/>
-                                        <TextBlock Text="Change the rotation rate" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                    </ui:SimpleStackPanel>
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
-                                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileStickSensitivity, Mode=OneWay}" />
-                                    <Slider Name="tb_ProfileStickSensitivity" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="10" Minimum="0.1" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" ValueChanged="SliderStickSensivity_ValueChanged"/>
-                                </Grid>
-                            </ui:SimpleStackPanel>
-                        </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Stick Sensitivtity" FontSize="14"/>
+                                    <TextBlock Text="Change the rotation rate" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileStickSensitivity, Mode=OneWay}" />
+                                    <Slider Margin="6,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="tb_ProfileStickSensitivity" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="10" Minimum="0.1" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" ValueChanged="SliderStickSensivity_ValueChanged"
+                                            MouseEnter="Scrolllock_MouseEnter"
+                                            MouseLeave="Scrolllock_MouseLeave"/>
+                                </DockPanel>
+                            </Grid>
+                        </ui:SimpleStackPanel>
                     </Expander.Content>
                 </Expander>
-            </Border>
+            </ui:SimpleStackPanel>
 
-
-            <!-- Chart -->
+            <!-- Custom response curve -->
             <ui:SimpleStackPanel Spacing="6">
                 <Label Content="Custom response curve" FontWeight="SemiBold"></Label>
                 <Border                      
@@ -177,7 +174,7 @@
                                         <ColumnDefinition Width="3.33*"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
-                                    <Button Content="Agressive" HorizontalAlignment="Center" Grid.Column="0" Click="Button_Click_1"></Button>
+                                    <Button Content="Agressive" HorizontalAlignment="Center" Click="Button_Click_1"></Button>
                                     <Button Content="Default" HorizontalAlignment="Center" Grid.Column="1" Click="Button_Click"></Button>
                                     <Button Content="Precise" HorizontalAlignment="Center" Grid.Column="2" Click="Button_Click_2"></Button>
                                 </Grid>

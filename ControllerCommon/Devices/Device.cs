@@ -1,9 +1,4 @@
 ﻿using ControllerCommon.Utils;
-using HidSharp;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management;
-using System.Runtime.InteropServices;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.DeviceUtils;
 
@@ -28,7 +23,7 @@ namespace ControllerCommon.Devices
         protected Inclinometer inclinometer;
         public bool hasInclinometer;
 
-        public double WidthHeightRatio = 1.0d;
+        public float WidthHeightRatio = 1.0f;
 
         protected Device(string ManufacturerName, string ProductName)
         {

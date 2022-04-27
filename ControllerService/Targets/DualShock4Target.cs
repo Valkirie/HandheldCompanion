@@ -48,7 +48,7 @@ namespace ControllerService.Targets
 
         private new IDualShock4Controller virtualController;
 
-        public DualShock4Target(XInputController xinput, ViGEmClient client, Controller controller, int index, ILogger logger) : base(xinput, client, controller, index, logger)
+        public DualShock4Target(XInputController xinput, ViGEmClient client, ILogger logger) : base(xinput, client, logger)
         {
             // initialize controller
             HID = HIDmode.DualShock4Controller;
@@ -200,13 +200,13 @@ namespace ControllerService.Targets
                 outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(Touch.TrackPadTouch2.Y >> 4);
             }
 
-            outDS4Report.wGyroX = (short)InputUtils.rangeMap(xinputController.AngularVelocity.X, XInputGirometer.sensorSpec);    // gyroPitchFull
-            outDS4Report.wGyroY = (short)InputUtils.rangeMap(-xinputController.AngularVelocity.Y, XInputGirometer.sensorSpec);   // gyroYawFull
-            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(xinputController.AngularVelocity.Z, XInputGirometer.sensorSpec);    // gyroRollFull
+            outDS4Report.wGyroX = (short)InputUtils.rangeMap(xinputController.AngularVelocities[XInputSensorFlags.Default].X, XInputGirometer.sensorSpec);    // gyroPitchFull
+            outDS4Report.wGyroY = (short)InputUtils.rangeMap(-xinputController.AngularVelocities[XInputSensorFlags.Default].Y, XInputGirometer.sensorSpec);   // gyroYawFull
+            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(xinputController.AngularVelocities[XInputSensorFlags.Default].Z, XInputGirometer.sensorSpec);    // gyroRollFull
 
-            outDS4Report.wAccelX = (short)InputUtils.rangeMap(-xinputController.Acceleration.X, XInputAccelerometer.sensorSpec); // accelXFull
-            outDS4Report.wAccelY = (short)InputUtils.rangeMap(-xinputController.Acceleration.Y, XInputAccelerometer.sensorSpec); // accelYFull
-            outDS4Report.wAccelZ = (short)InputUtils.rangeMap(xinputController.Acceleration.Z, XInputAccelerometer.sensorSpec);  // accelZFull
+            outDS4Report.wAccelX = (short)InputUtils.rangeMap(-xinputController.Accelerations[XInputSensorFlags.Default].X, XInputAccelerometer.sensorSpec); // accelXFull
+            outDS4Report.wAccelY = (short)InputUtils.rangeMap(-xinputController.Accelerations[XInputSensorFlags.Default].Y, XInputAccelerometer.sensorSpec); // accelYFull
+            outDS4Report.wAccelZ = (short)InputUtils.rangeMap(xinputController.Accelerations[XInputSensorFlags.Default].Z, XInputAccelerometer.sensorSpec);  // accelZFull
 
             outDS4Report.bBatteryLvlSpecial = 11;
 

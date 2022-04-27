@@ -15,13 +15,13 @@ namespace HandheldCompanion
         private readonly PipeClient pipeClient;
         private readonly MainWindow mainWindow;
 
-        private readonly ILogger microsoftLogger;
+        private readonly ILogger logger;
 
-        public CmdParser(PipeClient pipeClient, MainWindow mainWindow, ILogger microsoftLogger)
+        public CmdParser(PipeClient pipeClient, MainWindow mainWindow, ILogger logger)
         {
             this.pipeClient = pipeClient;
             this.mainWindow = mainWindow;
-            this.microsoftLogger = microsoftLogger;
+            this.logger = logger;
         }
 
         public void ParseArgs(string[] args, bool init = false)
@@ -29,7 +29,7 @@ namespace HandheldCompanion
             if (args.Length == 0)
                 return;
 
-            microsoftLogger?.LogInformation("Parsing command: {0}", String.Join(' ', args));
+            logger?.LogInformation("Parsing command: {0}", String.Join(' ', args));
 
             Parser.Default.ParseArguments<ProfileOption, ProfileService, DeviceOption>(args)
                 .MapResult(
@@ -111,7 +111,7 @@ namespace HandheldCompanion
 
         private bool CmdError(IEnumerable<Error> errors)
         {
-            microsoftLogger?.LogError("Couldn't parse command. Errors: {0}", String.Join(", ", errors));
+            logger?.LogError("Couldn't parse command. Errors: {0}", String.Join(", ", errors));
             return true;
         }
 

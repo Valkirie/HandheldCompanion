@@ -274,5 +274,17 @@ namespace HandheldCompanion.Properties {
                 this["OverlayTrackpadsOpacity"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("250")]
+        public int OverlayTrackpadsSize {
+            get {
+                return ((int)(this["OverlayTrackpadsSize"]));
+            }
+            set {
+                this["OverlayTrackpadsSize"] = value;
+            }
+        }
     }
 }

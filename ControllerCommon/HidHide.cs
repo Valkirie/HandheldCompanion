@@ -1,5 +1,4 @@
-﻿using ControllerCommon.Devices;
-using ControllerCommon.Utils;
+﻿using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -60,6 +59,26 @@ namespace ControllerCommon
             return whitelist;
         }
 
+        public List<string> GetRegisteredDevices()
+        {
+            process.StartInfo.Arguments = $"--dev-list";
+            process.Start();
+            process.WaitForExit();
+
+            string standard_output;
+            List<string> devices = new List<string>();
+            while ((standard_output = process.StandardOutput.ReadLine()) != null)
+            {
+                if (!standard_output.Contains("dev-hide"))
+                    break;
+
+                // --app-reg \"C:\\Program Files\\Nefarius Software Solutions e.U\\HidHideCLI\\HidHideCLI.exe\"
+                string path = CommonUtils.Between(standard_output, "--dev-hide \"", "\"");
+                devices.Add(path);
+            }
+            return devices;
+        }
+
         public void UnregisterApplication(string path)
         {
             process.StartInfo.Arguments = $"--app-unreg \"{path}\"";
@@ -118,8 +137,18 @@ namespace ControllerCommon
             logger.LogInformation("{0} cloak status set to {1}", ProductName, status);
         }
 
-        private void RegisterController(string deviceInstancePath)
+        public void UnregisterController(string deviceInstancePath)
         {
+            logger.LogInformation("HideDevice unhiding DeviceID: {0}", deviceInstancePath);
+            process.StartInfo.Arguments = $"--dev-unhide \"{deviceInstancePath}\"";
+            process.Start();
+            process.WaitForExit();
+            process.StandardOutput.ReadToEnd();
+        }
+
+        public void RegisterController(string deviceInstancePath)
+        {
+            logger.LogInformation("HideDevice hiding DeviceID: {0}", deviceInstancePath);
             process.StartInfo.Arguments = $"--dev-hide \"{deviceInstancePath}\"";
             process.Start();
             process.WaitForExit();
@@ -132,15 +161,6 @@ namespace ControllerCommon
             process.Start();
             process.WaitForExit();
             process.StandardOutput.ReadToEnd();
-        }
-
-        public void RegisterDevice(List<string> ControllerIDs)
-        {
-            foreach (string ControllerID in ControllerIDs)
-            {
-                RegisterController(ControllerID);
-                logger.LogInformation("HideDevice hiding DeviceID: {0}", ControllerID);
-            }
         }
     }
 }
