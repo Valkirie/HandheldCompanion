@@ -131,11 +131,263 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Emulated DualShock 4 Controller.
+        ///   Looks up a localized string similar to Always On.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_AlwaysOn {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.AlwaysOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_Back {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPad Down.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_DPadDown {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPad Left.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_DPadLeft {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPad Right.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_DPadRight {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPad Up.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_DPadUp {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Shoulder.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_LeftShoulder {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftShoulder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Thumb.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_LeftThumb {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Trigger.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_LeftTrigger {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Shoulder.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_RightShoulder {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightShoulder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Thumb.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_RightThumb {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Trigger.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_RightTrigger {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_Start {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emulated DualShock 4 controller.
         /// </summary>
         public static string Enum_HIDmode_DualShock4Controller {
             get {
                 return ResourceManager.GetString("Enum.HIDmode.DualShock4Controller", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No emulated controller.
+        /// </summary>
+        public static string Enum_HIDmode_NoController {
+            get {
+                return ResourceManager.GetString("Enum.HIDmode.NoController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emulated XBOX 360 controller.
+        /// </summary>
+        public static string Enum_HIDmode_Xbox360Controller {
+            get {
+                return ResourceManager.GetString("Enum.HIDmode.Xbox360Controller", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connected.
+        /// </summary>
+        public static string Enum_HIDstatus_Connected {
+            get {
+                return ResourceManager.GetString("Enum.HIDstatus.Connected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disconnected.
+        /// </summary>
+        public static string Enum_HIDstatus_Disconnected {
+            get {
+                return ResourceManager.GetString("Enum.HIDstatus.Disconnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Joystick camera.
+        /// </summary>
+        public static string Enum_Input_JoystickCamera {
+            get {
+                return ResourceManager.GetString("Enum.Input.JoystickCamera", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Joystick steering.
+        /// </summary>
+        public static string Enum_Input_JoystickSteering {
+            get {
+                return ResourceManager.GetString("Enum.Input.JoystickSteering", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Player space.
+        /// </summary>
+        public static string Enum_Input_PlayerSpace {
+            get {
+                return ResourceManager.GetString("Enum.Input.PlayerSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left joystick.
+        /// </summary>
+        public static string Enum_Output_LeftStick {
+            get {
+                return ResourceManager.GetString("Enum.Output.LeftStick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right joystick.
+        /// </summary>
+        public static string Enum_Output_RightStick {
+            get {
+                return ResourceManager.GetString("Enum.Output.RightStick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled..
+        /// </summary>
+        public static string Enum_ProfileErrorCode_IsDefault {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.IsDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oops. It seems this profile excutable is running. Some options requiring an executable might be disabled..
+        /// </summary>
+        public static string Enum_ProfileErrorCode_IsRunning {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.IsRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oops. It seems this profile does not have an executable. How is this even possible?.
+        /// </summary>
+        public static string Enum_ProfileErrorCode_MissingExecutable {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.MissingExecutable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oops. It seems this profile does not have a path to the application. Some options requiring an executable might be disabled..
+        /// </summary>
+        public static string Enum_ProfileErrorCode_MissingPath {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.MissingPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oops. It seems you do not have the necessary permission level to modify the content of this application. Make sure you have started this program in administrator mode..
+        /// </summary>
+        public static string Enum_ProfileErrorCode_MissingPermission {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.MissingPermission", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nothing to see here..
+        /// </summary>
+        public static string Enum_ProfileErrorCode_None {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.None", resourceCulture);
             }
         }
         
@@ -156,18 +408,18 @@ namespace ControllerCommon.Properties {
         /// <summary>
         ///   Looks up a localized string similar to This input will operate as a simple joystick. This is intended for traditional joystick applications.
         /// </summary>
-        public static string JoystickCamera {
+        public static string JoystickCameraDesc {
             get {
-                return ResourceManager.GetString("JoystickCamera", resourceCulture);
+                return ResourceManager.GetString("JoystickCameraDesc", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a steering wheel or a racing game.
         /// </summary>
-        public static string JoystickSteering {
+        public static string JoystickSteeringDesc {
             get {
-                return ResourceManager.GetString("JoystickSteering", resourceCulture);
+                return ResourceManager.GetString("JoystickSteeringDesc", resourceCulture);
             }
         }
         
@@ -188,9 +440,9 @@ namespace ControllerCommon.Properties {
         /// <summary>
         ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a first or third person camera.
         /// </summary>
-        public static string PlayerSpace {
+        public static string PlayerSpaceDesc {
             get {
-                return ResourceManager.GetString("PlayerSpace", resourceCulture);
+                return ResourceManager.GetString("PlayerSpaceDesc", resourceCulture);
             }
         }
         

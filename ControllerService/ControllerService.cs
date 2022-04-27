@@ -51,7 +51,7 @@ namespace ControllerService
         private int DSUport, HIDrate;
         private double HIDstrength;
 
-        private HIDmode HIDmode = HIDmode.None;
+        private HIDmode HIDmode = HIDmode.NoController;
         private HIDstatus HIDstatus = HIDstatus.Disconnected;
 
         private readonly ILogger<ControllerService> logger;
@@ -198,7 +198,7 @@ namespace ControllerService
             switch (mode)
             {
                 default:
-                case HIDmode.None:
+                case HIDmode.NoController:
                     VirtualTarget = null;
                     break;
                 case HIDmode.DualShock4Controller:

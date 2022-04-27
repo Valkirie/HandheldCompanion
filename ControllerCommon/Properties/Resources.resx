@@ -133,22 +133,106 @@
   <data name="Dolphin.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Dolphin.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
+    <value>Always On</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadDown" xml:space="preserve">
+    <value>DPad Down</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadLeft" xml:space="preserve">
+    <value>DPad Left</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadRight" xml:space="preserve">
+    <value>DPad Right</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadUp" xml:space="preserve">
+    <value>DPad Up</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftShoulder" xml:space="preserve">
+    <value>Left Shoulder</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
+    <value>Left Thumb</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
+    <value>Left Trigger</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightShoulder" xml:space="preserve">
+    <value>Right Shoulder</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
+    <value>Right Thumb</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
+    <value>Right Trigger</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
   <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
-    <value>Emulated DualShock 4 Controller</value>
+    <value>Emulated DualShock 4 controller</value>
+  </data>
+  <data name="Enum.HIDmode.NoController" xml:space="preserve">
+    <value>No emulated controller</value>
+  </data>
+  <data name="Enum.HIDmode.Xbox360Controller" xml:space="preserve">
+    <value>Emulated XBOX 360 controller</value>
+  </data>
+  <data name="Enum.HIDstatus.Connected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="Enum.HIDstatus.Disconnected" xml:space="preserve">
+    <value>Disconnected</value>
+  </data>
+  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
+    <value>Joystick camera</value>
+  </data>
+  <data name="Enum.Input.JoystickSteering" xml:space="preserve">
+    <value>Joystick steering</value>
+  </data>
+  <data name="Enum.Input.PlayerSpace" xml:space="preserve">
+    <value>Player space</value>
+  </data>
+  <data name="Enum.Output.LeftStick" xml:space="preserve">
+    <value>Left joystick</value>
+  </data>
+  <data name="Enum.Output.RightStick" xml:space="preserve">
+    <value>Right joystick</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.IsDefault" xml:space="preserve">
+    <value>This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
+    <value>Oops. It seems this profile excutable is running. Some options requiring an executable might be disabled.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
+    <value>Oops. It seems this profile does not have an executable. How is this even possible?</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.MissingPath" xml:space="preserve">
+    <value>Oops. It seems this profile does not have a path to the application. Some options requiring an executable might be disabled.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.MissingPermission" xml:space="preserve">
+    <value>Oops. It seems you do not have the necessary permission level to modify the content of this application. Make sure you have started this program in administrator mode.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
+    <value>Nothing to see here.</value>
   </data>
   <data name="HidHideCLI.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HidHideCLI.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="JoystickCamera" xml:space="preserve">
+  <data name="JoystickCameraDesc" xml:space="preserve">
     <value>This input will operate as a simple joystick. This is intended for traditional joystick applications</value>
   </data>
-  <data name="JoystickSteering" xml:space="preserve">
+  <data name="JoystickSteeringDesc" xml:space="preserve">
     <value>This input will operate as a joystick optimized for controlling a steering wheel or a racing game</value>
   </data>
   <data name="JoyXOff.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\JoyXOff.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="PlayerSpace" xml:space="preserve">
+  <data name="PlayerSpaceDesc" xml:space="preserve">
     <value>This input will operate as a joystick optimized for controlling a first or third person camera</value>
   </data>
   <data name="Playnite.FullscreenApp.json" type="System.Resources.ResXFileRef, System.Windows.Forms">

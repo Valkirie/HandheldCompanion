@@ -35,7 +35,7 @@ namespace HandheldCompanion.Views.Pages
         bool hasSettings;
 
         // controllers vars
-        private HIDmode controllerMode = HIDmode.None;
+        private HIDmode controllerMode = HIDmode.NoController;
         private HIDstatus controllerStatus = HIDstatus.Disconnected;
 
         private ControllerManager controllerManager;
@@ -47,7 +47,7 @@ namespace HandheldCompanion.Views.Pages
         {
             InitializeComponent();
 
-            foreach (HIDmode mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.None))
+            foreach (HIDmode mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.NoController))
                 cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
 
             // initialize controller manager
@@ -143,7 +143,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void UpdateController()
         {
-            if (controllerMode == HIDmode.None)
+            if (controllerMode == HIDmode.NoController)
                 return;
 
             // update UI icon to match HIDmode
