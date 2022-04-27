@@ -6,18 +6,19 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:local="clr-namespace:HandheldCompanion" 
       xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
+      xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       mc:Ignorable="d" 
       d:DesignHeight="1500" d:DesignWidth="1000"
       KeepAlive="True"
       Loaded="Page_Loaded"
-      Title="Overlay">
+      Title="{x:Static resx:Resources.Overlay}">
 
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="24">
             <ui:SimpleStackPanel Spacing="6">
                 
                 <!-- Overlay preview -->
-                <Label Content="Overlay preview" FontWeight="SemiBold"></Label>
+                <Label Content="{x:Static resx:Resources.OverlayPreview}" FontWeight="SemiBold"></Label>
                 <Border
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
@@ -64,8 +65,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Main trigger" FontSize="14"/>
-                                <TextBlock Text="Change the overlay main trigger" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.MainTrigger}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.MainTriggerDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -87,7 +88,7 @@
 
             <!-- Controller options -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="Controller options" FontWeight="SemiBold"></Label>
+                <Label Content="{x:Static resx:Resources.ControllerOptions}" FontWeight="SemiBold"></Label>
                 
                 <!-- Controller model -->
                 <Border                      
@@ -105,14 +106,14 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF158;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Overlay model" FontSize="14"/>
-                                <TextBlock Text="Change the overlay controller model" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayModel}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayModelDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:RadioButtons Name="OverlayModel" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="OverlayModel_SelectionChanged">
-                            <Label>OEM controller</Label>
-                            <Label>Emulated controller</Label>
+                            <Label>OEM Controller</Label>
+                            <Label>Emulated Controller</Label>
                         </ui:RadioButtons>
                     </Grid>
                 </Border>
@@ -133,8 +134,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE80A;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Alignment" FontSize="14"/>
-                                <TextBlock Text="Change the 3D overlay controller alignment" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.Alignment}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.AlignmentDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -176,8 +177,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECC6;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Size" FontSize="14"/>
-                                <TextBlock Text="Change the 3D overlay controller size" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.Size}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SizeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -206,8 +207,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Secondary trigger" FontSize="14"/>
-                                <TextBlock Text="Change the 3D overlay controller trigger" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SecondaryTrigger}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SecondaryTriggerDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -223,7 +224,7 @@
 
             <!-- Trackpads options -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="Trackpads options" FontWeight="SemiBold"></Label>
+                <Label Content="{x:Static resx:Resources.TrackpadsOptions}" FontWeight="SemiBold"></Label>
 
                 <!-- Controller Alignment -->
                 <Border                      
@@ -241,8 +242,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE80A;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Alignment" FontSize="14"/>
-                                <TextBlock Text="Change the trackpads overlay alignment" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.Alignment}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.AlignmentTrackpadDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -272,8 +273,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECC6;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Size" FontSize="14"/>
-                                <TextBlock Text="Change the overlay trackpads size" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.Size}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SizeOverlayDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -302,8 +303,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE75C;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Opacity" FontSize="14"/>
-                                <TextBlock Text="Change the overlay trackpads opacity" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.Opacity}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OpacityTrackpadDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -332,8 +333,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Secondary trigger" FontSize="14"/>
-                                <TextBlock Text="Change the overlay trackpads trigger" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SecondaryTrigger}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SecondaryTriggerOverlayDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
