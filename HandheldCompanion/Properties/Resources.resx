@@ -330,6 +330,36 @@
   <data name="ProfileSettingsMode0_StickSensitivtityDesc" xml:space="preserve">
     <value>Change the rotation rate</value>
   </data>
+  <data name="ProfileSettingsMode1_Deadzone" xml:space="preserve">
+    <value>Deadzone</value>
+  </data>
+  <data name="ProfileSettingsMode1_DeadzoneDesc" xml:space="preserve">
+    <value>Change the steering deadzone, in degree. Improves steering straight.</value>
+  </data>
+  <data name="ProfileSettingsMode1_JoystickGameInput" xml:space="preserve">
+    <value>Joystick Game Input</value>
+  </data>
+  <data name="ProfileSettingsMode1_JoystickSteering" xml:space="preserve">
+    <value>Joystick Steering</value>
+  </data>
+  <data name="ProfileSettingsMode1_JoystickSteeringOptions" xml:space="preserve">
+    <value>Joystick steering options</value>
+  </data>
+  <data name="ProfileSettingsMode1_JoystickSteeringPreview" xml:space="preserve">
+    <value>Joystick steering preview</value>
+  </data>
+  <data name="ProfileSettingsMode1_MaxSteeringAngle" xml:space="preserve">
+    <value>Max steering angle</value>
+  </data>
+  <data name="ProfileSettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
+    <value>Change the maximum steering angle value, in degree</value>
+  </data>
+  <data name="ProfileSettingsMode1_SteeringLinearity" xml:space="preserve">
+    <value>Steering linearity</value>
+  </data>
+  <data name="ProfileSettingsMode1_SteeringLinearityDesc" xml:space="preserve">
+    <value>Mapping between input and steering. Lower values provide more accuracy near full lock but less accuracy near the center. Higher values provide more accuracy near the center but less accuracy near full lock. 1.0 is a linear mapping.</value>
+  </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled.</value>
   </data>
