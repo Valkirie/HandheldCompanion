@@ -501,8 +501,89 @@
   <data name="ServiceName" xml:space="preserve">
     <value>Controller Service</value>
   </data>
+  <data name="SettingsPage_AppTheme" xml:space="preserve">
+    <value>Application theme</value>
+  </data>
+  <data name="SettingsPage_AppThemeDesc" xml:space="preserve">
+    <value>The application theme, light or dark mode</value>
+  </data>
+  <data name="SettingsPage_AutoStartApp" xml:space="preserve">
+    <value>Auto-start application</value>
+  </data>
+  <data name="SettingsPage_AutoStartAppDesc" xml:space="preserve">
+    <value>The application will start automatically when I sign in to Windows</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data name="SettingsPage_CloseMinimizes" xml:space="preserve">
+    <value>Close minimizes</value>
+  </data>
+  <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
+    <value>The application will be minimized instead of closed</value>
+  </data>
+  <data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
+    <value>Downloading - 100%</value>
+  </data>
+  <data name="SettingsPage_GeneralOptions" xml:space="preserve">
+    <value>General options</value>
+  </data>
+  <data name="SettingsPage_HaltWithCompanion" xml:space="preserve">
+    <value>Halt with Companion</value>
+  </data>
+  <data name="SettingsPage_HaltWithCompanionDesc" xml:space="preserve">
+    <value>Automatically turn off service when companion is closed</value>
+  </data>
+  <data name="SettingsPage_InstallNow" xml:space="preserve">
+    <value>Install now</value>
+  </data>
+  <data name="SettingsPage_LastChecked" xml:space="preserve">
+    <value>Last checked: Today</value>
+  </data>
+  <data name="SettingsPage_NotificationOptions" xml:space="preserve">
+    <value>Notification options</value>
+  </data>
+  <data name="SettingsPage_OpenAppBackground" xml:space="preserve">
+    <value>Open application in background</value>
+  </data>
+  <data name="SettingsPage_OpenAppBackgroundDesc" xml:space="preserve">
+    <value>The application will initially start minimized and appear on the taskbar</value>
+  </data>
+  <data name="SettingsPage_ServiceOptions" xml:space="preserve">
+    <value>Service options</value>
+  </data>
   <data name="SettingsPage_Settings" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="SettingsPage_StartupType" xml:space="preserve">
+    <value>Startup type</value>
+  </data>
+  <data name="SettingsPage_StartupTypeDesc" xml:space="preserve">
+    <value>Used by the service manager to define the service startup type</value>
+  </data>
+  <data name="SettingsPage_StartWithCompanion" xml:space="preserve">
+    <value>Start with Companion</value>
+  </data>
+  <data name="SettingsPage_StartWithCompanionDesc" xml:space="preserve">
+    <value>Automatically turn on service when companion starts</value>
+  </data>
+  <data name="SettingsPage_ThemeDark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="SettingsPage_ThemeLight" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="SettingsPage_ToastNotification" xml:space="preserve">
+    <value>Toast notification</value>
+  </data>
+  <data name="SettingsPage_ToastNotificationDesc" xml:space="preserve">
+    <value>Get notifications from the application in the Windows action center</value>
+  </data>
+  <data name="SettingsPage_UpToDate" xml:space="preserve">
+    <value>You're up to date</value>
+  </data>
+  <data name="SettingsPage_Version" xml:space="preserve">
+    <value>Handheld Companion (Version 0.9.2.0)</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>User</value>

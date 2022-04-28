@@ -33,12 +33,12 @@
                 </Grid>
 
                 <ui:SimpleStackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Stretch" Spacing="6">
-                    <Label Name="LabelUpdate" Content="You're up to date" FontWeight="SemiBold" FontSize="20" Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}"></Label>
-                    <Label Name="LabelUpdateDate" Content="Last checked: Today" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"></Label>
+                    <Label Name="LabelUpdate" Content="{x:Static resx:Resources.SettingsPage_UpToDate}" FontWeight="SemiBold" FontSize="20" Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}"></Label>
+                    <Label Name="LabelUpdateDate" Content="{x:Static resx:Resources.SettingsPage_LastChecked}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"></Label>
                     <ui:ProgressBar Name="ProgressBarUpdate" IsIndeterminate="True" Visibility="Collapsed" Margin="0,0,10,0"/>
                 </ui:SimpleStackPanel>
 
-                <Button Grid.Column="2" Name="B_CheckUpdate" Content="Check for updates" HorizontalAlignment="Right" VerticalAlignment="Center" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" Click="B_CheckUpdate_Click"/>
+                <Button Grid.Column="2" Name="B_CheckUpdate" Content="{x:Static resx:Resources.SettingsPage_CheckForUpdates}" HorizontalAlignment="Right" VerticalAlignment="Center" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" Click="B_CheckUpdate_Click"/>
             </Grid>
 
             <!-- Current update -->
@@ -55,15 +55,15 @@
                         <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Name="LabelUpdateName" Text="Handheld Companion (Version 0.9.2.0)" FontSize="14" VerticalAlignment="Center"/>
-                    <TextBlock Name="LabelUpdatePercentage" Text="Downloading - 100%" Grid.Column="1" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                    <Button Visibility="Hidden" Name="ButtonInstall" Content="Install now" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Click="B_InstallUpdate_Click"/>
+                    <TextBlock Name="LabelUpdateName" Text="{x:Static resx:Resources.SettingsPage_Version}" FontSize="14" VerticalAlignment="Center"/>
+                    <TextBlock Name="LabelUpdatePercentage" Text="{x:Static resx:Resources.SettingsPage_DownloadingPercentage}" Grid.Column="1" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <Button Visibility="Hidden" Name="ButtonInstall" Content="{x:Static resx:Resources.SettingsPage_InstallNow}" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Click="B_InstallUpdate_Click"/>
                 </Grid>
             </Border>
 
             <!-- General options -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="General options" FontWeight="SemiBold"></Label>
+                <Label Content="{x:Static resx:Resources.SettingsPage_GeneralOptions}" FontWeight="SemiBold"></Label>
 
                 <!-- Auto-start application -->
                 <Border                      
@@ -81,8 +81,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xED35;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Auto-start application" FontSize="14"/>
-                                <TextBlock Text="The application will start automatically when I sign in to Windows" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AutoStartApp}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AutoStartAppDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -106,8 +106,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEE40;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Open application in background" FontSize="14"/>
-                                <TextBlock Text="The application will initially start minimized and appear on the taskbar" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_OpenAppBackground}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_OpenAppBackgroundDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -131,8 +131,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE921;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Close minimizes" FontSize="14"/>
-                                <TextBlock Text="The application will be minimized instead of closed" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_CloseMinimizes}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_CloseMinimizesDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -156,16 +156,16 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Application theme" FontSize="14"/>
-                                <TextBlock Text="The application will be minimized instead of closed" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppTheme}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppThemeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
                         <ComboBox Name="cB_Theme" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_Theme_SelectionChanged"
                                   MouseEnter="Scrolllock_MouseEnter"
                                   MouseLeave="Scrolllock_MouseLeave">
-                            <ComboBoxItem Content="Light"/>
-                            <ComboBoxItem Content="Dark"/>
+                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_ThemeLight}"/>
+                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_ThemeDark}"/>
                         </ComboBox>
                     </Grid>
                 </Border>
@@ -173,7 +173,7 @@
 
             <!-- Notification options -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="Notification options" FontWeight="SemiBold"></Label>
+                <Label Content="{x:Static resx:Resources.SettingsPage_NotificationOptions}" FontWeight="SemiBold"></Label>
 
                 <!-- Toast notification -->
                 <Border                      
@@ -191,8 +191,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7E7;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Toast notification" FontSize="14"/>
-                                <TextBlock Text="Get notifications from the application in the action center" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_ToastNotification}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_ToastNotificationDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -203,7 +203,7 @@
 
             <!-- Service options -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="Service options" FontWeight="SemiBold"></Label>
+                <Label Content="{x:Static resx:Resources.SettingsPage_ServiceOptions}" FontWeight="SemiBold"></Label>
 
                 <!-- Toast notification -->
                 <Border                      
@@ -221,8 +221,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Startup type" FontSize="14"/>
-                                <TextBlock Text="Used by the service manager to define the service startup type " Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartupType}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartupTypeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -248,8 +248,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEDB5;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Start with Companion" FontSize="14"/>
-                                <TextBlock Text="Automatically turn on service when companion starts" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartWithCompanion}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartWithCompanionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -275,8 +275,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE71A;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Halt with Companion" FontSize="14"/>
-                                <TextBlock Text="Automatically turn off service when companion is closed" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanion}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
