@@ -72,7 +72,7 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="{x:Static resx:Resources.SensorSpecification}" FontSize="14"/>
+                            <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorSpecification}" FontSize="14"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Expander.Header>
@@ -87,17 +87,17 @@
                                 </Grid.ColumnDefinitions>
 
                                 <ui:SimpleStackPanel Spacing="12">
-                                    <TextBlock Text="{x:Static resx:Resources.SensorName}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.Gyrometer}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.Accelerometer}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.Inclinometer}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorName}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Gyrometer}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Accelerometer}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Inclinometer}" FontSize="14"/>
                                 </ui:SimpleStackPanel>
 
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
-                                    <TextBlock Name="SensorName" Text="{x:Static resx:Resources.NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock Name="GyrometerValue" Text="{x:Static resx:Resources.NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock Name="AccelerometerValue" Text="{x:Static resx:Resources.NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock Name="InclinometerValue" Text="{x:Static resx:Resources.NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Name="SensorName" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Name="GyrometerValue" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Name="AccelerometerValue" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Name="InclinometerValue" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
                         </ui:SimpleStackPanel>
@@ -128,17 +128,17 @@
                                 </Grid.ColumnDefinitions>
 
                                 <ui:SimpleStackPanel Spacing="12">
-                                    <TextBlock Text="{x:Static resx:Resources.Version}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.Author}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.Contributors}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.Description}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Version}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Author}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Contributors}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Description}" FontSize="14"/>
                                 </ui:SimpleStackPanel>
 
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
-                                    <TextBlock Name="VersionValue" Text="{x:Static resx:Resources.NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Name="VersionValue" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                     <TextBlock Text="BenjaminLSR" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                     <TextBlock Text="Nefarius, CasperH20" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock TextWrapping="Wrap" Text="{x:Static resx:Resources.AboutDescription}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock TextWrapping="Wrap" Text="{x:Static resx:Resources.AboutPage_AboutDescription}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
 
@@ -146,7 +146,7 @@
                             <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
                             <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="{x:Static resx:Resources.RelatedLinks}"/>
+                                <TextBlock Text="{x:Static resx:Resources.AboutPage_RelatedLinks}"/>
                                 <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/ControllerService" RequestNavigate="Hyperlink_RequestNavigate">SourceCode</Hyperlink></TextBlock>
                                 <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/ControllerService/wiki" RequestNavigate="Hyperlink_RequestNavigate">Wiki</Hyperlink></TextBlock>
                                 <TextBlock><Hyperlink NavigateUri="https://www.paypal.com/paypalme/BenjaminLSR" RequestNavigate="Hyperlink_RequestNavigate">Donate</Hyperlink></TextBlock>

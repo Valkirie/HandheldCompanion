@@ -63,18 +63,135 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Handheld Companion provides gyroscope and accelerometer support to the AYA NEO 2020 and 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on w [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string AboutDescription {
+        public static string AboutPage_AboutDescription {
             get {
-                return ResourceManager.GetString("AboutDescription", resourceCulture);
+                return ResourceManager.GetString("AboutPage_AboutDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Accelerometer.
         /// </summary>
-        public static string Accelerometer {
+        public static string AboutPage_Accelerometer {
             get {
-                return ResourceManager.GetString("Accelerometer", resourceCulture);
+                return ResourceManager.GetString("AboutPage_Accelerometer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Author.
+        /// </summary>
+        public static string AboutPage_Author {
+            get {
+                return ResourceManager.GetString("AboutPage_Author", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contributors.
+        /// </summary>
+        public static string AboutPage_Contributors {
+            get {
+                return ResourceManager.GetString("AboutPage_Contributors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        public static string AboutPage_Description {
+            get {
+                return ResourceManager.GetString("AboutPage_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Donate.
+        /// </summary>
+        public static string AboutPage_Donate {
+            get {
+                return ResourceManager.GetString("AboutPage_Donate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gyrometer.
+        /// </summary>
+        public static string AboutPage_Gyrometer {
+            get {
+                return ResourceManager.GetString("AboutPage_Gyrometer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inclinometer.
+        /// </summary>
+        public static string AboutPage_Inclinometer {
+            get {
+                return ResourceManager.GetString("AboutPage_Inclinometer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to N/A.
+        /// </summary>
+        public static string AboutPage_NotApplicable {
+            get {
+                return ResourceManager.GetString("AboutPage_NotApplicable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Related Links.
+        /// </summary>
+        public static string AboutPage_RelatedLinks {
+            get {
+                return ResourceManager.GetString("AboutPage_RelatedLinks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor Name.
+        /// </summary>
+        public static string AboutPage_SensorName {
+            get {
+                return ResourceManager.GetString("AboutPage_SensorName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor Specification.
+        /// </summary>
+        public static string AboutPage_SensorSpecification {
+            get {
+                return ResourceManager.GetString("AboutPage_SensorSpecification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source Code.
+        /// </summary>
+        public static string AboutPage_SourceCode {
+            get {
+                return ResourceManager.GetString("AboutPage_SourceCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version.
+        /// </summary>
+        public static string AboutPage_Version {
+            get {
+                return ResourceManager.GetString("AboutPage_Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wiki.
+        /// </summary>
+        public static string AboutPage_Wiki {
+            get {
+                return ResourceManager.GetString("AboutPage_Wiki", resourceCulture);
             }
         }
         
@@ -88,335 +205,344 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Alignment.
-        /// </summary>
-        public static string Alignment {
-            get {
-                return ResourceManager.GetString("Alignment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the 3D overlay controller alignment.
-        /// </summary>
-        public static string AlignmentDesc {
-            get {
-                return ResourceManager.GetString("AlignmentDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the trackpads overlay alignment.
-        /// </summary>
-        public static string AlignmentTrackpadDesc {
-            get {
-                return ResourceManager.GetString("AlignmentTrackpadDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Author.
-        /// </summary>
-        public static string Author {
-            get {
-                return ResourceManager.GetString("Author", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cloak device.
         /// </summary>
-        public static string CloakDevice {
+        public static string ControllerPage_CloakDevice {
             get {
-                return ResourceManager.GetString("CloakDevice", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_CloakDevice", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Change the physical controller visibility to other applications.
         /// </summary>
-        public static string CloakDeviceDesc {
+        public static string ControllerPage_CloakDeviceDesc {
             get {
-                return ResourceManager.GetString("CloakDeviceDesc", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_CloakDeviceDesc", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Connect.
         /// </summary>
-        public static string Connect {
+        public static string ControllerPage_Connect {
             get {
-                return ResourceManager.GetString("Connect", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Contributors.
-        /// </summary>
-        public static string Contributors {
-            get {
-                return ResourceManager.GetString("Contributors", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Controller options.
-        /// </summary>
-        public static string ControllerOptions {
-            get {
-                return ResourceManager.GetString("ControllerOptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Description.
-        /// </summary>
-        public static string Description {
-            get {
-                return ResourceManager.GetString("Description", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_Connect", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Device cloaking.
         /// </summary>
-        public static string DeviceCloaking {
+        public static string ControllerPage_DeviceCloaking {
             get {
-                return ResourceManager.GetString("DeviceCloaking", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Donate.
-        /// </summary>
-        public static string Donate {
-            get {
-                return ResourceManager.GetString("Donate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Emulated controller.
-        /// </summary>
-        public static string EmulatedController {
-            get {
-                return ResourceManager.GetString("EmulatedController", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Gyrometer.
-        /// </summary>
-        public static string Gyrometer {
-            get {
-                return ResourceManager.GetString("Gyrometer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Inclinometer.
-        /// </summary>
-        public static string Inclinometer {
-            get {
-                return ResourceManager.GetString("Inclinometer", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_DeviceCloaking", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Input devices.
         /// </summary>
-        public static string InputDevices {
+        public static string ControllerPage_InputDevices {
             get {
-                return ResourceManager.GetString("InputDevices", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_InputDevices", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Main trigger.
+        ///   Looks up a localized string similar to Uncloak on close.
         /// </summary>
-        public static string MainTrigger {
+        public static string ControllerPage_UncloakOnClose {
             get {
-                return ResourceManager.GetString("MainTrigger", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_UncloakOnClose", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the overlay main trigger.
+        ///   Looks up a localized string similar to Restore visibility of the physical controller to other applications on service exit.
         /// </summary>
-        public static string MainTriggerDesc {
+        public static string ControllerPage_UncloakOnCloseDesc {
             get {
-                return ResourceManager.GetString("MainTriggerDesc", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_UncloakOnCloseDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vibration strength.
+        /// </summary>
+        public static string ControllerPage_VibrationStrength {
+            get {
+                return ResourceManager.GetString("ControllerPage_VibrationStrength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change controller vibration strength.
+        /// </summary>
+        public static string ControllerPage_VibrationStrengthExpl {
+            get {
+                return ResourceManager.GetString("ControllerPage_VibrationStrengthExpl", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
-        public static string navAbout {
+        public static string MainWindow_navAbout {
             get {
-                return ResourceManager.GetString("navAbout", resourceCulture);
+                return ResourceManager.GetString("MainWindow_navAbout", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Controller.
         /// </summary>
-        public static string navController {
+        public static string MainWindow_navController {
             get {
-                return ResourceManager.GetString("navController", resourceCulture);
+                return ResourceManager.GetString("MainWindow_navController", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Overlay.
         /// </summary>
-        public static string navOverlay {
+        public static string MainWindow_navOverlay {
             get {
-                return ResourceManager.GetString("navOverlay", resourceCulture);
+                return ResourceManager.GetString("MainWindow_navOverlay", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Profiles.
         /// </summary>
-        public static string navProfiles {
+        public static string MainWindow_navProfiles {
             get {
-                return ResourceManager.GetString("navProfiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to N/A.
-        /// </summary>
-        public static string NotApplicable {
-            get {
-                return ResourceManager.GetString("NotApplicable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to OEM controller.
-        /// </summary>
-        public static string OEMController {
-            get {
-                return ResourceManager.GetString("OEMController", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Opacity.
-        /// </summary>
-        public static string Opacity {
-            get {
-                return ResourceManager.GetString("Opacity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the overlay trackpads opacity.
-        /// </summary>
-        public static string OpacityTrackpadDesc {
-            get {
-                return ResourceManager.GetString("OpacityTrackpadDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Overlay.
-        /// </summary>
-        public static string Overlay {
-            get {
-                return ResourceManager.GetString("Overlay", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Overlay model.
-        /// </summary>
-        public static string OverlayModel {
-            get {
-                return ResourceManager.GetString("OverlayModel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the overlay controller model.
-        /// </summary>
-        public static string OverlayModelDesc {
-            get {
-                return ResourceManager.GetString("OverlayModelDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Overlay preview.
-        /// </summary>
-        public static string OverlayPreview {
-            get {
-                return ResourceManager.GetString("OverlayPreview", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Related Links.
-        /// </summary>
-        public static string RelatedLinks {
-            get {
-                return ResourceManager.GetString("RelatedLinks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Secondary trigger.
-        /// </summary>
-        public static string SecondaryTrigger {
-            get {
-                return ResourceManager.GetString("SecondaryTrigger", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the 3D overlay controller trigger.
-        /// </summary>
-        public static string SecondaryTriggerDesc {
-            get {
-                return ResourceManager.GetString("SecondaryTriggerDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the overlay trackpads trigger.
-        /// </summary>
-        public static string SecondaryTriggerOverlayDesc {
-            get {
-                return ResourceManager.GetString("SecondaryTriggerOverlayDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sensor Name.
-        /// </summary>
-        public static string SensorName {
-            get {
-                return ResourceManager.GetString("SensorName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sensor Specification.
-        /// </summary>
-        public static string SensorSpecification {
-            get {
-                return ResourceManager.GetString("SensorSpecification", resourceCulture);
+                return ResourceManager.GetString("MainWindow_navProfiles", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Deploy Service.
         /// </summary>
-        public static string serviceDeploy {
+        public static string MainWindow_serviceDeploy {
             get {
-                return ResourceManager.GetString("serviceDeploy", resourceCulture);
+                return ResourceManager.GetString("MainWindow_serviceDeploy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Service.
+        /// </summary>
+        public static string MainWindow_serviceRemove {
+            get {
+                return ResourceManager.GetString("MainWindow_serviceRemove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start Service.
+        /// </summary>
+        public static string MainWindow_serviceStart {
+            get {
+                return ResourceManager.GetString("MainWindow_serviceStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop Service.
+        /// </summary>
+        public static string MainWindow_serviceStop {
+            get {
+                return ResourceManager.GetString("MainWindow_serviceStop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alignment.
+        /// </summary>
+        public static string OverlayPage_Alignment {
+            get {
+                return ResourceManager.GetString("OverlayPage_Alignment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the 3D overlay controller alignment.
+        /// </summary>
+        public static string OverlayPage_AlignmentDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_AlignmentDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the trackpads overlay alignment.
+        /// </summary>
+        public static string OverlayPage_AlignmentTrackpadDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_AlignmentTrackpadDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controller options.
+        /// </summary>
+        public static string OverlayPage_ControllerOptions {
+            get {
+                return ResourceManager.GetString("OverlayPage_ControllerOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emulated controller.
+        /// </summary>
+        public static string OverlayPage_EmulatedController {
+            get {
+                return ResourceManager.GetString("OverlayPage_EmulatedController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main trigger.
+        /// </summary>
+        public static string OverlayPage_MainTrigger {
+            get {
+                return ResourceManager.GetString("OverlayPage_MainTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the overlay main trigger.
+        /// </summary>
+        public static string OverlayPage_MainTriggerDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_MainTriggerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OEM controller.
+        /// </summary>
+        public static string OverlayPage_OEMController {
+            get {
+                return ResourceManager.GetString("OverlayPage_OEMController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opacity.
+        /// </summary>
+        public static string OverlayPage_Opacity {
+            get {
+                return ResourceManager.GetString("OverlayPage_Opacity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the overlay trackpads opacity.
+        /// </summary>
+        public static string OverlayPage_OpacityTrackpadDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_OpacityTrackpadDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overlay.
+        /// </summary>
+        public static string OverlayPage_Overlay {
+            get {
+                return ResourceManager.GetString("OverlayPage_Overlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overlay model.
+        /// </summary>
+        public static string OverlayPage_OverlayModel {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the overlay controller model.
+        /// </summary>
+        public static string OverlayPage_OverlayModelDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayModelDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overlay preview.
+        /// </summary>
+        public static string OverlayPage_OverlayPreview {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayPreview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Secondary trigger.
+        /// </summary>
+        public static string OverlayPage_SecondaryTrigger {
+            get {
+                return ResourceManager.GetString("OverlayPage_SecondaryTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the 3D overlay controller trigger.
+        /// </summary>
+        public static string OverlayPage_SecondaryTriggerDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_SecondaryTriggerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the overlay trackpads trigger.
+        /// </summary>
+        public static string OverlayPage_SecondaryTriggerOverlayDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_SecondaryTriggerOverlayDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Size.
+        /// </summary>
+        public static string OverlayPage_Size {
+            get {
+                return ResourceManager.GetString("OverlayPage_Size", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the 3D overlay controller size.
+        /// </summary>
+        public static string OverlayPage_SizeDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_SizeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the overlay trackpads size.
+        /// </summary>
+        public static string OverlayPage_SizeOverlayDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_SizeOverlayDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trackpads options.
+        /// </summary>
+        public static string OverlayPage_TrackpadsOptions {
+            get {
+                return ResourceManager.GetString("OverlayPage_TrackpadsOptions", resourceCulture);
             }
         }
         
@@ -435,69 +561,6 @@ namespace HandheldCompanion.Properties {
         public static string ServiceName {
             get {
                 return ResourceManager.GetString("ServiceName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Remove Service.
-        /// </summary>
-        public static string serviceRemove {
-            get {
-                return ResourceManager.GetString("serviceRemove", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Start Service.
-        /// </summary>
-        public static string serviceStart {
-            get {
-                return ResourceManager.GetString("serviceStart", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Stop Service.
-        /// </summary>
-        public static string serviceStop {
-            get {
-                return ResourceManager.GetString("serviceStop", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Size.
-        /// </summary>
-        public static string Size {
-            get {
-                return ResourceManager.GetString("Size", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the 3D overlay controller size.
-        /// </summary>
-        public static string SizeDesc {
-            get {
-                return ResourceManager.GetString("SizeDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the overlay trackpads size.
-        /// </summary>
-        public static string SizeOverlayDesc {
-            get {
-                return ResourceManager.GetString("SizeOverlayDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Source Code.
-        /// </summary>
-        public static string SourceCode {
-            get {
-                return ResourceManager.GetString("SourceCode", resourceCulture);
             }
         }
         
@@ -538,33 +601,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Trackpads options.
-        /// </summary>
-        public static string TrackpadsOptions {
-            get {
-                return ResourceManager.GetString("TrackpadsOptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Uncloak on close.
-        /// </summary>
-        public static string UncloakOnClose {
-            get {
-                return ResourceManager.GetString("UncloakOnClose", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Restore visibility of the physical controller to other applications on service exit.
-        /// </summary>
-        public static string UncloakOnCloseDesc {
-            get {
-                return ResourceManager.GetString("UncloakOnCloseDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to User.
         /// </summary>
         public static string User {
@@ -574,47 +610,11 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Version.
-        /// </summary>
-        public static string Version {
-            get {
-                return ResourceManager.GetString("Version", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Vibration strength.
-        /// </summary>
-        public static string VibrationStrength {
-            get {
-                return ResourceManager.GetString("VibrationStrength", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change controller vibration strength.
-        /// </summary>
-        public static string VibrationStrengthExpl {
-            get {
-                return ResourceManager.GetString("VibrationStrengthExpl", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Run this tool as Administrator to unlock these settings..
         /// </summary>
         public static string WarningElevated {
             get {
                 return ResourceManager.GetString("WarningElevated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Wiki.
-        /// </summary>
-        public static string Wiki {
-            get {
-                return ResourceManager.GetString("Wiki", resourceCulture);
             }
         }
     }
