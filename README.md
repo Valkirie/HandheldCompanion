@@ -29,6 +29,10 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 ## Supported Sensors
 - Bosch BMI160
 
+## Supported Languages
+- English
+- French (Work in progres...)
+
 ## Contribute
 ### Bugs & Features
 Found a bug and want it fixed? Open a detailed issue on the [GitHub issue tracker](../../issues)!
