@@ -6,11 +6,12 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:local="clr-namespace:HandheldCompanion" 
       xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
+      xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
       KeepAlive="True"
       Loaded="Page_Loaded"
-      Title="About">
+      Title="{x:Static resx:Resources.SettingsPage_Settings}">
 
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="24">

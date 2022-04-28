@@ -6,12 +6,12 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:local="clr-namespace:HandheldCompanion" 
       xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
-      xmlns:prop="clr-namespace:HandheldCompanion.Properties"
+      xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       mc:Ignorable="d" 
       d:DesignHeight="2000" d:DesignWidth="1000"
       KeepAlive="True"
       Loaded="Page_Loaded"
-      Title="Profiles">
+      Title="{x:Static resx:Resources.ProfilesPage_Profiles}">
 
     <Grid Name="MainGrid" Margin="20" >
         <Border>
@@ -332,7 +332,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{x:Static prop:Resources.StyleofInput}" FontSize="14" ToolTip="{x:Static prop:Resources.StyleofInputTooltip}"/>
+                                        <TextBlock Text="{x:Static resx:Resources.StyleofInput}" FontSize="14" ToolTip="{x:Static resx:Resources.StyleofInputTooltip}"/>
                                         <TextBlock Name="Text_InputHint" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
@@ -349,7 +349,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{x:Static prop:Resources.StyleofOutput}" ToolTip="{x:Static prop:Resources.StyleofOutputTooltip}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.StyleofOutput}" ToolTip="{x:Static resx:Resources.StyleofOutputTooltip}" FontSize="14"/>
                                         <TextBlock Text="When sending analog joystick commands to the game, should those commands be a left or right joystick" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
