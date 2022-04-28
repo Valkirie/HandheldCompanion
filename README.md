@@ -24,6 +24,7 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 ## Supported Devices
 - AYA Neo and its different versions
 - AYA Next and its different versions
+- ONEXPLAYER MINI (Work in progress...)
 
 ## Supported Sensors
 - Bosch BMI160
