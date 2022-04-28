@@ -279,8 +279,59 @@
   <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
     <value>Trackpads options</value>
   </data>
+  <data name="ProfileSettingsMode0_CameraOptions" xml:space="preserve">
+    <value>Camera options</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponseCurve" xml:space="preserve">
+    <value>Custom response curve</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponseCurveGameOutput" xml:space="preserve">
+    <value>Output sent to game</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponseIntensity" xml:space="preserve">
+    <value>Movement intensity</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponsePresetAgressive" xml:space="preserve">
+    <value>Agressive</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponsePresetDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponsePresetOptions" xml:space="preserve">
+    <value>Preset options</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
+    <value>Precise</value>
+  </data>
+  <data name="ProfileSettingsMode0_FlickDuration" xml:space="preserve">
+    <value>Flick Duration</value>
+  </data>
+  <data name="ProfileSettingsMode0_FlickDurationDesc" xml:space="preserve">
+    <value>Change the flick duration, calibrate to 180 degree turn, in milliseconds</value>
+  </data>
+  <data name="ProfileSettingsMode0_FlickStick" xml:space="preserve">
+    <value>Flick Stick (Experimental)</value>
+  </data>
+  <data name="ProfileSettingsMode0_FlickStickDesc" xml:space="preserve">
+    <value>Point camera in direction of (right) joystick flick, rotate camera purely in horizontal plane by rotating</value>
+  </data>
+  <data name="ProfileSettingsMode0_FlickStickEnable" xml:space="preserve">
+    <value>Enable flick stick</value>
+  </data>
+  <data name="ProfileSettingsMode0_Sensivity" xml:space="preserve">
+    <value>Sensivity</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensivityDesc" xml:space="preserve">
+    <value>Change the motion sensivity of the vertical and horizontal axis</value>
+  </data>
+  <data name="ProfileSettingsMode0_StickSensitivtity" xml:space="preserve">
+    <value>Stick Sensitivtity</value>
+  </data>
+  <data name="ProfileSettingsMode0_StickSensitivtityDesc" xml:space="preserve">
+    <value>Change the rotation rate</value>
+  </data>
   <data name="ServiceDescription" xml:space="preserve">
-    <value>Provides gyroscope and accelerometer support to the AYA NEO 2020, 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled.</value>
+    <value>Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled.</value>
   </data>
   <data name="ServiceName" xml:space="preserve">
     <value>Controller Service</value>

@@ -547,7 +547,160 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Provides gyroscope and accelerometer support to the AYA NEO 2020, 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled..
+        ///   Looks up a localized string similar to Camera options.
+        /// </summary>
+        public static string ProfileSettingsMode0_CameraOptions {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_CameraOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom response curve.
+        /// </summary>
+        public static string ProfileSettingsMode0_CustomResponseCurve {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponseCurve", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Output sent to game.
+        /// </summary>
+        public static string ProfileSettingsMode0_CustomResponseCurveGameOutput {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponseCurveGameOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Movement intensity.
+        /// </summary>
+        public static string ProfileSettingsMode0_CustomResponseIntensity {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponseIntensity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Agressive.
+        /// </summary>
+        public static string ProfileSettingsMode0_CustomResponsePresetAgressive {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponsePresetAgressive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default.
+        /// </summary>
+        public static string ProfileSettingsMode0_CustomResponsePresetDefault {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponsePresetDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preset options.
+        /// </summary>
+        public static string ProfileSettingsMode0_CustomResponsePresetOptions {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponsePresetOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Precise.
+        /// </summary>
+        public static string ProfileSettingsMode0_CustomResponsePresetPrecise {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponsePresetPrecise", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flick Duration.
+        /// </summary>
+        public static string ProfileSettingsMode0_FlickDuration {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_FlickDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the flick duration, calibrate to 180 degree turn, in milliseconds.
+        /// </summary>
+        public static string ProfileSettingsMode0_FlickDurationDesc {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_FlickDurationDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flick Stick (Experimental).
+        /// </summary>
+        public static string ProfileSettingsMode0_FlickStick {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_FlickStick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Point camera in direction of (right) joystick flick, rotate camera purely in horizontal plane by rotating.
+        /// </summary>
+        public static string ProfileSettingsMode0_FlickStickDesc {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_FlickStickDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable flick stick.
+        /// </summary>
+        public static string ProfileSettingsMode0_FlickStickEnable {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_FlickStickEnable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensivity.
+        /// </summary>
+        public static string ProfileSettingsMode0_Sensivity {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_Sensivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the motion sensivity of the vertical and horizontal axis.
+        /// </summary>
+        public static string ProfileSettingsMode0_SensivityDesc {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_SensivityDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stick Sensitivtity.
+        /// </summary>
+        public static string ProfileSettingsMode0_StickSensitivtity {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_StickSensitivtity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the rotation rate.
+        /// </summary>
+        public static string ProfileSettingsMode0_StickSensitivtityDesc {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_StickSensitivtityDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled..
         /// </summary>
         public static string ServiceDescription {
             get {
