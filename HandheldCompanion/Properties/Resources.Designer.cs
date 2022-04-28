@@ -1213,11 +1213,254 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Application theme.
+        /// </summary>
+        public static string SettingsPage_AppTheme {
+            get {
+                return ResourceManager.GetString("SettingsPage_AppTheme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The application theme, light or dark mode.
+        /// </summary>
+        public static string SettingsPage_AppThemeDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_AppThemeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto-start application.
+        /// </summary>
+        public static string SettingsPage_AutoStartApp {
+            get {
+                return ResourceManager.GetString("SettingsPage_AutoStartApp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The application will start automatically when I sign in to Windows.
+        /// </summary>
+        public static string SettingsPage_AutoStartAppDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_AutoStartAppDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check for updates.
+        /// </summary>
+        public static string SettingsPage_CheckForUpdates {
+            get {
+                return ResourceManager.GetString("SettingsPage_CheckForUpdates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close minimizes.
+        /// </summary>
+        public static string SettingsPage_CloseMinimizes {
+            get {
+                return ResourceManager.GetString("SettingsPage_CloseMinimizes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The application will be minimized instead of closed.
+        /// </summary>
+        public static string SettingsPage_CloseMinimizesDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_CloseMinimizesDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading - 100%.
+        /// </summary>
+        public static string SettingsPage_DownloadingPercentage {
+            get {
+                return ResourceManager.GetString("SettingsPage_DownloadingPercentage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to General options.
+        /// </summary>
+        public static string SettingsPage_GeneralOptions {
+            get {
+                return ResourceManager.GetString("SettingsPage_GeneralOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Halt with Companion.
+        /// </summary>
+        public static string SettingsPage_HaltWithCompanion {
+            get {
+                return ResourceManager.GetString("SettingsPage_HaltWithCompanion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically turn off service when companion is closed.
+        /// </summary>
+        public static string SettingsPage_HaltWithCompanionDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_HaltWithCompanionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Install now.
+        /// </summary>
+        public static string SettingsPage_InstallNow {
+            get {
+                return ResourceManager.GetString("SettingsPage_InstallNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last checked: Today.
+        /// </summary>
+        public static string SettingsPage_LastChecked {
+            get {
+                return ResourceManager.GetString("SettingsPage_LastChecked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notification options.
+        /// </summary>
+        public static string SettingsPage_NotificationOptions {
+            get {
+                return ResourceManager.GetString("SettingsPage_NotificationOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open application in background.
+        /// </summary>
+        public static string SettingsPage_OpenAppBackground {
+            get {
+                return ResourceManager.GetString("SettingsPage_OpenAppBackground", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The application will initially start minimized and appear on the taskbar.
+        /// </summary>
+        public static string SettingsPage_OpenAppBackgroundDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_OpenAppBackgroundDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Service options.
+        /// </summary>
+        public static string SettingsPage_ServiceOptions {
+            get {
+                return ResourceManager.GetString("SettingsPage_ServiceOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string SettingsPage_Settings {
             get {
                 return ResourceManager.GetString("SettingsPage_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Startup type.
+        /// </summary>
+        public static string SettingsPage_StartupType {
+            get {
+                return ResourceManager.GetString("SettingsPage_StartupType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Used by the service manager to define the service startup type.
+        /// </summary>
+        public static string SettingsPage_StartupTypeDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_StartupTypeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start with Companion.
+        /// </summary>
+        public static string SettingsPage_StartWithCompanion {
+            get {
+                return ResourceManager.GetString("SettingsPage_StartWithCompanion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically turn on service when companion starts.
+        /// </summary>
+        public static string SettingsPage_StartWithCompanionDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_StartWithCompanionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dark.
+        /// </summary>
+        public static string SettingsPage_ThemeDark {
+            get {
+                return ResourceManager.GetString("SettingsPage_ThemeDark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Light.
+        /// </summary>
+        public static string SettingsPage_ThemeLight {
+            get {
+                return ResourceManager.GetString("SettingsPage_ThemeLight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toast notification.
+        /// </summary>
+        public static string SettingsPage_ToastNotification {
+            get {
+                return ResourceManager.GetString("SettingsPage_ToastNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Get notifications from the application in the Windows action center.
+        /// </summary>
+        public static string SettingsPage_ToastNotificationDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_ToastNotificationDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You&apos;re up to date.
+        /// </summary>
+        public static string SettingsPage_UpToDate {
+            get {
+                return ResourceManager.GetString("SettingsPage_UpToDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Handheld Companion (Version 0.9.2.0).
+        /// </summary>
+        public static string SettingsPage_Version {
+            get {
+                return ResourceManager.GetString("SettingsPage_Version", resourceCulture);
             }
         }
         
