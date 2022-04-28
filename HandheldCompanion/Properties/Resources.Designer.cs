@@ -844,11 +844,353 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accelerometer multiplier.
+        /// </summary>
+        public static string ProfilesPage_AccelerometerMultiplier {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AccelerometerMultiplier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the system reported accelerometer value.
+        /// </summary>
+        public static string ProfilesPage_AccelerometerMultiplierDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AccelerometerMultiplierDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Additional settings.
+        /// </summary>
+        public static string ProfilesPage_AdditionalSettings {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AdditionalSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Anti-deadzone.
+        /// </summary>
+        public static string ProfilesPage_AntiDeadzone {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AntiDeadzone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the in-game anti-deadzone, in percentage.
+        /// </summary>
+        public static string ProfilesPage_AntiDeadzoneDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AntiDeadzoneDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create a new profile.
+        /// </summary>
+        public static string ProfilesPage_CreateNewProfile {
+            get {
+                return ResourceManager.GetString("ProfilesPage_CreateNewProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete profile.
+        /// </summary>
+        public static string ProfilesPage_DeleteProfile {
+            get {
+                return ResourceManager.GetString("ProfilesPage_DeleteProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable button.
+        /// </summary>
+        public static string ProfilesPage_EnableButton {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EnableButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The motion input can be turned on only when the selected button is pressed.
+        /// </summary>
+        public static string ProfilesPage_EnableButtonDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EnableButtonDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable profile.
+        /// </summary>
+        public static string ProfilesPage_EnableProfile {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EnableProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The profile will be automatically applied when the associated application is detected.
+        /// </summary>
+        public static string ProfilesPage_EnableProfileDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EnableProfileDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Global settings.
+        /// </summary>
+        public static string ProfilesPage_GlobalSettings {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GlobalSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the global profiles settings.
+        /// </summary>
+        public static string ProfilesPage_GlobalSettingsDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GlobalSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gyrometer multiplier.
+        /// </summary>
+        public static string ProfilesPage_GyrometerMultiplier {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GyrometerMultiplier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the system reported gyrometer value.
+        /// </summary>
+        public static string ProfilesPage_GyrometerMultiplierDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GyrometerMultiplierDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gyro steering axis.
+        /// </summary>
+        public static string ProfilesPage_GyroSteeringAxis {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GyroSteeringAxis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to For controlling the horizontal movement of the controller, you can use either the yaw or roll axis.
+        /// </summary>
+        public static string ProfilesPage_GyroSteeringAxisDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GyroSteeringAxisDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invert horizontal axis.
+        /// </summary>
+        public static string ProfilesPage_InvertHorizontalAxis {
+            get {
+                return ResourceManager.GetString("ProfilesPage_InvertHorizontalAxis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invert vertical axis.
+        /// </summary>
+        public static string ProfilesPage_InvertVerticalAxis {
+            get {
+                return ResourceManager.GetString("ProfilesPage_InvertVerticalAxis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motion control settings.
+        /// </summary>
+        public static string ProfilesPage_MotionControlSettings {
+            get {
+                return ResourceManager.GetString("ProfilesPage_MotionControlSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the global motion control settings.
+        /// </summary>
+        public static string ProfilesPage_MotionControlSettingsDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_MotionControlSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile details.
+        /// </summary>
+        public static string ProfilesPage_ProfileDetails {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProfileDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile name.
+        /// </summary>
+        public static string ProfilesPage_ProfileName {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProfileName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile path.
+        /// </summary>
+        public static string ProfilesPage_ProfilePath {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProfilePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Profiles.
         /// </summary>
         public static string ProfilesPage_Profiles {
             get {
                 return ResourceManager.GetString("ProfilesPage_Profiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile selection.
+        /// </summary>
+        public static string ProfilesPage_ProfileSelection {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProfileSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select the profile you would like to edit.
+        /// </summary>
+        public static string ProfilesPage_ProfileSelectionDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProfileSelectionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile settings.
+        /// </summary>
+        public static string ProfilesPage_ProfileSettings {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProfileSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Style of input.
+        /// </summary>
+        public static string ProfilesPage_StyleofInput {
+            get {
+                return ResourceManager.GetString("ProfilesPage_StyleofInput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The physical inputs of the controller can be programmed to act like different types of devices.
+        /// </summary>
+        public static string ProfilesPage_StyleofInputTooltip {
+            get {
+                return ResourceManager.GetString("ProfilesPage_StyleofInputTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Output.
+        /// </summary>
+        public static string ProfilesPage_StyleofOutput {
+            get {
+                return ResourceManager.GetString("ProfilesPage_StyleofOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When sending analog joystick commands to the game, should those commands be a left or right joystick.
+        /// </summary>
+        public static string ProfilesPage_StyleofOutputTooltip {
+            get {
+                return ResourceManager.GetString("ProfilesPage_StyleofOutputTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable universal motion controler.
+        /// </summary>
+        public static string ProfilesPage_UMCEnable {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCEnable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When sending analog joystick commands to the game, should those commands be a left or right joystick.
+        /// </summary>
+        public static string ProfilesPage_UMCSelectionRightLeftDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCSelectionRightLeftDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Universal motion control settings.
+        /// </summary>
+        public static string ProfilesPage_UMCSettings {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Translate device motions into controller inputs.
+        /// </summary>
+        public static string ProfilesPage_UMCSettingsDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update profile.
+        /// </summary>
+        public static string ProfilesPage_UpdateProfile {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UpdateProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow the application to access device physical controller.
+        /// </summary>
+        public static string ProfilesPage_Whitelist {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Whitelist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Translates DirectInput calls to XInput calls.
+        /// </summary>
+        public static string ProfilesPage_Wrapper {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Wrapper", resourceCulture);
             }
         }
         
@@ -876,42 +1218,6 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_Settings {
             get {
                 return ResourceManager.GetString("SettingsPage_Settings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Style of input.
-        /// </summary>
-        public static string StyleofInput {
-            get {
-                return ResourceManager.GetString("StyleofInput", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The physical inputs of the controller can be programmed to act like different types of devices.
-        /// </summary>
-        public static string StyleofInputTooltip {
-            get {
-                return ResourceManager.GetString("StyleofInputTooltip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Output.
-        /// </summary>
-        public static string StyleofOutput {
-            get {
-                return ResourceManager.GetString("StyleofOutput", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to When sending analog joystick commands to the game, should those commands be a left or right joystick.
-        /// </summary>
-        public static string StyleofOutputTooltip {
-            get {
-                return ResourceManager.GetString("StyleofOutputTooltip", resourceCulture);
             }
         }
         

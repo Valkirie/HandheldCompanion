@@ -378,8 +378,122 @@
   <data name="ProfileSettingsMode1_SteeringLinearityDesc" xml:space="preserve">
     <value>Mapping between input and steering. Lower values provide more accuracy near full lock but less accuracy near the center. Higher values provide more accuracy near the center but less accuracy near full lock. 1.0 is a linear mapping.</value>
   </data>
+  <data name="ProfilesPage_AccelerometerMultiplier" xml:space="preserve">
+    <value>Accelerometer multiplier</value>
+  </data>
+  <data name="ProfilesPage_AccelerometerMultiplierDesc" xml:space="preserve">
+    <value>Change the system reported accelerometer value</value>
+  </data>
+  <data name="ProfilesPage_AdditionalSettings" xml:space="preserve">
+    <value>Additional settings</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzone" xml:space="preserve">
+    <value>Anti-deadzone</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzoneDesc" xml:space="preserve">
+    <value>Change the in-game anti-deadzone, in percentage</value>
+  </data>
+  <data name="ProfilesPage_CreateNewProfile" xml:space="preserve">
+    <value>Create a new profile</value>
+  </data>
+  <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
+    <value>Delete profile</value>
+  </data>
+  <data name="ProfilesPage_EnableButton" xml:space="preserve">
+    <value>Enable button</value>
+  </data>
+  <data name="ProfilesPage_EnableButtonDesc" xml:space="preserve">
+    <value>The motion input can be turned on only when the selected button is pressed</value>
+  </data>
+  <data name="ProfilesPage_EnableProfile" xml:space="preserve">
+    <value>Enable profile</value>
+  </data>
+  <data name="ProfilesPage_EnableProfileDesc" xml:space="preserve">
+    <value>The profile will be automatically applied when the associated application is detected</value>
+  </data>
+  <data name="ProfilesPage_GlobalSettings" xml:space="preserve">
+    <value>Global settings</value>
+  </data>
+  <data name="ProfilesPage_GlobalSettingsDesc" xml:space="preserve">
+    <value>Change the global profiles settings</value>
+  </data>
+  <data name="ProfilesPage_GyrometerMultiplier" xml:space="preserve">
+    <value>Gyrometer multiplier</value>
+  </data>
+  <data name="ProfilesPage_GyrometerMultiplierDesc" xml:space="preserve">
+    <value>Change the system reported gyrometer value</value>
+  </data>
+  <data name="ProfilesPage_GyroSteeringAxis" xml:space="preserve">
+    <value>Gyro steering axis</value>
+  </data>
+  <data name="ProfilesPage_GyroSteeringAxisDesc" xml:space="preserve">
+    <value>For controlling the horizontal movement of the controller, you can use either the yaw or roll axis</value>
+  </data>
+  <data name="ProfilesPage_InvertHorizontalAxis" xml:space="preserve">
+    <value>Invert horizontal axis</value>
+  </data>
+  <data name="ProfilesPage_InvertVerticalAxis" xml:space="preserve">
+    <value>Invert vertical axis</value>
+  </data>
+  <data name="ProfilesPage_MotionControlSettings" xml:space="preserve">
+    <value>Motion control settings</value>
+  </data>
+  <data name="ProfilesPage_MotionControlSettingsDesc" xml:space="preserve">
+    <value>Change the global motion control settings</value>
+  </data>
+  <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
+    <value>Profile details</value>
+  </data>
+  <data name="ProfilesPage_ProfileName" xml:space="preserve">
+    <value>Profile name</value>
+  </data>
+  <data name="ProfilesPage_ProfilePath" xml:space="preserve">
+    <value>Profile path</value>
+  </data>
   <data name="ProfilesPage_Profiles" xml:space="preserve">
     <value>Profiles</value>
+  </data>
+  <data name="ProfilesPage_ProfileSelection" xml:space="preserve">
+    <value>Profile selection</value>
+  </data>
+  <data name="ProfilesPage_ProfileSelectionDesc" xml:space="preserve">
+    <value>Select the profile you would like to edit</value>
+  </data>
+  <data name="ProfilesPage_ProfileSettings" xml:space="preserve">
+    <value>Profile settings</value>
+  </data>
+  <data name="ProfilesPage_StyleofInput" xml:space="preserve">
+    <value>Style of input</value>
+  </data>
+  <data name="ProfilesPage_StyleofInputTooltip" xml:space="preserve">
+    <value>The physical inputs of the controller can be programmed to act like different types of devices</value>
+  </data>
+  <data name="ProfilesPage_StyleofOutput" xml:space="preserve">
+    <value>Output</value>
+  </data>
+  <data name="ProfilesPage_StyleofOutputTooltip" xml:space="preserve">
+    <value>When sending analog joystick commands to the game, should those commands be a left or right joystick</value>
+  </data>
+  <data name="ProfilesPage_UMCEnable" xml:space="preserve">
+    <value>Enable universal motion controler</value>
+  </data>
+  <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
+    <value>When sending analog joystick commands to the game, should those commands be a left or right joystick</value>
+  </data>
+  <data name="ProfilesPage_UMCSettings" xml:space="preserve">
+    <value>Universal motion control settings</value>
+  </data>
+  <data name="ProfilesPage_UMCSettingsDesc" xml:space="preserve">
+    <value>Translate device motions into controller inputs</value>
+  </data>
+  <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
+    <value>Update profile</value>
+  </data>
+  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+    <value>Allow the application to access device physical controller</value>
+  </data>
+  <data name="ProfilesPage_Wrapper" xml:space="preserve">
+    <value>Translates DirectInput calls to XInput calls</value>
   </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled.</value>
@@ -389,18 +503,6 @@
   </data>
   <data name="SettingsPage_Settings" xml:space="preserve">
     <value>Settings</value>
-  </data>
-  <data name="StyleofInput" xml:space="preserve">
-    <value>Style of input</value>
-  </data>
-  <data name="StyleofInputTooltip" xml:space="preserve">
-    <value>The physical inputs of the controller can be programmed to act like different types of devices</value>
-  </data>
-  <data name="StyleofOutput" xml:space="preserve">
-    <value>Output</value>
-  </data>
-  <data name="StyleofOutputTooltip" xml:space="preserve">
-    <value>When sending analog joystick commands to the game, should those commands be a left or right joystick</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>User</value>
