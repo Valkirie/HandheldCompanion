@@ -12,7 +12,7 @@
     mc:Ignorable="d" 
     d:DesignHeight="1000" d:DesignWidth="1000"
     Loaded="Page_Loaded"
-    Title="Controller">
+    Title="{x:Static resx:Resources.ControllerPage_Controller}">
 
     <Page.Resources>
         <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />

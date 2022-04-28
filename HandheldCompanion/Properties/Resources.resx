@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AboutPage_About" xml:space="preserve">
+    <value>About</value>
+  </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
     <value>Handheld Companion provides gyroscope and accelerometer support to the AYA NEO 2020 and 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible information on the GyroWiki.</value>
   </data>
@@ -174,6 +177,9 @@
   <data name="ControllerPage_Connect" xml:space="preserve">
     <value>Connect</value>
   </data>
+  <data name="ControllerPage_Controller" xml:space="preserve">
+    <value>Controller</value>
+  </data>
   <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
     <value>Device cloaking</value>
   </data>
@@ -191,6 +197,9 @@
   </data>
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
     <value>Change controller vibration strength</value>
+  </data>
+  <data name="MainWindow_HandheldCompanion" xml:space="preserve">
+    <value>Handheld Companion</value>
   </data>
   <data name="MainWindow_navAbout" xml:space="preserve">
     <value>About</value>
@@ -279,6 +288,12 @@
   <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
     <value>Trackpads options</value>
   </data>
+  <data name="Overlay_Overlay" xml:space="preserve">
+    <value>Overlay</value>
+  </data>
+  <data name="ProfileSettingsMode0_AdditionalSettings" xml:space="preserve">
+    <value>Additional settings</value>
+  </data>
   <data name="ProfileSettingsMode0_CameraOptions" xml:space="preserve">
     <value>Camera options</value>
   </data>
@@ -330,6 +345,9 @@
   <data name="ProfileSettingsMode0_StickSensitivtityDesc" xml:space="preserve">
     <value>Change the rotation rate</value>
   </data>
+  <data name="ProfileSettingsMode1_AdditionalSettings" xml:space="preserve">
+    <value>Additional settings</value>
+  </data>
   <data name="ProfileSettingsMode1_Deadzone" xml:space="preserve">
     <value>Deadzone</value>
   </data>
@@ -360,11 +378,17 @@
   <data name="ProfileSettingsMode1_SteeringLinearityDesc" xml:space="preserve">
     <value>Mapping between input and steering. Lower values provide more accuracy near full lock but less accuracy near the center. Higher values provide more accuracy near the center but less accuracy near full lock. 1.0 is a linear mapping.</value>
   </data>
+  <data name="ProfilesPage_Profiles" xml:space="preserve">
+    <value>Profiles</value>
+  </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled.</value>
   </data>
   <data name="ServiceName" xml:space="preserve">
     <value>Controller Service</value>
+  </data>
+  <data name="SettingsPage_Settings" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="StyleofInput" xml:space="preserve">
     <value>Style of input</value>

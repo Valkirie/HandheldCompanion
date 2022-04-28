@@ -10,7 +10,7 @@
       mc:Ignorable="d"
       d:DesignHeight="1000" d:DesignWidth="1000"
       KeepAlive="True"
-      Title="About">
+      Title="{x:Static resx:Resources.AboutPage_About}">
 
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="6">

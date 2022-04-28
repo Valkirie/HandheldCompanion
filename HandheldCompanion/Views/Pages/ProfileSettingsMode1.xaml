@@ -9,7 +9,7 @@
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
-      Title="Additional settings"
+      Title="{x:Static resx:Resources.ProfileSettingsMode1_AdditionalSettings}"
       Loaded="Page_Loaded">
 
     <Grid Name="MainGrid" Margin="20">

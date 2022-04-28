@@ -61,6 +61,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        public static string AboutPage_About {
+            get {
+                return ResourceManager.GetString("AboutPage_About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Handheld Companion provides gyroscope and accelerometer support to the AYA NEO 2020 and 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on w [rest of string was truncated]&quot;;.
         /// </summary>
         public static string AboutPage_AboutDescription {
@@ -232,6 +241,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Controller.
+        /// </summary>
+        public static string ControllerPage_Controller {
+            get {
+                return ResourceManager.GetString("ControllerPage_Controller", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Device cloaking.
         /// </summary>
         public static string ControllerPage_DeviceCloaking {
@@ -282,6 +300,15 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_VibrationStrengthExpl {
             get {
                 return ResourceManager.GetString("ControllerPage_VibrationStrengthExpl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Handheld Companion.
+        /// </summary>
+        public static string MainWindow_HandheldCompanion {
+            get {
+                return ResourceManager.GetString("MainWindow_HandheldCompanion", resourceCulture);
             }
         }
         
@@ -354,6 +381,15 @@ namespace HandheldCompanion.Properties {
         public static string MainWindow_serviceStop {
             get {
                 return ResourceManager.GetString("MainWindow_serviceStop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overlay.
+        /// </summary>
+        public static string Overlay_Overlay {
+            get {
+                return ResourceManager.GetString("Overlay_Overlay", resourceCulture);
             }
         }
         
@@ -547,6 +583,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Additional settings.
+        /// </summary>
+        public static string ProfileSettingsMode0_AdditionalSettings {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_AdditionalSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Camera options.
         /// </summary>
         public static string ProfileSettingsMode0_CameraOptions {
@@ -700,6 +745,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Additional settings.
+        /// </summary>
+        public static string ProfileSettingsMode1_AdditionalSettings {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode1_AdditionalSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deadzone.
         /// </summary>
         public static string ProfileSettingsMode1_Deadzone {
@@ -790,6 +844,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Profiles.
+        /// </summary>
+        public static string ProfilesPage_Profiles {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Profiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled..
         /// </summary>
         public static string ServiceDescription {
@@ -804,6 +867,15 @@ namespace HandheldCompanion.Properties {
         public static string ServiceName {
             get {
                 return ResourceManager.GetString("ServiceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string SettingsPage_Settings {
+            get {
+                return ResourceManager.GetString("SettingsPage_Settings", resourceCulture);
             }
         }
         
