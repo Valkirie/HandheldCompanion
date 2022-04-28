@@ -237,6 +237,9 @@
   <data name="OverlayPage_AlignmentTrackpadDesc" xml:space="preserve">
     <value>Change the trackpads overlay alignment</value>
   </data>
+  <data name="OverlayPage_BackButton" xml:space="preserve">
+    <value>Back</value>
+  </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
     <value>Controller options</value>
   </data>
@@ -287,6 +290,9 @@
   </data>
   <data name="OverlayPage_SizeOverlayDesc" xml:space="preserve">
     <value>Change the overlay trackpads size</value>
+  </data>
+  <data name="OverlayPage_StartButton" xml:space="preserve">
+    <value>Start</value>
   </data>
   <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
     <value>Trackpads options</value>

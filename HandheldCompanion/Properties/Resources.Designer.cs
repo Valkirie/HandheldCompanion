@@ -430,6 +430,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        public static string OverlayPage_BackButton {
+            get {
+                return ResourceManager.GetString("OverlayPage_BackButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controller options.
         /// </summary>
         public static string OverlayPage_ControllerOptions {
@@ -579,6 +588,15 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_SizeOverlayDesc {
             get {
                 return ResourceManager.GetString("OverlayPage_SizeOverlayDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start.
+        /// </summary>
+        public static string OverlayPage_StartButton {
+            get {
+                return ResourceManager.GetString("OverlayPage_StartButton", resourceCulture);
             }
         }
         
