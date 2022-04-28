@@ -117,152 +117,173 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AboutDescription" xml:space="preserve">
+  <data name="AboutPage_AboutDescription" xml:space="preserve">
     <value>Handheld Companion provides gyroscope and accelerometer support to the AYA NEO 2020 and 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible information on the GyroWiki.</value>
   </data>
-  <data name="Accelerometer" xml:space="preserve">
+  <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>Accelerometer</value>
+  </data>
+  <data name="AboutPage_Author" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="AboutPage_Contributors" xml:space="preserve">
+    <value>Contributors</value>
+  </data>
+  <data name="AboutPage_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="AboutPage_Donate" xml:space="preserve">
+    <value>Donate</value>
+  </data>
+  <data name="AboutPage_Gyrometer" xml:space="preserve">
+    <value>Gyrometer</value>
+  </data>
+  <data name="AboutPage_Inclinometer" xml:space="preserve">
+    <value>Inclinometer</value>
+  </data>
+  <data name="AboutPage_NotApplicable" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="AboutPage_RelatedLinks" xml:space="preserve">
+    <value>Related Links</value>
+  </data>
+  <data name="AboutPage_SensorName" xml:space="preserve">
+    <value>Sensor Name</value>
+  </data>
+  <data name="AboutPage_SensorSpecification" xml:space="preserve">
+    <value>Sensor Specification</value>
+  </data>
+  <data name="AboutPage_SourceCode" xml:space="preserve">
+    <value>Source Code</value>
+  </data>
+  <data name="AboutPage_Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="AboutPage_Wiki" xml:space="preserve">
+    <value>Wiki</value>
   </data>
   <data name="Administrator" xml:space="preserve">
     <value>Administrator</value>
   </data>
-  <data name="Alignment" xml:space="preserve">
-    <value>Alignment</value>
-  </data>
-  <data name="AlignmentDesc" xml:space="preserve">
-    <value>Change the 3D overlay controller alignment</value>
-  </data>
-  <data name="AlignmentTrackpadDesc" xml:space="preserve">
-    <value>Change the trackpads overlay alignment</value>
-  </data>
-  <data name="Author" xml:space="preserve">
-    <value>Author</value>
-  </data>
-  <data name="CloakDevice" xml:space="preserve">
+  <data name="ControllerPage_CloakDevice" xml:space="preserve">
     <value>Cloak device</value>
   </data>
-  <data name="CloakDeviceDesc" xml:space="preserve">
+  <data name="ControllerPage_CloakDeviceDesc" xml:space="preserve">
     <value>Change the physical controller visibility to other applications</value>
   </data>
-  <data name="Connect" xml:space="preserve">
+  <data name="ControllerPage_Connect" xml:space="preserve">
     <value>Connect</value>
   </data>
-  <data name="Contributors" xml:space="preserve">
-    <value>Contributors</value>
-  </data>
-  <data name="ControllerOptions" xml:space="preserve">
-    <value>Controller options</value>
-  </data>
-  <data name="Description" xml:space="preserve">
-    <value>Description</value>
-  </data>
-  <data name="DeviceCloaking" xml:space="preserve">
+  <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
     <value>Device cloaking</value>
   </data>
-  <data name="Donate" xml:space="preserve">
-    <value>Donate</value>
-  </data>
-  <data name="EmulatedController" xml:space="preserve">
-    <value>Emulated controller</value>
-  </data>
-  <data name="Gyrometer" xml:space="preserve">
-    <value>Gyrometer</value>
-  </data>
-  <data name="Inclinometer" xml:space="preserve">
-    <value>Inclinometer</value>
-  </data>
-  <data name="InputDevices" xml:space="preserve">
+  <data name="ControllerPage_InputDevices" xml:space="preserve">
     <value>Input devices</value>
   </data>
-  <data name="MainTrigger" xml:space="preserve">
-    <value>Main trigger</value>
+  <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
+    <value>Uncloak on close</value>
   </data>
-  <data name="MainTriggerDesc" xml:space="preserve">
-    <value>Change the overlay main trigger</value>
+  <data name="ControllerPage_UncloakOnCloseDesc" xml:space="preserve">
+    <value>Restore visibility of the physical controller to other applications on service exit</value>
   </data>
-  <data name="navAbout" xml:space="preserve">
+  <data name="ControllerPage_VibrationStrength" xml:space="preserve">
+    <value>Vibration strength</value>
+  </data>
+  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
+    <value>Change controller vibration strength</value>
+  </data>
+  <data name="MainWindow_navAbout" xml:space="preserve">
     <value>About</value>
   </data>
-  <data name="navController" xml:space="preserve">
+  <data name="MainWindow_navController" xml:space="preserve">
     <value>Controller</value>
   </data>
-  <data name="navOverlay" xml:space="preserve">
+  <data name="MainWindow_navOverlay" xml:space="preserve">
     <value>Overlay</value>
   </data>
-  <data name="navProfiles" xml:space="preserve">
+  <data name="MainWindow_navProfiles" xml:space="preserve">
     <value>Profiles</value>
   </data>
-  <data name="NotApplicable" xml:space="preserve">
-    <value>N/A</value>
+  <data name="MainWindow_serviceDeploy" xml:space="preserve">
+    <value>Deploy Service</value>
   </data>
-  <data name="OEMController" xml:space="preserve">
+  <data name="MainWindow_serviceRemove" xml:space="preserve">
+    <value>Remove Service</value>
+  </data>
+  <data name="MainWindow_serviceStart" xml:space="preserve">
+    <value>Start Service</value>
+  </data>
+  <data name="MainWindow_serviceStop" xml:space="preserve">
+    <value>Stop Service</value>
+  </data>
+  <data name="OverlayPage_Alignment" xml:space="preserve">
+    <value>Alignment</value>
+  </data>
+  <data name="OverlayPage_AlignmentDesc" xml:space="preserve">
+    <value>Change the 3D overlay controller alignment</value>
+  </data>
+  <data name="OverlayPage_AlignmentTrackpadDesc" xml:space="preserve">
+    <value>Change the trackpads overlay alignment</value>
+  </data>
+  <data name="OverlayPage_ControllerOptions" xml:space="preserve">
+    <value>Controller options</value>
+  </data>
+  <data name="OverlayPage_EmulatedController" xml:space="preserve">
+    <value>Emulated controller</value>
+  </data>
+  <data name="OverlayPage_MainTrigger" xml:space="preserve">
+    <value>Main trigger</value>
+  </data>
+  <data name="OverlayPage_MainTriggerDesc" xml:space="preserve">
+    <value>Change the overlay main trigger</value>
+  </data>
+  <data name="OverlayPage_OEMController" xml:space="preserve">
     <value>OEM controller</value>
   </data>
-  <data name="Opacity" xml:space="preserve">
+  <data name="OverlayPage_Opacity" xml:space="preserve">
     <value>Opacity</value>
   </data>
-  <data name="OpacityTrackpadDesc" xml:space="preserve">
+  <data name="OverlayPage_OpacityTrackpadDesc" xml:space="preserve">
     <value>Change the overlay trackpads opacity</value>
   </data>
-  <data name="Overlay" xml:space="preserve">
+  <data name="OverlayPage_Overlay" xml:space="preserve">
     <value>Overlay</value>
   </data>
-  <data name="OverlayModel" xml:space="preserve">
+  <data name="OverlayPage_OverlayModel" xml:space="preserve">
     <value>Overlay model</value>
   </data>
-  <data name="OverlayModelDesc" xml:space="preserve">
+  <data name="OverlayPage_OverlayModelDesc" xml:space="preserve">
     <value>Change the overlay controller model</value>
   </data>
-  <data name="OverlayPreview" xml:space="preserve">
+  <data name="OverlayPage_OverlayPreview" xml:space="preserve">
     <value>Overlay preview</value>
   </data>
-  <data name="RelatedLinks" xml:space="preserve">
-    <value>Related Links</value>
-  </data>
-  <data name="SecondaryTrigger" xml:space="preserve">
+  <data name="OverlayPage_SecondaryTrigger" xml:space="preserve">
     <value>Secondary trigger</value>
   </data>
-  <data name="SecondaryTriggerDesc" xml:space="preserve">
+  <data name="OverlayPage_SecondaryTriggerDesc" xml:space="preserve">
     <value>Change the 3D overlay controller trigger</value>
   </data>
-  <data name="SecondaryTriggerOverlayDesc" xml:space="preserve">
+  <data name="OverlayPage_SecondaryTriggerOverlayDesc" xml:space="preserve">
     <value>Change the overlay trackpads trigger</value>
   </data>
-  <data name="SensorName" xml:space="preserve">
-    <value>Sensor Name</value>
+  <data name="OverlayPage_Size" xml:space="preserve">
+    <value>Size</value>
   </data>
-  <data name="SensorSpecification" xml:space="preserve">
-    <value>Sensor Specification</value>
+  <data name="OverlayPage_SizeDesc" xml:space="preserve">
+    <value>Change the 3D overlay controller size</value>
   </data>
-  <data name="serviceDeploy" xml:space="preserve">
-    <value>Deploy Service</value>
+  <data name="OverlayPage_SizeOverlayDesc" xml:space="preserve">
+    <value>Change the overlay trackpads size</value>
+  </data>
+  <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
+    <value>Trackpads options</value>
   </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>Provides gyroscope and accelerometer support to the AYA NEO 2020, 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled.</value>
   </data>
   <data name="ServiceName" xml:space="preserve">
     <value>Controller Service</value>
-  </data>
-  <data name="serviceRemove" xml:space="preserve">
-    <value>Remove Service</value>
-  </data>
-  <data name="serviceStart" xml:space="preserve">
-    <value>Start Service</value>
-  </data>
-  <data name="serviceStop" xml:space="preserve">
-    <value>Stop Service</value>
-  </data>
-  <data name="Size" xml:space="preserve">
-    <value>Size</value>
-  </data>
-  <data name="SizeDesc" xml:space="preserve">
-    <value>Change the 3D overlay controller size</value>
-  </data>
-  <data name="SizeOverlayDesc" xml:space="preserve">
-    <value>Change the overlay trackpads size</value>
-  </data>
-  <data name="SourceCode" xml:space="preserve">
-    <value>Source Code</value>
   </data>
   <data name="StyleofInput" xml:space="preserve">
     <value>Style of input</value>
@@ -276,31 +297,10 @@
   <data name="StyleofOutputTooltip" xml:space="preserve">
     <value>When sending analog joystick commands to the game, should those commands be a left or right joystick</value>
   </data>
-  <data name="TrackpadsOptions" xml:space="preserve">
-    <value>Trackpads options</value>
-  </data>
-  <data name="UncloakOnClose" xml:space="preserve">
-    <value>Uncloak on close</value>
-  </data>
-  <data name="UncloakOnCloseDesc" xml:space="preserve">
-    <value>Restore visibility of the physical controller to other applications on service exit</value>
-  </data>
   <data name="User" xml:space="preserve">
     <value>User</value>
   </data>
-  <data name="Version" xml:space="preserve">
-    <value>Version</value>
-  </data>
-  <data name="VibrationStrength" xml:space="preserve">
-    <value>Vibration strength</value>
-  </data>
-  <data name="VibrationStrengthExpl" xml:space="preserve">
-    <value>Change controller vibration strength</value>
-  </data>
   <data name="WarningElevated" xml:space="preserve">
     <value>Run this tool as Administrator to unlock these settings.</value>
-  </data>
-  <data name="Wiki" xml:space="preserve">
-    <value>Wiki</value>
   </data>
 </root>

@@ -11,14 +11,14 @@
       d:DesignHeight="1500" d:DesignWidth="1000"
       KeepAlive="True"
       Loaded="Page_Loaded"
-      Title="{x:Static resx:Resources.Overlay}">
+      Title="{x:Static resx:Resources.OverlayPage_Overlay}">
 
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="24">
             <ui:SimpleStackPanel Spacing="6">
                 
                 <!-- Overlay preview -->
-                <Label Content="{x:Static resx:Resources.OverlayPreview}" FontWeight="SemiBold"></Label>
+                <Label Content="{x:Static resx:Resources.OverlayPage_OverlayPreview}" FontWeight="SemiBold"></Label>
                 <Border
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
@@ -65,8 +65,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.MainTrigger}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.MainTriggerDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_MainTrigger}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_MainTriggerDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -88,7 +88,7 @@
 
             <!-- Controller options -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="{x:Static resx:Resources.ControllerOptions}" FontWeight="SemiBold"></Label>
+                <Label Content="{x:Static resx:Resources.OverlayPage_ControllerOptions}" FontWeight="SemiBold"></Label>
                 
                 <!-- Controller model -->
                 <Border                      
@@ -106,8 +106,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF158;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.OverlayModel}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.OverlayModelDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_OverlayModel}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_OverlayModelDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -134,8 +134,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE80A;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.Alignment}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.AlignmentDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_Alignment}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_AlignmentDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -177,8 +177,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECC6;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.Size}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SizeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_Size}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_SizeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -207,8 +207,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SecondaryTrigger}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SecondaryTriggerDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_SecondaryTrigger}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_SecondaryTriggerDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -224,7 +224,7 @@
 
             <!-- Trackpads options -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="{x:Static resx:Resources.TrackpadsOptions}" FontWeight="SemiBold"></Label>
+                <Label Content="{x:Static resx:Resources.OverlayPage_TrackpadsOptions}" FontWeight="SemiBold"></Label>
 
                 <!-- Controller Alignment -->
                 <Border                      
@@ -242,8 +242,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE80A;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.Alignment}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.AlignmentTrackpadDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_Alignment}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_AlignmentTrackpadDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -273,8 +273,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECC6;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.Size}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SizeOverlayDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_Size}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_SizeOverlayDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -303,8 +303,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE75C;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.Opacity}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.OpacityTrackpadDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_Opacity}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_OpacityTrackpadDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -333,8 +333,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SecondaryTrigger}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SecondaryTriggerOverlayDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_SecondaryTrigger}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_SecondaryTriggerOverlayDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
