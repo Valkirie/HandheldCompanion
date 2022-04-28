@@ -156,6 +156,9 @@
   <data name="AboutPage_SensorSpecification" xml:space="preserve">
     <value>Sensor Specification</value>
   </data>
+  <data name="AboutPage_Service" xml:space="preserve">
+    <value>Service</value>
+  </data>
   <data name="AboutPage_SourceCode" xml:space="preserve">
     <value>Source Code</value>
   </data>
@@ -462,6 +465,9 @@
   <data name="ProfilesPage_ProfileSettings" xml:space="preserve">
     <value>Profile settings</value>
   </data>
+  <data name="ProfilesPage_Roll" xml:space="preserve">
+    <value>Roll</value>
+  </data>
   <data name="ProfilesPage_StyleofInput" xml:space="preserve">
     <value>Style of input</value>
   </data>
@@ -494,6 +500,9 @@
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
     <value>Translates DirectInput calls to XInput calls</value>
+  </data>
+  <data name="ProfilesPage_Yaw" xml:space="preserve">
+    <value>Yaw</value>
   </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled.</value>

@@ -112,7 +112,7 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE74C;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="Service" FontSize="14"/>
+                            <TextBlock Text="{x:Static resx:Resources.AboutPage_Service}" FontSize="14"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Expander.Header>
