@@ -133,8 +133,14 @@
   <data name="Dolphin.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Dolphin.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
+    <value>Button A</value>
+  </data>
   <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
     <value>Always On</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
+    <value>Button B</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
     <value>Back</value>
@@ -171,6 +177,12 @@
   </data>
   <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
     <value>Start</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.X" xml:space="preserve">
+    <value>Button X</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Y" xml:space="preserve">
+    <value>Button Y</value>
   </data>
   <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
     <value>Emulated DualShock 4 controller</value>

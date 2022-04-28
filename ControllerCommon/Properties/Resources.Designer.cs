@@ -131,11 +131,29 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Button A.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_A {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.A", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Always On.
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_AlwaysOn {
             get {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.AlwaysOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Button B.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_B {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.B", resourceCulture);
             }
         }
         
@@ -244,6 +262,24 @@ namespace ControllerCommon.Properties {
         public static string Enum_GamepadButtonFlagsExt_Start {
             get {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Button X.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_X {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.X", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Button Y.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_Y {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Y", resourceCulture);
             }
         }
         

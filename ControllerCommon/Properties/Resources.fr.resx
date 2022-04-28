@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
+    <value>Bouton A</value>
+  </data>
   <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
     <value>Toujours activé</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
+    <value>Bouton B</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
     <value>Affichage</value>
@@ -155,6 +161,12 @@
   </data>
   <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
     <value>Menu</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.X" xml:space="preserve">
+    <value>Bouton X</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Y" xml:space="preserve">
+    <value>Bouton Y</value>
   </data>
   <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
     <value>Contrôleur DualShock 4 émulé</value>
