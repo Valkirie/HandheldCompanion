@@ -700,6 +700,96 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deadzone.
+        /// </summary>
+        public static string ProfileSettingsMode1_Deadzone {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode1_Deadzone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the steering deadzone, in degree. Improves steering straight..
+        /// </summary>
+        public static string ProfileSettingsMode1_DeadzoneDesc {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode1_DeadzoneDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Joystick Game Input.
+        /// </summary>
+        public static string ProfileSettingsMode1_JoystickGameInput {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode1_JoystickGameInput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Joystick Steering.
+        /// </summary>
+        public static string ProfileSettingsMode1_JoystickSteering {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode1_JoystickSteering", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Joystick steering options.
+        /// </summary>
+        public static string ProfileSettingsMode1_JoystickSteeringOptions {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode1_JoystickSteeringOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Joystick steering preview.
+        /// </summary>
+        public static string ProfileSettingsMode1_JoystickSteeringPreview {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode1_JoystickSteeringPreview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max steering angle.
+        /// </summary>
+        public static string ProfileSettingsMode1_MaxSteeringAngle {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode1_MaxSteeringAngle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the maximum steering angle value, in degree.
+        /// </summary>
+        public static string ProfileSettingsMode1_MaxSteeringAngleDesc {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode1_MaxSteeringAngleDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Steering linearity.
+        /// </summary>
+        public static string ProfileSettingsMode1_SteeringLinearity {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode1_SteeringLinearity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mapping between input and steering. Lower values provide more accuracy near full lock but less accuracy near the center. Higher values provide more accuracy near the center but less accuracy near full lock. 1.0 is a linear mapping..
+        /// </summary>
+        public static string ProfileSettingsMode1_SteeringLinearityDesc {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode1_SteeringLinearityDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled..
         /// </summary>
         public static string ServiceDescription {
