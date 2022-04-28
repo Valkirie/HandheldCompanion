@@ -178,6 +178,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Service.
+        /// </summary>
+        public static string AboutPage_Service {
+            get {
+                return ResourceManager.GetString("AboutPage_Service", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Source Code.
         /// </summary>
         public static string AboutPage_SourceCode {
@@ -1096,6 +1105,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Roll.
+        /// </summary>
+        public static string ProfilesPage_Roll {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Roll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Style of input.
         /// </summary>
         public static string ProfilesPage_StyleofInput {
@@ -1191,6 +1209,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_Wrapper {
             get {
                 return ResourceManager.GetString("ProfilesPage_Wrapper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yaw.
+        /// </summary>
+        public static string ProfilesPage_Yaw {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Yaw", resourceCulture);
             }
         }
         
