@@ -496,13 +496,13 @@
     <value>Sélectionner le dispositif qui recevra les commandes de mouvement</value>
   </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
-    <value>Enable universal motion controler</value>
+    <value>Activer le contrôle universel de mouvements</value>
   </data>
   <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
     <value>Sélectionner le dispositif qui recevra les commandes de mouvement</value>
   </data>
   <data name="ProfilesPage_UMCSettings" xml:space="preserve">
-    <value>Paramètres de la commande de mouvement universelle</value>
+    <value>Paramètres du contrôle universel de mouvements</value>
   </data>
   <data name="ProfilesPage_UMCSettingsDesc" xml:space="preserve">
     <value>Traduire les mouvements du dispositif en entrées du contrôleur</value>
