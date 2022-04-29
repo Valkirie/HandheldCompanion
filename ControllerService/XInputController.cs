@@ -140,12 +140,12 @@ namespace ControllerService
 
                         case XInputSensorFlags.WithRatio:
                             AngularVelocities[flags] = Gyrometer.GetCurrentReading(false, true);
-                            Accelerations[flags] = Accelerometer.GetCurrentReading(false, true);
+                            Accelerations[flags] = Accelerometer.GetCurrentReading(false, false);
                             break;
 
                         case XInputSensorFlags.CenteredRatio:
                             AngularVelocities[flags] = Gyrometer.GetCurrentReading(true, true);
-                            Accelerations[flags] = Accelerometer.GetCurrentReading(true, true);
+                            Accelerations[flags] = Accelerometer.GetCurrentReading(true, false);
                             break;
 
                         case XInputSensorFlags.CenteredRaw:
