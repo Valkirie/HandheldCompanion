@@ -1,4 +1,4 @@
-﻿using ControllerCommon.Utils;
+using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using Force.Crc32;
 using Microsoft.Extensions.Logging;
@@ -625,16 +625,16 @@ namespace ControllerService
                 outIdx += 8;
 
                 //accelerometer
-                if (hidReport.Accelerations[XInputSensorFlags.Centered] != empty)
+                if (hidReport.Accelerations[XInputSensorFlags.Default] != empty)
                 {
                     // accelXG
-                    Array.Copy(BitConverter.GetBytes(hidReport.Accelerations[XInputSensorFlags.Centered].X), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(hidReport.Accelerations[XInputSensorFlags.Default].X), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // accelYG
-                    Array.Copy(BitConverter.GetBytes(hidReport.Accelerations[XInputSensorFlags.Centered].Y), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(hidReport.Accelerations[XInputSensorFlags.Default].Y), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // accelZG
-                    Array.Copy(BitConverter.GetBytes(-hidReport.Accelerations[XInputSensorFlags.Centered].Z), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(-hidReport.Accelerations[XInputSensorFlags.Default].Z), 0, outputData, outIdx, 4);
                     outIdx += 4;
                 }
                 else
@@ -644,16 +644,16 @@ namespace ControllerService
                 }
 
                 //gyroscope
-                if (hidReport.AngularVelocities[XInputSensorFlags.Centered] != empty)
+                if (hidReport.AngularVelocities[XInputSensorFlags.CenteredRatio] != empty)
                 {
                     // angVelPitch
-                    Array.Copy(BitConverter.GetBytes(hidReport.AngularVelocities[XInputSensorFlags.Centered].X), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(hidReport.AngularVelocities[XInputSensorFlags.CenteredRatio].X), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // angVelYaw
-                    Array.Copy(BitConverter.GetBytes(hidReport.AngularVelocities[XInputSensorFlags.Centered].Y), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(hidReport.AngularVelocities[XInputSensorFlags.CenteredRatio].Y), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // angVelRoll
-                    Array.Copy(BitConverter.GetBytes(-hidReport.AngularVelocities[XInputSensorFlags.Centered].Z), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(-hidReport.AngularVelocities[XInputSensorFlags.CenteredRatio].Z), 0, outputData, outIdx, 4);
                     outIdx += 4;
                 }
                 else
