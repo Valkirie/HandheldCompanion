@@ -188,6 +188,9 @@
   <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
     <value>Contrôleur</value>
   </data>
+  <data name="ControllerPage_Disconnect" xml:space="preserve">
+    <value>Déconnecter</value>
+  </data>
   <data name="ControllerPage_InputDevices" xml:space="preserve">
     <value>Dispositifs d'entrée</value>
   </data>
@@ -216,7 +219,7 @@
     <value>Overlay</value>
   </data>
   <data name="MainWindow_navProfiles" xml:space="preserve">
-    <value>Profiles</value>
+    <value>Profils</value>
   </data>
   <data name="MainWindow_serviceDeploy" xml:space="preserve">
     <value>Déployer le service</value>
@@ -229,6 +232,9 @@
   </data>
   <data name="MainWindow_serviceStop" xml:space="preserve">
     <value>Arrêter le service</value>
+  </data>
+  <data name="MainWindow_Settings" xml:space="preserve">
+    <value>Paramètres</value>
   </data>
   <data name="OverlayPage_Alignment" xml:space="preserve">
     <value>Alignement</value>
