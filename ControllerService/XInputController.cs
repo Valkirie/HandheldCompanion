@@ -158,7 +158,7 @@ namespace ControllerService
                 Angle = Inclinometer.GetCurrentReading();
 
                 // update sensorFusion (todo: call only when needed ?)
-                sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocities[XInputSensorFlags.Default], Accelerations[XInputSensorFlags.Default]);
+                sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocities[XInputSensorFlags.Centered], Accelerations[XInputSensorFlags.Default]);
 
                 // async update client(s)
                 Task.Run(() =>
