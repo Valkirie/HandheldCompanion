@@ -255,6 +255,7 @@ namespace HandheldCompanion.Views
             _pages.Add("ProfilesPage", profilesPage);
             _pages.Add("AboutPage", aboutPage);
             _pages.Add("OverlayPage", overlayPage);
+            _pages.Add("SettingsPage", settingsPage);
 
             if (!IsElevated)
             {
@@ -525,11 +526,7 @@ namespace HandheldCompanion.Views
         #region UI
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            if (args.IsSettingsInvoked == true)
-            {
-                NavView_Navigate(Properties.Resources.MainWindow_Settings);
-            }
-            else if (args.InvokedItemContainer != null)
+            if (args.InvokedItemContainer != null)
             {
                 NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
                 string navItemTag = (string)navItem.Tag;
@@ -559,16 +556,9 @@ namespace HandheldCompanion.Views
 
         public void NavView_Navigate(string navItemTag)
         {
-            Page _page = null;
-            if (navItemTag == "Settings")
-            {
-                _page = settingsPage;
-            }
-            else
-            {
-                var item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
-                _page = item.Value;
-            }
+            var item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
+            Page _page = item.Value;
+
             // Get the page type before navigation so you can prevent duplicate
             // entries in the backstack.
             var preNavPageType = ContentFrame.CurrentSourcePageType;
@@ -711,13 +701,7 @@ namespace HandheldCompanion.Views
         {
             navView.IsBackEnabled = ContentFrame.CanGoBack;
 
-            if (ContentFrame.SourcePageType == typeof(SettingsPage))
-            {
-                // SettingsItem is not part of NavView.MenuItems, and doesn't have a Tag.
-                navView.SelectedItem = (NavigationViewItem)navView.SettingsItem;
-                navView.Header = "Settings";
-            }
-            else if (ContentFrame.SourcePageType != null)
+            if (ContentFrame.SourcePageType != null)
             {
                 var preNavPageType = ContentFrame.CurrentSourcePageType;
                 var preNavPageName = preNavPageType.Name;

@@ -23,7 +23,7 @@
         SelectionFollowsFocus="Enabled"
         ShoulderNavigationEnabled="WhenSelectionFollowsFocus"
         Loaded="navView_Loaded"
-        BackRequested="navView_BackRequested">
+        BackRequested="navView_BackRequested" IsSettingsVisible="False">
 
         <ui:NavigationView.Resources>
             <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{DynamicResource SystemChromeMediumColor}"/>
@@ -58,6 +58,13 @@
             <ui:NavigationViewItem Name="navAbout" Content="{x:Static resx:Resources.MainWindow_navAbout}" Tag="AboutPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <!-- Settings -->
+            <ui:NavigationViewItem Name="navSettings" Content="{x:Static resx:Resources.MainWindow_Settings}" Tag="SettingsPage">
+                <ui:NavigationViewItem.Icon>
+                    <ui:SymbolIcon Symbol="Setting"/>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
