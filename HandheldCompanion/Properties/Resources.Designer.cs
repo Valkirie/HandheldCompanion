@@ -160,7 +160,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sensor Name.
+        ///   Looks up a localized string similar to Sensor name.
         /// </summary>
         public static string AboutPage_SensorName {
             get {
@@ -169,7 +169,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sensor Specification.
+        ///   Looks up a localized string similar to Sensor specification.
         /// </summary>
         public static string AboutPage_SensorSpecification {
             get {
@@ -187,7 +187,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Source Code.
+        ///   Looks up a localized string similar to Source code.
         /// </summary>
         public static string AboutPage_SourceCode {
             get {
@@ -264,6 +264,15 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_DeviceCloaking {
             get {
                 return ResourceManager.GetString("ControllerPage_DeviceCloaking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disconnect.
+        /// </summary>
+        public static string ControllerPage_Disconnect {
+            get {
+                return ResourceManager.GetString("ControllerPage_Disconnect", resourceCulture);
             }
         }
         
@@ -358,7 +367,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deploy Service.
+        ///   Looks up a localized string similar to Deploy service.
         /// </summary>
         public static string MainWindow_serviceDeploy {
             get {
@@ -367,7 +376,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove Service.
+        ///   Looks up a localized string similar to Remove service.
         /// </summary>
         public static string MainWindow_serviceRemove {
             get {
@@ -376,7 +385,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start Service.
+        ///   Looks up a localized string similar to Start service.
         /// </summary>
         public static string MainWindow_serviceStart {
             get {
@@ -385,11 +394,20 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stop Service.
+        ///   Looks up a localized string similar to Stop service.
         /// </summary>
         public static string MainWindow_serviceStop {
             get {
                 return ResourceManager.GetString("MainWindow_serviceStop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string MainWindow_Settings {
+            get {
+                return ResourceManager.GetString("MainWindow_Settings", resourceCulture);
             }
         }
         
@@ -453,6 +471,15 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_EmulatedController {
             get {
                 return ResourceManager.GetString("OverlayPage_EmulatedController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Listening....
+        /// </summary>
+        public static string OverlayPage_Listening {
+            get {
+                return ResourceManager.GetString("OverlayPage_Listening", resourceCulture);
             }
         }
         
@@ -691,7 +718,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Flick Duration.
+        ///   Looks up a localized string similar to Flick duration.
         /// </summary>
         public static string ProfileSettingsMode0_FlickDuration {
             get {
@@ -709,7 +736,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Flick Stick (Experimental).
+        ///   Looks up a localized string similar to Flick stick (experimental).
         /// </summary>
         public static string ProfileSettingsMode0_FlickStick {
             get {
@@ -754,7 +781,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stick Sensitivtity.
+        ///   Looks up a localized string similar to Stick sensitivtity.
         /// </summary>
         public static string ProfileSettingsMode0_StickSensitivtity {
             get {
@@ -799,7 +826,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Joystick Game Input.
+        ///   Looks up a localized string similar to Joystick game Input.
         /// </summary>
         public static string ProfileSettingsMode1_JoystickGameInput {
             get {
@@ -808,7 +835,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Joystick Steering.
+        ///   Looks up a localized string similar to Joystick steering.
         /// </summary>
         public static string ProfileSettingsMode1_JoystickSteering {
             get {
@@ -1150,7 +1177,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Output.
+        ///   Looks up a localized string similar to Output device.
         /// </summary>
         public static string ProfilesPage_StyleofOutput {
             get {
@@ -1159,7 +1186,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When sending analog joystick commands to the game, should those commands be a left or right joystick.
+        ///   Looks up a localized string similar to Select the device that will receive the motion commands.
         /// </summary>
         public static string ProfilesPage_StyleofOutputTooltip {
             get {
@@ -1177,7 +1204,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When sending analog joystick commands to the game, should those commands be a left or right joystick.
+        ///   Looks up a localized string similar to Select the device that will receive the motion commands.
         /// </summary>
         public static string ProfilesPage_UMCSelectionRightLeftDesc {
             get {
@@ -1240,7 +1267,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled..
+        ///   Looks up a localized string similar to Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and the virtual controller disabled..
         /// </summary>
         public static string ServiceDescription {
             get {
@@ -1321,7 +1348,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Downloading - 100%.
+        ///   Looks up a localized string similar to Downloading - .
         /// </summary>
         public static string SettingsPage_DownloadingPercentage {
             get {
@@ -1366,7 +1393,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Last checked: Today.
+        ///   Looks up a localized string similar to Last checked: .
         /// </summary>
         public static string SettingsPage_LastChecked {
             get {
@@ -1488,6 +1515,24 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_ToastNotificationDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_ToastNotificationDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updates available.
+        /// </summary>
+        public static string SettingsPage_UpdateAvailable {
+            get {
+                return ResourceManager.GetString("SettingsPage_UpdateAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking for updates....
+        /// </summary>
+        public static string SettingsPage_UpdateCheck {
+            get {
+                return ResourceManager.GetString("SettingsPage_UpdateCheck", resourceCulture);
             }
         }
         

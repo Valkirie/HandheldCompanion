@@ -66,7 +66,7 @@
             </Border>
 
             <!-- Sensor specifications -->
-            <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
+            <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsExpanded="True">
                 <Expander.Header>
                     <DockPanel Margin="-10,12,12,12">
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" HorizontalAlignment="Center"/>
@@ -106,7 +106,7 @@
             </Expander>
 
             <!-- Service -->
-            <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
+            <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsExpanded="True">
                 <Expander.Header>
                     <DockPanel Margin="-10,12,12,12">
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE74C;" Height="40" HorizontalAlignment="Center"/>
@@ -137,7 +137,7 @@
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
                                     <TextBlock Name="VersionValue" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                     <TextBlock Text="BenjaminLSR" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock Text="Nefarius, CasperH20" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Text="Nefarius, CasperH20, B-Core" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                     <TextBlock TextWrapping="Wrap" Text="{x:Static resx:Resources.AboutPage_AboutDescription}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                 </ui:SimpleStackPanel>
                             </Grid>

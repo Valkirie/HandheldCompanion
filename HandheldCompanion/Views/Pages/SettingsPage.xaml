@@ -55,8 +55,8 @@
                         <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Name="LabelUpdateName" Text="{x:Static resx:Resources.SettingsPage_Version}" FontSize="14" VerticalAlignment="Center"/>
-                    <TextBlock Name="LabelUpdatePercentage" Text="{x:Static resx:Resources.SettingsPage_DownloadingPercentage}" Grid.Column="1" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock Name="LabelUpdateName" FontSize="14" VerticalAlignment="Center"/>
+                    <TextBlock Name="LabelUpdatePercentage" Grid.Column="1" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     <Button Visibility="Hidden" Name="ButtonInstall" Content="{x:Static resx:Resources.SettingsPage_InstallNow}" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Click="B_InstallUpdate_Click"/>
                 </Grid>
             </Border>

@@ -527,7 +527,7 @@ namespace HandheldCompanion.Views
         {
             if (args.IsSettingsInvoked == true)
             {
-                NavView_Navigate("Settings");
+                NavView_Navigate(Properties.Resources.MainWindow_Settings);
             }
             else if (args.InvokedItemContainer != null)
             {

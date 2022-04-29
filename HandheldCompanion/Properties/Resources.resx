@@ -151,16 +151,16 @@
     <value>Related Links</value>
   </data>
   <data name="AboutPage_SensorName" xml:space="preserve">
-    <value>Sensor Name</value>
+    <value>Sensor name</value>
   </data>
   <data name="AboutPage_SensorSpecification" xml:space="preserve">
-    <value>Sensor Specification</value>
+    <value>Sensor specification</value>
   </data>
   <data name="AboutPage_Service" xml:space="preserve">
     <value>Service</value>
   </data>
   <data name="AboutPage_SourceCode" xml:space="preserve">
-    <value>Source Code</value>
+    <value>Source code</value>
   </data>
   <data name="AboutPage_Version" xml:space="preserve">
     <value>Version</value>
@@ -185,6 +185,9 @@
   </data>
   <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
     <value>Device cloaking</value>
+  </data>
+  <data name="ControllerPage_Disconnect" xml:space="preserve">
+    <value>Disconnect</value>
   </data>
   <data name="ControllerPage_InputDevices" xml:space="preserve">
     <value>Input devices</value>
@@ -217,16 +220,19 @@
     <value>Profiles</value>
   </data>
   <data name="MainWindow_serviceDeploy" xml:space="preserve">
-    <value>Deploy Service</value>
+    <value>Deploy service</value>
   </data>
   <data name="MainWindow_serviceRemove" xml:space="preserve">
-    <value>Remove Service</value>
+    <value>Remove service</value>
   </data>
   <data name="MainWindow_serviceStart" xml:space="preserve">
-    <value>Start Service</value>
+    <value>Start service</value>
   </data>
   <data name="MainWindow_serviceStop" xml:space="preserve">
-    <value>Stop Service</value>
+    <value>Stop service</value>
+  </data>
+  <data name="MainWindow_Settings" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="OverlayPage_Alignment" xml:space="preserve">
     <value>Alignment</value>
@@ -245,6 +251,9 @@
   </data>
   <data name="OverlayPage_EmulatedController" xml:space="preserve">
     <value>Emulated controller</value>
+  </data>
+  <data name="OverlayPage_Listening" xml:space="preserve">
+    <value>Listening...</value>
   </data>
   <data name="OverlayPage_MainTrigger" xml:space="preserve">
     <value>Main trigger</value>
@@ -328,13 +337,13 @@
     <value>Precise</value>
   </data>
   <data name="ProfileSettingsMode0_FlickDuration" xml:space="preserve">
-    <value>Flick Duration</value>
+    <value>Flick duration</value>
   </data>
   <data name="ProfileSettingsMode0_FlickDurationDesc" xml:space="preserve">
     <value>Change the flick duration, calibrate to 180 degree turn, in milliseconds</value>
   </data>
   <data name="ProfileSettingsMode0_FlickStick" xml:space="preserve">
-    <value>Flick Stick (Experimental)</value>
+    <value>Flick stick (experimental)</value>
   </data>
   <data name="ProfileSettingsMode0_FlickStickDesc" xml:space="preserve">
     <value>Point camera in direction of (right) joystick flick, rotate camera purely in horizontal plane by rotating</value>
@@ -349,7 +358,7 @@
     <value>Change the motion sensivity of the vertical and horizontal axis</value>
   </data>
   <data name="ProfileSettingsMode0_StickSensitivtity" xml:space="preserve">
-    <value>Stick Sensitivtity</value>
+    <value>Stick sensitivtity</value>
   </data>
   <data name="ProfileSettingsMode0_StickSensitivtityDesc" xml:space="preserve">
     <value>Change the rotation rate</value>
@@ -364,10 +373,10 @@
     <value>Change the steering deadzone, in degree. Improves steering straight.</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickGameInput" xml:space="preserve">
-    <value>Joystick Game Input</value>
+    <value>Joystick game Input</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickSteering" xml:space="preserve">
-    <value>Joystick Steering</value>
+    <value>Joystick steering</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickSteeringOptions" xml:space="preserve">
     <value>Joystick steering options</value>
@@ -481,16 +490,16 @@
     <value>The physical inputs of the controller can be programmed to act like different types of devices</value>
   </data>
   <data name="ProfilesPage_StyleofOutput" xml:space="preserve">
-    <value>Output</value>
+    <value>Output device</value>
   </data>
   <data name="ProfilesPage_StyleofOutputTooltip" xml:space="preserve">
-    <value>When sending analog joystick commands to the game, should those commands be a left or right joystick</value>
+    <value>Select the device that will receive the motion commands</value>
   </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
     <value>Enable universal motion controler</value>
   </data>
   <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
-    <value>When sending analog joystick commands to the game, should those commands be a left or right joystick</value>
+    <value>Select the device that will receive the motion commands</value>
   </data>
   <data name="ProfilesPage_UMCSettings" xml:space="preserve">
     <value>Universal motion control settings</value>
@@ -511,7 +520,7 @@
     <value>Yaw</value>
   </data>
   <data name="ServiceDescription" xml:space="preserve">
-    <value>Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled.</value>
+    <value>Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and the virtual controller disabled.</value>
   </data>
   <data name="ServiceName" xml:space="preserve">
     <value>Controller Service</value>
@@ -538,7 +547,7 @@
     <value>The application will be minimized instead of closed</value>
   </data>
   <data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
-    <value>Downloading - 100%</value>
+    <value>Downloading - </value>
   </data>
   <data name="SettingsPage_GeneralOptions" xml:space="preserve">
     <value>General options</value>
@@ -553,7 +562,7 @@
     <value>Install now</value>
   </data>
   <data name="SettingsPage_LastChecked" xml:space="preserve">
-    <value>Last checked: Today</value>
+    <value>Last checked: </value>
   </data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
     <value>Notification options</value>
@@ -594,11 +603,18 @@
   <data name="SettingsPage_ToastNotificationDesc" xml:space="preserve">
     <value>Get notifications from the application in the Windows action center</value>
   </data>
+  <data name="SettingsPage_UpdateAvailable" xml:space="preserve">
+    <value>Updates available</value>
+  </data>
+  <data name="SettingsPage_UpdateCheck" xml:space="preserve">
+    <value>Checking for updates...</value>
+  </data>
   <data name="SettingsPage_UpToDate" xml:space="preserve">
     <value>You're up to date</value>
   </data>
   <data name="SettingsPage_Version" xml:space="preserve">
     <value>Handheld Companion (Version 0.9.2.0)</value>
+    <comment>fix me !</comment>
   </data>
   <data name="User" xml:space="preserve">
     <value>User</value>

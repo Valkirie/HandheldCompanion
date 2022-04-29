@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using ModernWpf;
 using System;
@@ -62,8 +63,8 @@ namespace HandheldCompanion.Views.Pages
                 {
                     case UpdateStatus.Updated:
                     case UpdateStatus.Initialized:
-                        LabelUpdate.Content = "You're up to date";
-                        LabelUpdateDate.Content = $"Last checked: {updateManager.GetTime()}";
+                        LabelUpdate.Content = Properties.Resources.SettingsPage_UpToDate;
+                        LabelUpdateDate.Content = Properties.Resources.SettingsPage_LastChecked + updateManager.GetTime();
 
                         LabelUpdateDate.Visibility = System.Windows.Visibility.Visible;
                         GridUpdateSymbol.Visibility = System.Windows.Visibility.Visible;
@@ -72,7 +73,7 @@ namespace HandheldCompanion.Views.Pages
                         break;
 
                     case UpdateStatus.CheckingATOM:
-                        LabelUpdate.Content = "Checking for updates...";
+                        LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateCheck;
 
                         GridUpdateSymbol.Visibility = System.Windows.Visibility.Collapsed;
                         LabelUpdateDate.Visibility = System.Windows.Visibility.Collapsed;
@@ -82,14 +83,14 @@ namespace HandheldCompanion.Views.Pages
 
                     case UpdateStatus.Ready:
                         UpdateFile updateFile = (UpdateFile)value;
-                        LabelUpdate.Content = "Updates available";
+                        LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateAvailable;
                         LabelUpdateName.Text = updateFile.filename;
 
                         CurrentUpdate.Visibility = System.Windows.Visibility.Visible;
                         break;
 
                     case UpdateStatus.Downloading:
-                        LabelUpdatePercentage.Text = $"Downloading - {value}%";
+                        LabelUpdatePercentage.Text = Properties.Resources.SettingsPage_DownloadingPercentage + $"{value} %";
                         break;
 
                     case UpdateStatus.Downloaded:
@@ -112,7 +113,7 @@ namespace HandheldCompanion.Views.Pages
             this.serviceManager.Updated += OnServiceUpdate;
 
             foreach (ServiceStartMode mode in ((ServiceStartMode[])Enum.GetValues(typeof(ServiceStartMode))).Where(mode => mode >= ServiceStartMode.Automatic))
-                cB_StartupType.Items.Add(mode);
+                cB_StartupType.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
         }
 
         private void Toggle_AutoStart_Toggled(object sender, System.Windows.RoutedEventArgs e)
@@ -246,7 +247,19 @@ namespace HandheldCompanion.Views.Pages
                 if (mode != -1)
                 {
                     ServiceStartMode serviceMode = (ServiceStartMode)mode;
-                    cB_StartupType.SelectedItem = serviceMode;
+                    switch (serviceMode)
+                    {
+                        case ServiceStartMode.Automatic:
+                            cB_StartupType.SelectedIndex = 0;
+                            break;
+                        default:
+                        case ServiceStartMode.Manual:
+                            cB_StartupType.SelectedIndex = 1;
+                            break;
+                        case ServiceStartMode.Disabled:
+                            cB_StartupType.SelectedIndex = 2;
+                            break;
+                    }
                 }
             });
         }
