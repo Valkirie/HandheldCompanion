@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
+    <value>持續啟動</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadDown" xml:space="preserve">
+    <value>下</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadLeft" xml:space="preserve">
+    <value>左</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadRight" xml:space="preserve">
+    <value>右</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadUp" xml:space="preserve">
+    <value>上</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftShoulder" xml:space="preserve">
+    <value>左肩鍵</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
+    <value>左搖桿下壓</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
+    <value>左板機</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightShoulder" xml:space="preserve">
+    <value>右肩鍵</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
+    <value>右搖桿下壓</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
+    <value>右板機</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.X" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Y" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
+    <value>模擬DS4手柄</value>
+  </data>
+  <data name="Enum.HIDmode.NoController" xml:space="preserve">
+    <value>無模擬手柄</value>
+  </data>
+  <data name="Enum.HIDmode.Xbox360Controller" xml:space="preserve">
+    <value>模擬360手柄</value>
+  </data>
+  <data name="Enum.HIDstatus.Connected" xml:space="preserve">
+    <value>已連接</value>
+  </data>
+  <data name="Enum.HIDstatus.Disconnected" xml:space="preserve">
+    <value>未連接</value>
+  </data>
+  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
+    <value>體感視角</value>
+  </data>
+  <data name="Enum.Input.JoystickSteering" xml:space="preserve">
+    <value>體感駕駛</value>
+  </data>
+  <data name="Enum.Input.PlayerSpace" xml:space="preserve">
+    <value>玩家空間</value>
+  </data>
+  <data name="Enum.Output.LeftStick" xml:space="preserve">
+    <value>左搖桿</value>
+  </data>
+  <data name="Enum.Output.RightStick" xml:space="preserve">
+    <value>右搖桿</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.IsDefault" xml:space="preserve">
+    <value>這是默認的手柄配置。此配置將應用於沒有特定配置的所有應用程序。一些需要指定程序的選項可能被禁用。</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
+    <value>啊這。看來這個配置正在運行。一些需要指定程序的選項可能被禁用。</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
+    <value>啊這。這個配置似乎沒有可執行文件。這怎麼可能?</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.MissingPath" xml:space="preserve">
+    <value>啊這。這個配置似乎沒有指定應用程序的路徑。一些需要指定程序的選項可能被禁用。</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.MissingPermission" xml:space="preserve">
+    <value>阿這。你似乎沒有修改此應用程序內容的必要權限。確保在管理員模式下啟動此程序。</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
+    <value>這裏沒什麼好看的。</value>
+  </data>
+  <data name="Enum.ServiceStartMode.Automatic" xml:space="preserve">
+    <value>自動</value>
+  </data>
+  <data name="Enum.ServiceStartMode.Disabled" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
+    <value>手動</value>
+  </data>
+  <data name="JoystickCameraDesc" xml:space="preserve">
+    <value>這個輸入將作為一個簡單的搖桿操作，適用於傳統的搖桿應用。</value>
+  </data>
+  <data name="JoystickSteeringDesc" xml:space="preserve">
+    <value>這個輸入將作為一個為賽車遊戲優化的駕駛搖桿。</value>
+  </data>
+  <data name="PlayerSpaceDesc" xml:space="preserve">
+    <value>這個輸入將作為一個為第一或第三人稱視角優化的搖桿。</value>
+  </data>
+</root>
