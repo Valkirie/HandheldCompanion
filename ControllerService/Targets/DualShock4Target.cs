@@ -200,9 +200,9 @@ namespace ControllerService.Targets
                 outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(Touch.TrackPadTouch2.Y >> 4);
             }
 
-            outDS4Report.wGyroX = (short)InputUtils.rangeMap(xinputController.AngularVelocities[XInputSensorFlags.Default].X, XInputGirometer.sensorSpec);    // gyroPitchFull
-            outDS4Report.wGyroY = (short)InputUtils.rangeMap(-xinputController.AngularVelocities[XInputSensorFlags.Default].Y, XInputGirometer.sensorSpec);   // gyroYawFull
-            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(xinputController.AngularVelocities[XInputSensorFlags.Default].Z, XInputGirometer.sensorSpec);    // gyroRollFull
+            outDS4Report.wGyroX = (short)InputUtils.rangeMap(xinputController.AngularVelocities[XInputSensorFlags.CenteredRatio].X, XInputGirometer.sensorSpec);    // gyroPitchFull
+            outDS4Report.wGyroY = (short)InputUtils.rangeMap(-xinputController.AngularVelocities[XInputSensorFlags.CenteredRatio].Y, XInputGirometer.sensorSpec);   // gyroYawFull
+            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(xinputController.AngularVelocities[XInputSensorFlags.CenteredRatio].Z, XInputGirometer.sensorSpec);    // gyroRollFull
 
             outDS4Report.wAccelX = (short)InputUtils.rangeMap(-xinputController.Accelerations[XInputSensorFlags.Default].X, XInputAccelerometer.sensorSpec); // accelXFull
             outDS4Report.wAccelY = (short)InputUtils.rangeMap(-xinputController.Accelerations[XInputSensorFlags.Default].Y, XInputAccelerometer.sensorSpec); // accelYFull
