@@ -1546,11 +1546,11 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Handheld Companion (Version 0.9.2.0).
+        ///   Looks up a localized string similar to Controller is now cloaked and inputs forwarded to virtual controller.
         /// </summary>
-        public static string SettingsPage_Version {
+        public static string ToastNewControllerEx {
             get {
-                return ResourceManager.GetString("SettingsPage_Version", resourceCulture);
+                return ResourceManager.GetString("ToastNewControllerEx", resourceCulture);
             }
         }
         

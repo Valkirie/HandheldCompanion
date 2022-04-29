@@ -301,7 +301,7 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // notify user
-            toastManager.SendToast(controllerEx.ToString(), "Now hidden and inputs are sent to virtual controller.");
+            toastManager.SendToast(controllerEx.ToString(), Properties.Resources.ToastNewControllerEx);
             controllerEx.Identify();
 
             // notify service

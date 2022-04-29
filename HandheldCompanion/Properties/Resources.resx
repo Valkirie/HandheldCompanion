@@ -234,9 +234,6 @@
   <data name="MainWindow_Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
-  <data name="MainWindow_Settings" xml:space="preserve">
-    <value>Settings</value>
-  </data>
   <data name="OverlayPage_Alignment" xml:space="preserve">
     <value>Alignment</value>
   </data>
@@ -615,9 +612,8 @@
   <data name="SettingsPage_UpToDate" xml:space="preserve">
     <value>You're up to date</value>
   </data>
-  <data name="SettingsPage_Version" xml:space="preserve">
-    <value>Handheld Companion (Version 0.9.2.0)</value>
-    <comment>fix me !</comment>
+  <data name="ToastNewControllerEx" xml:space="preserve">
+    <value>Controller is now cloaked and inputs forwarded to virtual controller</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>User</value>

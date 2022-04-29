@@ -606,9 +606,8 @@
   <data name="SettingsPage_UpToDate" xml:space="preserve">
     <value>Vous êtes à jour</value>
   </data>
-  <data name="SettingsPage_Version" xml:space="preserve">
-    <value>Handheld Companion (Version 0.9.2.0)</value>
-    <comment>fix me !</comment>
+  <data name="ToastNewControllerEx" xml:space="preserve">
+    <value>Le contrôleur est maintenant masqué et les entrées sont transmises au contrôleur virtuel</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>Utilisateur</value>

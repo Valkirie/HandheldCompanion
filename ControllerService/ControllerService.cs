@@ -239,7 +239,7 @@ namespace ControllerService
             pipeServer?.SendMessage(new PipeServerToast
             {
                 title = $"{target}",
-                content = "Virtual controller is now disconnected",
+                content = Properties.Resources.ToastOnTargetDisconnected,
                 image = $"HIDmode{(uint)target.HID}"
             });
         }
@@ -250,7 +250,7 @@ namespace ControllerService
             pipeServer?.SendMessage(new PipeServerToast
             {
                 title = $"{target}",
-                content = "Virtual controller is now connected",
+                content = Properties.Resources.ToastOnTargetConnected,
                 image = $"HIDmode{(uint)target.HID}"
             });
         }
