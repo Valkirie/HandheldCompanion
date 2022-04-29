@@ -428,6 +428,33 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Automatic.
+        /// </summary>
+        public static string Enum_ServiceStartMode_Automatic {
+            get {
+                return ResourceManager.GetString("Enum.ServiceStartMode.Automatic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabled.
+        /// </summary>
+        public static string Enum_ServiceStartMode_Disabled {
+            get {
+                return ResourceManager.GetString("Enum.ServiceStartMode.Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manual.
+        /// </summary>
+        public static string Enum_ServiceStartMode_Manual {
+            get {
+                return ResourceManager.GetString("Enum.ServiceStartMode.Manual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {
         ///  &quot;name&quot;: &quot;HidHideCLI&quot;,
         ///  &quot;path&quot;: &quot;C:\\Program Files\\Nefarius Software Solutions e.U\\HidHideCLI\\HidHideCLI.exe&quot;,

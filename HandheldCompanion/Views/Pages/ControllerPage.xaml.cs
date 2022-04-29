@@ -160,8 +160,7 @@ namespace HandheldCompanion.Views.Pages
                 cB_HidMode.SelectedIndex = (int)controllerMode;
                 ControllerGrid.Background = uniformToFillBrush;
 
-                // todo: localization
-                B_ServiceSwitch.Content = controllerStatus == HIDstatus.Connected ? "Disconnect" : "Connect";
+                B_ServiceSwitch.Content = controllerStatus == HIDstatus.Connected ? Properties.Resources.ControllerPage_Disconnect : Properties.Resources.ControllerPage_Connect;
             });
         }
 

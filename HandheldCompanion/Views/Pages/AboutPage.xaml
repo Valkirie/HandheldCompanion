@@ -137,7 +137,7 @@
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
                                     <TextBlock Name="VersionValue" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                     <TextBlock Text="BenjaminLSR" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock Text="Nefarius, CasperH20" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Text="Nefarius, CasperH20, B-Core" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                     <TextBlock TextWrapping="Wrap" Text="{x:Static resx:Resources.AboutPage_AboutDescription}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                 </ui:SimpleStackPanel>
                             </Grid>

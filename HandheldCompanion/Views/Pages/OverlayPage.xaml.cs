@@ -259,7 +259,7 @@ namespace HandheldCompanion.Views.Pages
         private void ControllerTriggerButton_Click(object sender, RoutedEventArgs e)
         {
             overlay.ControllerTriggerClicked();
-            ControllerTriggerText.Text = "Listening..."; // todo: localization
+            ControllerTriggerText.Text = Properties.Resources.OverlayPage_Listening;
         }
 
         private void Overlay_ControllerTriggerUpdated(GamepadButtonFlags button)
@@ -279,7 +279,7 @@ namespace HandheldCompanion.Views.Pages
         private void TrackpadsTriggerButton_Click(object sender, RoutedEventArgs e)
         {
             overlay.TrackpadsTriggerClicked();
-            TrackpadsTriggerText.Text = "Listening..."; // todo: localization
+            TrackpadsTriggerText.Text = Properties.Resources.OverlayPage_Listening;
         }
 
         private void Overlay_TrackpadsTriggerUpdated(GamepadButtonFlags button)
