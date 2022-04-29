@@ -268,6 +268,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disconnect.
+        /// </summary>
+        public static string ControllerPage_Disconnect {
+            get {
+                return ResourceManager.GetString("ControllerPage_Disconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Input devices.
         /// </summary>
         public static string ControllerPage_InputDevices {
@@ -394,6 +403,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string MainWindow_Settings {
+            get {
+                return ResourceManager.GetString("MainWindow_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Overlay.
         /// </summary>
         public static string Overlay_Overlay {
@@ -453,6 +471,15 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_EmulatedController {
             get {
                 return ResourceManager.GetString("OverlayPage_EmulatedController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Listening....
+        /// </summary>
+        public static string OverlayPage_Listening {
+            get {
+                return ResourceManager.GetString("OverlayPage_Listening", resourceCulture);
             }
         }
         
