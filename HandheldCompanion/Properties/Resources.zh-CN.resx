@@ -564,7 +564,6 @@
   </data>
   <data name="SettingsPage_LastChecked" xml:space="preserve">
     <value>最后一次检查：</value>
-    <comment>// check me</comment>
   </data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
     <value>通知设置</value>
@@ -606,19 +605,16 @@
     <value>从Windows操作中心的应用程序获取通知</value>
   </data>
   <data name="SettingsPage_UpdateAvailable" xml:space="preserve">
-    <value>可用的更新</value>
-    <comment>// check me</comment>
+    <value>有可用的更新</value>
   </data>
   <data name="SettingsPage_UpdateCheck" xml:space="preserve">
-    <value>检查更新。</value>
-    <comment>// check me</comment>
+    <value>正在检查更新...</value>
   </data>
   <data name="SettingsPage_UpToDate" xml:space="preserve">
     <value>版本以是最新</value>
   </data>
   <data name="ToastNewControllerEx" xml:space="preserve">
-    <value>现在控制器被隐藏了，输入被传递到虚拟控制器。</value>
-    <comment>// check me</comment>
+    <value>物理手柄已被隐藏，输入被映射到虚拟手柄</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>用户</value>

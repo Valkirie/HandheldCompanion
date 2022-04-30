@@ -564,6 +564,9 @@
   <data name="SettingsPage_LastChecked" xml:space="preserve">
     <value>最後一次檢查：今天</value>
   </data>
+  <data name="SettingsPage_LastChecked1" xml:space="preserve">
+    <value>最後一次檢查：</value>
+  </data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
     <value>通知設置</value>
   </data>
@@ -603,11 +606,20 @@
   <data name="SettingsPage_ToastNotificationDesc" xml:space="preserve">
     <value>從Windows操作中心的應用程序獲取通知</value>
   </data>
+  <data name="SettingsPage_UpdateAvailable" xml:space="preserve">
+    <value>有可用的更新</value>
+  </data>
+  <data name="SettingsPage_UpdateCheck" xml:space="preserve">
+    <value>正在檢查更新...</value>
+  </data>
   <data name="SettingsPage_UpToDate" xml:space="preserve">
     <value>版本以是最新</value>
   </data>
   <data name="SettingsPage_Version" xml:space="preserve">
     <value>掌機伴侶 (V0.9.2.0)</value>
+  </data>
+  <data name="ToastNewControllerEx" xml:space="preserve">
+    <value>物理手柄已被隱藏，輸入被映射到虛擬手柄</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>用戶</value>
