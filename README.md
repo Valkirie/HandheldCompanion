@@ -31,7 +31,9 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 
 ## Supported Languages
 - English
-- French (Work in progres...)
+- French
+- Chinese (Simplified)
+- Chinese (Traditional)
 
 ## Contribute
 ### Bugs & Features
