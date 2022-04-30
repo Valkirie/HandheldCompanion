@@ -62,9 +62,6 @@ namespace ControllerService.Sensors
             {
                 reading *= controller.profile.accelerometer;
 
-                if (ratio)
-                    reading.Y *= controller.handheldDevice.WidthHeightRatio;
-
                 var readingZ = controller.profile.steering == 0 ? reading.Z : reading.Y;
                 var readingY = controller.profile.steering == 0 ? reading.Y : -reading.Z;
                 var readingX = controller.profile.steering == 0 ? reading.X : reading.X;
