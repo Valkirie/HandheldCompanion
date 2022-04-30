@@ -220,8 +220,24 @@
   <data name="MainWindow_navProfiles" xml:space="preserve">
     <value>配置</value>
   </data>
+  <data name="MainWindow_OK" xml:space="preserve">
+    <value>OK</value>
+    <comment>update</comment>
+  </data>
   <data name="MainWindow_serviceDeploy" xml:space="preserve">
     <value>部署服务</value>
+  </data>
+  <data name="MainWindow_ServiceManager" xml:space="preserve">
+    <value>Service manager</value>
+    <comment>update</comment>
+  </data>
+  <data name="MainWindow_ServiceManagerStartIssue" xml:space="preserve">
+    <value>Oups. There was an issue while we tried to start the service.</value>
+    <comment>update</comment>
+  </data>
+  <data name="MainWindow_ServiceManagerStopIssue" xml:space="preserve">
+    <value>Oups. There was an issue while we tried to stop the service.</value>
+    <comment>update</comment>
   </data>
   <data name="MainWindow_serviceRemove" xml:space="preserve">
     <value>移除服务</value>
@@ -412,8 +428,32 @@
   <data name="ProfilesPage_AntiDeadzoneDesc" xml:space="preserve">
     <value>修改反游戏死区百分比</value>
   </data>
+  <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
+    <value>Are you sure you want to delete</value>
+    <comment>update</comment>
+  </data>
+  <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
+    <value>This item will be deleted immediatly. You can't undo this action.</value>
+    <comment>update</comment>
+  </data>
+  <data name="ProfilesPage_AreYouSureOverwrite1" xml:space="preserve">
+    <value>Are you sure you want to overwrite</value>
+    <comment>update</comment>
+  </data>
+  <data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
+    <value>This item will be overwriten. You can't undo this action.</value>
+    <comment>update</comment>
+  </data>
+  <data name="ProfilesPage_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>update</comment>
+  </data>
   <data name="ProfilesPage_CreateNewProfile" xml:space="preserve">
     <value>创建配置</value>
+  </data>
+  <data name="ProfilesPage_Delete" xml:space="preserve">
+    <value>Delete</value>
+    <comment>update</comment>
   </data>
   <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
     <value>删除配置</value>
@@ -460,6 +500,10 @@
   <data name="ProfilesPage_MotionControlSettingsDesc" xml:space="preserve">
     <value>修改全局体感设置</value>
   </data>
+  <data name="ProfilesPage_OK" xml:space="preserve">
+    <value>OK</value>
+    <comment>update</comment>
+  </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
     <value>配置详情</value>
   </data>
@@ -480,6 +524,14 @@
   </data>
   <data name="ProfilesPage_ProfileSettings" xml:space="preserve">
     <value>配置设置</value>
+  </data>
+  <data name="ProfilesPage_ProfileUpdated1" xml:space="preserve">
+    <value>Profile updated</value>
+    <comment>update</comment>
+  </data>
+  <data name="ProfilesPage_ProfileUpdated2" xml:space="preserve">
+    <value>was updated.</value>
+    <comment>update</comment>
   </data>
   <data name="ProfilesPage_Roll" xml:space="preserve">
     <value>横滚</value>
@@ -519,6 +571,10 @@
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>航向</value>
+  </data>
+  <data name="ProfilesPage_Yes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>update</comment>
   </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>通过虚拟的DS4手柄，为Windows掌机提供体感支持。如果启用该服务，物理手柄将不会被白名单外的程序识别到。如果服务被关闭，物理手柄将会再次被启用，虚拟DS4也将被关闭。</value>
