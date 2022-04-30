@@ -258,8 +258,11 @@ namespace HandheldCompanion.Views.Pages
 
                     if (profileManager.Contains(profile))
                     {
-                        // todo: implement localized strings
-                        Task<ContentDialogResult> result = Dialog.ShowAsync($"Are you sure you want to overwrite \"{profile.name}\"?", "This item will be overwrite. You can't undo this action.", ContentDialogButton.Primary, "Cancel", "Yes");
+                        Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureOverwrite1} \"{profile.name}\"?", 
+                                                                            $"{Properties.Resources.ProfilesPage_AreYouSureOverwrite2}", 
+                                                                            ContentDialogButton.Primary, 
+                                                                            $"{Properties.Resources.ProfilesPage_Cancel}", 
+                                                                            $"{Properties.Resources.ProfilesPage_Yes}");
                         await result; // sync call
 
                         switch (result.Result)
@@ -394,8 +397,11 @@ namespace HandheldCompanion.Views.Pages
             if (profileCurrent == null)
                 return;
 
-            // todo: implement localized strings
-            Task<ContentDialogResult> result = Dialog.ShowAsync($"Are you sure you want to delete \"{profileCurrent.name}\"?", "This item will be deleted immediatly. You can't undo this action.", ContentDialogButton.Primary, "Cancel", "Delete");
+            Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{profileCurrent.name}\"?", 
+                                                                $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}", 
+                                                                ContentDialogButton.Primary, 
+                                                                $"{Properties.Resources.ProfilesPage_Cancel}", 
+                                                                $"{Properties.Resources.ProfilesPage_Delete}");
             await result; // sync call
 
             switch (result.Result)
@@ -413,9 +419,10 @@ namespace HandheldCompanion.Views.Pages
         {
             if (profileCurrent == null)
                 return;
-
-            // todo: implement localized strings
-            Dialog.ShowAsync("Profile updated", $"{profileCurrent.name} was updated.", ContentDialogButton.Primary, null, "OK");
+            
+            Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
+                             $"{profileCurrent.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
+                             ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
 
             profileCurrent.name = tB_ProfileName.Text;
             profileCurrent.fullpath = tB_ProfilePath.Text;
