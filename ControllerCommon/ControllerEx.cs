@@ -13,6 +13,7 @@ namespace ControllerCommon
     {
         private ILogger logger;
 
+        private PnPDevice device;
         public Controller Controller;
         public string Manufacturer, DeviceDesc;
         public UserIndex UserIndex;
@@ -22,8 +23,8 @@ namespace ControllerCommon
         public bool isVirtual;
         public string ProductId, VendorId, XID;
 
-        public string deviceInstancePath;
-        public string baseContainerDeviceInstancePath;
+        public string deviceInstancePath = "";
+        public string baseContainerDeviceInstancePath = "";
 
         private Vibration IdentifyVibration = new Vibration() { LeftMotorSpeed = ushort.MaxValue, RightMotorSpeed = ushort.MaxValue };
         private Timer IdentifyTimer;
@@ -61,7 +62,7 @@ namespace ControllerCommon
 
             for (int i = 0; i < devices.Count; i++)
             {
-                PnPDevice device = devices[i];
+                device = devices[i];
 
                 if (!device.DeviceId.Contains($"PID_{ProductId}", StringComparison.OrdinalIgnoreCase) || !device.DeviceId.Contains($"VID_{VendorId}", StringComparison.OrdinalIgnoreCase))
                     continue;
@@ -89,16 +90,20 @@ namespace ControllerCommon
                     if (parentId.Contains(@"HID\", StringComparison.OrdinalIgnoreCase))
                         return;
 
-                    if (parentId.StartsWith(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase) ||
-                        parentId.StartsWith(@"ROOT\USB", StringComparison.OrdinalIgnoreCase))
+                    if (device.InstanceId.StartsWith(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase) ||
+                        device.InstanceId.StartsWith(@"ROOT\USB", StringComparison.OrdinalIgnoreCase))
                     {
                         isVirtual = true;
                         return;
                     }
 
-                    device = PnPDevice.GetDeviceByInstanceId(parentId, false ? DeviceLocationFlags.Phantom : DeviceLocationFlags.Normal);
+                    device = PnPDevice.GetDeviceByInstanceId(parentId, DeviceLocationFlags.Phantom);
                 }
             }
+
+            // dirty, device contains HID
+            if (DeviceDesc is null || Manufacturer is null)
+                isVirtual = true;
         }
 
         public override string ToString()

@@ -40,8 +40,11 @@ namespace HandheldCompanion.Views.Pages
 
         private ControllerManager controllerManager;
 
-        public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(HIDmode controllerMode);
+        public event HIDchangedEventHandler HIDchanged;
+        public delegate void HIDchangedEventHandler(HIDmode HID);
+
+        public event ControllerChangedEventHandler ControllerChanged;
+        public delegate void ControllerChangedEventHandler(ControllerEx Controller);
 
         public ControllerPage()
         {
@@ -52,8 +55,9 @@ namespace HandheldCompanion.Views.Pages
 
             // initialize controller manager
             controllerManager = new ControllerManager(logger);
-            controllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
-            controllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
+            controllerManager.ControllerPlugged += ControllerPlugged;
+            controllerManager.ControllerUnplugged += ControllerUnplugged;
+
             controllerManager.Start();
         }
 
@@ -111,33 +115,52 @@ namespace HandheldCompanion.Views.Pages
         {
         }
 
-        private void ControllerManager_ControllerUnplugged(UserIndex idx, ControllerEx controller)
+        private void ControllerUnplugged(ControllerEx controller)
         {
-            // implement me
             this.Dispatcher.Invoke(() =>
             {
-                ControllerEx removeme = null;
                 foreach (ControllerEx ctrl in RadioControllers.Items)
                 {
-                    if (ctrl.Controller.UserIndex == idx)
-                        removeme = ctrl;
+                    if (ctrl.deviceInstancePath == controller.deviceInstancePath)
+                    {
+                        RadioControllers.Items.Remove(ctrl);
+                        break;
+                    }
                 }
-
-                if (removeme != null)
-                    RadioControllers.Items.Remove(removeme);
 
                 if (RadioControllers.Items.Count == 0)
                     InputDevices.Visibility = Visibility.Collapsed;
+                else
+                {
+                    // current controller was unplugged, pick another one from the list
+                    if (currentController is not null && currentController.deviceInstancePath == controller.deviceInstancePath)
+                        RadioControllers.SelectedIndex = 0;
+                }
             });
         }
 
-        private void ControllerManager_ControllerPlugged(UserIndex idx, ControllerEx controller)
+        private void ControllerPlugged(ControllerEx controller)
         {
-            // implement me
             this.Dispatcher.Invoke(() =>
             {
-                RadioControllers.Items.Add(controller);
                 InputDevices.Visibility = Visibility.Visible;
+
+                foreach (ControllerEx ctrl in RadioControllers.Items)
+                {
+                    if (ctrl.deviceInstancePath == controller.deviceInstancePath)
+                    {
+                        int idx = RadioControllers.Items.IndexOf(ctrl);
+                        RadioControllers.Items[idx] = controller;
+
+                        // current controller was updated, make sure we (re)send updated values
+                        if (currentController is not null && currentController.deviceInstancePath == controller.deviceInstancePath)
+                            RaiseEvents();
+
+                        return;
+                    }
+                }
+
+                RadioControllers.Items.Add(controller);
             });
         }
 
@@ -239,12 +262,16 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_HidMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (cB_HidMode.SelectedIndex == -1)
+                return;
+
             controllerMode = (HIDmode)cB_HidMode.SelectedIndex;
+
+            // raise event
+            HIDchanged?.Invoke(controllerMode);
 
             PipeClientSettings settings = new PipeClientSettings("HIDmode", controllerMode);
             mainWindow.pipeClient.SendMessage(settings);
-
-            Updated?.Invoke(controllerMode);
 
             UpdateController();
         }
@@ -287,25 +314,33 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.scrollLock = false;
         }
 
+        private ControllerEx currentController;
         private void RadioControllers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (RadioControllers.SelectedIndex == -1)
                 return;
 
-            ControllerEx controllerEx = (ControllerEx)RadioControllers.SelectedItem;
+            currentController = (ControllerEx)RadioControllers.SelectedItem;
 
-            if (controllerEx == null)
+            if (currentController is null)
                 return;
 
-            if (!controllerEx.IsConnected())
+            if (!currentController.IsConnected())
                 return;
 
             // notify user
-            toastManager.SendToast(controllerEx.ToString(), Properties.Resources.ToastNewControllerEx);
-            controllerEx.Identify();
+            toastManager.SendToast(currentController.ToString(), Properties.Resources.ToastNewControllerEx);
+            currentController.Identify();
 
-            // notify service
-            PipeControllerIndex settings = new PipeControllerIndex((int)controllerEx.UserIndex, controllerEx.deviceInstancePath, controllerEx.baseContainerDeviceInstancePath);
+            // raise events
+            RaiseEvents();
+        }
+
+        private void RaiseEvents()
+        {
+            ControllerChanged?.Invoke(currentController);
+
+            PipeControllerIndex settings = new PipeControllerIndex((int)currentController.UserIndex, currentController.deviceInstancePath, currentController.baseContainerDeviceInstancePath);
             pipeClient?.SendMessage(settings);
         }
     }

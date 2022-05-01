@@ -23,23 +23,21 @@ namespace HandheldCompanion
         private ManagementEventWatcher removeWatcher;
         private Timer watcherTimer;
 
-        private Dictionary<UserIndex, ControllerEx> controllers;
-        private List<bool> controllersStatus;
+        private Dictionary<string, ControllerEx> controllers;
 
         private readonly Guid hidClassInterfaceGuid;
         private List<PnPDevice> devices = new();
 
         public event ControllerPluggedEventHandler ControllerPlugged;
-        public delegate void ControllerPluggedEventHandler(UserIndex idx, ControllerEx controller);
+        public delegate void ControllerPluggedEventHandler(ControllerEx controller);
 
         public event ControllerUnpluggedEventHandler ControllerUnplugged;
-        public delegate void ControllerUnpluggedEventHandler(UserIndex idx, ControllerEx controller);
+        public delegate void ControllerUnpluggedEventHandler(ControllerEx controller);
 
         public ControllerManager(ILogger logger)
         {
             this.logger = logger;
             this.controllers = new();
-            this.controllersStatus = new() { false, false, false, false };
 
             // initialize timers
             watcherTimer = new Timer(1000) { AutoReset = false };
@@ -48,11 +46,6 @@ namespace HandheldCompanion
             // initialize hid
             HidD_GetHidGuidMethod(out var interfaceGuid);
             hidClassInterfaceGuid = interfaceGuid;
-        }
-
-        public ControllerEx ElementAt(UserIndex idx)
-        {
-            return this.controllers[idx];
         }
 
         public void Start()
@@ -70,7 +63,6 @@ namespace HandheldCompanion
 
         private void WatcherTimer_Tick(object? sender, EventArgs e)
         {
-            // refresh devices
             int deviceIndex = 0;
             devices.Clear();
 
@@ -82,29 +74,22 @@ namespace HandheldCompanion
                 UserIndex userIndex = (UserIndex)idx;
                 ControllerEx controllerEx = new ControllerEx(userIndex, null, ref devices);
 
-                bool isConnected = controllerEx.IsConnected();
-                bool wasConnected = controllersStatus[idx];
-
-                // update status
-                controllers[userIndex] = controllerEx;
-                controllersStatus[idx] = controllers[userIndex].IsConnected();
+                controllers[controllerEx.baseContainerDeviceInstancePath] = controllerEx;
 
                 if (controllerEx.isVirtual)
-                    return;
+                    continue;
 
-                if (isConnected)
-                {
-                    if (!wasConnected)
-                    {
-                        // controller was plugged
-                        ControllerPlugged?.Invoke(userIndex, controllerEx);
-                    }
-                }
-                else if (wasConnected)
-                {
-                    // controller was unplugged
-                    ControllerUnplugged?.Invoke(userIndex, controllerEx);
-                }
+                if (!controllerEx.IsConnected())
+                    continue;
+
+                ControllerPlugged?.Invoke(controllerEx);
+            }
+
+            // controller was unplugged
+            foreach (ControllerEx controllerEx in controllers.Values)
+            {
+                if (!controllerEx.IsConnected())
+                    ControllerUnplugged?.Invoke(controllerEx);
             }
         }
 
