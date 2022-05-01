@@ -66,7 +66,12 @@ namespace HandheldCompanion.Views.Windows
         private TouchArgs swipe;
 
         // Gamepad vars
-        private Gamepad gamepad;
+        private MultimediaTimer UpdateTimer;
+        private ControllerEx controllerEx;
+        private Gamepad Gamepad;
+        private State GamepadState;
+        private bool ControllerTriggerListening = false;
+        private bool TrackpadsTriggerListening = false;
 
         private Vector3D FaceCameraObjectAlignment;
         private Quaternion FaceCameraObjectAlignmentQuat;
@@ -92,6 +97,11 @@ namespace HandheldCompanion.Views.Windows
             // touch vars
             touchsource = new TouchSourceWinTouch(this);
             touchsource.Touch += Touchsource_Touch;
+
+            // initialize timers
+            UpdateTimer = new MultimediaTimer(10);
+            UpdateTimer.Tick += UpdateReport;
+            UpdateTimer.Start();
 
             this.SourceInitialized += Overlay_SourceInitialized;
         }
@@ -141,8 +151,6 @@ namespace HandheldCompanion.Views.Windows
                         ModelVisual3D.Content = VirtualModel.model3DGroup;
                     }
                     break;
-
-
             }
 
             ModelViewPort.ZoomExtents();
@@ -273,18 +281,16 @@ namespace HandheldCompanion.Views.Windows
                     switch (sensor.type)
                     {
                         case SensorType.Quaternion:
-                            // update ModelVisual3D
                             UpdateModelVisual3D(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z, sensor.x, sensor.y, sensor.z);
                             break;
                     }
                     break;
-
-                case PipeCode.SERVER_GAMEPAD:
-                    PipeGamepad pipeGamepad = (PipeGamepad)message;
-                    gamepad = pipeGamepad.ToGamepad();
-                    UpdateReport();
-                    break;
             }
+        }
+
+        internal void UpdateController(ControllerEx controllerEx)
+        {
+            this.controllerEx = controllerEx;
         }
 
         private bool isTriggered = false;
@@ -292,18 +298,25 @@ namespace HandheldCompanion.Views.Windows
         public GamepadButtonFlags controllerTrigger = GamepadButtonFlags.DPadUp;
         public GamepadButtonFlags trackpadTrigger = GamepadButtonFlags.DPadDown;
 
-        private void UpdateReport()
+        private void UpdateReport(object? sender, EventArgs e)
         {
+            // get current gamepad state
+            if (controllerEx != null && controllerEx.IsConnected())
+            {
+                GamepadState = controllerEx.GetState();
+                Gamepad = GamepadState.Gamepad;
+            }
+
             // Handle triggers
-            if ((gamepad.Buttons & mainTrigger) != 0)
+            if ((Gamepad.Buttons & mainTrigger) != 0)
             {
                 if (!isTriggered)
-                    isTriggered = true;
-                else
                 {
-                    if (gamepad.Buttons.HasFlag(controllerTrigger))
+                    isTriggered = true;
+
+                    if (Gamepad.Buttons.HasFlag(controllerTrigger))
                         UpdateControllerVisibility();
-                    if (gamepad.Buttons.HasFlag(trackpadTrigger))
+                    if (Gamepad.Buttons.HasFlag(trackpadTrigger))
                         UpdateTrackpadsVisibility();
 
                     UpdateVisibility();
@@ -313,15 +326,15 @@ namespace HandheldCompanion.Views.Windows
                 isTriggered = false;
 
             // handle triggers update
-            if (ControllerTriggerListening)
+            if (ControllerTriggerListening && Gamepad.Buttons != 0)
             {
-                ControllerTriggerUpdated?.Invoke(gamepad.Buttons);
+                ControllerTriggerUpdated?.Invoke(Gamepad.Buttons);
                 ControllerTriggerListening = false;
             }
 
-            if (TrackpadsTriggerListening)
+            if (TrackpadsTriggerListening && Gamepad.Buttons != 0)
             {
-                TrackpadsTriggerUpdated?.Invoke(gamepad.Buttons);
+                TrackpadsTriggerUpdated?.Invoke(Gamepad.Buttons);
                 TrackpadsTriggerListening = false;
             }
 
@@ -339,7 +352,7 @@ namespace HandheldCompanion.Views.Windows
                     foreach (Model3DGroup modelgroup in CurrentModel.ButtonMap[button])
                     {
                         model = (GeometryModel3D)modelgroup.Children.FirstOrDefault();
-                        if (gamepad.Buttons.HasFlag(button))
+                        if (Gamepad.Buttons.HasFlag(button))
                             model.Material = CurrentModel.MaterialHighlight;
                         else
                             model.Material = CurrentModel.MaterialPlasticBlack;
@@ -371,12 +384,12 @@ namespace HandheldCompanion.Views.Windows
 
                 // ShoulderLeftTrigger
                 model = CurrentModel.LeftShoulderTrigger.Children[0] as GeometryModel3D;
-                if (gamepad.LeftTrigger > 0)
+                if (Gamepad.LeftTrigger > 0)
                 {
                     model.Material = CurrentModel.MaterialHighlight;
 
                     // Define and compute
-                    float Angle = -1 * CurrentModel.TriggerMaxAngleDeg * (float)gamepad.LeftTrigger / (float)byte.MaxValue;
+                    float Angle = -1 * CurrentModel.TriggerMaxAngleDeg * (float)Gamepad.LeftTrigger / (float)byte.MaxValue;
 
                     // Rotation
                     var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, 7.27), Angle);
@@ -409,12 +422,12 @@ namespace HandheldCompanion.Views.Windows
 
                 // ShoulderRightTrigger
                 model = CurrentModel.RightShoulderTrigger.Children[0] as GeometryModel3D;
-                if (gamepad.RightTrigger > 0)
+                if (Gamepad.RightTrigger > 0)
                 {
                     model.Material = CurrentModel.MaterialHighlight;
 
                     // Define and compute
-                    float Angle = -1 * CurrentModel.TriggerMaxAngleDeg * (float)gamepad.RightTrigger / (float)byte.MaxValue;
+                    float Angle = -1 * CurrentModel.TriggerMaxAngleDeg * (float)Gamepad.RightTrigger / (float)byte.MaxValue;
 
                     // Rotation
                     var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, -7.27), Angle);
@@ -447,15 +460,15 @@ namespace HandheldCompanion.Views.Windows
 
                 // JoystickLeftRing
                 model = CurrentModel.LeftThumbRing.Children[0] as GeometryModel3D;
-                if (gamepad.LeftThumbX != 0 || gamepad.LeftThumbY != 0)
+                if (Gamepad.LeftThumbX != 0 || Gamepad.LeftThumbY != 0)
                 {
                     // Adjust color
                     model.Material = CurrentModel.MaterialHighlight;
 
                     // Define and compute
                     Transform3DGroup Transform3DGroupJoystickLeft = new Transform3DGroup();
-                    float x = CurrentModel.JoystickMaxAngleDeg * (float)gamepad.LeftThumbX / (float)short.MaxValue;
-                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)gamepad.LeftThumbY / (float)short.MaxValue;
+                    float x = CurrentModel.JoystickMaxAngleDeg * (float)Gamepad.LeftThumbX / (float)short.MaxValue;
+                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)Gamepad.LeftThumbY / (float)short.MaxValue;
 
                     // Rotation X
                     var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
@@ -502,14 +515,14 @@ namespace HandheldCompanion.Views.Windows
 
                 // JoystickRightRing
                 model = CurrentModel.RightThumbRing.Children[0] as GeometryModel3D;
-                if (gamepad.RightThumbX != 0 || gamepad.RightThumbY != 0)
+                if (Gamepad.RightThumbX != 0 || Gamepad.RightThumbY != 0)
                 {
                     model.Material = CurrentModel.MaterialHighlight;
 
                     // Define and compute
                     Transform3DGroup Transform3DGroupJoystickRight = new Transform3DGroup();
-                    float x = CurrentModel.JoystickMaxAngleDeg * (float)gamepad.RightThumbX / (float)short.MaxValue;
-                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)gamepad.RightThumbY / (float)short.MaxValue;
+                    float x = CurrentModel.JoystickMaxAngleDeg * (float)Gamepad.RightThumbX / (float)short.MaxValue;
+                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)Gamepad.RightThumbY / (float)short.MaxValue;
 
                     // Rotation X
                     var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
@@ -556,13 +569,11 @@ namespace HandheldCompanion.Views.Windows
             });
         }
 
-        private bool ControllerTriggerListening = false;
         public void ControllerTriggerClicked()
         {
             ControllerTriggerListening = true;
         }
 
-        private bool TrackpadsTriggerListening = false;
         public void TrackpadsTriggerClicked()
         {
             TrackpadsTriggerListening = true;

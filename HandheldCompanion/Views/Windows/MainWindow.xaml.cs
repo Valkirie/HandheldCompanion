@@ -209,11 +209,35 @@ namespace HandheldCompanion.Views
 
             // initialize pages
             controllerPage = new ControllerPage("controller", this, logger);
-            controllerPage.Updated += (controllerMode) =>
+            profilesPage = new ProfilesPage("profiles", this, logger);
+            settingsPage = new SettingsPage("settings", this, logger);
+            aboutPage = new AboutPage("about", this, logger);
+            overlayPage = new OverlayPage("overlay", overlay, logger);
+
+            // initialize command parser
+            cmdParser = new CmdParser(pipeClient, this, logger);
+            cmdParser.ParseArgs(arguments.Args, true);
+
+            // handle settingsPage events
+            settingsPage.ToastChanged += (value) =>
+            {
+                toastManager.Enabled = value;
+            };
+            settingsPage.AutoStartChanged += (value) =>
+            {
+                taskManager.UpdateTask(value);
+            };
+            settingsPage.ServiceChanged += (value) =>
+            {
+                serviceManager.SetStartType(value);
+            };
+
+            // handle controllerPage events
+            controllerPage.HIDchanged += (HID) =>
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    switch (controllerMode)
+                    switch (HID)
                     {
                         default:
                         case HIDmode.DualShock4Controller:
@@ -227,28 +251,9 @@ namespace HandheldCompanion.Views
                     overlay.UpdateVirtualModel(VirtualModel);
                 });
             };
-
-            profilesPage = new ProfilesPage("profiles", this, logger);
-            settingsPage = new SettingsPage("settings", this, logger);
-            aboutPage = new AboutPage("about", this, logger);
-            overlayPage = new OverlayPage("overlay", overlay, logger);
-
-            // initialize command parser
-            cmdParser = new CmdParser(pipeClient, this, logger);
-            cmdParser.ParseArgs(arguments.Args, true);
-
-            // initialize pages events
-            settingsPage.ToastChanged += (value) =>
+            controllerPage.ControllerChanged += (Controller) =>
             {
-                toastManager.Enabled = value;
-            };
-            settingsPage.AutoStartChanged += (value) =>
-            {
-                taskManager.UpdateTask(value);
-            };
-            settingsPage.ServiceChanged += (value) =>
-            {
-                serviceManager.SetStartType(value);
+                overlay.UpdateController(Controller);
             };
 
             _pages.Add("ControllerPage", controllerPage);

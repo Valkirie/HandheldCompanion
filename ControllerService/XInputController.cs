@@ -21,7 +21,6 @@ namespace ControllerService
         public ViGEmTarget virtualTarget;
 
         public Gamepad Gamepad;
-        private Gamepad prevGamepad;
         private State GamepadState;
 
         public Profile profile;
@@ -214,10 +213,6 @@ namespace ControllerService
                 {
                     GamepadState = controllerEx.GetState();
                     Gamepad = GamepadState.Gamepad;
-
-                    if (prevGamepad.ToString() != Gamepad.ToString())
-                        pipeServer?.SendMessage(new PipeGamepad(Gamepad));
-                    prevGamepad = Gamepad;
 
                     // update virtual controller
                     virtualTarget?.UpdateReport(Gamepad);

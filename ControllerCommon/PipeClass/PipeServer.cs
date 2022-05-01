@@ -34,9 +34,7 @@ namespace ControllerCommon
         CLIENT_HIDDER = 9,                  // Sent to server to register applications
                                             // args: ...
 
-        CLIENT_SCREEN = 11,                 // Sent to server to update screen details
-                                            // args: width, height
-                                            // OBSOLETE, REUSEME
+        OBSOLETE_1 = 11,                    // OBSOLETE, REUSEME
 
         CLIENT_CONSOLE = 12,                // Sent from client to client to pass parameters
                                             // args: string[] parameters
@@ -53,11 +51,10 @@ namespace ControllerCommon
         CLIENT_OVERLAY = 16,                // Sent to server to share current overlay status
                                             // args: ...
 
-        SERVER_GAMEPAD = 17,                // Sent to client to share gamepad values
-                                            // args: ...
+        OBSOLETE_2 = 17,                    // OBSOLETE, REUSEME
 
-        CLIENT_CONTROLLERINDEX = 18,              // Sent to server to share details on controller
-                                                  // args: ...
+        CLIENT_CONTROLLERINDEX = 18,        // Sent to server to share details on controller
+                                            // args: ...
 
         CLIENT_CLEARINDEX = 19,             // Sent to server to clear all hidden controllers
                                             // args: ...
