@@ -221,8 +221,24 @@
   <data name="MainWindow_navProfiles" xml:space="preserve">
     <value>Profils</value>
   </data>
+  <data name="MainWindow_OK" xml:space="preserve">
+    <value>OK</value>
+    <comment>update</comment>
+  </data>
   <data name="MainWindow_serviceDeploy" xml:space="preserve">
     <value>Déployer le service</value>
+  </data>
+  <data name="MainWindow_ServiceManager" xml:space="preserve">
+    <value>Service manager</value>
+    <comment>update</comment>
+  </data>
+  <data name="MainWindow_ServiceManagerStartIssue" xml:space="preserve">
+    <value>Oups. There was an issue while we tried to start the service.</value>
+    <comment>update</comment>
+  </data>
+  <data name="MainWindow_ServiceManagerStopIssue" xml:space="preserve">
+    <value>Oups. There was an issue while we tried to stop the service.</value>
+    <comment>update</comment>
   </data>
   <data name="MainWindow_serviceRemove" xml:space="preserve">
     <value>Supprimer le service</value>
@@ -411,8 +427,32 @@
   <data name="ProfilesPage_AntiDeadzoneDesc" xml:space="preserve">
     <value>Modifier l'anti-zone morte, en pourcentage</value>
   </data>
+  <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
+    <value>Are you sure you want to delete</value>
+    <comment>update</comment>
+  </data>
+  <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
+    <value>This item will be deleted immediatly. You can't undo this action.</value>
+    <comment>update</comment>
+  </data>
+  <data name="ProfilesPage_AreYouSureOverwrite1" xml:space="preserve">
+    <value>Are you sure you want to overwrite</value>
+    <comment>update</comment>
+  </data>
+  <data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
+    <value>This item will be overwriten. You can't undo this action.</value>
+    <comment>update</comment>
+  </data>
+  <data name="ProfilesPage_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>update</comment>
+  </data>
   <data name="ProfilesPage_CreateNewProfile" xml:space="preserve">
     <value>Créer un nouveau profil</value>
+  </data>
+  <data name="ProfilesPage_Delete" xml:space="preserve">
+    <value>Delete</value>
+    <comment>update</comment>
   </data>
   <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
     <value>Supprimer le profil</value>
@@ -459,6 +499,10 @@
   <data name="ProfilesPage_MotionControlSettingsDesc" xml:space="preserve">
     <value>Modifier les paramètres globaux de contrôle du mouvement</value>
   </data>
+  <data name="ProfilesPage_OK" xml:space="preserve">
+    <value>OK</value>
+    <comment>update</comment>
+  </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
     <value>Détails du profil</value>
   </data>
@@ -479,6 +523,14 @@
   </data>
   <data name="ProfilesPage_ProfileSettings" xml:space="preserve">
     <value>Paramètres du profil</value>
+  </data>
+  <data name="ProfilesPage_ProfileUpdated1" xml:space="preserve">
+    <value>Profile updated</value>
+    <comment>update</comment>
+  </data>
+  <data name="ProfilesPage_ProfileUpdated2" xml:space="preserve">
+    <value>was updated.</value>
+    <comment>update</comment>
   </data>
   <data name="ProfilesPage_Roll" xml:space="preserve">
     <value>Roulis</value>
@@ -518,6 +570,10 @@
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>Lacet</value>
+  </data>
+  <data name="ProfilesPage_Yes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>update</comment>
   </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>Fournit une prise en charge du gyroscope et de l'accéléromètre aux ordinateurs de jeu portables Windows par le biais d'un contrôleur virtuel. Si le service est activé, le contrôleur intégré sera masqué pour les applications en dehors de la liste blanche. Si le service est désactivé, le contrôleur embarqué ne sera plus caché et le contrôleur virtuel sera désactivé</value>

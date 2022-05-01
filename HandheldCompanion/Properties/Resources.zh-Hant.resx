@@ -118,113 +118,113 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutPage_About" xml:space="preserve">
-    <value>About</value>
+    <value>關於</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>Handheld Companion provides gyroscope and accelerometer support to the AYA NEO 2020 and 2021 models through a virtual DualShock 4 controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and virtual DualShock 4 controller disabled. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible information on the GyroWiki.</value>
+    <value>Handheld Companion，「掌機伴侶」通過模擬DualShock 4（DS4）手柄為AYA NEO 2020和2021版本提供6軸體感支持。如果啟用該服務，物理手柄將不會被白名單外的程序識別到。如果服務被關閉，物理手柄將會再次被啟用，虛擬DS4也將被關閉。掌機伴侶依賴於ViGEmBus驅動和ViGEmClient庫，以及內核態的HidHide過濾驅動。體感算法基於Jibbsmart的研究成果和GyroWiki上公開的信息。</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
-    <value>Accelerometer</value>
+    <value>加速計</value>
   </data>
   <data name="AboutPage_Author" xml:space="preserve">
-    <value>Author</value>
+    <value>作者</value>
   </data>
   <data name="AboutPage_Contributors" xml:space="preserve">
-    <value>Contributors</value>
+    <value>貢獻者</value>
   </data>
   <data name="AboutPage_Description" xml:space="preserve">
-    <value>Description</value>
+    <value>說明</value>
   </data>
   <data name="AboutPage_Donate" xml:space="preserve">
-    <value>Donate</value>
+    <value>捐贈</value>
   </data>
   <data name="AboutPage_Gyrometer" xml:space="preserve">
-    <value>Gyrometer</value>
+    <value>陀螺儀</value>
   </data>
   <data name="AboutPage_Inclinometer" xml:space="preserve">
-    <value>Inclinometer</value>
+    <value>傾斜計</value>
   </data>
   <data name="AboutPage_NotApplicable" xml:space="preserve">
     <value>N/A</value>
   </data>
   <data name="AboutPage_RelatedLinks" xml:space="preserve">
-    <value>Related Links</value>
+    <value>相關鏈接</value>
   </data>
   <data name="AboutPage_SensorName" xml:space="preserve">
-    <value>Sensor name</value>
+    <value>傳感器名稱</value>
   </data>
   <data name="AboutPage_SensorSpecification" xml:space="preserve">
-    <value>Sensor specification</value>
+    <value>傳感器參數</value>
   </data>
   <data name="AboutPage_Service" xml:space="preserve">
-    <value>Service</value>
+    <value>服務</value>
   </data>
   <data name="AboutPage_SourceCode" xml:space="preserve">
-    <value>Source code</value>
+    <value>源代碼</value>
   </data>
   <data name="AboutPage_Version" xml:space="preserve">
-    <value>Version</value>
+    <value>版本</value>
   </data>
   <data name="AboutPage_Wiki" xml:space="preserve">
-    <value>Wiki</value>
+    <value>維基</value>
   </data>
   <data name="Administrator" xml:space="preserve">
-    <value>Administrator</value>
+    <value>管理員</value>
   </data>
   <data name="ControllerPage_CloakDevice" xml:space="preserve">
-    <value>Cloak device</value>
+    <value>隱藏設備</value>
   </data>
   <data name="ControllerPage_CloakDeviceDesc" xml:space="preserve">
-    <value>Change the physical controller visibility to other applications</value>
+    <value>更改物理手柄對其他軟件的可見性</value>
   </data>
   <data name="ControllerPage_Connect" xml:space="preserve">
-    <value>Connect</value>
+    <value>連接</value>
   </data>
   <data name="ControllerPage_Controller" xml:space="preserve">
-    <value>Controller</value>
+    <value>手柄</value>
   </data>
   <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
-    <value>Device cloaking</value>
+    <value>設備隱藏中</value>
   </data>
   <data name="ControllerPage_Disconnect" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>斷開連接</value>
   </data>
   <data name="ControllerPage_InputDevices" xml:space="preserve">
-    <value>Input devices</value>
+    <value>輸入設備</value>
   </data>
   <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
-    <value>Uncloak on close</value>
+    <value>關閉時結束隱藏</value>
   </data>
   <data name="ControllerPage_UncloakOnCloseDesc" xml:space="preserve">
-    <value>Restore visibility of the physical controller to other applications on service exit</value>
+    <value>在服務退出時恢復物理手柄對其他應用程序的可見性</value>
   </data>
   <data name="ControllerPage_VibrationStrength" xml:space="preserve">
-    <value>Vibration strength</value>
+    <value>震動強度</value>
   </data>
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
-    <value>Change controller vibration strength</value>
+    <value>改變手柄震動強度</value>
   </data>
   <data name="MainWindow_HandheldCompanion" xml:space="preserve">
-    <value>Handheld Companion</value>
+    <value>掌機伴侶</value>
   </data>
   <data name="MainWindow_navAbout" xml:space="preserve">
-    <value>About</value>
+    <value>關於</value>
   </data>
   <data name="MainWindow_navController" xml:space="preserve">
-    <value>Controller</value>
+    <value>手柄</value>
   </data>
   <data name="MainWindow_navOverlay" xml:space="preserve">
-    <value>Overlay</value>
+    <value>展示</value>
   </data>
   <data name="MainWindow_navProfiles" xml:space="preserve">
-    <value>Profiles</value>
+    <value>配置</value>
   </data>
   <data name="MainWindow_OK" xml:space="preserve">
     <value>OK</value>
     <comment>update</comment>
   </data>
   <data name="MainWindow_serviceDeploy" xml:space="preserve">
-    <value>Deploy service</value>
+    <value>部署服務</value>
   </data>
   <data name="MainWindow_ServiceManager" xml:space="preserve">
     <value>Service manager</value>
@@ -239,193 +239,193 @@
     <comment>update</comment>
   </data>
   <data name="MainWindow_serviceRemove" xml:space="preserve">
-    <value>Remove service</value>
+    <value>移除服務</value>
   </data>
   <data name="MainWindow_serviceStart" xml:space="preserve">
-    <value>Start service</value>
+    <value>啟動服務</value>
   </data>
   <data name="MainWindow_serviceStop" xml:space="preserve">
-    <value>Stop service</value>
+    <value>停止服務</value>
   </data>
   <data name="MainWindow_Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>設置</value>
   </data>
   <data name="OverlayPage_Alignment" xml:space="preserve">
-    <value>Alignment</value>
+    <value>位置</value>
   </data>
   <data name="OverlayPage_AlignmentDesc" xml:space="preserve">
-    <value>Change the 3D overlay controller alignment</value>
+    <value>修改3D姿態展示位置</value>
   </data>
   <data name="OverlayPage_AlignmentTrackpadDesc" xml:space="preserve">
-    <value>Change the trackpads overlay alignment</value>
+    <value>修改觸摸板展示位置</value>
   </data>
   <data name="OverlayPage_BackButton" xml:space="preserve">
     <value>Back</value>
   </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
-    <value>Controller options</value>
+    <value>手柄選項</value>
   </data>
   <data name="OverlayPage_EmulatedController" xml:space="preserve">
-    <value>Emulated controller</value>
+    <value>模擬手柄</value>
   </data>
   <data name="OverlayPage_Listening" xml:space="preserve">
-    <value>Listening...</value>
+    <value>偵聽中...</value>
   </data>
   <data name="OverlayPage_MainTrigger" xml:space="preserve">
-    <value>Main trigger</value>
+    <value>主開關</value>
   </data>
   <data name="OverlayPage_MainTriggerDesc" xml:space="preserve">
-    <value>Change the overlay main trigger</value>
+    <value>修改主開關</value>
   </data>
   <data name="OverlayPage_OEMController" xml:space="preserve">
-    <value>OEM controller</value>
+    <value>原裝手柄</value>
   </data>
   <data name="OverlayPage_Opacity" xml:space="preserve">
-    <value>Opacity</value>
+    <value>透明度</value>
   </data>
   <data name="OverlayPage_OpacityTrackpadDesc" xml:space="preserve">
-    <value>Change the overlay trackpads opacity</value>
+    <value>修改觸摸板展示透明度</value>
   </data>
   <data name="OverlayPage_Overlay" xml:space="preserve">
-    <value>Overlay</value>
+    <value>展示</value>
   </data>
   <data name="OverlayPage_OverlayModel" xml:space="preserve">
-    <value>Overlay model</value>
+    <value>展示模型</value>
   </data>
   <data name="OverlayPage_OverlayModelDesc" xml:space="preserve">
-    <value>Change the overlay controller model</value>
+    <value>修改3D姿態展示模型</value>
   </data>
   <data name="OverlayPage_OverlayPreview" xml:space="preserve">
-    <value>Overlay preview</value>
+    <value>展示預覽</value>
   </data>
   <data name="OverlayPage_SecondaryTrigger" xml:space="preserve">
-    <value>Secondary trigger</value>
+    <value>副開關</value>
   </data>
   <data name="OverlayPage_SecondaryTriggerDesc" xml:space="preserve">
-    <value>Change the 3D overlay controller trigger</value>
+    <value>修改3D姿態展示開關</value>
   </data>
   <data name="OverlayPage_SecondaryTriggerOverlayDesc" xml:space="preserve">
-    <value>Change the overlay trackpads trigger</value>
+    <value>修改觸摸板展示開關</value>
   </data>
   <data name="OverlayPage_Size" xml:space="preserve">
-    <value>Size</value>
+    <value>大小</value>
   </data>
   <data name="OverlayPage_SizeDesc" xml:space="preserve">
-    <value>Change the 3D overlay controller size</value>
+    <value>修改3D姿態展示大小</value>
   </data>
   <data name="OverlayPage_SizeOverlayDesc" xml:space="preserve">
-    <value>Change the overlay trackpads size</value>
+    <value>修改觸摸板展示大小</value>
   </data>
   <data name="OverlayPage_StartButton" xml:space="preserve">
     <value>Start</value>
   </data>
   <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
-    <value>Trackpads options</value>
+    <value>觸摸板選項</value>
   </data>
   <data name="Overlay_Overlay" xml:space="preserve">
-    <value>Overlay</value>
+    <value>展示</value>
   </data>
   <data name="ProfileSettingsMode0_AdditionalSettings" xml:space="preserve">
-    <value>Additional settings</value>
+    <value>附加選項</value>
   </data>
   <data name="ProfileSettingsMode0_CameraOptions" xml:space="preserve">
-    <value>Camera options</value>
+    <value>視角選項</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponseCurve" xml:space="preserve">
-    <value>Custom response curve</value>
+    <value>自定義曲線</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponseCurveGameOutput" xml:space="preserve">
-    <value>Output sent to game</value>
+    <value>輸出至遊戲</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponseIntensity" xml:space="preserve">
-    <value>Movement intensity</value>
+    <value>移動強度</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponsePresetAgressive" xml:space="preserve">
-    <value>Agressive</value>
+    <value>加速</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponsePresetDefault" xml:space="preserve">
-    <value>Default</value>
+    <value>默認</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponsePresetOptions" xml:space="preserve">
-    <value>Preset options</value>
+    <value>預設選項</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
-    <value>Precise</value>
+    <value>高精度</value>
   </data>
   <data name="ProfileSettingsMode0_FlickDuration" xml:space="preserve">
-    <value>Flick duration</value>
+    <value>指向時長</value>
   </data>
   <data name="ProfileSettingsMode0_FlickDurationDesc" xml:space="preserve">
-    <value>Change the flick duration, calibrate to 180 degree turn, in milliseconds</value>
+    <value>修改指向時長，校準為180度轉彎，以毫秒為單位</value>
   </data>
   <data name="ProfileSettingsMode0_FlickStick" xml:space="preserve">
-    <value>Flick stick (experimental)</value>
+    <value>指向性搖桿（實驗性）</value>
   </data>
   <data name="ProfileSettingsMode0_FlickStickDesc" xml:space="preserve">
-    <value>Point camera in direction of (right) joystick flick, rotate camera purely in horizontal plane by rotating</value>
+    <value>將視角指向（右）搖桿傾斜的方向，只對相機進行水平旋轉。</value>
   </data>
   <data name="ProfileSettingsMode0_FlickStickEnable" xml:space="preserve">
-    <value>Enable flick stick</value>
+    <value>開啟指向性瞄準</value>
   </data>
   <data name="ProfileSettingsMode0_Sensivity" xml:space="preserve">
-    <value>Sensivity</value>
+    <value>靈明度</value>
   </data>
   <data name="ProfileSettingsMode0_SensivityDesc" xml:space="preserve">
-    <value>Change the motion sensivity of the vertical and horizontal axis</value>
+    <value>修改垂直軸和水平軸的體感靈敏度</value>
   </data>
   <data name="ProfileSettingsMode0_StickSensitivtity" xml:space="preserve">
-    <value>Stick sensitivtity</value>
+    <value>搖桿靈敏度</value>
   </data>
   <data name="ProfileSettingsMode0_StickSensitivtityDesc" xml:space="preserve">
-    <value>Change the rotation rate</value>
+    <value>修改旋轉率</value>
   </data>
   <data name="ProfileSettingsMode1_AdditionalSettings" xml:space="preserve">
-    <value>Additional settings</value>
+    <value>附加選項</value>
   </data>
   <data name="ProfileSettingsMode1_Deadzone" xml:space="preserve">
-    <value>Deadzone</value>
+    <value>死區</value>
   </data>
   <data name="ProfileSettingsMode1_DeadzoneDesc" xml:space="preserve">
-    <value>Change the steering deadzone, in degree. Improves steering straight.</value>
+    <value>改變轉向死區角度。提升直線。</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickGameInput" xml:space="preserve">
-    <value>Joystick game Input</value>
+    <value>搖桿遊戲輸入</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickSteering" xml:space="preserve">
-    <value>Joystick steering</value>
+    <value>體感駕駛</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickSteeringOptions" xml:space="preserve">
-    <value>Joystick steering options</value>
+    <value>體感駕駛選項</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickSteeringPreview" xml:space="preserve">
-    <value>Joystick steering preview</value>
+    <value>體感駕駛預覽</value>
   </data>
   <data name="ProfileSettingsMode1_MaxSteeringAngle" xml:space="preserve">
-    <value>Max steering angle</value>
+    <value>最大轉向角度</value>
   </data>
   <data name="ProfileSettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
-    <value>Change the maximum steering angle value, in degree</value>
+    <value>修改最大轉向角度</value>
   </data>
   <data name="ProfileSettingsMode1_SteeringLinearity" xml:space="preserve">
-    <value>Steering linearity</value>
+    <value>轉向線性度</value>
   </data>
   <data name="ProfileSettingsMode1_SteeringLinearityDesc" xml:space="preserve">
-    <value>Mapping between input and steering. Lower values provide more accuracy near full lock but less accuracy near the center. Higher values provide more accuracy near the center but less accuracy near full lock. 1.0 is a linear mapping.</value>
+    <value>輸入和轉向之間的映射。較低的值在大小末端提供更高的精度，但在中心附近的精度較低。數值越高，在中心附近的精度越高，在兩端的精度越低。1.0是一個線性映射。</value>
   </data>
   <data name="ProfilesPage_AccelerometerMultiplier" xml:space="preserve">
-    <value>Accelerometer multiplier</value>
+    <value>加速度計靈敏度</value>
   </data>
   <data name="ProfilesPage_AccelerometerMultiplierDesc" xml:space="preserve">
-    <value>Change the system reported accelerometer value</value>
+    <value>改變系統回報的加速度</value>
   </data>
   <data name="ProfilesPage_AdditionalSettings" xml:space="preserve">
-    <value>Additional settings</value>
+    <value>附加選項</value>
   </data>
   <data name="ProfilesPage_AntiDeadzone" xml:space="preserve">
-    <value>Anti-deadzone</value>
+    <value>反死區</value>
   </data>
   <data name="ProfilesPage_AntiDeadzoneDesc" xml:space="preserve">
-    <value>Change the in-game anti-deadzone, in percentage</value>
+    <value>修改反遊戲死區百分比</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
     <value>Are you sure you want to delete</value>
@@ -448,81 +448,81 @@
     <comment>update</comment>
   </data>
   <data name="ProfilesPage_CreateNewProfile" xml:space="preserve">
-    <value>Create a new profile</value>
+    <value>創建配置</value>
   </data>
   <data name="ProfilesPage_Delete" xml:space="preserve">
     <value>Delete</value>
     <comment>update</comment>
   </data>
   <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
-    <value>Delete profile</value>
+    <value>刪除配置</value>
   </data>
   <data name="ProfilesPage_EnableButton" xml:space="preserve">
-    <value>Enable button</value>
+    <value>開啟鍵</value>
   </data>
   <data name="ProfilesPage_EnableButtonDesc" xml:space="preserve">
-    <value>The motion input can be turned on only when the selected button is pressed</value>
+    <value>只有在按下指定按鈕可開啟體感</value>
   </data>
   <data name="ProfilesPage_EnableProfile" xml:space="preserve">
-    <value>Enable profile</value>
+    <value>啟動配置</value>
   </data>
   <data name="ProfilesPage_EnableProfileDesc" xml:space="preserve">
-    <value>The profile will be automatically applied when the associated application is detected</value>
+    <value>自動在檢測到指定應用時啟動配置</value>
   </data>
   <data name="ProfilesPage_GlobalSettings" xml:space="preserve">
-    <value>Global settings</value>
+    <value>全局設置</value>
   </data>
   <data name="ProfilesPage_GlobalSettingsDesc" xml:space="preserve">
-    <value>Change the global profiles settings</value>
+    <value>修改全局配置</value>
   </data>
   <data name="ProfilesPage_GyrometerMultiplier" xml:space="preserve">
-    <value>Gyrometer multiplier</value>
+    <value>陀螺儀靈敏度</value>
   </data>
   <data name="ProfilesPage_GyrometerMultiplierDesc" xml:space="preserve">
-    <value>Change the system reported gyrometer value</value>
+    <value>改變系統回報的角速度</value>
   </data>
   <data name="ProfilesPage_GyroSteeringAxis" xml:space="preserve">
-    <value>Gyro steering axis</value>
+    <value>體感駕駛軸</value>
   </data>
   <data name="ProfilesPage_GyroSteeringAxisDesc" xml:space="preserve">
-    <value>For controlling the horizontal movement of the controller, you can use either the yaw or roll axis</value>
+    <value>你可以選用航向或者橫滾軸控製傾斜</value>
   </data>
   <data name="ProfilesPage_InvertHorizontalAxis" xml:space="preserve">
-    <value>Invert horizontal axis</value>
+    <value>反轉水平軸</value>
   </data>
   <data name="ProfilesPage_InvertVerticalAxis" xml:space="preserve">
-    <value>Invert vertical axis</value>
+    <value>反轉垂直軸</value>
   </data>
   <data name="ProfilesPage_MotionControlSettings" xml:space="preserve">
-    <value>Motion control settings</value>
+    <value>體感設置</value>
   </data>
   <data name="ProfilesPage_MotionControlSettingsDesc" xml:space="preserve">
-    <value>Change the global motion control settings</value>
+    <value>修改全局體感設置</value>
   </data>
   <data name="ProfilesPage_OK" xml:space="preserve">
     <value>OK</value>
     <comment>update</comment>
   </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
-    <value>Profile details</value>
+    <value>配置詳情</value>
   </data>
   <data name="ProfilesPage_ProfileName" xml:space="preserve">
-    <value>Profile name</value>
+    <value>配置名稱</value>
   </data>
   <data name="ProfilesPage_ProfilePath" xml:space="preserve">
-    <value>Profile path</value>
+    <value>配置路徑</value>
   </data>
   <data name="ProfilesPage_Profiles" xml:space="preserve">
-    <value>Profiles</value>
+    <value>配置</value>
   </data>
   <data name="ProfilesPage_ProfileSelection" xml:space="preserve">
-    <value>Profile selection</value>
+    <value>配置選擇</value>
   </data>
   <data name="ProfilesPage_ProfileSelectionDesc" xml:space="preserve">
-    <value>Select the profile you would like to edit</value>
+    <value>選擇你想要編輯的配置</value>
   </data>
   <data name="ProfilesPage_ProfileSettings" xml:space="preserve">
-    <value>Profile settings</value>
+    <value>配置設置</value>
   </data>
   <data name="ProfilesPage_ProfileUpdated1" xml:space="preserve">
     <value>Profile updated</value>
@@ -533,151 +533,154 @@
     <comment>update</comment>
   </data>
   <data name="ProfilesPage_Roll" xml:space="preserve">
-    <value>Roll</value>
+    <value>橫滾</value>
   </data>
   <data name="ProfilesPage_StyleofInput" xml:space="preserve">
-    <value>Style of input</value>
+    <value>輸入形式</value>
   </data>
   <data name="ProfilesPage_StyleofInputTooltip" xml:space="preserve">
-    <value>The physical inputs of the controller can be programmed to act like different types of devices</value>
+    <value>手柄的物理輸入可以被編程成類似於不同類型的設備</value>
   </data>
   <data name="ProfilesPage_StyleofOutput" xml:space="preserve">
-    <value>Output device</value>
+    <value>輸出形式</value>
   </data>
   <data name="ProfilesPage_StyleofOutputTooltip" xml:space="preserve">
-    <value>Select the device that will receive the motion commands</value>
+    <value>當向遊戲發送模擬搖桿命令時，這些命令應該是左搖桿還是右搖桿</value>
   </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
-    <value>Enable universal motion controler</value>
+    <value>啟動全局體感手柄</value>
   </data>
   <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
-    <value>Select the device that will receive the motion commands</value>
+    <value>當向遊戲發送模擬搖桿命令時，這些命令應該是左搖桿還是右搖桿</value>
   </data>
   <data name="ProfilesPage_UMCSettings" xml:space="preserve">
-    <value>Universal motion control settings</value>
+    <value>全局體感設置</value>
   </data>
   <data name="ProfilesPage_UMCSettingsDesc" xml:space="preserve">
-    <value>Translate device motions into controller inputs</value>
+    <value>將設備體感轉換為手柄體感</value>
   </data>
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
-    <value>Update profile</value>
+    <value>更新配置</value>
   </data>
   <data name="ProfilesPage_Whitelist" xml:space="preserve">
-    <value>Allow the application to access device physical controller</value>
+    <value>允許程序使用物理手柄</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>Translates DirectInput calls to XInput calls</value>
+    <value>將DInput轉換為XInput輸入</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
-    <value>Yaw</value>
+    <value>航向</value>
   </data>
   <data name="ProfilesPage_Yes" xml:space="preserve">
     <value>Yes</value>
     <comment>update</comment>
   </data>
-  <data name="Properties.Resources.ControllerPage_Disconnect" xml:space="preserve">
-    <value>Properties.Resources.ControllerPage_Disconnect</value>
-  </data>
   <data name="ServiceDescription" xml:space="preserve">
-    <value>Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and the virtual controller disabled.</value>
+    <value>通過虛擬的DS4手柄，為Windows掌機提供體感支持。如果啟用該服務，物理手柄將不會被白名單外的程序識別到。如果服務被關閉，物理手柄將會再次被啟用，虛擬DS4也將被關閉。</value>
   </data>
   <data name="ServiceName" xml:space="preserve">
     <value>Controller Service</value>
   </data>
   <data name="SettingsPage_AppTheme" xml:space="preserve">
-    <value>Application theme</value>
+    <value>應用主題</value>
   </data>
   <data name="SettingsPage_AppThemeDesc" xml:space="preserve">
-    <value>The application theme, light or dark mode</value>
+    <value>暗夜或者白色主題</value>
   </data>
   <data name="SettingsPage_AutoStartApp" xml:space="preserve">
-    <value>Auto-start application</value>
+    <value>自動啟動程序</value>
   </data>
   <data name="SettingsPage_AutoStartAppDesc" xml:space="preserve">
-    <value>The application will start automatically when I sign in to Windows</value>
+    <value>程序將在登入Windows時自動啟動</value>
   </data>
   <data name="SettingsPage_CheckForUpdates" xml:space="preserve">
-    <value>Check for updates</value>
+    <value>檢查更新</value>
   </data>
   <data name="SettingsPage_CloseMinimizes" xml:space="preserve">
-    <value>Close minimizes</value>
+    <value>最小化窗口</value>
   </data>
   <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
-    <value>The application will be minimized instead of closed</value>
+    <value>程序將會被最小化，而不是關閉</value>
   </data>
   <data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
-    <value>Downloading - </value>
+    <value>下載中 - 100%</value>
   </data>
   <data name="SettingsPage_GeneralOptions" xml:space="preserve">
-    <value>General options</value>
+    <value>通用設置</value>
   </data>
   <data name="SettingsPage_HaltWithCompanion" xml:space="preserve">
-    <value>Halt with Companion</value>
+    <value>自動關閉服務</value>
   </data>
   <data name="SettingsPage_HaltWithCompanionDesc" xml:space="preserve">
-    <value>Automatically turn off service when companion is closed</value>
+    <value>掌機伴侶關閉時自動關閉服務</value>
   </data>
   <data name="SettingsPage_InstallNow" xml:space="preserve">
-    <value>Install now</value>
+    <value>立即安裝</value>
   </data>
   <data name="SettingsPage_LastChecked" xml:space="preserve">
-    <value>Last checked: </value>
+    <value>最後一次檢查：今天</value>
+  </data>
+  <data name="SettingsPage_LastChecked1" xml:space="preserve">
+    <value>最後一次檢查：</value>
   </data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
-    <value>Notification options</value>
+    <value>通知設置</value>
   </data>
   <data name="SettingsPage_OpenAppBackground" xml:space="preserve">
-    <value>Open application in background</value>
+    <value>在背景中打開應用</value>
   </data>
   <data name="SettingsPage_OpenAppBackgroundDesc" xml:space="preserve">
-    <value>The application will initially start minimized and appear on the taskbar</value>
+    <value>應用程序啟動時將開始最小化，並出現在任務欄上</value>
   </data>
   <data name="SettingsPage_ServiceOptions" xml:space="preserve">
-    <value>Service options</value>
+    <value>服務設置</value>
   </data>
   <data name="SettingsPage_Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>設置</value>
   </data>
   <data name="SettingsPage_StartupType" xml:space="preserve">
-    <value>Startup type</value>
+    <value>啟動類型</value>
   </data>
   <data name="SettingsPage_StartupTypeDesc" xml:space="preserve">
-    <value>Used by the service manager to define the service startup type</value>
+    <value>由服務管理器用於定義服務啟動類型</value>
   </data>
   <data name="SettingsPage_StartWithCompanion" xml:space="preserve">
-    <value>Start with Companion</value>
+    <value>自動啟動服務</value>
   </data>
   <data name="SettingsPage_StartWithCompanionDesc" xml:space="preserve">
-    <value>Automatically turn on service when companion starts</value>
+    <value>掌機伴侶啟動時自動啟動服務</value>
   </data>
   <data name="SettingsPage_ThemeDark" xml:space="preserve">
-    <value>Dark</value>
+    <value>深色</value>
   </data>
   <data name="SettingsPage_ThemeLight" xml:space="preserve">
-    <value>Light</value>
+    <value>白色</value>
   </data>
   <data name="SettingsPage_ToastNotification" xml:space="preserve">
-    <value>Toast notification</value>
+    <value>烤面包通知 :)</value>
   </data>
   <data name="SettingsPage_ToastNotificationDesc" xml:space="preserve">
-    <value>Get notifications from the application in the Windows action center</value>
+    <value>從Windows操作中心的應用程序獲取通知</value>
   </data>
   <data name="SettingsPage_UpdateAvailable" xml:space="preserve">
-    <value>Updates available</value>
+    <value>有可用的更新</value>
   </data>
   <data name="SettingsPage_UpdateCheck" xml:space="preserve">
-    <value>Checking for updates...</value>
+    <value>正在檢查更新...</value>
   </data>
   <data name="SettingsPage_UpToDate" xml:space="preserve">
-    <value>You're up to date</value>
+    <value>版本以是最新</value>
+  </data>
+  <data name="SettingsPage_Version" xml:space="preserve">
+    <value>掌機伴侶 (V0.9.2.0)</value>
   </data>
   <data name="ToastNewControllerEx" xml:space="preserve">
-    <value>Controller is now cloaked and inputs forwarded to virtual controller</value>
+    <value>物理手柄已被隱藏，輸入被映射到虛擬手柄</value>
   </data>
   <data name="User" xml:space="preserve">
-    <value>User</value>
+    <value>用戶</value>
   </data>
   <data name="WarningElevated" xml:space="preserve">
-    <value>Run this tool as Administrator to unlock these settings.</value>
+    <value>以管理員身份運行此工具以解鎖這些設置</value>
   </data>
 </root>

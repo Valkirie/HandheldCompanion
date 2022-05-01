@@ -367,11 +367,47 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        public static string MainWindow_OK {
+            get {
+                return ResourceManager.GetString("MainWindow_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deploy service.
         /// </summary>
         public static string MainWindow_serviceDeploy {
             get {
                 return ResourceManager.GetString("MainWindow_serviceDeploy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Service manager.
+        /// </summary>
+        public static string MainWindow_ServiceManager {
+            get {
+                return ResourceManager.GetString("MainWindow_ServiceManager", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oups. There was an issue while we tried to start the service..
+        /// </summary>
+        public static string MainWindow_ServiceManagerStartIssue {
+            get {
+                return ResourceManager.GetString("MainWindow_ServiceManagerStartIssue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oups. There was an issue while we tried to stop the service..
+        /// </summary>
+        public static string MainWindow_ServiceManagerStopIssue {
+            get {
+                return ResourceManager.GetString("MainWindow_ServiceManagerStopIssue", resourceCulture);
             }
         }
         
@@ -943,11 +979,65 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete.
+        /// </summary>
+        public static string ProfilesPage_AreYouSureDelete1 {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AreYouSureDelete1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This item will be deleted immediatly. You can&apos;t undo this action..
+        /// </summary>
+        public static string ProfilesPage_AreYouSureDelete2 {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AreYouSureDelete2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to overwrite.
+        /// </summary>
+        public static string ProfilesPage_AreYouSureOverwrite1 {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AreYouSureOverwrite1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This item will be overwriten. You can&apos;t undo this action..
+        /// </summary>
+        public static string ProfilesPage_AreYouSureOverwrite2 {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AreYouSureOverwrite2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string ProfilesPage_Cancel {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create a new profile.
         /// </summary>
         public static string ProfilesPage_CreateNewProfile {
             get {
                 return ResourceManager.GetString("ProfilesPage_CreateNewProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string ProfilesPage_Delete {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Delete", resourceCulture);
             }
         }
         
@@ -1087,6 +1177,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        public static string ProfilesPage_OK {
+            get {
+                return ResourceManager.GetString("ProfilesPage_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Profile details.
         /// </summary>
         public static string ProfilesPage_ProfileDetails {
@@ -1146,6 +1245,24 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_ProfileSettings {
             get {
                 return ResourceManager.GetString("ProfilesPage_ProfileSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile updated.
+        /// </summary>
+        public static string ProfilesPage_ProfileUpdated1 {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProfileUpdated1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to was updated..
+        /// </summary>
+        public static string ProfilesPage_ProfileUpdated2 {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ProfileUpdated2", resourceCulture);
             }
         }
         
@@ -1263,6 +1380,24 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_Yaw {
             get {
                 return ResourceManager.GetString("ProfilesPage_Yaw", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string ProfilesPage_Yes {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Properties.Resources.ControllerPage_Disconnect.
+        /// </summary>
+        public static string Properties_Resources_ControllerPage_Disconnect {
+            get {
+                return ResourceManager.GetString("Properties.Resources.ControllerPage_Disconnect", resourceCulture);
             }
         }
         

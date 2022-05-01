@@ -195,13 +195,11 @@ namespace HandheldCompanion.Views
             serviceManager.Updated += OnServiceUpdate;
             serviceManager.StartFailed += (status) =>
             {
-                // todo: implement localized strings
-                Dialog.ShowAsync("Service manager", "Oups. There was an issue while we tried to start the service.", ContentDialogButton.Primary, null, "OK");
+                Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStartIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
             };
             serviceManager.StopFailed += (status) =>
             {
-                // todo: implement localized strings
-                Dialog.ShowAsync("Service manager", "Oups. There was an issue while we tried to stop the service.", ContentDialogButton.Primary, null, "OK");
+                Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStopIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
             };
 
             // initialize task manager

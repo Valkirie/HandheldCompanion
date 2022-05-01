@@ -31,7 +31,18 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 
 ## Supported Languages
 - English
-- French (Work in progres...)
+- French
+- Chinese (Simplified)
+- Chinese (Traditional)
+
+## Visuals
+
+![image](https://user-images.githubusercontent.com/934757/158461053-180c23d3-844a-4187-bf4b-968eb504d89e.png)
+![image](https://user-images.githubusercontent.com/934757/158461074-b387f10a-de24-40df-a52e-61711850b24a.png)
+![image](https://user-images.githubusercontent.com/934757/158461093-62402463-4e46-45e5-b1db-9045ab8f38e5.png)
+![image](https://user-images.githubusercontent.com/934757/158461113-70890600-a7c4-46fb-a8ec-f39eb2341ee3.png)
+![image](https://user-images.githubusercontent.com/934757/158461938-e5c96ad7-b6eb-4bd2-9260-9f4c1ca4d199.png)
+![image](https://user-images.githubusercontent.com/934757/158461955-6cffd0ac-0399-4afa-9d32-cfb3ab6aab5b.png)
 
 ## Contribute
 ### Bugs & Features
@@ -62,12 +73,3 @@ Run the `install.exe` as administrator and you'll be set!
 This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 We believe in the fair use of open-source solutions. We expect OEMs to come forward before distributing our solution with their devices. This way we can work together to make your device and our solution compatible in the best possible way. We reserve the right to take any action necessary to block partial or full access to the application to any entities that do not comply with the license or fair use principle.
-
-## Visuals
-
-![image](https://user-images.githubusercontent.com/934757/158461053-180c23d3-844a-4187-bf4b-968eb504d89e.png)
-![image](https://user-images.githubusercontent.com/934757/158461074-b387f10a-de24-40df-a52e-61711850b24a.png)
-![image](https://user-images.githubusercontent.com/934757/158461093-62402463-4e46-45e5-b1db-9045ab8f38e5.png)
-![image](https://user-images.githubusercontent.com/934757/158461113-70890600-a7c4-46fb-a8ec-f39eb2341ee3.png)
-![image](https://user-images.githubusercontent.com/934757/158461938-e5c96ad7-b6eb-4bd2-9260-9f4c1ca4d199.png)
-![image](https://user-images.githubusercontent.com/934757/158461955-6cffd0ac-0399-4afa-9d32-cfb3ab6aab5b.png)
