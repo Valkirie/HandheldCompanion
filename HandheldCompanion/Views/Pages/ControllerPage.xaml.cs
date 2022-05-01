@@ -224,6 +224,8 @@ namespace HandheldCompanion.Views.Pages
                             int index = int.Parse(property);
                             if (RadioControllers.Items.Count > index)
                                 RadioControllers.SelectedIndex = index;
+                            else if (RadioControllers.Items.Count >= 1)
+                                RadioControllers.SelectedIndex = 0;
                         });
                         break;
                     case "HIDmode":
