@@ -3,9 +3,11 @@ using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using SharpDX.XInput;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Timers;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Media3D;
@@ -52,9 +54,12 @@ namespace HandheldCompanion.Views.Windows
         private Point LeftTrackPadPosition;
         private Point RightTrackPadPosition;
 
+        Vibration HapticVibration = new Vibration();
+        Timer HapticTimerLeft = new Timer() { Interval = 100 };
+        Timer HapticTimerRight = new Timer() { Interval = 100 };
+
         private enum TouchTarget
         {
-            SwipeTop = 0,
             TrackpadLeft = 1,
             TrackpadRight = 2
         }
@@ -103,7 +108,22 @@ namespace HandheldCompanion.Views.Windows
             UpdateTimer.Tick += UpdateReport;
             UpdateTimer.Start();
 
+            HapticTimerLeft.Elapsed += HapticTimerLeft_Elapsed;
+            HapticTimerRight.Elapsed += HapticTimerRight_Elapsed;
+
             this.SourceInitialized += Overlay_SourceInitialized;
+        }
+
+        private void HapticTimerRight_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            HapticVibration.RightMotorSpeed = 0;
+            controllerEx.Controller.SetVibration(HapticVibration);
+        }
+
+        private void HapticTimerLeft_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            HapticVibration.LeftMotorSpeed = 0;
+            controllerEx.Controller.SetVibration(HapticVibration);
         }
 
         public Overlay(ILogger logger, PipeClient pipeClient) : this()
@@ -167,20 +187,32 @@ namespace HandheldCompanion.Views.Windows
             this.RightTrackPadPosition = RightTrackpad.PointToScreen(new Point(0, 0));
         }
 
+        private void HapticFeedback(TouchTarget target)
+        {
+            if (controllerEx is null)
+                return;
+
+            switch (target)
+            {
+                default:
+                case TouchTarget.TrackpadLeft:
+                    HapticVibration.LeftMotorSpeed = 8000;
+                    HapticTimerLeft.Stop();
+                    HapticTimerLeft.Start();
+                    break;
+                case TouchTarget.TrackpadRight:
+                    HapticVibration.RightMotorSpeed = 8000;
+                    HapticTimerRight.Stop();
+                    HapticTimerRight.Start();
+                    break;
+            }
+
+            controllerEx.Controller.SetVibration(HapticVibration);
+        }
+
+        Dictionary<Int32, int> TouchDistance = new();
         private void Touchsource_Touch(TouchArgs args, long time)
         {
-            /* handle top screen swipe
-            if (swipe != null && args.Id == swipe.Id)
-            {
-                if (args.Status == CursorEvent.EventType.MOVE)
-                    if (args.LocationY - swipe.LocationY > 40) // hardcoded
-                    {
-                        swipe = null;
-                        UpdateControllerVisibility();
-                    }
-                return;
-            } */
-
             double X = args.LocationX - this.OverlayPosition.X;
             double Y = args.LocationY - this.OverlayPosition.Y;
 
@@ -201,10 +233,6 @@ namespace HandheldCompanion.Views.Windows
                     Button = CursorButton.TouchRight;
                     CurrentPoint = RightTrackPadPosition;
                     break;
-                case TouchTarget.SwipeTop:
-                    if (args.Status == CursorEvent.EventType.DOWN)
-                        swipe = args;
-                    return;
             }
 
             // normalized
@@ -221,6 +249,8 @@ namespace HandheldCompanion.Views.Windows
                     {
                         if (args.Status == CursorEvent.EventType.DOWN)
                         {
+                            HapticFeedback(TouchTarget.TrackpadLeft);
+
                             LeftTrackpad.Opacity += 0.25;
                             var elapsed = time - prevLeftTrackPadTime;
                             if (elapsed < 200)
@@ -228,7 +258,13 @@ namespace HandheldCompanion.Views.Windows
                             prevLeftTrackPadTime = time;
                         }
                         else if (args.Status == CursorEvent.EventType.UP)
+                        {
                             LeftTrackpad.Opacity -= 0.25;
+                        }
+                        else if (args.Status == CursorEvent.EventType.MOVE)
+                        {
+                            // do something
+                        }
                     }
                     break;
 
@@ -236,6 +272,8 @@ namespace HandheldCompanion.Views.Windows
                     {
                         if (args.Status == CursorEvent.EventType.DOWN)
                         {
+                            HapticFeedback(TouchTarget.TrackpadRight);
+
                             RightTrackpad.Opacity += 0.25;
                             var elapsed = time - prevRightTrackPadTime;
                             if (elapsed < 200)
@@ -243,7 +281,13 @@ namespace HandheldCompanion.Views.Windows
                             prevRightTrackPadTime = time;
                         }
                         else if (args.Status == CursorEvent.EventType.UP)
+                        {
                             RightTrackpad.Opacity -= 0.25;
+                        }
+                        else if (args.Status == CursorEvent.EventType.MOVE)
+                        {
+                            // do something
+                        }
 
                         normalizedX += 0.5d;
                     }
