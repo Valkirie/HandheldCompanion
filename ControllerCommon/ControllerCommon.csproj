@@ -35,7 +35,7 @@
 
   <ItemGroup>
     <Reference Include="Nefarius.Utilities.DeviceManagement">
-      <HintPath>..\..\Nefarius.Utilities.DeviceManagement\bin\netstandard2.0\Nefarius.Utilities.DeviceManagement.dll</HintPath>
+      <HintPath>..\dependencies\Nefarius.Utilities.DeviceManagement.dll</HintPath>
     </Reference>
   </ItemGroup>
 
