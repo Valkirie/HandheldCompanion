@@ -308,22 +308,26 @@ namespace HandheldCompanion.Views.Windows
             }
 
             // Handle triggers
-            if ((Gamepad.Buttons & mainTrigger) != 0)
+            if (Gamepad.Buttons.HasFlag(mainTrigger))
             {
-                if (!isTriggered)
+                if (Gamepad.Buttons.HasFlag(controllerTrigger) && !isTriggered)
                 {
-                    isTriggered = true;
-
-                    if (Gamepad.Buttons.HasFlag(controllerTrigger))
-                        UpdateControllerVisibility();
-                    if (Gamepad.Buttons.HasFlag(trackpadTrigger))
-                        UpdateTrackpadsVisibility();
-
+                    UpdateControllerVisibility();
                     UpdateVisibility();
+                    isTriggered = true;
+                }
+                
+                if (Gamepad.Buttons.HasFlag(trackpadTrigger) && !isTriggered)
+                {
+                    UpdateTrackpadsVisibility();
+                    UpdateVisibility();
+                    isTriggered = true;
                 }
             }
             else if (isTriggered)
+            {
                 isTriggered = false;
+            }
 
             // handle triggers update
             if (ControllerTriggerListening && Gamepad.Buttons != 0)
