@@ -65,7 +65,7 @@ namespace HandheldCompanion.Views.Windows
         Dictionary<TouchTarget, double> TrackpadSlidingDistance = new();
 
         Timer LeftTrackpadSliding = new Timer() { Interval = 100, AutoReset = true };
-        Timer RightTrackpadSliding = new Timer() { Interval = 50, AutoReset = true };
+        Timer RightTrackpadSliding = new Timer() { Interval = 10, AutoReset = true };
         Dictionary<TouchTarget, Timer> TrackpadSlidingTimer = new();
 
         private enum TouchTarget
@@ -135,7 +135,7 @@ namespace HandheldCompanion.Views.Windows
             // this is actually distance since last timer elapse ie a speed
             // pixels per time (depends on timer), default 10 msec
             double speed = Math.Abs(TrackpadSlidingDistance[TouchTarget.TrackpadRight] - prevTrackpadSlidingDistance[TouchTarget.TrackpadRight]);
-            speed *= 200.0; // pixels per second
+            speed *= 1000.0; // pixels per second
             int[] FrequencyArray = new int[] { 0 };
 
             logger.LogInformation("Speed: {0}", speed);
