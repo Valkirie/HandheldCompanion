@@ -100,15 +100,15 @@ namespace HandheldCompanion
                     device = device,
                     path = path,
                     isVirtual = IsVirtualDevice(device),
-                    deviceIndex = deviceIndex
+                    deviceIndex = deviceIndex,
+                    arrivalDate = device.GetProperty<DateTimeOffset>(DevicePropertyDevice.LastArrivalDate)
                 };
 
                 devices.Add(deviceEx);
             }
 
-            // temporary : put virtual controllers down the list
-            // todo : rely on Last arrival date
-            devices = devices.OrderByDescending(a => a.deviceIndex).ThenBy(a => a.isVirtual).ToList();
+            // rely on device Last arrival date
+            devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();
 
             for (int idx = 0; idx < 4; idx++)
             {

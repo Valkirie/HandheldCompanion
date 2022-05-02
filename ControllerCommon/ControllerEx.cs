@@ -16,6 +16,7 @@ namespace ControllerCommon
         public PnPDevice device;
         public string path;
         public bool isVirtual;
+        public DateTimeOffset arrivalDate;
     }
 
     public class ControllerEx
