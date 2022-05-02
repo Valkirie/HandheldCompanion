@@ -55,8 +55,14 @@ namespace HandheldCompanion.Views.Windows
         private Point RightTrackPadPosition;
 
         Vibration HapticVibration = new Vibration();
-        Timer HapticTimerLeft = new Timer() { Interval = 100 };
-        Timer HapticTimerRight = new Timer() { Interval = 100 };
+        Timer HapticTimerLeft = new Timer() { Interval = 25 };
+        Timer HapticTimerRight = new Timer() { Interval = 25 };
+
+        Dictionary<TouchTarget, double> prevTrackpadSlidingDistance = new();
+        Dictionary<TouchTarget, double> TrackpadSlidingDistance = new();
+
+        Timer LeftTrackpadSliding = new Timer() { Interval = 125, AutoReset = true, Enabled = true };
+        Timer RightTrackpadSliding = new Timer() { Interval = 125, AutoReset = true, Enabled = true };
 
         private enum TouchTarget
         {
@@ -108,10 +114,38 @@ namespace HandheldCompanion.Views.Windows
             UpdateTimer.Tick += UpdateReport;
             UpdateTimer.Start();
 
+            TrackpadSlidingDistance[TouchTarget.TrackpadLeft] = 0;
+            TrackpadSlidingDistance[TouchTarget.TrackpadRight] = 0;
+            prevTrackpadSlidingDistance[TouchTarget.TrackpadLeft] = 0;
+            prevTrackpadSlidingDistance[TouchTarget.TrackpadRight] = 0;
+
             HapticTimerLeft.Elapsed += HapticTimerLeft_Elapsed;
             HapticTimerRight.Elapsed += HapticTimerRight_Elapsed;
 
+            LeftTrackpadSliding.Elapsed += LeftTrackpadSliding_Elapsed;
+            RightTrackpadSliding.Elapsed += RightTrackpadSliding_Elapsed;
+
             this.SourceInitialized += Overlay_SourceInitialized;
+        }
+
+        private void RightTrackpadSliding_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            double dist = Math.Abs(TrackpadSlidingDistance[TouchTarget.TrackpadRight] - prevTrackpadSlidingDistance[TouchTarget.TrackpadRight]);
+
+            if (dist > 10)
+                HapticFeedback(TouchTarget.TrackpadRight);
+
+            prevTrackpadSlidingDistance[TouchTarget.TrackpadRight] = TrackpadSlidingDistance[TouchTarget.TrackpadRight];
+        }
+
+        private void LeftTrackpadSliding_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            double dist = Math.Abs(prevTrackpadSlidingDistance[TouchTarget.TrackpadLeft] - TrackpadSlidingDistance[TouchTarget.TrackpadLeft]);
+
+            if (dist > 10)
+                HapticFeedback(TouchTarget.TrackpadLeft);
+
+            prevTrackpadSlidingDistance[TouchTarget.TrackpadLeft] = TrackpadSlidingDistance[TouchTarget.TrackpadLeft];
         }
 
         private void HapticTimerRight_Elapsed(object? sender, ElapsedEventArgs e)
@@ -196,12 +230,12 @@ namespace HandheldCompanion.Views.Windows
             {
                 default:
                 case TouchTarget.TrackpadLeft:
-                    HapticVibration.LeftMotorSpeed = 8000;
+                    HapticVibration.LeftMotorSpeed = 4000;
                     HapticTimerLeft.Stop();
                     HapticTimerLeft.Start();
                     break;
                 case TouchTarget.TrackpadRight:
-                    HapticVibration.RightMotorSpeed = 8000;
+                    HapticVibration.RightMotorSpeed = 4000;
                     HapticTimerRight.Stop();
                     HapticTimerRight.Start();
                     break;
@@ -210,7 +244,6 @@ namespace HandheldCompanion.Views.Windows
             controllerEx.Controller.SetVibration(HapticVibration);
         }
 
-        Dictionary<Int32, int> TouchDistance = new();
         private void Touchsource_Touch(TouchArgs args, long time)
         {
             double X = args.LocationX - this.OverlayPosition.X;
@@ -242,6 +275,15 @@ namespace HandheldCompanion.Views.Windows
             var normalizedX = (relativeX / LeftTrackpad.ActualWidth) / 2.0d;
             var normalizedY = relativeY / LeftTrackpad.ActualHeight;
 
+            switch (args.Status)
+            {
+                case CursorEvent.EventType.DOWN:
+                    break;
+                case CursorEvent.EventType.MOVE:
+                    TrackpadSlidingDistance[target] = relativeX;
+                    break;
+            }
+
             switch (target)
             {
                 default:
@@ -249,8 +291,6 @@ namespace HandheldCompanion.Views.Windows
                     {
                         if (args.Status == CursorEvent.EventType.DOWN)
                         {
-                            HapticFeedback(TouchTarget.TrackpadLeft);
-
                             LeftTrackpad.Opacity += 0.25;
                             var elapsed = time - prevLeftTrackPadTime;
                             if (elapsed < 200)
@@ -261,10 +301,6 @@ namespace HandheldCompanion.Views.Windows
                         {
                             LeftTrackpad.Opacity -= 0.25;
                         }
-                        else if (args.Status == CursorEvent.EventType.MOVE)
-                        {
-                            // do something
-                        }
                     }
                     break;
 
@@ -272,8 +308,6 @@ namespace HandheldCompanion.Views.Windows
                     {
                         if (args.Status == CursorEvent.EventType.DOWN)
                         {
-                            HapticFeedback(TouchTarget.TrackpadRight);
-
                             RightTrackpad.Opacity += 0.25;
                             var elapsed = time - prevRightTrackPadTime;
                             if (elapsed < 200)
@@ -283,10 +317,6 @@ namespace HandheldCompanion.Views.Windows
                         else if (args.Status == CursorEvent.EventType.UP)
                         {
                             RightTrackpad.Opacity -= 0.25;
-                        }
-                        else if (args.Status == CursorEvent.EventType.MOVE)
-                        {
-                            // do something
                         }
 
                         normalizedX += 0.5d;
