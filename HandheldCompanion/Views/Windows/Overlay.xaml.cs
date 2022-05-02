@@ -135,16 +135,15 @@ namespace HandheldCompanion.Views.Windows
         {
 
             int[] FrequencyArray = new int[] { 0 };
-
-            logger.LogInformation("Speed: {0}", SpeedRight);
+            FrequencyRight = 0;
 
             // SpeedRight 0, skip, set to 0
             // Use some intervals
-            if (SpeedRight > 0 && SpeedRight <= 300) { FrequencyArray = new int[] { 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 }; FrequencyRight = 3125; }
-            else if (SpeedRight > 300 && SpeedRight <= 600) { FrequencyArray = new int[] { 1, 1, 1, 1, 0, 0, 0, 0 }; FrequencyRight = 625; }
-            else if (SpeedRight > 600 && SpeedRight <= 900) { FrequencyArray = new int[] { 1, 1, 1, 0, 0, 0 }; FrequencyRight = 125; }
-            else if (SpeedRight > 900 && SpeedRight <= 1200) { FrequencyArray = new int[] { 1, 1, 0, 0 }; FrequencyRight = 25; }
-            else if (SpeedRight > 1200) { FrequencyArray = new int[] { 1, 0 }; FrequencyRight = 50; }
+            if (SpeedRight > 0 && SpeedRight <= 50) { FrequencyArray = new int[] { 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 }; FrequencyRight = 3125; }
+            else if (SpeedRight > 50 && SpeedRight <= 100) { FrequencyArray = new int[] { 1, 1, 1, 1, 0, 0, 0, 0 }; FrequencyRight = 625; }
+            else if (SpeedRight > 150 && SpeedRight <= 200) { FrequencyArray = new int[] { 1, 1, 1, 0, 0, 0 }; FrequencyRight = 125; }
+            else if (SpeedRight > 200 && SpeedRight <= 250) { FrequencyArray = new int[] { 1, 1, 0, 0 }; FrequencyRight = 25; }
+            else if (SpeedRight > 250) { FrequencyArray = new int[] { 1, 0 }; FrequencyRight = 50; }
 
             // If we have changed frequency, start over, yes this get's cut off rather ugly
             // alternatively find first occurence of similar value and start from there...
@@ -157,7 +156,8 @@ namespace HandheldCompanion.Views.Windows
             if (FrequencyArray[HapticFeedbackCounterRight] == 1) { HapticVibration.RightMotorSpeed = 4000; }
             else { HapticVibration.RightMotorSpeed = 0; }
             controllerEx.Controller.SetVibration(HapticVibration);
-                       
+
+            //logger.LogInformation("Speed: {0}, FrequencyRight: {1}, HapticFeedbackCounterRight: {2}, Vibe: {3}, FreqArray {4}", SpeedRight, FrequencyRight, HapticFeedbackCounterRight, FrequencyArray[HapticFeedbackCounterRight], FrequencyArray);
 
             // Increment index counter
             HapticFeedbackCounterRight += 1;
