@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using PInvoke;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,14 @@ using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerCommon
 {
+    public struct PnPDeviceEx
+    {
+        public int deviceIndex;
+        public PnPDevice device;
+        public string path;
+        public bool isVirtual;
+    }
+
     public class ControllerEx
     {
         private ILogger logger;
@@ -30,7 +39,19 @@ namespace ControllerCommon
         private Timer IdentifyTimer;
 
         [DllImport("hid.dll", EntryPoint = "HidD_GetHidGuid")]
-        static internal extern void HidD_GetHidGuidMethod(out Guid hidGuid);
+        static internal extern void HidD_GetHidGuid(out Guid hidGuid);
+
+        [DllImport("hid.dll", EntryPoint = "HidD_GetAttributes")]
+        static internal extern bool HidD_GetAttributes(IntPtr hidDeviceObject, ref Attributes attributes);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Attributes
+        {
+            public int Size;
+            public ushort VendorID;
+            public ushort ProductID;
+            public short VersionNumber;
+        }
 
         private readonly Guid hidClassInterfaceGuid;
 
@@ -55,55 +76,76 @@ namespace ControllerCommon
             }
         }
 
-        public ControllerEx(UserIndex index, ILogger logger, ref List<PnPDevice> devices) : this(index, logger)
+        public ControllerEx(UserIndex index, ILogger logger, ref List<PnPDeviceEx> devices) : this(index, logger)
         {
             if (ProductId is null || VendorId is null)
                 return;
 
-            for (int i = 0; i < devices.Count; i++)
+            foreach(PnPDeviceEx deviceEx in devices)
             {
-                device = devices[i];
+                device = deviceEx.device;
 
-                if (!device.DeviceId.Contains($"PID_{ProductId}", StringComparison.OrdinalIgnoreCase) || !device.DeviceId.Contains($"VID_{VendorId}", StringComparison.OrdinalIgnoreCase))
+                // get attributes
+                Attributes device_attributes = new Attributes();
+                GetHidAttributes(deviceEx.path, out device_attributes);
+
+                if (device_attributes.ProductID != CapabilitiesEx.ProductId || device_attributes.VendorID != CapabilitiesEx.VendorId)
                     continue;
+
+                isVirtual = deviceEx.isVirtual;
 
                 // update HID
                 deviceInstancePath = device.DeviceId;
-
-                while (device is not null && device.DeviceId.Contains($"VID_{VendorId}"))
-                {
-                    // update device details
-                    DeviceDesc = device.GetProperty<string>(DevicePropertyDevice.DeviceDesc);
-                    Manufacturer = device.GetProperty<string>(DevicePropertyDevice.Manufacturer);
-
-                    baseContainerDeviceInstancePath = device.DeviceId;
-                    devices.Remove(device);
-
-                    var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
-
-                    if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
-                        return;
-
-                    if (parentId.Contains(@"USB\ROOT", StringComparison.OrdinalIgnoreCase))
-                        return;
-
-                    if (parentId.Contains(@"HID\", StringComparison.OrdinalIgnoreCase))
-                        return;
-
-                    if (device.InstanceId.StartsWith(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase) ||
-                        device.InstanceId.StartsWith(@"ROOT\USB", StringComparison.OrdinalIgnoreCase))
-                    {
-                        isVirtual = true;
-                        return;
-                    }
-
-                    device = PnPDevice.GetDeviceByInstanceId(parentId, DeviceLocationFlags.Phantom);
-                }
+                devices.Remove(deviceEx);
+                break;
             }
 
-            // dirty, device contains HID
-            if (DeviceDesc is null || Manufacturer is null)
-                isVirtual = true;
+            while (device is not null)
+            {
+                // update device details
+                DeviceDesc = device.GetProperty<string>(DevicePropertyDevice.DeviceDesc);
+                Manufacturer = device.GetProperty<string>(DevicePropertyDevice.Manufacturer);
+
+                baseContainerDeviceInstancePath = device.DeviceId;
+
+                var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+
+                if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
+                    return;
+
+                if (parentId.Contains(@"USB\ROOT", StringComparison.OrdinalIgnoreCase))
+                    return;
+
+                if (parentId.Contains(@"HID\", StringComparison.OrdinalIgnoreCase))
+                    return;
+
+                if (!parentId.Contains(ProductId) && !parentId.Contains(VendorId))
+                    return;
+
+                device = PnPDevice.GetDeviceByInstanceId(parentId, DeviceLocationFlags.Normal);
+            }
+        }
+
+        private bool GetHidAttributes(string path, out Attributes attributes)
+        {
+            attributes = new Attributes();
+
+            using var handle = Kernel32.CreateFile(path,
+                Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
+                Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
+                Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
+                IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
+                Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
+                | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
+                | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
+                Kernel32.SafeObjectHandle.Null
+            );
+
+            var ret = HidD_GetAttributes(handle.DangerousGetHandle(), ref attributes);
+
+            if (!ret) return false;
+
+            return true;
         }
 
         public override string ToString()

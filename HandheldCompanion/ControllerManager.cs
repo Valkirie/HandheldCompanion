@@ -4,6 +4,7 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Timers;
@@ -26,7 +27,7 @@ namespace HandheldCompanion
         private Dictionary<string, ControllerEx> controllers;
 
         private readonly Guid hidClassInterfaceGuid;
-        private List<PnPDevice> devices = new();
+        private List<PnPDeviceEx> devices = new();
 
         public event ControllerPluggedEventHandler ControllerPlugged;
         public delegate void ControllerPluggedEventHandler(ControllerEx controller);
@@ -61,13 +62,53 @@ namespace HandheldCompanion
             WatcherTimer_Tick(null, null);
         }
 
+        private bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)
+        {
+            while (device is not null)
+            {
+                var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+
+                if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
+                    break;
+
+                device = PnPDevice.GetDeviceByInstanceId(parentId,
+                    isRemoved
+                        ? DeviceLocationFlags.Phantom
+                        : DeviceLocationFlags.Normal
+                );
+            }
+
+            //
+            // TODO: test how others behave (reWASD, NVIDIA, ...)
+            // 
+            return device is not null &&
+                   (device.InstanceId.StartsWith(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase)
+                    || device.InstanceId.StartsWith(@"ROOT\USB", StringComparison.OrdinalIgnoreCase));
+        }
+
         private void WatcherTimer_Tick(object? sender, EventArgs e)
         {
             int deviceIndex = 0;
             devices.Clear();
 
             while (Devcon.Find(hidClassInterfaceGuid, out var path, out var instanceId, deviceIndex++))
-                devices.Add(PnPDevice.GetDeviceByInterfaceId(path));
+            {
+                var device = PnPDevice.GetDeviceByInterfaceId(path);
+
+                PnPDeviceEx deviceEx = new PnPDeviceEx()
+                {
+                    device = device,
+                    path = path,
+                    isVirtual = IsVirtualDevice(device),
+                    deviceIndex = deviceIndex
+                };
+
+                devices.Add(deviceEx);
+            }
+
+            // temporary : put virtual controllers down the list
+            // todo : rely on Last arrival date
+            devices = devices.OrderByDescending(a => a.deviceIndex).ThenBy(a => a.isVirtual).ToList();
 
             for (int idx = 0; idx < 4; idx++)
             {
@@ -82,14 +123,23 @@ namespace HandheldCompanion
                 if (!controllerEx.IsConnected())
                     continue;
 
+                // raise event
                 ControllerPlugged?.Invoke(controllerEx);
             }
 
-            // controller was unplugged
-            foreach (ControllerEx controllerEx in controllers.Values)
+            string[] keys = controllers.Keys.ToArray();
+
+            foreach(string key in keys)
             {
+                ControllerEx controllerEx = controllers[key];
                 if (!controllerEx.IsConnected())
+                {
+                    // controller was unplugged
+                    controllers.Remove(key);
+
+                    // raise event
                     ControllerUnplugged?.Invoke(controllerEx);
+                }
             }
         }
 

@@ -80,11 +80,9 @@ namespace ControllerCommon.Utils
             [MarshalAs(UnmanagedType.U2)]
             public ushort ProductId;
             [MarshalAs(UnmanagedType.U2)]
-            public ushort VersionNumber;
-            [MarshalAs(UnmanagedType.U2)]
-            public ushort unk1;
+            public UInt16 REV;
             [MarshalAs(UnmanagedType.U4)]
-            public uint unk2;
+            public UInt32 XID;
         };
 
         [DllImport("xinput1_4.dll", EntryPoint = "#108")]
