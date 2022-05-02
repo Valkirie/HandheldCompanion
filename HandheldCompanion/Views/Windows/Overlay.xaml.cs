@@ -61,8 +61,9 @@ namespace HandheldCompanion.Views.Windows
         Dictionary<TouchTarget, double> prevTrackpadSlidingDistance = new();
         Dictionary<TouchTarget, double> TrackpadSlidingDistance = new();
 
-        Timer LeftTrackpadSliding = new Timer() { Interval = 125, AutoReset = true, Enabled = true };
-        Timer RightTrackpadSliding = new Timer() { Interval = 125, AutoReset = true, Enabled = true };
+        Timer LeftTrackpadSliding = new Timer() { Interval = 100, AutoReset = true };
+        Timer RightTrackpadSliding = new Timer() { Interval = 100, AutoReset = true };
+        Dictionary<TouchTarget, Timer> TrackpadSlidingTimer = new();
 
         private enum TouchTarget
         {
@@ -114,13 +115,11 @@ namespace HandheldCompanion.Views.Windows
             UpdateTimer.Tick += UpdateReport;
             UpdateTimer.Start();
 
-            TrackpadSlidingDistance[TouchTarget.TrackpadLeft] = 0;
-            TrackpadSlidingDistance[TouchTarget.TrackpadRight] = 0;
-            prevTrackpadSlidingDistance[TouchTarget.TrackpadLeft] = 0;
-            prevTrackpadSlidingDistance[TouchTarget.TrackpadRight] = 0;
-
             HapticTimerLeft.Elapsed += HapticTimerLeft_Elapsed;
             HapticTimerRight.Elapsed += HapticTimerRight_Elapsed;
+
+            TrackpadSlidingTimer[TouchTarget.TrackpadLeft] = LeftTrackpadSliding;
+            TrackpadSlidingTimer[TouchTarget.TrackpadRight] = RightTrackpadSliding;
 
             LeftTrackpadSliding.Elapsed += LeftTrackpadSliding_Elapsed;
             RightTrackpadSliding.Elapsed += RightTrackpadSliding_Elapsed;
@@ -278,9 +277,16 @@ namespace HandheldCompanion.Views.Windows
             switch (args.Status)
             {
                 case CursorEvent.EventType.DOWN:
+                    TrackpadSlidingDistance[target] = 0;
+                    prevTrackpadSlidingDistance[target] = 0;
+                    TrackpadSlidingTimer[target].Start();
                     break;
                 case CursorEvent.EventType.MOVE:
                     TrackpadSlidingDistance[target] = relativeX;
+                    break;
+                case CursorEvent.EventType.UP:
+                    TrackpadSlidingTimer[target].Stop();
+                    // implement inertia
                     break;
             }
 
