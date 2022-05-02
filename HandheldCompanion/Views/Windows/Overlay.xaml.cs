@@ -57,6 +57,7 @@ namespace HandheldCompanion.Views.Windows
         int HapticFeedbackCounterRight;
         int FrequencyRight;
         int FrequencyRightPrev;
+        double SpeedRight;
         Vibration HapticVibration = new Vibration();
         Timer HapticTimerLeft = new Timer() { Interval = 25 };
         Timer HapticTimerRight = new Timer() { Interval = 25 };
@@ -132,20 +133,18 @@ namespace HandheldCompanion.Views.Windows
 
         private void RightTrackpadSliding_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            // this is actually distance since last timer elapse ie a speed
-            // pixels per time (depends on timer), default 10 msec
-            double speed = Math.Abs(TrackpadSlidingDistance[TouchTarget.TrackpadRight] - prevTrackpadSlidingDistance[TouchTarget.TrackpadRight]);
-            speed *= 1000.0; // pixels per second
+
             int[] FrequencyArray = new int[] { 0 };
 
-            logger.LogInformation("Speed: {0}", speed);
+            logger.LogInformation("Speed: {0}", SpeedRight);
 
-            // speed 0, skip, set to 0
+            // SpeedRight 0, skip, set to 0
             // Use some intervals
-            if (speed > 0 && speed <= 2000) { FrequencyArray = new int[] { 1, 1, 1, 1, 0, 0, 0, 0 }; FrequencyRight = 625; }
-            else if (speed > 2000 && speed <= 4000) { FrequencyArray = new int[] { 1, 1, 1, 0, 0, 0 }; FrequencyRight = 125; }
-            else if (speed > 4000 && speed <= 6000) { FrequencyArray = new int[] { 1, 1, 0, 0 }; FrequencyRight = 25; }
-            else if (speed > 6000) { FrequencyArray = new int[] { 1, 0 }; FrequencyRight = 50; }
+            if (SpeedRight > 0 && SpeedRight <= 300) { FrequencyArray = new int[] { 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 }; FrequencyRight = 3125; }
+            else if (SpeedRight > 300 && SpeedRight <= 600) { FrequencyArray = new int[] { 1, 1, 1, 1, 0, 0, 0, 0 }; FrequencyRight = 625; }
+            else if (SpeedRight > 600 && SpeedRight <= 900) { FrequencyArray = new int[] { 1, 1, 1, 0, 0, 0 }; FrequencyRight = 125; }
+            else if (SpeedRight > 900 && SpeedRight <= 1200) { FrequencyArray = new int[] { 1, 1, 0, 0 }; FrequencyRight = 25; }
+            else if (SpeedRight > 1200) { FrequencyArray = new int[] { 1, 0 }; FrequencyRight = 50; }
 
             // If we have changed frequency, start over, yes this get's cut off rather ugly
             // alternatively find first occurence of similar value and start from there...
@@ -155,8 +154,6 @@ namespace HandheldCompanion.Views.Windows
             if (HapticFeedbackCounterRight > FrequencyArray.Length - 1) { HapticFeedbackCounterRight = 0; }
 
             // Read frequency array
-            // if false HapticVibration.RightMotorSpeed = 0;
-            // if true HapticVibration.RightMotorSpeed = 4000;
             if (FrequencyArray[HapticFeedbackCounterRight] == 1) { HapticVibration.RightMotorSpeed = 4000; }
             else { HapticVibration.RightMotorSpeed = 0; }
             controllerEx.Controller.SetVibration(HapticVibration);
@@ -165,7 +162,6 @@ namespace HandheldCompanion.Views.Windows
             // Increment index counter
             HapticFeedbackCounterRight += 1;
             // Store previous for next round
-            prevTrackpadSlidingDistance[TouchTarget.TrackpadRight] = TrackpadSlidingDistance[TouchTarget.TrackpadRight];
             FrequencyRightPrev = FrequencyRight;
         }
 
@@ -177,6 +173,13 @@ namespace HandheldCompanion.Views.Windows
                 HapticFeedback(TouchTarget.TrackpadLeft);
 
             prevTrackpadSlidingDistance[TouchTarget.TrackpadLeft] = TrackpadSlidingDistance[TouchTarget.TrackpadLeft];
+
+            // this is actually distance since last timer elapse ie a speed
+            // pixels per time (depends on timer), default 10 msec
+            SpeedRight = Math.Abs(TrackpadSlidingDistance[TouchTarget.TrackpadRight] - prevTrackpadSlidingDistance[TouchTarget.TrackpadRight]);
+            SpeedRight *= 10.0; // pixels per second
+            prevTrackpadSlidingDistance[TouchTarget.TrackpadRight] = TrackpadSlidingDistance[TouchTarget.TrackpadRight];
+
         }
 
         private void HapticTimerRight_Elapsed(object? sender, ElapsedEventArgs e)
@@ -261,7 +264,7 @@ namespace HandheldCompanion.Views.Windows
             {
                 default:
                 case TouchTarget.TrackpadLeft:
-                    HapticVibration.LeftMotorSpeed = 4000;
+                    //HapticVibration.LeftMotorSpeed = 4000;
                     HapticTimerLeft.Stop();
                     HapticTimerLeft.Start();
                     break;
