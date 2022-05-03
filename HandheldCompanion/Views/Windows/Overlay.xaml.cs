@@ -152,15 +152,17 @@ namespace HandheldCompanion.Views.Windows
             SpeedArray[SpeedArrayIndex] = SpeedRight;
             SpeedArrayIndex += 1;
             // Determina average
-            SpeedRight = SpeedArray.Average();
+            double SpeedAverage = SpeedArray.Average();
 
-            // SpeedRight 0, skip, set to 0
+            //logger.LogInformation("SpeedAverage: {0}, SpeedRight: {1}, Index {2}, Array: {3}", SpeedAverage, SpeedRight, SpeedArrayIndex, SpeedArray);
+
+            // SpeedAverage 0, skip, set to 0
             // Use some intervals
-            if (SpeedRight > 0 && SpeedRight <= 50) { FrequencyArray = new int[] { 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 }; FrequencyRight = 3125; }
-            else if (SpeedRight > 50 && SpeedRight <= 100) { FrequencyArray = new int[] { 1, 1, 1, 1, 0, 0, 0, 0 }; FrequencyRight = 625; }
-            else if (SpeedRight > 100 && SpeedRight <= 200) { FrequencyArray = new int[] { 1, 1, 1, 0, 0, 0 }; FrequencyRight = 125; }
-            else if (SpeedRight > 200 && SpeedRight <= 500) { FrequencyArray = new int[] { 1, 1, 0, 0 }; FrequencyRight = 25; }
-            else if (SpeedRight > 500) { FrequencyArray = new int[] { 1, 0 }; FrequencyRight = 50; }
+            if (SpeedAverage > 0 && SpeedAverage <= 50) { FrequencyArray = new int[] { 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 }; FrequencyRight = 3125; }
+            else if (SpeedAverage > 50 && SpeedAverage <= 100) { FrequencyArray = new int[] { 1, 1, 1, 1, 0, 0, 0, 0 }; FrequencyRight = 625; }
+            else if (SpeedAverage > 100 && SpeedAverage <= 200) { FrequencyArray = new int[] { 1, 1, 1, 0, 0, 0 }; FrequencyRight = 125; }
+            else if (SpeedAverage > 200 && SpeedAverage <= 500) { FrequencyArray = new int[] { 1, 1, 0, 0 }; FrequencyRight = 25; }
+            else if (SpeedAverage > 500) { FrequencyArray = new int[] { 1, 0 }; FrequencyRight = 50; }
 
             // When frequency changes, continue from similar
             // fractional position in updated frequency array
@@ -179,7 +181,7 @@ namespace HandheldCompanion.Views.Windows
             else { HapticVibration.RightMotorSpeed = 0; }
             controllerEx.Controller.SetVibration(HapticVibration);
 
-            //logger.LogInformation("Speed: {0}, FrequencyRight: {1}, HapticFeedbackCounterRight: {2}, Vibe: {3}, FractionalPosition {4}, FreqArray {5}", SpeedRight, FrequencyRight, HapticFeedbackCounterRight, FrequencyArray[HapticFeedbackCounterRight], FractionalPosition, FrequencyArray);
+            //logger.LogInformation("SpeedAverage: {0}, FrequencyRight: {1}, HapticFeedbackCounterRight: {2}, Vibe: {3}, FractionalPosition {4}, FreqArray {5}", SpeedAverage, FrequencyRight, HapticFeedbackCounterRight, FrequencyArray[HapticFeedbackCounterRight], FractionalPosition, FrequencyArray);
 
             // Increment index counter
             HapticFeedbackCounterRight += 1;
