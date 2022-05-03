@@ -2,10 +2,14 @@ using ControllerCommon;
 using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using ModernWpf;
+using ModernWpf.Controls;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.ServiceProcess;
+using System.Threading;
 using System.Windows.Controls;
+using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.ServiceControllerStatus;
 
 namespace HandheldCompanion.Views.Pages
@@ -114,6 +118,26 @@ namespace HandheldCompanion.Views.Pages
 
             foreach (ServiceStartMode mode in ((ServiceStartMode[])Enum.GetValues(typeof(ServiceStartMode))).Where(mode => mode >= ServiceStartMode.Automatic))
                 cB_StartupType.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
+
+            // supported languages
+            cB_Language.Items.Add(new CultureInfo("en-US"));
+            cB_Language.Items.Add(new CultureInfo("fr-FR"));
+            cB_Language.Items.Add(new CultureInfo("zh-CN"));
+            cB_Language.Items.Add(new CultureInfo("zh-Hant"));
+
+            string CurrentCulture = Thread.CurrentThread.CurrentCulture.Name;
+            switch (CurrentCulture)
+            {
+                default:
+                    cB_Language.SelectedItem = new CultureInfo("en-US");
+                    break;
+                case "fr-FR":
+                case "en-US":
+                case "zh-CN":
+                case "zh-Hant":
+                    cB_Language.SelectedItem = new CultureInfo(CurrentCulture);
+                    break;
+            }
         }
 
         private void Toggle_AutoStart_Toggled(object sender, System.Windows.RoutedEventArgs e)
@@ -191,6 +215,24 @@ namespace HandheldCompanion.Views.Pages
             StartServiceWithCompanion = Toggle_ServiceStartup.IsOn;
         }
 
+        private void cB_Language_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cB_Language.SelectedItem == null)
+                return;
+
+            // skip if setting is identical to current
+            CultureInfo culture = (CultureInfo)cB_Language.SelectedItem;
+            if (culture.Name == Properties.Settings.Default.CurrentCulture)
+                return;
+
+            Properties.Settings.Default.CurrentCulture = culture.Name;
+            Properties.Settings.Default.Save();
+
+            Dialog.ShowAsync($"{Properties.Resources.SettingsPage_AppLanguageWarning}",
+                Properties.Resources.SettingsPage_AppLanguageWarningDesc,
+                ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+        }
+
         private void Toggle_Notification_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
             Properties.Settings.Default.ToastEnable = Toggle_Notification.IsOn;
@@ -202,6 +244,13 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_Theme_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (cB_Theme.SelectedIndex == -1)
+                return;
+
+            // skip if setting is identical to current
+            if (cB_Theme.SelectedIndex == Properties.Settings.Default.MainWindowTheme)
+                return;
+
             Properties.Settings.Default.MainWindowTheme = cB_Theme.SelectedIndex;
             Properties.Settings.Default.Save();
 

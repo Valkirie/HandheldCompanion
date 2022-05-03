@@ -115,7 +115,6 @@ namespace HandheldCompanion.Views
             logger.LogInformation("{0} ({1})", ManufacturerName, ProductName);
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentCulture;
             fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
 
             // initialize log

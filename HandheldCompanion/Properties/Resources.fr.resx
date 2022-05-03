@@ -223,22 +223,18 @@
   </data>
   <data name="MainWindow_OK" xml:space="preserve">
     <value>OK</value>
-    <comment>update</comment>
   </data>
   <data name="MainWindow_serviceDeploy" xml:space="preserve">
     <value>Déployer le service</value>
   </data>
   <data name="MainWindow_ServiceManager" xml:space="preserve">
-    <value>Service manager</value>
-    <comment>update</comment>
+    <value>Gestionnaire de service</value>
   </data>
   <data name="MainWindow_ServiceManagerStartIssue" xml:space="preserve">
-    <value>Oups. There was an issue while we tried to start the service.</value>
-    <comment>update</comment>
+    <value>Oups. Il y a eu un problème lorsque nous avons essayé de démarrer le service.</value>
   </data>
   <data name="MainWindow_ServiceManagerStopIssue" xml:space="preserve">
-    <value>Oups. There was an issue while we tried to stop the service.</value>
-    <comment>update</comment>
+    <value>Oups. Il y a eu un problème lorsque nous avons essayé d'arrêter le service.</value>
   </data>
   <data name="MainWindow_serviceRemove" xml:space="preserve">
     <value>Supprimer le service</value>
@@ -428,31 +424,25 @@
     <value>Modifier l'anti-zone morte, en pourcentage</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
-    <value>Are you sure you want to delete</value>
-    <comment>update</comment>
+    <value>Êtes-vous sûr de vouloir supprimer</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
-    <value>This item will be deleted immediatly. You can't undo this action.</value>
-    <comment>update</comment>
+    <value>Cet élément sera supprimé immédiatement. Vous ne pouvez pas annuler cette action.</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwrite1" xml:space="preserve">
-    <value>Are you sure you want to overwrite</value>
-    <comment>update</comment>
+    <value>Etes-vous sûr de vouloir écraser</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
-    <value>This item will be overwriten. You can't undo this action.</value>
-    <comment>update</comment>
+    <value>Cet élément sera écrasé. Vous ne pouvez pas annuler cette action.</value>
   </data>
   <data name="ProfilesPage_Cancel" xml:space="preserve">
-    <value>Cancel</value>
-    <comment>update</comment>
+    <value>Annuler</value>
   </data>
   <data name="ProfilesPage_CreateNewProfile" xml:space="preserve">
     <value>Créer un nouveau profil</value>
   </data>
   <data name="ProfilesPage_Delete" xml:space="preserve">
-    <value>Delete</value>
-    <comment>update</comment>
+    <value>Supprimer</value>
   </data>
   <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
     <value>Supprimer le profil</value>
@@ -501,7 +491,6 @@
   </data>
   <data name="ProfilesPage_OK" xml:space="preserve">
     <value>OK</value>
-    <comment>update</comment>
   </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
     <value>Détails du profil</value>
@@ -525,12 +514,10 @@
     <value>Paramètres du profil</value>
   </data>
   <data name="ProfilesPage_ProfileUpdated1" xml:space="preserve">
-    <value>Profile updated</value>
-    <comment>update</comment>
+    <value>Profil mis à jour</value>
   </data>
   <data name="ProfilesPage_ProfileUpdated2" xml:space="preserve">
-    <value>was updated.</value>
-    <comment>update</comment>
+    <value>a été mis à jour.</value>
   </data>
   <data name="ProfilesPage_Roll" xml:space="preserve">
     <value>Roulis</value>
@@ -572,14 +559,25 @@
     <value>Lacet</value>
   </data>
   <data name="ProfilesPage_Yes" xml:space="preserve">
-    <value>Yes</value>
-    <comment>update</comment>
+    <value>Oui</value>
   </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>Fournit une prise en charge du gyroscope et de l'accéléromètre aux ordinateurs de jeu portables Windows par le biais d'un contrôleur virtuel. Si le service est activé, le contrôleur intégré sera masqué pour les applications en dehors de la liste blanche. Si le service est désactivé, le contrôleur embarqué ne sera plus caché et le contrôleur virtuel sera désactivé</value>
   </data>
   <data name="ServiceName" xml:space="preserve">
     <value>Controller Service</value>
+  </data>
+  <data name="SettingsPage_AppLanguage" xml:space="preserve">
+    <value>Langue</value>
+  </data>
+  <data name="SettingsPage_AppLanguageDesc" xml:space="preserve">
+    <value>La langue de l'application</value>
+  </data>
+  <data name="SettingsPage_AppLanguageWarning" xml:space="preserve">
+    <value>Redémarrage nécessaire</value>
+  </data>
+  <data name="SettingsPage_AppLanguageWarningDesc" xml:space="preserve">
+    <value>Pour que les modifications soient prises en compte, veuillez redémarrer l'application</value>
   </data>
   <data name="SettingsPage_AppTheme" xml:space="preserve">
     <value>Thème de l'application</value>
@@ -663,7 +661,7 @@
     <value>Mises à jour disponibles</value>
   </data>
   <data name="SettingsPage_UpdateCheck" xml:space="preserve">
-    <value>Vérification des mises à jour..</value>
+    <value>Vérification des mises à jour...</value>
   </data>
   <data name="SettingsPage_UpToDate" xml:space="preserve">
     <value>Vous êtes à jour</value>

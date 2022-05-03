@@ -161,12 +161,35 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ComboBox Name="cB_Theme" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_Theme_SelectionChanged"
-                                  MouseEnter="Scrolllock_MouseEnter"
-                                  MouseLeave="Scrolllock_MouseLeave">
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_ThemeLight}"/>
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_ThemeDark}"/>
-                        </ComboBox>
+                        <ui:RadioButtons Name="cB_Theme" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="cB_Theme_SelectionChanged">
+                            <Label Content="{x:Static resx:Resources.SettingsPage_ThemeLight}"/>
+                            <Label Content="{x:Static resx:Resources.SettingsPage_ThemeDark}"/>
+                        </ui:RadioButtons>
+                    </Grid>
+                </Border>
+
+                <!-- Application language -->
+                <Border  
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF2B7;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppLanguage}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppLanguageDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:RadioButtons Name="cB_Language" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="cB_Language_SelectionChanged"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
@@ -226,9 +249,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ComboBox Name="cB_StartupType" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="cB_StartupType_SelectionChanged"
-                                  MouseEnter="Scrolllock_MouseEnter"
-                                  MouseLeave="Scrolllock_MouseLeave"/>
+                        <ui:RadioButtons Name="cB_StartupType" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1" SelectionChanged="cB_StartupType_SelectionChanged" />
                     </Grid>
                 </Border>
 
