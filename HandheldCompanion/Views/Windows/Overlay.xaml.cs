@@ -57,6 +57,7 @@ namespace HandheldCompanion.Views.Windows
         int HapticFeedbackCounterRight;
         int FrequencyRight;
         int FrequencyRightPrev;
+        int FrequencyArrayLengthPrev;
         double SpeedRight;
         Vibration HapticVibration = new Vibration();
         Timer HapticTimerLeft = new Timer() { Interval = 25 };
@@ -135,6 +136,7 @@ namespace HandheldCompanion.Views.Windows
         {
 
             int[] FrequencyArray = new int[] { 0 };
+            float FractionalPosition = 0.0f;
             FrequencyRight = 0;
 
             // SpeedRight 0, skip, set to 0
@@ -145,24 +147,30 @@ namespace HandheldCompanion.Views.Windows
             else if (SpeedRight > 200 && SpeedRight <= 250) { FrequencyArray = new int[] { 1, 1, 0, 0 }; FrequencyRight = 25; }
             else if (SpeedRight > 250) { FrequencyArray = new int[] { 1, 0 }; FrequencyRight = 50; }
 
-            // If we have changed frequency, start over, yes this get's cut off rather ugly
-            // alternatively find first occurence of similar value and start from there...
-            if (FrequencyRight != FrequencyRightPrev) { HapticFeedbackCounterRight = 0; }
+            // When frequency changes, continue from similar
+            // fractional position in updated frequency array
+            if (FrequencyRight != FrequencyRightPrev) {
+                // Determine position from previous array info
+                FractionalPosition = ((float)HapticFeedbackCounterRight + 1.0f) / (float)FrequencyArrayLengthPrev;
+                // Determine fractional position for current array
+                HapticFeedbackCounterRight = (int)Math.Round((((float)FrequencyArray.Length * FractionalPosition) - 1.0f)); 
+            }
 
             // Start over from start of array if we go beyond currently selected frequency array
-            if (HapticFeedbackCounterRight > FrequencyArray.Length - 1) { HapticFeedbackCounterRight = 0; }
+            if (HapticFeedbackCounterRight > FrequencyArray.Length - 1 || HapticFeedbackCounterRight < 0) { HapticFeedbackCounterRight = 0; }
 
             // Read frequency array
             if (FrequencyArray[HapticFeedbackCounterRight] == 1) { HapticVibration.RightMotorSpeed = 4000; }
             else { HapticVibration.RightMotorSpeed = 0; }
             controllerEx.Controller.SetVibration(HapticVibration);
 
-            //logger.LogInformation("Speed: {0}, FrequencyRight: {1}, HapticFeedbackCounterRight: {2}, Vibe: {3}, FreqArray {4}", SpeedRight, FrequencyRight, HapticFeedbackCounterRight, FrequencyArray[HapticFeedbackCounterRight], FrequencyArray);
+            logger.LogInformation("Speed: {0}, FrequencyRight: {1}, HapticFeedbackCounterRight: {2}, Vibe: {3}, FractionalPosition {4}, FreqArray {5}", SpeedRight, FrequencyRight, HapticFeedbackCounterRight, FrequencyArray[HapticFeedbackCounterRight], FractionalPosition, FrequencyArray);
 
             // Increment index counter
             HapticFeedbackCounterRight += 1;
             // Store previous for next round
             FrequencyRightPrev = FrequencyRight;
+            FrequencyArrayLengthPrev = FrequencyArray.Length;
         }
 
         private void LeftTrackpadSliding_Elapsed(object? sender, ElapsedEventArgs e)
