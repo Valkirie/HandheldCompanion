@@ -1420,6 +1420,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        public static string SettingsPage_AppLanguage {
+            get {
+                return ResourceManager.GetString("SettingsPage_AppLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The application language.
+        /// </summary>
+        public static string SettingsPage_AppLanguageDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_AppLanguageDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart required.
+        /// </summary>
+        public static string SettingsPage_AppLanguageWarning {
+            get {
+                return ResourceManager.GetString("SettingsPage_AppLanguageWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In order for the changes to take effect, please restart the application.
+        /// </summary>
+        public static string SettingsPage_AppLanguageWarningDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_AppLanguageWarningDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Application theme.
         /// </summary>
         public static string SettingsPage_AppTheme {

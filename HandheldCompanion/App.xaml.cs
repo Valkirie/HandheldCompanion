@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Extensions.Logging;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows;
@@ -25,6 +26,24 @@ namespace HandheldCompanion
         [STAThread]
         private void Main(object sender, StartupEventArgs Arguments)
         {
+            string CurrentCulture = HandheldCompanion.Properties.Settings.Default.CurrentCulture;
+            CultureInfo culture = CultureInfo.CurrentCulture;
+
+            switch (CurrentCulture)
+            {
+                default:
+                    break;
+                case "fr-FR":
+                case "en-US":
+                case "zh-CN":
+                case "zh-Hant":
+                    culture = new CultureInfo(CurrentCulture);
+                    break;
+            }
+
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+
             if (mutex.WaitOne(TimeSpan.Zero, true))
             {
                 Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
