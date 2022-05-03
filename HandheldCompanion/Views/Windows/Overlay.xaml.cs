@@ -59,6 +59,7 @@ namespace HandheldCompanion.Views.Windows
         int FrequencyRightPrev;
         int FrequencyArrayLengthPrev;
         double SpeedRight;
+        double SpeedRightPrev;
         double[] SpeedArray = new double[5];
         int SpeedArrayIndex;
         Vibration HapticVibration = new Vibration();
@@ -151,7 +152,20 @@ namespace HandheldCompanion.Views.Windows
             if (SpeedArrayIndex > SpeedArray.Length - 1) { SpeedArrayIndex = 0; }
             SpeedArray[SpeedArrayIndex] = SpeedRight;
             SpeedArrayIndex += 1;
-            // Determina average
+
+            // If we have the start of movement,
+            // burst fill average array with speed value
+            // prevents ramping up
+            // Note, alternatively we can compare with previous average, which means multiple cycles of 0
+            if (SpeedRightPrev == 0 && SpeedRight > 0)
+            {
+                for (int i = 0; i < SpeedArray.Length; i++)
+                {
+                    SpeedArray[i] = SpeedRight;
+                }
+            }
+
+            // Determine average
             double SpeedAverage = SpeedArray.Average();
 
             //logger.LogInformation("SpeedAverage: {0}, SpeedRight: {1}, Index {2}, Array: {3}", SpeedAverage, SpeedRight, SpeedArrayIndex, SpeedArray);
@@ -181,14 +195,6 @@ namespace HandheldCompanion.Views.Windows
 
                 //logger.LogInformation("Speed: {0}, AmountOfElementsFloat {1}, FrequencyArray: {2}", SpeedAverage, AmountOfElements, FrequencyArray);
 
-                // SpeedAverage 0, skip, set to 0
-                // Use some intervals
-                //if (SpeedAverage > 0 && SpeedAverage <= 50) { FrequencyArray = new int[] { 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 }; FrequencyRight = 3125; }
-                //else if (SpeedAverage > 50 && SpeedAverage <= 100) { FrequencyArray = new int[] { 1, 1, 1, 1, 0, 0, 0, 0 }; FrequencyRight = 625; }
-                //else if (SpeedAverage > 100 && SpeedAverage <= 200) { FrequencyArray = new int[] { 1, 1, 1, 0, 0, 0 }; FrequencyRight = 125; }
-                //else if (SpeedAverage > 200 && SpeedAverage <= 500) { FrequencyArray = new int[] { 1, 1, 0, 0 }; FrequencyRight = 25; }
-                //else if (SpeedAverage > 500) { FrequencyArray = new int[] { 1, 0 }; FrequencyRight = 50; }
-
                 // When frequency changes, continue from similar
                 // fractional position in updated frequency array
                 if (FrequencyRight != FrequencyRightPrev) {
@@ -216,6 +222,7 @@ namespace HandheldCompanion.Views.Windows
             prevTrackpadSlidingDistance[TouchTarget.TrackpadRight] = TrackpadSlidingDistance[TouchTarget.TrackpadRight];
             FrequencyRightPrev = FrequencyRight;
             FrequencyArrayLengthPrev = FrequencyArray.Length;
+            SpeedRightPrev = SpeedRight;
         }
 
         private void LeftTrackpadSliding_Elapsed(object? sender, ElapsedEventArgs e)
