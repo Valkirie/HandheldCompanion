@@ -156,21 +156,48 @@ namespace HandheldCompanion.Views.Windows
 
             //logger.LogInformation("SpeedAverage: {0}, SpeedRight: {1}, Index {2}, Array: {3}", SpeedAverage, SpeedRight, SpeedArrayIndex, SpeedArray);
 
-            // SpeedAverage 0, skip, set to 0
-            // Use some intervals
-            if (SpeedAverage > 0 && SpeedAverage <= 50) { FrequencyArray = new int[] { 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 }; FrequencyRight = 3125; }
-            else if (SpeedAverage > 50 && SpeedAverage <= 100) { FrequencyArray = new int[] { 1, 1, 1, 1, 0, 0, 0, 0 }; FrequencyRight = 625; }
-            else if (SpeedAverage > 100 && SpeedAverage <= 200) { FrequencyArray = new int[] { 1, 1, 1, 0, 0, 0 }; FrequencyRight = 125; }
-            else if (SpeedAverage > 200 && SpeedAverage <= 500) { FrequencyArray = new int[] { 1, 1, 0, 0 }; FrequencyRight = 25; }
-            else if (SpeedAverage > 500) { FrequencyArray = new int[] { 1, 0 }; FrequencyRight = 50; }
+            // Todo add something that we don't calculate etc if speed is 0
 
-            // When frequency changes, continue from similar
-            // fractional position in updated frequency array
-            if (FrequencyRight != FrequencyRightPrev) {
-                // Determine position from previous array info
-                FractionalPosition = ((float)HapticFeedbackCounterRight + 1.0f) / (float)FrequencyArrayLengthPrev;
-                // Determine fractional position for current array
-                HapticFeedbackCounterRight = (int)Math.Round((((float)FrequencyArray.Length * FractionalPosition) - 1.0f)); 
+            if (SpeedAverage > 0) { 
+
+                // Generate frequency array to step through
+                // Range speed to frequency
+                float InSpeedMin = 1;    // pixels / second
+                float InSpeedMax = 600; // pixels / second
+                float OutFrequencyMin = 8; // Length of array / 2
+                float OutFrequencyMax = 2;// Length of array / 2
+
+                int AmountOfElements = 2 * (int)Math.Round((Math.Clamp(SpeedAverage, InSpeedMin, InSpeedMax) - InSpeedMin) * (OutFrequencyMax - OutFrequencyMin) / (InSpeedMax - InSpeedMin) + OutFrequencyMin);
+                FrequencyRight = AmountOfElements; // Todo, cleanup
+
+                // Build array
+                FrequencyArray = new int[AmountOfElements];
+                // Fill array
+                for (int i = 0; i < FrequencyArray.Length; i++)
+                {
+                    if (i < AmountOfElements / 2) { FrequencyArray[i] = 1; }
+                    else { FrequencyArray[i] = 0; }
+                }
+
+                //logger.LogInformation("Speed: {0}, AmountOfElementsFloat {1}, FrequencyArray: {2}", SpeedAverage, AmountOfElements, FrequencyArray);
+
+                // SpeedAverage 0, skip, set to 0
+                // Use some intervals
+                //if (SpeedAverage > 0 && SpeedAverage <= 50) { FrequencyArray = new int[] { 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 }; FrequencyRight = 3125; }
+                //else if (SpeedAverage > 50 && SpeedAverage <= 100) { FrequencyArray = new int[] { 1, 1, 1, 1, 0, 0, 0, 0 }; FrequencyRight = 625; }
+                //else if (SpeedAverage > 100 && SpeedAverage <= 200) { FrequencyArray = new int[] { 1, 1, 1, 0, 0, 0 }; FrequencyRight = 125; }
+                //else if (SpeedAverage > 200 && SpeedAverage <= 500) { FrequencyArray = new int[] { 1, 1, 0, 0 }; FrequencyRight = 25; }
+                //else if (SpeedAverage > 500) { FrequencyArray = new int[] { 1, 0 }; FrequencyRight = 50; }
+
+                // When frequency changes, continue from similar
+                // fractional position in updated frequency array
+                if (FrequencyRight != FrequencyRightPrev) {
+                    // Determine position from previous array info
+                    FractionalPosition = ((float)HapticFeedbackCounterRight + 1.0f) / (float)FrequencyArrayLengthPrev;
+                    // Determine fractional position for current array
+                    HapticFeedbackCounterRight = (int)Math.Round((((float)FrequencyArray.Length * FractionalPosition) - 1.0f));
+                }
+
             }
 
             // Start over from start of array if we go beyond currently selected frequency array
