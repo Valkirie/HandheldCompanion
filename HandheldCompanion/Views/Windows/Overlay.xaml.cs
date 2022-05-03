@@ -317,7 +317,7 @@ namespace HandheldCompanion.Views.Windows
                     TrackpadSlidingTimer[target].Start();
                     break;
                 case CursorEvent.EventType.MOVE:
-                    TrackpadSlidingDistance[target] = relativeX;
+                    TrackpadSlidingDistance[target] = Math.Sqrt(relativeX * relativeX + relativeY * relativeY);
                     break;
                 case CursorEvent.EventType.UP:
                     TrackpadSlidingTimer[target].Stop();
