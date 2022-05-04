@@ -65,6 +65,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 switch (status)
                 {
+                    case UpdateStatus.Failed: // lazy ?
                     case UpdateStatus.Updated:
                     case UpdateStatus.Initialized:
                         LabelUpdate.Content = Properties.Resources.SettingsPage_UpToDate;

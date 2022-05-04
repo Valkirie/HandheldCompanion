@@ -27,7 +27,7 @@ namespace HandheldCompanion
         public Version version;
         public Uri meta;
         public Uri uri;
-        public double filesize;
+        public double filesize = 0.0d;
         public string filename;
     }
 
@@ -118,10 +118,15 @@ namespace HandheldCompanion
 
         private void ParseMETA(string Result)
         {
-            double asset_size = double.Parse(CommonUtils.Between(Result, "asset-size-label\">", " MB</span>"), CultureInfo.InvariantCulture);
+            double asset_size = 0.0d;
+            
+            try
+            {
+                asset_size = double.Parse(CommonUtils.Between(Result, "asset-size-label\">", " MB</span>"), CultureInfo.InvariantCulture);
+            }
+            catch (Exception) { }
 
-            // something is wrong with the file
-            if (asset_size != updateFile.filesize)
+            if (asset_size == 0.0d || updateFile.filesize == 0.0d)
             {
                 status = UpdateStatus.Failed;
                 Updated?.Invoke(status, updateFile);
@@ -161,7 +166,7 @@ namespace HandheldCompanion
                             // build updatefile
                             updateFile = new();
                             updateFile.version = Version.Parse(versionStr);
-                            updateFile.filename = $"Handheld.Companion-{versionStr}.exe";
+                            updateFile.filename = $"Handheld.Companion-Release-{versionStr}.exe";
                         }
                         break;
 
