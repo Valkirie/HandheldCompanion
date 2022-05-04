@@ -60,7 +60,7 @@ namespace HandheldCompanion.Views.Windows
         int FrequencyArrayLengthPrev;
         double SpeedRight;
         double SpeedRightPrev;
-        double[] SpeedArray = new double[5];
+        double[] SpeedArray = new double[45];
         int SpeedArrayIndex;
         Vibration HapticVibration = new Vibration();
         Timer HapticTimerLeft = new Timer() { Interval = 25 };
@@ -178,19 +178,24 @@ namespace HandheldCompanion.Views.Windows
                 // Range speed to frequency
                 float InSpeedMin = 1;    // pixels / second
                 float InSpeedMax = 600; // pixels / second
-                float OutFrequencyMin = 8; // Length of array / 2
-                float OutFrequencyMax = 2;// Length of array / 2
+                float OutFrequencyMin = 14; // Amount of array elements for vibration off minimal ie longer silence
+                float OutFrequencyMax = 4; // Amount of array elements for vibration off minimal ie short silence
+                int LengthOfOn = 2; // Amount of array elements for vibration on
 
-                int AmountOfElements = 2 * (int)Math.Round((Math.Clamp(SpeedAverage, InSpeedMin, InSpeedMax) - InSpeedMin) * (OutFrequencyMax - OutFrequencyMin) / (InSpeedMax - InSpeedMin) + OutFrequencyMin);
+                int AmountOfElements = (int)Math.Round((Math.Clamp(SpeedAverage, InSpeedMin, InSpeedMax) - InSpeedMin) * (OutFrequencyMax - OutFrequencyMin) / (InSpeedMax - InSpeedMin) + OutFrequencyMin);
                 FrequencyRight = AmountOfElements; // Todo, cleanup
 
                 // Build array
-                FrequencyArray = new int[AmountOfElements];
+                FrequencyArray = new int[LengthOfOn + AmountOfElements];
                 // Fill array
-                for (int i = 0; i < FrequencyArray.Length; i++)
+                for (int i = 0; i < LengthOfOn; i++)
                 {
-                    if (i < AmountOfElements / 2) { FrequencyArray[i] = 1; }
-                    else { FrequencyArray[i] = 0; }
+                    FrequencyArray[i] = 1;
+                }
+
+                for (int i = LengthOfOn; i < FrequencyArray.Length; i++)
+                {
+                    FrequencyArray[i] = 0;
                 }
 
                 //logger.LogInformation("Speed: {0}, AmountOfElementsFloat {1}, FrequencyArray: {2}", SpeedAverage, AmountOfElements, FrequencyArray);
