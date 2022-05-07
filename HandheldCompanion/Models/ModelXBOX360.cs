@@ -13,6 +13,8 @@ namespace HandheldCompanion.Models
         Model3DGroup MainBodyCharger;
         Model3DGroup XBoxButton;
         Model3DGroup XboxButtonRing;
+        Model3DGroup LeftShoulderBottom;
+        Model3DGroup RightShoulderBottom;
 
         public ModelXBOX360() : base("XBOX360")
         {
@@ -43,6 +45,8 @@ namespace HandheldCompanion.Models
             MainBodyCharger = modelImporter.Load($"models/{ModelName}/MainBody-Charger.obj");
             XBoxButton = modelImporter.Load($"models/{ModelName}/XBoxButton.obj");
             XboxButtonRing = modelImporter.Load($"models/{ModelName}/XboxButtonRing.obj");
+            LeftShoulderBottom = modelImporter.Load($"models/{ModelName}/LeftShoulderBottom.obj");
+            RightShoulderBottom = modelImporter.Load($"models/{ModelName}/RightShoulderBottom.obj");
 
             // map model(s)
             foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
@@ -72,7 +76,9 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(MainBodyCharger);
             model3DGroup.Children.Add(XBoxButton);
             model3DGroup.Children.Add(XboxButtonRing);
-
+            model3DGroup.Children.Add(LeftShoulderBottom);
+            model3DGroup.Children.Add(RightShoulderBottom);
+            
             foreach (Model3DGroup model3D in model3DGroup.Children)
                 ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
 
@@ -80,6 +86,8 @@ namespace HandheldCompanion.Models
             ((GeometryModel3D)MainBody.Children[0]).Material = MaterialPlasticWhite;
             ((GeometryModel3D)LeftMotor.Children[0]).Material = MaterialPlasticWhite;
             ((GeometryModel3D)RightMotor.Children[0]).Material = MaterialPlasticWhite;
+            ((GeometryModel3D)LeftShoulderBottom.Children[0]).Material = MaterialPlasticWhite;
+            ((GeometryModel3D)RightShoulderBottom.Children[0]).Material = MaterialPlasticWhite;
         }
     }
 }
