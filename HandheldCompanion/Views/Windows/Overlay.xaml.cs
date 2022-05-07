@@ -670,12 +670,12 @@ namespace HandheldCompanion.Views.Windows
                 // Transform mode with group
                 ModelVisual3D.Content.Transform = Transform3DGroupModel;
 
-                // --- Upward visibility rotation for shoulder buttons ---
+                // Upward visibility rotation for shoulder buttons
                 // Model angle to compensate for
                 float ModelPoseXDeg = InputUtils.rad2deg(x) - (float)FaceCameraObjectAlignment.X;
                 float ShoulderButtonsAngleDeg = 0.0f;
 
-                // Rotate shoulder 90 degrees while controller faces user or go out of sight
+                // Rotate shoulder 90 degrees upward while controller faces user
                 if (ModelPoseXDeg < 0)
                 {
                     ShoulderButtonsAngleDeg = 90.0f;
