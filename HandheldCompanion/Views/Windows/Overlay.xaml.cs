@@ -581,6 +581,46 @@ namespace HandheldCompanion.Views.Windows
             pipeClient.SendMessage(new PipeOverlay((int)VirtualController.Visibility));
         }
 
+        private void UpwardVisibilityRotationShoulderButtons(float ShoulderButtonsAngleDeg, 
+                                                             Vector3D UpwardVisibilityRotationAxis, 
+                                                             Vector3D UpwardVisibilityRotationPoint,
+                                                             float ShoulderTriggerAngleDeg,
+                                                             Vector3D ShoulderTriggerRotationPointCenterMillimeter,
+                                                             ref Model3DGroup ShoulderTrigger,
+                                                             ref Model3DGroup ShoulderButton
+                                                            )
+        {
+            // Define rotation group for trigger button to combine rotations
+            Transform3DGroup Transform3DGroupShoulderTrigger = new Transform3DGroup();
+
+            // Upward visibility rotation vector and angle
+            var ax3d = new AxisAngleRotation3D(UpwardVisibilityRotationAxis, ShoulderButtonsAngleDeg);
+            RotateTransform3D TransformShoulder = new RotateTransform3D(ax3d);
+
+            // Define rotation point shoulder buttons
+            TransformShoulder.CenterX = UpwardVisibilityRotationPoint.X;
+            TransformShoulder.CenterY = UpwardVisibilityRotationPoint.Y;
+            TransformShoulder.CenterZ = UpwardVisibilityRotationPoint.Z;
+
+            // Trigger vector and angle
+            ax3d = new AxisAngleRotation3D(UpwardVisibilityRotationAxis, ShoulderTriggerAngleDeg);
+            RotateTransform3D TransformTriggerPosition = new RotateTransform3D(ax3d);
+
+            // Define rotation point trigger
+            TransformTriggerPosition.CenterX = ShoulderTriggerRotationPointCenterMillimeter.X;
+            TransformTriggerPosition.CenterY = ShoulderTriggerRotationPointCenterMillimeter.Y;
+            TransformTriggerPosition.CenterZ = ShoulderTriggerRotationPointCenterMillimeter.Z;
+
+            // Transform trigger
+            // Trigger first, then visibility transform
+            Transform3DGroupShoulderTrigger.Children.Add(TransformTriggerPosition);
+            Transform3DGroupShoulderTrigger.Children.Add(TransformShoulder);
+
+            // Transform trigger with both upward visibility and trigger position
+            ShoulderTrigger.Transform = Transform3DGroupShoulderTrigger;
+            // Transform shoulder button only with upward visibility
+            ShoulderButton.Transform = TransformShoulder;
+        }
         private void UpdateModelVisual3D(float q_w, float q_x, float q_y, float q_z, float x, float y, float z)
         {
             m_ModelVisualUpdate++;
@@ -651,77 +691,33 @@ namespace HandheldCompanion.Views.Windows
                     ShoulderButtonsAngleDeg = 0.0f;
                 }
 
-                // --- Left Shoulder ---
+                // Left shoulder buttons visibility rotation and trigger button angle
+                Model3DGroup Placeholder = CurrentModel.ButtonMap[GamepadButtonFlags.LeftShoulder][0];
 
-                // Define rotation group for trigger button left to combine rotations
-                Transform3DGroup Transform3DGroupShoulderTriggerLeft = new Transform3DGroup();
+                UpwardVisibilityRotationShoulderButtons(ShoulderButtonsAngleDeg,
+                                                        CurrentModel.UpwardVisibilityRotationAxisLeft,
+                                                        CurrentModel.UpwardVisibilityRotationPointLeft,
+                                                        TriggerAngleShoulderLeft,
+                                                        CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter,
+                                                        ref CurrentModel.LeftShoulderTrigger,
+                                                        ref Placeholder
+                                                        );
 
-                // Upward visibility rotation vector and angle        Todo: make generic and clean up: 1,0,0   26.915, 0, 7.27
-                var ax3d = new AxisAngleRotation3D(CurrentModel.UpwardVisibilityRotationAxisLeft, ShoulderButtonsAngleDeg);
-                RotateTransform3D TransformShoulderLeft = new RotateTransform3D(ax3d);
+                CurrentModel.ButtonMap[GamepadButtonFlags.LeftShoulder][0] = Placeholder;
 
-                // Define rotation point left shoulder buttons
-                // Todo, make generic
-                TransformShoulderLeft.CenterX = CurrentModel.UpwardVisibilityRotationPointLeft.X;
-                TransformShoulderLeft.CenterY = CurrentModel.UpwardVisibilityRotationPointLeft.Y;
-                TransformShoulderLeft.CenterZ = CurrentModel.UpwardVisibilityRotationPointLeft.Z;
+                // Right shoulder buttons visibility rotation and trigger button angle
+                Placeholder = CurrentModel.ButtonMap[GamepadButtonFlags.RightShoulder][0];
 
-                // Trigger angle
-                // Rotation
-                ax3d = new AxisAngleRotation3D(CurrentModel.UpwardVisibilityRotationAxisLeft, TriggerAngleShoulderLeft);
-                TransformTriggerPositionLeft = new RotateTransform3D(ax3d);
+                UpwardVisibilityRotationShoulderButtons(ShoulderButtonsAngleDeg,
+                                                        CurrentModel.UpwardVisibilityRotationAxisRight,
+                                                        CurrentModel.UpwardVisibilityRotationPointRight,
+                                                        TriggerAngleShoulderRight,
+                                                        CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter,
+                                                        ref CurrentModel.RightShoulderTrigger,
+                                                        ref Placeholder
+                                                        );
 
-                // Define rotation point
-                TransformTriggerPositionLeft.CenterX = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.X;
-                TransformTriggerPositionLeft.CenterY = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Y;
-                TransformTriggerPositionLeft.CenterZ = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Z;
-
-                // Transform trigger
-                // Trigger first, then visibility transform
-                Transform3DGroupShoulderTriggerLeft.Children.Add(TransformTriggerPositionLeft);
-                Transform3DGroupShoulderTriggerLeft.Children.Add(TransformShoulderLeft);
-
-                // Transform shoulder buttons
-                // Transform trigger with both upward visibility and trigger position
-                CurrentModel.LeftShoulderTrigger.Transform = Transform3DGroupShoulderTriggerLeft;
-                // Transform shoulder button only with upward visibility
-                CurrentModel.ButtonMap[GamepadButtonFlags.LeftShoulder][0].Transform = TransformShoulderLeft;
-
-                // --- Right Shoulder ---
-
-                // Define rotation group for trigger button left to combine rotations
-                Transform3DGroup Transform3DGroupShoulderTriggerRight = new Transform3DGroup();
-
-                // Upward visibility rotation vector and angle        Todo: make generic and clean up: 1,0,0   26.915, 0, 7.27
-                ax3d = new AxisAngleRotation3D(CurrentModel.UpwardVisibilityRotationAxisRight, ShoulderButtonsAngleDeg);
-                RotateTransform3D TransformShoulderRight = new RotateTransform3D(ax3d);
-
-                // Define rotation point right shoulder buttons
-                // Todo, make generic
-                TransformShoulderRight.CenterX = CurrentModel.UpwardVisibilityRotationPointRight.X;
-                TransformShoulderRight.CenterY = CurrentModel.UpwardVisibilityRotationPointRight.Y;
-                TransformShoulderRight.CenterZ = CurrentModel.UpwardVisibilityRotationPointRight.Z;
-
-                // Trigger angle
-                // Rotation
-                ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, -7.27), TriggerAngleShoulderRight);
-                TransformTriggerPositionRight = new RotateTransform3D(ax3d);
-
-                // Define rotation point
-                TransformTriggerPositionRight.CenterX = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.X;
-                TransformTriggerPositionRight.CenterY = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.Y;
-                TransformTriggerPositionRight.CenterZ = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.Z;
-
-                // Transform trigger
-                // Trigger first, then visibility transform
-                Transform3DGroupShoulderTriggerRight.Children.Add(TransformTriggerPositionRight);
-                Transform3DGroupShoulderTriggerRight.Children.Add(TransformShoulderRight);
-
-                // Transform shoulder buttons
-                // Transform trigger with both upward visibility and trigger position
-                CurrentModel.RightShoulderTrigger.Transform = Transform3DGroupShoulderTriggerRight;
-                // Transform shoulder button only with upward visibility
-                CurrentModel.ButtonMap[GamepadButtonFlags.RightShoulder][0].Transform = TransformShoulderRight;
+                CurrentModel.ButtonMap[GamepadButtonFlags.RightShoulder][0] = Placeholder;
 
             });
         }
