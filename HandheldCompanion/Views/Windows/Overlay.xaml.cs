@@ -74,13 +74,15 @@ namespace HandheldCompanion.Views.Windows
         private bool TrackpadsTriggerListening = false;
 
         private Vector3D FaceCameraObjectAlignment;
-        private Quaternion FaceCameraObjectAlignmentQuat;
 
         public event ControllerTriggerUpdatedEventHandler ControllerTriggerUpdated;
         public delegate void ControllerTriggerUpdatedEventHandler(GamepadButtonFlags button);
 
         public event TrackpadsTriggerUpdatedEventHandler TrackpadsTriggerUpdated;
         public delegate void TrackpadsTriggerUpdatedEventHandler(GamepadButtonFlags button);
+
+        private float TriggerAngleShoulderLeft;
+        private float TriggerAngleShoulderRight;
 
         // TODO Dummy variables, placeholder and for testing 
         short MotorLeftPlaceholder;
@@ -267,8 +269,8 @@ namespace HandheldCompanion.Views.Windows
         private RotateTransform3D DeviceRotateTransformFaceCameraZ;
         private RotateTransform3D LeftJoystickRotateTransform;
         private RotateTransform3D RightJoystickRotateTransform;
-        private RotateTransform3D LeftTriggerRotateTransform;
-        private RotateTransform3D RightTriggerRotateTransform;
+        private RotateTransform3D TransformTriggerPositionLeft;
+        private RotateTransform3D TransformTriggerPositionRight;
 
         private int m_ModelVisualUpdate;
         private void OnServerMessage(object sender, PipeMessage message)
@@ -388,78 +390,29 @@ namespace HandheldCompanion.Views.Windows
 
                 // ShoulderLeftTrigger
                 model = CurrentModel.LeftShoulderTrigger.Children[0] as GeometryModel3D;
+                TriggerAngleShoulderLeft = -1 * CurrentModel.TriggerMaxAngleDeg * (float)Gamepad.LeftTrigger / (float)byte.MaxValue;
+
                 if (Gamepad.LeftTrigger > 0)
                 {
                     model.Material = CurrentModel.MaterialHighlight;
 
-                    // Define and compute
-                    float Angle = -1 * CurrentModel.TriggerMaxAngleDeg * (float)Gamepad.LeftTrigger / (float)byte.MaxValue;
-
-                    // Rotation
-                    var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, 7.27), Angle);
-                    LeftTriggerRotateTransform = new RotateTransform3D(ax3d);
-
-                    // Define rotation point
-                    LeftTriggerRotateTransform.CenterX = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.X;
-                    LeftTriggerRotateTransform.CenterY = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Y;
-                    LeftTriggerRotateTransform.CenterZ = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Z;
-
-                    // Transform trigger
-                    CurrentModel.LeftShoulderTrigger.Transform = LeftTriggerRotateTransform;
                 }
                 else
                 {
                     model.Material = CurrentModel.MaterialPlasticBlack;
-
-                    // Rotation reset
-                    var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, 7.27), 0);
-                    LeftTriggerRotateTransform = new RotateTransform3D(ax3d);
-
-                    // Define rotation point
-                    LeftTriggerRotateTransform.CenterX = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.X;
-                    LeftTriggerRotateTransform.CenterY = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Y;
-                    LeftTriggerRotateTransform.CenterZ = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Z;
-
-                    // Transform trigger
-                    CurrentModel.LeftShoulderTrigger.Transform = LeftTriggerRotateTransform;
                 }
 
                 // ShoulderRightTrigger
                 model = CurrentModel.RightShoulderTrigger.Children[0] as GeometryModel3D;
+                TriggerAngleShoulderRight = -1 * CurrentModel.TriggerMaxAngleDeg * (float)Gamepad.RightTrigger / (float)byte.MaxValue;
+
                 if (Gamepad.RightTrigger > 0)
                 {
                     model.Material = CurrentModel.MaterialHighlight;
-
-                    // Define and compute
-                    float Angle = -1 * CurrentModel.TriggerMaxAngleDeg * (float)Gamepad.RightTrigger / (float)byte.MaxValue;
-
-                    // Rotation
-                    var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, -7.27), Angle);
-                    RightTriggerRotateTransform = new RotateTransform3D(ax3d);
-
-                    // Define rotation point
-                    RightTriggerRotateTransform.CenterX = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.X;
-                    RightTriggerRotateTransform.CenterY = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.Y;
-                    RightTriggerRotateTransform.CenterZ = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.Z;
-
-                    // Transform trigger
-                    CurrentModel.RightShoulderTrigger.Transform = RightTriggerRotateTransform;
                 }
                 else
                 {
                     model.Material = CurrentModel.MaterialPlasticBlack;
-
-                    // Rotation reset
-                    var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, -7.27), 0);
-                    RightTriggerRotateTransform = new RotateTransform3D(ax3d);
-
-                    // Define rotation point
-                    RightTriggerRotateTransform.CenterX = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.X;
-                    RightTriggerRotateTransform.CenterY = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.Y;
-                    RightTriggerRotateTransform.CenterZ = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.Z;
-
-                    // Transform trigger
-                    CurrentModel.RightShoulderTrigger.Transform = RightTriggerRotateTransform;
                 }
 
                 // JoystickLeftRing
@@ -676,6 +629,100 @@ namespace HandheldCompanion.Views.Windows
 
                 // Transform mode with group
                 ModelVisual3D.Content.Transform = Transform3DGroupModel;
+
+                // --- Upward visibility rotation for shoulder buttons ---
+                // Model angle to compensate for
+                float ModelPoseXDeg = InputUtils.rad2deg(x) - (float)FaceCameraObjectAlignment.X;
+                float ShoulderButtonsAngleDeg = 0.0f;
+
+                // Rotate shoulder 90 degrees while controller faces user or go out of sight
+                if (ModelPoseXDeg < 0)
+                {
+                    ShoulderButtonsAngleDeg = 90.0f;
+                }
+                // In between rotate inverted from pose
+                else if (ModelPoseXDeg > 0 && ModelPoseXDeg < 45.0f)
+                {
+                    ShoulderButtonsAngleDeg = 90.0f - (2 * ModelPoseXDeg);
+                }
+                // Rotate shoulder buttons to original spot at -45 and beyond
+                else if (ModelPoseXDeg < 45.0f)
+                {
+                    ShoulderButtonsAngleDeg = 0.0f;
+                }
+
+                // --- Left Shoulder ---
+
+                // Define rotation group for trigger button left to combine rotations
+                Transform3DGroup Transform3DGroupShoulderTriggerLeft = new Transform3DGroup();
+
+                // Upward visibility rotation vector and angle        Todo: make generic and clean up: 1,0,0   26.915, 0, 7.27
+                var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, 7.27), ShoulderButtonsAngleDeg);
+                RotateTransform3D TransformShoulderLeft = new RotateTransform3D(ax3d);
+
+                // Define rotation point left shoulder buttons
+                // Todo, make generic
+                TransformShoulderLeft.CenterX = -105.951f;
+                TransformShoulderLeft.CenterY = -8.5f;
+                TransformShoulderLeft.CenterZ = 47.814f;
+
+                // Trigger angle
+                // Rotation
+                ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, 7.27), TriggerAngleShoulderLeft);
+                TransformTriggerPositionLeft = new RotateTransform3D(ax3d);
+
+                // Define rotation point
+                TransformTriggerPositionLeft.CenterX = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.X;
+                TransformTriggerPositionLeft.CenterY = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Y;
+                TransformTriggerPositionLeft.CenterZ = CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter.Z;
+
+                // Transform trigger
+                // Trigger first, then visibility transform
+                Transform3DGroupShoulderTriggerLeft.Children.Add(TransformTriggerPositionLeft);
+                Transform3DGroupShoulderTriggerLeft.Children.Add(TransformShoulderLeft);
+
+                // Transform shoulder buttons
+                // Transform trigger with both upward visibility and trigger position
+                CurrentModel.LeftShoulderTrigger.Transform = Transform3DGroupShoulderTriggerLeft;
+                // Transform shoulder button only with upward visibility
+                CurrentModel.ButtonMap[GamepadButtonFlags.LeftShoulder][0].Transform = TransformShoulderLeft;
+
+                // --- Right Shoulder ---
+
+                // Define rotation group for trigger button left to combine rotations
+                Transform3DGroup Transform3DGroupShoulderTriggerRight = new Transform3DGroup();
+
+                // Upward visibility rotation vector and angle        Todo: make generic and clean up: 1,0,0   26.915, 0, 7.27
+                ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, -7.27), ShoulderButtonsAngleDeg);
+                RotateTransform3D TransformShoulderRight = new RotateTransform3D(ax3d);
+
+                // Define rotation point right shoulder buttons
+                // Todo, make generic
+                TransformShoulderRight.CenterX = 105.951f;
+                TransformShoulderRight.CenterY = -8.5f;
+                TransformShoulderRight.CenterZ = 47.814f;
+
+                // Trigger angle
+                // Rotation
+                ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, -7.27), TriggerAngleShoulderRight);
+                TransformTriggerPositionRight = new RotateTransform3D(ax3d);
+
+                // Define rotation point
+                TransformTriggerPositionRight.CenterX = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.X;
+                TransformTriggerPositionRight.CenterY = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.Y;
+                TransformTriggerPositionRight.CenterZ = CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter.Z;
+
+                // Transform trigger
+                // Trigger first, then visibility transform
+                Transform3DGroupShoulderTriggerRight.Children.Add(TransformTriggerPositionRight);
+                Transform3DGroupShoulderTriggerRight.Children.Add(TransformShoulderRight);
+
+                // Transform shoulder buttons
+                // Transform trigger with both upward visibility and trigger position
+                CurrentModel.RightShoulderTrigger.Transform = Transform3DGroupShoulderTriggerRight;
+                // Transform shoulder button only with upward visibility
+                CurrentModel.ButtonMap[GamepadButtonFlags.RightShoulder][0].Transform = TransformShoulderRight;
+
             });
         }
         #endregion
