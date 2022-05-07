@@ -34,6 +34,11 @@ namespace HandheldCompanion.Models
             ShoulderTriggerRotationPointCenterRightMillimeter = new Vector3D(105.951f, 1.25f, 46.814f);
             TriggerMaxAngleDeg = 16.0f;
 
+            UpwardVisibilityRotationAxisLeft = new Vector3D(1, 0, 0);
+            UpwardVisibilityRotationAxisRight = new Vector3D(1, 0, 0);
+            UpwardVisibilityRotationPointLeft = new Vector3D(-92.5f, -10.5f, 54.1f);
+            UpwardVisibilityRotationPointRight = new Vector3D(92.5f, -10.5f, 54.1f);
+
             // load model(s)
             WFB1 = modelImporter.Load($"models/{ModelName}/WFB-1.obj");
             WFB2 = modelImporter.Load($"models/{ModelName}/WFB-2.obj");

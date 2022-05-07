@@ -512,6 +512,9 @@
     <None Update="Models\XBOX360\Joystick-Right-Ring.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="models\XBOX360\LeftShoulderBottom.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Models\XBOX360\LeftThumb.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -528,6 +531,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\XBOX360\MotorRight.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="models\XBOX360\RightShoulderBottom.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\XBOX360\RightThumb.obj">
