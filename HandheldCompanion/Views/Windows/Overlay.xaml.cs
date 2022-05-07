@@ -657,18 +657,18 @@ namespace HandheldCompanion.Views.Windows
                 Transform3DGroup Transform3DGroupShoulderTriggerLeft = new Transform3DGroup();
 
                 // Upward visibility rotation vector and angle        Todo: make generic and clean up: 1,0,0   26.915, 0, 7.27
-                var ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, 7.27), ShoulderButtonsAngleDeg);
+                var ax3d = new AxisAngleRotation3D(CurrentModel.UpwardVisibilityRotationAxisLeft, ShoulderButtonsAngleDeg);
                 RotateTransform3D TransformShoulderLeft = new RotateTransform3D(ax3d);
 
                 // Define rotation point left shoulder buttons
                 // Todo, make generic
-                TransformShoulderLeft.CenterX = -105.951f;
-                TransformShoulderLeft.CenterY = -8.5f;
-                TransformShoulderLeft.CenterZ = 47.814f;
+                TransformShoulderLeft.CenterX = CurrentModel.UpwardVisibilityRotationPointLeft.X;
+                TransformShoulderLeft.CenterY = CurrentModel.UpwardVisibilityRotationPointLeft.Y;
+                TransformShoulderLeft.CenterZ = CurrentModel.UpwardVisibilityRotationPointLeft.Z;
 
                 // Trigger angle
                 // Rotation
-                ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, 7.27), TriggerAngleShoulderLeft);
+                ax3d = new AxisAngleRotation3D(CurrentModel.UpwardVisibilityRotationAxisLeft, TriggerAngleShoulderLeft);
                 TransformTriggerPositionLeft = new RotateTransform3D(ax3d);
 
                 // Define rotation point
@@ -693,14 +693,14 @@ namespace HandheldCompanion.Views.Windows
                 Transform3DGroup Transform3DGroupShoulderTriggerRight = new Transform3DGroup();
 
                 // Upward visibility rotation vector and angle        Todo: make generic and clean up: 1,0,0   26.915, 0, 7.27
-                ax3d = new AxisAngleRotation3D(new Vector3D(26.915, 0, -7.27), ShoulderButtonsAngleDeg);
+                ax3d = new AxisAngleRotation3D(CurrentModel.UpwardVisibilityRotationAxisRight, ShoulderButtonsAngleDeg);
                 RotateTransform3D TransformShoulderRight = new RotateTransform3D(ax3d);
 
                 // Define rotation point right shoulder buttons
                 // Todo, make generic
-                TransformShoulderRight.CenterX = 105.951f;
-                TransformShoulderRight.CenterY = -8.5f;
-                TransformShoulderRight.CenterZ = 47.814f;
+                TransformShoulderRight.CenterX = CurrentModel.UpwardVisibilityRotationPointRight.X;
+                TransformShoulderRight.CenterY = CurrentModel.UpwardVisibilityRotationPointRight.Y;
+                TransformShoulderRight.CenterZ = CurrentModel.UpwardVisibilityRotationPointRight.Z;
 
                 // Trigger angle
                 // Rotation

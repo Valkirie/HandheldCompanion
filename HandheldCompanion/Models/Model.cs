@@ -34,6 +34,10 @@ namespace HandheldCompanion
         public Vector3D ShoulderTriggerRotationPointCenterLeftMillimeter;
         public Vector3D ShoulderTriggerRotationPointCenterRightMillimeter;
         public float TriggerMaxAngleDeg;
+        public Vector3D UpwardVisibilityRotationAxisLeft;
+        public Vector3D UpwardVisibilityRotationAxisRight;
+        public Vector3D UpwardVisibilityRotationPointLeft;
+        public Vector3D UpwardVisibilityRotationPointRight;
 
         // Default Materials
         public Color ColorPlasticBlack;

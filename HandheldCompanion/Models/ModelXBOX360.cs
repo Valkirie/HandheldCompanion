@@ -29,9 +29,15 @@ namespace HandheldCompanion.Models
             JoystickRotationPointCenterLeftMillimeter = new Vector3D(-42.231f, -6.10f, 21.436f);
             JoystickRotationPointCenterRightMillimeter = new Vector3D(21.013f, -6.1f, -3.559f);
             JoystickMaxAngleDeg = 19.0f;
+
             ShoulderTriggerRotationPointCenterLeftMillimeter = new Vector3D(-44.668f, 3.087f, 39.705);
             ShoulderTriggerRotationPointCenterRightMillimeter = new Vector3D(44.668f, 3.087f, 39.705);
             TriggerMaxAngleDeg = 16.0f;
+
+            UpwardVisibilityRotationAxisLeft = new Vector3D(1, 0, 0);
+            UpwardVisibilityRotationAxisRight = new Vector3D(1, 0, 0);
+            UpwardVisibilityRotationPointLeft = new Vector3D(-36.226f, -14.26f, 47.332f);
+            UpwardVisibilityRotationPointRight = new Vector3D(36.226f, -14.26f, 47.332f);
 
             // load model(s)
             MainBodyCharger = modelImporter.Load($"models/{ModelName}/MainBody-Charger.obj");

@@ -34,9 +34,15 @@ namespace HandheldCompanion.Models
             JoystickRotationPointCenterLeftMillimeter = new Vector3D(-109.0f, -8.0f, 23.0f);
             JoystickRotationPointCenterRightMillimeter = new Vector3D(104.0f, -8.0f, -6.0f);
             JoystickMaxAngleDeg = 19.0f;
+
             ShoulderTriggerRotationPointCenterLeftMillimeter = new Vector3D(-105.951f, 1.25f, 46.814f);
             ShoulderTriggerRotationPointCenterRightMillimeter = new Vector3D(105.951f, 1.25f, 46.814f);
             TriggerMaxAngleDeg = 16.0f;
+
+            UpwardVisibilityRotationAxisLeft = new Vector3D(26.915, 0, 7.27);
+            UpwardVisibilityRotationAxisRight = new Vector3D(26.915, 0, -7.27);
+            UpwardVisibilityRotationPointLeft = new Vector3D(-93.32f, -10.5f, 54.05f);
+            UpwardVisibilityRotationPointRight = new Vector3D(93.32, -10.5f, 54.05f);
 
             // load model(s)
             WFBEsc = modelImporter.Load($"models/{ModelName}/WFB-Esc.obj");
