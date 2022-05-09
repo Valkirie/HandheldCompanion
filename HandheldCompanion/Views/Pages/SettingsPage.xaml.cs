@@ -139,6 +139,10 @@ namespace HandheldCompanion.Views.Pages
                     cB_Language.SelectedItem = new CultureInfo(CurrentCulture);
                     break;
             }
+            cB_Language_SelectionChanged(null, null);
+
+            cB_Theme.SelectedIndex = Properties.Settings.Default.MainWindowTheme;
+            ApplyTheme((ApplicationTheme)cB_Theme.SelectedIndex);
         }
 
         private void Toggle_AutoStart_Toggled(object sender, System.Windows.RoutedEventArgs e)
