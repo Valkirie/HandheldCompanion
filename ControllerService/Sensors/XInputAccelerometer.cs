@@ -37,9 +37,9 @@ namespace ControllerService.Sensors
         {
             AccelerometerReading reading = args.Reading;
 
-            this.reading.X = this.reading_fixed.X = (float)reading.AccelerationX;
-            this.reading.Y = this.reading_fixed.Y = (float)reading.AccelerationZ;
-            this.reading.Z = this.reading_fixed.Z = (float)reading.AccelerationY;
+            this.reading.X = this.reading_fixed.X = (float)reading.AccelerationX * controller.handheldDevice.AccelerationAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)reading.AccelerationZ * controller.handheldDevice.AccelerationAxis.Z;
+            this.reading.Z = this.reading_fixed.Z = (float)reading.AccelerationY * controller.handheldDevice.AccelerationAxis.Y;
 
             base.ReadingChanged();
         }
