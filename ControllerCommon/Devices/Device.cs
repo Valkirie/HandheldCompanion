@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Utils;
+using System.Numerics;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.DeviceUtils;
 
@@ -23,13 +24,13 @@ namespace ControllerCommon.Devices
         protected Inclinometer inclinometer;
         public bool hasInclinometer;
 
+        // device specific settings
         public float WidthHeightRatio = 1.0f;
+        public Vector3 AngularVelocityAxis = new Vector3(1.0f, 1.0f, 1.0f);
+        public Vector3 AccelerationAxis = new Vector3(1.0f, 1.0f, 1.0f);
 
-        protected Device(string ManufacturerName, string ProductName)
+        protected Device()
         {
-            this.ManufacturerName = ManufacturerName;
-            this.ProductName = ProductName;
-
             gyrometer = Gyrometer.GetDefault();
             if (gyrometer != null)
                 hasGyrometer = true;

@@ -132,18 +132,24 @@ namespace ControllerService
                 case "AYANEO 2021":
                 case "AYANEO 2021 Pro":
                 case "AYANEO 2021 Pro Retro Power":
-                    handheldDevice = new AYANEO2021(ManufacturerName, ProductName);
+                    handheldDevice = new AYANEO2021();
                     break;
                 case "NEXT Pro":
                 case "NEXT Advance":
                 case "NEXT":
-                    handheldDevice = new AYANEONEXT(ManufacturerName, ProductName);
+                    handheldDevice = new AYANEONEXT();
+                    break;
+                case "ONE XPLAYER": // MINI ?
+                    handheldDevice = new OneXPlayerMini();
                     break;
                 default:
-                    handheldDevice = new DefaultDevice(ManufacturerName, ProductName);
+                    handheldDevice = new DefaultDevice();
                     logger.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
                     break;
             }
+            handheldDevice.ManufacturerName = ManufacturerName;
+            handheldDevice.ProductName = ProductName;
+
             XInputController.SetDevice(handheldDevice);
 
             // initialize DSUClient

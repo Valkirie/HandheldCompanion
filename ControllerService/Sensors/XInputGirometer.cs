@@ -40,9 +40,9 @@ namespace ControllerService.Sensors
             GyrometerReading reading = args.Reading;
 
             // swapping Y and Z
-            this.reading.X = this.reading_fixed.X = (float)reading.AngularVelocityX;
-            this.reading.Y = this.reading_fixed.Y = (float)reading.AngularVelocityZ;
-            this.reading.Z = this.reading_fixed.Z = (float)reading.AngularVelocityY;
+            this.reading.X = this.reading_fixed.X = (float)reading.AngularVelocityX * controller.handheldDevice.AngularVelocityAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)reading.AngularVelocityZ * controller.handheldDevice.AngularVelocityAxis.Z;
+            this.reading.Z = this.reading_fixed.Z = (float)reading.AngularVelocityY * controller.handheldDevice.AngularVelocityAxis.Y;
 
             base.ReadingChanged();
         }
