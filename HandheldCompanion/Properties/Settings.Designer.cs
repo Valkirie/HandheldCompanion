@@ -12,7 +12,7 @@ namespace HandheldCompanion.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.2.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -296,6 +296,42 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["CurrentCulture"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double OverlayControllerRestingPitch {
+            get {
+                return ((double)(this["OverlayControllerRestingPitch"]));
+            }
+            set {
+                this["OverlayControllerRestingPitch"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double OverlayControllerRestingYaw {
+            get {
+                return ((double)(this["OverlayControllerRestingYaw"]));
+            }
+            set {
+                this["OverlayControllerRestingYaw"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double OverlayControllerRestingRoll {
+            get {
+                return ((double)(this["OverlayControllerRestingRoll"]));
+            }
+            set {
+                this["OverlayControllerRestingRoll"] = value;
             }
         }
     }
