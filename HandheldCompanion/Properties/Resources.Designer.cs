@@ -493,6 +493,78 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Camera resting angles.
+        /// </summary>
+        public static string OverlayPage_CameraAngle {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAngle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the angles of your resting 3D overlay controller model.
+        /// </summary>
+        public static string OverlayPage_CameraAngleDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAngleDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resting pitch.
+        /// </summary>
+        public static string OverlayPage_CameraAnglePitch {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAnglePitch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the pitch angle of your resting 3D overlay controller model, in degrees.
+        /// </summary>
+        public static string OverlayPage_CameraAnglePitchDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAnglePitchDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resting roll.
+        /// </summary>
+        public static string OverlayPage_CameraAngleRoll {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAngleRoll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the roll angle of your resting 3D overlay controller model, in degrees.
+        /// </summary>
+        public static string OverlayPage_CameraAngleRollDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAngleRollDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resting yaw.
+        /// </summary>
+        public static string OverlayPage_CameraAngleYaw {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAngleYaw", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the yaw angle of your resting 3D overlay controller model, in degrees.
+        /// </summary>
+        public static string OverlayPage_CameraAngleYawDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAngleYawDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controller options.
         /// </summary>
         public static string OverlayPage_ControllerOptions {

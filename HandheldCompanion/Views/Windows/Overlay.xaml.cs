@@ -295,8 +295,9 @@ namespace HandheldCompanion.Views.Windows
             this.controllerEx = controllerEx;
         }
 
-        private bool isTriggered = false;
-        public GamepadButtonFlags mainTrigger = GamepadButtonFlags.Back;
+        private bool controllerTriggered = false;
+        private bool trackpadTriggered = false;
+
         public GamepadButtonFlags controllerTrigger = GamepadButtonFlags.DPadUp;
         public GamepadButtonFlags trackpadTrigger = GamepadButtonFlags.DPadDown;
 
@@ -309,39 +310,58 @@ namespace HandheldCompanion.Views.Windows
                 Gamepad = GamepadState.Gamepad;
             }
 
-            // Handle triggers
-            if (Gamepad.Buttons.HasFlag(mainTrigger))
+            // Handle controller trigger(s)
+            if (!ControllerTriggerListening && Gamepad.Buttons.HasFlag(controllerTrigger))
             {
-                if (Gamepad.Buttons.HasFlag(controllerTrigger) && !isTriggered)
+                if (!controllerTriggered)
                 {
                     UpdateControllerVisibility();
                     UpdateVisibility();
-                    isTriggered = true;
+                    controllerTriggered = true;
                 }
-                
-                if (Gamepad.Buttons.HasFlag(trackpadTrigger) && !isTriggered)
+            }
+            else if (controllerTriggered)
+            {
+                controllerTriggered = false;
+            }
+
+            // handle controller trigger(s) update
+            if (ControllerTriggerListening)
+            {
+                if (Gamepad.Buttons != 0)
+                    controllerTrigger |= Gamepad.Buttons;
+                else if (Gamepad.Buttons == 0 && controllerTrigger != 0)
+                {
+                    ControllerTriggerUpdated?.Invoke(controllerTrigger);
+                    ControllerTriggerListening = false;
+                }
+            }
+
+            // Handle trackpad trigger(s)
+            if (!TrackpadsTriggerListening && Gamepad.Buttons.HasFlag(trackpadTrigger))
+            {
+                if (!trackpadTriggered)
                 {
                     UpdateTrackpadsVisibility();
                     UpdateVisibility();
-                    isTriggered = true;
+                    trackpadTriggered = true;
                 }
             }
-            else if (isTriggered)
+            else if (trackpadTriggered)
             {
-                isTriggered = false;
+                trackpadTriggered = false;
             }
 
-            // handle triggers update
-            if (ControllerTriggerListening && Gamepad.Buttons != 0)
+            // handle trackpad trigger(s) update
+            if (TrackpadsTriggerListening)
             {
-                ControllerTriggerUpdated?.Invoke(Gamepad.Buttons);
-                ControllerTriggerListening = false;
-            }
-
-            if (TrackpadsTriggerListening && Gamepad.Buttons != 0)
-            {
-                TrackpadsTriggerUpdated?.Invoke(Gamepad.Buttons);
-                TrackpadsTriggerListening = false;
+                if (Gamepad.Buttons != 0)
+                    trackpadTrigger |= Gamepad.Buttons;
+                else if (Gamepad.Buttons == 0 && trackpadTrigger != 0)
+                {
+                    TrackpadsTriggerUpdated?.Invoke(trackpadTrigger);
+                    TrackpadsTriggerListening = false;
+                }
             }
 
             if (VirtualController.Visibility != Visibility.Visible)
@@ -528,11 +548,13 @@ namespace HandheldCompanion.Views.Windows
 
         public void ControllerTriggerClicked()
         {
+            controllerTrigger = 0;
             ControllerTriggerListening = true;
         }
 
         public void TrackpadsTriggerClicked()
         {
+            trackpadTrigger = 0;
             TrackpadsTriggerListening = true;
         }
 
@@ -621,13 +643,15 @@ namespace HandheldCompanion.Views.Windows
             // Transform shoulder button only with upward visibility
             ShoulderButton.Transform = TransformShoulder;
         }
+
+        public Vector3D DesiredAngle = new Vector3D(0, 0, 0);
         private void UpdateModelVisual3D(float q_w, float q_x, float q_y, float q_z, float x, float y, float z)
         {
             m_ModelVisualUpdate++;
 
-            // reduce CPU usage by drawing every x calls
+            /* reduce CPU usage by drawing every x calls
             if (m_ModelVisualUpdate % 2 != 0)
-                return;
+                return; */
 
             this.Dispatcher.Invoke(() =>
             {
@@ -640,7 +664,6 @@ namespace HandheldCompanion.Views.Windows
                 Transform3DGroupModel.Children.Add(DeviceRotateTransform);
 
                 // Angles
-                Vector3D DesiredAngle = new Vector3D(0, 0, 0);
                 Vector3D DiffAngle = new Vector3D(0, 0, 0);
 
                 // Determine diff angles

@@ -258,6 +258,30 @@
   <data name="OverlayPage_BackButton" xml:space="preserve">
     <value>Back</value>
   </data>
+  <data name="OverlayPage_CameraAngle" xml:space="preserve">
+    <value>Camera resting angles</value>
+  </data>
+  <data name="OverlayPage_CameraAngleDesc" xml:space="preserve">
+    <value>Change the angles of your resting 3D overlay controller model</value>
+  </data>
+  <data name="OverlayPage_CameraAnglePitch" xml:space="preserve">
+    <value>Resting pitch</value>
+  </data>
+  <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
+    <value>Change the pitch angle of your resting 3D overlay controller model, in degrees</value>
+  </data>
+  <data name="OverlayPage_CameraAngleRoll" xml:space="preserve">
+    <value>Resting roll</value>
+  </data>
+  <data name="OverlayPage_CameraAngleRollDesc" xml:space="preserve">
+    <value>Change the roll angle of your resting 3D overlay controller model, in degrees</value>
+  </data>
+  <data name="OverlayPage_CameraAngleYaw" xml:space="preserve">
+    <value>Resting yaw</value>
+  </data>
+  <data name="OverlayPage_CameraAngleYawDesc" xml:space="preserve">
+    <value>Change the yaw angle of your resting 3D overlay controller model, in degrees</value>
+  </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
     <value>Controller options</value>
   </data>
