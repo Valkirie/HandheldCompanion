@@ -701,10 +701,10 @@ namespace HandheldCompanion.Views.Windows
                 // Rotate shoulder 90 degrees upward while controller faces user
                 if (ModelPoseXDeg < 0)
                 {
-                    ShoulderButtonsAngleDeg = 90.0f;
+                    ShoulderButtonsAngleDeg = Math.Clamp(90.0f - (1 * ModelPoseXDeg), 90.0f, 180.0f);
                 }
                 // In between rotate inverted from pose
-                else if (ModelPoseXDeg > 0 && ModelPoseXDeg < 45.0f)
+                else if (ModelPoseXDeg >= 0 && ModelPoseXDeg <= 45.0f)
                 {
                     ShoulderButtonsAngleDeg = 90.0f - (2 * ModelPoseXDeg);
                 }
