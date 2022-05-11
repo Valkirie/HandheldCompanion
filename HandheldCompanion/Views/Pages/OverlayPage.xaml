@@ -208,7 +208,7 @@
                                     <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAnglePitch}" FontSize="14"/>
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAnglePitchDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </StackPanel>
@@ -231,7 +231,7 @@
                                     <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAngleYaw}" FontSize="14"/>
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAngleYawDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </StackPanel>
@@ -254,7 +254,7 @@
                                     <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAngleRoll}" FontSize="14"/>
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAngleRollDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </StackPanel>
