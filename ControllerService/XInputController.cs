@@ -42,7 +42,7 @@ namespace ControllerService
         public SensorFusion sensorFusion;
         public MadgwickAHRS madgwickAHRS;
 
-        public Device handheldDevice;
+        public Device handheldDevice = new DefaultDevice();
 
         protected readonly Stopwatch stopwatch;
         public long CurrentMicroseconds;
