@@ -161,6 +161,15 @@ namespace ControllerService
                 // update sensorFusion (todo: call only when needed ?)
                 sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocities[XInputSensorFlags.Centered], Accelerations[XInputSensorFlags.Default]);
 
+                logger.LogInformation("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
+                logger.LogInformation("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
+                logger.LogInformation("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Z);
+
+                Vector3 Temp = USBGyro.GetCurrentReadingAcc();
+                logger.LogInformation("Plot AccelerationRawUSBX {0} {1}", TotalMilliseconds, Temp.X);
+                logger.LogInformation("Plot AccelerationRawUSBY {0} {1}", TotalMilliseconds, Temp.Y);
+                logger.LogInformation("Plot AccelerationRawUSBZ {0} {1}", TotalMilliseconds, Temp.Z);
+
                 // async update client(s)
                 Task.Run(() =>
                 {

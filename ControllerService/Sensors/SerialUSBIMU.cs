@@ -16,10 +16,10 @@ namespace ControllerService.Sensors
 		Vector3 EulerRollPitchYawDeg = new Vector3();
 
 		// Create a new SerialPort object with default settings.
-		SerialPort SensorSerialPort = new SerialPort();
+		private SerialPort SensorSerialPort = new SerialPort();
 
 		// Todo, only once! Or based on reading if it's needed?
-		bool openAutoCalib = false;
+		private bool openAutoCalib = false;
 
 		public SerialUSBIMU(ILogger logger)
 		{
@@ -27,13 +27,6 @@ namespace ControllerService.Sensors
 
 			// Get a list of serial port names.
 			string[] ports = SerialPort.GetPortNames();
-
-			// Display each port name to the console.
-			// Todo, remove when done
-			foreach (string port in ports)
-			{
-				Console.WriteLine(port);
-			}
 
 			// Check if there are any serial connected devices
 			if (ports.Length > 0)
@@ -50,7 +43,7 @@ namespace ControllerService.Sensors
 					Console.WriteLine("USB Serial IMU found multiple serialports, using: {0}", ports[0]);
 					ComPortName = ports[0];
 					// todo, check one by one if they report expected data, then choose that...
-					// todo, if the device has a consistent (factory) name, use that
+					// todo, if the device has a consistent (factory) name and manufacturer
 				}
 			}
 			else
@@ -62,35 +55,27 @@ namespace ControllerService.Sensors
 			if (ComPortName != "") 
 			{
 				SensorSerialPort.PortName = ComPortName;
-				SensorSerialPort.BaudRate = 9600;
+				SensorSerialPort.BaudRate = 115200;
+				SensorSerialPort.DataBits = 8;
 				SensorSerialPort.Parity = Parity.None;
 				SensorSerialPort.StopBits = StopBits.One;
-				SensorSerialPort.DataBits = 8;
 				SensorSerialPort.Handshake = Handshake.None;
 				SensorSerialPort.RtsEnable = true;
-				//SensorSerialPort.ReadTimeout = 500;
-				//SensorSerialPort.WriteTimeout = 500;
-
-				SensorSerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 
 				SensorSerialPort.Open();
-				// Todo, when to close?	
-			}
+				SensorSerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 
+				// Todo, when to close?	
+
+			}
 
 		}
 
 		// When data is received over the serial port		
-		private static void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+		private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
 		{
-			SerialPort sp = (SerialPort)sender;
-			string indata = sp.ReadExisting();
-
-			// Debug output
-			Console.WriteLine("Data Received:");
-			Console.Write(indata);
-
-			byte[] byteTemp = new byte[1000]; // Todo, could perhaps be shorter...
+			int index = 0;
+			byte[] byteTemp = new byte[1000];
 
 			// Todo indata above to bytetemp
 
@@ -130,7 +115,7 @@ namespace ControllerService.Sensors
 					// Data checksum lower 8 bits  0x10
 					byte[] buffer = new byte[] { 0xA4, 0x06, 0x07, 0x5F, 0x10 };
 					SensorSerialPort.Write(buffer, 0, buffer.Length);
-					Thread.Sleep(1);
+					System.Threading.Thread.Sleep(1);
 					// Address write function code register = 0xA4, 0x03
 					// Register to read/write save settings 0x05
 					// 0x55 save current configuration
@@ -139,10 +124,9 @@ namespace ControllerService.Sensors
 					openAutoCalib = false;
 				}
 
-				// packageLength = (uint)datalength; // Useles? 
 				byte[] array = new byte[datalength];
 				Array.ConstrainedCopy(byteTemp, index, array, 0, datalength);
-                InterpretData(array);
+				InterpretData(array);
 				index += datalength;
 			}
 		}
@@ -166,9 +150,10 @@ namespace ControllerService.Sensors
 
 			// Acceleration, convert byte to G
 			// Assuming default range
+			// Flip Y and Z
 			AccelerationG.X = (float)(IntData[0] / 32768.0 * 16);
-			AccelerationG.Y = (float)(IntData[1] / 32768.0 * 16);
-			AccelerationG.Z = (float)(IntData[2] / 32768.0 * 16);
+			AccelerationG.Z = (float)(IntData[1] / 32768.0 * 16);
+			AccelerationG.Y = (float)(IntData[2] / 32768.0 * 16);
 
 			// Gyro, convert byte to angular velocity deg/sec
 			// Assuming default range
@@ -178,25 +163,25 @@ namespace ControllerService.Sensors
 
 			// Todo, according to spec sheet 6 - 8 contain roll pitch yaw... check usability.
 			// Roll, Pitch, Yaw
-			EulerRollPitchYawDeg.X = (float)(IntData[6] / 32768.0);
+		    EulerRollPitchYawDeg.X = (float)(IntData[6] / 32768.0);
 			EulerRollPitchYawDeg.Y = (float)(IntData[7] / 32768.0);
 			EulerRollPitchYawDeg.Z = (float)(IntData[8] / 32768.0);
 		}
 
-		// Todo, profile swapping etc
+		// Todo, profile swapping etc?
 
 		// Todo use or not use get currents?
-		public new Vector3 GetCurrentReadingAcc()
+		public Vector3 GetCurrentReadingAcc()
 		{
 			return AccelerationG;
 		}
 
-		public new Vector3 GetCurrentReadingAngVel()
+		public Vector3 GetCurrentReadingAngVel()
 		{
 			return AngularVelocityDeg;
 		}
 
-		public new Vector3 GetCurrentReadingRollPitchYaw()
+		public Vector3 GetCurrentReadingRollPitchYaw()
 		{
 			return EulerRollPitchYawDeg;
 		}
