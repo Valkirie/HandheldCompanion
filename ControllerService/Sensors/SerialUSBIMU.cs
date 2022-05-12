@@ -157,9 +157,10 @@ namespace ControllerService.Sensors
 
 			// Gyro, convert byte to angular velocity deg/sec
 			// Assuming default range
+			// Flip Y and Z
 			AngularVelocityDeg.X = (float)(IntData[3] / 32768.0 * 2000);
-			AngularVelocityDeg.Y = (float)(IntData[4] / 32768.0 * 2000);
-			AngularVelocityDeg.Z = (float)(IntData[5] / 32768.0 * 2000);
+			AngularVelocityDeg.Z = (float)(IntData[4] / 32768.0 * 2000);
+			AngularVelocityDeg.Y = (float)(IntData[5] / 32768.0 * 2000);
 
 			// Todo, according to spec sheet 6 - 8 contain roll pitch yaw... check usability.
 			// Roll, Pitch, Yaw
