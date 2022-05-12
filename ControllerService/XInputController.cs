@@ -41,6 +41,7 @@ namespace ControllerService
 
         public SensorFusion sensorFusion;
         public MadgwickAHRS madgwickAHRS;
+        public SerialUSBIMU USBGyro;
 
         public Device handheldDevice = new DefaultDevice();
 
@@ -76,6 +77,7 @@ namespace ControllerService
             // initialize sensorfusion and madgwick
             sensorFusion = new SensorFusion(logger);
             madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
+            USBGyro = new SerialUSBIMU(logger);
 
             // initialize profile(s)
             profile = new();

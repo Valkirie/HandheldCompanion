@@ -3,6 +3,9 @@ using System.IO.Ports;
 using System.Numerics;
 using Microsoft.Extensions.Logging;
 
+// References
+// https://www.demo2s.com/csharp/csharp-serialport-getportnames.html
+
 namespace ControllerService.Sensors
 {
 	public class SerialUSBIMU
@@ -13,29 +16,66 @@ namespace ControllerService.Sensors
 		Vector3 EulerRollPitchYawDeg = new Vector3();
 
 		// Create a new SerialPort object with default settings.
-		SerialPort SensorSerialPort = new SerialPort("COM1");
+		SerialPort SensorSerialPort = new SerialPort();
 
 		// Todo, only once! Or based on reading if it's needed?
 		bool openAutoCalib = false;
 
-		public SerialUSBIMU(XInputController controller, ILogger logger)
+		public SerialUSBIMU(ILogger logger)
 		{
-			// Todo SerialPort.GetPortNames Method use to provide user a selection option, alternatively, just select if there's only 1.		
+			string ComPortName = "";
 
-			SensorSerialPort.BaudRate = 9600;
-			SensorSerialPort.Parity = Parity.None;
-			SensorSerialPort.StopBits = StopBits.One;
-			SensorSerialPort.DataBits = 8;
-			SensorSerialPort.Handshake = Handshake.None;
-			SensorSerialPort.RtsEnable = true;
-			//SensorSerialPort.ReadTimeout = 500;
-			//SensorSerialPort.WriteTimeout = 500;
+			// Get a list of serial port names.
+			string[] ports = SerialPort.GetPortNames();
 
-			SensorSerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+			// Display each port name to the console.
+			// Todo, remove when done
+			foreach (string port in ports)
+			{
+				Console.WriteLine(port);
+			}
 
-			SensorSerialPort.Open();
-			// Todo, when to close?	
+			// Check if there are any serial connected devices
+			if (ports.Length > 0)
+			{
+				// If only one device, use that.
+				if (ports.Length == 1)
+				{
+					Console.WriteLine("USB Serial IMU using serialport: {0}", ports[0]);
+					ComPortName = ports[0];
+				}
+				// In case of multiple devices, check them one by one
+				if (ports.Length > 1)
+				{
+					Console.WriteLine("USB Serial IMU found multiple serialports, using: {0}", ports[0]);
+					ComPortName = ports[0];
+					// todo, check one by one if they report expected data, then choose that...
+					// todo, if the device has a consistent (factory) name, use that
+				}
+			}
+			else
+			{
+				Console.WriteLine("USB Serial IMU no serialport device(s) detected.");
+			}
 
+			// If sensor is connected, configure and use.
+			if (ComPortName != "") 
+			{
+				SensorSerialPort.PortName = ComPortName;
+				SensorSerialPort.BaudRate = 9600;
+				SensorSerialPort.Parity = Parity.None;
+				SensorSerialPort.StopBits = StopBits.One;
+				SensorSerialPort.DataBits = 8;
+				SensorSerialPort.Handshake = Handshake.None;
+				SensorSerialPort.RtsEnable = true;
+				//SensorSerialPort.ReadTimeout = 500;
+				//SensorSerialPort.WriteTimeout = 500;
+
+				SensorSerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+
+				SensorSerialPort.Open();
+				// Todo, when to close?	
+			}
 
 
 		}
