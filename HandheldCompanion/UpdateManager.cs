@@ -16,6 +16,7 @@ namespace HandheldCompanion
         Updated,
         CheckingATOM,
         CheckingMETA,
+        Display,
         Ready,
         Downloading,
         Downloaded,
@@ -122,6 +123,8 @@ namespace HandheldCompanion
             
             try
             {
+                string assets = CommonUtils.Between(Result, "Assets</h3>", "</details>");
+
                 asset_size = double.Parse(CommonUtils.Between(Result, "asset-size-label\">", " MB</span>"), CultureInfo.InvariantCulture);
             }
             catch (Exception) { }
@@ -151,6 +154,9 @@ namespace HandheldCompanion
             XmlNodeList entries = doc.GetElementsByTagName("entry");
             var entry = entries[0];
 
+            Version latestBuild = new Version(0,0,0,0);
+            Uri latestHref = null;
+
             foreach (XmlNode child in entry.ChildNodes)
             {
                 switch (child.Name)
@@ -161,12 +167,7 @@ namespace HandheldCompanion
                             int idx = innerText.LastIndexOf("-") + 1;
                             int len = innerText.Length;
 
-                            string versionStr = innerText.Substring(idx, len - idx);
-
-                            // build updatefile
-                            updateFile = new();
-                            updateFile.version = Version.Parse(versionStr);
-                            updateFile.filename = $"Handheld.Companion-Release-{versionStr}.exe";
+                            latestBuild = Version.Parse(innerText.Substring(idx, len - idx));
                         }
                         break;
 
@@ -177,11 +178,7 @@ namespace HandheldCompanion
                                 switch (attribute.Name)
                                 {
                                     case "href":
-                                        string href = attribute.Value;
-                                        string url = $"{href.Replace("tag", "download")}/{updateFile.filename}";
-                                        updateFile.meta = new Uri(href);
-                                        updateFile.uri = new Uri(url);
-                                        updateFile.filesize = GetFileSize(updateFile.uri);
+                                        latestHref = new Uri(attribute.Value);
                                         break;
                                 }
                                 continue;
@@ -193,14 +190,22 @@ namespace HandheldCompanion
 
             UpdateTime();
 
-            if (updateFile.version <= build)
+#if !DEBUG
+            if (latestBuild <= build)
             {
                 Updated?.Invoke(UpdateStatus.Updated, null);
                 return;
             }
 
+            if (latestHref == null)
+            {
+                Updated?.Invoke(UpdateStatus.Failed, null);
+                return;
+            }
+#endif
+
             status = UpdateStatus.CheckingMETA;
-            webClient.DownloadStringAsync(updateFile.meta);
+            webClient.DownloadStringAsync(latestHref);
         }
 
         public void Start()
