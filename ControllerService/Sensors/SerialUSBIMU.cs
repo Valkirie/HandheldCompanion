@@ -126,7 +126,10 @@ namespace ControllerService.Sensors
 
 				byte[] array = new byte[datalength];
 				Array.ConstrainedCopy(byteTemp, index, array, 0, datalength);
+
 				InterpretData(array);
+				PlacementTransformation("Top", false);
+
 				index += datalength;
 			}
 		}
@@ -169,10 +172,48 @@ namespace ControllerService.Sensors
 			EulerRollPitchYawDeg.Z = (float)(IntData[8] / 32768.0);
 		}
 
-		// Todo, profile swapping etc?
+		public void PlacementTransformation(string PlacementPosition, bool Mirror)
+		{
+			Vector3 AccTemp = AccelerationG;
+			Vector3 AngVelTemp = AngularVelocityDeg;
 
-		// Todo use or not use get currents?
-		public Vector3 GetCurrentReadingAcc()
+			switch (PlacementPosition)
+			{
+				case "Top":
+					AccelerationG.X = -AccTemp.X;
+					AccelerationG.Y = AccTemp.Y;
+					AccelerationG.Z = AccTemp.Z;
+
+					AngularVelocityDeg.X = AngVelTemp.X;
+					AngularVelocityDeg.Y = AngVelTemp.Y;
+					AngularVelocityDeg.Z = AngVelTemp.Z;
+
+					if (Mirror) { }
+
+					break;
+				case "Right":
+
+					if (Mirror) { }
+
+					break;
+				case "Bottom":
+
+					if (Mirror) { }
+
+					break;
+				case "Left":
+
+					if (Mirror) { }
+					break;
+				default:
+					break;
+			}
+		}
+
+			// Todo, profile swapping etc?
+
+			// Todo use or not use get currents?
+			public Vector3 GetCurrentReadingAcc()
 		{
 			return AccelerationG;
 		}
