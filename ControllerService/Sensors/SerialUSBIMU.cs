@@ -128,7 +128,7 @@ namespace ControllerService.Sensors
 				Array.ConstrainedCopy(byteTemp, index, array, 0, datalength);
 
 				InterpretData(array);
-				PlacementTransformation("Top", false);
+				PlacementTransformation("Bottom", false);
 
 				index += datalength;
 			}
@@ -174,21 +174,34 @@ namespace ControllerService.Sensors
 
 		public void PlacementTransformation(string PlacementPosition, bool Mirror)
 		{
+			// Adaption of XYZ or invert based on USB port location on device. 
+			// Mirror option in case of USB-C port usage.
+
 			Vector3 AccTemp = AccelerationG;
 			Vector3 AngVelTemp = AngularVelocityDeg;
 
-			switch (PlacementPosition)
-			{
-				case "Top":
-					AccelerationG.X = -AccTemp.X;
+			/*
+					AccelerationG.X = AccTemp.X;
 					AccelerationG.Y = AccTemp.Y;
 					AccelerationG.Z = AccTemp.Z;
 
 					AngularVelocityDeg.X = AngVelTemp.X;
 					AngularVelocityDeg.Y = AngVelTemp.Y;
-					AngularVelocityDeg.Z = AngVelTemp.Z;
+					AngularVelocityDeg.Z = AngVelTemp.Z; 
+			*/
 
-					if (Mirror) { }
+			switch (PlacementPosition)
+			{
+				case "Top":
+					AccelerationG.X = -AccTemp.X;
+
+					if (Mirror) {
+						AccelerationG.X = -AccTemp.X; // Yes, this is applied twice intentionally!
+						AccelerationG.Y = -AccTemp.Y;
+
+						AngularVelocityDeg.X = -AngVelTemp.X;
+						AngularVelocityDeg.Y = -AngVelTemp.Y;
+					}
 
 					break;
 				case "Right":
@@ -197,6 +210,11 @@ namespace ControllerService.Sensors
 
 					break;
 				case "Bottom":
+
+					AccelerationG.Z = -AccTemp.Z;
+
+					AngularVelocityDeg.X = -AngVelTemp.X;
+					AngularVelocityDeg.Z = -AngVelTemp.Z;
 
 					if (Mirror) { }
 
