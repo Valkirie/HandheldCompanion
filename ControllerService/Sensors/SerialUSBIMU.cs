@@ -34,13 +34,13 @@ namespace ControllerService.Sensors
 				// If only one device, use that.
 				if (ports.Length == 1)
 				{
-					Console.WriteLine("USB Serial IMU using serialport: {0}", ports[0]);
+					logger.LogInformation("USB Serial IMU using serialport: {0}", ports[0]);
 					ComPortName = ports[0];
 				}
 				// In case of multiple devices, check them one by one
 				if (ports.Length > 1)
 				{
-					Console.WriteLine("USB Serial IMU found multiple serialports, using: {0}", ports[0]);
+					logger.LogInformation("USB Serial IMU found multiple serialports, using: {0}", ports[0]);
 					ComPortName = ports[0];
 					// todo, check one by one if they report expected data, then choose that...
 					// todo, if the device has a consistent (factory) name and manufacturer
@@ -48,7 +48,7 @@ namespace ControllerService.Sensors
 			}
 			else
 			{
-				Console.WriteLine("USB Serial IMU no serialport device(s) detected.");
+				logger.LogInformation("USB Serial IMU no serialport device(s) detected.");
 			}
 
 			// If sensor is connected, configure and use.
@@ -147,9 +147,6 @@ namespace ControllerService.Sensors
 			IntData[3] = (short)((byteTemp[10] << 8) | byteTemp[11]);
 			IntData[4] = (short)((byteTemp[12] << 8) | byteTemp[13]);
 			IntData[5] = (short)((byteTemp[14] << 8) | byteTemp[15]);
-			IntData[6] = (short)((byteTemp[16] << 8) | byteTemp[17]);
-			IntData[7] = (short)((byteTemp[18] << 8) | byteTemp[19]);
-			IntData[8] = (short)((byteTemp[20] << 8) | byteTemp[21]);
 
 			// Acceleration, convert byte to G
 			// Assuming default range
@@ -164,12 +161,6 @@ namespace ControllerService.Sensors
 			AngularVelocityDeg.X = (float)(IntData[3] / 32768.0 * 2000);
 			AngularVelocityDeg.Z = (float)(IntData[4] / 32768.0 * 2000);
 			AngularVelocityDeg.Y = (float)(IntData[5] / 32768.0 * 2000);
-
-			// Todo, according to spec sheet 6 - 8 contain roll pitch yaw... check usability.
-			// Roll, Pitch, Yaw
-		    EulerRollPitchYawDeg.X = (float)(IntData[6] / 32768.0);
-			EulerRollPitchYawDeg.Y = (float)(IntData[7] / 32768.0);
-			EulerRollPitchYawDeg.Z = (float)(IntData[8] / 32768.0);
 		}
 
 		public void PlacementTransformation(string PlacementPosition, bool Mirror)
