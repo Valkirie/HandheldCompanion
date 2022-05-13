@@ -32,10 +32,6 @@ namespace HandheldCompanion.Views.Pages
 
             this.logger = logger;
 
-            // overlay trigger
-            OverlayTrigger.SelectedIndex = Properties.Settings.Default.OverlayTrigger;
-            OverlayTrigger_SelectionChanged(this, null);
-
             // controller model
             OverlayModel.SelectedIndex = Properties.Settings.Default.OverlayModel;
             OverlayModel_SelectionChanged(this, null);
@@ -53,10 +49,15 @@ namespace HandheldCompanion.Views.Pages
             SliderTrackpadsSize_ValueChanged(this, null);
 
             // controller trigger
-            GamepadButtonFlagsExt ControllerButton = (GamepadButtonFlagsExt)Properties.Settings.Default.OverlayControllerTrigger;
-            ControllerTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph(ControllerButton);
+            GamepadButtonFlags ControllerButton = (GamepadButtonFlags)Properties.Settings.Default.OverlayControllerTrigger;
+            ControllerTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph((GamepadButtonFlagsExt)ControllerButton);
             ControllerTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(ControllerButton);
-            overlay.controllerTrigger = (GamepadButtonFlags)ControllerButton;
+            overlay.controllerTrigger = ControllerButton;
+
+            // controller resting angles
+            Slider_RestingPitch.Value = Properties.Settings.Default.OverlayControllerRestingPitch;
+            Slider_RestingRoll.Value = Properties.Settings.Default.OverlayControllerRestingRoll;
+            Slider_RestingYaw.Value = Properties.Settings.Default.OverlayControllerRestingYaw;
 
             // trackpads alignment
             var TrackpadsAlignment = Properties.Settings.Default.OverlayTrackpadsAlignment;
@@ -67,10 +68,10 @@ namespace HandheldCompanion.Views.Pages
             SliderTrackpadsOpacity_ValueChanged(this, null);
 
             // trackpads trigger
-            GamepadButtonFlagsExt TrackpadsButton = (GamepadButtonFlagsExt)Properties.Settings.Default.OverlayTrackpadsTrigger;
-            TrackpadsTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph(TrackpadsButton);
+            GamepadButtonFlags TrackpadsButton = (GamepadButtonFlags)Properties.Settings.Default.OverlayTrackpadsTrigger;
+            TrackpadsTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph((GamepadButtonFlagsExt)TrackpadsButton);
             TrackpadsTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(TrackpadsButton);
-            overlay.trackpadTrigger = (GamepadButtonFlags)TrackpadsButton;
+            overlay.trackpadTrigger = TrackpadsButton;
         }
 
         private void UpdateUI_TrackpadsPosition(int trackpadsAlignment)
@@ -197,23 +198,6 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.scrollLock = false;
         }
 
-        private void OverlayTrigger_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            switch (OverlayTrigger.SelectedIndex)
-            {
-                case 0:
-                    overlay.mainTrigger = GamepadButtonFlags.Back;
-                    break;
-                case 1:
-                    overlay.mainTrigger = GamepadButtonFlags.Start;
-                    break;
-            }
-
-            // save settings
-            Properties.Settings.Default.OverlayTrigger = OverlayTrigger.SelectedIndex;
-            Properties.Settings.Default.Save();
-        }
-
         private void OverlayModel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             overlay.UpdateModelMode((OverlayModelMode)OverlayModel.SelectedIndex);
@@ -293,6 +277,38 @@ namespace HandheldCompanion.Views.Pages
 
             // save settings
             Properties.Settings.Default.OverlayTrackpadsTrigger = (int)button;
+            Properties.Settings.Default.Save();
+        }
+
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            ((Expander)sender).BringIntoView();
+        }
+
+        private void Slider_RestingPitch_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            overlay.DesiredAngle.X = Slider_RestingPitch.Value;
+
+            // save settings
+            Properties.Settings.Default.OverlayControllerRestingPitch = Slider_RestingPitch.Value;
+            Properties.Settings.Default.Save();
+        }
+
+        private void Slider_RestingYaw_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            overlay.DesiredAngle.Z = Slider_RestingYaw.Value;
+
+            // save settings
+            Properties.Settings.Default.OverlayControllerRestingYaw = Slider_RestingYaw.Value;
+            Properties.Settings.Default.Save();
+        }
+
+        private void Slider_RestingRoll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            overlay.DesiredAngle.Y = Slider_RestingRoll.Value;
+
+            // save settings
+            Properties.Settings.Default.OverlayControllerRestingRoll = Slider_RestingRoll.Value;
             Properties.Settings.Default.Save();
         }
     }

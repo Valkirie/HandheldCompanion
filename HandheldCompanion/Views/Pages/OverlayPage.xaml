@@ -48,42 +48,6 @@
                         </Grid>
                     </Grid>
                 </Border>
-                
-                <!-- Main trigger -->
-                <Border                      
-                            Padding="15,12,12,12"
-                            CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
-
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_MainTrigger}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_MainTriggerDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                            <ui:RadioButtons Name="OverlayTrigger" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="OverlayTrigger_SelectionChanged">
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <ui:FontIcon Glyph="&#xEECA;"/>
-                                    <Label Content="{x:Static resx:Resources.OverlayPage_BackButton}"></Label>
-                                </ui:SimpleStackPanel>
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <ui:FontIcon Glyph="&#xEDE3;"/>
-                                    <Label Content="{x:Static resx:Resources.OverlayPage_StartButton}"></Label>
-                                </ui:SimpleStackPanel>
-                            </ui:RadioButtons>
-                        </DockPanel>
-                    </Grid>
-                </Border>
             </ui:SimpleStackPanel>
 
             <!-- Controller options -->
@@ -220,6 +184,91 @@
                         </Button>
                     </Grid>
                 </Border>
+
+                <!-- Resting angles -->
+                <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
+                    <Expander.Header>
+                        <DockPanel Margin="-10,12,12,12">
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8B4;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAngle}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAngleDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+                    </Expander.Header>
+
+                    <Expander.Content>
+                        <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
+
+                            <!-- Resting pitch -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAnglePitch}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAnglePitchDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=Slider_RestingPitch, Mode=OneWay}" />
+                                    <Slider Margin="6,0,0,0" Name="Slider_RestingPitch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="90" TickFrequency="5" TickPlacement="BottomRight" Minimum="-90" AutoToolTipPrecision="1" IsSnapToTickEnabled="True"
+									MouseEnter="Scrolllock_MouseEnter"
+									MouseLeave="Scrolllock_MouseLeave" LargeChange="10" SmallChange="5" ValueChanged="Slider_RestingPitch_ValueChanged"/>
+                                </DockPanel>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+
+                            <!-- Resting yaw -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAngleYaw}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAngleYawDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=Slider_RestingYaw, Mode=OneWay}" />
+                                    <Slider Margin="6,0,0,0" Name="Slider_RestingYaw" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="90" TickFrequency="5" TickPlacement="BottomRight" Minimum="-90" AutoToolTipPrecision="1" IsSnapToTickEnabled="True"
+									MouseEnter="Scrolllock_MouseEnter"
+									MouseLeave="Scrolllock_MouseLeave" LargeChange="10" SmallChange="5" ValueChanged="Slider_RestingYaw_ValueChanged"/>
+                                </DockPanel>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+
+                            <!-- Resting roll -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAngleRoll}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAngleRollDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=Slider_RestingRoll, Mode=OneWay}" />
+                                    <Slider Margin="6,0,0,0" Name="Slider_RestingRoll" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="90" TickFrequency="5" TickPlacement="BottomRight" Minimum="-90" AutoToolTipPrecision="1" IsSnapToTickEnabled="True"
+									MouseEnter="Scrolllock_MouseEnter"
+									MouseLeave="Scrolllock_MouseLeave" LargeChange="10" SmallChange="5" ValueChanged="Slider_RestingRoll_ValueChanged"/>
+                                </DockPanel>
+                            </Grid>
+                        </ui:SimpleStackPanel>
+                    </Expander.Content>
+                </Expander>
             </ui:SimpleStackPanel>
 
             <!-- Trackpads options -->

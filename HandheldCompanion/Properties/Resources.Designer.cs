@@ -493,6 +493,78 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 3D model stationary angles.
+        /// </summary>
+        public static string OverlayPage_CameraAngle {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAngle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the respective roll, pitch and yaw angles of your stationary 3D overlay controller model.
+        /// </summary>
+        public static string OverlayPage_CameraAngleDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAngleDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pitch.
+        /// </summary>
+        public static string OverlayPage_CameraAnglePitch {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAnglePitch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the angle, in degree.
+        /// </summary>
+        public static string OverlayPage_CameraAnglePitchDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAnglePitchDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Roll.
+        /// </summary>
+        public static string OverlayPage_CameraAngleRoll {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAngleRoll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the angle, in degree.
+        /// </summary>
+        public static string OverlayPage_CameraAngleRollDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAngleRollDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yaw.
+        /// </summary>
+        public static string OverlayPage_CameraAngleYaw {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAngleYaw", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the angle, in degree.
+        /// </summary>
+        public static string OverlayPage_CameraAngleYawDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_CameraAngleYawDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controller options.
         /// </summary>
         public static string OverlayPage_ControllerOptions {
@@ -601,7 +673,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Secondary trigger.
+        ///   Looks up a localized string similar to Trigger button(s).
         /// </summary>
         public static string OverlayPage_SecondaryTrigger {
             get {
