@@ -2,9 +2,16 @@
 using System.IO.Ports;
 using System.Numerics;
 using Microsoft.Extensions.Logging;
+using System.Management;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Linq;
 
 // References
 // https://www.demo2s.com/csharp/csharp-serialport-getportnames.html
+// https://www.sparxeng.com/blog/software/must-use-net-system-io-ports-serialport
+// http://blog.gorski.pm/serial-port-details-in-c-sharp
+// https://github.com/freakone/serial-reader/blob/744e4337cb380cb9ce1ad6067f9eecf7917019c6/SerialReader/MainWindow.xaml.cs#L79
 
 namespace ControllerService.Sensors
 {
@@ -20,6 +27,18 @@ namespace ControllerService.Sensors
 
 		// Todo, only once! Or based on reading if it's needed?
 		private bool openAutoCalib = false;
+
+
+		private const string vidPattern = @"VID_([0-9A-F]{4})";
+		private const string pidPattern = @"PID_([0-9A-F]{4})";
+
+		struct ComPort // custom struct with our desired values
+		{
+			public string name;
+			public string vid;
+			public string pid;
+			public string description;
+		}
 
 		public SerialUSBIMU(ILogger logger)
 		{
@@ -69,6 +88,46 @@ namespace ControllerService.Sensors
 
 			}
 
+			List<ComPort> PortList = GetSerialPorts();
+			logger.LogInformation("USB Serial IMU detected {0} COM devices", PortList.Count);
+
+			for (int i = 0; i < PortList.Count; i++)
+			{
+				logger.LogInformation("USB Serial IMU detected COM device: {0} ; {1} ; {3} ; {4}", 
+									  PortList[i].name, 
+									  PortList[i].description, 
+									  PortList[i].pid, 
+									  PortList[i].vid
+									  );
+			}
+
+		}
+
+		private List<ComPort> GetSerialPorts()
+		{
+			using (var searcher = new ManagementObjectSearcher
+				("SELECT * FROM Win32_PnPEntity WHERE Name LIKE '%COM%' AND PNPClass = 'Ports'"))
+			{
+				var ports = searcher.Get().Cast<ManagementBaseObject>().ToList();
+				return ports.Select(p =>
+				{
+					ComPort c = new ComPort();
+					c.name = p.GetPropertyValue("DeviceID").ToString();
+					c.vid = p.GetPropertyValue("PNPDeviceID").ToString();
+					c.description = p.GetPropertyValue("Caption").ToString();
+
+					Match mVID = Regex.Match(c.vid, vidPattern, RegexOptions.IgnoreCase);
+					Match mPID = Regex.Match(c.vid, pidPattern, RegexOptions.IgnoreCase);
+
+					if (mVID.Success)
+						c.vid = mVID.Groups[1].Value;
+					if (mPID.Success)
+						c.pid = mPID.Groups[1].Value;
+
+					return c;
+
+				}).ToList();
+			}
 		}
 
 		// When data is received over the serial port		
@@ -76,8 +135,6 @@ namespace ControllerService.Sensors
 		{
 			int index = 0;
 			byte[] byteTemp = new byte[1000];
-
-			// Todo indata above to bytetemp
 
 			// Read serial, store in byte array, at specified offset, certain amount and determine length
 			UInt16 usLength = (UInt16)SensorSerialPort.Read(byteTemp, 0, 1000);
