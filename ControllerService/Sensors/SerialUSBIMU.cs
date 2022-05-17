@@ -62,7 +62,7 @@ namespace ControllerService.Sensors
 			List<ComPort> PortList = GetSerialPorts();
 			logger.LogInformation("USB Serial IMU detected {0} COM devices", PortList.Count);
 
-			// If sensor is connected, configure and use.
+			// Handle possible exceptions.
 			try
 			{
 				// Check if there are any serial connected devices
@@ -71,12 +71,7 @@ namespace ControllerService.Sensors
 					// Filter ports to specific PID and VID of USB Gyro v2
 					ComPort com = PortList.FindLast(c => c.pid.Equals("7523") && c.vid.Equals("1A86"));
 
-					// com.providertype -> crash
-					// com.name = USB-SERIAL CH340 (COM4)
-					// com.description = USB-SERIAL CH340
-					// com.caption = USB-SERIAL CH340 (COM4)
-					// com.deviceid = USB\VID_1A86&PID_7523\6&32455EC1&0&3
-
+					// Interprete name, example: USB-SERIAL CH340 (COM4)
 					string[] SplitName = com.name.Split(' ');
 					SensorSerialPort.PortName = SplitName[2].Trim('(').Trim(')');
 
@@ -95,11 +90,12 @@ namespace ControllerService.Sensors
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());
 				logger.LogInformation("USB Serial IMU exception occured {0}", ex.ToString());
 			}
 
 		}
+
+		// Get all current serial ports with property information
 		private List<ComPort> GetSerialPorts()
 		{
 			using (var searcher = new ManagementObjectSearcher
@@ -187,11 +183,11 @@ namespace ControllerService.Sensors
 				InterpretData(array);
 				PlacementTransformation("Top", false);
 
-				index += datalength;
+				index += datalength; // Todo, check with Frank, = 0 probably in the wrong location.
 			}
 		}
 
-		// Convert raw bytes to SI unit variables
+		// Convert raw bytes to SI units
 		public void InterpretData(byte[] byteTemp)
 		{
 			// Array to interprete bytes
@@ -229,7 +225,7 @@ namespace ControllerService.Sensors
 			Vector3 AngVelTemp = AngularVelocityDeg;
 
 			/*
-					Convenient copy paste list.
+					Convenient default copy paste list.
 					
 					AccelerationG.X = AccTemp.X;
 					AccelerationG.Y = AccTemp.Y;
@@ -298,11 +294,6 @@ namespace ControllerService.Sensors
 		public Vector3 GetCurrentReadingAngVel()
 		{
 			return AngularVelocityDeg;
-		}
-
-		public Vector3 GetCurrentReadingRollPitchYaw()
-		{
-			return EulerRollPitchYawDeg;
 		}
 	}
 }
