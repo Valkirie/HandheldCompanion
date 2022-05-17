@@ -79,7 +79,7 @@ namespace ControllerService.Sensors
 						SensorSerialPort.Close();
 
 					SensorSerialPort.Open();
-					SensorSerialPort.DataReceived += DataReceivedHandler;
+					SensorSerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 
 					logger.LogInformation("USB Serial IMU Connected to {0}", com.name);
 				}
