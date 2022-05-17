@@ -25,14 +25,11 @@ namespace ControllerService.Sensors
 		// Create a new SerialPort object with default settings.
 		private SerialPort SensorSerialPort = new SerialPort();
 
-		// Todo, only once! Or based on reading if it's needed?
-		private bool openAutoCalib = false;
+		private bool openAutoCalib = false; // Todo, only once! Or based on reading if it's needed?
+		private readonly ILogger logger;
 
-
-		private const string vidPattern = @"VID_([0-9A-F]{4})";
-		private const string pidPattern = @"PID_([0-9A-F]{4})";
-
-		struct ComPort // custom struct with our desired values
+		// COM Port struct with wanted properties
+		struct ComPort 
 		{
 			public string name;
 			public string vid;
@@ -42,67 +39,67 @@ namespace ControllerService.Sensors
 
 		public SerialUSBIMU(ILogger logger)
 		{
-			string ComPortName = "";
+			this.logger = logger;
 
-			// Get a list of serial port names.
-			string[] ports = SerialPort.GetPortNames();
+			// USB Gyro v2 COM Port settings.
+			SensorSerialPort.BaudRate = 115200; // Differs from datasheet intentionally.
+			SensorSerialPort.DataBits = 8;
+			SensorSerialPort.Parity = Parity.None;
+			SensorSerialPort.StopBits = StopBits.One;
+			SensorSerialPort.Handshake = Handshake.None;
+			SensorSerialPort.RtsEnable = true;
 
-			// Check if there are any serial connected devices
-			if (ports.Length > 0)
-			{
-				// If only one device, use that.
-				if (ports.Length == 1)
-				{
-					logger.LogInformation("USB Serial IMU using serialport: {0}", ports[0]);
-					ComPortName = ports[0];
-				}
-				// In case of multiple devices, check them one by one
-				if (ports.Length > 1)
-				{
-					logger.LogInformation("USB Serial IMU found multiple serialports, using: {0}", ports[0]);
-					ComPortName = ports[0];
-					// todo, check one by one if they report expected data, then choose that...
-					// todo, if the device has a consistent (factory) name and manufacturer
-				}
-			}
-			else
-			{
-				logger.LogInformation("USB Serial IMU no serialport device(s) detected.");
-			}
+			// Todo, rework to timer that runs/checks every second
+			DetectAndConnect();
+		}
 
-			// If sensor is connected, configure and use.
-			if (ComPortName != "") 
-			{
-				SensorSerialPort.PortName = ComPortName;
-				SensorSerialPort.BaudRate = 115200;
-				SensorSerialPort.DataBits = 8;
-				SensorSerialPort.Parity = Parity.None;
-				SensorSerialPort.StopBits = StopBits.One;
-				SensorSerialPort.Handshake = Handshake.None;
-				SensorSerialPort.RtsEnable = true;
-
-				SensorSerialPort.Open();
-				SensorSerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
-
-				// Todo, when to close?	
-
-			}
-
+		// Check for all existing connected devices,
+		// if match is found for Gyro USB v2,
+		// connect and log info accordingly.
+		public void DetectAndConnect()
+		{
+			// Get a list of serial ports and their properties.
 			List<ComPort> PortList = GetSerialPorts();
 			logger.LogInformation("USB Serial IMU detected {0} COM devices", PortList.Count);
 
-			for (int i = 0; i < PortList.Count; i++)
+			// If sensor is connected, configure and use.
+			try
 			{
-				logger.LogInformation("USB Serial IMU detected COM device: {0} ; {1} ; {3} ; {4}", 
-									  PortList[i].name, 
-									  PortList[i].description, 
-									  PortList[i].pid, 
-									  PortList[i].vid
-									  );
+				// Check if there are any serial connected devices
+				if (PortList.Count > 0)
+				{
+					// Filter ports to specific PID and VID of USB Gyro v2
+					ComPort com = PortList.FindLast(c => c.pid.Equals("7523") && c.vid.Equals("1A86"));
+
+					// com.providertype -> crash
+					// com.name = USB-SERIAL CH340 (COM4)
+					// com.description = USB-SERIAL CH340
+					// com.caption = USB-SERIAL CH340 (COM4)
+					// com.deviceid = USB\VID_1A86&PID_7523\6&32455EC1&0&3
+
+					string[] SplitName = com.name.Split(' ');
+					SensorSerialPort.PortName = SplitName[2].Trim('(').Trim(')');
+
+					if (SensorSerialPort.IsOpen)
+						SensorSerialPort.Close();
+
+					SensorSerialPort.Open();
+					SensorSerialPort.DataReceived += DataReceivedHandler;
+
+					logger.LogInformation("USB Serial IMU Connected to {0}", com.name);
+				}
+				else
+				{
+					logger.LogInformation("USB Serial IMU no serialport device(s) detected.");
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				logger.LogInformation("USB Serial IMU exception occured {0}", ex.ToString());
 			}
 
 		}
-
 		private List<ComPort> GetSerialPorts()
 		{
 			using (var searcher = new ManagementObjectSearcher
@@ -112,9 +109,12 @@ namespace ControllerService.Sensors
 				return ports.Select(p =>
 				{
 					ComPort c = new ComPort();
-					c.name = p.GetPropertyValue("DeviceID").ToString();
+					c.name = p.GetPropertyValue("Name").ToString();
 					c.vid = p.GetPropertyValue("PNPDeviceID").ToString();
 					c.description = p.GetPropertyValue("Caption").ToString();
+
+					string vidPattern = @"VID_([0-9A-F]{4})";
+					string pidPattern = @"PID_([0-9A-F]{4})";
 
 					Match mVID = Regex.Match(c.vid, vidPattern, RegexOptions.IgnoreCase);
 					Match mPID = Regex.Match(c.vid, pidPattern, RegexOptions.IgnoreCase);
@@ -130,7 +130,7 @@ namespace ControllerService.Sensors
 			}
 		}
 
-		// When data is received over the serial port		
+		// When data is received over the serial port, parse.	
 		private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
 		{
 			int index = 0;
@@ -185,7 +185,7 @@ namespace ControllerService.Sensors
 				Array.ConstrainedCopy(byteTemp, index, array, 0, datalength);
 
 				InterpretData(array);
-				PlacementTransformation("Bottom", false);
+				PlacementTransformation("Top", false);
 
 				index += datalength;
 			}
@@ -229,6 +229,8 @@ namespace ControllerService.Sensors
 			Vector3 AngVelTemp = AngularVelocityDeg;
 
 			/*
+					Convenient copy paste list.
+					
 					AccelerationG.X = AccTemp.X;
 					AccelerationG.Y = AccTemp.Y;
 					AccelerationG.Z = AccTemp.Z;
@@ -274,12 +276,21 @@ namespace ControllerService.Sensors
 				default:
 					break;
 			}
+		}	
+
+		// Todo, call when application closes and USB device is no longer detected.
+		public void Disconnect()
+		{
+			if (SensorSerialPort.IsOpen)
+			{
+				SensorSerialPort.Close();
+			}
 		}
 
-			// Todo, profile swapping etc?
+		// Todo, profile swapping etc?
 
-			// Todo use or not use get currents?
-			public Vector3 GetCurrentReadingAcc()
+		// Todo use or not use get currents?
+		public Vector3 GetCurrentReadingAcc()
 		{
 			return AccelerationG;
 		}
