@@ -41,25 +41,8 @@
                 <Button Grid.Column="2" Name="B_CheckUpdate" Content="{x:Static resx:Resources.SettingsPage_CheckForUpdates}" HorizontalAlignment="Right" VerticalAlignment="Center" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" Click="B_CheckUpdate_Click"/>
             </Grid>
 
-            <!-- Current update -->
-            <Border
-                Padding="20,12,12,12"
-                CornerRadius="{DynamicResource ControlCornerRadius}"
-                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                Name="CurrentUpdate"
-                Visibility="Collapsed">
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Name="LabelUpdateName" FontSize="14" VerticalAlignment="Center"/>
-                    <TextBlock Name="LabelUpdatePercentage" Grid.Column="1" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                    <Button Visibility="Hidden" Name="ButtonInstall" Content="{x:Static resx:Resources.SettingsPage_InstallNow}" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Click="B_InstallUpdate_Click"/>
-                </Grid>
-            </Border>
+            <!-- Update(s) -->
+            <ui:SimpleStackPanel Name="CurrentUpdates" Spacing="6"/>
 
             <!-- General options -->
             <ui:SimpleStackPanel Spacing="6">

@@ -1,5 +1,6 @@
 ﻿using ControllerCommon.Utils;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -16,7 +17,6 @@ namespace HandheldCompanion
         Updated,
         CheckingATOM,
         CheckingMETA,
-        Display,
         Ready,
         Downloading,
         Downloaded,
@@ -25,8 +25,6 @@ namespace HandheldCompanion
 
     public class UpdateFile
     {
-        public Version version;
-        public Uri meta;
         public Uri uri;
         public double filesize = 0.0d;
         public string filename;
@@ -40,7 +38,7 @@ namespace HandheldCompanion
         private Random random = new();
 
         private Version build;
-        private UpdateFile updateFile;
+        private List<UpdateFile> updateFiles = new();
 
         private UpdateStatus status;
 
@@ -78,13 +76,9 @@ namespace HandheldCompanion
 
         private void WebClient_DownloadFileCompleted(object? sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            switch (status)
-            {
-                case UpdateStatus.Downloading:
-                    status = UpdateStatus.Downloaded;
-                    Updated?.Invoke(status, updateFile);
-                    break;
-            }
+            var filename = (string)e.UserState;
+            status = UpdateStatus.Downloaded;
+            Updated?.Invoke(status, filename);
         }
 
         private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -118,31 +112,54 @@ namespace HandheldCompanion
         }
 
         private void ParseMETA(string Result)
-        {
-            double asset_size = 0.0d;
-            
+        {            
             try
             {
-                string assets = CommonUtils.Between(Result, "Assets</h3>", "</details>");
+                updateFiles.Clear();
 
-                asset_size = double.Parse(CommonUtils.Between(Result, "asset-size-label\">", " MB</span>"), CultureInfo.InvariantCulture);
+                string assets = CommonUtils.Between(Result, "Assets</h3>", "</details>");
+                string asset = CommonUtils.Between(assets, "<a", "</a>", true);
+
+                while (!String.IsNullOrEmpty(asset))
+                {
+                    Uri href = new Uri($"https://github.com{CommonUtils.Between(asset, "href=\"", "\"")}");
+
+                    UpdateFile update = new UpdateFile()
+                    {
+                        filename = System.IO.Path.GetFileName(href.LocalPath),
+                        uri = href,
+                        filesize = GetFileSize(href)
+                    };
+
+#if !DEBUG
+                    if (update.filesize != 0)
+#endif
+                    updateFiles.Add(update);
+
+                    assets = assets.Replace(asset, null);
+
+                    // get next iteration
+                    asset = CommonUtils.Between(assets, "<a", "</a>", true);
+                }
+
+                // asset_size = double.Parse(CommonUtils.Between(Result, "asset-size-label\">", " MB</span>"), CultureInfo.InvariantCulture);
             }
             catch (Exception) { }
 
-            if (asset_size == 0.0d || updateFile.filesize == 0.0d)
+            if (updateFiles.Count == 0)
             {
                 status = UpdateStatus.Failed;
-                Updated?.Invoke(status, updateFile);
+                Updated?.Invoke(status, null);
                 return;
             }
 
             status = UpdateStatus.Ready;
-            Updated?.Invoke(status, updateFile);
+            Updated?.Invoke(status, updateFiles);
 
-            // download release
+            /* download release
             webClient.DownloadFileAsync(updateFile.uri, updateFile.filename);
             status = UpdateStatus.Downloading;
-            Updated?.Invoke(status, 0);
+            Updated?.Invoke(status, 0); */
         }
 
         private void ParseATOM(string Result)
@@ -238,7 +255,7 @@ namespace HandheldCompanion
             webClient.DownloadStringAsync(new Uri(restUrl));
         }
 
-        public void InstallUpdate()
+        public void InstallUpdate(UpdateFile updateFile)
         {
             if (status != UpdateStatus.Downloaded)
                 return;

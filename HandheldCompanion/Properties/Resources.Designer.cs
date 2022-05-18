@@ -1591,6 +1591,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download.
+        /// </summary>
+        public static string SettingsPage_Download {
+            get {
+                return ResourceManager.GetString("SettingsPage_Download", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Downloading - .
         /// </summary>
         public static string SettingsPage_DownloadingPercentage {

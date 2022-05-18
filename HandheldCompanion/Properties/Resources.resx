@@ -627,6 +627,10 @@
   <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
     <value>The application will be minimized instead of closed</value>
   </data>
+  <data name="SettingsPage_Download" xml:space="preserve">
+    <value>Download</value>
+    <comment>added on 15/05/2022</comment>
+  </data>
   <data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
     <value>Downloading - </value>
   </data>

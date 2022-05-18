@@ -4,11 +4,14 @@ using Microsoft.Extensions.Logging;
 using ModernWpf;
 using ModernWpf.Controls;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.ServiceControllerStatus;
 
@@ -61,50 +64,7 @@ namespace HandheldCompanion.Views.Pages
 
             // initialize update manager
             updateManager = new UpdateManager();
-            updateManager.Updated += (status, value) =>
-            {
-                switch (status)
-                {
-                    case UpdateStatus.Failed: // lazy ?
-                    case UpdateStatus.Updated:
-                    case UpdateStatus.Initialized:
-                        LabelUpdate.Content = Properties.Resources.SettingsPage_UpToDate;
-                        LabelUpdateDate.Content = Properties.Resources.SettingsPage_LastChecked + updateManager.GetTime();
-
-                        LabelUpdateDate.Visibility = System.Windows.Visibility.Visible;
-                        GridUpdateSymbol.Visibility = System.Windows.Visibility.Visible;
-                        ProgressBarUpdate.Visibility = System.Windows.Visibility.Collapsed;
-                        B_CheckUpdate.IsEnabled = true;
-                        break;
-
-                    case UpdateStatus.CheckingATOM:
-                        LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateCheck;
-
-                        GridUpdateSymbol.Visibility = System.Windows.Visibility.Collapsed;
-                        LabelUpdateDate.Visibility = System.Windows.Visibility.Collapsed;
-                        ProgressBarUpdate.Visibility = System.Windows.Visibility.Visible;
-                        B_CheckUpdate.IsEnabled = false;
-                        break;
-
-                    case UpdateStatus.Ready:
-                        UpdateFile updateFile = (UpdateFile)value;
-                        LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateAvailable;
-                        LabelUpdateName.Text = updateFile.filename;
-
-                        CurrentUpdate.Visibility = System.Windows.Visibility.Visible;
-                        break;
-
-                    case UpdateStatus.Downloading:
-                        LabelUpdatePercentage.Text = Properties.Resources.SettingsPage_DownloadingPercentage + $"{value} %";
-                        break;
-
-                    case UpdateStatus.Downloaded:
-                        ProgressBarUpdate.Visibility = System.Windows.Visibility.Collapsed;
-                        LabelUpdatePercentage.Visibility = System.Windows.Visibility.Hidden;
-                        ButtonInstall.Visibility = System.Windows.Visibility.Visible;
-                        break;
-                }
-            };
+            updateManager.Updated += UpdateManager_Updated;
         }
 
         public SettingsPage(string Tag, MainWindow mainWindow, ILogger logger) : this()
@@ -194,6 +154,113 @@ namespace HandheldCompanion.Views.Pages
             CloseMinimises = Toggle_CloseMinimizes.IsOn;
         }
 
+        private void UpdateManager_Updated(UpdateStatus status, object value)
+        {
+            switch (status)
+            {
+                case UpdateStatus.Failed: // lazy ?
+                case UpdateStatus.Updated:
+                case UpdateStatus.Initialized:
+                    LabelUpdate.Content = Properties.Resources.SettingsPage_UpToDate;
+                    LabelUpdateDate.Content = Properties.Resources.SettingsPage_LastChecked + updateManager.GetTime();
+
+                    LabelUpdateDate.Visibility = System.Windows.Visibility.Visible;
+                    GridUpdateSymbol.Visibility = System.Windows.Visibility.Visible;
+                    ProgressBarUpdate.Visibility = System.Windows.Visibility.Collapsed;
+                    B_CheckUpdate.IsEnabled = true;
+                    break;
+
+                case UpdateStatus.CheckingATOM:
+                    LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateCheck;
+
+                    GridUpdateSymbol.Visibility = System.Windows.Visibility.Collapsed;
+                    LabelUpdateDate.Visibility = System.Windows.Visibility.Collapsed;
+                    ProgressBarUpdate.Visibility = System.Windows.Visibility.Visible;
+                    B_CheckUpdate.IsEnabled = false;
+                    break;
+
+                case UpdateStatus.Ready:
+                    ProgressBarUpdate.Visibility = System.Windows.Visibility.Collapsed;
+
+                    List<UpdateFile> updateFiles = (List<UpdateFile>)value;
+                    LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateAvailable;
+
+                    foreach(UpdateFile update in updateFiles)
+                    {
+                        Border updateBorder = new Border() {
+                            Padding = new Thickness(20, 12, 12, 12),
+                            Background = (Brush)Application.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"]
+                        };
+
+                        // Create the grid
+                        Grid updateGrid = new Grid();
+
+                        // Define the Columns
+                        ColumnDefinition colDef1 = new ColumnDefinition()
+                        {
+                            Width = new GridLength(5, GridUnitType.Star),
+                            MinWidth = 200
+                        };
+                        updateGrid.ColumnDefinitions.Add(colDef1);
+
+                        ColumnDefinition colDef2 = new ColumnDefinition()
+                        {
+                            Width = new GridLength(3, GridUnitType.Star),
+                            MinWidth = 120
+                        };
+                        updateGrid.ColumnDefinitions.Add(colDef2);
+
+                        // Create TextBlock
+                        TextBlock FilenameBlock = new TextBlock()
+                        {
+                            FontSize = 14,
+                            Text = update.filename,
+                            VerticalAlignment = VerticalAlignment.Center
+                        };
+                        Grid.SetColumn(FilenameBlock, 0);
+                        updateGrid.Children.Add(FilenameBlock);
+
+                        // Create TextBlock
+                        TextBlock PercentageBlock = new TextBlock()
+                        {
+                            FontSize = 14,
+                            VerticalAlignment = VerticalAlignment.Center,
+                            HorizontalAlignment = HorizontalAlignment.Right
+                        };
+                        Grid.SetColumn(PercentageBlock, 1);
+                        updateGrid.Children.Add(PercentageBlock);
+
+                        // Create Button
+                        Button UpdateButton = new Button()
+                        {
+                            FontSize = 14,
+                            Content = Properties.Resources.SettingsPage_Download,
+                            VerticalAlignment = VerticalAlignment.Center,
+                            HorizontalAlignment = HorizontalAlignment.Right
+                        };
+                        Grid.SetColumn(UpdateButton, 1);
+                        updateGrid.Children.Add(UpdateButton);
+
+                        updateBorder.Child = updateGrid;
+                        CurrentUpdates.Children.Add(updateBorder);
+                    }
+                    break;
+
+                case UpdateStatus.Downloading:
+                    {
+                        // LabelUpdatePercentage.Text = Properties.Resources.SettingsPage_DownloadingPercentage + $"{value} %";
+                    }
+                    break;
+
+                case UpdateStatus.Downloaded:
+                    {
+                        /* LabelUpdatePercentage.Visibility = System.Windows.Visibility.Hidden;
+                        ButtonInstall.Visibility = System.Windows.Visibility.Visible; */
+                    }
+                    break;
+            }
+        }
+
         private void B_CheckUpdate_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             updateManager.StartProcess();
@@ -201,7 +268,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void B_InstallUpdate_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            updateManager.InstallUpdate();
+            updateManager.InstallUpdate(null);
         }
 
         private void Toggle_ServiceShutdown_Toggled(object sender, System.Windows.RoutedEventArgs e)
