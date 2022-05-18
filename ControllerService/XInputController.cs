@@ -200,10 +200,10 @@ namespace ControllerService
                     {
                         case 0: // Visible
                             var AngularVelocityRad = new Vector3();
-                            AngularVelocityRad.X = -InputUtils.deg2rad(AngularVelocities[XInputSensorFlags.CenteredRaw].X);
-                            AngularVelocityRad.Y = -InputUtils.deg2rad(AngularVelocities[XInputSensorFlags.CenteredRaw].Y);
-                            AngularVelocityRad.Z = -InputUtils.deg2rad(AngularVelocities[XInputSensorFlags.CenteredRaw].Z);
-                            madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Accelerations[XInputSensorFlags.RawValue].X, Accelerations[XInputSensorFlags.RawValue].Y, Accelerations[XInputSensorFlags.RawValue].Z, DeltaSeconds);
+                            AngularVelocityRad.X = -InputUtils.deg2rad(USBAngVel.X);
+                            AngularVelocityRad.Y = -InputUtils.deg2rad(USBAngVel.Y);
+                            AngularVelocityRad.Z = -InputUtils.deg2rad(USBAngVel.Z);
+                            madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -USBAcc.X, USBAcc.Y, USBAcc.Z, DeltaSeconds);
 
                             pipeServer?.SendMessage(new PipeSensor(madgwickAHRS.GetEuler(), madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
                             break;
