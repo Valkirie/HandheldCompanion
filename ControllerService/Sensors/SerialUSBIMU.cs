@@ -2,19 +2,10 @@
 using System.IO.Ports;
 using System.Numerics;
 using Microsoft.Extensions.Logging;
-using System.Management;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
 using System.Linq;
 using static ControllerCommon.Utils.DeviceUtils;
 using ControllerCommon;
 using System.Threading;
-
-// References
-// https://www.demo2s.com/csharp/csharp-serialport-getportnames.html
-// https://www.sparxeng.com/blog/software/must-use-net-system-io-ports-serialport
-// http://blog.gorski.pm/serial-port-details-in-c-sharp
-// https://github.com/freakone/serial-reader/blob/744e4337cb380cb9ce1ad6067f9eecf7917019c6/SerialReader/MainWindow.xaml.cs#L79
 
 namespace ControllerService.Sensors
 {
@@ -23,7 +14,6 @@ namespace ControllerService.Sensors
 		// Global variables that can be updated or output etc
 		private Vector3 AccelerationG = new Vector3();		// accelerometer
 		private Vector3 AngularVelocityDeg = new Vector3();	// gyrometer
-		private Vector3 EulerRollPitchYawDeg = new Vector3();
 
 		public USBDeviceInfo sensor;
 
@@ -183,8 +173,6 @@ namespace ControllerService.Sensors
 
 				// raise event
 				ReadingChanged?.Invoke(AccelerationG, AngularVelocityDeg);
-
-				index += datalength; // Todo, check with Frank, = 0 probably in the wrong location.
 			}
 		}
 
@@ -220,7 +208,7 @@ namespace ControllerService.Sensors
 		public void PlacementTransformation(string PlacementPosition, bool Mirror)
 		{
 			// Adaption of XYZ or invert based on USB port location on device. 
-			// Mirror option in case of USB-C port usage.
+			// Mirror option in case of USB-C port usage. Pins on screen side is default.
 
 			Vector3 AccTemp = AccelerationG;
 			Vector3 AngVelTemp = AngularVelocityDeg;
@@ -274,27 +262,5 @@ namespace ControllerService.Sensors
 					break;
 			}
 		}	
-
-		// Todo, call when application closes and USB device is no longer detected.
-		public void Disconnect()
-		{
-			if (_serialPort.IsOpen)
-			{
-				_serialPort.Close();
-			}
-		}
-
-		// Todo, profile swapping etc?
-
-		// Todo use or not use get currents?
-		public Vector3 GetCurrentReadingAcc()
-		{
-			return AccelerationG;
-		}
-
-		public Vector3 GetCurrentReadingAngVel()
-		{
-			return AngularVelocityDeg;
-		}
 	}
 }
