@@ -6,6 +6,7 @@ using System.Management;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
+using static ControllerCommon.Utils.DeviceUtils;
 
 // References
 // https://www.demo2s.com/csharp/csharp-serialport-getportnames.html
@@ -27,15 +28,6 @@ namespace ControllerService.Sensors
 
 		private bool openAutoCalib = false; // Todo, only once! Or based on reading if it's needed?
 		private readonly ILogger logger;
-
-		// COM Port struct with wanted properties
-		struct ComPort 
-		{
-			public string name;
-			public string vid;
-			public string pid;
-			public string description;
-		}
 
 		public SerialUSBIMU(ILogger logger)
 		{
@@ -59,70 +51,26 @@ namespace ControllerService.Sensors
 		public void DetectAndConnect()
 		{
 			// Get a list of serial ports and their properties.
-			List<ComPort> PortList = GetSerialPorts();
-			logger.LogInformation("USB Serial IMU detected {0} COM devices", PortList.Count);
+			USBDeviceInfo USBGyro = GetSerialDevices().Where(a => a.PID.Equals("7523") && a.VID.Equals("1A86")).FirstOrDefault();
 
-			// Handle possible exceptions.
-			try
-			{
-				// Check if there are any serial connected devices
-				if (PortList.Count > 0)
-				{
-					// Filter ports to specific PID and VID of USB Gyro v2
-					ComPort com = PortList.FindLast(c => c.pid.Equals("7523") && c.vid.Equals("1A86"));
+			if (USBGyro != null)
+            {
+				logger.LogInformation("USB Serial IMU {0} detected", USBGyro.Description);
+				
+				string[] SplitName = USBGyro.Name.Split(' ');
+				SensorSerialPort.PortName = SplitName[2].Trim('(').Trim(')');
 
-					// Interprete name, example: USB-SERIAL CH340 (COM4)
-					string[] SplitName = com.name.Split(' ');
-					SensorSerialPort.PortName = SplitName[2].Trim('(').Trim(')');
+				if (SensorSerialPort.IsOpen)
+					SensorSerialPort.Close();
 
-					if (SensorSerialPort.IsOpen)
-						SensorSerialPort.Close();
+				SensorSerialPort.Open();
+				SensorSerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 
-					SensorSerialPort.Open();
-					SensorSerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
-
-					logger.LogInformation("USB Serial IMU Connected to {0}", com.name);
-				}
-				else
-				{
-					logger.LogInformation("USB Serial IMU no serialport device(s) detected.");
-				}
+				logger.LogInformation("USB Serial IMU Connected to {0}", USBGyro.Name);
 			}
-			catch (Exception ex)
+			else
 			{
-				logger.LogInformation("USB Serial IMU exception occured {0}", ex.ToString());
-			}
-
-		}
-
-		// Get all current serial ports with property information
-		private List<ComPort> GetSerialPorts()
-		{
-			using (var searcher = new ManagementObjectSearcher
-				("SELECT * FROM Win32_PnPEntity WHERE Name LIKE '%COM%' AND PNPClass = 'Ports'"))
-			{
-				var ports = searcher.Get().Cast<ManagementBaseObject>().ToList();
-				return ports.Select(p =>
-				{
-					ComPort c = new ComPort();
-					c.name = p.GetPropertyValue("Name").ToString();
-					c.vid = p.GetPropertyValue("PNPDeviceID").ToString();
-					c.description = p.GetPropertyValue("Caption").ToString();
-
-					string vidPattern = @"VID_([0-9A-F]{4})";
-					string pidPattern = @"PID_([0-9A-F]{4})";
-
-					Match mVID = Regex.Match(c.vid, vidPattern, RegexOptions.IgnoreCase);
-					Match mPID = Regex.Match(c.vid, pidPattern, RegexOptions.IgnoreCase);
-
-					if (mVID.Success)
-						c.vid = mVID.Groups[1].Value;
-					if (mPID.Success)
-						c.pid = mPID.Groups[1].Value;
-
-					return c;
-
-				}).ToList();
+				logger.LogWarning("No USB Serial IMU detected");
 			}
 		}
 

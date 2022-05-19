@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace ControllerCommon.Utils
 {
@@ -97,16 +100,41 @@ namespace ControllerCommon.Utils
 
         public class USBDeviceInfo
         {
-            public USBDeviceInfo(string deviceId, string name, string description)
+            static string vidPattern = @"VID_([0-9A-F]{4})";
+            static string pidPattern = @"PID_([0-9A-F]{4})";
+
+            public string DeviceId { get; set; } = "0";
+            public string Name { get; set; } = "N/A";
+            public string Description { get; set; } = "N/A";
+            public string Caption { get; set; } = "N/A";
+            public string PID { get; set; } = "0x00";
+            public string VID { get; set; } = "0x00";
+
+            public USBDeviceInfo(string deviceId = "0", string name = "N/A", string description = "N/A", string caption = "N/A", string pid = "0x00", string vid = "0x00")
             {
                 DeviceId = deviceId;
                 Name = name;
                 Description = description;
+                Caption = caption;
+                PID = pid;
+                VID = vid;
             }
 
-            public string DeviceId { get; }
-            public string Name { get; }
-            public string Description { get; }
+            public USBDeviceInfo(ManagementBaseObject device)
+            {
+                DeviceId = device.GetPropertyValue("DeviceId").ToString();
+                Name = device.GetPropertyValue("Name").ToString();
+                Description = device.GetPropertyValue("Description").ToString();
+                Caption = device.GetPropertyValue("Caption").ToString();
+
+                Match mVID = Regex.Match(DeviceId, vidPattern, RegexOptions.IgnoreCase);
+                Match mPID = Regex.Match(DeviceId, pidPattern, RegexOptions.IgnoreCase);
+
+                if (mVID.Success)
+                    VID = mVID.Groups[1].Value;
+                if (mPID.Success)
+                    PID = mPID.Groups[1].Value;
+            }
 
             public override string ToString()
             {
@@ -118,24 +146,32 @@ namespace ControllerCommon.Utils
         {
             try
             {
-                using (var mos = new ManagementObjectSearcher($"Select * From Win32_PnPEntity WHERE DeviceId LIKE '%{DeviceId}%'"))
+                using (var searcher = new ManagementObjectSearcher($"SELECT * From Win32_PnPEntity WHERE DeviceId LIKE '%{DeviceId}%'"))
                 {
-                    using (ManagementObjectCollection collection = mos.Get())
-                    {
-                        foreach (var device in collection)
-                        {
-
-                            var id = device.GetPropertyValue("DeviceId").ToString();
-                            var name = device.GetPropertyValue("Name").ToString();
-                            var description = device.GetPropertyValue("Description").ToString();
-                            return new USBDeviceInfo(id, name, description);
-                        }
-                    }
+                    var devices = searcher.Get().Cast<ManagementBaseObject>().ToList();
+                    return new USBDeviceInfo(devices.FirstOrDefault());
                 }
             }
             catch (Exception) { }
 
             return null;
+        }
+
+        public static List<USBDeviceInfo> GetSerialDevices()
+        {
+            List<USBDeviceInfo> serials = new List<USBDeviceInfo>();
+            try
+            {
+                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE Name LIKE '%COM%' AND PNPClass = 'Ports'"))
+                {
+                    var devices = searcher.Get().Cast<ManagementBaseObject>().ToList();
+                    foreach (var device in devices)
+                        serials.Add(new USBDeviceInfo(device));
+                }
+            }
+            catch (Exception) { }
+
+            return serials;
         }
     }
 }

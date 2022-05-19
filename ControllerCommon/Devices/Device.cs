@@ -7,7 +7,7 @@ namespace ControllerCommon.Devices
 {
     public abstract class Device
     {
-        protected USBDeviceInfo sensor = new USBDeviceInfo("0", "N/A", "");
+        protected USBDeviceInfo sensor = new USBDeviceInfo();
         public string sensorName = "N/A";
         public bool ProductSupported = false;
 

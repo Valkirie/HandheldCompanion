@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
-using System.Timers;
 
 namespace HandheldCompanion
 {
@@ -20,9 +19,7 @@ namespace HandheldCompanion
 
         private ILogger logger;
 
-        private ManagementEventWatcher insertWatcher;
-        private ManagementEventWatcher removeWatcher;
-        private Timer watcherTimer;
+        private SystemManager systemManager;
 
         private Dictionary<string, ControllerEx> controllers;
 
@@ -40,9 +37,8 @@ namespace HandheldCompanion
             this.logger = logger;
             this.controllers = new();
 
-            // initialize timers
-            watcherTimer = new Timer(1000) { AutoReset = false };
-            watcherTimer.Elapsed += WatcherTimer_Tick;
+            // initialize manager(s)
+            systemManager = new SystemManager();
 
             // initialize hid
             HidD_GetHidGuidMethod(out var interfaceGuid);
@@ -51,15 +47,10 @@ namespace HandheldCompanion
 
         public void Start()
         {
-            insertWatcher = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2"));
-            insertWatcher.EventArrived += new EventArrivedEventHandler(DeviceEvent);
-            insertWatcher.Start();
+            systemManager.DeviceArrived += DeviceEvent;
+            systemManager.DeviceRemoved += DeviceEvent;
 
-            removeWatcher = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 3"));
-            removeWatcher.EventArrived += new EventArrivedEventHandler(DeviceEvent);
-            removeWatcher.Start();
-
-            WatcherTimer_Tick(null, null);
+            DeviceEvent();
         }
 
         private bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)
@@ -86,74 +77,64 @@ namespace HandheldCompanion
                     || device.InstanceId.StartsWith(@"ROOT\USB", StringComparison.OrdinalIgnoreCase));
         }
 
-        private void WatcherTimer_Tick(object? sender, EventArgs e)
+        private void DeviceEvent()
         {
-            int deviceIndex = 0;
-            devices.Clear();
-
-            while (Devcon.Find(hidClassInterfaceGuid, out var path, out var instanceId, deviceIndex++))
+            lock (devices)
             {
-                var device = PnPDevice.GetDeviceByInterfaceId(path);
+                int deviceIndex = 0;
+                devices.Clear();
 
-                PnPDeviceEx deviceEx = new PnPDeviceEx()
+                while (Devcon.Find(hidClassInterfaceGuid, out var path, out var instanceId, deviceIndex++))
                 {
-                    device = device,
-                    path = path,
-                    isVirtual = IsVirtualDevice(device),
-                    deviceIndex = deviceIndex,
-                    arrivalDate = device.GetProperty<DateTimeOffset>(DevicePropertyDevice.LastArrivalDate)
-                };
+                    var device = PnPDevice.GetDeviceByInterfaceId(path);
 
-                devices.Add(deviceEx);
-            }
+                    PnPDeviceEx deviceEx = new PnPDeviceEx()
+                    {
+                        device = device,
+                        path = path,
+                        isVirtual = IsVirtualDevice(device),
+                        deviceIndex = deviceIndex,
+                        arrivalDate = device.GetProperty<DateTimeOffset>(DevicePropertyDevice.LastArrivalDate)
+                    };
 
-            // rely on device Last arrival date
-            devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();
+                    devices.Add(deviceEx);
+                }
 
-            for (int idx = 0; idx < 4; idx++)
-            {
-                UserIndex userIndex = (UserIndex)idx;
-                ControllerEx controllerEx = new ControllerEx(userIndex, null, ref devices);
+                // rely on device Last arrival date
+                devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();
 
-                controllers[controllerEx.baseContainerDeviceInstancePath] = controllerEx;
-
-                if (controllerEx.isVirtual)
-                    continue;
-
-                if (!controllerEx.IsConnected())
-                    continue;
-
-                // raise event
-                ControllerPlugged?.Invoke(controllerEx);
-            }
-
-            string[] keys = controllers.Keys.ToArray();
-
-            foreach(string key in keys)
-            {
-                ControllerEx controllerEx = controllers[key];
-                if (!controllerEx.IsConnected())
+                for (int idx = 0; idx < 4; idx++)
                 {
-                    // controller was unplugged
-                    controllers.Remove(key);
+                    UserIndex userIndex = (UserIndex)idx;
+                    ControllerEx controllerEx = new ControllerEx(userIndex, null, ref devices);
+
+                    controllers[controllerEx.baseContainerDeviceInstancePath] = controllerEx;
+
+                    if (controllerEx.isVirtual)
+                        continue;
+
+                    if (!controllerEx.IsConnected())
+                        continue;
 
                     // raise event
-                    ControllerUnplugged?.Invoke(controllerEx);
+                    ControllerPlugged?.Invoke(controllerEx);
+                }
+
+                string[] keys = controllers.Keys.ToArray();
+
+                foreach (string key in keys)
+                {
+                    ControllerEx controllerEx = controllers[key];
+                    if (!controllerEx.IsConnected())
+                    {
+                        // controller was unplugged
+                        controllers.Remove(key);
+
+                        // raise event
+                        ControllerUnplugged?.Invoke(controllerEx);
+                    }
                 }
             }
-        }
-
-        private void DeviceEvent(object sender, EventArrivedEventArgs e)
-        {
-            watcherTimer.Stop();
-            watcherTimer.Start();
-        }
-
-        public void Stop()
-        {
-            insertWatcher.Stop();
-            removeWatcher.Stop();
-            watcherTimer.Stop();
         }
     }
 }
