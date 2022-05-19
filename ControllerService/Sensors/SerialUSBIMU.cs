@@ -111,7 +111,7 @@ namespace ControllerService.Sensors
 		private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
 		{
 			int index = 0;
-			ushort usLength = 0;
+			ushort usLength;
 			byte[] byteTemp = new byte[1000];
 
 			try
@@ -152,7 +152,6 @@ namespace ControllerService.Sensors
 						return;
 					}
 
-					index += usLength; // Remaining data is not processed
 					return;
 				}
 
@@ -176,7 +175,8 @@ namespace ControllerService.Sensors
 						return;
 					}
 
-					System.Threading.Thread.Sleep(1);
+					Thread.Sleep(1); // give device a bit of time...
+
 					// Address write function code register = 0xA4, 0x03
 					// Register to read/write save settings 0x05
 					// 0x55 save current configuration
