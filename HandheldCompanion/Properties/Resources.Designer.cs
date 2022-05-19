@@ -1672,6 +1672,69 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sensor options.
+        /// </summary>
+        public static string SettingsPage_SensorOptions {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor placement direction.
+        /// </summary>
+        public static string SettingsPage_SensorPlacementDirection {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorPlacementDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select on which side of the device the senor has been mounted.
+        /// </summary>
+        public static string SettingsPage_SensorPlacementDirectionDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorPlacementDirectionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor mirrored.
+        /// </summary>
+        public static string SettingsPage_SensorPlacementMirrored {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorPlacementMirrored", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor has been mounted upside down, possible with USB-C convertor.
+        /// </summary>
+        public static string SettingsPage_SensorPlacementMirroredDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorPlacementMirroredDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor selection.
+        /// </summary>
+        public static string SettingsPage_SensorSelection {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select the desired sensor used for motion input.
+        /// </summary>
+        public static string SettingsPage_SensorSelectionDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorSelectionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Service options.
         /// </summary>
         public static string SettingsPage_ServiceOptions {
