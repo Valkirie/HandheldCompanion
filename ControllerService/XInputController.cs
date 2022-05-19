@@ -69,7 +69,7 @@ namespace ControllerService
             // initialize sensorfusion and madgwick
             sensorFusion = new SensorFusion(logger);
             madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
-            USBGyro = new SerialUSBIMU(logger);
+            USBGyro = new SerialUSBIMU(this, logger);
             USBGyro.Connected += () =>
             {
                 UpdateSensors();

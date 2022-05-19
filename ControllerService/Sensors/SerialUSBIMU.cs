@@ -4,6 +4,7 @@ using System.Numerics;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using static ControllerCommon.Utils.DeviceUtils;
+using static ControllerCommon.Utils.CommonUtils;
 using ControllerCommon;
 using System.Threading;
 
@@ -13,7 +14,9 @@ namespace ControllerService.Sensors
 	{
 		// Global variables that can be updated or output etc
 		private Vector3 AccelerationG = new Vector3();		// accelerometer
-		private Vector3 AngularVelocityDeg = new Vector3();	// gyrometer
+		private Vector3 AngularVelocityDeg = new Vector3(); // gyrometer
+
+		private readonly OneEuroFilter3D accelerationFilter;
 
 		public USBDeviceInfo sensor;
 
@@ -34,9 +37,12 @@ namespace ControllerService.Sensors
 		public event DisconnectedEventHandler Disconnected;
 		public delegate void DisconnectedEventHandler();
 
-		public SerialUSBIMU(ILogger logger)
+		public SerialUSBIMU(XInputController controller, ILogger logger)
 		{
 			this.logger = logger;
+
+			accelerationFilter = new OneEuroFilter3D();
+			accelerationFilter.SetFilterAttrs(0.4, 0.2);
 
 			// initialize manager(s)
 			systemManager = new SystemManager();
@@ -192,6 +198,7 @@ namespace ControllerService.Sensors
 				Array.ConstrainedCopy(byteTemp, index, array, 0, datalength);
 
 				InterpretData(array);
+				//FilterData();
 				PlacementTransformation("Top", false);
 
 				// raise event
@@ -226,6 +233,15 @@ namespace ControllerService.Sensors
 			AngularVelocityDeg.X = (float)(IntData[3] / 32768.0 * 2000);
 			AngularVelocityDeg.Z = (float)(IntData[4] / 32768.0 * 2000);
 			AngularVelocityDeg.Y = (float)(IntData[5] / 32768.0 * 2000);
+		}
+
+		public void FilterData()
+        {
+			var rate = 10; // todo, add controller.UpdateTimePreviousMilliseconds
+
+			AccelerationG.X = (float)accelerationFilter.axis1Filter.Filter(AccelerationG.X, rate);
+			AccelerationG.Y = (float)accelerationFilter.axis2Filter.Filter(AccelerationG.Y, rate);
+			AccelerationG.Z = (float)accelerationFilter.axis3Filter.Filter(AccelerationG.Z, rate);
 		}
 
 		public void PlacementTransformation(string PlacementPosition, bool Mirror)
