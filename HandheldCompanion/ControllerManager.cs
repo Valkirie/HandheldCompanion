@@ -50,7 +50,7 @@ namespace HandheldCompanion
             systemManager.DeviceArrived += DeviceEvent;
             systemManager.DeviceRemoved += DeviceEvent;
 
-            DeviceEvent();
+            DeviceEvent(false);
         }
 
         private bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)
@@ -77,7 +77,7 @@ namespace HandheldCompanion
                     || device.InstanceId.StartsWith(@"ROOT\USB", StringComparison.OrdinalIgnoreCase));
         }
 
-        private void DeviceEvent()
+        private void DeviceEvent(bool update)
         {
             lock (devices)
             {

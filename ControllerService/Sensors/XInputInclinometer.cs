@@ -16,10 +16,10 @@ namespace ControllerService.Sensors
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
                 sensor.ReadingChanged += ReadingChanged;
             }
-            else if (controller.USBGyro.SensorSerialPort.IsOpen)
+            else if (controller.USBGyro._serialPort.IsOpen)
             {
                 controller.USBGyro.ReadingChanged += USBGyro_ReadingChanged;
-                logger.LogInformation("{0} initialised. Baud rate to {1}", this.ToString(), controller.USBGyro.SensorSerialPort.BaudRate);
+                logger.LogInformation("{0} initialised. Baud rate to {1}", this.ToString(), controller.USBGyro._serialPort.BaudRate);
             }
             else
             {

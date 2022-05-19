@@ -28,19 +28,19 @@ namespace ControllerCommon
         // event handler(s)
         private Timer ConfigurationChangedTimer;
         public event ConfigurationChangedEventHandler ConfigurationChanged;
-        public delegate void ConfigurationChangedEventHandler();
+        public delegate void ConfigurationChangedEventHandler(bool update);
 
         private Timer DeviceArrivedTimer;
         public event DeviceArrivedEventHandler DeviceArrived;
-        public delegate void DeviceArrivedEventHandler();
+        public delegate void DeviceArrivedEventHandler(bool update);
 
         private Timer DeviceRemovedTimer;
         public event DeviceRemovedEventHandler DeviceRemoved;
-        public delegate void DeviceRemovedEventHandler();
+        public delegate void DeviceRemovedEventHandler(bool update);
 
         private Timer DockedTimer;
         public event DockedEventHandler Docked;
-        public delegate void DockedEventHandler();
+        public delegate void DockedEventHandler(bool update);
 
         public SystemManager()
         {
@@ -53,25 +53,25 @@ namespace ControllerCommon
             ConfigurationChangedTimer = new Timer() { Interval = 500, AutoReset = false };
             ConfigurationChangedTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
             {
-                ConfigurationChanged?.Invoke();
+                ConfigurationChanged?.Invoke(true);
             };
 
             DeviceArrivedTimer = new Timer() { Interval = 500, AutoReset = false };
             DeviceArrivedTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
             {
-                DeviceArrived?.Invoke();
+                DeviceArrived?.Invoke(true);
             };
 
             DeviceRemovedTimer = new Timer() { Interval = 500, AutoReset = false };
             DeviceRemovedTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
             {
-                DeviceRemoved?.Invoke();
+                DeviceRemoved?.Invoke(true);
             };
 
             DockedTimer = new Timer() { Interval = 500, AutoReset = false };
             DockedTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
             {
-                Docked?.Invoke();
+                Docked?.Invoke(true);
             };
         }
 

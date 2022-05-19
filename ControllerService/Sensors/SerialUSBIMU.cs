@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static ControllerCommon.Utils.DeviceUtils;
 using ControllerCommon;
+using System.Threading;
 
 // References
 // https://www.demo2s.com/csharp/csharp-serialport-getportnames.html
@@ -27,7 +28,7 @@ namespace ControllerService.Sensors
 		public USBDeviceInfo sensor;
 
 		// Create a new SerialPort object with default settings.
-		public SerialPort SensorSerialPort = new SerialPort();
+		public SerialPort _serialPort = new SerialPort();
 
 		private bool openAutoCalib = false; // Todo, only once! Or based on reading if it's needed?
 
@@ -36,6 +37,12 @@ namespace ControllerService.Sensors
 
 		public event ReadingChangedEventHandler ReadingChanged;
 		public delegate void ReadingChangedEventHandler(Vector3 AccelerationG, Vector3 AngularVelocityDeg);
+
+		public event ConnectedEventHandler Connected;
+		public delegate void ConnectedEventHandler();
+
+		public event DisconnectedEventHandler Disconnected;
+		public delegate void DisconnectedEventHandler();
 
 		public SerialUSBIMU(ILogger logger)
 		{
@@ -47,35 +54,66 @@ namespace ControllerService.Sensors
 			systemManager.DeviceRemoved += DeviceEvent;
 
 			// USB Gyro v2 COM Port settings.
-			SensorSerialPort.BaudRate = 115200; // Differs from datasheet intentionally.
-			SensorSerialPort.DataBits = 8;
-			SensorSerialPort.Parity = Parity.None;
-			SensorSerialPort.StopBits = StopBits.One;
-			SensorSerialPort.Handshake = Handshake.None;
-			SensorSerialPort.RtsEnable = true;
+			_serialPort.BaudRate = 115200; // Differs from datasheet intentionally.
+			_serialPort.DataBits = 8;
+			_serialPort.Parity = Parity.None;
+			_serialPort.StopBits = StopBits.One;
+			_serialPort.Handshake = Handshake.None;
+			_serialPort.RtsEnable = true;
 
-			DeviceEvent();
+			// Set the read/write timeouts
+			_serialPort.ReadTimeout = 500;
+			_serialPort.WriteTimeout = 500;
+
+			DeviceEvent(false);
+		}
+
+		public override string ToString()
+		{
+			return this.GetType().Name;
 		}
 
 		// Check for all existing connected devices,
 		// if match is found for Gyro USB v2,
 		// connect and log info accordingly.
-		public void DeviceEvent()
+		public void DeviceEvent(bool update)
 		{
-			// Get the first available USB gyro sensor
-			sensor = GetSerialDevices().Where(a => a.PID.Equals("7523") && a.VID.Equals("1A86")).FirstOrDefault();
-			if (sensor != null)
+			try
 			{
-				if (SensorSerialPort.IsOpen)
-					return; // SensorSerialPort.Close();
+				// get the first available USB gyro sensor
+				var serial = GetSerialDevices().Where(a => a.PID.Equals("7523") && a.VID.Equals("1A86")).FirstOrDefault();
+				if (serial != null)
+				{
+					if (_serialPort.IsOpen)
+						return;
 
-				string[] SplitName = sensor.Name.Split(' ');
-				SensorSerialPort.PortName = SplitName[2].Trim('(').Trim(')');
+					logger.LogInformation("{0} connecting to {1}", this.ToString(), serial.Name);
 
-				SensorSerialPort.Open();
-				SensorSerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+					// give system a bit of time...
+					Thread.Sleep(1000);
 
-				logger.LogInformation("USB Serial IMU Connected to {0}", sensor.Name);
+					// update current sensor
+					sensor = serial;
+
+					string[] SplitName = sensor.Name.Split(' ');
+					_serialPort.PortName = SplitName[2].Trim('(').Trim(')');
+					_serialPort.Open();
+					_serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+
+					logger.LogInformation("{0} connected to {1}", this.ToString(), sensor.Name);
+					Connected?.Invoke();
+				}
+				else if (sensor != null)
+				{
+					_serialPort.Close();
+					_serialPort.DataReceived -= new SerialDataReceivedEventHandler(DataReceivedHandler);
+
+					logger.LogInformation("{0} disconnected from {1}", this.ToString(), sensor.Name);
+					Disconnected?.Invoke();
+				}
+			}
+			catch (Exception ex)
+			{
 			}
 		}
 
@@ -83,10 +121,17 @@ namespace ControllerService.Sensors
 		private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
 		{
 			int index = 0;
+			ushort usLength = 0;
 			byte[] byteTemp = new byte[1000];
 
-			// Read serial, store in byte array, at specified offset, certain amount and determine length
-			UInt16 usLength = (UInt16)SensorSerialPort.Read(byteTemp, 0, 1000);
+			try
+			{
+				// Read serial, store in byte array, at specified offset, certain amount and determine length
+				usLength = (ushort)_serialPort.Read(byteTemp, 0, 1000);
+			}catch (Exception)
+			{
+				return;
+			}
 
 			// Default output mode is continues
 			// Check frame header ID (default is 0xA4) and update rate 0x03 (default is 100 Hz 0x03)
@@ -107,7 +152,7 @@ namespace ControllerService.Sensors
 					// Number of registers wanted 0x12, 
 					// Checksum 0xC1
 					byte[] buffer = new byte[] { 0xA4, 0x03, 0x08, 0x12, 0xC1 };
-					SensorSerialPort.Write(buffer, 0, buffer.Length);
+					_serialPort.Write(buffer, 0, buffer.Length);
 					index += usLength; // Remaining data is not processed
 					return;
 				}
@@ -120,13 +165,13 @@ namespace ControllerService.Sensors
 					// Register to read/write 0x07 Status query
 					// Data checksum lower 8 bits  0x10
 					byte[] buffer = new byte[] { 0xA4, 0x06, 0x07, 0x5F, 0x10 };
-					SensorSerialPort.Write(buffer, 0, buffer.Length);
+					_serialPort.Write(buffer, 0, buffer.Length);
 					System.Threading.Thread.Sleep(1);
 					// Address write function code register = 0xA4, 0x03
 					// Register to read/write save settings 0x05
 					// 0x55 save current configuration
 					buffer = new byte[] { 0xA4, 0x06, 0x05, 0x55, 0x04 };
-					SensorSerialPort.Write(buffer, 0, buffer.Length);
+					_serialPort.Write(buffer, 0, buffer.Length);
 					openAutoCalib = false;
 				}
 
@@ -135,6 +180,8 @@ namespace ControllerService.Sensors
 
 				InterpretData(array);
 				PlacementTransformation("Top", false);
+
+				// raise event
 				ReadingChanged?.Invoke(AccelerationG, AngularVelocityDeg);
 
 				index += datalength; // Todo, check with Frank, = 0 probably in the wrong location.
@@ -231,9 +278,9 @@ namespace ControllerService.Sensors
 		// Todo, call when application closes and USB device is no longer detected.
 		public void Disconnect()
 		{
-			if (SensorSerialPort.IsOpen)
+			if (_serialPort.IsOpen)
 			{
-				SensorSerialPort.Close();
+				_serialPort.Close();
 			}
 		}
 

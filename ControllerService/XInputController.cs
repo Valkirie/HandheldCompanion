@@ -66,6 +66,19 @@ namespace ControllerService
             this.logger = logger;
             this.pipeServer = pipeServer;
 
+            // initialize sensorfusion and madgwick
+            sensorFusion = new SensorFusion(logger);
+            madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
+            USBGyro = new SerialUSBIMU(logger);
+            USBGyro.Connected += () =>
+            {
+                UpdateSensors();
+            };
+            USBGyro.Disconnected += () =>
+            {
+                UpdateSensors();
+            };
+
             // initialize sensor(s)
             UpdateSensors();
 
@@ -73,10 +86,6 @@ namespace ControllerService
             Accelerations = new();
             AngularVelocities = new();
             Angle = new();
-
-            // initialize sensorfusion and madgwick
-            sensorFusion = new SensorFusion(logger);
-            madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
 
             // initialize profile(s)
             profile = new();
@@ -103,8 +112,6 @@ namespace ControllerService
 
         public void UpdateSensors()
         {
-            USBGyro = new SerialUSBIMU(logger);
-
             Gyrometer = new XInputGirometer(this, logger);
             Accelerometer = new XInputAccelerometer(this, logger);
             Inclinometer = new XInputInclinometer(this, logger);
