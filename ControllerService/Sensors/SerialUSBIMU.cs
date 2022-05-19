@@ -132,8 +132,6 @@ namespace ControllerService.Sensors
 				// If datalength is not 23 ie does not match the read register request
 				// and does not match the start register number request 0x08
 				// then request this...
-				// Todo, assumption is that the continous output needs to be configured first to what you want (and saved!)?
-				// If this assumption is correct, 
 				if (datalength != 23 || byteTemp[index + 2] != 0x08)
 				{
 					// Initialization
@@ -142,7 +140,18 @@ namespace ControllerService.Sensors
 					// Number of registers wanted 0x12, 
 					// Checksum 0xC1
 					byte[] buffer = new byte[] { 0xA4, 0x03, 0x08, 0x12, 0xC1 };
-					_serialPort.Write(buffer, 0, buffer.Length);
+
+					logger.LogInformation("Serial USB Received unexpected datalength and start register, setting register...");
+
+					try
+					{
+						_serialPort.Write(buffer, 0, buffer.Length);
+					}
+					catch (Exception)
+					{
+						return;
+					}
+
 					index += usLength; // Remaining data is not processed
 					return;
 				}
@@ -155,12 +164,26 @@ namespace ControllerService.Sensors
 					// Register to read/write 0x07 Status query
 					// Data checksum lower 8 bits  0x10
 					byte[] buffer = new byte[] { 0xA4, 0x06, 0x07, 0x5F, 0x10 };
-					_serialPort.Write(buffer, 0, buffer.Length);
+
+					logger.LogInformation("Serial USB Calibrating Sensor");
+
+					try
+					{
+						_serialPort.Write(buffer, 0, buffer.Length);
+					}
+					catch (Exception)
+					{
+						return;
+					}
+
 					System.Threading.Thread.Sleep(1);
 					// Address write function code register = 0xA4, 0x03
 					// Register to read/write save settings 0x05
 					// 0x55 save current configuration
 					buffer = new byte[] { 0xA4, 0x06, 0x05, 0x55, 0x04 };
+
+					logger.LogInformation("Serial USB save settings on device");
+
 					_serialPort.Write(buffer, 0, buffer.Length);
 					openAutoCalib = false;
 				}
