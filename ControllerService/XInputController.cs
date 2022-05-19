@@ -77,7 +77,6 @@ namespace ControllerService
             // initialize sensorfusion and madgwick
             sensorFusion = new SensorFusion(logger);
             madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
-            USBGyro = new SerialUSBIMU(logger);
 
             // initialize profile(s)
             profile = new();
@@ -104,6 +103,8 @@ namespace ControllerService
 
         public void UpdateSensors()
         {
+            USBGyro = new SerialUSBIMU(logger);
+
             Gyrometer = new XInputGirometer(this, logger);
             Accelerometer = new XInputAccelerometer(this, logger);
             Inclinometer = new XInputInclinometer(this, logger);
@@ -160,9 +161,6 @@ namespace ControllerService
 
                 // update sensorFusion (todo: call only when needed ?)
                 sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocities[XInputSensorFlags.Centered], Accelerations[XInputSensorFlags.Default]);
-
-                Vector3 USBAcc = USBGyro.GetCurrentReadingAcc();
-                Vector3 USBAngVel = USBGyro.GetCurrentReadingAngVel();
                 
                 /*
                 logger.LogInformation("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
@@ -200,10 +198,10 @@ namespace ControllerService
                     {
                         case 0: // Visible
                             var AngularVelocityRad = new Vector3();
-                            AngularVelocityRad.X = -InputUtils.deg2rad(USBAngVel.X);
-                            AngularVelocityRad.Y = -InputUtils.deg2rad(USBAngVel.Y);
-                            AngularVelocityRad.Z = -InputUtils.deg2rad(USBAngVel.Z);
-                            madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -USBAcc.X, USBAcc.Y, USBAcc.Z, DeltaSeconds);
+                            AngularVelocityRad.X = -InputUtils.deg2rad(AngularVelocities[XInputSensorFlags.CenteredRaw].X);
+                            AngularVelocityRad.Y = -InputUtils.deg2rad(AngularVelocities[XInputSensorFlags.CenteredRaw].Y);
+                            AngularVelocityRad.Z = -InputUtils.deg2rad(AngularVelocities[XInputSensorFlags.CenteredRaw].Z);
+                            madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Accelerations[XInputSensorFlags.RawValue].X, Accelerations[XInputSensorFlags.RawValue].Y, Accelerations[XInputSensorFlags.RawValue].Z, DeltaSeconds);
 
                             pipeServer?.SendMessage(new PipeSensor(madgwickAHRS.GetEuler(), madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
                             break;

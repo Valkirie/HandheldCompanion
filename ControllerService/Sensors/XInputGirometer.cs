@@ -7,7 +7,6 @@ namespace ControllerService.Sensors
 {
     public class XInputGirometer : XInputSensor
     {
-        public Gyrometer sensor;
         public static SensorSpec sensorSpec = new SensorSpec()
         {
             minIn = -128.0f,
@@ -18,21 +17,34 @@ namespace ControllerService.Sensors
 
         public XInputGirometer(XInputController controller, ILogger logger) : base(controller, logger)
         {
-            sensor = Gyrometer.GetDefault();
+            updateTimer.Interval = updateInterval * 6;
+
+            Gyrometer sensor = null; // Gyrometer.GetDefault();
             if (sensor != null)
             {
                 sensor.ReportInterval = (uint)updateInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
-                // (re)center
-                updateTimer.Interval = updateInterval * 6;
-
                 sensor.ReadingChanged += ReadingChanged;
+            }
+            else if (controller.USBGyro.SensorSerialPort.IsOpen)
+            {
+                controller.USBGyro.ReadingChanged += USBGyro_ReadingChanged;
+                logger.LogInformation("{0} initialised. Baud rate to {1}", this.ToString(), controller.USBGyro.SensorSerialPort.BaudRate);
             }
             else
             {
                 logger.LogWarning("{0} not initialised.", this.ToString());
             }
+        }
+
+        private void USBGyro_ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
+        {
+            this.reading.X = this.reading_fixed.X = (float)AngularVelocityDeg.X * controller.handheldDevice.AngularVelocityAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)AngularVelocityDeg.Y * controller.handheldDevice.AngularVelocityAxis.Y;
+            this.reading.Z = this.reading_fixed.Z = (float)AngularVelocityDeg.Z * controller.handheldDevice.AngularVelocityAxis.Z;
+
+            base.ReadingChanged();
         }
 
         private void ReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)

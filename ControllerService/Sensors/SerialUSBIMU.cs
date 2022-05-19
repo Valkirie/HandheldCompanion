@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
 using static ControllerCommon.Utils.DeviceUtils;
+using ControllerCommon;
 
 // References
 // https://www.demo2s.com/csharp/csharp-serialport-getportnames.html
@@ -19,19 +20,31 @@ namespace ControllerService.Sensors
 	public class SerialUSBIMU
 	{
 		// Global variables that can be updated or output etc
-		Vector3 AccelerationG = new Vector3();
-		Vector3 AngularVelocityDeg = new Vector3();
-		Vector3 EulerRollPitchYawDeg = new Vector3();
+		private Vector3 AccelerationG = new Vector3();		// accelerometer
+		private Vector3 AngularVelocityDeg = new Vector3();	// gyrometer
+		private Vector3 EulerRollPitchYawDeg = new Vector3();
+
+		public USBDeviceInfo sensor;
 
 		// Create a new SerialPort object with default settings.
-		private SerialPort SensorSerialPort = new SerialPort();
+		public SerialPort SensorSerialPort = new SerialPort();
 
 		private bool openAutoCalib = false; // Todo, only once! Or based on reading if it's needed?
+
 		private readonly ILogger logger;
+		private SystemManager systemManager;
+
+		public event ReadingChangedEventHandler ReadingChanged;
+		public delegate void ReadingChangedEventHandler(Vector3 AccelerationG, Vector3 AngularVelocityDeg);
 
 		public SerialUSBIMU(ILogger logger)
 		{
 			this.logger = logger;
+
+			// initialize manager(s)
+			systemManager = new SystemManager();
+			systemManager.DeviceArrived += DeviceEvent;
+			systemManager.DeviceRemoved += DeviceEvent;
 
 			// USB Gyro v2 COM Port settings.
 			SensorSerialPort.BaudRate = 115200; // Differs from datasheet intentionally.
@@ -41,36 +54,28 @@ namespace ControllerService.Sensors
 			SensorSerialPort.Handshake = Handshake.None;
 			SensorSerialPort.RtsEnable = true;
 
-			// Todo, rework to timer that runs/checks every second
-			DetectAndConnect();
+			DeviceEvent();
 		}
 
 		// Check for all existing connected devices,
 		// if match is found for Gyro USB v2,
 		// connect and log info accordingly.
-		public void DetectAndConnect()
+		public void DeviceEvent()
 		{
-			// Get a list of serial ports and their properties.
-			USBDeviceInfo USBGyro = GetSerialDevices().Where(a => a.PID.Equals("7523") && a.VID.Equals("1A86")).FirstOrDefault();
-
-			if (USBGyro != null)
-            {
-				logger.LogInformation("USB Serial IMU {0} detected", USBGyro.Description);
-				
-				string[] SplitName = USBGyro.Name.Split(' ');
-				SensorSerialPort.PortName = SplitName[2].Trim('(').Trim(')');
-
+			// Get the first available USB gyro sensor
+			sensor = GetSerialDevices().Where(a => a.PID.Equals("7523") && a.VID.Equals("1A86")).FirstOrDefault();
+			if (sensor != null)
+			{
 				if (SensorSerialPort.IsOpen)
-					SensorSerialPort.Close();
+					return; // SensorSerialPort.Close();
+
+				string[] SplitName = sensor.Name.Split(' ');
+				SensorSerialPort.PortName = SplitName[2].Trim('(').Trim(')');
 
 				SensorSerialPort.Open();
 				SensorSerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 
-				logger.LogInformation("USB Serial IMU Connected to {0}", USBGyro.Name);
-			}
-			else
-			{
-				logger.LogWarning("No USB Serial IMU detected");
+				logger.LogInformation("USB Serial IMU Connected to {0}", sensor.Name);
 			}
 		}
 
@@ -130,6 +135,7 @@ namespace ControllerService.Sensors
 
 				InterpretData(array);
 				PlacementTransformation("Top", false);
+				ReadingChanged?.Invoke(AccelerationG, AngularVelocityDeg);
 
 				index += datalength; // Todo, check with Frank, = 0 probably in the wrong location.
 			}

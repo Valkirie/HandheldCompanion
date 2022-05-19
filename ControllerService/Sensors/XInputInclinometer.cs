@@ -7,21 +7,33 @@ namespace ControllerService.Sensors
 {
     public class XInputInclinometer : XInputSensor
     {
-        public Accelerometer sensor;
-
         public XInputInclinometer(XInputController controller, ILogger logger) : base(controller, logger)
         {
-            sensor = Accelerometer.GetDefault();
+            Accelerometer sensor = null; // Accelerometer.GetDefault();
             if (sensor != null)
             {
                 sensor.ReportInterval = (uint)updateInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
                 sensor.ReadingChanged += ReadingChanged;
             }
+            else if (controller.USBGyro.SensorSerialPort.IsOpen)
+            {
+                controller.USBGyro.ReadingChanged += USBGyro_ReadingChanged;
+                logger.LogInformation("{0} initialised. Baud rate to {1}", this.ToString(), controller.USBGyro.SensorSerialPort.BaudRate);
+            }
             else
             {
                 logger.LogWarning("{0} not initialised.", this.ToString());
             }
+        }
+
+        private void USBGyro_ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
+        {
+            this.reading.X = this.reading_fixed.X = (float)AccelerationG.X * controller.handheldDevice.AngularVelocityAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)AccelerationG.Y * controller.handheldDevice.AngularVelocityAxis.Y;
+            this.reading.Z = this.reading_fixed.Z = (float)AccelerationG.Z * controller.handheldDevice.AngularVelocityAxis.Z;
+
+            base.ReadingChanged();
         }
 
         private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
