@@ -298,6 +298,11 @@ namespace HandheldCompanion.Views.Pages
 
             // Todo And actually do something...
 
+
+            // inform service
+            //PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
+            //pipeClient?.SendMessage(settings);
+
         }
         private void SensorPlacement_Click(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -308,6 +313,10 @@ namespace HandheldCompanion.Views.Pages
             // save settings
             Properties.Settings.Default.SensorPlacement = Tag;
             Properties.Settings.Default.Save();
+
+            // inform service
+            PipeClientSettings settings = new PipeClientSettings("SensorPlacement", Tag);
+            pipeClient?.SendMessage(settings);
         }
 
         private void UpdateUI_SensorPlacement(int SensorPlacement)
@@ -328,6 +337,10 @@ namespace HandheldCompanion.Views.Pages
             Properties.Settings.Default.Save();
 
             SensorPlacementMirrored = Toggle_SensorPlacementMirrored.IsOn;
+
+            // inform service
+            PipeClientSettings settings = new PipeClientSettings("SensorPlacementMirrored", SensorPlacementMirrored);
+            pipeClient?.SendMessage(settings);
         }
 
         #region serviceManager

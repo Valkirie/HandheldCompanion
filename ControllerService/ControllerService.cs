@@ -57,6 +57,9 @@ namespace ControllerService
         private readonly ILogger<ControllerService> logger;
         private readonly IHostApplicationLifetime lifetime;
 
+        private int SensorPlacement;
+        private bool SensorPlacementMirrored;
+
         public ControllerService(ILogger<ControllerService> logger, IHostApplicationLifetime lifetime)
         {
             this.logger = logger;
@@ -85,6 +88,8 @@ namespace ControllerService
             DSUport = int.Parse(configuration.AppSettings.Settings["DSUport"].Value); // Properties.Settings.Default.DSUport;
             HIDrate = int.Parse(configuration.AppSettings.Settings["HIDrate"].Value); // Properties.Settings.Default.HIDrate;
             HIDstrength = double.Parse(configuration.AppSettings.Settings["HIDstrength"].Value); // Properties.Settings.Default.HIDstrength;
+            SensorPlacement = int.Parse(configuration.AppSettings.Settings["SensorPlacment"].Value); // Properties.Settings.Default.SensorPlacement;
+            SensorPlacementMirrored = bool.Parse(configuration.AppSettings.Settings["SensorPlacmentMirrored"].Value); // Properties.Settings.Default.SensorPlacementMirrored;
 
             HIDidx = Enum.Parse<UserIndex>(configuration.AppSettings.Settings["HIDidx"].Value); // Properties.Settings.Default.HIDidx;
             deviceInstancePath = configuration.AppSettings.Settings["deviceInstancePath"].Value; // Properties.Settings.Default.deviceInstancePath;
@@ -480,6 +485,19 @@ namespace ControllerService
                         DSUServer.port = value;
                     }
                     break;
+                case "SensorPlacement":
+                    {
+                        int value = int.Parse(property);
+                        SensorPlacement = value;
+                    }
+                    break;
+                case "SensorPlacementMirrored":
+                    {
+                        bool value = bool.Parse(property);
+                        SensorPlacementMirrored = value;
+                    }
+                    break;
+
             }
         }
 
