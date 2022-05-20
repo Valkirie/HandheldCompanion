@@ -588,6 +588,7 @@ namespace HandheldCompanion.Views
             scrollOffset = scrollViewer.VerticalOffset;
         }
 
+        private bool hasScrolled;
         private void ScrollViewer_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (scrollPoint == new Point())
@@ -596,7 +597,22 @@ namespace HandheldCompanion.Views
             if (MainWindow.scrollLock)
                 return;
 
-            scrollViewer.ScrollToVerticalOffset(scrollOffset + (scrollPoint.Y - e.GetPosition(scrollViewer).Y));
+            double diff = (scrollPoint.Y - e.GetPosition(scrollViewer).Y);
+
+            if (Math.Abs(diff) >= 3)
+            {
+                Debug.WriteLine("hasScrolled: {0} by: {1}", true, diff);
+                scrollViewer.ScrollToVerticalOffset(scrollOffset + diff);
+                hasScrolled = true;
+                e.Handled = true;
+            }
+            else
+            {
+                Debug.WriteLine("hasScrolled: {0}", false);
+                hasScrolled = false;
+                e.Handled = false;
+                // do nothing
+            }
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -728,6 +744,23 @@ namespace HandheldCompanion.Views
         private void ScrollViewer_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             scrollPoint = new Point();
+
+            if (hasScrolled)
+            {
+                e.Handled = true;
+                hasScrolled = false;
+            }
+        }
+
+        private void scrollViewer_MouseLeave(object sender, MouseEventArgs e)
+        {
+            scrollPoint = new Point();
+
+            if (hasScrolled)
+            {
+                e.Handled = true;
+                hasScrolled = false;
+            }
         }
 
         private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
