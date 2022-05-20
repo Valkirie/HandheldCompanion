@@ -8,7 +8,9 @@ using System.Globalization;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.ServiceControllerStatus;
 
@@ -61,6 +63,7 @@ namespace HandheldCompanion.Views.Pages
 
             cB_SensorSelection.SelectedIndex = SensorSelection = Properties.Settings.Default.SensorSelection;
             var SensorPlacement = Properties.Settings.Default.SensorPlacement;
+            UpdateUI_SensorPlacement(SensorPlacement);
             Toggle_SensorPlacementMirrored.IsOn = SensorPlacementMirrored = Properties.Settings.Default.SensorPlacementMirrored;
 
             // initialize update manager
@@ -300,11 +303,24 @@ namespace HandheldCompanion.Views.Pages
         {
             int Tag = int.Parse((string)((Button)sender).Tag);
 
-            // Todo, update UI something?
+            UpdateUI_SensorPlacement(Tag);
 
             // save settings
             Properties.Settings.Default.SensorPlacement = Tag;
             Properties.Settings.Default.Save();
+        }
+
+        private void UpdateUI_SensorPlacement(int SensorPlacement)
+        {
+            foreach (SimpleStackPanel panel in SensorPlacementVisualisation.Children)
+                foreach (Button button in panel.Children)
+                {
+                    if (int.Parse((string)button.Tag) == SensorPlacement)
+                        button.Background = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+                    else
+                        button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
+                }
+
         }
         private void Toggle_SensorPlacementMirrored_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {

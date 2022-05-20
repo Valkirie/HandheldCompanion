@@ -357,21 +357,21 @@
                         </DockPanel>
 
                         <Grid Grid.Column="1">
-                            <ui:SimpleStackPanel Name="SensorPlacement" Spacing="6" HorizontalAlignment="Right">
+                            <ui:SimpleStackPanel Name="SensorPlacementVisualisation" Spacing="6" HorizontalAlignment="Right">
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <Rectangle Width="50" Height="50"></Rectangle>
+                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
                                     <Button Tag="0" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
-                                    <Rectangle Width="50" Height="50"></Rectangle>
+                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
                                 </ui:SimpleStackPanel>
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <Button Tag="1" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
-                                    <Rectangle Width="50" Height="50"></Rectangle>
+                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
                                     <Button Tag="2" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
                                 </ui:SimpleStackPanel>
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <Rectangle Width="50" Height="50"></Rectangle>
+                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
                                     <Button Tag="3" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
-                                    <Rectangle Width="50" Height="50"></Rectangle>
+                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
                                 </ui:SimpleStackPanel>
                             </ui:SimpleStackPanel>
                         </Grid>
@@ -391,7 +391,7 @@
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF57C;" Height="40" HorizontalAlignment="Center"/>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE1CA;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
                                 <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementMirrored}" FontSize="14"/>
