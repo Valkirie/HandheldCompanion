@@ -25,8 +25,8 @@ namespace HandheldCompanion.Views.Pages
         private ServiceManager serviceManager;
 
         // settings vars
-        public bool ToastEnable, RunAtStartup, StartMinimized, CloseMinimises, StartServiceWithCompanion, HaltServiceWithCompanion;
-        public int ApplicationTheme, ServiceStartup;
+        public bool ToastEnable, RunAtStartup, StartMinimized, CloseMinimises, StartServiceWithCompanion, HaltServiceWithCompanion, SensorPlacementMirrored;
+        public int ApplicationTheme, ServiceStartup, SensorSelection;
 
         private UpdateManager updateManager;
 
@@ -58,6 +58,10 @@ namespace HandheldCompanion.Views.Pages
 
             Toggle_ServiceStartup.IsOn = StartServiceWithCompanion = Properties.Settings.Default.StartServiceWithCompanion;
             Toggle_ServiceShutdown.IsOn = HaltServiceWithCompanion = Properties.Settings.Default.HaltServiceWithCompanion;
+
+            cB_SensorSelection.SelectedIndex = SensorSelection = Properties.Settings.Default.SensorSelection;
+            var SensorPlacement = Properties.Settings.Default.SensorPlacement;
+            Toggle_SensorPlacementMirrored.IsOn = SensorPlacementMirrored = Properties.Settings.Default.SensorPlacementMirrored;
 
             // initialize update manager
             updateManager = new UpdateManager();
@@ -275,6 +279,39 @@ namespace HandheldCompanion.Views.Pages
         private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             MainWindow.scrollLock = false;
+        }
+
+        private void cB_SensorSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cB_SensorSelection.SelectedIndex == -1)
+                return;
+
+            // skip if setting is identical to current
+            if (cB_SensorSelection.SelectedIndex == Properties.Settings.Default.SensorSelection)
+                return;
+
+            Properties.Settings.Default.SensorSelection = cB_SensorSelection.SelectedIndex;
+            Properties.Settings.Default.Save();
+
+            // Todo And actually do something...
+
+        }
+        private void SensorPlacement_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            int Tag = int.Parse((string)((Button)sender).Tag);
+
+            // Todo, update UI something?
+
+            // save settings
+            Properties.Settings.Default.SensorPlacement = Tag;
+            Properties.Settings.Default.Save();
+        }
+        private void Toggle_SensorPlacementMirrored_Toggled(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Properties.Settings.Default.SensorPlacementMirrored = Toggle_SensorPlacementMirrored.IsOn;
+            Properties.Settings.Default.Save();
+
+            SensorPlacementMirrored = Toggle_SensorPlacementMirrored.IsOn;
         }
 
         #region serviceManager

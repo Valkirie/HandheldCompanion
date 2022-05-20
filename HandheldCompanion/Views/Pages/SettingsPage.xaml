@@ -359,14 +359,19 @@
                         <Grid Grid.Column="1">
                             <ui:SimpleStackPanel Name="SensorPlacement" Spacing="6" HorizontalAlignment="Right">
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <Rectangle Width="50" Height="50"></Rectangle>
                                     <Button Tag="0" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
+                                    <Rectangle Width="50" Height="50"></Rectangle>
                                 </ui:SimpleStackPanel>
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <Button Tag="1" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
+                                    <Rectangle Width="50" Height="50"></Rectangle>
                                     <Button Tag="2" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
                                 </ui:SimpleStackPanel>
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <Rectangle Width="50" Height="50"></Rectangle>
                                     <Button Tag="3" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
+                                    <Rectangle Width="50" Height="50"></Rectangle>
                                 </ui:SimpleStackPanel>
                             </ui:SimpleStackPanel>
                         </Grid>
@@ -394,7 +399,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_SensorPlacementMirrored" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_SensorPlacementMirrored_Toggled" IsEnabled="False"/>
+                        <ui:ToggleSwitch Name="Toggle_SensorPlacementMirrored" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_SensorPlacementMirrored_Toggled" IsEnabled="True"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
