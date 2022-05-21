@@ -121,6 +121,8 @@ namespace HandheldCompanion.Views.Pages
             this.logger = logger;
 
             this.pipeClient = mainWindow.pipeClient;
+            this.pipeClient.ServerMessage += OnServerMessage;
+
             this.serviceManager = mainWindow.serviceManager;
             this.serviceManager.Updated += OnServiceUpdate;
 
@@ -150,6 +152,21 @@ namespace HandheldCompanion.Views.Pages
 
             cB_Theme.SelectedIndex = Properties.Settings.Default.MainWindowTheme;
             ApplyTheme((ApplicationTheme)cB_Theme.SelectedIndex);
+        }
+
+        private void OnServerMessage(object sender, PipeMessage message)
+        {
+            switch (message.code)
+            {
+                case PipeCode.SERVER_CONTROLLER:
+                    PipeServerHandheld handheldDevice = (PipeServerHandheld)message;
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        SensorInternal.IsEnabled = handheldDevice.hasInternal;
+                        SensorExternal.IsEnabled = handheldDevice.hasExternal;
+                    });
+                    break;
+            }
         }
 
         private void Toggle_AutoStart_Toggled(object sender, System.Windows.RoutedEventArgs e)
