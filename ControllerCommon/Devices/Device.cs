@@ -45,7 +45,7 @@ namespace ControllerCommon.Devices
             }
 
             var USB = SerialUSBIMU.GetDefault(null);
-            if (USB != null)
+            if (USB.sensor != null)
             {
                 ExternalSensorName = USB.sensor.Name;
                 hasExternal = true;
