@@ -40,9 +40,9 @@ namespace ControllerService.Sensors
         {
             AccelerometerReading reading = args.Reading;
 
-            this.reading.X = this.reading_fixed.X = (float)reading.AccelerationX;
-            this.reading.Y = this.reading_fixed.Y = (float)reading.AccelerationZ;
-            this.reading.Z = this.reading_fixed.Z = (float)reading.AccelerationY;
+            this.reading.X = this.reading_fixed.X = (float)reading.AccelerationX * ControllerService.handheldDevice.AccelerationAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)reading.AccelerationZ * ControllerService.handheldDevice.AccelerationAxis.Z;
+            this.reading.Z = this.reading_fixed.Z = (float)reading.AccelerationY * ControllerService.handheldDevice.AccelerationAxis.Y;
 
             base.ReadingChanged();
         }
@@ -55,26 +55,26 @@ namespace ControllerService.Sensors
                 Y = center ? this.reading_fixed.Y : this.reading.Y,
                 Z = center ? this.reading_fixed.Z : this.reading.Z
             };
-            
-                var readingZ = ControllerService.profile.steering == 0 ? reading.Z : reading.Y;
-                var readingY = ControllerService.profile.steering == 0 ? reading.Y : -reading.Z;
-                var readingX = ControllerService.profile.steering == 0 ? reading.X : reading.X;
 
-                if (ControllerService.profile.inverthorizontal)
-                {
-                    readingY *= -1.0f;
-                    readingZ *= -1.0f;
-                }
+            var readingZ = ControllerService.profile.steering == 0 ? reading.Z : reading.Y;
+            var readingY = ControllerService.profile.steering == 0 ? reading.Y : -reading.Z;
+            var readingX = ControllerService.profile.steering == 0 ? reading.X : reading.X;
 
-                if (ControllerService.profile.invertvertical)
-                {
-                    readingY *= -1.0f;
-                    readingX *= -1.0f;
-                }
+            if (ControllerService.profile.inverthorizontal)
+            {
+                readingY *= -1.0f;
+                readingZ *= -1.0f;
+            }
 
-                reading.X = readingX;
-                reading.Y = readingY;
-                reading.Z = readingZ;
+            if (ControllerService.profile.invertvertical)
+            {
+                readingY *= -1.0f;
+                readingX *= -1.0f;
+            }
+
+            reading.X = readingX;
+            reading.Y = readingY;
+            reading.Z = readingZ;
 
             // Calculate angles around Y and X axis (Theta and Psi) using all 3 directions of accelerometer
             // Based on: https://www.digikey.com/en/articles/using-an-accelerometer-for-inclination-sensing               
