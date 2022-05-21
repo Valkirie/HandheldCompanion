@@ -26,30 +26,21 @@ namespace ControllerService.Sensors
 
         protected static SensorSpec sensorSpec;
 
-        protected Timer updateTimer;
-        protected int updateInterval;
+        protected Timer centerTimer;
 
         protected readonly ILogger logger;
 
-        public event ReadingChangedEventHandler ReadingHasChanged;
-        public delegate void ReadingChangedEventHandler(XInputSensor sender, Vector3 e);
-
-        protected XInputSensor(int updateInterval, ILogger logger)
+        protected XInputSensor(ILogger logger)
         {
-            this.updateInterval = updateInterval;
-
-            this.updateTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 100 };
-            this.updateTimer.Elapsed += Timer_Elapsed;
+            this.centerTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 100 };
+            this.centerTimer.Elapsed += Timer_Elapsed;
         }
 
         protected virtual void ReadingChanged()
         {
             // reset reading after inactivity
-            updateTimer.Stop();
-            updateTimer.Start();
-
-            // raise event
-            ReadingHasChanged?.Invoke(this, this.reading);
+            centerTimer.Stop();
+            centerTimer.Start();
 
             Task.Run(() => logger?.LogDebug("{0}.ReadingChanged({1:00.####}, {2:00.####}, {3:00.####})", this.GetType().Name, this.reading.X, this.reading.Y, this.reading.Z));
         }

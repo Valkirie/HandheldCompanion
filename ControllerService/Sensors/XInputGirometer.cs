@@ -15,9 +15,9 @@ namespace ControllerService.Sensors
             maxOut = 2048.0f,
         };
 
-        public XInputGirometer(int updateInterval, ILogger logger) : base(updateInterval, logger)
+        public XInputGirometer(int updateInterval, ILogger logger) : base(logger)
         {
-            updateTimer.Interval = updateInterval * 6;
+            centerTimer.Interval = updateInterval * 6;
 
             Gyrometer sensor = Gyrometer.GetDefault();
             if (sensor != null && ControllerService.SensorSelection == 0)

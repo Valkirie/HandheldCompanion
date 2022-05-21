@@ -7,7 +7,7 @@ namespace ControllerService.Sensors
 {
     public class XInputInclinometer : XInputSensor
     {
-        public XInputInclinometer(int updateInterval, ILogger logger) : base(updateInterval, logger)
+        public XInputInclinometer(int updateInterval, ILogger logger) : base(logger)
         {
             Accelerometer sensor = Accelerometer.GetDefault();
             if (sensor != null && ControllerService.SensorSelection == 0)

@@ -15,7 +15,7 @@ namespace ControllerService.Sensors
             maxOut = short.MaxValue,
         };
 
-        public XInputAccelerometer(int updateInterval, ILogger logger) : base(updateInterval, logger)
+        public XInputAccelerometer(int updateInterval, ILogger logger) : base(logger)
         {
             Accelerometer sensor = Accelerometer.GetDefault();
             if (sensor != null && ControllerService.SensorSelection == 0)
