@@ -1,6 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Devices;
 using ControllerCommon.Utils;
+using ControllerService.Sensors;
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +27,6 @@ namespace ControllerService
         // controllers vars
         private ViGEmClient VirtualClient;
         private ViGEmTarget VirtualTarget;
-
         public XInputController XInputController;
 
         private PipeServer pipeServer;
@@ -34,7 +35,7 @@ namespace ControllerService
         public HidHide Hidder;
 
         // devices vars
-        private Device handheldDevice;
+        public static Device handheldDevice = new DefaultDevice();
         private UserIndex HIDidx;
         private string deviceInstancePath;
         private string baseContainerDeviceInstancePath;
@@ -57,8 +58,14 @@ namespace ControllerService
         private readonly ILogger<ControllerService> logger;
         private readonly IHostApplicationLifetime lifetime;
 
-        private int SensorPlacement;
-        private bool SensorPlacementMirrored;
+        // sensor vars
+        public static SerialUSBIMU USBGyro;
+        public static int SensorPlacement, SensorSelection;
+        public static bool SensorPlacementMirrored;
+
+        // profile vars
+        public static Profile profile = new();
+        public static Profile defaultProfile = new();
 
         public ControllerService(ILogger<ControllerService> logger, IHostApplicationLifetime lifetime)
         {
@@ -88,8 +95,10 @@ namespace ControllerService
             DSUport = int.Parse(configuration.AppSettings.Settings["DSUport"].Value); // Properties.Settings.Default.DSUport;
             HIDrate = int.Parse(configuration.AppSettings.Settings["HIDrate"].Value); // Properties.Settings.Default.HIDrate;
             HIDstrength = double.Parse(configuration.AppSettings.Settings["HIDstrength"].Value); // Properties.Settings.Default.HIDstrength;
-            SensorPlacement = int.Parse(configuration.AppSettings.Settings["SensorPlacment"].Value); // Properties.Settings.Default.SensorPlacement;
-            SensorPlacementMirrored = bool.Parse(configuration.AppSettings.Settings["SensorPlacmentMirrored"].Value); // Properties.Settings.Default.SensorPlacementMirrored;
+
+            SensorSelection = int.Parse(configuration.AppSettings.Settings["SensorSelection"].Value); // Properties.Settings.Default.SensorSelection;
+            SensorPlacement = int.Parse(configuration.AppSettings.Settings["SensorPlacement"].Value); // Properties.Settings.Default.SensorPlacement;
+            SensorPlacementMirrored = bool.Parse(configuration.AppSettings.Settings["SensorPlacementMirrored"].Value); // Properties.Settings.Default.SensorPlacementMirrored;
 
             HIDidx = Enum.Parse<UserIndex>(configuration.AppSettings.Settings["HIDidx"].Value); // Properties.Settings.Default.HIDidx;
             deviceInstancePath = configuration.AppSettings.Settings["deviceInstancePath"].Value; // Properties.Settings.Default.deviceInstancePath;
@@ -108,6 +117,13 @@ namespace ControllerService
                 logger.LogCritical("ViGEm is missing. Please get it from: {0}", "https://github.com/ViGEm/ViGEmBus/releases");
                 throw new InvalidOperationException();
             }
+
+            // initialize sensor(s)
+            // todo: warn client to disable either option if not available ?
+            // todo: client to proceed to self-check on start ?
+            USBGyro = new SerialUSBIMU(logger);
+            USBGyro.Connected += () => { XInputController.UpdateSensors(); };
+            USBGyro.Disconnected += () => { XInputController.UpdateSensors(); };
 
             // initialize HidHide
             Hidder = new HidHide(logger);
@@ -154,8 +170,6 @@ namespace ControllerService
             }
             handheldDevice.ManufacturerName = ManufacturerName;
             handheldDevice.ProductName = ProductName;
-
-            XInputController.SetDevice(handheldDevice);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
@@ -404,7 +418,21 @@ namespace ControllerService
 
         internal void ProfileUpdated(Profile profile, bool backgroundtask)
         {
-            XInputController.SetProfile(profile);
+            // skip if current profile
+            if (profile == ControllerService.profile)
+                return;
+
+            // restore default profile
+            if (profile == null)
+                profile = defaultProfile;
+
+            ControllerService.profile = profile;
+
+            // update default profile
+            if (profile.isDefault)
+                defaultProfile = profile;
+            else
+                logger.LogInformation("Profile {0} applied.", profile.name);
         }
 
         public void UpdateSettings(Dictionary<string, object> args)
@@ -414,8 +442,11 @@ namespace ControllerService
                 string name = pair.Key;
                 string property = pair.Value.ToString();
 
-                configuration.AppSettings.Settings[name].Value = property;
-                configuration.Save(ConfigurationSaveMode.Modified);
+                if (configuration.AppSettings.Settings.AllKeys.ToList().Contains(name))
+                {
+                    configuration.AppSettings.Settings[name].Value = property;
+                    configuration.Save(ConfigurationSaveMode.Modified);
+                }
 
                 ApplySetting(name, property);
                 logger.LogDebug("{0} set to {1}", name, property);
@@ -497,7 +528,13 @@ namespace ControllerService
                         SensorPlacementMirrored = value;
                     }
                     break;
-
+                case "SensorSelection":
+                    {
+                        int value = int.Parse(property);
+                        SensorSelection = value;
+                        XInputController.UpdateSensors();
+                    }
+                    break;
             }
         }
 

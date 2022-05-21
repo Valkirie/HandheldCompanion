@@ -654,6 +654,14 @@
   <data name="SettingsPage_OpenAppBackgroundDesc" xml:space="preserve">
     <value>The application will initially start minimized and appear on the taskbar</value>
   </data>
+  <data name="SettingsPage_SensorExternal" xml:space="preserve">
+    <value>External</value>
+    <comment>added on 21/05/2022</comment>
+  </data>
+  <data name="SettingsPage_SensorInternal" xml:space="preserve">
+    <value>Internal</value>
+    <comment>added on 21/05/2022</comment>
+  </data>
   <data name="SettingsPage_SensorOptions" xml:space="preserve">
     <value>Sensor options</value>
   </data>

@@ -24,8 +24,6 @@ namespace ControllerService.Sensors
         protected Vector3 reading = new();
         protected Vector3 reading_fixed = new();
 
-        protected XInputController controller;
-
         protected static SensorSpec sensorSpec;
 
         protected Timer updateTimer;
@@ -36,11 +34,9 @@ namespace ControllerService.Sensors
         public event ReadingChangedEventHandler ReadingHasChanged;
         public delegate void ReadingChangedEventHandler(XInputSensor sender, Vector3 e);
 
-        protected XInputSensor(XInputController controller, ILogger logger)
+        protected XInputSensor(int updateInterval, ILogger logger)
         {
-            this.controller = controller;
-
-            this.updateInterval = controller.updateInterval;
+            this.updateInterval = updateInterval;
 
             this.updateTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 100 };
             this.updateTimer.Elapsed += Timer_Elapsed;

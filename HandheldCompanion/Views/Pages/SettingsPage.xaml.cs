@@ -293,15 +293,13 @@ namespace HandheldCompanion.Views.Pages
             if (cB_SensorSelection.SelectedIndex == Properties.Settings.Default.SensorSelection)
                 return;
 
+            // save settings
             Properties.Settings.Default.SensorSelection = cB_SensorSelection.SelectedIndex;
             Properties.Settings.Default.Save();
 
-            // Todo And actually do something...
-
-
             // inform service
-            //PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
-            //pipeClient?.SendMessage(settings);
+            PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
+            pipeClient?.SendMessage(settings);
 
         }
         private void SensorPlacement_Click(object sender, System.Windows.RoutedEventArgs e)

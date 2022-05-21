@@ -51,6 +51,8 @@ namespace ControllerCommon.Devices
                 if (sensor != null)
                     sensorName = sensor.Name;
             }
+
+            // todo: has USB dongle ?
         }
     }
 }

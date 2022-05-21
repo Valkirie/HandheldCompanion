@@ -1672,6 +1672,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to External.
+        /// </summary>
+        public static string SettingsPage_SensorExternal {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorExternal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internal.
+        /// </summary>
+        public static string SettingsPage_SensorInternal {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorInternal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sensor options.
         /// </summary>
         public static string SettingsPage_SensorOptions {

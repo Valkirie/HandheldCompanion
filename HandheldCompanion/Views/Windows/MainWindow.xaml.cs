@@ -8,6 +8,7 @@ using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -355,6 +356,12 @@ namespace HandheldCompanion.Views
                 // start process manager
                 processManager.Start();
             }
+
+            // send all local settings to server ?
+            PipeClientSettings settings = new PipeClientSettings();
+            foreach (SettingsProperty currentProperty in Properties.Settings.Default.Properties)
+                settings.settings.Add(currentProperty.Name, Properties.Settings.Default[currentProperty.Name]);
+            pipeClient?.SendMessage(settings);
         }
 
         private void OnClientDisconnected(object sender)

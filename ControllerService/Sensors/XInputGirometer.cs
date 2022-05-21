@@ -15,22 +15,22 @@ namespace ControllerService.Sensors
             maxOut = 2048.0f,
         };
 
-        public XInputGirometer(XInputController controller, ILogger logger) : base(controller, logger)
+        public XInputGirometer(int updateInterval, ILogger logger) : base(updateInterval, logger)
         {
             updateTimer.Interval = updateInterval * 6;
 
-            Gyrometer sensor = null; // Gyrometer.GetDefault();
-            if (sensor != null)
+            Gyrometer sensor = Gyrometer.GetDefault();
+            if (sensor != null && ControllerService.SensorSelection == 0)
             {
                 sensor.ReportInterval = (uint)updateInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
                 sensor.ReadingChanged += ReadingChanged;
             }
-            else if (controller.USBGyro._serialPort.IsOpen)
+            else if (ControllerService.USBGyro._serialPort.IsOpen && ControllerService.SensorSelection == 1)
             {
-                controller.USBGyro.ReadingChanged += USBGyro_ReadingChanged;
-                logger.LogInformation("{0} initialised. Baud rate to {1}", this.ToString(), controller.USBGyro._serialPort.BaudRate);
+                ControllerService.USBGyro.ReadingChanged += USBGyro_ReadingChanged;
+                logger.LogInformation("{0} initialised. Baud rate to {1}", this.ToString(), ControllerService.USBGyro._serialPort.BaudRate);
             }
             else
             {
@@ -40,9 +40,9 @@ namespace ControllerService.Sensors
 
         private void USBGyro_ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
         {
-            this.reading.X = this.reading_fixed.X = (float)AngularVelocityDeg.X * controller.handheldDevice.AngularVelocityAxis.X;
-            this.reading.Y = this.reading_fixed.Y = (float)AngularVelocityDeg.Y * controller.handheldDevice.AngularVelocityAxis.Y;
-            this.reading.Z = this.reading_fixed.Z = (float)AngularVelocityDeg.Z * controller.handheldDevice.AngularVelocityAxis.Z;
+            this.reading.X = this.reading_fixed.X = (float)AngularVelocityDeg.X * ControllerService.handheldDevice.AngularVelocityAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)AngularVelocityDeg.Y * ControllerService.handheldDevice.AngularVelocityAxis.Y;
+            this.reading.Z = this.reading_fixed.Z = (float)AngularVelocityDeg.Z * ControllerService.handheldDevice.AngularVelocityAxis.Z;
 
             base.ReadingChanged();
         }
@@ -52,9 +52,9 @@ namespace ControllerService.Sensors
             GyrometerReading reading = args.Reading;
 
             // swapping Y and Z
-            this.reading.X = this.reading_fixed.X = (float)reading.AngularVelocityX * controller.handheldDevice.AngularVelocityAxis.X;
-            this.reading.Y = this.reading_fixed.Y = (float)reading.AngularVelocityZ * controller.handheldDevice.AngularVelocityAxis.Z;
-            this.reading.Z = this.reading_fixed.Z = (float)reading.AngularVelocityY * controller.handheldDevice.AngularVelocityAxis.Y;
+            this.reading.X = this.reading_fixed.X = (float)reading.AngularVelocityX * ControllerService.handheldDevice.AngularVelocityAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)reading.AngularVelocityZ * ControllerService.handheldDevice.AngularVelocityAxis.Z;
+            this.reading.Z = this.reading_fixed.Z = (float)reading.AngularVelocityY * ControllerService.handheldDevice.AngularVelocityAxis.Y;
 
             base.ReadingChanged();
         }
@@ -68,33 +68,30 @@ namespace ControllerService.Sensors
                 Z = center ? this.reading_fixed.Z : this.reading.Z
             };
 
-            if (controller.virtualTarget != null)
+            reading *= ControllerService.profile.gyrometer;
+
+            if (ratio)
+                reading.Y *= ControllerService.handheldDevice.WidthHeightRatio;
+
+            var readingZ = ControllerService.profile.steering == 0 ? reading.Z : reading.Y;
+            var readingY = ControllerService.profile.steering == 0 ? reading.Y : reading.Z;
+            var readingX = ControllerService.profile.steering == 0 ? reading.X : reading.X;
+
+            if (ControllerService.profile.inverthorizontal)
             {
-                reading *= controller.profile.gyrometer;
-
-                if (ratio)
-                    reading.Y *= controller.handheldDevice.WidthHeightRatio;
-
-                var readingZ = controller.profile.steering == 0 ? reading.Z : reading.Y;
-                var readingY = controller.profile.steering == 0 ? reading.Y : reading.Z;
-                var readingX = controller.profile.steering == 0 ? reading.X : reading.X;
-
-                if (controller.profile.inverthorizontal)
-                {
-                    readingY *= -1.0f;
-                    readingZ *= -1.0f;
-                }
-
-                if (controller.profile.invertvertical)
-                {
-                    readingY *= -1.0f;
-                    readingX *= -1.0f;
-                }
-
-                reading.X = readingX;
-                reading.Y = readingY;
-                reading.Z = readingZ;
+                readingY *= -1.0f;
+                readingZ *= -1.0f;
             }
+
+            if (ControllerService.profile.invertvertical)
+            {
+                readingY *= -1.0f;
+                readingX *= -1.0f;
+            }
+
+            reading.X = readingX;
+            reading.Y = readingY;
+            reading.Z = readingZ;
 
             return reading;
         }

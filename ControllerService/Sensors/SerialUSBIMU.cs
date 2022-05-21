@@ -37,7 +37,7 @@ namespace ControllerService.Sensors
 		public event DisconnectedEventHandler Disconnected;
 		public delegate void DisconnectedEventHandler();
 
-		public SerialUSBIMU(XInputController controller, ILogger logger)
+		public SerialUSBIMU(ILogger logger)
 		{
 			this.logger = logger;
 

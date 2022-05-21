@@ -23,9 +23,6 @@ namespace ControllerService
         public Gamepad Gamepad;
         private State GamepadState;
 
-        public Profile profile;
-        private Profile defaultProfile;
-
         public Dictionary<XInputSensorFlags, Vector3> Accelerations = new();
         public Dictionary<XInputSensorFlags, Vector3> AngularVelocities = new();
 
@@ -41,9 +38,6 @@ namespace ControllerService
 
         public SensorFusion sensorFusion;
         public MadgwickAHRS madgwickAHRS;
-        public SerialUSBIMU USBGyro;
-
-        public Device handheldDevice = new DefaultDevice();
 
         protected readonly Stopwatch stopwatch;
         public long CurrentMicroseconds;
@@ -69,15 +63,6 @@ namespace ControllerService
             // initialize sensorfusion and madgwick
             sensorFusion = new SensorFusion(logger);
             madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
-            USBGyro = new SerialUSBIMU(this, logger);
-            USBGyro.Connected += () =>
-            {
-                UpdateSensors();
-            };
-            USBGyro.Disconnected += () =>
-            {
-                UpdateSensors();
-            };
 
             // initialize sensor(s)
             UpdateSensors();
@@ -86,10 +71,6 @@ namespace ControllerService
             Accelerations = new();
             AngularVelocities = new();
             Angle = new();
-
-            // initialize profile(s)
-            profile = new();
-            defaultProfile = new();
 
             // initialize touch
             Touch = new();
@@ -112,9 +93,9 @@ namespace ControllerService
 
         public void UpdateSensors()
         {
-            Gyrometer = new XInputGirometer(this, logger);
-            Accelerometer = new XInputAccelerometer(this, logger);
-            Inclinometer = new XInputInclinometer(this, logger);
+            Gyrometer = new XInputGirometer(updateInterval, logger);
+            Accelerometer = new XInputAccelerometer(updateInterval, logger);
+            Inclinometer = new XInputInclinometer(updateInterval, logger);
         }
 
         private void UpdateTimer_Ticked(object sender, EventArgs e)
@@ -248,30 +229,6 @@ namespace ControllerService
 
                 Updated?.Invoke(this);
             }
-        }
-
-        internal void SetDevice(Device handheldDevice)
-        {
-            this.handheldDevice = handheldDevice;
-        }
-
-        public void SetProfile(Profile profile)
-        {
-            // skip if current profile
-            if (profile == this.profile)
-                return;
-
-            // restore default profile
-            if (profile == null)
-                profile = defaultProfile;
-
-            this.profile = profile;
-
-            // update default profile
-            if (profile.isDefault)
-                defaultProfile = profile;
-            else
-                logger.LogInformation("Profile {0} applied.", profile.name);
         }
 
         public void SetPollRate(int HIDrate)

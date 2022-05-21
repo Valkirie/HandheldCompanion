@@ -7,19 +7,19 @@ namespace ControllerService.Sensors
 {
     public class XInputInclinometer : XInputSensor
     {
-        public XInputInclinometer(XInputController controller, ILogger logger) : base(controller, logger)
+        public XInputInclinometer(int updateInterval, ILogger logger) : base(updateInterval, logger)
         {
-            Accelerometer sensor = null; // Accelerometer.GetDefault();
-            if (sensor != null)
+            Accelerometer sensor = Accelerometer.GetDefault();
+            if (sensor != null && ControllerService.SensorSelection == 0)
             {
                 sensor.ReportInterval = (uint)updateInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
                 sensor.ReadingChanged += ReadingChanged;
             }
-            else if (controller.USBGyro._serialPort.IsOpen)
+            else if (ControllerService.USBGyro._serialPort.IsOpen && ControllerService.SensorSelection == 1)
             {
-                controller.USBGyro.ReadingChanged += USBGyro_ReadingChanged;
-                logger.LogInformation("{0} initialised. Baud rate to {1}", this.ToString(), controller.USBGyro._serialPort.BaudRate);
+                ControllerService.USBGyro.ReadingChanged += USBGyro_ReadingChanged;
+                logger.LogInformation("{0} initialised. Baud rate to {1}", this.ToString(), ControllerService.USBGyro._serialPort.BaudRate);
             }
             else
             {
@@ -29,9 +29,9 @@ namespace ControllerService.Sensors
 
         private void USBGyro_ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
         {
-            this.reading.X = this.reading_fixed.X = (float)AccelerationG.X * controller.handheldDevice.AngularVelocityAxis.X;
-            this.reading.Y = this.reading_fixed.Y = (float)AccelerationG.Y * controller.handheldDevice.AngularVelocityAxis.Y;
-            this.reading.Z = this.reading_fixed.Z = (float)AccelerationG.Z * controller.handheldDevice.AngularVelocityAxis.Z;
+            this.reading.X = this.reading_fixed.X = (float)AccelerationG.X * ControllerService.handheldDevice.AngularVelocityAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)AccelerationG.Y * ControllerService.handheldDevice.AngularVelocityAxis.Y;
+            this.reading.Z = this.reading_fixed.Z = (float)AccelerationG.Z * ControllerService.handheldDevice.AngularVelocityAxis.Z;
 
             base.ReadingChanged();
         }
@@ -55,20 +55,18 @@ namespace ControllerService.Sensors
                 Y = center ? this.reading_fixed.Y : this.reading.Y,
                 Z = center ? this.reading_fixed.Z : this.reading.Z
             };
+            
+                var readingZ = ControllerService.profile.steering == 0 ? reading.Z : reading.Y;
+                var readingY = ControllerService.profile.steering == 0 ? reading.Y : -reading.Z;
+                var readingX = ControllerService.profile.steering == 0 ? reading.X : reading.X;
 
-            if (controller.virtualTarget != null)
-            {
-                var readingZ = controller.profile.steering == 0 ? reading.Z : reading.Y;
-                var readingY = controller.profile.steering == 0 ? reading.Y : -reading.Z;
-                var readingX = controller.profile.steering == 0 ? reading.X : reading.X;
-
-                if (controller.profile.inverthorizontal)
+                if (ControllerService.profile.inverthorizontal)
                 {
                     readingY *= -1.0f;
                     readingZ *= -1.0f;
                 }
 
-                if (controller.profile.invertvertical)
+                if (ControllerService.profile.invertvertical)
                 {
                     readingY *= -1.0f;
                     readingX *= -1.0f;
@@ -77,7 +75,6 @@ namespace ControllerService.Sensors
                 reading.X = readingX;
                 reading.Y = readingY;
                 reading.Z = readingZ;
-            }
 
             // Calculate angles around Y and X axis (Theta and Psi) using all 3 directions of accelerometer
             // Based on: https://www.digikey.com/en/articles/using-an-accelerometer-for-inclination-sensing               

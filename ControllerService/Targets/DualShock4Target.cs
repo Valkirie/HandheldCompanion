@@ -169,7 +169,7 @@ namespace ControllerService.Targets
                 outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
             }
 
-            if (!xinputController.profile.whitelisted)
+            if (!ControllerService.profile.whitelisted)
             {
                 outDS4Report.wButtons = tempButtons;
                 outDS4Report.wButtons |= tempDPad.Value;

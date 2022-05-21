@@ -8,7 +8,7 @@
       xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       mc:Ignorable="d" 
-      d:DesignHeight="1000" d:DesignWidth="1000"
+      d:DesignHeight="2000" d:DesignWidth="1000"
       KeepAlive="True"
       Loaded="Page_Loaded"
       Title="{x:Static resx:Resources.SettingsPage_Settings}">
@@ -331,7 +331,16 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:RadioButtons Name="cB_SensorSelection" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1" SelectionChanged="cB_SensorSelection_SelectionChanged" />
+                        <ui:RadioButtons Name="cB_SensorSelection" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1" SelectionChanged="cB_SensorSelection_SelectionChanged">
+                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                <ui:FontIcon Glyph="&#xE770;"/>
+                                <Label Content="{x:Static resx:Resources.SettingsPage_SensorInternal}"></Label>
+                            </ui:SimpleStackPanel>
+                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                <ui:FontIcon Glyph="&#xECF1;"/>
+                                <Label Content="{x:Static resx:Resources.SettingsPage_SensorExternal}"></Label>
+                            </ui:SimpleStackPanel>
+                        </ui:RadioButtons>
                     </Grid>
                 </Border>
 
