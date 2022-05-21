@@ -120,13 +120,17 @@ namespace ControllerService
             }
 
             // initialize sensor(s)
-            // todo: warn client to disable either option if not available ?
-            // todo: client to proceed to self-check on start ?
             SerialIMU = SerialUSBIMU.GetDefault(logger);
-            SerialIMU.Connected += () => { // do something
-                                         };
-            SerialIMU.Disconnected += () => { // do something
-                                            };
+            SerialIMU.Connected += () =>
+            {
+                // todo: update client UI
+                XInputController.UpdateSensors(SensorSelection);
+            };
+            SerialIMU.Disconnected += () =>
+            {
+                // todo: update client UI
+                XInputController.UpdateSensors(SensorSelection);
+            };
 
             // initialize HidHide
             Hidder = new HidHide(logger);
