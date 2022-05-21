@@ -15,9 +15,10 @@ namespace ControllerService.Sensors
             maxOut = short.MaxValue,
         };
 
+        private Accelerometer sensor;
         public XInputAccelerometer(int updateInterval, ILogger logger) : base(logger)
         {
-            Accelerometer sensor = Accelerometer.GetDefault();
+            sensor = Accelerometer.GetDefault();
             if (sensor != null && ControllerService.SensorSelection == 0)
             {
                 sensor.ReportInterval = (uint)updateInterval;
@@ -28,7 +29,7 @@ namespace ControllerService.Sensors
             }
             else if (ControllerService.USBGyro._serialPort.IsOpen && ControllerService.SensorSelection == 1)
             {
-                ControllerService.USBGyro.ReadingChanged += USBGyro_ReadingChanged;
+                ControllerService.USBGyro.ReadingChanged += ReadingChanged;
                 logger.LogInformation("{0} initialised. Baud rate to {1}", this.ToString(), ControllerService.USBGyro._serialPort.BaudRate);
             }
             else
@@ -37,7 +38,7 @@ namespace ControllerService.Sensors
             }
         }
 
-        private void USBGyro_ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
+        private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
         {
             this.reading.X = this.reading_fixed.X = (float)AccelerationG.X * ControllerService.handheldDevice.AngularVelocityAxis.X;
             this.reading.Y = this.reading_fixed.Y = (float)AccelerationG.Y * ControllerService.handheldDevice.AngularVelocityAxis.Y;
@@ -48,11 +49,9 @@ namespace ControllerService.Sensors
 
         private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
-            AccelerometerReading reading = args.Reading;
-
-            this.reading.X = this.reading_fixed.X = (float)reading.AccelerationX * ControllerService.handheldDevice.AccelerationAxis.X;
-            this.reading.Y = this.reading_fixed.Y = (float)reading.AccelerationZ * ControllerService.handheldDevice.AccelerationAxis.Z;
-            this.reading.Z = this.reading_fixed.Z = (float)reading.AccelerationY * ControllerService.handheldDevice.AccelerationAxis.Y;
+            this.reading.X = this.reading_fixed.X = (float)args.Reading.AccelerationX * ControllerService.handheldDevice.AccelerationAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)args.Reading.AccelerationZ * ControllerService.handheldDevice.AccelerationAxis.Z;
+            this.reading.Z = this.reading_fixed.Z = (float)args.Reading.AccelerationY * ControllerService.handheldDevice.AccelerationAxis.Y;
 
             base.ReadingChanged();
         }
