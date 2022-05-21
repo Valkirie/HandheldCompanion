@@ -8,19 +8,19 @@ namespace ControllerService.Sensors
     public class XInputInclinometer : XInputSensor
     {
         private Accelerometer sensor;
-        public XInputInclinometer(int updateInterval, ILogger logger) : base(logger)
+        public XInputInclinometer(int selection, int updateInterval, ILogger logger) : base(logger)
         {
             sensor = Accelerometer.GetDefault();
-            if (sensor != null && ControllerService.SensorSelection == 0)
+            if (sensor != null && selection == 0)
             {
                 sensor.ReportInterval = (uint)updateInterval;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
                 sensor.ReadingChanged += ReadingChanged;
             }
-            else if (ControllerService.USBGyro._serialPort.IsOpen && ControllerService.SensorSelection == 1)
+            else if (ControllerService.SerialIMU.IsOpen() && selection == 1)
             {
-                ControllerService.USBGyro.ReadingChanged += ReadingChanged;
-                logger.LogInformation("{0} initialised. Baud rate to {1}", this.ToString(), ControllerService.USBGyro._serialPort.BaudRate);
+                ControllerService.SerialIMU.ReadingChanged += ReadingChanged;
+                logger.LogInformation("{0} initialised. Baud rate to {1}", this.ToString(), ControllerService.SerialIMU.GetInterval());
             }
             else
             {

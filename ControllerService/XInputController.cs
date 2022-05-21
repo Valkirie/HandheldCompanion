@@ -55,7 +55,7 @@ namespace ControllerService
         private readonly ILogger logger;
         private readonly PipeServer pipeServer;
 
-        public XInputController(ILogger logger, PipeServer pipeServer)
+        public XInputController(int selection, ILogger logger, PipeServer pipeServer)
         {
             this.logger = logger;
             this.pipeServer = pipeServer;
@@ -64,8 +64,7 @@ namespace ControllerService
             sensorFusion = new SensorFusion(logger);
             madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
 
-            // initialize sensor(s)
-            UpdateSensors();
+            UpdateSensors(selection);
 
             // initialize vectors
             Accelerations = new();
@@ -91,11 +90,11 @@ namespace ControllerService
             this.controllerEx = controllerEx;
         }
 
-        public void UpdateSensors()
+        public void UpdateSensors(int selection)
         {
-            Gyrometer = new XInputGirometer(updateInterval, logger);
-            Accelerometer = new XInputAccelerometer(updateInterval, logger);
-            Inclinometer = new XInputInclinometer(updateInterval, logger);
+            Gyrometer = new XInputGirometer(selection, updateInterval, logger);
+            Accelerometer = new XInputAccelerometer(selection, updateInterval, logger);
+            Inclinometer = new XInputInclinometer(selection, updateInterval, logger);
         }
 
         private void UpdateTimer_Ticked(object sender, EventArgs e)
@@ -111,7 +110,7 @@ namespace ControllerService
                 // update reading(s)
                 foreach (XInputSensorFlags flags in (XInputSensorFlags[])Enum.GetValues(typeof(XInputSensorFlags)))
                 {
-                    switch(flags)
+                    switch (flags)
                     {
                         case XInputSensorFlags.Default:
                             AngularVelocities[flags] = Gyrometer.GetCurrentReading();
@@ -149,7 +148,7 @@ namespace ControllerService
 
                 // update sensorFusion (todo: call only when needed ?)
                 sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocities[XInputSensorFlags.Centered], Accelerations[XInputSensorFlags.Default]);
-                
+
                 /*
                 logger.LogInformation("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
                 logger.LogInformation("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
@@ -167,7 +166,7 @@ namespace ControllerService
                 logger.LogInformation("Plot AngRawUSBY {0} {1}", TotalMilliseconds, USBAngVel.Y);
                 logger.LogInformation("Plot AngRawUSBZ {0} {1}", TotalMilliseconds, USBAngVel.Z);
                 */
-                
+
                 // async update client(s)
                 Task.Run(() =>
                 {

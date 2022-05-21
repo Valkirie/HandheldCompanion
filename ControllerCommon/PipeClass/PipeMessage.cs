@@ -42,11 +42,11 @@ namespace ControllerCommon
         public string ProductIllustration;
         public bool ProductSupported;
 
-        public string SensorName;
+        public string InternalSensorName;
+        public string ExternalSensorName;
 
-        public bool hasGyrometer;
-        public bool hasAccelerometer;
-        public bool hasInclinometer;
+        public bool hasInternal;
+        public bool hasExternal;
 
         public string ControllerName;
         public ushort ControllerVID;

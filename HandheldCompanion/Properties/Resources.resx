@@ -150,6 +150,14 @@
   <data name="AboutPage_RelatedLinks" xml:space="preserve">
     <value>Related Links</value>
   </data>
+  <data name="AboutPage_SensorExternal" xml:space="preserve">
+    <value>External</value>
+    <comment>added on 21/05/2022</comment>
+  </data>
+  <data name="AboutPage_SensorInternal" xml:space="preserve">
+    <value>Internal</value>
+    <comment>added on 21/05/2022</comment>
+  </data>
   <data name="AboutPage_SensorName" xml:space="preserve">
     <value>Sensor name</value>
   </data>

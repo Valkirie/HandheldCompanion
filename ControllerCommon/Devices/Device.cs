@@ -8,21 +8,16 @@ namespace ControllerCommon.Devices
     public abstract class Device
     {
         protected USBDeviceInfo sensor = new USBDeviceInfo();
-        public string sensorName = "N/A";
+        public string InternalSensorName = "N/A";
+        public string ExternalSensorName = "N/A";
         public bool ProductSupported = false;
 
-        public string ManufacturerName;
-        public string ProductName;
+        public string ManufacturerName { get; }
+        public string ProductName { get; }
         public string ProductIllustration = "device_generic";
 
-        protected Gyrometer gyrometer;
-        public bool hasGyrometer;
-
-        protected Accelerometer accelerometer;
-        public bool hasAccelerometer;
-
-        protected Inclinometer inclinometer;
-        public bool hasInclinometer;
+        public bool hasInternal;
+        public bool hasExternal;
 
         // device specific settings
         public float WidthHeightRatio = 1.0f;
@@ -31,28 +26,30 @@ namespace ControllerCommon.Devices
 
         protected Device()
         {
-            gyrometer = Gyrometer.GetDefault();
-            if (gyrometer != null)
-                hasGyrometer = true;
+        }
 
-            accelerometer = Accelerometer.GetDefault();
-            if (accelerometer != null)
-                hasAccelerometer = true;
+        public void Initialize(string ManufacturerName, string ProductName)
+        {
+            var gyrometer = Gyrometer.GetDefault();
+            var accelerometer = Accelerometer.GetDefault();
 
-            inclinometer = Inclinometer.GetDefault();
-            if (inclinometer != null)
-                hasInclinometer = true;
-
-            if (hasGyrometer)
+            if (gyrometer != null && accelerometer != null)
             {
                 // check sensor
                 string ACPI = CommonUtils.Between(gyrometer.DeviceId, "ACPI#", "#");
                 sensor = GetUSBDevice(ACPI);
                 if (sensor != null)
-                    sensorName = sensor.Name;
+                    InternalSensorName = sensor.Name;
+
+                hasInternal = true;
             }
 
-            // todo: has USB dongle ?
+            var USB = SerialUSBIMU.GetDefault(null);
+            if (USB != null)
+            {
+                ExternalSensorName = USB.sensor.Name;
+                hasExternal = true;
+            }
         }
     }
 }

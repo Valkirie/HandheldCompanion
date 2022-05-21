@@ -67,10 +67,8 @@ namespace HandheldCompanion.Views.Pages
                 HandheldGrid.Visibility = Visibility.Visible;
 
                 VersionValue.Text = mainWindow.fileVersionInfo.FileVersion;
-                SensorName.Text = handheldDevice.SensorName;
-                GyrometerValue.Text = handheldDevice.hasGyrometer ? "Detected" : "N/A";
-                AccelerometerValue.Text = handheldDevice.hasAccelerometer ? "Detected" : "N/A";
-                InclinometerValue.Text = handheldDevice.hasInclinometer ? "Detected" : "N/A";
+                SensorInternal.Text = handheldDevice.hasInternal ? handheldDevice.InternalSensorName : "N/A";
+                SensorExternal.Text = handheldDevice.hasExternal ? handheldDevice.ExternalSensorName : "N/A";
 
                 if (!handheldDevice.ProductSupported)
                 {

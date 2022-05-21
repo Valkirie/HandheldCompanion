@@ -31,6 +31,7 @@ namespace ControllerService
 
         private PipeServer pipeServer;
         private ProfileManager profileManager;
+        private SystemManager systemManager;
         private DSUServer DSUServer;
         public HidHide Hidder;
 
@@ -59,9 +60,9 @@ namespace ControllerService
         private readonly IHostApplicationLifetime lifetime;
 
         // sensor vars
-        public static SerialUSBIMU USBGyro;
-        public static int SensorPlacement, SensorSelection;
-        public static bool SensorPlacementMirrored;
+        public static SerialUSBIMU SerialIMU;
+        private static int SensorPlacement, SensorSelection;
+        private static bool SensorPlacementMirrored;
 
         // profile vars
         public static Profile profile = new();
@@ -121,9 +122,11 @@ namespace ControllerService
             // initialize sensor(s)
             // todo: warn client to disable either option if not available ?
             // todo: client to proceed to self-check on start ?
-            USBGyro = new SerialUSBIMU(logger);
-            USBGyro.Connected += () => { XInputController.UpdateSensors(); };
-            USBGyro.Disconnected += () => { XInputController.UpdateSensors(); };
+            SerialIMU = SerialUSBIMU.GetDefault(logger);
+            SerialIMU.Connected += () => { // do something
+                                         };
+            SerialIMU.Disconnected += () => { // do something
+                                            };
 
             // initialize HidHide
             Hidder = new HidHide(logger);
@@ -135,8 +138,19 @@ namespace ControllerService
             pipeServer.Disconnected += OnClientDisconnected;
             pipeServer.ClientMessage += OnClientMessage;
 
+            // initialize manager(s)
+            systemManager = new SystemManager();
+            systemManager.DeviceArrived += (update) =>
+            {
+                SerialIMU.DeviceEvent(update);
+            };
+            systemManager.DeviceRemoved += (update) =>
+            {
+                SerialIMU.DeviceEvent(update);
+            };
+
             // XInputController settings
-            XInputController = new XInputController(logger, pipeServer);
+            XInputController = new XInputController(SensorSelection, logger, pipeServer);
             XInputController.SetVibrationStrength(HIDstrength);
             XInputController.SetPollRate(HIDrate);
             XInputController.Updated += OnTargetSubmited;
@@ -168,8 +182,7 @@ namespace ControllerService
                     logger.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
                     break;
             }
-            handheldDevice.ManufacturerName = ManufacturerName;
-            handheldDevice.ProductName = ProductName;
+            handheldDevice.Initialize(ManufacturerName, ProductName);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
@@ -399,12 +412,12 @@ namespace ControllerService
                 ProductName = handheldDevice.ProductName,
                 ProductIllustration = handheldDevice.ProductIllustration,
 
-                SensorName = handheldDevice.sensorName,
+                InternalSensorName = handheldDevice.InternalSensorName,
+                ExternalSensorName = handheldDevice.ExternalSensorName,
                 ProductSupported = handheldDevice.ProductSupported,
 
-                hasAccelerometer = handheldDevice.hasAccelerometer,
-                hasGyrometer = handheldDevice.hasGyrometer,
-                hasInclinometer = handheldDevice.hasInclinometer,
+                hasInternal = handheldDevice.hasInternal,
+                hasExternal = handheldDevice.hasExternal,
 
                 ControllerName = XInputController.ProductName,
                 ControllerVID = XInputController.controllerEx.GetVID(),
@@ -532,7 +545,7 @@ namespace ControllerService
                     {
                         int value = int.Parse(property);
                         SensorSelection = value;
-                        XInputController.UpdateSensors();
+                        XInputController.UpdateSensors(value);
                     }
                     break;
             }
@@ -598,7 +611,7 @@ namespace ControllerService
                     break;
                 case PowerModes.Resume:
                     // (re)initialize sensors
-                    XInputController?.UpdateSensors();
+                    XInputController?.UpdateSensors(SensorSelection);
                     break;
                 case PowerModes.Suspend:
                     break;
