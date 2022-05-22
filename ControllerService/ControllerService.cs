@@ -189,13 +189,20 @@ namespace ControllerService
         private void SetControllerIdx(UserIndex idx, string deviceInstancePath, string baseContainerDeviceInstancePath)
         {
             ControllerEx controller = new ControllerEx(idx, logger);
-            XInputController.SetController(controller); // set even if disconnected
+            controller.deviceInstancePath = deviceInstancePath;
+            controller.baseContainerDeviceInstancePath = baseContainerDeviceInstancePath;
+
+            XInputController.SetController(controller);
 
             if (!controller.IsConnected())
             {
                 logger.LogWarning("No physical controller detected on UserIndex: {0}", idx);
                 return;
             }
+
+            if (this.deviceInstancePath == deviceInstancePath &&
+                this.baseContainerDeviceInstancePath == baseContainerDeviceInstancePath)
+                return;
 
             logger.LogInformation("Listening to physical controller on UserIndex: {0}", idx);
 
@@ -213,6 +220,11 @@ namespace ControllerService
             Hidder.RegisterController(deviceInstancePath);
             Hidder.RegisterController(baseContainerDeviceInstancePath);
 
+            // update variables
+            this.HIDidx = idx;
+            this.deviceInstancePath = deviceInstancePath;
+            this.baseContainerDeviceInstancePath = baseContainerDeviceInstancePath;
+
             // update settings
             configuration.AppSettings.Settings["HIDidx"].Value = ((int)idx).ToString();
             configuration.AppSettings.Settings["deviceInstancePath"].Value = deviceInstancePath;
@@ -223,6 +235,7 @@ namespace ControllerService
         private void SetControllerMode(HIDmode mode)
         {
             // disconnect current virtual controller
+            // todo: do not disconnect if similar to incoming mode
             VirtualTarget?.Disconnect();
 
             switch (mode)

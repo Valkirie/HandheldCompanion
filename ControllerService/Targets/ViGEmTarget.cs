@@ -82,7 +82,7 @@ namespace ControllerService.Targets
         public void SetVibrationStrength(double strength)
         {
             vibrationStrength = strength / 100.0f;
-            logger.LogInformation("Virtual {0} vibration strength set to {1}%", this, strength);
+            logger.LogInformation("{0} vibration strength set to {1}%", this, strength);
         }
 
         public override string ToString()
@@ -94,14 +94,14 @@ namespace ControllerService.Targets
         {
             IsConnected = true;
             Connected?.Invoke(this);
-            logger.LogInformation("Virtual {0} connected", ToString());
+            logger.LogInformation("{0} connected", ToString());
         }
 
         public virtual void Disconnect()
         {
             IsConnected = false;
             Disconnected?.Invoke(this);
-            logger.LogInformation("Virtual {0} disconnected", ToString());
+            logger.LogInformation("{0} disconnected", ToString());
         }
 
 

@@ -274,7 +274,7 @@ namespace ControllerService
             SetPollRate(updateInterval);
             SetVibrationStrength(vibrationStrength);
 
-            logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, ProductName, controllerEx.Controller.UserIndex);
+            logger.LogInformation("{0} attached to {1} on slot {2}", target, ProductName, controllerEx.Controller.UserIndex);
         }
     }
 }
