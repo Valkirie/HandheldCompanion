@@ -13,7 +13,7 @@ namespace ControllerCommon
 	public class SerialUSBIMU
 	{
 		// Global variables that can be updated or output etc
-		private Vector3 AccelerationG = new Vector3();		// accelerometer
+		private Vector3 AccelerationG = new Vector3();      // accelerometer
 		private Vector3 AngularVelocityDeg = new Vector3(); // gyrometer
 
 		private OneEuroFilter3D accelerationFilter;
@@ -35,11 +35,13 @@ namespace ControllerCommon
 		public delegate void DisconnectedEventHandler();
 
 		double FilterRate = 100;
+		string SensorPlacement = "Top"; // Todo, should probably be an enum or int range?
+		bool SensorPlacementUpsideDown = false;
 
 		public static SerialUSBIMU GetDefault(ILogger logger = null)
 		{
 			SerialUSBIMU serialUSBIMU = new SerialUSBIMU();
-			serialUSBIMU.logger = logger;	
+			serialUSBIMU.logger = logger;
 
 			serialUSBIMU.accelerationFilter = new OneEuroFilter3D();
 			serialUSBIMU.accelerationFilter.SetFilterAttrs(0.008, 0.001);
@@ -68,14 +70,14 @@ namespace ControllerCommon
 		}
 
 		public bool IsOpen()
-        {
+		{
 			return serial.IsOpen;
-        }
+		}
 
 		public int GetInterval()
-        {
+		{
 			return serial.BaudRate;
-        }
+		}
 
 		// Check for all existing connected devices,
 		// if match is found for Gyro USB v2,
@@ -132,7 +134,8 @@ namespace ControllerCommon
 			{
 				// Read serial, store in byte array, at specified offset, certain amount and determine length
 				usLength = (ushort)serial.Read(byteTemp, 0, 1000);
-			}catch (Exception)
+			}
+			catch (Exception)
 			{
 				return;
 			}
@@ -207,7 +210,7 @@ namespace ControllerCommon
 
 				InterpretData(array);
 				FilterData();
-				PlacementTransformation("Top", false);
+				PlacementTransformation(SensorPlacement, SensorPlacementUpsideDown);
 
 				// raise event
 				ReadingChanged?.Invoke(AccelerationG, AngularVelocityDeg);
@@ -244,7 +247,7 @@ namespace ControllerCommon
 		}
 
 		public void FilterData()
-        {
+		{
 			AccelerationG.X = (float)accelerationFilter.axis1Filter.Filter(AccelerationG.X, FilterRate);
 			AccelerationG.Y = (float)accelerationFilter.axis2Filter.Filter(AccelerationG.Y, FilterRate);
 			AccelerationG.Z = (float)accelerationFilter.axis3Filter.Filter(AccelerationG.Z, FilterRate);
@@ -255,10 +258,10 @@ namespace ControllerCommon
 			FilterRate = 1 / DeltaSecond;
 		}
 
-		public void PlacementTransformation(string PlacementPosition, bool Mirror)
+		public void PlacementTransformation(string PlacementPosition, bool UpsideDown)
 		{
 			// Adaption of XYZ or invert based on USB port location on device. 
-			// Mirror option in case of USB-C port usage. Pins on screen side is default.
+			// Upsidedown option in case of USB-C port usage. Pins on screen side is default.
 
 			Vector3 AccTemp = AccelerationG;
 			Vector3 AngVelTemp = AngularVelocityDeg;
@@ -280,7 +283,8 @@ namespace ControllerCommon
 				case "Top":
 					AccelerationG.X = -AccTemp.X;
 
-					if (Mirror) {
+					if (UpsideDown)
+					{
 						AccelerationG.X = -AccTemp.X; // Yes, this is applied twice intentionally!
 						AccelerationG.Y = -AccTemp.Y;
 
@@ -291,7 +295,7 @@ namespace ControllerCommon
 					break;
 				case "Right":
 
-					if (Mirror) { }
+					if (UpsideDown) { }
 
 					break;
 				case "Bottom":
@@ -301,16 +305,21 @@ namespace ControllerCommon
 					AngularVelocityDeg.X = -AngVelTemp.X;
 					AngularVelocityDeg.Z = -AngVelTemp.Z;
 
-					if (Mirror) { }
+					if (UpsideDown) { }
 
 					break;
 				case "Left":
 
-					if (Mirror) { }
+					if (UpsideDown) { }
 					break;
 				default:
 					break;
 			}
-		}	
+		}
+		public void PlacementUpdate(string PlacementPosition, bool UpsideDown)
+		{
+			SensorPlacement = PlacementPosition;
+			SensorPlacementUpsideDown = UpsideDown;
+		}
 	}
 }
