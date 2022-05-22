@@ -146,6 +146,8 @@ namespace ControllerService
 
                 Angle = Inclinometer.GetCurrentReading();
 
+                ControllerService.SerialIMU.UpdateFilterRate(DeltaSeconds);
+
                 // update sensorFusion (todo: call only when needed ?)
                 sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocities[XInputSensorFlags.Centered], Accelerations[XInputSensorFlags.Default]);
 

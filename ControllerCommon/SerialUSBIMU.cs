@@ -34,13 +34,15 @@ namespace ControllerCommon
 		public event DisconnectedEventHandler Disconnected;
 		public delegate void DisconnectedEventHandler();
 
+		double FilterRate = 100;
+
 		public static SerialUSBIMU GetDefault(ILogger logger = null)
 		{
 			SerialUSBIMU serialUSBIMU = new SerialUSBIMU();
-			serialUSBIMU.logger = logger;
+			serialUSBIMU.logger = logger;	
 
 			serialUSBIMU.accelerationFilter = new OneEuroFilter3D();
-			serialUSBIMU.accelerationFilter.SetFilterAttrs(0.4, 0.2);
+			serialUSBIMU.accelerationFilter.SetFilterAttrs(0.008, 0.001);
 
 			// USB Gyro v2 COM Port settings.
 			serialUSBIMU.serial = new SerialPort()
@@ -204,7 +206,7 @@ namespace ControllerCommon
 				Array.ConstrainedCopy(byteTemp, index, array, 0, datalength);
 
 				InterpretData(array);
-				//FilterData();
+				FilterData();
 				PlacementTransformation("Top", false);
 
 				// raise event
@@ -243,11 +245,14 @@ namespace ControllerCommon
 
 		public void FilterData()
         {
-			var rate = 10; // todo, add controller.UpdateTimePreviousMilliseconds
+			AccelerationG.X = (float)accelerationFilter.axis1Filter.Filter(AccelerationG.X, FilterRate);
+			AccelerationG.Y = (float)accelerationFilter.axis2Filter.Filter(AccelerationG.Y, FilterRate);
+			AccelerationG.Z = (float)accelerationFilter.axis3Filter.Filter(AccelerationG.Z, FilterRate);
+		}
 
-			AccelerationG.X = (float)accelerationFilter.axis1Filter.Filter(AccelerationG.X, rate);
-			AccelerationG.Y = (float)accelerationFilter.axis2Filter.Filter(AccelerationG.Y, rate);
-			AccelerationG.Z = (float)accelerationFilter.axis3Filter.Filter(AccelerationG.Z, rate);
+		public void UpdateFilterRate(double DeltaSecond)
+		{
+			FilterRate = 1 / DeltaSecond;
 		}
 
 		public void PlacementTransformation(string PlacementPosition, bool Mirror)
