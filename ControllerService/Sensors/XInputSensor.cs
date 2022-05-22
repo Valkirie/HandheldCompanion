@@ -67,7 +67,7 @@ namespace ControllerService.Sensors
                     {
                         var sensor = Gyrometer.GetDefault();
                         if (sensor != null)
-                            return XInputSensorStatus.Ready;
+                            return XInputSensorStatus.Busy;
                     }
                     break;
                 case SensorFamily.SerialUSBIMU:
