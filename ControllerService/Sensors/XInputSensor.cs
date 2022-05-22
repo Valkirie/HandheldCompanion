@@ -1,10 +1,14 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon;
+using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Timers;
+using Windows.Devices.Sensors;
+using static ControllerCommon.Utils.CommonUtils;
+using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerService.Sensors
 {
@@ -19,6 +23,14 @@ namespace ControllerService.Sensors
         CenteredRatio   =   RawValue | WithRatio,
     }
 
+    [Flags]
+    public enum XInputSensorStatus
+    {
+        Missing = 0,
+        Ready = 1,
+        Busy = 2
+    }
+
     public abstract class XInputSensor
     {
         protected Vector3 reading = new();
@@ -27,6 +39,8 @@ namespace ControllerService.Sensors
         protected static SensorSpec sensorSpec;
 
         protected Timer centerTimer;
+        public object sensor;
+        public OneEuroFilter3D filter;
 
         protected readonly ILogger logger;
 
@@ -43,6 +57,28 @@ namespace ControllerService.Sensors
             centerTimer.Start();
 
             Task.Run(() => logger?.LogDebug("{0}.ReadingChanged({1:00.####}, {2:00.####}, {3:00.####})", this.GetType().Name, this.reading.X, this.reading.Y, this.reading.Z));
+        }
+
+        public static XInputSensorStatus GetStatus(SensorFamily sensorFamily)
+        {
+            switch(sensorFamily)
+            {
+                case SensorFamily.WindowsDevicesSensors:
+                    {
+                        var sensor = Gyrometer.GetDefault();
+                        if (sensor != null)
+                            return XInputSensorStatus.Ready;
+                    }
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    {
+                        var sensor = SerialUSBIMU.GetDefault();
+                        if (sensor != null)
+                            return sensor.IsOpen() ? XInputSensorStatus.Busy : XInputSensorStatus.Ready;
+                    }
+                    break;
+            }
+            return XInputSensorStatus.Missing;
         }
 
         protected virtual void Timer_Elapsed(object sender, ElapsedEventArgs e)

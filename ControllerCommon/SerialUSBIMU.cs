@@ -7,6 +7,7 @@ using static ControllerCommon.Utils.CommonUtils;
 using ControllerCommon;
 using System.Threading;
 using System.IO.Ports;
+using ControllerCommon.Utils;
 
 namespace ControllerCommon
 {
@@ -16,10 +17,12 @@ namespace ControllerCommon
 		private Vector3 AccelerationG = new Vector3();		// accelerometer
 		private Vector3 AngularVelocityDeg = new Vector3(); // gyrometer
 
-		private OneEuroFilter3D accelerationFilter;
+		private static SerialUSBIMU serialUSBIMU = new();
+		public USBDeviceInfo device;
+		private SerialPort port = new();
 
-		public USBDeviceInfo sensor;
-		private SerialPort serial;
+		string SensorPlacement = "Top"; // Todo, should probably be an enum or int range?
+		bool SensorPlacementUpsideDown = false;
 
 		private bool openAutoCalib = false; // Todo, only once! Or based on reading if it's needed?
 
@@ -28,34 +31,44 @@ namespace ControllerCommon
 		public event ReadingChangedEventHandler ReadingChanged;
 		public delegate void ReadingChangedEventHandler(Vector3 AccelerationG, Vector3 AngularVelocityDeg);
 
-		public event ConnectedEventHandler Connected;
-		public delegate void ConnectedEventHandler();
-
-		public event DisconnectedEventHandler Disconnected;
-		public delegate void DisconnectedEventHandler();
-
 		public static SerialUSBIMU GetDefault(ILogger logger = null)
 		{
-			SerialUSBIMU serialUSBIMU = new SerialUSBIMU();
+			if (serialUSBIMU.port.IsOpen)
+				return serialUSBIMU;
+
 			serialUSBIMU.logger = logger;
 
-			serialUSBIMU.accelerationFilter = new OneEuroFilter3D();
-			serialUSBIMU.accelerationFilter.SetFilterAttrs(0.4, 0.2);
-
 			// USB Gyro v2 COM Port settings.
-			serialUSBIMU.serial = new SerialPort()
+			var GyroV2 = GetSerialDevices().Where(a => a.PID.Equals("7523") && a.VID.Equals("1A86")).FirstOrDefault();
+			if (GyroV2 != null)
 			{
-				BaudRate = 115200, // Differs from datasheet intentionally.
-				DataBits = 8,
-				Parity = Parity.None,
-				StopBits = StopBits.One,
-				Handshake = Handshake.None,
-				RtsEnable = true,
-				ReadTimeout = 500,
-				WriteTimeout = 500
-			};
+				// update main device
+				serialUSBIMU.device = GyroV2;
 
-			serialUSBIMU.DeviceEvent(false);
+				serialUSBIMU.port = new SerialPort()
+				{
+					BaudRate = 115200, // Differs from datasheet intentionally.
+					DataBits = 8,
+					Parity = Parity.None,
+					StopBits = StopBits.One,
+					Handshake = Handshake.None,
+					PortName = Between(GyroV2.Name, "(", ")"),
+					RtsEnable = true,
+					ReadTimeout = 500,
+					WriteTimeout = 500
+				};
+			}
+			else
+            {
+				return null;
+            }
+
+			logger?.LogDebug("{0} connecting to {1}", serialUSBIMU.ToString(), serialUSBIMU.device.Name);
+
+			// open serial port
+			serialUSBIMU.Open();
+
+			serialUSBIMU.port.DataReceived += new SerialDataReceivedEventHandler(serialUSBIMU.DataReceivedHandler);
 
 			return serialUSBIMU;
 		}
@@ -67,55 +80,47 @@ namespace ControllerCommon
 
 		public bool IsOpen()
         {
-			return serial.IsOpen;
+			return port.IsOpen;
         }
 
 		public int GetInterval()
         {
-			return serial.BaudRate;
+			return port.BaudRate;
         }
 
-		// Check for all existing connected devices,
-		// if match is found for Gyro USB v2,
-		// connect and log info accordingly.
-		public void DeviceEvent(bool update)
+		private int tentative;
+		public bool Open()
+		{
+			tentative = 0; // reset tentative
+
+			while (!serialUSBIMU.port.IsOpen && tentative < 10)
+			{
+				try
+				{
+					serialUSBIMU.port.Open();
+					return true;
+				}
+				catch (Exception)
+				{
+					// port is not ready yet
+					tentative++;
+					Thread.Sleep(400);
+				}
+			}
+
+			return false;
+		}
+
+		public bool Close()
 		{
 			try
 			{
-				// get the first available USB gyro sensor
-				var serial = GetSerialDevices().Where(a => a.PID.Equals("7523") && a.VID.Equals("1A86")).FirstOrDefault();
-				if (serial != null)
-				{
-					if (this.serial.IsOpen)
-						return;
-
-					logger?.LogInformation("{0} connecting to {1}", this.ToString(), serial.Name);
-
-					// give system a bit of time...
-					Thread.Sleep(1000);
-
-					// update current sensor
-					sensor = serial;
-
-					string[] SplitName = sensor.Name.Split(' ');
-					this.serial.PortName = SplitName[2].Trim('(').Trim(')');
-					this.serial.Open();
-					this.serial.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
-
-					logger?.LogInformation("{0} connected to {1}", this.ToString(), sensor.Name);
-					Connected?.Invoke();
-				}
-				else if (sensor != null)
-				{
-					this.serial.Close();
-					this.serial.DataReceived -= new SerialDataReceivedEventHandler(DataReceivedHandler);
-
-					logger?.LogInformation("{0} disconnected from {1}", this.ToString(), sensor.Name);
-					Disconnected?.Invoke();
-				}
+				serialUSBIMU.port.Close();
+				return true;
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
+				return false;
 			}
 		}
 
@@ -129,7 +134,7 @@ namespace ControllerCommon
 			try
 			{
 				// Read serial, store in byte array, at specified offset, certain amount and determine length
-				usLength = (ushort)serial.Read(byteTemp, 0, 1000);
+				usLength = (ushort)port.Read(byteTemp, 0, 1000);
 			}catch (Exception)
 			{
 				return;
@@ -157,7 +162,7 @@ namespace ControllerCommon
 
 					try
 					{
-						serial.Write(buffer, 0, buffer.Length);
+						port.Write(buffer, 0, buffer.Length);
 					}
 					catch (Exception)
 					{
@@ -180,7 +185,7 @@ namespace ControllerCommon
 
 					try
 					{
-						serial.Write(buffer, 0, buffer.Length);
+						port.Write(buffer, 0, buffer.Length);
 					}
 					catch (Exception)
 					{
@@ -196,7 +201,7 @@ namespace ControllerCommon
 
 					logger?.LogInformation("Serial USB save settings on device");
 
-					serial.Write(buffer, 0, buffer.Length);
+					port.Write(buffer, 0, buffer.Length);
 					openAutoCalib = false;
 				}
 
@@ -204,8 +209,7 @@ namespace ControllerCommon
 				Array.ConstrainedCopy(byteTemp, index, array, 0, datalength);
 
 				InterpretData(array);
-				//FilterData();
-				PlacementTransformation("Top", false);
+				PlacementTransformation(SensorPlacement, SensorPlacementUpsideDown);
 
 				// raise event
 				ReadingChanged?.Invoke(AccelerationG, AngularVelocityDeg);
@@ -241,19 +245,10 @@ namespace ControllerCommon
 			AngularVelocityDeg.Y = (float)(IntData[5] / 32768.0 * 2000);
 		}
 
-		public void FilterData()
-        {
-			var rate = 10; // todo, add controller.UpdateTimePreviousMilliseconds
-
-			AccelerationG.X = (float)accelerationFilter.axis1Filter.Filter(AccelerationG.X, rate);
-			AccelerationG.Y = (float)accelerationFilter.axis2Filter.Filter(AccelerationG.Y, rate);
-			AccelerationG.Z = (float)accelerationFilter.axis3Filter.Filter(AccelerationG.Z, rate);
-		}
-
-		public void PlacementTransformation(string PlacementPosition, bool Mirror)
+		public void PlacementTransformation(string PlacementPosition, bool UpsideDown)
 		{
 			// Adaption of XYZ or invert based on USB port location on device. 
-			// Mirror option in case of USB-C port usage. Pins on screen side is default.
+			// Upsidedown option in case of USB-C port usage. Pins on screen side is default.
 
 			Vector3 AccTemp = AccelerationG;
 			Vector3 AngVelTemp = AngularVelocityDeg;
@@ -275,7 +270,7 @@ namespace ControllerCommon
 				case "Top":
 					AccelerationG.X = -AccTemp.X;
 
-					if (Mirror) {
+					if (UpsideDown) {
 						AccelerationG.X = -AccTemp.X; // Yes, this is applied twice intentionally!
 						AccelerationG.Y = -AccTemp.Y;
 
@@ -286,7 +281,7 @@ namespace ControllerCommon
 					break;
 				case "Right":
 
-					if (Mirror) { }
+					if (UpsideDown) { }
 
 					break;
 				case "Bottom":
@@ -296,16 +291,23 @@ namespace ControllerCommon
 					AngularVelocityDeg.X = -AngVelTemp.X;
 					AngularVelocityDeg.Z = -AngVelTemp.Z;
 
-					if (Mirror) { }
+					if (UpsideDown) { }
 
 					break;
 				case "Left":
 
-					if (Mirror) { }
+					if (UpsideDown) { }
 					break;
 				default:
 					break;
 			}
-		}	
+		}
+
+		// todo: use enum
+		public void PlacementUpdate(string PlacementPosition, bool UpsideDown)
+		{
+			SensorPlacement = PlacementPosition;
+			SensorPlacementUpsideDown = UpsideDown;
+		}
 	}
 }

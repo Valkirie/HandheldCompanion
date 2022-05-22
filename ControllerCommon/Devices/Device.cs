@@ -12,8 +12,8 @@ namespace ControllerCommon.Devices
         public string ExternalSensorName = "N/A";
         public bool ProductSupported = false;
 
-        public string ManufacturerName { get; }
-        public string ProductName { get; }
+        public string ManufacturerName;
+        public string ProductName;
         public string ProductIllustration = "device_generic";
 
         public bool hasInternal;
@@ -30,6 +30,9 @@ namespace ControllerCommon.Devices
 
         public void Initialize(string ManufacturerName, string ProductName)
         {
+            this.ManufacturerName = ManufacturerName;
+            this.ProductName = ProductName;
+
             var gyrometer = Gyrometer.GetDefault();
             var accelerometer = Accelerometer.GetDefault();
 
@@ -44,10 +47,10 @@ namespace ControllerCommon.Devices
                 hasInternal = true;
             }
 
-            var USB = SerialUSBIMU.GetDefault(null);
-            if (USB.sensor != null)
+            var USB = SerialUSBIMU.GetDefault();
+            if (USB != null && USB.device != null)
             {
-                ExternalSensorName = USB.sensor.Name;
+                ExternalSensorName = USB.device.Name;
                 hasExternal = true;
             }
         }

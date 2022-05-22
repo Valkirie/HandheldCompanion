@@ -18,6 +18,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using static ControllerCommon.Utils.DeviceUtils;
 using Device = ControllerCommon.Devices.Device;
 
 namespace ControllerService
@@ -60,8 +61,8 @@ namespace ControllerService
         private readonly IHostApplicationLifetime lifetime;
 
         // sensor vars
-        public static SerialUSBIMU SerialIMU;
-        private static int SensorPlacement, SensorSelection;
+        private static SensorFamily SensorSelection;
+        private static int SensorPlacement;
         private static bool SensorPlacementMirrored;
 
         // profile vars
@@ -97,7 +98,7 @@ namespace ControllerService
             HIDrate = int.Parse(configuration.AppSettings.Settings["HIDrate"].Value); // Properties.Settings.Default.HIDrate;
             HIDstrength = double.Parse(configuration.AppSettings.Settings["HIDstrength"].Value); // Properties.Settings.Default.HIDstrength;
 
-            SensorSelection = int.Parse(configuration.AppSettings.Settings["SensorSelection"].Value); // Properties.Settings.Default.SensorSelection;
+            SensorSelection = Enum.Parse<SensorFamily>(configuration.AppSettings.Settings["SensorSelection"].Value); // Properties.Settings.Default.SensorSelection;
             SensorPlacement = int.Parse(configuration.AppSettings.Settings["SensorPlacement"].Value); // Properties.Settings.Default.SensorPlacement;
             SensorPlacementMirrored = bool.Parse(configuration.AppSettings.Settings["SensorPlacementMirrored"].Value); // Properties.Settings.Default.SensorPlacementMirrored;
 
@@ -119,19 +120,6 @@ namespace ControllerService
                 throw new InvalidOperationException();
             }
 
-            // initialize sensor(s)
-            SerialIMU = SerialUSBIMU.GetDefault(logger);
-            SerialIMU.Connected += () =>
-            {
-                // todo: update client UI
-                XInputController.UpdateSensors(SensorSelection);
-            };
-            SerialIMU.Disconnected += () =>
-            {
-                // todo: update client UI
-                XInputController.UpdateSensors(SensorSelection);
-            };
-
             // initialize HidHide
             Hidder = new HidHide(logger);
             Hidder.RegisterApplication(CurrentExe);
@@ -146,11 +134,11 @@ namespace ControllerService
             systemManager = new SystemManager();
             systemManager.DeviceArrived += (update) =>
             {
-                SerialIMU.DeviceEvent(update);
+                XInputController.UpdateSensors(SensorSelection);
             };
             systemManager.DeviceRemoved += (update) =>
             {
-                SerialIMU.DeviceEvent(update);
+                XInputController.UpdateSensors(SensorSelection);
             };
 
             // XInputController settings
@@ -547,7 +535,7 @@ namespace ControllerService
                     break;
                 case "SensorSelection":
                     {
-                        int value = int.Parse(property);
+                        SensorFamily value = Enum.Parse<SensorFamily>(property);
                         SensorSelection = value;
                         XInputController.UpdateSensors(value);
                     }
@@ -615,7 +603,7 @@ namespace ControllerService
                     break;
                 case PowerModes.Resume:
                     // (re)initialize sensors
-                    XInputController?.UpdateSensors(SensorSelection);
+                    XInputController?.UpdateSensors(SensorSelection, true);
                     break;
                 case PowerModes.Suspend:
                     break;

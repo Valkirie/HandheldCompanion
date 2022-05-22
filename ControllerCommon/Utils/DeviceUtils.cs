@@ -98,6 +98,13 @@ namespace ControllerCommon.Utils
         );
         #endregion
 
+        public enum SensorFamily
+        {
+            WindowsDevicesSensors = 0,
+            SerialUSBIMU = 1,
+            None = 2
+        }
+
         public static USBDeviceInfo GetUSBDevice(string DeviceId)
         {
             try

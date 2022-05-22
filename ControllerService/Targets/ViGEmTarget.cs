@@ -171,7 +171,7 @@ namespace ControllerService.Targets
                                             float FlickStickX = flickStick.Handle(RightThumb,
                                                                                   ControllerService.profile.flick_duration,
                                                                                   ControllerService.profile.stick_sensivity,
-                                                                                  xinputController.TotalMilliseconds);
+                                                                                  XInputController.TotalMilliseconds);
 
                                             // X input combines motion controls plus flick stick result
                                             // Y input only from motion controls

@@ -1,38 +1,54 @@
+using ControllerCommon;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerService.Sensors
 {
     public class XInputInclinometer : XInputSensor
     {
-        private Accelerometer sensor;
-        public XInputInclinometer(int selection, int updateInterval, ILogger logger) : base(logger)
+        public XInputInclinometer(SensorFamily family, int updateInterval, ILogger logger) : base(logger)
         {
-            sensor = Accelerometer.GetDefault();
-            if (sensor != null && selection == 0)
+            switch (family)
             {
-                sensor.ReportInterval = (uint)updateInterval;
-                logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
-                sensor.ReadingChanged += ReadingChanged;
+                case SensorFamily.WindowsDevicesSensors:
+                    sensor = Accelerometer.GetDefault();
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    filter.SetFilterAttrs(0.008, 0.001); // todo: store and pull me from the actual serial object
+                    sensor = SerialUSBIMU.GetDefault(logger);
+                    break;
             }
-            else if (ControllerService.SerialIMU.IsOpen() && selection == 1)
+
+            if (sensor == null)
             {
-                ControllerService.SerialIMU.ReadingChanged += ReadingChanged;
-                logger.LogInformation("{0} initialised. Baud rate to {1}", this.ToString(), ControllerService.SerialIMU.GetInterval());
+                logger.LogWarning("{0}:{1} not initialised.", this.ToString(), family.ToString());
+                return;
             }
-            else
+
+            switch (family)
             {
-                logger.LogWarning("{0} not initialised.", this.ToString());
+                case SensorFamily.WindowsDevicesSensors:
+                    ((Accelerometer)sensor).ReportInterval = (uint)updateInterval;
+                    ((Accelerometer)sensor).ReadingChanged += ReadingChanged;
+
+                    logger.LogInformation("{0}:{1} initialised. Report interval set to {2}ms", this.ToString(), family.ToString(), updateInterval);
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    ((SerialUSBIMU)sensor).ReadingChanged += ReadingChanged;
+
+                    logger.LogInformation("{0}:{1} initialised. Report interval set to {2}", this.ToString(), family.ToString(), ((SerialUSBIMU)sensor).GetInterval());
+                    break;
             }
         }
 
         private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
         {
-            this.reading.X = this.reading_fixed.X = (float)AccelerationG.X * ControllerService.handheldDevice.AngularVelocityAxis.X;
-            this.reading.Y = this.reading_fixed.Y = (float)AccelerationG.Y * ControllerService.handheldDevice.AngularVelocityAxis.Y;
-            this.reading.Z = this.reading_fixed.Z = (float)AccelerationG.Z * ControllerService.handheldDevice.AngularVelocityAxis.Z;
+            this.reading.X = this.reading_fixed.X = (float)filter.axis1Filter.Filter(AccelerationG.X * ControllerService.handheldDevice.AngularVelocityAxis.X, 1 / XInputController.DeltaSeconds);
+            this.reading.Y = this.reading_fixed.Y = (float)filter.axis2Filter.Filter(AccelerationG.Y * ControllerService.handheldDevice.AngularVelocityAxis.Y, 1 / XInputController.DeltaSeconds);
+            this.reading.Z = this.reading_fixed.Z = (float)filter.axis3Filter.Filter(AccelerationG.Z * ControllerService.handheldDevice.AngularVelocityAxis.Z, 1 / XInputController.DeltaSeconds);
 
             base.ReadingChanged();
         }

@@ -1,7 +1,9 @@
+using ControllerCommon;
 using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerService.Sensors
 {
@@ -15,27 +17,39 @@ namespace ControllerService.Sensors
             maxOut = 2048.0f,
         };
 
-        private Gyrometer sensor;
-        public XInputGirometer(int selection, int updateInterval, ILogger logger) : base(logger)
+        public XInputGirometer(SensorFamily family, int updateInterval, ILogger logger) : base(logger)
         {
             centerTimer.Interval = updateInterval * 6;
 
-            sensor = Gyrometer.GetDefault();
-            if (sensor != null && selection == 0)
+            switch(family)
             {
-                sensor.ReportInterval = (uint)updateInterval;
-                logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
+                case SensorFamily.WindowsDevicesSensors:
+                    sensor = Gyrometer.GetDefault();
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    sensor = SerialUSBIMU.GetDefault(logger);
+                    break;
+            }
 
-                sensor.ReadingChanged += ReadingChanged;
-            }
-            else if (ControllerService.SerialIMU.IsOpen() && selection == 1)
+            if (sensor == null)
             {
-                ControllerService.SerialIMU.ReadingChanged += ReadingChanged;
-                logger.LogInformation("{0} initialised. Baud rate to {1}", this.ToString(), ControllerService.SerialIMU.GetInterval());
+                logger.LogWarning("{0}:{1} not initialised.", this.ToString(), family.ToString());
+                return;
             }
-            else
+
+            switch (family)
             {
-                logger.LogWarning("{0} not initialised.", this.ToString());
+                case SensorFamily.WindowsDevicesSensors:
+                    ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
+                    ((Gyrometer)sensor).ReadingChanged += ReadingChanged;
+
+                    logger.LogInformation("{0}:{1} initialised. Report interval set to {2}ms", this.ToString(), family.ToString(), updateInterval);
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    ((SerialUSBIMU)sensor).ReadingChanged += ReadingChanged;
+
+                    logger.LogInformation("{0}:{1} initialised. Report interval set to {2}", this.ToString(), family.ToString(), ((SerialUSBIMU)sensor).GetInterval());
+                    break;
             }
         }
 

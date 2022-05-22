@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Threading.Tasks;
+using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerService
 {
@@ -32,6 +33,7 @@ namespace ControllerService
         public double vibrationStrength = 100.0d;
         public int updateInterval = 10;
 
+        private SensorFamily sensorFamily = SensorFamily.None;
         public XInputGirometer Gyrometer;
         public XInputAccelerometer Accelerometer;
         public XInputInclinometer Inclinometer;
@@ -42,9 +44,9 @@ namespace ControllerService
         protected readonly Stopwatch stopwatch;
         public long CurrentMicroseconds;
 
-        public double TotalMilliseconds;
-        public double UpdateTimePreviousMilliseconds;
-        public double DeltaSeconds;
+        public static double TotalMilliseconds;
+        public static double UpdateTimePreviousMilliseconds;
+        public static double DeltaSeconds = 100.0d;
 
         public DS4Touch Touch;
 
@@ -55,7 +57,7 @@ namespace ControllerService
         private readonly ILogger logger;
         private readonly PipeServer pipeServer;
 
-        public XInputController(int selection, ILogger logger, PipeServer pipeServer)
+        public XInputController(SensorFamily sensorFamily, ILogger logger, PipeServer pipeServer)
         {
             this.logger = logger;
             this.pipeServer = pipeServer;
@@ -64,7 +66,7 @@ namespace ControllerService
             sensorFusion = new SensorFusion(logger);
             madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
 
-            UpdateSensors(selection);
+            UpdateSensors(sensorFamily, true);
 
             // initialize vectors
             Accelerations = new();
@@ -90,11 +92,34 @@ namespace ControllerService
             this.controllerEx = controllerEx;
         }
 
-        public void UpdateSensors(int selection)
+        public void UpdateSensors(SensorFamily sensorFamily, bool force = false)
         {
-            Gyrometer = new XInputGirometer(selection, updateInterval, logger);
-            Accelerometer = new XInputAccelerometer(selection, updateInterval, logger);
-            Inclinometer = new XInputInclinometer(selection, updateInterval, logger);
+            // we force (re)initialize on: system startup, system resume
+            if (!force)
+            {
+                XInputSensorStatus sensorStatus = XInputSensor.GetStatus(sensorFamily);
+
+                switch(sensorStatus)
+                {
+                    case XInputSensorStatus.Busy:
+                        {
+                            if (this.sensorFamily == sensorFamily)
+                                return;
+                        }
+                        break;
+                    case XInputSensorStatus.Missing:
+                        return;
+                    case XInputSensorStatus.Ready:
+                        break;
+                }
+            }
+            
+            Gyrometer = new XInputGirometer(sensorFamily, updateInterval, logger);
+            Accelerometer = new XInputAccelerometer(sensorFamily, updateInterval, logger);
+            Inclinometer = new XInputInclinometer(sensorFamily, updateInterval, logger);
+
+            if (Gyrometer.sensor != null)
+                this.sensorFamily = sensorFamily;
         }
 
         private void UpdateTimer_Ticked(object sender, EventArgs e)
