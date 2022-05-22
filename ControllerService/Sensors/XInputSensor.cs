@@ -40,7 +40,7 @@ namespace ControllerService.Sensors
 
         protected Timer centerTimer;
         public object sensor;
-        public OneEuroFilter3D filter;
+        public OneEuroFilter3D filter = new();
 
         protected readonly ILogger logger;
 
