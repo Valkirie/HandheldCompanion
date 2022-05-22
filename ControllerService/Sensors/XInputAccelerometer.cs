@@ -16,12 +16,12 @@ namespace ControllerService.Sensors
         };
 
         private Accelerometer sensor;
-        public XInputAccelerometer(int selection, int updateInterval, ILogger logger) : base(logger)
+        public XInputAccelerometer(int selection, int updateIntervalMsec, ILogger logger) : base(logger)
         {
             sensor = Accelerometer.GetDefault();
             if (sensor != null && selection == 0)
             {
-                sensor.ReportInterval = (uint)updateInterval;
+                sensor.ReportInterval = (uint)updateIntervalMsec;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
                 sensor.ReadingChanged += ReadingChanged;

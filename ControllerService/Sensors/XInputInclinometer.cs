@@ -8,12 +8,12 @@ namespace ControllerService.Sensors
     public class XInputInclinometer : XInputSensor
     {
         private Accelerometer sensor;
-        public XInputInclinometer(int selection, int updateInterval, ILogger logger) : base(logger)
+        public XInputInclinometer(int selection, int updateIntervalMsec, ILogger logger) : base(logger)
         {
             sensor = Accelerometer.GetDefault();
             if (sensor != null && selection == 0)
             {
-                sensor.ReportInterval = (uint)updateInterval;
+                sensor.ReportInterval = (uint)updateIntervalMsec;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
                 sensor.ReadingChanged += ReadingChanged;
             }

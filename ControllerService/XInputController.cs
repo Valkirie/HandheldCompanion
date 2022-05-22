@@ -30,7 +30,7 @@ namespace ControllerService
 
         public MultimediaTimer UpdateTimer;
         public double vibrationStrength = 100.0d;
-        public int updateInterval = 10;
+        public int updateIntervalMsec = 10;
 
         public XInputGirometer Gyrometer;
         public XInputAccelerometer Accelerometer;
@@ -79,7 +79,7 @@ namespace ControllerService
             stopwatch.Start();
 
             // initialize timers
-            UpdateTimer = new MultimediaTimer(updateInterval);
+            UpdateTimer = new MultimediaTimer(updateIntervalMsec);
             UpdateTimer.Tick += UpdateTimer_Ticked;
             UpdateTimer.Start();
         }
@@ -92,9 +92,9 @@ namespace ControllerService
 
         public void UpdateSensors(int selection)
         {
-            Gyrometer = new XInputGirometer(selection, updateInterval, logger);
-            Accelerometer = new XInputAccelerometer(selection, updateInterval, logger);
-            Inclinometer = new XInputInclinometer(selection, updateInterval, logger);
+            Gyrometer = new XInputGirometer(selection, updateIntervalMsec, logger);
+            Accelerometer = new XInputAccelerometer(selection, updateIntervalMsec, logger);
+            Inclinometer = new XInputInclinometer(selection, updateIntervalMsec, logger);
         }
 
         private void UpdateTimer_Ticked(object sender, EventArgs e)
@@ -232,7 +232,7 @@ namespace ControllerService
 
         public void SetPollRate(int HIDrate)
         {
-            updateInterval = HIDrate;
+            updateIntervalMsec = HIDrate;
             UpdateTimer.Interval = HIDrate;
         }
 
@@ -246,7 +246,7 @@ namespace ControllerService
         {
             this.virtualTarget = target;
 
-            SetPollRate(updateInterval);
+            SetPollRate(updateIntervalMsec);
             SetVibrationStrength(vibrationStrength);
 
             logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, ProductName, controllerEx.Controller.UserIndex);

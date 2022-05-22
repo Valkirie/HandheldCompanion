@@ -16,14 +16,14 @@ namespace ControllerService.Sensors
         };
 
         private Gyrometer sensor;
-        public XInputGirometer(int selection, int updateInterval, ILogger logger) : base(logger)
+        public XInputGirometer(int selection, int updateIntervalMsec, ILogger logger) : base(logger)
         {
-            centerTimer.Interval = updateInterval * 6;
+            centerTimer.Interval = updateIntervalMsec * 6;
 
             sensor = Gyrometer.GetDefault();
             if (sensor != null && selection == 0)
             {
-                sensor.ReportInterval = (uint)updateInterval;
+                sensor.ReportInterval = (uint)updateIntervalMsec;
                 logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
 
                 sensor.ReadingChanged += ReadingChanged;
