@@ -17,8 +17,8 @@ namespace ControllerService.Sensors
                     sensor = Accelerometer.GetDefault();
                     break;
                 case SensorFamily.SerialUSBIMU:
-                    filter.SetFilterAttrs(0.008, 0.001); // todo: store and pull me from the actual serial object
                     sensor = SerialUSBIMU.GetDefault(logger);
+                    filter.SetFilterAttrs(((SerialUSBIMU)sensor).filterCutoff, ((SerialUSBIMU)sensor).filterBeta);
                     break;
             }
 

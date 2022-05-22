@@ -11,6 +11,14 @@ using ControllerCommon.Utils;
 
 namespace ControllerCommon
 {
+	public enum SerialPlacement
+    {
+		Top = 0,
+		Left = 1,
+		Right = 2,
+		Bottom = 3
+    }
+
 	public class SerialUSBIMU
 	{
 		// Global variables that can be updated or output etc
@@ -21,10 +29,11 @@ namespace ControllerCommon
 		public USBDeviceInfo device;
 		private SerialPort port = new();
 
-		string SensorPlacement = "Top"; // Todo, should probably be an enum or int range?
-		bool SensorPlacementUpsideDown = false;
-
-		private bool openAutoCalib = false; // Todo, only once! Or based on reading if it's needed?
+		private SerialPlacement SensorPlacement = SerialPlacement.Top;
+		private bool isUpsideDown = false;
+		private bool openAutoCalib = false;		// todo: only once! Or based on reading if it's needed?
+		public double filterBeta = 0.001d;		// default value
+		public double filterCutoff = 0.008d;	// default value
 
 		private ILogger logger;
 
@@ -44,6 +53,8 @@ namespace ControllerCommon
 			{
 				// update main device
 				serialUSBIMU.device = GyroV2;
+				serialUSBIMU.filterBeta = 0.001d;
+				serialUSBIMU.filterCutoff = 0.008d;
 
 				serialUSBIMU.port = new SerialPort()
 				{
@@ -89,22 +100,25 @@ namespace ControllerCommon
         }
 
 		private int tentative;
+		private int maxTentative = 8;
 		public bool Open()
 		{
 			tentative = 0; // reset tentative
 
-			while (!serialUSBIMU.port.IsOpen && tentative < 10)
+			while (!serialUSBIMU.port.IsOpen && tentative < maxTentative)
 			{
 				try
 				{
 					serialUSBIMU.port.Open();
+					logger?.LogDebug("{0} connected", serialUSBIMU.ToString());
 					return true;
 				}
 				catch (Exception)
 				{
 					// port is not ready yet
 					tentative++;
-					Thread.Sleep(400);
+					logger?.LogError("{0} could not connect. Attempt: {1} out of {2}", serialUSBIMU.ToString(), tentative, maxTentative);
+					Thread.Sleep(500);
 				}
 			}
 
@@ -209,7 +223,7 @@ namespace ControllerCommon
 				Array.ConstrainedCopy(byteTemp, index, array, 0, datalength);
 
 				InterpretData(array);
-				PlacementTransformation(SensorPlacement, SensorPlacementUpsideDown);
+				PlacementTransformation(SensorPlacement, isUpsideDown);
 
 				// raise event
 				ReadingChanged?.Invoke(AccelerationG, AngularVelocityDeg);
@@ -245,7 +259,7 @@ namespace ControllerCommon
 			AngularVelocityDeg.Y = (float)(IntData[5] / 32768.0 * 2000);
 		}
 
-		public void PlacementTransformation(string PlacementPosition, bool UpsideDown)
+		public void PlacementTransformation(SerialPlacement SensorPlacement, bool isUpsideDown)
 		{
 			// Adaption of XYZ or invert based on USB port location on device. 
 			// Upsidedown option in case of USB-C port usage. Pins on screen side is default.
@@ -265,49 +279,60 @@ namespace ControllerCommon
 					AngularVelocityDeg.Z = AngVelTemp.Z; 
 			*/
 
-			switch (PlacementPosition)
+			switch (SensorPlacement)
 			{
-				case "Top":
-					AccelerationG.X = -AccTemp.X;
+				case SerialPlacement.Top:
+					{
+						AccelerationG.X = -AccTemp.X;
 
-					if (UpsideDown) {
-						AccelerationG.X = -AccTemp.X; // Yes, this is applied twice intentionally!
-						AccelerationG.Y = -AccTemp.Y;
+						if (isUpsideDown)
+						{
+							AccelerationG.X = -AccTemp.X; // Yes, this is applied twice intentionally!
+							AccelerationG.Y = -AccTemp.Y;
+
+							AngularVelocityDeg.X = -AngVelTemp.X;
+							AngularVelocityDeg.Y = -AngVelTemp.Y;
+						}
+					}
+					break;
+				case SerialPlacement.Right:
+					{
+						if (isUpsideDown)
+						{
+							// do something
+						}
+					}
+					break;
+				case SerialPlacement.Bottom:
+					{
+						AccelerationG.Z = -AccTemp.Z;
 
 						AngularVelocityDeg.X = -AngVelTemp.X;
-						AngularVelocityDeg.Y = -AngVelTemp.Y;
+						AngularVelocityDeg.Z = -AngVelTemp.Z;
+
+						if (isUpsideDown)
+						{
+							// do something
+						}
 					}
-
 					break;
-				case "Right":
-
-					if (UpsideDown) { }
-
-					break;
-				case "Bottom":
-
-					AccelerationG.Z = -AccTemp.Z;
-
-					AngularVelocityDeg.X = -AngVelTemp.X;
-					AngularVelocityDeg.Z = -AngVelTemp.Z;
-
-					if (UpsideDown) { }
-
-					break;
-				case "Left":
-
-					if (UpsideDown) { }
+				case SerialPlacement.Left:
+					{
+						if (isUpsideDown)
+						{
+							// do something
+						}
+					}
 					break;
 				default:
 					break;
 			}
 		}
 
-		// todo: use enum
-		public void PlacementUpdate(string PlacementPosition, bool UpsideDown)
+		public void SetSensorPlacement(SerialPlacement SensorPlacement, bool isUpsideDown)
 		{
-			SensorPlacement = PlacementPosition;
-			SensorPlacementUpsideDown = UpsideDown;
+			this.SensorPlacement = SensorPlacement;
+			this.isUpsideDown = isUpsideDown;
 		}
 	}
 }
