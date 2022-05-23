@@ -375,17 +375,17 @@
                             <ui:SimpleStackPanel Name="SensorPlacementVisualisation" Spacing="6" HorizontalAlignment="Right">
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
-                                    <Button Tag="0" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
+                                    <Button Tag="0" Width="50" Height="50" Click="SensorPlacement_Click" IsEnabled="False"></Button>
                                     <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
                                 </ui:SimpleStackPanel>
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <Button Tag="1" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
+                                    <Button Tag="1" Width="50" Height="50" Click="SensorPlacement_Click" IsEnabled="False"></Button>
                                     <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
-                                    <Button Tag="2" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
+                                    <Button Tag="2" Width="50" Height="50" Click="SensorPlacement_Click" IsEnabled="False"></Button>
                                 </ui:SimpleStackPanel>
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
-                                    <Button Tag="3" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
+                                    <Button Tag="3" Width="50" Height="50" Click="SensorPlacement_Click" IsEnabled="False"></Button>
                                     <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
                                 </ui:SimpleStackPanel>
                             </ui:SimpleStackPanel>
@@ -414,7 +414,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_SensorPlacementMirrored" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_SensorPlacementMirrored_Toggled" IsEnabled="True"/>
+                        <ui:ToggleSwitch Name="Toggle_SensorPlacementMirrored" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_SensorPlacementMirrored_Toggled" IsEnabled="False"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
