@@ -338,12 +338,12 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool SensorPlacementMirrored {
+        public bool SensorPlacementUpsideDown {
             get {
-                return ((bool)(this["SensorPlacementMirrored"]));
+                return ((bool)(this["SensorPlacementUpsideDown"]));
             }
             set {
-                this["SensorPlacementMirrored"] = value;
+                this["SensorPlacementUpsideDown"] = value;
             }
         }
         

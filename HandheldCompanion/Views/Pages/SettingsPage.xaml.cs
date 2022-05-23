@@ -27,7 +27,7 @@ namespace HandheldCompanion.Views.Pages
         private ServiceManager serviceManager;
 
         // settings vars
-        public bool ToastEnable, RunAtStartup, StartMinimized, CloseMinimises, StartServiceWithCompanion, HaltServiceWithCompanion, SensorPlacementMirrored;
+        public bool ToastEnable, RunAtStartup, StartMinimized, CloseMinimises, StartServiceWithCompanion, HaltServiceWithCompanion, SensorPlacementUpsideDown;
         public int ApplicationTheme, ServiceStartup, SensorSelection;
 
         private UpdateManager updateManager;
@@ -59,7 +59,7 @@ namespace HandheldCompanion.Views.Pages
             cB_SensorSelection.SelectedIndex = SensorSelection = Properties.Settings.Default.SensorSelection;
             var SensorPlacement = Properties.Settings.Default.SensorPlacement;
             UpdateUI_SensorPlacement(SensorPlacement);
-            Toggle_SensorPlacementMirrored.IsOn = SensorPlacementMirrored = Properties.Settings.Default.SensorPlacementMirrored;
+            Toggle_SensorPlacementUpsideDown.IsOn = SensorPlacementUpsideDown = Properties.Settings.Default.SensorPlacementUpsideDown;
 
             // initialize update manager
             updateManager = new UpdateManager();
@@ -170,7 +170,7 @@ namespace HandheldCompanion.Views.Pages
                     {
                         SensorInternal.IsEnabled = handheldDevice.hasInternal;
                         SensorExternal.IsEnabled = handheldDevice.hasExternal;
-                        Toggle_SensorPlacementMirrored.IsEnabled = handheldDevice.hasExternal;
+                        Toggle_SensorPlacementUpsideDown.IsEnabled = handheldDevice.hasExternal;
                         
                         foreach (SimpleStackPanel panel in SensorPlacementVisualisation.Children)
                             foreach (Button button in panel.Children)
@@ -359,15 +359,15 @@ namespace HandheldCompanion.Views.Pages
                 }
 
         }
-        private void Toggle_SensorPlacementMirrored_Toggled(object sender, System.Windows.RoutedEventArgs e)
+        private void Toggle_SensorPlacementUpsideDown_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            Properties.Settings.Default.SensorPlacementMirrored = Toggle_SensorPlacementMirrored.IsOn;
+            Properties.Settings.Default.SensorPlacementUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
             Properties.Settings.Default.Save();
 
-            SensorPlacementMirrored = Toggle_SensorPlacementMirrored.IsOn;
+            SensorPlacementUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
 
             // inform service
-            PipeClientSettings settings = new PipeClientSettings("SensorPlacementMirrored", SensorPlacementMirrored);
+            PipeClientSettings settings = new PipeClientSettings("SensorPlacementUpsideDown", SensorPlacementUpsideDown);
             pipeClient?.SendMessage(settings);
         }
 

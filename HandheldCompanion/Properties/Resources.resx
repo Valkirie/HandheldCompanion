@@ -679,10 +679,10 @@
   <data name="SettingsPage_SensorPlacementDirectionDesc" xml:space="preserve">
     <value>Select on which side of the device the senor has been mounted</value>
   </data>
-  <data name="SettingsPage_SensorPlacementMirrored" xml:space="preserve">
-    <value>Sensor mirrored</value>
+  <data name="SettingsPage_SensorPlacementUpsideDown" xml:space="preserve">
+    <value>Sensor upside down</value>
   </data>
-  <data name="SettingsPage_SensorPlacementMirroredDesc" xml:space="preserve">
+  <data name="SettingsPage_SensorPlacementUpsideDownDesc" xml:space="preserve">
     <value>Sensor has been mounted upside down, possible with USB-C convertor</value>
   </data>
   <data name="SettingsPage_SensorSelection" xml:space="preserve">

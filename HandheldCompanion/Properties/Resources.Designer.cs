@@ -1735,20 +1735,20 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sensor mirrored.
+        ///   Looks up a localized string similar to Sensor upside down.
         /// </summary>
-        public static string SettingsPage_SensorPlacementMirrored {
+        public static string SettingsPage_SensorPlacementUpsideDown {
             get {
-                return ResourceManager.GetString("SettingsPage_SensorPlacementMirrored", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_SensorPlacementUpsideDown", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Sensor has been mounted upside down, possible with USB-C convertor.
         /// </summary>
-        public static string SettingsPage_SensorPlacementMirroredDesc {
+        public static string SettingsPage_SensorPlacementUpsideDownDesc {
             get {
-                return ResourceManager.GetString("SettingsPage_SensorPlacementMirroredDesc", resourceCulture);
+                return ResourceManager.GetString("SettingsPage_SensorPlacementUpsideDownDesc", resourceCulture);
             }
         }
         

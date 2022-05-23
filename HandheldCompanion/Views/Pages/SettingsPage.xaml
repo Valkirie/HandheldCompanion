@@ -409,12 +409,12 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE1CA;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementMirrored}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementMirroredDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDownDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_SensorPlacementMirrored" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_SensorPlacementMirrored_Toggled" IsEnabled="False"/>
+                        <ui:ToggleSwitch Name="Toggle_SensorPlacementUpsideDown" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_SensorPlacementUpsideDown_Toggled" IsEnabled="False"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>

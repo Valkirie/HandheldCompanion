@@ -63,7 +63,7 @@ namespace ControllerService
         // sensor vars
         private static SensorFamily SensorSelection;
         private static int SensorPlacement;
-        private static bool SensorPlacementMirrored;
+        private static bool SensorPlacementUpsideDown;
 
         // profile vars
         public static Profile profile = new();
@@ -100,7 +100,7 @@ namespace ControllerService
 
             SensorSelection = Enum.Parse<SensorFamily>(configuration.AppSettings.Settings["SensorSelection"].Value); // Properties.Settings.Default.SensorSelection;
             SensorPlacement = int.Parse(configuration.AppSettings.Settings["SensorPlacement"].Value); // Properties.Settings.Default.SensorPlacement;
-            SensorPlacementMirrored = bool.Parse(configuration.AppSettings.Settings["SensorPlacementMirrored"].Value); // Properties.Settings.Default.SensorPlacementMirrored;
+            SensorPlacementUpsideDown = bool.Parse(configuration.AppSettings.Settings["SensorPlacementUpsideDown"].Value); // Properties.Settings.Default.SensorPlacementUpsideDown;
 
             HIDidx = Enum.Parse<UserIndex>(configuration.AppSettings.Settings["HIDidx"].Value); // Properties.Settings.Default.HIDidx;
             deviceInstancePath = configuration.AppSettings.Settings["deviceInstancePath"].Value; // Properties.Settings.Default.deviceInstancePath;
@@ -525,10 +525,10 @@ namespace ControllerService
                         SensorPlacement = value;
                     }
                     break;
-                case "SensorPlacementMirrored":
+                case "SensorPlacementUpsideDown":
                     {
                         bool value = bool.Parse(property);
-                        SensorPlacementMirrored = value;
+                        SensorPlacementUpsideDown = value;
                     }
                     break;
                 case "SensorSelection":
