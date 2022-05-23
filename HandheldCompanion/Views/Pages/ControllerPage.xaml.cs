@@ -74,15 +74,21 @@ namespace HandheldCompanion.Views.Pages
             this.pipeClient.ServerMessage += OnServerMessage;
 
             this.serviceManager = mainWindow.serviceManager;
-            this.serviceManager.Updated += ServiceManager_Updated;
+            this.serviceManager.Updated += OnServiceUpdate;
         }
 
-        public void Close()
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+        }
+
+        public void Page_Closed()
+        {
+            pipeClient.ServerMessage -= OnServerMessage;
+            serviceManager.Updated -= OnServiceUpdate;
             controllerManager.StopListen();
         }
 
-        private async void ServiceManager_Updated(ServiceControllerStatus status, int mode)
+        private async void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
             switch (status)
             {
@@ -113,10 +119,6 @@ namespace HandheldCompanion.Views.Pages
                     break;
             }
             UpdateMainGrid();
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
         }
 
         private void ControllerUnplugged(ControllerEx controller)

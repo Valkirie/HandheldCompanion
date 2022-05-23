@@ -624,7 +624,11 @@ namespace HandheldCompanion.Views
                 pipeServer.Stop();
 
             // closing page(s)
-            controllerPage.Close();
+            controllerPage.Page_Closed();
+            profilesPage.Page_Closed();
+            settingsPage.Page_Closed();
+            aboutPage.Page_Closed();
+            overlayPage.Page_Closed();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)

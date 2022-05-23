@@ -41,11 +41,6 @@ namespace HandheldCompanion.Views.Pages
         public event ServiceChangedEventHandler ServiceChanged;
         public delegate void ServiceChangedEventHandler(ServiceStartMode value);
 
-        private void Page_Loaded(object sender, System.Windows.RoutedEventArgs e)
-        {
-            updateManager.Start();
-        }
-
         public SettingsPage()
         {
             InitializeComponent();
@@ -152,6 +147,17 @@ namespace HandheldCompanion.Views.Pages
 
             cB_Theme.SelectedIndex = Properties.Settings.Default.MainWindowTheme;
             ApplyTheme((ApplicationTheme)cB_Theme.SelectedIndex);
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            updateManager.Start();
+        }
+
+        public void Page_Closed()
+        {
+            pipeClient.ServerMessage -= OnServerMessage;
+            serviceManager.Updated -= OnServiceUpdate;
         }
 
         private void OnServerMessage(object sender, PipeMessage message)

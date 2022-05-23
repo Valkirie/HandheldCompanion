@@ -44,7 +44,7 @@ namespace HandheldCompanion.Views.Pages
             this.logger = logger;
 
             this.pipeClient = mainWindow.pipeClient;
-            this.pipeClient.ServerMessage += PipeClient_ServerMessage;
+            this.pipeClient.ServerMessage += OnServerMessage;
 
             this.profileManager = mainWindow.profileManager;
 
@@ -141,12 +141,17 @@ namespace HandheldCompanion.Views.Pages
             }
         }
 
-        private void PipeClient_ServerMessage(object sender, PipeMessage e)
+        private void OnServerMessage(object sender, PipeMessage e)
         {
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+        }
+
+        public void Page_Closed()
+        {
+            pipeClient.ServerMessage -= OnServerMessage;
         }
 
         #region UI

@@ -32,6 +32,15 @@ namespace HandheldCompanion.Views.Pages
             this.pipeClient.ServerMessage += OnServerMessage;
         }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+        }
+
+        public void Page_Closed()
+        {
+            pipeClient.ServerMessage -= OnServerMessage;
+        }
+
         private void OnServerMessage(object sender, PipeMessage message)
         {
             switch (message.code)

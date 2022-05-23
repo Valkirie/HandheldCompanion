@@ -74,6 +74,14 @@ namespace HandheldCompanion.Views.Pages
             overlay.trackpadTrigger = TrackpadsButton;
         }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+        }
+
+        public void Page_Closed()
+        {
+        }
+
         private void UpdateUI_TrackpadsPosition(int trackpadsAlignment)
         {
             foreach (Button button in OverlayTrackpadsAlignment.Children)
@@ -155,11 +163,6 @@ namespace HandheldCompanion.Views.Pages
                     overlay.VirtualController.HorizontalAlignment = HorizontalAlignment.Right;
                     break;
             }
-        }
-
-        private void Page_Loaded(object sender, System.Windows.RoutedEventArgs e)
-        {
-            // do something
         }
 
         private void SliderControllerSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
