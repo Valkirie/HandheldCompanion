@@ -160,6 +160,9 @@ namespace HandheldCompanion.Views.Pages
                 }
 
                 RadioControllers.Items.Add(controller);
+
+                if (currentController == null)
+                    RadioControllers.SelectedIndex = 0;
             });
         }
 
