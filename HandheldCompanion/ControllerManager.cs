@@ -31,13 +31,19 @@ namespace HandheldCompanion
             this.controllers = new();
 
             // initialize manager(s)
-            systemManager = new SystemManager();
+            systemManager = new SystemManager(logger);
+            systemManager.XInputArrived += SystemManager_XInputUpdated;
+            systemManager.XInputRemoved += SystemManager_XInputUpdated;
+        }
+
+        public void StopListen()
+        {
+            systemManager.StopListen();
         }
 
         public void StartListen()
         {
-            systemManager.XInputArrived += SystemManager_XInputUpdated;
-            systemManager.XInputRemoved += SystemManager_XInputUpdated;
+            systemManager.StartListen();
 
             lock (devices)
             {

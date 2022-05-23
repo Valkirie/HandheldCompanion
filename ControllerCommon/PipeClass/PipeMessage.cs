@@ -48,11 +48,6 @@ namespace ControllerCommon
         public bool hasInternal;
         public bool hasExternal;
 
-        public string ControllerName;
-        public ushort ControllerVID;
-        public ushort ControllerPID;
-        public int ControllerIdx;
-
         public PipeServerHandheld()
         {
             code = PipeCode.SERVER_CONTROLLER;

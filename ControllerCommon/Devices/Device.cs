@@ -32,7 +32,10 @@ namespace ControllerCommon.Devices
         {
             this.ManufacturerName = ManufacturerName;
             this.ProductName = ProductName;
+        }
 
+        public void PullSensors()
+        {
             var gyrometer = Gyrometer.GetDefault();
             var accelerometer = Accelerometer.GetDefault();
 
@@ -46,6 +49,11 @@ namespace ControllerCommon.Devices
 
                 hasInternal = true;
             }
+            else
+            {
+                InternalSensorName = "N/A";
+                hasInternal = false;
+            }
 
             var USB = SerialUSBIMU.GetDefault();
             if (USB != null && USB.device != null)
@@ -53,6 +61,31 @@ namespace ControllerCommon.Devices
                 ExternalSensorName = USB.device.Name;
                 hasExternal = true;
             }
+            else
+            {
+                ExternalSensorName = "N/A";
+                hasExternal = false;
+            }
+        }
+
+        public PipeServerHandheld ToPipe()
+        {
+            // refresh sensors status
+            PullSensors();
+
+            return new PipeServerHandheld()
+            {
+                ManufacturerName = ManufacturerName,
+                ProductName = ProductName,
+                ProductIllustration = ProductIllustration,
+
+                InternalSensorName = InternalSensorName,
+                ExternalSensorName = ExternalSensorName,
+                ProductSupported = ProductSupported,
+
+                hasInternal = hasInternal,
+                hasExternal = hasExternal
+            };
         }
     }
 }

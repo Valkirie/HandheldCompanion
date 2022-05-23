@@ -131,15 +131,10 @@ namespace ControllerService
             pipeServer.ClientMessage += OnClientMessage;
 
             // initialize manager(s)
-            systemManager = new SystemManager();
-            systemManager.SerialArrived += (device) =>
-            {
-                XInputController.UpdateSensors(SensorSelection);
-            };
-            systemManager.SerialRemoved += (device) =>
-            {
-                XInputController.UpdateSensors(SensorSelection);
-            };
+            systemManager = new SystemManager(logger);
+            systemManager.SerialArrived += SystemManager_SerialUpdated;
+            systemManager.SerialRemoved += SystemManager_SerialUpdated;
+            systemManager.StartListen();
 
             // XInputController settings
             XInputController = new XInputController(SensorSelection, logger, pipeServer);
@@ -184,6 +179,13 @@ namespace ControllerService
             // initialize Profile Manager
             profileManager = new ProfileManager(logger);
             profileManager.Updated += ProfileUpdated;
+        }
+
+        private void SystemManager_SerialUpdated(Nefarius.Utilities.DeviceManagement.PnP.PnPDevice device)
+        {
+            // send controller details
+            pipeServer.SendMessage(handheldDevice.ToPipe());
+            XInputController.UpdateSensors(SensorSelection);
         }
 
         private void SetControllerIdx(UserIndex idx, string deviceInstancePath, string baseContainerDeviceInstancePath)
@@ -411,24 +413,7 @@ namespace ControllerService
         private void OnClientConnected(object sender)
         {
             // send controller details
-            pipeServer.SendMessage(new PipeServerHandheld()
-            {
-                ManufacturerName = handheldDevice.ManufacturerName,
-                ProductName = handheldDevice.ProductName,
-                ProductIllustration = handheldDevice.ProductIllustration,
-
-                InternalSensorName = handheldDevice.InternalSensorName,
-                ExternalSensorName = handheldDevice.ExternalSensorName,
-                ProductSupported = handheldDevice.ProductSupported,
-
-                hasInternal = handheldDevice.hasInternal,
-                hasExternal = handheldDevice.hasExternal,
-
-                ControllerName = XInputController.ProductName,
-                ControllerVID = XInputController.controllerEx.GetVID(),
-                ControllerPID = XInputController.controllerEx.GetVID(),
-                ControllerIdx = (int)XInputController.controllerEx.UserIndex
-            });
+            pipeServer.SendMessage(handheldDevice.ToPipe());
 
             // send server settings
             pipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
@@ -601,6 +586,9 @@ namespace ControllerService
 
             // stop Pipe Server
             pipeServer?.Stop();
+
+            // stop System Manager
+            systemManager.StopListen();
 
             return Task.CompletedTask;
         }

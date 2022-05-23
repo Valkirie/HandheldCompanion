@@ -50,7 +50,7 @@ namespace ControllerCommon
         public event SerialRemovedEventHandler SerialRemoved;
         public delegate void SerialRemovedEventHandler(PnPDevice device);
 
-        public SystemManager()
+        public SystemManager(ILogger logger)
         {
             this.logger = logger;
 
@@ -59,14 +59,29 @@ namespace ControllerCommon
             HidDevice = interfaceGuid;
 
             hidListener = new DeviceNotificationListener();
+            xinputListener = new DeviceNotificationListener();
+        }
+
+        public void StartListen()
+        {
             hidListener.StartListen(UsbDevice);
             hidListener.DeviceArrived += Listener_DeviceArrived;
             hidListener.DeviceRemoved += Listener_DeviceRemoved;
 
-            xinputListener = new DeviceNotificationListener();
             xinputListener.StartListen(XUsbDevice);
             xinputListener.DeviceArrived += XinputListener_DeviceArrived;
             xinputListener.DeviceRemoved += XinputListener_DeviceRemoved;
+        }
+
+        public void StopListen()
+        {
+            hidListener.StopListen(UsbDevice);
+            hidListener.DeviceArrived -= Listener_DeviceArrived;
+            hidListener.DeviceRemoved -= Listener_DeviceRemoved;
+
+            xinputListener.StopListen(XUsbDevice);
+            xinputListener.DeviceArrived -= XinputListener_DeviceArrived;
+            xinputListener.DeviceRemoved -= XinputListener_DeviceRemoved;
         }
 
         public static bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)
@@ -191,8 +206,7 @@ namespace ControllerCommon
                 var deviceEx = GetDeviceEx(device);
                 XInputRemoved?.Invoke(deviceEx);
             }
-            catch (Exception ex)
-            { }
+            catch (Exception) { }
         }
 
         private void XinputListener_DeviceArrived(DeviceEventArgs obj)
@@ -204,8 +218,7 @@ namespace ControllerCommon
                 var deviceEx = GetDeviceEx(device);
                 XInputArrived?.Invoke(deviceEx);
             }
-            catch (Exception ex)
-            { }
+            catch (Exception) { }
         }
 
         private void Listener_DeviceRemoved(DeviceEventArgs obj)

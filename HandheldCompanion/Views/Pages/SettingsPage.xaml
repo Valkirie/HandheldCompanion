@@ -332,14 +332,20 @@
                         </DockPanel>
 
                         <ui:RadioButtons Name="cB_SensorSelection" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1" SelectionChanged="cB_SensorSelection_SelectionChanged">
-                            <ui:SimpleStackPanel Name="SensorInternal" IsEnabled="False" Orientation="Horizontal" Spacing="6">
-                                <ui:FontIcon Glyph="&#xE770;"/>
-                                <Label Content="{x:Static resx:Resources.SettingsPage_SensorInternal}"></Label>
-                            </ui:SimpleStackPanel>
-                            <ui:SimpleStackPanel Name="SensorExternal" IsEnabled="False" Orientation="Horizontal" Spacing="6">
-                                <ui:FontIcon Glyph="&#xECF1;"/>
-                                <Label Content="{x:Static resx:Resources.SettingsPage_SensorExternal}"></Label>
-                            </ui:SimpleStackPanel>
+
+                            <RadioButton Name="SensorInternal" IsEnabled="False" >
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="&#xE770;"/>
+                                    <Label Content="{x:Static resx:Resources.SettingsPage_SensorInternal}"></Label>
+                                </ui:SimpleStackPanel>
+                            </RadioButton>
+                            
+                            <RadioButton Name="SensorExternal" IsEnabled="False" >
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="&#xECF1;"/>
+                                    <Label Content="{x:Static resx:Resources.SettingsPage_SensorExternal}"></Label>
+                                </ui:SimpleStackPanel>
+                            </RadioButton>
                         </ui:RadioButtons>
                     </Grid>
                 </Border>

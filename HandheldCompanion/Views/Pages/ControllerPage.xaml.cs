@@ -77,6 +77,11 @@ namespace HandheldCompanion.Views.Pages
             this.serviceManager.Updated += ServiceManager_Updated;
         }
 
+        public void Close()
+        {
+            controllerManager.StopListen();
+        }
+
         private async void ServiceManager_Updated(ServiceControllerStatus status, int mode)
         {
             switch (status)

@@ -623,8 +623,8 @@ namespace HandheldCompanion.Views
             if (pipeServer.connected)
                 pipeServer.Stop();
 
-            // force kill the app
-            Environment.Exit(Environment.ExitCode);
+            // closing page(s)
+            controllerPage.Close();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
