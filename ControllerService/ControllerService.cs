@@ -132,11 +132,11 @@ namespace ControllerService
 
             // initialize manager(s)
             systemManager = new SystemManager();
-            systemManager.DeviceArrived += (update) =>
+            systemManager.SerialArrived += (device) =>
             {
                 XInputController.UpdateSensors(SensorSelection);
             };
-            systemManager.DeviceRemoved += (update) =>
+            systemManager.SerialRemoved += (device) =>
             {
                 XInputController.UpdateSensors(SensorSelection);
             };

@@ -57,7 +57,7 @@ namespace HandheldCompanion.Views.Pages
             controllerManager = new ControllerManager(logger);
             controllerManager.ControllerPlugged += ControllerPlugged;
             controllerManager.ControllerUnplugged += ControllerUnplugged;
-            controllerManager.Start();
+            controllerManager.StartListen();
         }
 
         public ControllerPage(string Tag, MainWindow mainWindow, ILogger logger) : this()

@@ -7,99 +7,233 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Timers;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Nefarius.Utilities.DeviceManagement.PnP;
+using PInvoke;
+using ControllerCommon.Utils;
 
 namespace ControllerCommon
 {
-    public enum DeviceChangeEnum
-    {
-        ConfigurationChanged = 1,
-        DeviceArrived = 2,
-        DeviceRemoved = 3,
-        Docked = 4
-    }
-
     public class SystemManager
     {
+        #region import
+        [DllImport("hid.dll", EntryPoint = "HidD_GetHidGuid")]
+        static internal extern void HidD_GetHidGuidMethod(out Guid hidGuid);
+        #endregion
+
         private ILogger logger;
 
-        private ManagementEventWatcher eventWatcher;
-        private Timer eventTimer;
+        public static Guid HidDevice;
 
-        // event handler(s)
-        private Timer ConfigurationChangedTimer;
-        public event ConfigurationChangedEventHandler ConfigurationChanged;
-        public delegate void ConfigurationChangedEventHandler(bool update);
+        /// <summary>
+        ///     An interface exposed on USB devices.
+        /// </summary>
+        public static Guid UsbDevice => Guid.Parse("{a5dcbf10-6530-11d2-901f-00c04fb951ed}");
 
-        private Timer DeviceArrivedTimer;
-        public event DeviceArrivedEventHandler DeviceArrived;
-        public delegate void DeviceArrivedEventHandler(bool update);
+        /// <summary>
+        ///     An interface exposed on XUSB (Xbox 360) or XGIP (Xbox One) compatible (XInput) devices.
+        /// </summary>
+        public static Guid XUsbDevice => Guid.Parse("{EC87F1E3-C13B-4100-B5F7-8B84D54260CB}");
 
-        private Timer DeviceRemovedTimer;
-        public event DeviceRemovedEventHandler DeviceRemoved;
-        public delegate void DeviceRemovedEventHandler(bool update);
+        private DeviceNotificationListener hidListener;
+        private DeviceNotificationListener xinputListener;
 
-        private Timer DockedTimer;
-        public event DockedEventHandler Docked;
-        public delegate void DockedEventHandler(bool update);
+        public event XInputArrivedEventHandler XInputArrived;
+        public delegate void XInputArrivedEventHandler(PnPDeviceEx device);
+
+        public event XInputRemovedEventHandler XInputRemoved;
+        public delegate void XInputRemovedEventHandler(PnPDeviceEx device);
+
+        public event SerialArrivedEventHandler SerialArrived;
+        public delegate void SerialArrivedEventHandler(PnPDevice device);
+
+        public event SerialRemovedEventHandler SerialRemoved;
+        public delegate void SerialRemovedEventHandler(PnPDevice device);
 
         public SystemManager()
         {
             this.logger = logger;
 
-            eventWatcher = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent"));
-            eventWatcher.EventArrived += new EventArrivedEventHandler( HandleEvent);
-            eventWatcher.Start();
+            // initialize hid
+            HidD_GetHidGuidMethod(out var interfaceGuid);
+            HidDevice = interfaceGuid;
 
-            ConfigurationChangedTimer = new Timer() { Interval = 500, AutoReset = false };
-            ConfigurationChangedTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
-            {
-                ConfigurationChanged?.Invoke(true);
-            };
+            hidListener = new DeviceNotificationListener();
+            hidListener.StartListen(UsbDevice);
+            hidListener.DeviceArrived += Listener_DeviceArrived;
+            hidListener.DeviceRemoved += Listener_DeviceRemoved;
 
-            DeviceArrivedTimer = new Timer() { Interval = 500, AutoReset = false };
-            DeviceArrivedTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
-            {
-                DeviceArrived?.Invoke(true);
-            };
-
-            DeviceRemovedTimer = new Timer() { Interval = 500, AutoReset = false };
-            DeviceRemovedTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
-            {
-                DeviceRemoved?.Invoke(true);
-            };
-
-            DockedTimer = new Timer() { Interval = 500, AutoReset = false };
-            DockedTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
-            {
-                Docked?.Invoke(true);
-            };
+            xinputListener = new DeviceNotificationListener();
+            xinputListener.StartListen(XUsbDevice);
+            xinputListener.DeviceArrived += XinputListener_DeviceArrived;
+            xinputListener.DeviceRemoved += XinputListener_DeviceRemoved;
         }
 
-        private void HandleEvent(object sender, EventArrivedEventArgs e)
+        public static bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)
         {
-            int EventType = Convert.ToInt32(e.NewEvent.GetPropertyValue("EventType"));
-            DeviceChangeEnum value = (DeviceChangeEnum)EventType;
-
-            // we use timers because events are triggered in chains
-            switch (value)
+            while (device is not null)
             {
-                case DeviceChangeEnum.ConfigurationChanged:
-                    ConfigurationChangedTimer.Stop();
-                    ConfigurationChangedTimer.Start();
+                var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+
+                if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
                     break;
-                case DeviceChangeEnum.DeviceArrived:
-                    DeviceArrivedTimer.Stop();
-                    DeviceArrivedTimer.Start();
-                    break;
-                case DeviceChangeEnum.DeviceRemoved:
-                    DeviceRemovedTimer.Stop();
-                    DeviceRemovedTimer.Start();
-                    break;
-                case DeviceChangeEnum.Docked:
-                    DockedTimer.Stop();
-                    DockedTimer.Start();
-                    break;
+
+                device = PnPDevice.GetDeviceByInstanceId(parentId,
+                    isRemoved
+                        ? DeviceLocationFlags.Phantom
+                        : DeviceLocationFlags.Normal
+                );
             }
+
+            //
+            // TODO: test how others behave (reWASD, NVIDIA, ...)
+            // 
+            return device is not null &&
+                   (device.InstanceId.StartsWith(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase)
+                    || device.InstanceId.StartsWith(@"ROOT\USB", StringComparison.OrdinalIgnoreCase));
+        }
+
+        private PnPDeviceEx GetDeviceEx(PnPDevice owner)
+        {
+            PnPDeviceEx deviceEx = new PnPDeviceEx()
+            {
+                deviceUSB = owner
+            };
+
+            int deviceIndex = 0;
+            while (Devcon.Find(HidDevice, out var path, out var instanceId, deviceIndex++))
+            {
+                var pnpDevice = PnPDevice.GetDeviceByInterfaceId(path);
+                var device = pnpDevice;
+
+                while (device is not null)
+                {
+                    var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+
+                    if (parentId == owner.DeviceId)
+                    {
+                        return new PnPDeviceEx()
+                        {
+                            deviceUSB = device,
+                            deviceHID = pnpDevice,
+                            path = path,
+                            isVirtual = IsVirtualDevice(pnpDevice),
+                            deviceIndex = deviceIndex,
+                            arrivalDate = pnpDevice.GetProperty<DateTimeOffset>(DevicePropertyDevice.LastArrivalDate)
+                        };
+                    }
+
+                    if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
+                        break;
+
+                    if (parentId.Contains(@"USB\ROOT", StringComparison.OrdinalIgnoreCase))
+                        break;
+
+                    if (parentId.Contains(@"HID\", StringComparison.OrdinalIgnoreCase))
+                        break;
+
+                    device = PnPDevice.GetDeviceByInstanceId(parentId, DeviceLocationFlags.Normal);
+                }
+            }
+
+            return deviceEx;
+        }
+
+        public List<PnPDeviceEx> GetDeviceExs()
+        {
+            List<PnPDeviceEx> devices = new();
+
+            int deviceIndex = 0;
+            while (Devcon.Find(HidDevice, out var path, out var instanceId, deviceIndex++))
+            {
+                var pnpDevice = PnPDevice.GetDeviceByInterfaceId(path);
+                var device = pnpDevice;
+
+                while (device is not null)
+                {
+                    var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+
+                    if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
+                        break;
+
+                    if (parentId.Contains(@"USB\ROOT", StringComparison.OrdinalIgnoreCase))
+                        break;
+
+                    if (parentId.Contains(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase))
+                        break;
+
+                    if (parentId.Contains(@"HID\", StringComparison.OrdinalIgnoreCase))
+                        break;
+
+                    device = PnPDevice.GetDeviceByInstanceId(parentId, DeviceLocationFlags.Normal);
+                }
+
+                devices.Add(new PnPDeviceEx()
+                {
+                    deviceUSB = device,
+                    deviceHID = pnpDevice,
+                    path = path,
+                    isVirtual = IsVirtualDevice(pnpDevice),
+                    deviceIndex = deviceIndex,
+                    arrivalDate = pnpDevice.GetProperty<DateTimeOffset>(DevicePropertyDevice.LastArrivalDate)
+                });
+            }
+
+            return devices;
+        }
+
+        private void XinputListener_DeviceRemoved(DeviceEventArgs obj)
+        {
+            // XInput device removed
+            try
+            {
+                var device = PnPDevice.GetDeviceByInterfaceId(obj.SymLink);
+                var deviceEx = GetDeviceEx(device);
+                XInputRemoved?.Invoke(deviceEx);
+            }
+            catch (Exception ex)
+            { }
+        }
+
+        private void XinputListener_DeviceArrived(DeviceEventArgs obj)
+        {
+            // XInput device arrived
+            try
+            {
+                var device = PnPDevice.GetDeviceByInterfaceId(obj.SymLink);
+                var deviceEx = GetDeviceEx(device);
+                XInputArrived?.Invoke(deviceEx);
+            }
+            catch (Exception ex)
+            { }
+        }
+
+        private void Listener_DeviceRemoved(DeviceEventArgs obj)
+        {
+            try
+            {
+                string symLink = CommonUtils.Between(obj.SymLink, "#", "#") + "&";
+                string VendorID = CommonUtils.Between(symLink, "VID_", "&");
+                string ProductID = CommonUtils.Between(symLink, "PID_", "&");
+
+                if (SerialUSBIMU.settingsUSBIMU.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
+                    SerialRemoved?.Invoke(null);
+            }
+            catch (Exception) { }
+        }
+
+        private void Listener_DeviceArrived(DeviceEventArgs obj)
+        {
+            try
+            {
+                string symLink = CommonUtils.Between(obj.SymLink, "#", "#") + "&";
+                string VendorID = CommonUtils.Between(symLink, "VID_", "&");
+                string ProductID = CommonUtils.Between(symLink, "PID_", "&");
+
+                if (SerialUSBIMU.settingsUSBIMU.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
+                    SerialArrived?.Invoke(null);
+            }
+            catch (Exception) { }
         }
     }
 }

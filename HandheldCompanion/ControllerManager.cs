@@ -12,18 +12,11 @@ namespace HandheldCompanion
 {
     public class ControllerManager
     {
-        #region import
-        [DllImport("hid.dll", EntryPoint = "HidD_GetHidGuid")]
-        static internal extern void HidD_GetHidGuidMethod(out Guid hidGuid);
-        #endregion
-
         private ILogger logger;
 
         private SystemManager systemManager;
 
         private Dictionary<string, ControllerEx> controllers;
-
-        private readonly Guid hidClassInterfaceGuid;
         private List<PnPDeviceEx> devices = new();
 
         public event ControllerPluggedEventHandler ControllerPlugged;
@@ -39,66 +32,54 @@ namespace HandheldCompanion
 
             // initialize manager(s)
             systemManager = new SystemManager();
-
-            // initialize hid
-            HidD_GetHidGuidMethod(out var interfaceGuid);
-            hidClassInterfaceGuid = interfaceGuid;
         }
 
-        public void Start()
+        public void StartListen()
         {
-            systemManager.DeviceArrived += DeviceEvent;
-            systemManager.DeviceRemoved += DeviceEvent;
+            systemManager.XInputArrived += SystemManager_XInputUpdated;
+            systemManager.XInputRemoved += SystemManager_XInputUpdated;
 
-            DeviceEvent(false);
-        }
-
-        private bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)
-        {
-            while (device is not null)
+            lock (devices)
             {
-                var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+                devices = systemManager.GetDeviceExs();
 
-                if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
-                    break;
+                // rely on device Last arrival date
+                devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();
 
-                device = PnPDevice.GetDeviceByInstanceId(parentId,
-                    isRemoved
-                        ? DeviceLocationFlags.Phantom
-                        : DeviceLocationFlags.Normal
-                );
+                for (int idx = 0; idx < 4; idx++)
+                {
+                    UserIndex userIndex = (UserIndex)idx;
+                    ControllerEx controllerEx = new ControllerEx(userIndex, null, ref devices);
+
+                    controllers[controllerEx.baseContainerDeviceInstancePath] = controllerEx;
+
+                    if (controllerEx.isVirtual)
+                        continue;
+
+                    if (!controllerEx.IsConnected())
+                        continue;
+
+                    // raise event
+                    ControllerPlugged?.Invoke(controllerEx);
+                }
             }
-
-            //
-            // TODO: test how others behave (reWASD, NVIDIA, ...)
-            // 
-            return device is not null &&
-                   (device.InstanceId.StartsWith(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase)
-                    || device.InstanceId.StartsWith(@"ROOT\USB", StringComparison.OrdinalIgnoreCase));
         }
 
-        private void DeviceEvent(bool update)
+        private void SystemManager_XInputRemoved(PnPDeviceEx device)
+        {
+            // todo: implement me
+        }
+
+        private void SystemManager_XInputArrived(PnPDeviceEx device)
+        {
+            // todo: implement me
+        }
+
+        private void SystemManager_XInputUpdated(PnPDeviceEx device)
         {
             lock (devices)
             {
-                int deviceIndex = 0;
-                devices.Clear();
-
-                while (Devcon.Find(hidClassInterfaceGuid, out var path, out var instanceId, deviceIndex++))
-                {
-                    var device = PnPDevice.GetDeviceByInterfaceId(path);
-
-                    PnPDeviceEx deviceEx = new PnPDeviceEx()
-                    {
-                        device = device,
-                        path = path,
-                        isVirtual = IsVirtualDevice(device),
-                        deviceIndex = deviceIndex,
-                        arrivalDate = device.GetProperty<DateTimeOffset>(DevicePropertyDevice.LastArrivalDate)
-                    };
-
-                    devices.Add(deviceEx);
-                }
+                devices = systemManager.GetDeviceExs();
 
                 // rely on device Last arrival date
                 devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();

@@ -8,6 +8,7 @@ using ControllerCommon;
 using System.Threading;
 using System.IO.Ports;
 using ControllerCommon.Utils;
+using System.Collections.Generic;
 
 namespace ControllerCommon
 {
@@ -22,12 +23,30 @@ namespace ControllerCommon
 	public class SerialUSBIMU
 	{
 		// Global variables that can be updated or output etc
-		private Vector3 AccelerationG = new Vector3();		// accelerometer
+		private Vector3 AccelerationG = new Vector3();      // accelerometer
 		private Vector3 AngularVelocityDeg = new Vector3(); // gyrometer
 
 		private static SerialUSBIMU serialUSBIMU = new();
+		public static Dictionary<KeyValuePair<string, string>, SerialPort> settingsUSBIMU = new()
+		{
+			// USB Gyro v2
+			{	
+				new KeyValuePair<string, string>("1A86", "7523"),
+				new SerialPort() { BaudRate = 115200, DataBits = 8, Parity = Parity.None, StopBits = StopBits.One, Handshake = Handshake.None, RtsEnable = true, ReadTimeout = 500, WriteTimeout = 500 }
+			}
+		};
+
+		public static Dictionary<KeyValuePair<string, string>, KeyValuePair<double, double>> filterUSBIMU = new()
+		{
+			// USB Gyro v2 (beta, cutoff)
+			{
+				new KeyValuePair<string, string>("1A86", "7523"),
+				new KeyValuePair<double, double>(0.001d, 0.008d)
+			}
+		};
+
 		public USBDeviceInfo device;
-		private SerialPort port = new();
+		private SerialPort serialPort = new();
 
 		private SerialPlacement SensorPlacement = SerialPlacement.Top;
 		private bool isUpsideDown = false;
@@ -42,44 +61,41 @@ namespace ControllerCommon
 
 		public static SerialUSBIMU GetDefault(ILogger logger = null)
 		{
-			if (serialUSBIMU.port.IsOpen)
+			if (serialUSBIMU.serialPort.IsOpen)
 				return serialUSBIMU;
 
 			serialUSBIMU.logger = logger;
 
-			// USB Gyro v2 COM Port settings.
-			var GyroV2 = GetSerialDevices().Where(a => a.PID.Equals("7523") && a.VID.Equals("1A86")).FirstOrDefault();
-			if (GyroV2 != null)
-			{
-				// update main device
-				serialUSBIMU.device = GyroV2;
-				serialUSBIMU.filterBeta = 0.001d;
-				serialUSBIMU.filterCutoff = 0.008d;
+			USBDeviceInfo deviceInfo = null;
+			List<USBDeviceInfo> devices = GetSerialDevices();
 
-				serialUSBIMU.port = new SerialPort()
-				{
-					BaudRate = 115200, // Differs from datasheet intentionally.
-					DataBits = 8,
-					Parity = Parity.None,
-					StopBits = StopBits.One,
-					Handshake = Handshake.None,
-					PortName = Between(GyroV2.Name, "(", ")"),
-					RtsEnable = true,
-					ReadTimeout = 500,
-					WriteTimeout = 500
-				};
-			}
-			else
+			foreach (var serial in settingsUSBIMU)
             {
+				string VendorID = serial.Key.Key;
+				string ProductID = serial.Key.Value;
+
+				deviceInfo = devices.Where(a => a.VID == VendorID && a.PID == ProductID).FirstOrDefault();
+				if (deviceInfo != null)
+				{
+					serialUSBIMU.device = deviceInfo;
+					serialUSBIMU.filterBeta = filterUSBIMU[serial.Key].Key;
+					serialUSBIMU.filterCutoff = filterUSBIMU[serial.Key].Value;
+
+					serialUSBIMU.serialPort = serial.Value;
+					serialUSBIMU.serialPort.PortName = Between(deviceInfo.Name, "(", ")");
+					break;
+                }
+			}
+
+			if (deviceInfo is null)
 				return null;
-            }
 
 			logger?.LogDebug("{0} connecting to {1}", serialUSBIMU.ToString(), serialUSBIMU.device.Name);
 
 			// open serial port
 			serialUSBIMU.Open();
 
-			serialUSBIMU.port.DataReceived += new SerialDataReceivedEventHandler(serialUSBIMU.DataReceivedHandler);
+			serialUSBIMU.serialPort.DataReceived += new SerialDataReceivedEventHandler(serialUSBIMU.DataReceivedHandler);
 
 			return serialUSBIMU;
 		}
@@ -91,12 +107,12 @@ namespace ControllerCommon
 
 		public bool IsOpen()
         {
-			return port.IsOpen;
+			return serialPort.IsOpen;
         }
 
 		public int GetInterval()
         {
-			return port.BaudRate;
+			return serialPort.BaudRate;
         }
 
 		private int tentative;
@@ -105,11 +121,11 @@ namespace ControllerCommon
 		{
 			tentative = 0; // reset tentative
 
-			while (!serialUSBIMU.port.IsOpen && tentative < maxTentative)
+			while (!serialUSBIMU.serialPort.IsOpen && tentative < maxTentative)
 			{
 				try
 				{
-					serialUSBIMU.port.Open();
+					serialUSBIMU.serialPort.Open();
 					logger?.LogDebug("{0} connected", serialUSBIMU.ToString());
 					return true;
 				}
@@ -129,7 +145,7 @@ namespace ControllerCommon
 		{
 			try
 			{
-				serialUSBIMU.port.Close();
+				serialUSBIMU.serialPort.Close();
 				return true;
 			}
 			catch (Exception)
@@ -148,7 +164,7 @@ namespace ControllerCommon
 			try
 			{
 				// Read serial, store in byte array, at specified offset, certain amount and determine length
-				usLength = (ushort)port.Read(byteTemp, 0, 1000);
+				usLength = (ushort)serialPort.Read(byteTemp, 0, 1000);
 			}catch (Exception)
 			{
 				return;
@@ -176,7 +192,7 @@ namespace ControllerCommon
 
 					try
 					{
-						port.Write(buffer, 0, buffer.Length);
+						serialPort.Write(buffer, 0, buffer.Length);
 					}
 					catch (Exception)
 					{
@@ -199,7 +215,7 @@ namespace ControllerCommon
 
 					try
 					{
-						port.Write(buffer, 0, buffer.Length);
+						serialPort.Write(buffer, 0, buffer.Length);
 					}
 					catch (Exception)
 					{
@@ -215,7 +231,7 @@ namespace ControllerCommon
 
 					logger?.LogInformation("Serial USB save settings on device");
 
-					port.Write(buffer, 0, buffer.Length);
+					serialPort.Write(buffer, 0, buffer.Length);
 					openAutoCalib = false;
 				}
 
