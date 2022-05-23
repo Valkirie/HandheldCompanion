@@ -609,14 +609,13 @@ namespace HandheldCompanion.Views
         private void Window_Closed(object sender, EventArgs e)
         {
             processManager.Stop();
+            serviceManager.Stop();
+            profileManager.Stop();
 
             notifyIcon.Visible = false;
-            notifyIcon = null;
+            notifyIcon.Dispose();
 
             overlay.Close();
-            overlay = null;
-
-            serviceManager.Stop();
 
             if (pipeClient.connected)
                 pipeClient.Stop();
@@ -624,7 +623,8 @@ namespace HandheldCompanion.Views
             if (pipeServer.connected)
                 pipeServer.Stop();
 
-            profileManager.Stop();
+            // force kill the app
+            Environment.Exit(Environment.ExitCode);
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
