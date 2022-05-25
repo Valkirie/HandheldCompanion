@@ -14,13 +14,13 @@
     <PackageReference Include="HidSharp" Version="2.1.0" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.1" />
-    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.4.94" />
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.2" />
+    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.6.98" />
     <PackageReference Include="Nefarius.ViGEm.Client" Version="1.17.178" />
     <PackageReference Include="NetCoreNamedPipeWrapper" Version="1.0.4" />
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.104" />

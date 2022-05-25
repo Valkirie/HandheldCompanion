@@ -24,17 +24,6 @@ namespace ControllerCommon
         private ILogger logger;
 
         public static Guid HidDevice;
-
-        /// <summary>
-        ///     An interface exposed on USB devices.
-        /// </summary>
-        public static Guid UsbDevice => Guid.Parse("{a5dcbf10-6530-11d2-901f-00c04fb951ed}");
-
-        /// <summary>
-        ///     An interface exposed on XUSB (Xbox 360) or XGIP (Xbox One) compatible (XInput) devices.
-        /// </summary>
-        public static Guid XUsbDevice => Guid.Parse("{EC87F1E3-C13B-4100-B5F7-8B84D54260CB}");
-
         private DeviceNotificationListener hidListener;
         private DeviceNotificationListener xinputListener;
 
@@ -64,22 +53,22 @@ namespace ControllerCommon
 
         public void StartListen()
         {
-            hidListener.StartListen(UsbDevice);
+            hidListener.StartListen(DeviceInterfaceIds.UsbDevice);
             hidListener.DeviceArrived += Listener_DeviceArrived;
             hidListener.DeviceRemoved += Listener_DeviceRemoved;
 
-            xinputListener.StartListen(XUsbDevice);
+            xinputListener.StartListen(DeviceInterfaceIds.XUsbDevice);
             xinputListener.DeviceArrived += XinputListener_DeviceArrived;
             xinputListener.DeviceRemoved += XinputListener_DeviceRemoved;
         }
 
         public void StopListen()
         {
-            hidListener.StopListen(UsbDevice);
+            hidListener.StopListen(DeviceInterfaceIds.UsbDevice);
             hidListener.DeviceArrived -= Listener_DeviceArrived;
             hidListener.DeviceRemoved -= Listener_DeviceRemoved;
 
-            xinputListener.StopListen(XUsbDevice);
+            xinputListener.StopListen(DeviceInterfaceIds.XUsbDevice);
             xinputListener.DeviceArrived -= XinputListener_DeviceArrived;
             xinputListener.DeviceRemoved -= XinputListener_DeviceRemoved;
         }
