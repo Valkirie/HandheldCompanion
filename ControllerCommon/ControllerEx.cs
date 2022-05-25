@@ -80,7 +80,7 @@ namespace ControllerCommon
             if (ProductId is null || VendorId is null)
                 return;
 
-            foreach(PnPDeviceEx deviceEx in devices)
+            foreach (PnPDeviceEx deviceEx in devices)
             {
                 // get attributes
                 Attributes device_attributes = new Attributes();

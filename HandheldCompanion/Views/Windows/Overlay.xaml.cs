@@ -603,8 +603,8 @@ namespace HandheldCompanion.Views.Windows
             pipeClient.SendMessage(new PipeOverlay((int)VirtualController.Visibility));
         }
 
-        private void UpwardVisibilityRotationShoulderButtons(float ShoulderButtonsAngleDeg, 
-                                                             Vector3D UpwardVisibilityRotationAxis, 
+        private void UpwardVisibilityRotationShoulderButtons(float ShoulderButtonsAngleDeg,
+                                                             Vector3D UpwardVisibilityRotationAxis,
                                                              Vector3D UpwardVisibilityRotationPoint,
                                                              float ShoulderTriggerAngleDeg,
                                                              Vector3D ShoulderTriggerRotationPointCenterMillimeter,

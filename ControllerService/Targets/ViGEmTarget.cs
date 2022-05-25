@@ -148,7 +148,7 @@ namespace ControllerService.Targets
                                 // apply sensivity curve
                                 Angular.X *= InputUtils.ApplyCustomSensitivity(Angular.X, XInputGirometer.sensorSpec.maxIn, ControllerService.profile.aiming_array);
                                 Angular.Y *= InputUtils.ApplyCustomSensitivity(Angular.Y, XInputGirometer.sensorSpec.maxIn, ControllerService.profile.aiming_array);
-                                
+
                                 // apply device width ratio
                                 Angular.Y *= ControllerService.handheldDevice.WidthHeightRatio;
 

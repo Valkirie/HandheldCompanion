@@ -1,5 +1,4 @@
 using ControllerCommon;
-using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using ControllerService.Targets;
@@ -99,7 +98,7 @@ namespace ControllerService
             {
                 XInputSensorStatus sensorStatus = XInputSensor.GetStatus(sensorFamily);
 
-                switch(sensorStatus)
+                switch (sensorStatus)
                 {
                     case XInputSensorStatus.Busy:
                         {
@@ -113,7 +112,7 @@ namespace ControllerService
                         break;
                 }
             }
-            
+
             Gyrometer = new XInputGirometer(sensorFamily, updateInterval, logger);
             Accelerometer = new XInputAccelerometer(sensorFamily, updateInterval, logger);
             Inclinometer = new XInputInclinometer(sensorFamily, updateInterval, logger);

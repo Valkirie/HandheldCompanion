@@ -1,12 +1,8 @@
 ﻿using ControllerCommon;
 using Microsoft.Extensions.Logging;
-using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.XInput;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Management;
-using System.Runtime.InteropServices;
 
 namespace HandheldCompanion
 {

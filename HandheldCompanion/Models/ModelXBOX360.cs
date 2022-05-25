@@ -78,7 +78,7 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(XboxButtonRing);
             model3DGroup.Children.Add(LeftShoulderBottom);
             model3DGroup.Children.Add(RightShoulderBottom);
-            
+
             foreach (Model3DGroup model3D in model3DGroup.Children)
                 ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
 

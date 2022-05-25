@@ -85,7 +85,7 @@ namespace HandheldCompanion.Views.Pages
                 // create icon
                 FontIcon icon = new FontIcon() { Glyph = "" };
 
-                switch(mode)
+                switch (mode)
                 {
                     default:
                     case Input.PlayerSpace:
@@ -263,10 +263,10 @@ namespace HandheldCompanion.Views.Pages
 
                     if (profileManager.Contains(profile))
                     {
-                        Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureOverwrite1} \"{profile.name}\"?", 
-                                                                            $"{Properties.Resources.ProfilesPage_AreYouSureOverwrite2}", 
-                                                                            ContentDialogButton.Primary, 
-                                                                            $"{Properties.Resources.ProfilesPage_Cancel}", 
+                        Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureOverwrite1} \"{profile.name}\"?",
+                                                                            $"{Properties.Resources.ProfilesPage_AreYouSureOverwrite2}",
+                                                                            ContentDialogButton.Primary,
+                                                                            $"{Properties.Resources.ProfilesPage_Cancel}",
                                                                             $"{Properties.Resources.ProfilesPage_Yes}");
                         await result; // sync call
 
@@ -402,10 +402,10 @@ namespace HandheldCompanion.Views.Pages
             if (profileCurrent == null)
                 return;
 
-            Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{profileCurrent.name}\"?", 
-                                                                $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}", 
-                                                                ContentDialogButton.Primary, 
-                                                                $"{Properties.Resources.ProfilesPage_Cancel}", 
+            Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{profileCurrent.name}\"?",
+                                                                $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
+                                                                ContentDialogButton.Primary,
+                                                                $"{Properties.Resources.ProfilesPage_Cancel}",
                                                                 $"{Properties.Resources.ProfilesPage_Delete}");
             await result; // sync call
 
@@ -424,7 +424,7 @@ namespace HandheldCompanion.Views.Pages
         {
             if (profileCurrent == null)
                 return;
-            
+
             Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
                              $"{profileCurrent.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
                              ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");

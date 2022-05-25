@@ -1,7 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

@@ -171,7 +171,7 @@ namespace HandheldCompanion.Views.Pages
                         SensorInternal.IsEnabled = handheldDevice.hasInternal;
                         SensorExternal.IsEnabled = handheldDevice.hasExternal;
                         Toggle_SensorPlacementUpsideDown.IsEnabled = handheldDevice.hasExternal;
-                        
+
                         foreach (SimpleStackPanel panel in SensorPlacementVisualisation.Children)
                             foreach (Button button in panel.Children)
                             {
