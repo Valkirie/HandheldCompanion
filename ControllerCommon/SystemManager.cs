@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using System.Timers;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Nefarius.Utilities.DeviceManagement.PnP;
-using PInvoke;
+﻿using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
+using Microsoft.Extensions.Logging;
+using Nefarius.Utilities.DeviceManagement.PnP;
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace ControllerCommon
 {
@@ -218,7 +212,7 @@ namespace ControllerCommon
                 string VendorID = CommonUtils.Between(symLink, "VID_", "&");
                 string ProductID = CommonUtils.Between(symLink, "PID_", "&");
 
-                if (SerialUSBIMU.settingsUSBIMU.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
+                if (SerialUSBIMU.vendors.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
                     SerialRemoved?.Invoke(null);
             }
             catch (Exception) { }
@@ -232,7 +226,7 @@ namespace ControllerCommon
                 string VendorID = CommonUtils.Between(symLink, "VID_", "&");
                 string ProductID = CommonUtils.Between(symLink, "PID_", "&");
 
-                if (SerialUSBIMU.settingsUSBIMU.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
+                if (SerialUSBIMU.vendors.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
                     SerialArrived?.Invoke(null);
             }
             catch (Exception) { }

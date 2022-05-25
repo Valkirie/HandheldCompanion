@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 
 namespace ControllerCommon.Utils
 {
@@ -109,7 +108,7 @@ namespace ControllerCommon.Utils
         {
             try
             {
-                using (var searcher = new ManagementObjectSearcher($"SELECT * From Win32_PnPEntity WHERE DeviceId LIKE '%{DeviceId}%'"))
+                using (var searcher = new ManagementObjectSearcher($"SELECT * From Win32_PnPEntity WHERE DeviceId = '{DeviceId.Replace("\\", "\\\\")}'"))
                 {
                     var devices = searcher.Get().Cast<ManagementBaseObject>().ToList();
                     return new USBDeviceInfo(devices.FirstOrDefault());

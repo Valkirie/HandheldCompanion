@@ -1,7 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Devices;
 using ControllerCommon.Utils;
-using ControllerService.Sensors;
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -136,15 +135,6 @@ namespace ControllerService
             systemManager.SerialRemoved += SystemManager_SerialUpdated;
             systemManager.StartListen();
 
-            // XInputController settings
-            XInputController = new XInputController(SensorSelection, logger, pipeServer);
-            XInputController.SetVibrationStrength(HIDstrength);
-            XInputController.SetPollRate(HIDrate);
-            XInputController.Updated += OnTargetSubmited;
-
-            // prepare physical controller
-            SetControllerIdx(HIDidx, deviceInstancePath, baseContainerDeviceInstancePath);
-
             // get the actual handheld device
             var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
             var ProductName = MotherboardInfo.Product;
@@ -170,6 +160,15 @@ namespace ControllerService
                     break;
             }
             handheldDevice.Initialize(ManufacturerName, ProductName);
+
+            // XInputController settings
+            XInputController = new XInputController(SensorSelection, logger, pipeServer);
+            XInputController.SetVibrationStrength(HIDstrength);
+            XInputController.SetPollRate(HIDrate);
+            XInputController.Updated += OnTargetSubmited;
+
+            // prepare physical controller
+            SetControllerIdx(HIDidx, deviceInstancePath, baseContainerDeviceInstancePath);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);

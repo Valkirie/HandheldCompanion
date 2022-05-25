@@ -1,4 +1,4 @@
-using ControllerCommon;
+using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System.Numerics;
@@ -21,7 +21,7 @@ namespace ControllerService.Sensors
         {
             centerTimer.Interval = updateInterval * 6;
 
-            switch(family)
+            switch (family)
             {
                 case SensorFamily.WindowsDevicesSensors:
                     sensor = Gyrometer.GetDefault();

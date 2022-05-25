@@ -1,4 +1,4 @@
-using ControllerCommon;
+using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System.Numerics;
@@ -23,10 +23,11 @@ namespace ControllerService.Sensors
             {
                 case SensorFamily.WindowsDevicesSensors:
                     sensor = Accelerometer.GetDefault();
+                    filter.SetFilterAttrs(ControllerService.handheldDevice.oneEuroSettings.minCutoff, ControllerService.handheldDevice.oneEuroSettings.beta);
                     break;
                 case SensorFamily.SerialUSBIMU:
                     sensor = SerialUSBIMU.GetDefault(logger);
-                    filter.SetFilterAttrs(((SerialUSBIMU)sensor).filterCutoff, ((SerialUSBIMU)sensor).filterBeta);
+                    filter.SetFilterAttrs(((SerialUSBIMU)sensor).GetFilterCutoff(), ((SerialUSBIMU)sensor).GetFilterBeta());
                     break;
             }
 
@@ -63,9 +64,9 @@ namespace ControllerService.Sensors
 
         private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
-            this.reading.X = this.reading_fixed.X = (float)args.Reading.AccelerationX * ControllerService.handheldDevice.AccelerationAxis.X;
-            this.reading.Y = this.reading_fixed.Y = (float)args.Reading.AccelerationZ * ControllerService.handheldDevice.AccelerationAxis.Z;
-            this.reading.Z = this.reading_fixed.Z = (float)args.Reading.AccelerationY * ControllerService.handheldDevice.AccelerationAxis.Y;
+            this.reading.X = this.reading_fixed.X = (float)filter.axis1Filter.Filter(args.Reading.AccelerationX * ControllerService.handheldDevice.AccelerationAxis.X, 1 / XInputController.DeltaSeconds);
+            this.reading.Y = this.reading_fixed.Y = (float)filter.axis2Filter.Filter(args.Reading.AccelerationZ * ControllerService.handheldDevice.AccelerationAxis.Z, 1 / XInputController.DeltaSeconds);
+            this.reading.Z = this.reading_fixed.Z = (float)filter.axis3Filter.Filter(args.Reading.AccelerationY * ControllerService.handheldDevice.AccelerationAxis.Y, 1 / XInputController.DeltaSeconds);
 
             base.ReadingChanged();
         }

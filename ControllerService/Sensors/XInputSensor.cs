@@ -1,12 +1,14 @@
-﻿using ControllerCommon;
+﻿using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Timers;
 using Windows.Devices.Sensors;
+using static ControllerCommon.OneEuroFilter;
 using static ControllerCommon.Utils.CommonUtils;
 using static ControllerCommon.Utils.DeviceUtils;
 
@@ -15,12 +17,12 @@ namespace ControllerService.Sensors
     [Flags]
     public enum XInputSensorFlags
     {
-        Default         =   0000,
-        RawValue        =   0001,
-        Centered        =   0010,
-        WithRatio       =   0100,
-        CenteredRaw     =   RawValue | Centered,
-        CenteredRatio   =   RawValue | WithRatio,
+        Default = 0000,
+        RawValue = 0001,
+        Centered = 0010,
+        WithRatio = 0100,
+        CenteredRaw = RawValue | Centered,
+        CenteredRatio = RawValue | WithRatio,
     }
 
     [Flags]
@@ -46,6 +48,8 @@ namespace ControllerService.Sensors
 
         protected XInputSensor(ILogger logger)
         {
+            this.logger = logger;
+
             this.centerTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 100 };
             this.centerTimer.Elapsed += Timer_Elapsed;
         }
@@ -61,7 +65,7 @@ namespace ControllerService.Sensors
 
         public static XInputSensorStatus GetStatus(SensorFamily sensorFamily)
         {
-            switch(sensorFamily)
+            switch (sensorFamily)
             {
                 case SensorFamily.WindowsDevicesSensors:
                     {

@@ -1,6 +1,8 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon.Sensors;
+using ControllerCommon.Utils;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using static ControllerCommon.OneEuroFilter;
 using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerCommon.Devices
@@ -23,6 +25,7 @@ namespace ControllerCommon.Devices
         public float WidthHeightRatio = 1.0f;
         public Vector3 AngularVelocityAxis = new Vector3(1.0f, 1.0f, 1.0f);
         public Vector3 AccelerationAxis = new Vector3(1.0f, 1.0f, 1.0f);
+        public OneEuroSettings oneEuroSettings = new OneEuroSettings(0.0d, 0.0d);
 
         protected Device()
         {
@@ -42,8 +45,8 @@ namespace ControllerCommon.Devices
             if (gyrometer != null && accelerometer != null)
             {
                 // check sensor
-                string ACPI = CommonUtils.Between(gyrometer.DeviceId, "ACPI#", "#");
-                sensor = GetUSBDevice(ACPI);
+                string DeviceId = CommonUtils.Between(gyrometer.DeviceId, @"\\?\", @"#{").Replace(@"#", @"\");
+                sensor = GetUSBDevice(DeviceId);
                 if (sensor != null)
                     InternalSensorName = sensor.Name;
 
@@ -56,9 +59,9 @@ namespace ControllerCommon.Devices
             }
 
             var USB = SerialUSBIMU.GetDefault();
-            if (USB != null && USB.device != null)
+            if (USB != null)
             {
-                ExternalSensorName = USB.device.Name;
+                ExternalSensorName = USB.GetName();
                 hasExternal = true;
             }
             else
