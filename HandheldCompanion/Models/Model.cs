@@ -40,8 +40,8 @@ namespace HandheldCompanion
         public Vector3D UpwardVisibilityRotationPointRight;
 
         // Materials
-        public Dictionary<Model3DGroup, DiffuseMaterial> DefaultMaterials = new();
-        public Dictionary<Model3DGroup, DiffuseMaterial> HighlightMaterials = new();
+        public Dictionary<Model3DGroup, Material> DefaultMaterials = new();
+        public Dictionary<Model3DGroup, Material> HighlightMaterials = new();
 
         public string ModelName;
 

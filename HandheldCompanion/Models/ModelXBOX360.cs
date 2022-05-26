@@ -36,6 +36,7 @@ namespace HandheldCompanion.Models
             var MaterialPlasticGreen = new DiffuseMaterial(new SolidColorBrush(ColorPlasticGreen));
             var MaterialPlasticRed = new DiffuseMaterial(new SolidColorBrush(ColorPlasticRed));
             var MaterialPlasticBlue = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlue));
+            var MaterialPlasticTransparent = new SpecularMaterial();
 
             var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
@@ -100,24 +101,26 @@ namespace HandheldCompanion.Models
             // specific button material(s)
             foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
             {
+                int i = 0;
                 if (ButtonMap.ContainsKey(button))
                     foreach (var model3D in ButtonMap[button])
                     {
                         switch (button)
                         {
                             case GamepadButtonFlags.X:
-                                DefaultMaterials[model3D] = MaterialPlasticBlue;
+                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticTransparent : MaterialPlasticBlue;
                                 break;
                             case GamepadButtonFlags.Y:
-                                DefaultMaterials[model3D] = MaterialPlasticYellow;
+                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticTransparent : MaterialPlasticYellow;
                                 break;
                             case GamepadButtonFlags.A:
-                                DefaultMaterials[model3D] = MaterialPlasticGreen;
+                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticTransparent : MaterialPlasticGreen;
                                 break;
                             case GamepadButtonFlags.B:
-                                DefaultMaterials[model3D] = MaterialPlasticRed;
+                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticTransparent : MaterialPlasticRed;
                                 break;
                         }
+                        i++;
                     }
             }
 
