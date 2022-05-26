@@ -19,13 +19,13 @@ namespace HandheldCompanion.Models
         public ModelXBOX360() : base("XBOX360")
         {
             // colors
-            ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#707477");
-            ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#D4D4D4");
-            ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#707477");
+            var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#D4D4D4");
+            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
 
-            MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
-            MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
-            MaterialHighlight = new DiffuseMaterial(ColorHighlight);
+            var MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
+            var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
+            var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
             // Rotation Points
             JoystickRotationPointCenterLeftMillimeter = new Vector3D(-42.231f, -6.10f, 21.436f);
@@ -80,14 +80,25 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(RightShoulderBottom);
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
-                ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
+            {
+                // generic material(s)
+                HighlightMaterials[model3D] = MaterialHighlight;
+            }
 
-            // specific color(s)
-            ((GeometryModel3D)MainBody.Children[0]).Material = MaterialPlasticWhite;
-            ((GeometryModel3D)LeftMotor.Children[0]).Material = MaterialPlasticWhite;
-            ((GeometryModel3D)RightMotor.Children[0]).Material = MaterialPlasticWhite;
-            ((GeometryModel3D)LeftShoulderBottom.Children[0]).Material = MaterialPlasticWhite;
-            ((GeometryModel3D)RightShoulderBottom.Children[0]).Material = MaterialPlasticWhite;
+            foreach (Model3DGroup model3D in model3DGroup.Children)
+            {
+                // specific material(s)
+                if (model3D == MainBody || model3D == LeftMotor || model3D == RightMotor || model3D == LeftShoulderBottom || model3D == RightShoulderBottom)
+                {
+                    ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
+                    DefaultMaterials[model3D] = MaterialPlasticWhite;
+                    continue;
+                }
+
+                // generic material(s)
+                ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
+                DefaultMaterials[model3D] = MaterialPlasticBlack;
+            }
         }
     }
 }
