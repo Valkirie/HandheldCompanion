@@ -649,7 +649,7 @@ namespace HandheldCompanion.Views.Windows
                 DiffAngle.Y = (y < 0.0) ? DiffAngle.Y += 180.0f : DiffAngle.Y -= 180.0f;
 
                 // Correction amount for camera, increase slowly
-                FaceCameraObjectAlignment += DiffAngle * 0.0015; // 0.0015 = ~90 degrees in 30 seconds
+                FaceCameraObjectAlignment += DiffAngle * 0.0005; // 0.0015 = ~90 degrees in 30 seconds
 
                 // Transform YZX
                 var Ax3DFaceCameraY = new AxisAngleRotation3D(new Vector3D(0, 1, 0), FaceCameraObjectAlignment.Y);

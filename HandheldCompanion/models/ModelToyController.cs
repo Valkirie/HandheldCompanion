@@ -56,10 +56,10 @@ namespace HandheldCompanion.Models
             ShoulderTriggerRotationPointCenterRightMillimeter = new Vector3D(44.668f, 3.087f, 39.705);
             TriggerMaxAngleDeg = 16.0f;
 
-            UpwardVisibilityRotationAxisLeft = new Vector3D(1, 0, 0);
-            UpwardVisibilityRotationAxisRight = new Vector3D(1, 0, 0);
-            UpwardVisibilityRotationPointLeft = new Vector3D(-36.226f, -14.26f, 47.332f);
-            UpwardVisibilityRotationPointRight = new Vector3D(36.226f, -14.26f, 47.332f);
+            UpwardVisibilityRotationAxisLeft = new Vector3D(0.914607, 0, 0.404344);
+            UpwardVisibilityRotationAxisRight = new Vector3D(0.920505, 0, -0.390731);
+            UpwardVisibilityRotationPointLeft = new Vector3D(-67.174f, -16.3f, 75.475f);
+            UpwardVisibilityRotationPointRight = new Vector3D(62.3f, -16.3f, 62.526f);
 
             // load model(s)
             JoystickLeftCover = modelImporter.Load($"models/{ModelName}/Joystick-Left-Cover.obj");
@@ -129,7 +129,7 @@ namespace HandheldCompanion.Models
                                 DefaultMaterials[model3D] = MaterialPlasticBlue;
                                 break;
                             case GamepadButtonFlags.A:
-                                DefaultMaterials[model3D] = MaterialPlasticYellow;
+                                DefaultMaterials[model3D] = MaterialPlasticOrange;
                                 break;
                             case GamepadButtonFlags.B:
                                 DefaultMaterials[model3D] = MaterialPlasticRed;
@@ -186,6 +186,12 @@ namespace HandheldCompanion.Models
                     DefaultMaterials[model3D] = MaterialPlasticRed;
                 }
 
+
+                if (model3D == JoystickLeftCover || model3D == JoystickRightCover)
+                {
+                    ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlue;
+                    DefaultMaterials[model3D] = MaterialPlasticBlue;
+                }
 
             }
         }
