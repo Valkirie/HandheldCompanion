@@ -197,7 +197,6 @@ namespace ControllerService
 
                         sensor.Open();
                         sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
-                        sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
 
                         XInputController?.UpdateSensors();
                     }
@@ -558,24 +557,26 @@ namespace ControllerService
                         DSUServer.port = value;
                     }
                     break;
-                    /* case "SensorPlacement":
-                        {
-                            int value = int.Parse(property);
-                            SensorPlacement = value;
-                        }
-                        break;
-                    case "SensorPlacementUpsideDown":
-                        {
-                            bool value = bool.Parse(property);
-                            SensorPlacementUpsideDown = value;
-                        }
-                        break;
-                    case "SensorSelection":
-                        {
-                            SensorFamily value = Enum.Parse<SensorFamily>(property);
-                            SensorSelection = value;
-                        }
-                        break; */
+                case "SensorPlacement":
+                    {
+                        int value = int.Parse(property);
+                        SensorPlacement = value;
+                        sensor?.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
+                    }
+                    break;
+                case "SensorPlacementUpsideDown":
+                    {
+                        bool value = bool.Parse(property);
+                        SensorPlacementUpsideDown = value;
+                        sensor?.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
+                    }
+                    break;
+                /* case "SensorSelection":
+                    {
+                        SensorFamily value = Enum.Parse<SensorFamily>(property);
+                        SensorSelection = value;
+                    }
+                    break; */
             }
         }
 
