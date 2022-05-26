@@ -21,10 +21,22 @@ namespace HandheldCompanion.Models
             // colors
             var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#707477");
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#D4D4D4");
+
+            var ColorPlasticYellow = (Color)ColorConverter.ConvertFromString("#faa51f");
+            var ColorPlasticGreen = (Color)ColorConverter.ConvertFromString("#7cb63b");
+            var ColorPlasticRed = (Color)ColorConverter.ConvertFromString("#ff5f4b");
+            var ColorPlasticBlue = (Color)ColorConverter.ConvertFromString("#6ac4f6");
+
             var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
 
             var MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
             var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
+
+            var MaterialPlasticYellow = new DiffuseMaterial(new SolidColorBrush(ColorPlasticYellow));
+            var MaterialPlasticGreen = new DiffuseMaterial(new SolidColorBrush(ColorPlasticGreen));
+            var MaterialPlasticRed = new DiffuseMaterial(new SolidColorBrush(ColorPlasticRed));
+            var MaterialPlasticBlue = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlue));
+
             var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
             // Rotation Points
@@ -85,8 +97,35 @@ namespace HandheldCompanion.Models
                 HighlightMaterials[model3D] = MaterialHighlight;
             }
 
+            // specific button material(s)
+            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            {
+                if (ButtonMap.ContainsKey(button))
+                    foreach (var model3D in ButtonMap[button])
+                    {
+                        switch (button)
+                        {
+                            case GamepadButtonFlags.X:
+                                DefaultMaterials[model3D] = MaterialPlasticBlue;
+                                break;
+                            case GamepadButtonFlags.Y:
+                                DefaultMaterials[model3D] = MaterialPlasticYellow;
+                                break;
+                            case GamepadButtonFlags.A:
+                                DefaultMaterials[model3D] = MaterialPlasticGreen;
+                                break;
+                            case GamepadButtonFlags.B:
+                                DefaultMaterials[model3D] = MaterialPlasticRed;
+                                break;
+                        }
+                    }
+            }
+
             foreach (Model3DGroup model3D in model3DGroup.Children)
             {
+                if (DefaultMaterials.ContainsKey(model3D))
+                    continue;
+
                 // specific material(s)
                 if (model3D == MainBody || model3D == LeftMotor || model3D == RightMotor || model3D == LeftShoulderBottom || model3D == RightShoulderBottom)
                 {

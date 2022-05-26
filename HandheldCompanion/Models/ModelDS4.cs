@@ -41,7 +41,6 @@ namespace HandheldCompanion.Models
             UpwardVisibilityRotationPointRight = new Vector3D(48.868f, -13f, 29.62f);
 
             // load model(s)
-
             LeftShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Middle.obj");
             RightShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Middle.obj");
             Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
@@ -67,6 +66,9 @@ namespace HandheldCompanion.Models
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
             {
+                if (DefaultMaterials.ContainsKey(model3D))
+                    continue;
+
                 // specific material(s)
                 if (model3D == MainBody || model3D == LeftMotor || model3D == RightMotor || model3D == Triangle)
                 {

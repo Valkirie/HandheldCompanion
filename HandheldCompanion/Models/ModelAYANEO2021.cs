@@ -78,6 +78,9 @@ namespace HandheldCompanion.Models
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
             {
+                if (DefaultMaterials.ContainsKey(model3D))
+                    continue;
+
                 // specific material(s)
                 if (model3D == MainBody || model3D == LeftMotor || model3D == RightMotor)
                 {
