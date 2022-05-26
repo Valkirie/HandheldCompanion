@@ -79,13 +79,6 @@ namespace ControllerCommon.Sensors
             if (deviceInfo is null)
                 return null;
 
-            logger?.LogDebug("{0} connecting to {1}", serial.ToString(), serial.device.Name);
-
-            // open serial port
-            serial.Open();
-
-            serial.port.DataReceived += new SerialDataReceivedEventHandler(serial.DataReceivedHandler);
-
             return serial;
         }
 
@@ -125,12 +118,16 @@ namespace ControllerCommon.Sensors
         {
             tentative = 0; // reset tentative
 
+            logger?.LogInformation("{0} connecting to {1}", serial.ToString(), serial.device.Name);
+
             while (!serial.port.IsOpen && tentative < maxTentative)
             {
                 try
                 {
                     serial.port.Open();
-                    logger?.LogDebug("{0} connected", serial.ToString());
+                    serial.port.DataReceived += new SerialDataReceivedEventHandler(serial.DataReceivedHandler);
+
+                    logger?.LogInformation("{0} connected", serial.ToString());
                     return true;
                 }
                 catch (Exception)
@@ -150,6 +147,9 @@ namespace ControllerCommon.Sensors
             try
             {
                 serial.port.Close();
+                serial.port.DataReceived -= new SerialDataReceivedEventHandler(serial.DataReceivedHandler);
+
+                logger?.LogInformation("{0} disconnected", serial.ToString());
                 return true;
             }
             catch (Exception)

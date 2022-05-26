@@ -1,11 +1,12 @@
 using ControllerCommon;
 using ControllerCommon.Devices;
+using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using ControllerService.Targets;
-using ControllerCommon.Sensors;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
 using System;
@@ -132,9 +133,10 @@ namespace ControllerService
 
             // initialize manager(s)
             systemManager = new SystemManager(logger);
-            systemManager.SerialArrived += SystemManager_SerialUpdated;
-            systemManager.SerialRemoved += SystemManager_SerialUpdated;
+            systemManager.SerialArrived += SystemManager_SerialArrived;
+            systemManager.SerialRemoved += SystemManager_SerialRemoved;
             systemManager.StartListen();
+            SystemManager_SerialArrived(null);
 
             // get the actual handheld device
             var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
@@ -181,11 +183,48 @@ namespace ControllerService
             profileManager.Updated += ProfileUpdated;
         }
 
-        private void SystemManager_SerialUpdated(Nefarius.Utilities.DeviceManagement.PnP.PnPDevice device)
+        private SerialUSBIMU sensor;
+        private void SystemManager_SerialArrived(PnPDevice device)
         {
+            switch (SensorSelection)
+            {
+                case SensorFamily.SerialUSBIMU:
+                    {
+                        sensor = SerialUSBIMU.GetDefault(logger);
+
+                        if (sensor is null)
+                            break;
+
+                        sensor.Open();
+                        sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
+                        sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
+
+                        XInputController?.UpdateSensors();
+                    }
+                    break;
+            }
+
             // send controller details
             pipeServer.SendMessage(handheldDevice.ToPipe());
-            XInputController.UpdateSensors(SensorSelection);
+        }
+
+        private void SystemManager_SerialRemoved(PnPDevice device)
+        {
+            switch (SensorSelection)
+            {
+                case SensorFamily.SerialUSBIMU:
+                    {
+                        if (sensor is null)
+                            break;
+
+                        sensor.Close();
+                        XInputController?.UpdateSensors();
+                    }
+                    break;
+            }
+
+            // send controller details
+            pipeServer.SendMessage(handheldDevice.ToPipe());
         }
 
         private void SetControllerIdx(UserIndex idx, string deviceInstancePath, string baseContainerDeviceInstancePath)
@@ -519,31 +558,24 @@ namespace ControllerService
                         DSUServer.port = value;
                     }
                     break;
-                case "SensorPlacement":
-                    {
-                        int value = int.Parse(property);
-                        SensorPlacement = value;
-                        var USB = SerialUSBIMU.GetDefault();
-                        USB.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
-
-                    }
-                    break;
-                case "SensorPlacementUpsideDown":
-                    {
-                        bool value = bool.Parse(property);
-                        SensorPlacementUpsideDown = value;
-                        var USB = SerialUSBIMU.GetDefault();
-                        USB.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
-
-                    }
-                    break;
-                case "SensorSelection":
-                    {
-                        SensorFamily value = Enum.Parse<SensorFamily>(property);
-                        SensorSelection = value;
-                        XInputController.UpdateSensors(value);
-                    }
-                    break;
+                    /* case "SensorPlacement":
+                        {
+                            int value = int.Parse(property);
+                            SensorPlacement = value;
+                        }
+                        break;
+                    case "SensorPlacementUpsideDown":
+                        {
+                            bool value = bool.Parse(property);
+                            SensorPlacementUpsideDown = value;
+                        }
+                        break;
+                    case "SensorSelection":
+                        {
+                            SensorFamily value = Enum.Parse<SensorFamily>(property);
+                            SensorSelection = value;
+                        }
+                        break; */
             }
         }
 
@@ -610,7 +642,7 @@ namespace ControllerService
                     break;
                 case PowerModes.Resume:
                     // (re)initialize sensors
-                    XInputController?.UpdateSensors(SensorSelection, true);
+                    XInputController?.UpdateSensors();
                     break;
                 case PowerModes.Suspend:
                     break;

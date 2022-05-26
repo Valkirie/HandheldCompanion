@@ -331,6 +331,10 @@ namespace HandheldCompanion.Views.Pages
             PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
             pipeClient?.SendMessage(settings);
 
+            Dialog.ShowAsync($"{Properties.Resources.SettingsPage_AppLanguageWarning}",
+                Properties.Resources.SettingsPage_AppLanguageWarningDesc,
+                ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+
         }
         private void SensorPlacement_Click(object sender, System.Windows.RoutedEventArgs e)
         {

@@ -2,13 +2,10 @@
 using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.IO.Ports;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Timers;
 using Windows.Devices.Sensors;
-using static ControllerCommon.OneEuroFilter;
 using static ControllerCommon.Utils.CommonUtils;
 using static ControllerCommon.Utils.DeviceUtils;
 
@@ -41,6 +38,8 @@ namespace ControllerService.Sensors
         protected static SensorSpec sensorSpec;
 
         protected Timer centerTimer;
+        protected int updateInterval;
+
         public object sensor;
         public OneEuroFilter3D filter = new();
 

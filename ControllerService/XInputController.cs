@@ -65,7 +65,11 @@ namespace ControllerService
             sensorFusion = new SensorFusion(logger);
             madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
 
-            UpdateSensors(sensorFamily, true);
+            // initialize sensors
+            Gyrometer = new XInputGirometer(sensorFamily, updateInterval, logger);
+            Accelerometer = new XInputAccelerometer(sensorFamily, updateInterval, logger);
+            Inclinometer = new XInputInclinometer(sensorFamily, updateInterval, logger);
+            this.sensorFamily = sensorFamily;
 
             // initialize vectors
             Accelerations = new();
@@ -85,40 +89,17 @@ namespace ControllerService
             UpdateTimer.Start();
         }
 
-        internal void SetController(ControllerEx controllerEx)
+        public void UpdateSensors()
+        {
+            Gyrometer.UpdateSensor(sensorFamily);
+            Accelerometer.UpdateSensor(sensorFamily);
+            Inclinometer.UpdateSensor(sensorFamily);
+        }
+
+        public void SetController(ControllerEx controllerEx)
         {
             // initilize controller
             this.controllerEx = controllerEx;
-        }
-
-        public void UpdateSensors(SensorFamily sensorFamily, bool force = false)
-        {
-            // we force (re)initialize on: system startup, system resume
-            if (!force)
-            {
-                XInputSensorStatus sensorStatus = XInputSensor.GetStatus(sensorFamily);
-
-                switch (sensorStatus)
-                {
-                    case XInputSensorStatus.Busy:
-                        {
-                            if (this.sensorFamily == sensorFamily)
-                                return;
-                        }
-                        break;
-                    case XInputSensorStatus.Missing:
-                        return;
-                    case XInputSensorStatus.Ready:
-                        break;
-                }
-            }
-
-            Gyrometer = new XInputGirometer(sensorFamily, updateInterval, logger);
-            Accelerometer = new XInputAccelerometer(sensorFamily, updateInterval, logger);
-            Inclinometer = new XInputInclinometer(sensorFamily, updateInterval, logger);
-
-            if (Gyrometer.sensor != null)
-                this.sensorFamily = sensorFamily;
         }
 
         private void UpdateTimer_Ticked(object sender, EventArgs e)

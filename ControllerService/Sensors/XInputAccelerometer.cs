@@ -17,38 +17,44 @@ namespace ControllerService.Sensors
             maxOut = short.MaxValue,
         };
 
-        public XInputAccelerometer(SensorFamily family, int updateInterval, ILogger logger) : base(logger)
+        public XInputAccelerometer(SensorFamily sensorFamily, int updateInterval, ILogger logger) : base(logger)
         {
-            switch (family)
+            this.updateInterval = updateInterval;
+            UpdateSensor(sensorFamily);
+        }
+
+        public void UpdateSensor(SensorFamily sensorFamily)
+        {
+            switch (sensorFamily)
             {
                 case SensorFamily.WindowsDevicesSensors:
                     sensor = Accelerometer.GetDefault();
-                    filter.SetFilterAttrs(ControllerService.handheldDevice.oneEuroSettings.minCutoff, ControllerService.handheldDevice.oneEuroSettings.beta);
                     break;
                 case SensorFamily.SerialUSBIMU:
                     sensor = SerialUSBIMU.GetDefault(logger);
-                    filter.SetFilterAttrs(((SerialUSBIMU)sensor).GetFilterCutoff(), ((SerialUSBIMU)sensor).GetFilterBeta());
                     break;
             }
 
             if (sensor == null)
             {
-                logger.LogWarning("{0}:{1} not initialised.", this.ToString(), family.ToString());
+                logger.LogWarning("{0}:{1} not initialised.", this.ToString(), sensorFamily.ToString());
                 return;
             }
 
-            switch (family)
+            switch (sensorFamily)
             {
                 case SensorFamily.WindowsDevicesSensors:
                     ((Accelerometer)sensor).ReportInterval = (uint)updateInterval;
                     ((Accelerometer)sensor).ReadingChanged += ReadingChanged;
+                    filter.SetFilterAttrs(ControllerService.handheldDevice.oneEuroSettings.minCutoff, ControllerService.handheldDevice.oneEuroSettings.beta);
 
-                    logger.LogInformation("{0}:{1} initialised. Report interval set to {2}ms", this.ToString(), family.ToString(), updateInterval);
+                    logger.LogInformation("{0}:{1} initialised. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
                     break;
                 case SensorFamily.SerialUSBIMU:
                     ((SerialUSBIMU)sensor).ReadingChanged += ReadingChanged;
+                    filter.SetFilterAttrs(((SerialUSBIMU)sensor).GetFilterCutoff(), ((SerialUSBIMU)sensor).GetFilterBeta());
 
-                    logger.LogInformation("{0}:{1} initialised. Report interval set to {2}", this.ToString(), family.ToString(), ((SerialUSBIMU)sensor).GetInterval());
+                    logger.LogInformation("{0}:{1} initialised. Report interval set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
                     break;
             }
         }
