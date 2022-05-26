@@ -40,7 +40,7 @@ namespace ControllerService
         public SensorFusion sensorFusion;
         public MadgwickAHRS madgwickAHRS;
 
-        protected readonly Stopwatch stopwatch;
+        protected Stopwatch stopwatch;
         public long CurrentMicroseconds;
 
         public static double TotalMilliseconds;
@@ -81,12 +81,25 @@ namespace ControllerService
 
             // initialize stopwatch
             stopwatch = new Stopwatch();
-            stopwatch.Start();
 
             // initialize timers
             UpdateTimer = new MultimediaTimer(updateInterval);
+        }
+
+        public void StartListening()
+        {
+            stopwatch.Start();
+
             UpdateTimer.Tick += UpdateTimer_Ticked;
             UpdateTimer.Start();
+        }
+
+        public void StopListening()
+        {
+            stopwatch.Stop();
+
+            UpdateTimer.Tick -= UpdateTimer_Ticked;
+            UpdateTimer.Stop();
         }
 
         public void UpdateSensors()

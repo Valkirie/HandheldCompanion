@@ -39,7 +39,7 @@ namespace ControllerService.Sensors
 
             if (sensor == null)
             {
-                logger.LogWarning("{0}:{1} not initialised.", this.ToString(), sensorFamily.ToString());
+                logger.LogWarning("{0} not initialised as a {1}.", this.ToString(), sensorFamily.ToString());
                 return;
             }
 
@@ -49,12 +49,12 @@ namespace ControllerService.Sensors
                     ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
                     ((Gyrometer)sensor).ReadingChanged += ReadingChanged;
 
-                    logger.LogInformation("{0}:{1} initialised. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
+                    logger.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
                     break;
                 case SensorFamily.SerialUSBIMU:
                     ((SerialUSBIMU)sensor).ReadingChanged += ReadingChanged;
 
-                    logger.LogInformation("{0}:{1} initialised. Report interval set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
+                    logger.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
                     break;
             }
         }
