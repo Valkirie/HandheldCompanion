@@ -283,22 +283,10 @@ namespace ControllerCommon.Sensors
         public void PlacementTransformation(SerialPlacement SensorPlacement, bool isUpsideDown)
         {
             // Adaption of XYZ or invert based on USB port location on device. 
-            // Upsidedown option in case of USB-C port usage. Pins on screen side is default.
+            // Upsidedown option in case of USB-C port usage or unusual USB-A installation. Pins on screen side is default.
 
             Vector3 AccTemp = AccelerationG;
             Vector3 AngVelTemp = AngularVelocityDeg;
-
-            /*
-					Convenient default copy paste list.
-					
-					AccelerationG.X = AccTemp.X;
-					AccelerationG.Y = AccTemp.Y;
-					AccelerationG.Z = AccTemp.Z;
-
-					AngularVelocityDeg.X = AngVelTemp.X;
-					AngularVelocityDeg.Y = AngVelTemp.Y;
-					AngularVelocityDeg.Z = AngVelTemp.Z; 
-			*/
 
             switch (SensorPlacement)
             {
@@ -308,7 +296,7 @@ namespace ControllerCommon.Sensors
 
                         if (isUpsideDown)
                         {
-                            AccelerationG.X = -AccTemp.X; // Yes, this is applied twice intentionally!
+                            AccelerationG.X = AccTemp.X; // Intentionally undo previous
                             AccelerationG.Y = -AccTemp.Y;
 
                             AngularVelocityDeg.X = -AngVelTemp.X;
@@ -318,9 +306,19 @@ namespace ControllerCommon.Sensors
                     break;
                 case SerialPlacement.Right:
                     {
+                        AccelerationG.X = AccTemp.Z;
+                        AccelerationG.Z = AccTemp.X;
+
+                        AngularVelocityDeg.X = -AngVelTemp.Z;
+                        AngularVelocityDeg.Z = AngVelTemp.X;
+
                         if (isUpsideDown)
                         {
-                            // do something
+                            AccelerationG.Y = -AccTemp.Y;
+                            AccelerationG.Z = -AccTemp.X;
+
+                            AngularVelocityDeg.Y = -AngVelTemp.Y;
+                            AngularVelocityDeg.Z = -AngVelTemp.X;
                         }
                     }
                     break;
@@ -333,15 +331,29 @@ namespace ControllerCommon.Sensors
 
                         if (isUpsideDown)
                         {
-                            // do something
+                            AccelerationG.X = -AccTemp.X;
+                            AccelerationG.Y = -AccTemp.Y;
+
+                            AngularVelocityDeg.X = AngVelTemp.X; // Intentionally undo previous
+                            AngularVelocityDeg.Y = -AngVelTemp.Y;
                         }
                     }
                     break;
                 case SerialPlacement.Left:
                     {
+                        AccelerationG.X = -AccTemp.Z;
+                        AccelerationG.Z = -AccTemp.X;
+
+                        AngularVelocityDeg.X = AngVelTemp.Z;
+                        AngularVelocityDeg.Z = -AngVelTemp.X;
+
                         if (isUpsideDown)
                         {
-                            // do something
+                            AccelerationG.Y = -AccTemp.Y;
+                            AccelerationG.Z = AccTemp.X;
+
+                            AngularVelocityDeg.Y = -AngVelTemp.Y;
+                            AngularVelocityDeg.Z = AngVelTemp.X;
                         }
                     }
                     break;
