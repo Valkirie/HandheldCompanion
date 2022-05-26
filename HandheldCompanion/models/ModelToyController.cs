@@ -58,8 +58,8 @@ namespace HandheldCompanion.Models
 
             UpwardVisibilityRotationAxisLeft = new Vector3D(0.914607, 0, 0.404344);
             UpwardVisibilityRotationAxisRight = new Vector3D(0.920505, 0, -0.390731);
-            UpwardVisibilityRotationPointLeft = new Vector3D(-67.174f, -16.3f, 75.475f);
-            UpwardVisibilityRotationPointRight = new Vector3D(62.3f, -16.3f, 62.526f);
+            UpwardVisibilityRotationPointLeft = new Vector3D(-67.174f, -6.3f, 75.475f);
+            UpwardVisibilityRotationPointRight = new Vector3D(62.3f, -6.3f, 62.526f);
 
             // load model(s)
             JoystickLeftCover = modelImporter.Load($"models/{ModelName}/Joystick-Left-Cover.obj");
@@ -141,8 +141,10 @@ namespace HandheldCompanion.Models
                                 DefaultMaterials[model3D] = MaterialPlasticRed;
                                 break;
                             case GamepadButtonFlags.LeftShoulder:
-                            case GamepadButtonFlags.RightShoulder:
                                 DefaultMaterials[model3D] = MaterialPlasticOrange;
+                                break;
+                            case GamepadButtonFlags.RightShoulder:
+                                DefaultMaterials[model3D] = MaterialPlasticPurple;
                                 break;
                             case GamepadButtonFlags.Start:
                             case GamepadButtonFlags.Back:
