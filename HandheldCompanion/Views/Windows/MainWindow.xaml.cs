@@ -125,17 +125,30 @@ namespace HandheldCompanion.Views
                 Text = Name,
                 Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location),
                 Visible = false,
-                ContextMenuStrip = new(),
+                ContextMenuStrip = new()
             };
-            notifyIcon.DoubleClick += NotifyIconDoubleClick;
 
-            notifyIcon.ContextMenuStrip = new ContextMenuStrip();
-            notifyIcon.ContextMenuStrip.Items.Add("Exit");
-            notifyIcon.ContextMenuStrip.Items[0].Click += (o, e) =>
+            notifyIcon.DoubleClick += (sender, e) =>
             {
-                appClosing = true;
-                this.Close();
+                WindowState = prevWindowState;
             };
+
+            foreach(NavigationViewItem item in navView.FooterMenuItems)
+            {
+                ToolStripMenuItem menuItem = new ToolStripMenuItem(item.Content.ToString());
+                menuItem.Tag = item.Tag;
+                menuItem.Click += MenuItem_Click;
+
+                notifyIcon.ContextMenuStrip.Items.Add(menuItem);
+            }
+
+            ToolStripSeparator separator = new ToolStripSeparator();
+            notifyIcon.ContextMenuStrip.Items.Add(separator);
+
+            ToolStripMenuItem menuItemExit = new ToolStripMenuItem("Exit"); // todo: localize me
+            menuItemExit.Tag = menuItemExit.Text;
+            menuItemExit.Click += MenuItem_Click;
+            notifyIcon.ContextMenuStrip.Items.Add(menuItemExit);
 
             // paths
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
@@ -265,6 +278,29 @@ namespace HandheldCompanion.Views
             }
         }
 
+        private void MenuItem_Click(object? sender, EventArgs e)
+        {
+            switch (((ToolStripMenuItem)sender).Tag)
+            {
+                case "ServiceStart":
+                    serviceManager.StartServiceAsync();
+                    break;
+                case "ServiceStop":
+                    serviceManager.StopServiceAsync();
+                    break;
+                case "ServiceInstall":
+                    serviceManager.CreateService(CurrentPathService);
+                    break;
+                case "ServiceDelete":
+                    serviceManager.DeleteService();
+                    break;
+                case "Exit":
+                    appClosing = true;
+                    this.Close();
+                    break;
+            }
+        }
+
         private void ProcessManager_ProcessStopped(uint processid, string path, string exec)
         {
             try
@@ -340,11 +376,6 @@ namespace HandheldCompanion.Views
                 logger.LogDebug("Profile {0} applied", currentProfile.name);
             }
             catch (Exception) { }
-        }
-
-        private void NotifyIconDoubleClick(object? sender, EventArgs e)
-        {
-            WindowState = prevWindowState;
         }
 
         private void OnClientConnected(object sender)
@@ -451,6 +482,14 @@ namespace HandheldCompanion.Views
         #endregion
 
         #region serviceManager
+
+        /*
+         * Stop
+         * Start
+         * Deploy
+         * Remove
+         */
+
         private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
             this.Dispatcher.Invoke(() =>
@@ -459,19 +498,29 @@ namespace HandheldCompanion.Views
                 {
                     case ServiceControllerStatus.Paused:
                     case ServiceControllerStatus.Stopped:
-                        b_ServiceInstall.Visibility = Visibility.Collapsed;
                         b_ServiceStop.Visibility = Visibility.Collapsed;
-                        b_ServiceDelete.Visibility = Visibility.Visible;
                         b_ServiceStart.Visibility = Visibility.Visible;
+                        b_ServiceInstall.Visibility = Visibility.Collapsed;
+                        b_ServiceDelete.Visibility = Visibility.Visible;
+
+                        notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
+                        notifyIcon.ContextMenuStrip.Items[1].Enabled = true;
+                        notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
+                        notifyIcon.ContextMenuStrip.Items[3].Enabled = true;
 
                         b_ServiceDelete.IsEnabled = IsElevated;
                         b_ServiceStart.IsEnabled = IsElevated;
                         break;
                     case ServiceControllerStatus.Running:
+                        b_ServiceStop.Visibility = Visibility.Visible;
+                        b_ServiceStart.Visibility = Visibility.Collapsed;
                         b_ServiceInstall.Visibility = Visibility.Collapsed;
                         b_ServiceDelete.Visibility = Visibility.Collapsed;
-                        b_ServiceStart.Visibility = Visibility.Collapsed;
-                        b_ServiceStop.Visibility = Visibility.Visible;
+
+                        notifyIcon.ContextMenuStrip.Items[0].Enabled = true;
+                        notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
+                        notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
+                        notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
 
                         b_ServiceStop.IsEnabled = IsElevated;
                         break;
@@ -479,16 +528,26 @@ namespace HandheldCompanion.Views
                     case ServiceControllerStatus.PausePending:
                     case ServiceControllerStatus.StartPending:
                     case ServiceControllerStatus.StopPending:
+                        b_ServiceStop.IsEnabled = false;
+                        b_ServiceStart.IsEnabled = false;
                         b_ServiceInstall.IsEnabled = false;
                         b_ServiceDelete.IsEnabled = false;
-                        b_ServiceStart.IsEnabled = false;
-                        b_ServiceStop.IsEnabled = false;
+
+                        notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
+                        notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
+                        notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
+                        notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
                         break;
                     default:
-                        b_ServiceDelete.Visibility = Visibility.Collapsed;
-                        b_ServiceStart.Visibility = Visibility.Collapsed;
                         b_ServiceStop.Visibility = Visibility.Collapsed;
+                        b_ServiceStart.Visibility = Visibility.Collapsed;
                         b_ServiceInstall.Visibility = Visibility.Visible;
+                        b_ServiceDelete.Visibility = Visibility.Collapsed;
+
+                        notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
+                        notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
+                        notifyIcon.ContextMenuStrip.Items[2].Enabled = true;
+                        notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
 
                         b_ServiceInstall.IsEnabled = IsElevated;
                         break;
