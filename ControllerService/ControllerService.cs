@@ -2,6 +2,7 @@ using ControllerCommon;
 using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using ControllerService.Targets;
+using ControllerCommon.Sensors;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
@@ -522,12 +523,18 @@ namespace ControllerService
                     {
                         int value = int.Parse(property);
                         SensorPlacement = value;
+                        var USB = SerialUSBIMU.GetDefault();
+                        USB.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
+
                     }
                     break;
                 case "SensorPlacementUpsideDown":
                     {
                         bool value = bool.Parse(property);
                         SensorPlacementUpsideDown = value;
+                        var USB = SerialUSBIMU.GetDefault();
+                        USB.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
+
                     }
                     break;
                 case "SensorSelection":
