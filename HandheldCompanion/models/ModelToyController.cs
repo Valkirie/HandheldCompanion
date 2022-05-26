@@ -27,11 +27,11 @@ namespace HandheldCompanion.Models
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#F0EFF0");
             var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
 
-            Color ColorPlasticBlue = (Color)ColorConverter.ConvertFromString("#7CC047");
-            Color ColorPlasticGreen = (Color)ColorConverter.ConvertFromString("#7CC047");
+            Color ColorPlasticBlue = (Color)ColorConverter.ConvertFromString("#02BCE3");
+            Color ColorPlasticGreen = (Color)ColorConverter.ConvertFromString("#7BBF46");
             Color ColorPlasticRed = (Color)ColorConverter.ConvertFromString("#E8072F");
-            Color ColorPlasticOrange = (Color)ColorConverter.ConvertFromString("#7CC047");
-            Color ColorPlasticYellow = (Color)ColorConverter.ConvertFromString("#F8D902");
+            Color ColorPlasticOrange = (Color)ColorConverter.ConvertFromString("#F38200");
+            Color ColorPlasticYellow = (Color)ColorConverter.ConvertFromString("#F8DB01");
             Color ColorPlasticPurple = (Color)ColorConverter.ConvertFromString("#843CA8");
             Color ColorPlasticGreenFluorescent = (Color)ColorConverter.ConvertFromString("#BAD000");
 
@@ -123,16 +123,34 @@ namespace HandheldCompanion.Models
                         switch (button)
                         {
                             case GamepadButtonFlags.X:
-                                DefaultMaterials[model3D] = MaterialPlasticBlue;
+                                DefaultMaterials[model3D] = MaterialPlasticGreen;
                                 break;
                             case GamepadButtonFlags.Y:
-                                DefaultMaterials[model3D] = MaterialPlasticYellow;
+                                DefaultMaterials[model3D] = MaterialPlasticBlue;
                                 break;
                             case GamepadButtonFlags.A:
-                                DefaultMaterials[model3D] = MaterialPlasticGreen;
+                                DefaultMaterials[model3D] = MaterialPlasticYellow;
                                 break;
                             case GamepadButtonFlags.B:
                                 DefaultMaterials[model3D] = MaterialPlasticRed;
+                                break;
+                            case GamepadButtonFlags.DPadDown:
+                            case GamepadButtonFlags.DPadUp:
+                            case GamepadButtonFlags.DPadLeft:
+                            case GamepadButtonFlags.DPadRight:
+                                DefaultMaterials[model3D] = MaterialPlasticRed;
+                                break;
+                            case GamepadButtonFlags.LeftShoulder:
+                            case GamepadButtonFlags.RightShoulder:
+                                DefaultMaterials[model3D] = MaterialPlasticOrange;
+                                break;
+                            case GamepadButtonFlags.Start:
+                            case GamepadButtonFlags.Back:
+                                DefaultMaterials[model3D] = MaterialPlasticYellow;
+                                break;
+                            case GamepadButtonFlags.LeftThumb:
+                            case GamepadButtonFlags.RightThumb:
+                                DefaultMaterials[model3D] = MaterialPlasticBlue;
                                 break;
                         }
                         i++;
@@ -144,8 +162,12 @@ namespace HandheldCompanion.Models
                 if (DefaultMaterials.ContainsKey(model3D))
                     continue;
 
+                // generic material(s)
+                ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
+                DefaultMaterials[model3D] = MaterialPlasticBlack;
+
                 // specific material(s)
-                if (model3D == MainBody || model3D == Smile1 || model3D == Smile1)
+                if (model3D == MainBody || model3D == Smile1 || model3D == Smile2)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
                     DefaultMaterials[model3D] = MaterialPlasticWhite;
@@ -164,9 +186,7 @@ namespace HandheldCompanion.Models
                     DefaultMaterials[model3D] = MaterialPlasticRed;
                 }
 
-                // generic material(s)
-                ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
-                DefaultMaterials[model3D] = MaterialPlasticBlack;
+
             }
         }
     }
