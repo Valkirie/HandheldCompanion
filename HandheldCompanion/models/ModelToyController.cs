@@ -12,13 +12,28 @@ namespace HandheldCompanion.Models
         // Specific groups (move me)
         Model3DGroup JoystickLeftCover;
         Model3DGroup JoystickRightCover;
+        Model3DGroup MainBodyBack;
+
         Model3DGroup Smile1;
         Model3DGroup Smile2;
         Model3DGroup Smile3;
         Model3DGroup Smile4;
         Model3DGroup Smile5;
         Model3DGroup Smile6;
-        Model3DGroup MainBodyBack;
+
+        Model3DGroup ALetter;
+        Model3DGroup ALetterInside;
+        Model3DGroup BLetter;
+        Model3DGroup XLetter;
+        Model3DGroup XLetterInside;
+        Model3DGroup YLetter;
+        Model3DGroup YLetterInside1;
+        Model3DGroup YLetterInside2;
+            
+        Model3DGroup DPadLeft1;
+        Model3DGroup DPadUp2;
+        Model3DGroup DPadRight3;
+        Model3DGroup DPadDown4;
 
         public ModelToyController() : base("ToyController")
         {
@@ -64,13 +79,28 @@ namespace HandheldCompanion.Models
             // load model(s)
             JoystickLeftCover = modelImporter.Load($"models/{ModelName}/Joystick-Left-Cover.obj");
             JoystickRightCover = modelImporter.Load($"models/{ModelName}/Joystick-Right-Cover.obj");
+            MainBodyBack = modelImporter.Load($"models/{ModelName}/MainBodyBack.obj");
+
             Smile1 = modelImporter.Load($"models/{ModelName}/Smile1.obj");
             Smile2 = modelImporter.Load($"models/{ModelName}/Smile2.obj");
             Smile3 = modelImporter.Load($"models/{ModelName}/Smile3.obj");
             Smile4 = modelImporter.Load($"models/{ModelName}/Smile4.obj");
             Smile5 = modelImporter.Load($"models/{ModelName}/Smile5.obj");
             Smile6 = modelImporter.Load($"models/{ModelName}/Smile6.obj");
-            MainBodyBack = modelImporter.Load($"models/{ModelName}/MainBodyBack.obj");
+            
+            ALetter = modelImporter.Load($"models/{ModelName}/ALetter.obj");
+            ALetterInside = modelImporter.Load($"models/{ModelName}/ALetterInside.obj");
+            BLetter = modelImporter.Load($"models/{ModelName}/BLetter.obj");
+            XLetter = modelImporter.Load($"models/{ModelName}/XLetter.obj");
+            XLetterInside = modelImporter.Load($"models/{ModelName}/XLetterInside.obj");
+            YLetter = modelImporter.Load($"models/{ModelName}/YLetter.obj");
+            YLetterInside1 = modelImporter.Load($"models/{ModelName}/YLetterInside1.obj");
+            YLetterInside2 = modelImporter.Load($"models/{ModelName}/YLetterInside2.obj");
+
+            DPadLeft1 = modelImporter.Load($"models/{ModelName}/DPadLeft1.obj");
+            DPadUp2 = modelImporter.Load($"models/{ModelName}/DPadUp2.obj");
+            DPadRight3 = modelImporter.Load($"models/{ModelName}/DPadRight3.obj");
+            DPadDown4 = modelImporter.Load($"models/{ModelName}/DPadDown4.obj");
 
             // map model(s)
             foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
@@ -99,13 +129,28 @@ namespace HandheldCompanion.Models
             // pull model(s)
             model3DGroup.Children.Add(JoystickLeftCover);
             model3DGroup.Children.Add(JoystickRightCover);
+            model3DGroup.Children.Add(MainBodyBack);
+
             model3DGroup.Children.Add(Smile1);
             model3DGroup.Children.Add(Smile2);
             model3DGroup.Children.Add(Smile3);
             model3DGroup.Children.Add(Smile4);
             model3DGroup.Children.Add(Smile5);
             model3DGroup.Children.Add(Smile6);
-            model3DGroup.Children.Add(MainBodyBack);
+
+            model3DGroup.Children.Add(ALetter);
+            model3DGroup.Children.Add(ALetterInside);
+            model3DGroup.Children.Add(BLetter);
+            model3DGroup.Children.Add(XLetter);
+            model3DGroup.Children.Add(XLetterInside);
+            model3DGroup.Children.Add(YLetter);
+            model3DGroup.Children.Add(YLetterInside1);
+            model3DGroup.Children.Add(YLetterInside2);
+
+            model3DGroup.Children.Add(DPadLeft1);
+            model3DGroup.Children.Add(DPadUp2);
+            model3DGroup.Children.Add(DPadRight3);
+            model3DGroup.Children.Add(DPadDown4);
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
             {
@@ -169,7 +214,7 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == Smile1 || model3D == Smile2)
+                if (model3D == MainBody || model3D == Smile1 || model3D == Smile2 || model3D == DPadLeft1 || model3D == DPadUp2 || model3D == DPadRight3 || model3D == DPadDown4)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
                     DefaultMaterials[model3D] = MaterialPlasticWhite;
