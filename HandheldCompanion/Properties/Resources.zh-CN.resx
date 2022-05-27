@@ -635,7 +635,7 @@
     <comment>Translate</comment>
   </data>
   <data name="SettingsPage_SensorPlacementDirection" xml:space="preserve">
-    <value>Sensor placement direction</value>
+    <value>External sensor placement direction</value>
     <comment>Translate</comment>
   </data>
   <data name="SettingsPage_SensorPlacementDirectionDesc" xml:space="preserve">
@@ -643,7 +643,7 @@
     <comment>Translate</comment>
   </data>
   <data name="SettingsPage_SensorPlacementUpsideDown" xml:space="preserve">
-    <value>Sensor upside down</value>
+    <value>External sensor upside down</value>
     <comment>Translate</comment>
   </data>
   <data name="SettingsPage_SensorPlacementUpsideDownDesc" xml:space="preserve">
