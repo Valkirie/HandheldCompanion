@@ -73,6 +73,7 @@ namespace HandheldCompanion.Views
         public ServiceManager serviceManager;
         public ProfileManager profileManager;
         public TaskManager taskManager;
+        private CheatManager cheatManager;
 
         private WindowState prevWindowState;
         private NotifyIcon notifyIcon;
@@ -216,6 +217,18 @@ namespace HandheldCompanion.Views
             // initialize task manager
             taskManager = new TaskManager("ControllerService", CurrentExe);
 
+            // initialize cheat manager
+            cheatManager = new CheatManager(logger);
+            cheatManager.Cheated += (cheat) =>
+            {
+                switch (cheat)
+                {
+                    case "OverlayControllerFisherPrice":
+                        overlayPage.UnlockToyController();
+                        break;
+                }
+            };
+
             // initialize pages
             controllerPage = new ControllerPage("controller", this, logger);
             profilesPage = new ProfilesPage("profiles", this, logger);
@@ -263,6 +276,7 @@ namespace HandheldCompanion.Views
             controllerPage.ControllerChanged += (Controller) =>
             {
                 overlay.UpdateController(Controller);
+                cheatManager.UpdateController(Controller);
             };
 
             _pages.Add("ControllerPage", controllerPage);
@@ -422,6 +436,9 @@ namespace HandheldCompanion.Views
             pipeClient.Start();
             pipeServer.Start();
 
+            // start Cheat Manager
+            cheatManager.StartListening();
+
             if (IsElevated)
             {
                 // start service with companion
@@ -503,10 +520,13 @@ namespace HandheldCompanion.Views
                         b_ServiceInstall.Visibility = Visibility.Collapsed;
                         b_ServiceDelete.Visibility = Visibility.Visible;
 
-                        notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
-                        notifyIcon.ContextMenuStrip.Items[1].Enabled = true;
-                        notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
-                        notifyIcon.ContextMenuStrip.Items[3].Enabled = true;
+                        if (notifyIcon.ContextMenuStrip != null)
+                        {
+                            notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
+                            notifyIcon.ContextMenuStrip.Items[1].Enabled = true;
+                            notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
+                            notifyIcon.ContextMenuStrip.Items[3].Enabled = true;
+                        }
 
                         b_ServiceDelete.IsEnabled = IsElevated;
                         b_ServiceStart.IsEnabled = IsElevated;
@@ -517,10 +537,13 @@ namespace HandheldCompanion.Views
                         b_ServiceInstall.Visibility = Visibility.Collapsed;
                         b_ServiceDelete.Visibility = Visibility.Collapsed;
 
-                        notifyIcon.ContextMenuStrip.Items[0].Enabled = true;
-                        notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
-                        notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
-                        notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                        if (notifyIcon.ContextMenuStrip != null)
+                        {
+                            notifyIcon.ContextMenuStrip.Items[0].Enabled = true;
+                            notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
+                            notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
+                            notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                        }
 
                         b_ServiceStop.IsEnabled = IsElevated;
                         break;
@@ -533,10 +556,13 @@ namespace HandheldCompanion.Views
                         b_ServiceInstall.IsEnabled = false;
                         b_ServiceDelete.IsEnabled = false;
 
-                        notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
-                        notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
-                        notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
-                        notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                        if (notifyIcon.ContextMenuStrip != null)
+                        {
+                            notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
+                            notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
+                            notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
+                            notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                        }
                         break;
                     default:
                         b_ServiceStop.Visibility = Visibility.Collapsed;
@@ -544,10 +570,13 @@ namespace HandheldCompanion.Views
                         b_ServiceInstall.Visibility = Visibility.Visible;
                         b_ServiceDelete.Visibility = Visibility.Collapsed;
 
-                        notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
-                        notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
-                        notifyIcon.ContextMenuStrip.Items[2].Enabled = true;
-                        notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                        if (notifyIcon.ContextMenuStrip != null)
+                        {
+                            notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
+                            notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
+                            notifyIcon.ContextMenuStrip.Items[2].Enabled = true;
+                            notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                        }
 
                         b_ServiceInstall.IsEnabled = IsElevated;
                         break;
@@ -679,6 +708,8 @@ namespace HandheldCompanion.Views
 
             if (pipeServer.connected)
                 pipeServer.Stop();
+
+            cheatManager.StopListening();
 
             // closing page(s)
             controllerPage.Page_Closed();

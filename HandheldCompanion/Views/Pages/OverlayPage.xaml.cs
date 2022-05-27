@@ -32,6 +32,9 @@ namespace HandheldCompanion.Views.Pages
 
             this.logger = logger;
 
+            // controller enabler
+            ToyControllerRadio.IsEnabled = Properties.Settings.Default.OverlayControllerFisherPrice;
+
             // controller model
             OverlayModel.SelectedIndex = Properties.Settings.Default.OverlayModel;
             OverlayModel_SelectionChanged(this, null);
@@ -80,6 +83,12 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
+        }
+
+        public void UnlockToyController()
+        {
+            // controller enabler
+            ToyControllerRadio.IsEnabled = true;
         }
 
         private void UpdateUI_TrackpadsPosition(int trackpadsAlignment)

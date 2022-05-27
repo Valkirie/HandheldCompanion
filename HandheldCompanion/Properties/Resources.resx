@@ -347,6 +347,10 @@
   <data name="OverlayPage_StartButton" xml:space="preserve">
     <value>Start</value>
   </data>
+  <data name="OverlayPage_ToyController" xml:space="preserve">
+    <value>Fisher-Price controller</value>
+    <comment>added on 27/05/2022</comment>
+  </data>
   <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
     <value>Trackpads options</value>
   </data>

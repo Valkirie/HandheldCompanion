@@ -296,7 +296,7 @@ namespace HandheldCompanion.Views.Windows
             }
         }
 
-        internal void UpdateController(ControllerEx controllerEx)
+        public void UpdateController(ControllerEx controllerEx)
         {
             this.controllerEx = controllerEx;
         }

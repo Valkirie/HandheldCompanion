@@ -754,6 +754,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fisher-Price controller.
+        /// </summary>
+        public static string OverlayPage_ToyController {
+            get {
+                return ResourceManager.GetString("OverlayPage_ToyController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Trackpads options.
         /// </summary>
         public static string OverlayPage_TrackpadsOptions {
