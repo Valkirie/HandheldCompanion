@@ -107,8 +107,10 @@ namespace HandheldCompanion
                 if (cheat.Key.OrderBy(a => a).SequenceEqual(inputs.OrderBy(b => b)))
                 {
                     Properties.Settings.Default[cheat.Value] = true;
-                    inputs.Clear();
+                    inputs = new() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // reset
+
                     controllerEx?.Identify();
+                    Cheated?.Invoke(cheat.Value);
                 }
             }
         }

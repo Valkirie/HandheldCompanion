@@ -46,6 +46,8 @@ namespace HandheldCompanion.Views.Windows
         private Model CurrentModel;
         private Model ProductModel;
         private Model VirtualModel;
+        private Model BonusModel;
+
         private OverlayModelMode ModelMode;
 
         private Point OverlayPosition;
@@ -134,6 +136,12 @@ namespace HandheldCompanion.Views.Windows
             UpdateModel();
         }
 
+        public void UpdateBonusModel(Model BonusModel)
+        {
+            this.BonusModel = BonusModel;
+            UpdateModel();
+        }
+
         public void UpdateModelMode(OverlayModelMode ModelMode)
         {
             this.ModelMode = ModelMode;
@@ -157,6 +165,13 @@ namespace HandheldCompanion.Views.Windows
                     {
                         CurrentModel = VirtualModel;
                         ModelVisual3D.Content = VirtualModel.model3DGroup;
+                    }
+                    break;
+                case OverlayModelMode.Toy:
+                    if (BonusModel != null)
+                    {
+                        CurrentModel = BonusModel;
+                        ModelVisual3D.Content = BonusModel.model3DGroup;
                     }
                     break;
             }

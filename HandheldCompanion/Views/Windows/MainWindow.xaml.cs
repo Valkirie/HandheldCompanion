@@ -98,12 +98,12 @@ namespace HandheldCompanion.Views
                 case "AYANEO 2021":
                 case "AYANEO 2021 Pro":
                 case "AYANEO 2021 Pro Retro Power":
-                    ProductModel = new ModelToyController();
+                    ProductModel = new ModelAYANEO2021();
                     break;
                 case "NEXT Pro":
                 case "NEXT Advance":
                 case "NEXT":
-                    ProductModel = new ModelToyController();
+                    ProductModel = new ModelAYANEONext();
                     break;
                 default:
                     break;

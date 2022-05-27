@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Utils;
+using HandheldCompanion.Models;
 using HandheldCompanion.Views.Windows;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
@@ -87,8 +88,10 @@ namespace HandheldCompanion.Views.Pages
 
         public void UnlockToyController()
         {
-            // controller enabler
-            ToyControllerRadio.IsEnabled = true;
+            this.Dispatcher.Invoke(() =>
+            {
+                ToyControllerRadio.IsEnabled = true;
+            });
         }
 
         private void UpdateUI_TrackpadsPosition(int trackpadsAlignment)
@@ -212,6 +215,13 @@ namespace HandheldCompanion.Views.Pages
 
         private void OverlayModel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            switch((OverlayModelMode)OverlayModel.SelectedIndex)
+            {
+                case OverlayModelMode.Toy:
+                    overlay.UpdateBonusModel(new ModelToyController());
+                    break;
+            }
+
             overlay.UpdateModelMode((OverlayModelMode)OverlayModel.SelectedIndex);
 
             // save settings
