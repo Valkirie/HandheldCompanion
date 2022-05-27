@@ -328,16 +328,6 @@ namespace HandheldCompanion.Views
                 // inform service & mouseHook
                 pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
 
-                // change overlay hook
-                /* this.Dispatcher.Invoke(() =>
-                {
-                    // hide overlay on profile switch
-                    overlay.UnHook();
-
-                    if (!currentProfile.IsDefault)
-                        overlay.HookInto(processid);
-                }); */
-
                 logger.LogDebug("Profile {0} applied", currentProfile.name);
             }
             catch (Exception) { }

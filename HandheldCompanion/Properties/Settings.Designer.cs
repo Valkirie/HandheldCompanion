@@ -229,7 +229,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("33")]
         public int OverlayControllerTrigger {
             get {
                 return ((int)(this["OverlayControllerTrigger"]));
@@ -253,7 +253,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("34")]
         public int OverlayTrackpadsTrigger {
             get {
                 return ((int)(this["OverlayTrackpadsTrigger"]));
