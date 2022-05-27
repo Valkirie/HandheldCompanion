@@ -214,7 +214,10 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == Smile1 || model3D == Smile2 || model3D == DPadLeft1 || model3D == DPadUp2 || model3D == DPadRight3 || model3D == DPadDown4)
+                if (model3D == MainBody || model3D == Smile1 || model3D == Smile2 
+                    || model3D == DPadLeft1 || model3D == DPadUp2 || model3D == DPadRight3 || model3D == DPadDown4
+                    || model3D == ALetter || model3D == BLetter || model3D == XLetter || model3D == YLetter
+                    )
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
                     DefaultMaterials[model3D] = MaterialPlasticWhite;
@@ -234,10 +237,30 @@ namespace HandheldCompanion.Models
                 }
 
 
-                if (model3D == JoystickLeftCover || model3D == JoystickRightCover)
+                if (model3D == JoystickLeftCover || model3D == JoystickRightCover 
+                    || model3D == LeftThumbRing || model3D == RightThumbRing
+                    || model3D == YLetterInside1 || model3D == YLetterInside2)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlue;
                     DefaultMaterials[model3D] = MaterialPlasticBlue;
+                }
+
+                if (model3D == RightShoulderTrigger)
+                {
+                    ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticPurple;
+                    DefaultMaterials[model3D] = MaterialPlasticPurple;
+                }
+
+                if (model3D == LeftShoulderTrigger || model3D == ALetterInside)
+                {
+                    ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticOrange;
+                    DefaultMaterials[model3D] = MaterialPlasticOrange;
+                }
+
+                if (model3D == XLetterInside)
+                {
+                    ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticGreen;
+                    DefaultMaterials[model3D] = MaterialPlasticGreen;
                 }
 
             }
