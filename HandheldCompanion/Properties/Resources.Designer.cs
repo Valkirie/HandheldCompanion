@@ -1717,7 +1717,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sensor placement direction.
+        ///   Looks up a localized string similar to External sensor placement direction.
         /// </summary>
         public static string SettingsPage_SensorPlacementDirection {
             get {
@@ -1735,7 +1735,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sensor upside down.
+        ///   Looks up a localized string similar to External sensor upside down.
         /// </summary>
         public static string SettingsPage_SensorPlacementUpsideDown {
             get {
