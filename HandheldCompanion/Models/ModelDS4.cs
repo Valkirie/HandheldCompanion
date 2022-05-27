@@ -14,6 +14,14 @@ namespace HandheldCompanion.Models
         Model3DGroup PlaystationButton;
         Model3DGroup AuxPort;
         Model3DGroup Triangle;
+        Model3DGroup ASymbol;
+        Model3DGroup BSymbol;
+        Model3DGroup XSymbol;
+        Model3DGroup YSymbol;
+        Model3DGroup DPadDownArrow;
+        Model3DGroup DPadUpArrow;
+        Model3DGroup DPadLeftArrow;
+        Model3DGroup DPadRightArrow;
 
         public ModelDS4() : base("DS4")
         {
@@ -48,6 +56,14 @@ namespace HandheldCompanion.Models
             PlaystationButton = modelImporter.Load($"models/{ModelName}/Playstation-Button.obj");
             AuxPort = modelImporter.Load($"models/{ModelName}/Aux-Port.obj");
             Triangle = modelImporter.Load($"models/{ModelName}/Triangle.obj");
+            ASymbol = modelImporter.Load($"models/{ModelName}/A-Symbol.obj");
+            BSymbol = modelImporter.Load($"models/{ModelName}/B-Symbol.obj");
+            XSymbol = modelImporter.Load($"models/{ModelName}/X-Symbol.obj");
+            YSymbol = modelImporter.Load($"models/{ModelName}/Y-Symbol.obj");
+            DPadDownArrow = modelImporter.Load($"models/{ModelName}/DPadDownArrow.obj");
+            DPadUpArrow = modelImporter.Load($"models/{ModelName}/DPadUpArrow.obj");
+            DPadLeftArrow = modelImporter.Load($"models/{ModelName}/DPadLeftArrow.obj");
+            DPadRightArrow = modelImporter.Load($"models/{ModelName}/DPadRightArrow.obj");
 
             // pull model(s)
             model3DGroup.Children.Add(LeftShoulderMiddle);
@@ -57,6 +73,14 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(PlaystationButton);
             model3DGroup.Children.Add(AuxPort);
             model3DGroup.Children.Add(Triangle);
+            model3DGroup.Children.Add(ASymbol);
+            model3DGroup.Children.Add(BSymbol);
+            model3DGroup.Children.Add(XSymbol);
+            model3DGroup.Children.Add(YSymbol);
+            model3DGroup.Children.Add(DPadDownArrow);
+            model3DGroup.Children.Add(DPadUpArrow);
+            model3DGroup.Children.Add(DPadLeftArrow);
+            model3DGroup.Children.Add(DPadRightArrow);
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
             {
