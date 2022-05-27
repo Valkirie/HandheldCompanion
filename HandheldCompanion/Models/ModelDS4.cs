@@ -1,3 +1,6 @@
+using SharpDX.XInput;
+using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -14,10 +17,6 @@ namespace HandheldCompanion.Models
         Model3DGroup PlaystationButton;
         Model3DGroup AuxPort;
         Model3DGroup Triangle;
-        Model3DGroup ASymbol;
-        Model3DGroup BSymbol;
-        Model3DGroup XSymbol;
-        Model3DGroup YSymbol;
         Model3DGroup DPadDownArrow;
         Model3DGroup DPadUpArrow;
         Model3DGroup DPadLeftArrow;
@@ -28,10 +27,18 @@ namespace HandheldCompanion.Models
             // colors
             var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#38383A");
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#E0E0E0");
+
             var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
 
             var MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
             var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
+
+            var MaterialPlasticTriangle = new DiffuseMaterial(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#66a0a4")));
+            var MaterialPlasticCross = new DiffuseMaterial(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#96b2d9")));
+            var MaterialPlasticCircle = new DiffuseMaterial(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#d66673")));
+            var MaterialPlasticSquare = new DiffuseMaterial(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#d7bee5")));
+            var MaterialPlasticTransparent = new SpecularMaterial();
+
             var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
             // Rotation Points
@@ -56,14 +63,34 @@ namespace HandheldCompanion.Models
             PlaystationButton = modelImporter.Load($"models/{ModelName}/Playstation-Button.obj");
             AuxPort = modelImporter.Load($"models/{ModelName}/Aux-Port.obj");
             Triangle = modelImporter.Load($"models/{ModelName}/Triangle.obj");
-            ASymbol = modelImporter.Load($"models/{ModelName}/A-Symbol.obj");
-            BSymbol = modelImporter.Load($"models/{ModelName}/B-Symbol.obj");
-            XSymbol = modelImporter.Load($"models/{ModelName}/X-Symbol.obj");
-            YSymbol = modelImporter.Load($"models/{ModelName}/Y-Symbol.obj");
             DPadDownArrow = modelImporter.Load($"models/{ModelName}/DPadDownArrow.obj");
             DPadUpArrow = modelImporter.Load($"models/{ModelName}/DPadUpArrow.obj");
             DPadLeftArrow = modelImporter.Load($"models/{ModelName}/DPadLeftArrow.obj");
             DPadRightArrow = modelImporter.Load($"models/{ModelName}/DPadRightArrow.obj");
+
+            // map model(s)
+            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            {
+                switch (button)
+                {
+                    case GamepadButtonFlags.A:
+                    case GamepadButtonFlags.B:
+                    case GamepadButtonFlags.X:
+                    case GamepadButtonFlags.Y:
+
+                        string filename = $"models/{ModelName}/{button}-Symbol.obj";
+                        if (File.Exists(filename))
+                        {
+                            Model3DGroup model = modelImporter.Load(filename);
+                            ButtonMap[button].Add(model);
+
+                            // pull model
+                            model3DGroup.Children.Add(model);
+                        }
+
+                        break;
+                }
+            }
 
             // pull model(s)
             model3DGroup.Children.Add(LeftShoulderMiddle);
@@ -73,10 +100,6 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(PlaystationButton);
             model3DGroup.Children.Add(AuxPort);
             model3DGroup.Children.Add(Triangle);
-            model3DGroup.Children.Add(ASymbol);
-            model3DGroup.Children.Add(BSymbol);
-            model3DGroup.Children.Add(XSymbol);
-            model3DGroup.Children.Add(YSymbol);
             model3DGroup.Children.Add(DPadDownArrow);
             model3DGroup.Children.Add(DPadUpArrow);
             model3DGroup.Children.Add(DPadLeftArrow);
@@ -86,6 +109,32 @@ namespace HandheldCompanion.Models
             {
                 // generic material(s)
                 HighlightMaterials[model3D] = MaterialHighlight;
+            }
+
+            // specific button material(s)
+            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            {
+                int i = 0;
+                if (ButtonMap.ContainsKey(button))
+                    foreach (var model3D in ButtonMap[button])
+                    {
+                        switch (button)
+                        {
+                            case GamepadButtonFlags.X:
+                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticBlack : MaterialPlasticSquare;
+                                break;
+                            case GamepadButtonFlags.Y:
+                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticBlack : MaterialPlasticTriangle;
+                                break;
+                            case GamepadButtonFlags.A:
+                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticBlack : MaterialPlasticCross;
+                                break;
+                            case GamepadButtonFlags.B:
+                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticBlack : MaterialPlasticCircle;
+                                break;
+                        }
+                        i++;
+                    }
             }
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
