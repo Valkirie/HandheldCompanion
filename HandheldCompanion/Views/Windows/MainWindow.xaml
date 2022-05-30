@@ -85,12 +85,13 @@
         </ui:NavigationView.FooterMenuItems>
 
         <ui:ScrollViewerEx
-                PanningMode="VerticalOnly"
-                Name="scrollViewer"
-                PreviewMouseLeftButtonDown="ScrollViewer_PreviewMouseLeftButtonDown"
-                PreviewMouseMove="ScrollViewer_PreviewMouseMove"
-                PreviewMouseLeftButtonUp="ScrollViewer_PreviewMouseLeftButtonUp"
-                PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+            PanningMode="VerticalOnly"
+            Name="scrollViewer"
+            PreviewMouseLeftButtonDown="ScrollViewer_PreviewMouseLeftButtonDown"
+            PreviewMouseMove="ScrollViewer_PreviewMouseMove"
+            PreviewMouseLeftButtonUp="ScrollViewer_PreviewMouseLeftButtonUp"
+            PreviewMouseWheel="ScrollViewer_PreviewMouseWheel"
+            MouseLeave="scrollViewer_MouseLeave">
             <ui:Frame
                     Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
                     Name="ContentFrame" MaxWidth="1100"

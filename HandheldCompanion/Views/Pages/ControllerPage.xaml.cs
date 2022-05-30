@@ -148,8 +148,6 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Dispatcher.Invoke(() =>
             {
-                InputDevices.Visibility = Visibility.Visible;
-
                 foreach (ControllerEx ctrl in RadioControllers.Items)
                 {
                     if (ctrl.deviceInstancePath == controller.deviceInstancePath)
@@ -167,8 +165,10 @@ namespace HandheldCompanion.Views.Pages
 
                 RadioControllers.Items.Add(controller);
 
-                if (currentController == null)
+                if (currentController is null)
                     RadioControllers.SelectedIndex = 0;
+
+                InputDevices.Visibility = Visibility.Visible;
             });
         }
 

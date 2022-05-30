@@ -56,7 +56,7 @@ namespace HandheldCompanion.Views.Pages
             GamepadButtonFlags ControllerButton = (GamepadButtonFlags)Properties.Settings.Default.OverlayControllerTrigger;
             ControllerTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph((GamepadButtonFlagsExt)ControllerButton);
             ControllerTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(ControllerButton);
-            overlay.controllerTrigger = ControllerButton;
+            overlay.controllerTriggerButtons = ControllerButton;
 
             // controller resting angles
             Slider_RestingPitch.Value = Properties.Settings.Default.OverlayControllerRestingPitch;
@@ -75,7 +75,7 @@ namespace HandheldCompanion.Views.Pages
             GamepadButtonFlags TrackpadsButton = (GamepadButtonFlags)Properties.Settings.Default.OverlayTrackpadsTrigger;
             TrackpadsTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph((GamepadButtonFlagsExt)TrackpadsButton);
             TrackpadsTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(TrackpadsButton);
-            overlay.trackpadTrigger = TrackpadsButton;
+            overlay.trackpadTriggerButtons = TrackpadsButton;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -275,7 +275,7 @@ namespace HandheldCompanion.Views.Pages
                 ControllerTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph((GamepadButtonFlagsExt)button);
                 ControllerTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(button);
             });
-            overlay.controllerTrigger = button;
+            overlay.controllerTriggerButtons = button;
 
             // save settings
             Properties.Settings.Default.OverlayControllerTrigger = (int)button;
@@ -295,7 +295,7 @@ namespace HandheldCompanion.Views.Pages
                 TrackpadsTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph((GamepadButtonFlagsExt)button);
                 TrackpadsTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(button);
             });
-            overlay.trackpadTrigger = button;
+            overlay.trackpadTriggerButtons = button;
 
             // save settings
             Properties.Settings.Default.OverlayTrackpadsTrigger = (int)button;

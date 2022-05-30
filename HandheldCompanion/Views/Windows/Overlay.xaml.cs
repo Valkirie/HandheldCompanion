@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Media3D;
 using TouchEventSample;
-using static HandheldCompanion.OverlayHook;
 using static TouchEventSample.TouchSourceWinTouch;
 using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
 
@@ -21,14 +20,6 @@ namespace HandheldCompanion.Views.Windows
     /// </summary>
     public partial class Overlay : Window
     {
-        private IntPtr hWnd;
-        private IntPtr hWinEventHook;
-        private Process targetProc = null;
-
-        protected WinEventDelegate WinEventDelegate;
-        static GCHandle GCSafetyHandle;
-        private bool isHooked = true; // hack
-
         #region import
         private const int GWL_EXSTYLE = -20;
         private const int WS_EX_NOACTIVATE = 0x08000000;
@@ -75,7 +66,7 @@ namespace HandheldCompanion.Views.Windows
         private bool ControllerTriggerListening = false;
         private bool TrackpadsTriggerListening = false;
 
-        private Vector3D FaceCameraObjectAlignment;
+        private Vector3D FaceCameraObjectAlignment = new Vector3D(0.0d, 0.0d, 0.0d);
 
         public event ControllerTriggerUpdatedEventHandler ControllerTriggerUpdated;
         public delegate void ControllerTriggerUpdatedEventHandler(GamepadButtonFlags button);
@@ -86,6 +77,12 @@ namespace HandheldCompanion.Views.Windows
         private float TriggerAngleShoulderLeft;
         private float TriggerAngleShoulderRight;
 
+        private bool controllerTriggered = false;
+        private bool trackpadTriggered = false;
+
+        public GamepadButtonFlags controllerTriggerButtons = GamepadButtonFlags.Back | GamepadButtonFlags.DPadUp;
+        public GamepadButtonFlags trackpadTriggerButtons = GamepadButtonFlags.Back | GamepadButtonFlags.DPadDown;
+
         // TODO Dummy variables, placeholder and for testing 
         short MotorLeftPlaceholder;
         short MotorRightPlaceholder;
@@ -93,10 +90,6 @@ namespace HandheldCompanion.Views.Windows
         public Overlay()
         {
             InitializeComponent();
-
-            // hook vars
-            WinEventDelegate = new WinEventDelegate(WinEventCallback);
-            GCSafetyHandle = GCHandle.Alloc(WinEventDelegate);
 
             // touch vars
             touchsource = new TouchSourceWinTouch(this);
@@ -185,25 +178,10 @@ namespace HandheldCompanion.Views.Windows
             WindowInteropHelper helper = new WindowInteropHelper(this);
             SetWindowLong(helper.Handle, GWL_EXSTYLE,
                 GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
-
-            this.LeftTrackPadPosition = LeftTrackpad.PointToScreen(new Point(0, 0));
-            this.RightTrackPadPosition = RightTrackpad.PointToScreen(new Point(0, 0));
         }
 
         private void Touchsource_Touch(TouchArgs args, long time)
         {
-            /* handle top screen swipe
-            if (swipe != null && args.Id == swipe.Id)
-            {
-                if (args.Status == CursorEvent.EventType.MOVE)
-                    if (args.LocationY - swipe.LocationY > 40) // hardcoded
-                    {
-                        swipe = null;
-                        UpdateControllerVisibility();
-                    }
-                return;
-            } */
-
             double X = args.LocationX - this.OverlayPosition.X;
             double Y = args.LocationY - this.OverlayPosition.Y;
 
@@ -283,6 +261,68 @@ namespace HandheldCompanion.Views.Windows
             });
         }
 
+        public void UpdateController(ControllerEx controllerEx)
+        {
+            this.controllerEx = controllerEx;
+        }
+
+        public void ControllerTriggerClicked()
+        {
+            controllerTriggerButtons = 0;
+            ControllerTriggerListening = true;
+        }
+
+        public void TrackpadsTriggerClicked()
+        {
+            trackpadTriggerButtons = 0;
+            TrackpadsTriggerListening = true;
+        }
+
+        public void UpdateControllerVisibility()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                Visibility visibility = Visibility.Visible;
+                switch (VirtualController.Visibility)
+                {
+                    case Visibility.Visible:
+                        visibility = Visibility.Hidden;
+                        break;
+                    case Visibility.Hidden:
+                        visibility = Visibility.Visible;
+                        break;
+                }
+                VirtualController.Visibility = visibility;
+            });
+        }
+
+        public void UpdateTrackpadsVisibility()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                Visibility visibility = Visibility.Visible;
+                switch (VirtualTrackpads.Visibility)
+                {
+                    case Visibility.Visible:
+                        visibility = Visibility.Hidden;
+                        break;
+                    case Visibility.Hidden:
+                        visibility = Visibility.Visible;
+                        break;
+                }
+                VirtualTrackpads.Visibility = visibility;
+            });
+        }
+
+        private void UpdateVisibility()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.Visibility = (VirtualController.Visibility == Visibility.Visible || VirtualTrackpads.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Hidden;
+            });
+            pipeClient.SendMessage(new PipeOverlay((int)VirtualController.Visibility));
+        }
+
         #region ModelVisual3D
         private RotateTransform3D DeviceRotateTransform;
         private RotateTransform3D DeviceRotateTransformFaceCameraX;
@@ -304,24 +344,22 @@ namespace HandheldCompanion.Views.Windows
                     switch (sensor.type)
                     {
                         case SensorType.Quaternion:
-                            UpdateModelVisual3D(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z, sensor.x, sensor.y, sensor.z);
+                            q_w = sensor.q_w;
+                            q_x = sensor.q_x;
+                            q_y = sensor.q_y;
+                            q_z = sensor.q_z;
+
+                            x = sensor.x;
+                            y = sensor.y;
+                            z = sensor.z;
                             break;
                     }
                     break;
             }
         }
 
-        public void UpdateController(ControllerEx controllerEx)
-        {
-            this.controllerEx = controllerEx;
-        }
-
-        private bool controllerTriggered = false;
-        private bool trackpadTriggered = false;
-
-        public GamepadButtonFlags controllerTrigger = GamepadButtonFlags.DPadUp;
-        public GamepadButtonFlags trackpadTrigger = GamepadButtonFlags.DPadDown;
-
+        private Gamepad prevGamepad;
+        private GeometryModel3D model = null;
         private void UpdateReport(object? sender, EventArgs e)
         {
             // get current gamepad state
@@ -331,78 +369,92 @@ namespace HandheldCompanion.Views.Windows
                 Gamepad = GamepadState.Gamepad;
             }
 
-            // Handle controller trigger(s)
-            if (!ControllerTriggerListening && Gamepad.Buttons.HasFlag(controllerTrigger))
+            // update model based on Gamepad state
+            if (prevGamepad.GetHashCode() != Gamepad.GetHashCode())
             {
-                if (!controllerTriggered)
+                // Handle controller trigger(s)
+                if (!ControllerTriggerListening && Gamepad.Buttons.HasFlag(controllerTriggerButtons))
                 {
-                    UpdateControllerVisibility();
-                    UpdateVisibility();
-                    controllerTriggered = true;
+                    if (!controllerTriggered)
+                    {
+                        UpdateControllerVisibility();
+                        UpdateVisibility();
+                        controllerTriggered = true;
+                    }
                 }
-            }
-            else if (controllerTriggered)
-            {
-                controllerTriggered = false;
+                else if (controllerTriggered)
+                {
+                    controllerTriggered = false;
+                }
+
+                // handle controller trigger(s) update
+                if (ControllerTriggerListening)
+                {
+                    if (Gamepad.Buttons != 0)
+                        controllerTriggerButtons |= Gamepad.Buttons;
+                    else if (Gamepad.Buttons == 0 && controllerTriggerButtons != 0)
+                    {
+                        ControllerTriggerUpdated?.Invoke(controllerTriggerButtons);
+                        ControllerTriggerListening = false;
+                    }
+                }
+
+                // Handle trackpad trigger(s)
+                if (!TrackpadsTriggerListening && Gamepad.Buttons.HasFlag(trackpadTriggerButtons))
+                {
+                    if (!trackpadTriggered)
+                    {
+                        UpdateTrackpadsVisibility();
+                        UpdateVisibility();
+                        trackpadTriggered = true;
+                    }
+                }
+                else if (trackpadTriggered)
+                {
+                    trackpadTriggered = false;
+                }
+
+                // handle trackpad trigger(s) update
+                if (TrackpadsTriggerListening)
+                {
+                    if (Gamepad.Buttons != 0)
+                        trackpadTriggerButtons |= Gamepad.Buttons;
+                    else if (Gamepad.Buttons == 0 && trackpadTriggerButtons != 0)
+                    {
+                        TrackpadsTriggerUpdated?.Invoke(trackpadTriggerButtons);
+                        TrackpadsTriggerListening = false;
+                    }
+                }
+
+                this.Dispatcher.Invoke(() =>
+                {
+                    GeometryModel3D model = null;
+                    foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+                    {
+                        if (!CurrentModel.ButtonMap.ContainsKey(button))
+                            continue;
+
+                        foreach (Model3DGroup modelgroup in CurrentModel.ButtonMap[button])
+                        {
+                            model = (GeometryModel3D)modelgroup.Children.FirstOrDefault();
+                            model.Material = Gamepad.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
+                        }
+                    }
+                });
             }
 
-            // handle controller trigger(s) update
-            if (ControllerTriggerListening)
-            {
-                if (Gamepad.Buttons != 0)
-                    controllerTrigger |= Gamepad.Buttons;
-                else if (Gamepad.Buttons == 0 && controllerTrigger != 0)
-                {
-                    ControllerTriggerUpdated?.Invoke(controllerTrigger);
-                    ControllerTriggerListening = false;
-                }
-            }
+            // update gamepad state
+            prevGamepad = Gamepad;
 
-            // Handle trackpad trigger(s)
-            if (!TrackpadsTriggerListening && Gamepad.Buttons.HasFlag(trackpadTrigger))
-            {
-                if (!trackpadTriggered)
-                {
-                    UpdateTrackpadsVisibility();
-                    UpdateVisibility();
-                    trackpadTriggered = true;
-                }
-            }
-            else if (trackpadTriggered)
-            {
-                trackpadTriggered = false;
-            }
+            // update model
+            UpdateModelVisual3D();
 
-            // handle trackpad trigger(s) update
-            if (TrackpadsTriggerListening)
-            {
-                if (Gamepad.Buttons != 0)
-                    trackpadTrigger |= Gamepad.Buttons;
-                else if (Gamepad.Buttons == 0 && trackpadTrigger != 0)
-                {
-                    TrackpadsTriggerUpdated?.Invoke(trackpadTrigger);
-                    TrackpadsTriggerListening = false;
-                }
-            }
-
+            // skip virtual controller update if hidden or collapsed
             if (VirtualController.Visibility != Visibility.Visible)
                 return;
 
             this.Dispatcher.Invoke(() =>
             {
-                GeometryModel3D model = null;
-                foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
-                {
-                    if (!CurrentModel.ButtonMap.ContainsKey(button))
-                        continue;
-
-                    foreach (Model3DGroup modelgroup in CurrentModel.ButtonMap[button])
-                    {
-                        model = (GeometryModel3D)modelgroup.Children.FirstOrDefault();
-                        model.Material = Gamepad.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
-                    }
-                }
-
                 // TODO update motor placeholders!
                 // Motor Left
                 model = CurrentModel.LeftMotor.Children[0] as GeometryModel3D;
@@ -534,65 +586,8 @@ namespace HandheldCompanion.Views.Windows
                 }
             });
         }
-
-        public void ControllerTriggerClicked()
-        {
-            controllerTrigger = 0;
-            ControllerTriggerListening = true;
-        }
-
-        public void TrackpadsTriggerClicked()
-        {
-            trackpadTrigger = 0;
-            TrackpadsTriggerListening = true;
-        }
-
-        public void UpdateControllerVisibility()
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                Visibility visibility = Visibility.Visible;
-                switch (VirtualController.Visibility)
-                {
-                    case Visibility.Visible:
-                        visibility = Visibility.Hidden;
-                        break;
-                    case Visibility.Hidden:
-                        visibility = Visibility.Visible;
-                        break;
-                }
-                VirtualController.Visibility = visibility;
-            });
-        }
-
-        public void UpdateTrackpadsVisibility()
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                Visibility visibility = Visibility.Visible;
-                switch (VirtualTrackpads.Visibility)
-                {
-                    case Visibility.Visible:
-                        visibility = Visibility.Hidden;
-                        break;
-                    case Visibility.Hidden:
-                        visibility = Visibility.Visible;
-                        break;
-                }
-                VirtualTrackpads.Visibility = visibility;
-            });
-        }
-
-        private void UpdateVisibility()
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                this.Visibility = (VirtualController.Visibility == Visibility.Visible || VirtualTrackpads.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Hidden;
-            });
-            pipeClient.SendMessage(new PipeOverlay((int)VirtualController.Visibility));
-        }
-
-        private void UpwardVisibilityRotationShoulderButtons(float ShoulderButtonsAngleDeg,
+        
+        private void UpwardVisibilityRotationShoulderButtons(float ShoulderButtonsAngleDeg, 
                                                              Vector3D UpwardVisibilityRotationAxis,
                                                              Vector3D UpwardVisibilityRotationPoint,
                                                              float ShoulderTriggerAngleDeg,
@@ -634,7 +629,10 @@ namespace HandheldCompanion.Views.Windows
         }
 
         public Vector3D DesiredAngle = new Vector3D(0, 0, 0);
-        private void UpdateModelVisual3D(float q_w, float q_x, float q_y, float q_z, float x, float y, float z)
+        private float q_w, q_x, q_y, q_z;
+        private float x = 160.5f, y = 0.0f, z = 0.0f;
+
+        private void UpdateModelVisual3D()
         {
             m_ModelVisualUpdate++;
 
@@ -732,77 +730,6 @@ namespace HandheldCompanion.Views.Windows
                 CurrentModel.ButtonMap[GamepadButtonFlags.RightShoulder][0] = Placeholder;
 
             });
-        }
-        #endregion
-
-        #region Hook
-        protected void WinEventCallback(
-            IntPtr hWinEventHook,
-            NativeMethods.SWEH_Events eventType,
-            IntPtr hWnd,
-            NativeMethods.SWEH_ObjectId idObject,
-            long idChild, uint dwEventThread, uint dwmsEventTime)
-        {
-            try
-            {
-                if (hWnd == this.hWnd &&
-                eventType == NativeMethods.SWEH_Events.EVENT_OBJECT_LOCATIONCHANGE &&
-                idObject == (NativeMethods.SWEH_ObjectId)NativeMethods.SWEH_CHILDID_SELF)
-                {
-                    var rect = GetWindowRectangle(hWnd);
-                    this.Top = rect.Top;
-                    this.Left = rect.Left;
-                    this.Width = rect.Right - rect.Left;
-                    this.Height = rect.Bottom - rect.Top;
-
-                    this.OverlayPosition = new Point(rect.Left, rect.Top);
-                    this.LeftTrackPadPosition = LeftTrackpad.PointToScreen(new Point(0, 0));
-                    this.RightTrackPadPosition = RightTrackpad.PointToScreen(new Point(0, 0));
-                }
-            }
-            catch (Exception ex) { }
-        }
-
-        public void HookInto(uint processid)
-        {
-            try
-            {
-                targetProc = Process.GetProcessById((int)processid);
-
-                if (targetProc != null)
-                {
-                    hWnd = targetProc.MainWindowHandle;
-
-                    if (hWnd != IntPtr.Zero)
-                    {
-                        uint targetThreadId = GetWindowThread(hWnd);
-                        isHooked = true;
-
-                        hWinEventHook = WinEventHookOne(
-                            NativeMethods.SWEH_Events.EVENT_OBJECT_LOCATIONCHANGE,
-                            WinEventDelegate, (uint)targetProc.Id, targetThreadId);
-
-                        var rect = GetWindowRectangle(hWnd);
-
-                        this.Top = rect.Top;
-                        this.Left = rect.Left;
-                        this.Width = rect.Right - rect.Left;
-                        this.Height = rect.Bottom - rect.Top;
-
-                        this.OverlayPosition = new Point(rect.Left, rect.Top);
-                    }
-                }
-            }
-            catch (Exception ex) { UnHook(); }
-        }
-
-        public void UnHook()
-        {
-            UpdateControllerVisibility();
-
-            targetProc = null;
-            hWnd = IntPtr.Zero;
-            isHooked = false;
         }
         #endregion
     }
