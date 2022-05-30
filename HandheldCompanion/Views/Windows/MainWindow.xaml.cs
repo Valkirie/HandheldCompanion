@@ -47,6 +47,9 @@ namespace HandheldCompanion.Views
         // overlay vars
         private Overlay overlay;
 
+        // suspender vars
+        private Suspender suspender;
+
         // touchscroll vars
         Point scrollPoint = new Point();
         double scrollOffset = 1;
@@ -196,6 +199,9 @@ namespace HandheldCompanion.Views
             overlay.UpdateProductModel(ProductModel);
             overlay.UpdateVirtualModel(VirtualModel);
 
+            // initialize suspender
+            suspender = new Suspender(logger, pipeClient);
+
             // initialize process manager
             processManager = new ProcessManager();
             processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
@@ -277,6 +283,7 @@ namespace HandheldCompanion.Views
             {
                 overlay.UpdateController(Controller);
                 cheatManager.UpdateController(Controller);
+                suspender.UpdateController(Controller);
             };
 
             _pages.Add("ControllerPage", controllerPage);
@@ -708,6 +715,10 @@ namespace HandheldCompanion.Views
             notifyIcon.Dispose();
 
             overlay.Close();
+
+            suspender.Close();
+
+            serviceManager.Stop();
 
             if (pipeClient.connected)
                 pipeClient.Stop();
