@@ -72,7 +72,8 @@ namespace HandheldCompanion
                     var fileSize = webResponse.Headers.Get("Content-Length");
                     return Math.Round(Convert.ToDouble(fileSize) / 1024.0 / 1024.0, 2); // MB
                 }
-            }catch (Exception ex) { return 0.0d; }
+            }
+            catch (Exception ex) { return 0.0d; }
         }
 
         private void WebClient_DownloadFileCompleted(object? sender, System.ComponentModel.AsyncCompletedEventArgs e)
@@ -119,7 +120,7 @@ namespace HandheldCompanion
         private void ParseMETA(string Result)
         {
             double asset_size = 0.0d;
-            
+
             try
             {
                 asset_size = double.Parse(CommonUtils.Between(Result, "asset-size-label\">", " MB</span>"), CultureInfo.InvariantCulture);

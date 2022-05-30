@@ -1,5 +1,4 @@
-﻿using SharpDX.XInput;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -42,16 +41,11 @@ namespace ControllerCommon
         public string ProductIllustration;
         public bool ProductSupported;
 
-        public string SensorName;
+        public string InternalSensorName;
+        public string ExternalSensorName;
 
-        public bool hasGyrometer;
-        public bool hasAccelerometer;
-        public bool hasInclinometer;
-
-        public string ControllerName;
-        public ushort ControllerVID;
-        public ushort ControllerPID;
-        public int ControllerIdx;
+        public bool hasInternal;
+        public bool hasExternal;
 
         public PipeServerHandheld()
         {

@@ -1,13 +1,14 @@
+using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerService.Sensors
 {
     public class XInputGirometer : XInputSensor
     {
-        public Gyrometer sensor;
         public static SensorSpec sensorSpec = new SensorSpec()
         {
             minIn = -128.0f,
@@ -16,33 +17,63 @@ namespace ControllerService.Sensors
             maxOut = 2048.0f,
         };
 
-        public XInputGirometer(XInputController controller, ILogger logger) : base(controller, logger)
+        public XInputGirometer(SensorFamily sensorFamily, int updateInterval, ILogger logger) : base(logger)
         {
-            sensor = Gyrometer.GetDefault();
-            if (sensor != null)
-            {
-                sensor.ReportInterval = (uint)updateInterval;
-                logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
+            this.updateInterval = updateInterval;
+            centerTimer.Interval = updateInterval * 6;
 
-                // (re)center
-                updateTimer.Interval = updateInterval * 6;
+            UpdateSensor(sensorFamily);
+        }
 
-                sensor.ReadingChanged += ReadingChanged;
-            }
-            else
+        public void UpdateSensor(SensorFamily sensorFamily)
+        {
+            switch (sensorFamily)
             {
-                logger.LogWarning("{0} not initialised.", this.ToString());
+                case SensorFamily.WindowsDevicesSensors:
+                    sensor = Gyrometer.GetDefault();
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    sensor = SerialUSBIMU.GetDefault(logger);
+                    break;
             }
+
+            if (sensor == null)
+            {
+                logger.LogWarning("{0} not initialised as a {1}.", this.ToString(), sensorFamily.ToString());
+                return;
+            }
+
+            switch (sensorFamily)
+            {
+                case SensorFamily.WindowsDevicesSensors:
+                    ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
+                    ((Gyrometer)sensor).ReadingChanged += ReadingChanged;
+
+                    logger.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    ((SerialUSBIMU)sensor).ReadingChanged += ReadingChanged;
+
+                    logger.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
+                    break;
+            }
+        }
+
+        private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
+        {
+            this.reading.X = this.reading_fixed.X = (float)AngularVelocityDeg.X * ControllerService.handheldDevice.AngularVelocityAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)AngularVelocityDeg.Y * ControllerService.handheldDevice.AngularVelocityAxis.Y;
+            this.reading.Z = this.reading_fixed.Z = (float)AngularVelocityDeg.Z * ControllerService.handheldDevice.AngularVelocityAxis.Z;
+
+            base.ReadingChanged();
         }
 
         private void ReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
         {
-            GyrometerReading reading = args.Reading;
-
             // swapping Y and Z
-            this.reading.X = this.reading_fixed.X = (float)reading.AngularVelocityX * controller.handheldDevice.AngularVelocityAxis.X;
-            this.reading.Y = this.reading_fixed.Y = (float)reading.AngularVelocityZ * controller.handheldDevice.AngularVelocityAxis.Z;
-            this.reading.Z = this.reading_fixed.Z = (float)reading.AngularVelocityY * controller.handheldDevice.AngularVelocityAxis.Y;
+            this.reading.X = this.reading_fixed.X = (float)args.Reading.AngularVelocityX * ControllerService.handheldDevice.AngularVelocityAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)args.Reading.AngularVelocityZ * ControllerService.handheldDevice.AngularVelocityAxis.Z;
+            this.reading.Z = this.reading_fixed.Z = (float)args.Reading.AngularVelocityY * ControllerService.handheldDevice.AngularVelocityAxis.Y;
 
             base.ReadingChanged();
         }
@@ -56,33 +87,30 @@ namespace ControllerService.Sensors
                 Z = center ? this.reading_fixed.Z : this.reading.Z
             };
 
-            if (controller.virtualTarget != null)
+            reading *= ControllerService.profile.gyrometer;
+
+            if (ratio)
+                reading.Y *= ControllerService.handheldDevice.WidthHeightRatio;
+
+            var readingZ = ControllerService.profile.steering == 0 ? reading.Z : reading.Y;
+            var readingY = ControllerService.profile.steering == 0 ? reading.Y : reading.Z;
+            var readingX = ControllerService.profile.steering == 0 ? reading.X : reading.X;
+
+            if (ControllerService.profile.inverthorizontal)
             {
-                reading *= controller.profile.gyrometer;
-
-                if (ratio)
-                    reading.Y *= controller.handheldDevice.WidthHeightRatio;
-
-                var readingZ = controller.profile.steering == 0 ? reading.Z : reading.Y;
-                var readingY = controller.profile.steering == 0 ? reading.Y : reading.Z;
-                var readingX = controller.profile.steering == 0 ? reading.X : reading.X;
-
-                if (controller.profile.inverthorizontal)
-                {
-                    readingY *= -1.0f;
-                    readingZ *= -1.0f;
-                }
-
-                if (controller.profile.invertvertical)
-                {
-                    readingY *= -1.0f;
-                    readingX *= -1.0f;
-                }
-
-                reading.X = readingX;
-                reading.Y = readingY;
-                reading.Z = readingZ;
+                readingY *= -1.0f;
+                readingZ *= -1.0f;
             }
+
+            if (ControllerService.profile.invertvertical)
+            {
+                readingY *= -1.0f;
+                readingX *= -1.0f;
+            }
+
+            reading.X = readingX;
+            reading.Y = readingY;
+            reading.Z = readingZ;
 
             return reading;
         }

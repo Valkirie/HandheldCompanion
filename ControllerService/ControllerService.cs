@@ -1,10 +1,12 @@
 using ControllerCommon;
 using ControllerCommon.Devices;
+using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
 using System;
@@ -13,9 +15,11 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using static ControllerCommon.Utils.DeviceUtils;
 using Device = ControllerCommon.Devices.Device;
 
 namespace ControllerService
@@ -25,16 +29,16 @@ namespace ControllerService
         // controllers vars
         private ViGEmClient VirtualClient;
         private ViGEmTarget VirtualTarget;
-
         public XInputController XInputController;
 
         private PipeServer pipeServer;
         private ProfileManager profileManager;
+        private SystemManager systemManager;
         private DSUServer DSUServer;
         public HidHide Hidder;
 
         // devices vars
-        private Device handheldDevice;
+        public static Device handheldDevice = new DefaultDevice();
         private UserIndex HIDidx;
         private string deviceInstancePath;
         private string baseContainerDeviceInstancePath;
@@ -56,6 +60,15 @@ namespace ControllerService
 
         private readonly ILogger<ControllerService> logger;
         private readonly IHostApplicationLifetime lifetime;
+
+        // sensor vars
+        private static SensorFamily SensorSelection;
+        private static int SensorPlacement;
+        private static bool SensorPlacementUpsideDown;
+
+        // profile vars
+        public static Profile profile = new();
+        public static Profile defaultProfile = new();
 
         public ControllerService(ILogger<ControllerService> logger, IHostApplicationLifetime lifetime)
         {
@@ -86,6 +99,10 @@ namespace ControllerService
             HIDrate = int.Parse(configuration.AppSettings.Settings["HIDrate"].Value); // Properties.Settings.Default.HIDrate;
             HIDstrength = double.Parse(configuration.AppSettings.Settings["HIDstrength"].Value); // Properties.Settings.Default.HIDstrength;
 
+            SensorSelection = Enum.Parse<SensorFamily>(configuration.AppSettings.Settings["SensorSelection"].Value); // Properties.Settings.Default.SensorSelection;
+            SensorPlacement = int.Parse(configuration.AppSettings.Settings["SensorPlacement"].Value); // Properties.Settings.Default.SensorPlacement;
+            SensorPlacementUpsideDown = bool.Parse(configuration.AppSettings.Settings["SensorPlacementUpsideDown"].Value); // Properties.Settings.Default.SensorPlacementUpsideDown;
+
             HIDidx = Enum.Parse<UserIndex>(configuration.AppSettings.Settings["HIDidx"].Value); // Properties.Settings.Default.HIDidx;
             deviceInstancePath = configuration.AppSettings.Settings["deviceInstancePath"].Value; // Properties.Settings.Default.deviceInstancePath;
             baseContainerDeviceInstancePath = configuration.AppSettings.Settings["baseContainerDeviceInstancePath"].Value; // Properties.Settings.Default.baseContainerDeviceInstancePath;
@@ -114,14 +131,12 @@ namespace ControllerService
             pipeServer.Disconnected += OnClientDisconnected;
             pipeServer.ClientMessage += OnClientMessage;
 
-            // XInputController settings
-            XInputController = new XInputController(logger, pipeServer);
-            XInputController.SetVibrationStrength(HIDstrength);
-            XInputController.SetPollRate(HIDrate);
-            XInputController.Updated += OnTargetSubmited;
-
-            // prepare physical controller
-            SetControllerIdx(HIDidx, deviceInstancePath, baseContainerDeviceInstancePath);
+            // initialize manager(s)
+            systemManager = new SystemManager(logger);
+            systemManager.SerialArrived += SystemManager_SerialArrived;
+            systemManager.SerialRemoved += SystemManager_SerialRemoved;
+            systemManager.StartListen();
+            SystemManager_SerialArrived(null);
 
             // get the actual handheld device
             var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
@@ -147,10 +162,17 @@ namespace ControllerService
                     logger.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
                     break;
             }
-            handheldDevice.ManufacturerName = ManufacturerName;
-            handheldDevice.ProductName = ProductName;
+            handheldDevice.Initialize(ManufacturerName, ProductName);
 
-            XInputController.SetDevice(handheldDevice);
+            // XInputController settings
+            XInputController = new XInputController(SensorSelection, logger, pipeServer);
+            XInputController.SetVibrationStrength(HIDstrength);
+            XInputController.SetPollRate(HIDrate);
+            XInputController.Updated += OnTargetSubmited;
+            XInputController.StartListening();
+
+            // prepare physical controller
+            SetControllerIdx(HIDidx, deviceInstancePath, baseContainerDeviceInstancePath);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport, logger);
@@ -162,16 +184,66 @@ namespace ControllerService
             profileManager.Updated += ProfileUpdated;
         }
 
+        private SerialUSBIMU sensor;
+        private void SystemManager_SerialArrived(PnPDevice device)
+        {
+            switch (SensorSelection)
+            {
+                case SensorFamily.SerialUSBIMU:
+                    {
+                        sensor = SerialUSBIMU.GetDefault(logger);
+
+                        if (sensor is null)
+                            break;
+
+                        sensor.Open();
+                        sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
+
+                        XInputController?.UpdateSensors();
+                    }
+                    break;
+            }
+
+            // send controller details
+            pipeServer.SendMessage(handheldDevice.ToPipe());
+        }
+
+        private void SystemManager_SerialRemoved(PnPDevice device)
+        {
+            switch (SensorSelection)
+            {
+                case SensorFamily.SerialUSBIMU:
+                    {
+                        if (sensor is null)
+                            break;
+
+                        sensor.Close();
+                        XInputController?.UpdateSensors();
+                    }
+                    break;
+            }
+
+            // send controller details
+            pipeServer.SendMessage(handheldDevice.ToPipe());
+        }
+
         private void SetControllerIdx(UserIndex idx, string deviceInstancePath, string baseContainerDeviceInstancePath)
         {
             ControllerEx controller = new ControllerEx(idx, logger);
-            XInputController.SetController(controller); // set even if disconnected
+            controller.deviceInstancePath = deviceInstancePath;
+            controller.baseContainerDeviceInstancePath = baseContainerDeviceInstancePath;
+
+            XInputController.SetController(controller);
 
             if (!controller.IsConnected())
             {
                 logger.LogWarning("No physical controller detected on UserIndex: {0}", idx);
                 return;
             }
+
+            if (this.deviceInstancePath == deviceInstancePath &&
+                this.baseContainerDeviceInstancePath == baseContainerDeviceInstancePath)
+                return;
 
             logger.LogInformation("Listening to physical controller on UserIndex: {0}", idx);
 
@@ -189,6 +261,11 @@ namespace ControllerService
             Hidder.RegisterController(deviceInstancePath);
             Hidder.RegisterController(baseContainerDeviceInstancePath);
 
+            // update variables
+            this.HIDidx = idx;
+            this.deviceInstancePath = deviceInstancePath;
+            this.baseContainerDeviceInstancePath = baseContainerDeviceInstancePath;
+
             // update settings
             configuration.AppSettings.Settings["HIDidx"].Value = ((int)idx).ToString();
             configuration.AppSettings.Settings["deviceInstancePath"].Value = deviceInstancePath;
@@ -199,6 +276,7 @@ namespace ControllerService
         private void SetControllerMode(HIDmode mode)
         {
             // disconnect current virtual controller
+            // todo: do not disconnect if similar to incoming mode
             VirtualTarget?.Disconnect();
 
             switch (mode)
@@ -374,24 +452,7 @@ namespace ControllerService
         private void OnClientConnected(object sender)
         {
             // send controller details
-            pipeServer.SendMessage(new PipeServerHandheld()
-            {
-                ManufacturerName = handheldDevice.ManufacturerName,
-                ProductName = handheldDevice.ProductName,
-                ProductIllustration = handheldDevice.ProductIllustration,
-
-                SensorName = handheldDevice.sensorName,
-                ProductSupported = handheldDevice.ProductSupported,
-
-                hasAccelerometer = handheldDevice.hasAccelerometer,
-                hasGyrometer = handheldDevice.hasGyrometer,
-                hasInclinometer = handheldDevice.hasInclinometer,
-
-                ControllerName = XInputController.ProductName,
-                ControllerVID = XInputController.controllerEx.GetVID(),
-                ControllerPID = XInputController.controllerEx.GetVID(),
-                ControllerIdx = (int)XInputController.controllerEx.UserIndex
-            });
+            pipeServer.SendMessage(handheldDevice.ToPipe());
 
             // send server settings
             pipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
@@ -399,7 +460,21 @@ namespace ControllerService
 
         internal void ProfileUpdated(Profile profile, bool backgroundtask)
         {
-            XInputController.SetProfile(profile);
+            // skip if current profile
+            if (profile == ControllerService.profile)
+                return;
+
+            // restore default profile
+            if (profile == null)
+                profile = defaultProfile;
+
+            ControllerService.profile = profile;
+
+            // update default profile
+            if (profile.isDefault)
+                defaultProfile = profile;
+            else
+                logger.LogInformation("Profile {0} applied.", profile.name);
         }
 
         public void UpdateSettings(Dictionary<string, object> args)
@@ -409,8 +484,11 @@ namespace ControllerService
                 string name = pair.Key;
                 string property = pair.Value.ToString();
 
-                configuration.AppSettings.Settings[name].Value = property;
-                configuration.Save(ConfigurationSaveMode.Modified);
+                if (configuration.AppSettings.Settings.AllKeys.ToList().Contains(name))
+                {
+                    configuration.AppSettings.Settings[name].Value = property;
+                    configuration.Save(ConfigurationSaveMode.Modified);
+                }
 
                 ApplySetting(name, property);
                 logger.LogDebug("{0} set to {1}", name, property);
@@ -480,6 +558,26 @@ namespace ControllerService
                         DSUServer.port = value;
                     }
                     break;
+                case "SensorPlacement":
+                    {
+                        int value = int.Parse(property);
+                        SensorPlacement = value;
+                        sensor?.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
+                    }
+                    break;
+                case "SensorPlacementUpsideDown":
+                    {
+                        bool value = bool.Parse(property);
+                        SensorPlacementUpsideDown = value;
+                        sensor?.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
+                    }
+                    break;
+                /* case "SensorSelection":
+                    {
+                        SensorFamily value = Enum.Parse<SensorFamily>(property);
+                        SensorSelection = value;
+                    }
+                    break; */
             }
         }
 
@@ -514,6 +612,9 @@ namespace ControllerService
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            // stop listening from controller
+            XInputController.StopListening();
+
             // turn off cloaking
             Hidder?.SetCloaking(!HIDuncloakonclose, XInputController.ProductName);
 
@@ -528,6 +629,9 @@ namespace ControllerService
 
             // stop Pipe Server
             pipeServer?.Stop();
+
+            // stop System Manager
+            systemManager.StopListen();
 
             return Task.CompletedTask;
         }

@@ -1,36 +1,70 @@
+using ControllerCommon.Sensors;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerService.Sensors
 {
     public class XInputInclinometer : XInputSensor
     {
-        public Accelerometer sensor;
-
-        public XInputInclinometer(XInputController controller, ILogger logger) : base(controller, logger)
+        public XInputInclinometer(SensorFamily sensorFamily, int updateInterval, ILogger logger) : base(logger)
         {
-            sensor = Accelerometer.GetDefault();
-            if (sensor != null)
+            this.updateInterval = updateInterval;
+            UpdateSensor(sensorFamily);
+        }
+
+        public void UpdateSensor(SensorFamily sensorFamily)
+        {
+            switch (sensorFamily)
             {
-                sensor.ReportInterval = (uint)updateInterval;
-                logger.LogInformation("{0} initialised. Report interval set to {1}ms", this.ToString(), sensor.ReportInterval);
-                sensor.ReadingChanged += ReadingChanged;
+                case SensorFamily.WindowsDevicesSensors:
+                    sensor = Accelerometer.GetDefault();
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    sensor = SerialUSBIMU.GetDefault(logger);
+                    break;
             }
-            else
+
+            if (sensor == null)
             {
-                logger.LogWarning("{0} not initialised.", this.ToString());
+                logger.LogWarning("{0} not initialised as a {1}.", this.ToString(), sensorFamily.ToString());
+                return;
             }
+
+            switch (sensorFamily)
+            {
+                case SensorFamily.WindowsDevicesSensors:
+                    ((Accelerometer)sensor).ReportInterval = (uint)updateInterval;
+                    ((Accelerometer)sensor).ReadingChanged += ReadingChanged;
+                    filter.SetFilterAttrs(ControllerService.handheldDevice.oneEuroSettings.minCutoff, ControllerService.handheldDevice.oneEuroSettings.beta);
+
+                    logger.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    ((SerialUSBIMU)sensor).ReadingChanged += ReadingChanged;
+                    filter.SetFilterAttrs(((SerialUSBIMU)sensor).GetFilterCutoff(), ((SerialUSBIMU)sensor).GetFilterBeta());
+
+                    logger.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
+                    break;
+            }
+        }
+
+        private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
+        {
+            this.reading.X = this.reading_fixed.X = (float)filter.axis1Filter.Filter(AccelerationG.X * ControllerService.handheldDevice.AngularVelocityAxis.X, 1 / XInputController.DeltaSeconds);
+            this.reading.Y = this.reading_fixed.Y = (float)filter.axis2Filter.Filter(AccelerationG.Y * ControllerService.handheldDevice.AngularVelocityAxis.Y, 1 / XInputController.DeltaSeconds);
+            this.reading.Z = this.reading_fixed.Z = (float)filter.axis3Filter.Filter(AccelerationG.Z * ControllerService.handheldDevice.AngularVelocityAxis.Z, 1 / XInputController.DeltaSeconds);
+
+            base.ReadingChanged();
         }
 
         private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
-            AccelerometerReading reading = args.Reading;
-
-            this.reading.X = this.reading_fixed.X = (float)reading.AccelerationX;
-            this.reading.Y = this.reading_fixed.Y = (float)reading.AccelerationZ;
-            this.reading.Z = this.reading_fixed.Z = (float)reading.AccelerationY;
+            this.reading.X = this.reading_fixed.X = (float)filter.axis1Filter.Filter(args.Reading.AccelerationX * ControllerService.handheldDevice.AccelerationAxis.X, 1 / XInputController.DeltaSeconds);
+            this.reading.Y = this.reading_fixed.Y = (float)filter.axis2Filter.Filter(args.Reading.AccelerationZ * ControllerService.handheldDevice.AccelerationAxis.Z, 1 / XInputController.DeltaSeconds);
+            this.reading.Z = this.reading_fixed.Z = (float)filter.axis3Filter.Filter(args.Reading.AccelerationY * ControllerService.handheldDevice.AccelerationAxis.Y, 1 / XInputController.DeltaSeconds);
 
             base.ReadingChanged();
         }
@@ -44,28 +78,25 @@ namespace ControllerService.Sensors
                 Z = center ? this.reading_fixed.Z : this.reading.Z
             };
 
-            if (controller.virtualTarget != null)
+            var readingZ = ControllerService.profile.steering == 0 ? reading.Z : reading.Y;
+            var readingY = ControllerService.profile.steering == 0 ? reading.Y : -reading.Z;
+            var readingX = ControllerService.profile.steering == 0 ? reading.X : reading.X;
+
+            if (ControllerService.profile.inverthorizontal)
             {
-                var readingZ = controller.profile.steering == 0 ? reading.Z : reading.Y;
-                var readingY = controller.profile.steering == 0 ? reading.Y : -reading.Z;
-                var readingX = controller.profile.steering == 0 ? reading.X : reading.X;
-
-                if (controller.profile.inverthorizontal)
-                {
-                    readingY *= -1.0f;
-                    readingZ *= -1.0f;
-                }
-
-                if (controller.profile.invertvertical)
-                {
-                    readingY *= -1.0f;
-                    readingX *= -1.0f;
-                }
-
-                reading.X = readingX;
-                reading.Y = readingY;
-                reading.Z = readingZ;
+                readingY *= -1.0f;
+                readingZ *= -1.0f;
             }
+
+            if (ControllerService.profile.invertvertical)
+            {
+                readingY *= -1.0f;
+                readingX *= -1.0f;
+            }
+
+            reading.X = readingX;
+            reading.Y = readingY;
+            reading.Z = readingZ;
 
             // Calculate angles around Y and X axis (Theta and Psi) using all 3 directions of accelerometer
             // Based on: https://www.digikey.com/en/articles/using-an-accelerometer-for-inclination-sensing               

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
 
@@ -6,7 +8,6 @@ namespace ControllerCommon.Utils
 {
     public class DeviceUtils
     {
-        #region imports
         [StructLayout(LayoutKind.Explicit)]
         public struct XInputGamepad
         {
@@ -85,6 +86,7 @@ namespace ControllerCommon.Utils
             public UInt32 XID;
         };
 
+        #region imports
         [DllImport("xinput1_4.dll", EntryPoint = "#108")]
         public static extern int XInputGetCapabilitiesEx
         (
@@ -95,47 +97,43 @@ namespace ControllerCommon.Utils
         );
         #endregion
 
-        public class USBDeviceInfo
+        public enum SensorFamily
         {
-            public USBDeviceInfo(string deviceId, string name, string description)
-            {
-                DeviceId = deviceId;
-                Name = name;
-                Description = description;
-            }
-
-            public string DeviceId { get; }
-            public string Name { get; }
-            public string Description { get; }
-
-            public override string ToString()
-            {
-                return Name;
-            }
+            WindowsDevicesSensors = 0,
+            SerialUSBIMU = 1,
+            None = 2
         }
 
         public static USBDeviceInfo GetUSBDevice(string DeviceId)
         {
             try
             {
-                using (var mos = new ManagementObjectSearcher($"Select * From Win32_PnPEntity WHERE DeviceId LIKE '%{DeviceId}%'"))
+                using (var searcher = new ManagementObjectSearcher($"SELECT * From Win32_PnPEntity WHERE DeviceId = '{DeviceId.Replace("\\", "\\\\")}'"))
                 {
-                    using (ManagementObjectCollection collection = mos.Get())
-                    {
-                        foreach (var device in collection)
-                        {
-
-                            var id = device.GetPropertyValue("DeviceId").ToString();
-                            var name = device.GetPropertyValue("Name").ToString();
-                            var description = device.GetPropertyValue("Description").ToString();
-                            return new USBDeviceInfo(id, name, description);
-                        }
-                    }
+                    var devices = searcher.Get().Cast<ManagementBaseObject>().ToList();
+                    return new USBDeviceInfo(devices.FirstOrDefault());
                 }
             }
             catch (Exception) { }
 
             return null;
+        }
+
+        public static List<USBDeviceInfo> GetSerialDevices()
+        {
+            List<USBDeviceInfo> serials = new List<USBDeviceInfo>();
+            try
+            {
+                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE Name LIKE '%COM%' AND PNPClass = 'Ports'"))
+                {
+                    var devices = searcher.Get().Cast<ManagementBaseObject>().ToList();
+                    foreach (var device in devices)
+                        serials.Add(new USBDeviceInfo(device));
+                }
+            }
+            catch (Exception) { }
+
+            return serials;
         }
     }
 }

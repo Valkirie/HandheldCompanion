@@ -32,6 +32,15 @@ namespace HandheldCompanion.Views.Pages
             this.pipeClient.ServerMessage += OnServerMessage;
         }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+        }
+
+        public void Page_Closed()
+        {
+            pipeClient.ServerMessage -= OnServerMessage;
+        }
+
         private void OnServerMessage(object sender, PipeMessage message)
         {
             switch (message.code)
@@ -67,10 +76,8 @@ namespace HandheldCompanion.Views.Pages
                 HandheldGrid.Visibility = Visibility.Visible;
 
                 VersionValue.Text = mainWindow.fileVersionInfo.FileVersion;
-                SensorName.Text = handheldDevice.SensorName;
-                GyrometerValue.Text = handheldDevice.hasGyrometer ? "Detected" : "N/A";
-                AccelerometerValue.Text = handheldDevice.hasAccelerometer ? "Detected" : "N/A";
-                InclinometerValue.Text = handheldDevice.hasInclinometer ? "Detected" : "N/A";
+                SensorInternal.Text = handheldDevice.hasInternal ? handheldDevice.InternalSensorName : "N/A";
+                SensorExternal.Text = handheldDevice.hasExternal ? handheldDevice.ExternalSensorName : "N/A";
 
                 if (!handheldDevice.ProductSupported)
                 {

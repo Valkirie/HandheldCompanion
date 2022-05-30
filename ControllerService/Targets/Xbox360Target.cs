@@ -92,7 +92,7 @@ namespace ControllerService.Targets
             if (!IsConnected)
                 return;
 
-            if (xinputController.profile.whitelisted)
+            if (ControllerService.profile.whitelisted)
                 return;
 
             base.UpdateReport(Gamepad);

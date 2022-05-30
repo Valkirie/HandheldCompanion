@@ -1,7 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -57,8 +56,7 @@ namespace HandheldCompanion.Views.Pages
             controllerManager = new ControllerManager(logger);
             controllerManager.ControllerPlugged += ControllerPlugged;
             controllerManager.ControllerUnplugged += ControllerUnplugged;
-
-            controllerManager.Start();
+            controllerManager.StartListen();
         }
 
         public ControllerPage(string Tag, MainWindow mainWindow, ILogger logger) : this()
@@ -75,10 +73,21 @@ namespace HandheldCompanion.Views.Pages
             this.pipeClient.ServerMessage += OnServerMessage;
 
             this.serviceManager = mainWindow.serviceManager;
-            this.serviceManager.Updated += ServiceManager_Updated;
+            this.serviceManager.Updated += OnServiceUpdate;
         }
 
-        private async void ServiceManager_Updated(ServiceControllerStatus status, int mode)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+        }
+
+        public void Page_Closed()
+        {
+            pipeClient.ServerMessage -= OnServerMessage;
+            serviceManager.Updated -= OnServiceUpdate;
+            controllerManager.StopListen();
+        }
+
+        private async void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
             switch (status)
             {
@@ -109,10 +118,6 @@ namespace HandheldCompanion.Views.Pages
                     break;
             }
             UpdateMainGrid();
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
         }
 
         private void ControllerUnplugged(ControllerEx controller)

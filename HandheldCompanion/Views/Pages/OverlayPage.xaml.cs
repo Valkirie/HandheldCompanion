@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Utils;
+using HandheldCompanion.Models;
 using HandheldCompanion.Views.Windows;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
@@ -31,6 +32,9 @@ namespace HandheldCompanion.Views.Pages
             this.overlay.TrackpadsTriggerUpdated += Overlay_TrackpadsTriggerUpdated;
 
             this.logger = logger;
+
+            // controller enabler
+            ToyControllerRadio.IsEnabled = Properties.Settings.Default.OverlayControllerFisherPrice;
 
             // controller model
             OverlayModel.SelectedIndex = Properties.Settings.Default.OverlayModel;
@@ -72,6 +76,22 @@ namespace HandheldCompanion.Views.Pages
             TrackpadsTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph((GamepadButtonFlagsExt)TrackpadsButton);
             TrackpadsTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(TrackpadsButton);
             overlay.trackpadTriggerButtons = TrackpadsButton;
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+        }
+
+        public void Page_Closed()
+        {
+        }
+
+        public void UnlockToyController()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                ToyControllerRadio.IsEnabled = true;
+            });
         }
 
         private void UpdateUI_TrackpadsPosition(int trackpadsAlignment)
@@ -157,11 +177,6 @@ namespace HandheldCompanion.Views.Pages
             }
         }
 
-        private void Page_Loaded(object sender, System.Windows.RoutedEventArgs e)
-        {
-            // do something
-        }
-
         private void SliderControllerSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (overlay == null)
@@ -200,6 +215,13 @@ namespace HandheldCompanion.Views.Pages
 
         private void OverlayModel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            switch((OverlayModelMode)OverlayModel.SelectedIndex)
+            {
+                case OverlayModelMode.Toy:
+                    overlay.UpdateBonusModel(new ModelToyController());
+                    break;
+            }
+
             overlay.UpdateModelMode((OverlayModelMode)OverlayModel.SelectedIndex);
 
             // save settings

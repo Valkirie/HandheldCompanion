@@ -54,13 +54,13 @@
       <Value Profile="(Default)">400</Value>
     </Setting>
     <Setting Name="OverlayControllerTrigger" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">33</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="OverlayTrackpadsAlignment" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="OverlayTrackpadsTrigger" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">34</Value>
+      <Value Profile="(Default)">2</Value>
     </Setting>
     <Setting Name="OverlayTrackpadsOpacity" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0.25</Value>
@@ -79,6 +79,18 @@
     </Setting>
     <Setting Name="OverlayControllerRestingRoll" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="SensorPlacementUpsideDown" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SensorSelection" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="SensorPlacement" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="OverlayControllerFisherPrice" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

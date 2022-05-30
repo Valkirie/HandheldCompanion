@@ -630,6 +630,34 @@
   <data name="SettingsPage_OpenAppBackgroundDesc" xml:space="preserve">
     <value>应用程序启动时将开始最小化，并出现在任务栏上</value>
   </data>
+  <data name="SettingsPage_SensorOptions" xml:space="preserve">
+    <value>Sensor options</value>
+    <comment>Translate</comment>
+  </data>
+  <data name="SettingsPage_SensorPlacementDirection" xml:space="preserve">
+    <value>External sensor placement direction</value>
+    <comment>Translate</comment>
+  </data>
+  <data name="SettingsPage_SensorPlacementDirectionDesc" xml:space="preserve">
+    <value>Select on which side of the device the senor has been mounted</value>
+    <comment>Translate</comment>
+  </data>
+  <data name="SettingsPage_SensorPlacementUpsideDown" xml:space="preserve">
+    <value>External sensor upside down</value>
+    <comment>Translate</comment>
+  </data>
+  <data name="SettingsPage_SensorPlacementUpsideDownDesc" xml:space="preserve">
+    <value>Sensor has been mounted upside down, possible with USB-C convertor</value>
+    <comment>Translate</comment>
+  </data>
+  <data name="SettingsPage_SensorSelection" xml:space="preserve">
+    <value>Sensor selection</value>
+    <comment>Translate</comment>
+  </data>
+  <data name="SettingsPage_SensorSelectionDesc" xml:space="preserve">
+    <value>Select the desired sensor used for motion input</value>
+    <comment>Translate</comment>
+  </data>
   <data name="SettingsPage_ServiceOptions" xml:space="preserve">
     <value>服务设置</value>
   </data>

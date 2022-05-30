@@ -75,9 +75,16 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:RadioButtons Name="OverlayModel" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="OverlayModel_SelectionChanged">
-                            <Label Content="{x:Static resx:Resources.OverlayPage_OEMController}"></Label>
-                            <Label Content="{x:Static resx:Resources.OverlayPage_EmulatedController}"></Label>
+                        <ui:RadioButtons Name="OverlayModel" Grid.Column="1" HorizontalAlignment="Right" SelectionChanged="OverlayModel_SelectionChanged">
+                            <RadioButton>
+                                <Label Content="{x:Static resx:Resources.OverlayPage_OEMController}"></Label>
+                            </RadioButton>
+                            <RadioButton>
+                                <Label Content="{x:Static resx:Resources.OverlayPage_EmulatedController}"></Label>
+                            </RadioButton>
+                            <RadioButton Name="ToyControllerRadio" IsEnabled="False">
+                                <Label Content="{x:Static resx:Resources.OverlayPage_ToyController}"></Label>
+                            </RadioButton>
                         </ui:RadioButtons>
                     </Grid>
                 </Border>

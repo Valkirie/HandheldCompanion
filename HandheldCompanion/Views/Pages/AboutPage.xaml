@@ -87,18 +87,14 @@
                                 </Grid.ColumnDefinitions>
 
                                 <ui:SimpleStackPanel Spacing="12">
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorName}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Gyrometer}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Accelerometer}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Inclinometer}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorInternal}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorExternal}" FontSize="14"/>
                                 </ui:SimpleStackPanel>
 
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
-                                    <TextBlock Name="SensorName" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock Name="GyrometerValue" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock Name="AccelerometerValue" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock Name="InclinometerValue" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                </ui:SimpleStackPanel>
+                                    <TextBlock Name="SensorInternal" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Name="SensorExternal" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    </ui:SimpleStackPanel>
                             </Grid>
                         </ui:SimpleStackPanel>
                     </Grid>
