@@ -630,7 +630,7 @@ namespace HandheldCompanion.Views.Windows
 
         public Vector3D DesiredAngle = new Vector3D(0, 0, 0);
         private float q_w, q_x, q_y, q_z;
-        private float x = 160.5f, y = 0.0f, z = 0.0f;
+        private float x = 0.0f, y = 0.0f, z = 0.0f;
 
         private void UpdateModelVisual3D()
         {
