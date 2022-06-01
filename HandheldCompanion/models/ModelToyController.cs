@@ -162,44 +162,53 @@ namespace HandheldCompanion.Models
             foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
             {
                 int i = 0;
+                Material buttonMaterial = null;
+
                 if (ButtonMap.ContainsKey(button))
                     foreach (var model3D in ButtonMap[button])
                     {
                         switch (button)
                         {
                             case GamepadButtonFlags.X:
-                                DefaultMaterials[model3D] = MaterialPlasticGreen;
+                                buttonMaterial = MaterialPlasticGreen;
                                 break;
                             case GamepadButtonFlags.Y:
-                                DefaultMaterials[model3D] = MaterialPlasticBlue;
+                                buttonMaterial = MaterialPlasticBlue;
                                 break;
                             case GamepadButtonFlags.A:
-                                DefaultMaterials[model3D] = MaterialPlasticOrange;
+                                buttonMaterial = MaterialPlasticOrange;
                                 break;
                             case GamepadButtonFlags.B:
-                                DefaultMaterials[model3D] = MaterialPlasticRed;
+                                buttonMaterial = MaterialPlasticRed;
                                 break;
                             case GamepadButtonFlags.DPadDown:
                             case GamepadButtonFlags.DPadUp:
                             case GamepadButtonFlags.DPadLeft:
                             case GamepadButtonFlags.DPadRight:
-                                DefaultMaterials[model3D] = MaterialPlasticRed;
+                                buttonMaterial = MaterialPlasticRed;
                                 break;
                             case GamepadButtonFlags.LeftShoulder:
-                                DefaultMaterials[model3D] = MaterialPlasticOrange;
+                                buttonMaterial = MaterialPlasticOrange;
                                 break;
                             case GamepadButtonFlags.RightShoulder:
-                                DefaultMaterials[model3D] = MaterialPlasticPurple;
+                                buttonMaterial = MaterialPlasticPurple;
                                 break;
                             case GamepadButtonFlags.Start:
                             case GamepadButtonFlags.Back:
-                                DefaultMaterials[model3D] = MaterialPlasticYellow;
+                                buttonMaterial = MaterialPlasticYellow;
                                 break;
                             case GamepadButtonFlags.LeftThumb:
                             case GamepadButtonFlags.RightThumb:
-                                DefaultMaterials[model3D] = MaterialPlasticBlue;
+                                buttonMaterial = MaterialPlasticBlue;
+                                break;
+                            default:
+                                buttonMaterial = MaterialPlasticBlack;
                                 break;
                         }
+
+                        DefaultMaterials[model3D] = buttonMaterial;
+                        ((GeometryModel3D)model3D.Children[0]).Material = buttonMaterial;
+
                         i++;
                     }
             }

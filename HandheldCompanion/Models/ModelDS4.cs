@@ -115,24 +115,33 @@ namespace HandheldCompanion.Models
             foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
             {
                 int i = 0;
+                Material buttonMaterial = null;
+
                 if (ButtonMap.ContainsKey(button))
                     foreach (var model3D in ButtonMap[button])
                     {
                         switch (button)
                         {
                             case GamepadButtonFlags.X:
-                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticBlack : MaterialPlasticSquare;
+                                buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticSquare;
                                 break;
                             case GamepadButtonFlags.Y:
-                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticBlack : MaterialPlasticTriangle;
+                                buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticTriangle;
                                 break;
                             case GamepadButtonFlags.A:
-                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticBlack : MaterialPlasticCross;
+                                buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticCross;
                                 break;
                             case GamepadButtonFlags.B:
-                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticBlack : MaterialPlasticCircle;
+                                buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticCircle;
+                                break;
+                            default:
+                                buttonMaterial = MaterialPlasticBlack;
                                 break;
                         }
+
+                        DefaultMaterials[model3D] = buttonMaterial;
+                        ((GeometryModel3D)model3D.Children[0]).Material = buttonMaterial;
+
                         i++;
                     }
             }

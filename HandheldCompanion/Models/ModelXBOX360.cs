@@ -102,24 +102,33 @@ namespace HandheldCompanion.Models
             foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
             {
                 int i = 0;
+                Material buttonMaterial = null;
+
                 if (ButtonMap.ContainsKey(button))
                     foreach (var model3D in ButtonMap[button])
                     {
                         switch (button)
                         {
                             case GamepadButtonFlags.X:
-                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticTransparent : MaterialPlasticBlue;
+                                buttonMaterial = i == 0 ? MaterialPlasticTransparent : MaterialPlasticBlue;
                                 break;
                             case GamepadButtonFlags.Y:
-                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticTransparent : MaterialPlasticYellow;
+                                buttonMaterial = i == 0 ? MaterialPlasticTransparent : MaterialPlasticYellow;
                                 break;
                             case GamepadButtonFlags.A:
-                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticTransparent : MaterialPlasticGreen;
+                                buttonMaterial = i == 0 ? MaterialPlasticTransparent : MaterialPlasticGreen;
                                 break;
                             case GamepadButtonFlags.B:
-                                DefaultMaterials[model3D] = i == 0 ? MaterialPlasticTransparent : MaterialPlasticRed;
+                                buttonMaterial = i == 0 ? MaterialPlasticTransparent : MaterialPlasticRed;
+                                break;
+                            default:
+                                buttonMaterial = MaterialPlasticBlack;
                                 break;
                         }
+
+                        DefaultMaterials[model3D] = buttonMaterial;
+                        ((GeometryModel3D)model3D.Children[0]).Material = buttonMaterial;
+
                         i++;
                     }
             }
