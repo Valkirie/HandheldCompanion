@@ -61,9 +61,9 @@ namespace ControllerService.Sensors
 
         private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
         {
-            this.reading.X = this.reading_fixed.X = (float)filter.axis1Filter.Filter(AccelerationG.X * ControllerService.handheldDevice.AccelerationAxis.X, XInputController.DeltaSeconds);
-            this.reading.Y = this.reading_fixed.Y = (float)filter.axis2Filter.Filter(AccelerationG.Y * ControllerService.handheldDevice.AccelerationAxis.Y, XInputController.DeltaSeconds);
-            this.reading.Z = this.reading_fixed.Z = (float)filter.axis3Filter.Filter(AccelerationG.Z * ControllerService.handheldDevice.AccelerationAxis.Z, XInputController.DeltaSeconds);
+            this.reading.X = this.reading_fixed.X = (float)filter.axis1Filter.Filter(AccelerationG.X, XInputController.DeltaSeconds);
+            this.reading.Y = this.reading_fixed.Y = (float)filter.axis2Filter.Filter(AccelerationG.Y, XInputController.DeltaSeconds);
+            this.reading.Z = this.reading_fixed.Z = (float)filter.axis3Filter.Filter(AccelerationG.Z, XInputController.DeltaSeconds);
 
             base.ReadingChanged();
         }
