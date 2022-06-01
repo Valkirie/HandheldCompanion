@@ -524,6 +524,21 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {
+        ///  &quot;name&quot;: &quot;Power Control Panel&quot;,
+        ///  &quot;path&quot;: &quot;Power Control Panel.exe&quot;,
+        ///  &quot;executable&quot;: &quot;Power Control Panel.exe&quot;,
+        ///  &quot;whitelisted&quot;: true
+        ///}
+        ///.
+        /// </summary>
+        public static string PowerControlPanel_json {
+            get {
+                return ResourceManager.GetString("PowerControlPanel.json", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         public static byte[] xinput1_x64 {
