@@ -274,7 +274,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_ServiceStartup" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceStartup_Toggled" IsEnabled="False">
+                        <ui:ToggleSwitch Name="Toggle_ServiceStartup" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceStartup_Toggled" IsEnabled="False" IsOn="True">
 
                         </ui:ToggleSwitch>
                     </Grid>
@@ -301,7 +301,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_ServiceShutdown" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceShutdown_Toggled" IsEnabled="False"/>
+                        <ui:ToggleSwitch Name="Toggle_ServiceShutdown" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceShutdown_Toggled" IsEnabled="False" IsOn="True"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>

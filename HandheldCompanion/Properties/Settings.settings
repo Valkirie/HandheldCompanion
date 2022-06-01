@@ -33,10 +33,10 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="StartServiceWithCompanion" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="HaltServiceWithCompanion" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="UpdateLastChecked" Type="System.DateTime" Scope="User">
       <Value Profile="(Default)">2022-03-16</Value>
