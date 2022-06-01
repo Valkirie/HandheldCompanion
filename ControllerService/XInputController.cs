@@ -168,13 +168,13 @@ namespace ControllerService
                 sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocities[XInputSensorFlags.Centered], Accelerations[XInputSensorFlags.Default]);
 
                 /*
-                logger.LogInformation("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
-                logger.LogInformation("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
-                logger.LogInformation("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Z);
+                logger.LogTrace("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
+                logger.LogTrace("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
+                logger.LogTrace("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Z);
                                 
-                logger.LogInformation("Plot AngRawX {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].X);
-                logger.LogInformation("Plot AngRawY {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].Y);
-                logger.LogInformation("Plot AngRawZ {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].Z);
+                logger.LogTrace("Plot AngRawX {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].X);
+                logger.LogTrace("Plot AngRawY {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].Y);
+                logger.LogTrace("Plot AngRawZ {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].Z);
                 */
 
                 // async update client(s)
@@ -213,17 +213,17 @@ namespace ControllerService
 
                 Task.Run(() =>
                 {
-                    logger.LogDebug("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
-                    logger.LogDebug("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
-                    logger.LogDebug("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Z);
+                    logger.LogTrace("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
+                    logger.LogTrace("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
+                    logger.LogTrace("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Z);
 
-                    logger.LogDebug("Plot GyroRawCX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].X);
-                    logger.LogDebug("Plot GyroRawCY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Y);
-                    logger.LogDebug("Plot GyroRawCZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Z);
+                    logger.LogTrace("Plot GyroRawCX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].X);
+                    logger.LogTrace("Plot GyroRawCY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Y);
+                    logger.LogTrace("Plot GyroRawCZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Z);
 
-                    logger.LogDebug("Plot PoseX {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().X);
-                    logger.LogDebug("Plot PoseY {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Y);
-                    logger.LogDebug("Plot PoseZ {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Z);
+                    logger.LogTrace("Plot PoseX {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().X);
+                    logger.LogTrace("Plot PoseY {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Y);
+                    logger.LogTrace("Plot PoseZ {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Z);
                 });
 
                 // get current gamepad state

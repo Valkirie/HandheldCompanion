@@ -59,7 +59,7 @@ namespace ControllerService.Sensors
             centerTimer.Stop();
             centerTimer.Start();
 
-            Task.Run(() => logger?.LogDebug("{0}.ReadingChanged({1:00.####}, {2:00.####}, {3:00.####})", this.GetType().Name, this.reading.X, this.reading.Y, this.reading.Z));
+            Task.Run(() => logger?.LogTrace("{0}.ReadingChanged({1:00.####}, {2:00.####}, {3:00.####})", this.GetType().Name, this.reading.X, this.reading.Y, this.reading.Z));
         }
 
         public static XInputSensorStatus GetStatus(SensorFamily sensorFamily)
