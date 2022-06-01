@@ -49,17 +49,14 @@ namespace ControllerService
 
         // settings vars
         Configuration configuration;
-
         private string DSUip;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
         private int DSUport, HIDrate;
         private double HIDstrength;
-
         private HIDmode HIDmode = HIDmode.NoController;
         private HIDstatus HIDstatus = HIDstatus.Disconnected;
 
         private readonly ILogger<ControllerService> logger;
-        private readonly IHostApplicationLifetime lifetime;
 
         // sensor vars
         private static SensorFamily SensorSelection;
@@ -73,7 +70,6 @@ namespace ControllerService
         public ControllerService(ILogger<ControllerService> logger, IHostApplicationLifetime lifetime)
         {
             this.logger = logger;
-            this.lifetime = lifetime;
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
@@ -275,6 +271,8 @@ namespace ControllerService
 
         private void SetControllerMode(HIDmode mode)
         {
+            HIDmode = mode;
+
             // disconnect current virtual controller
             // todo: do not disconnect if similar to incoming mode
             VirtualTarget?.Disconnect();
@@ -583,10 +581,6 @@ namespace ControllerService
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            lifetime.ApplicationStarted.Register(OnStarted);
-            lifetime.ApplicationStopping.Register(OnStopping);
-            lifetime.ApplicationStopped.Register(OnStopped);
-
             // turn on cloaking
             Hidder.SetCloaking(HIDcloaked, XInputController.ProductName);
 
@@ -648,25 +642,18 @@ namespace ControllerService
                 case PowerModes.Resume:
                     // (re)initialize sensors
                     XInputController?.UpdateSensors();
+
+                    // (re)initialize ViGEm
+                    VirtualClient = new ViGEmClient();
+
+                    // update virtual controller
+                    SetControllerMode(HIDmode);
+                    SetControllerStatus(HIDstatus);
                     break;
                 case PowerModes.Suspend:
+                    VirtualClient.Dispose();
                     break;
             }
-        }
-
-        private void OnStarted()
-        {
-            // Perform post-startup activities here
-        }
-
-        private void OnStopping()
-        {
-            // Perform on-stopping activities here
-        }
-
-        private void OnStopped()
-        {
-            // Perform post-stopped activities here
         }
 
         public Dictionary<string, string> GetSettings()
