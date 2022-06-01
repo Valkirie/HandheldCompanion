@@ -8,7 +8,7 @@
   },
   "Serilog": {
     "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Console" ],
-    "MinimumLevel": "Information",
+    "MinimumLevel": "Debug",
     "WriteTo": [
       {
         "Name": "File",
@@ -17,7 +17,12 @@
           "rollingInterval": "Day"
         }
       },
-      { "Name": "Console" }
+      {
+        "Name": "Console",
+        "Args": {
+          "restrictedToMinimumLevel": "Information"
+        }
+      }
     ]
   }
 }
