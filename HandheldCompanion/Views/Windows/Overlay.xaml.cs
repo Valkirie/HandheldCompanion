@@ -349,9 +349,9 @@ namespace HandheldCompanion.Views.Windows
                             q_y = sensor.q_y;
                             q_z = sensor.q_z;
 
-                            x = sensor.x;
-                            y = sensor.y;
-                            z = sensor.z;
+                            PoseRad.X = sensor.x;
+                            PoseRad.Y = sensor.y;
+                            PoseRad.Z = sensor.z;
                             break;
                     }
                     break;
@@ -628,9 +628,9 @@ namespace HandheldCompanion.Views.Windows
             ShoulderButton.Transform = TransformShoulder;
         }
 
-        public Vector3D DesiredAngle = new Vector3D(0, 0, 0);
-        private float q_w, q_x, q_y, q_z;
-        private float x = 0.0f, y = 0.0f, z = 0.0f;
+        public Vector3D DesiredAngleDeg = new Vector3D(0, 0, 0);
+        private float q_w = 0.0f, q_x = 0.0f, q_y = 1.0f, q_z = 0.0f;
+        private Vector3D PoseRad = new Vector3D(0, 3.14, 0);
 
         private void UpdateModelVisual3D()
         {
@@ -654,12 +654,12 @@ namespace HandheldCompanion.Views.Windows
                 Vector3D DiffAngle = new Vector3D(0, 0, 0);
 
                 // Determine diff angles
-                DiffAngle.X = (InputUtils.rad2deg(x) - (float)FaceCameraObjectAlignment.X) - (float)DesiredAngle.X;
-                DiffAngle.Y = (InputUtils.rad2deg(y) - (float)FaceCameraObjectAlignment.Y) - (float)DesiredAngle.Y;
-                DiffAngle.Z = (InputUtils.rad2deg(z) - (float)FaceCameraObjectAlignment.Z) - (float)DesiredAngle.Z;
+                DiffAngle.X = (InputUtils.rad2deg((float)PoseRad.X) - (float)FaceCameraObjectAlignment.X) - (float)DesiredAngleDeg.X;
+                DiffAngle.Y = (InputUtils.rad2deg((float)PoseRad.Y) - (float)FaceCameraObjectAlignment.Y) - (float)DesiredAngleDeg.Y;
+                DiffAngle.Z = (InputUtils.rad2deg((float)PoseRad.Z) - (float)FaceCameraObjectAlignment.Z) - (float)DesiredAngleDeg.Z;
 
                 // Handle wrap around at -180 +180 position which is horizontal for steering
-                DiffAngle.Y = (y < 0.0) ? DiffAngle.Y += 180.0f : DiffAngle.Y -= 180.0f;
+                DiffAngle.Y = ((float)PoseRad.Y < 0.0) ? DiffAngle.Y += 180.0f : DiffAngle.Y -= 180.0f;
 
                 // Correction amount for camera, increase slowly
                 FaceCameraObjectAlignment += DiffAngle * 0.0005; // 0.0015 = ~90 degrees in 30 seconds
@@ -682,7 +682,7 @@ namespace HandheldCompanion.Views.Windows
 
                 // Upward visibility rotation for shoulder buttons
                 // Model angle to compensate for
-                float ModelPoseXDeg = InputUtils.rad2deg(x) - (float)FaceCameraObjectAlignment.X;
+                float ModelPoseXDeg = InputUtils.rad2deg((float)PoseRad.X) - (float)FaceCameraObjectAlignment.X;
                 float ShoulderButtonsAngleDeg = 0.0f;
 
                 // Rotate shoulder 90 degrees upward while controller faces user
