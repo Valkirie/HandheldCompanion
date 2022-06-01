@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
+using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using SharpDX.XInput;
@@ -111,7 +112,14 @@ namespace ControllerService.Targets
             virtualController.SetSliderValue(Xbox360Slider.LeftTrigger, Gamepad.LeftTrigger);
             virtualController.SetSliderValue(Xbox360Slider.RightTrigger, Gamepad.RightTrigger);
 
-            virtualController.SubmitReport();
+            try
+            {
+                virtualController.SubmitReport();
+            }
+            catch (VigemBusNotFoundException)
+            {
+                // todo: prevent this from happening !
+            }
 
             base.SubmitReport();
         }

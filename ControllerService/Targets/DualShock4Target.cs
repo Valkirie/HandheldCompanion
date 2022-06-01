@@ -2,6 +2,7 @@
 using ControllerService.Sensors;
 using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
+using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using SharpDX.XInput;
@@ -213,7 +214,15 @@ namespace ControllerService.Targets
             outDS4Report.wTimestamp = (ushort)(xinputController.CurrentMicroseconds);
 
             DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
-            virtualController.SubmitRawReport(rawOutReportEx);
+
+            try
+            {
+                virtualController.SubmitRawReport(rawOutReportEx);
+            }
+            catch(VigemBusNotFoundException)
+            {
+                // todo: prevent this from happening !
+            }
 
             base.SubmitReport();
         }
