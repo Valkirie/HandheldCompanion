@@ -309,7 +309,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Slider_RestingPitch_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            overlay.DesiredAngle.X = Slider_RestingPitch.Value;
+            overlay.DesiredAngleDeg.X = Slider_RestingPitch.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerRestingPitch = Slider_RestingPitch.Value;
@@ -318,7 +318,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Slider_RestingYaw_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            overlay.DesiredAngle.Z = Slider_RestingYaw.Value;
+            overlay.DesiredAngleDeg.Z = Slider_RestingYaw.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerRestingYaw = Slider_RestingYaw.Value;
@@ -327,7 +327,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Slider_RestingRoll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            overlay.DesiredAngle.Y = Slider_RestingRoll.Value;
+            overlay.DesiredAngleDeg.Y = Slider_RestingRoll.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerRestingRoll = Slider_RestingRoll.Value;
