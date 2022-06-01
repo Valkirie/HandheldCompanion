@@ -123,7 +123,7 @@ namespace ControllerCommon
 
             try
             {
-                process.StartInfo.Arguments = $"create {name} binpath= \"{path}\" start= \"auto\" DisplayName= \"{display}\"";
+                process.StartInfo.Arguments = $"create {name} binpath= \"{path}\" start= \"demand\" DisplayName= \"{display}\"";
                 process.Start();
                 process.WaitForExit();
 
