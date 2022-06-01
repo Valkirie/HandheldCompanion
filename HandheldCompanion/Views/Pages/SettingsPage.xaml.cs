@@ -26,6 +26,8 @@ namespace HandheldCompanion.Views.Pages
         private PipeClient pipeClient;
         private ServiceManager serviceManager;
 
+        private bool Initialized;
+
         // settings vars
         public bool ToastEnable, RunAtStartup, StartMinimized, CloseMinimises, StartServiceWithCompanion, HaltServiceWithCompanion, SensorPlacementUpsideDown;
         public int ApplicationTheme, ServiceStartup, SensorSelection;
@@ -44,6 +46,7 @@ namespace HandheldCompanion.Views.Pages
         public SettingsPage()
         {
             InitializeComponent();
+            Initialized = true;
 
             Toggle_AutoStart.IsOn = RunAtStartup = Properties.Settings.Default.RunAtStartup;
             Toggle_Background.IsOn = StartMinimized = Properties.Settings.Default.StartMinimized;
@@ -184,6 +187,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_AutoStart_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             Properties.Settings.Default.RunAtStartup = Toggle_AutoStart.IsOn;
             Properties.Settings.Default.Save();
 
@@ -193,6 +199,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_Background_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             Properties.Settings.Default.StartMinimized = Toggle_Background.IsOn;
             Properties.Settings.Default.Save();
 
@@ -201,6 +210,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_StartupType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             ServiceStartMode mode;
             switch (cB_StartupType.SelectedIndex)
             {
@@ -225,6 +237,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_CloseMinimizes_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             Properties.Settings.Default.CloseMinimises = Toggle_CloseMinimizes.IsOn;
             Properties.Settings.Default.Save();
 
@@ -243,6 +258,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_ServiceShutdown_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             Properties.Settings.Default.HaltServiceWithCompanion = Toggle_ServiceShutdown.IsOn;
             Properties.Settings.Default.Save();
 
@@ -251,6 +269,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_ServiceStartup_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             Properties.Settings.Default.StartServiceWithCompanion = Toggle_ServiceStartup.IsOn;
             Properties.Settings.Default.Save();
 
@@ -259,6 +280,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_Language_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             if (cB_Language.SelectedItem == null)
                 return;
 
@@ -277,6 +301,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_Notification_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             Properties.Settings.Default.ToastEnable = Toggle_Notification.IsOn;
             Properties.Settings.Default.Save();
 
@@ -286,6 +313,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_Theme_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             if (cB_Theme.SelectedIndex == -1)
                 return;
 
@@ -316,6 +346,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_SensorSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             if (cB_SensorSelection.SelectedIndex == -1)
                 return;
 
@@ -365,6 +398,9 @@ namespace HandheldCompanion.Views.Pages
         }
         private void Toggle_SensorPlacementUpsideDown_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             Properties.Settings.Default.SensorPlacementUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
             Properties.Settings.Default.Save();
 

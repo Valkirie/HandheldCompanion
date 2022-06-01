@@ -18,10 +18,12 @@ namespace HandheldCompanion.Views.Pages
     {
         private ILogger logger;
         private Overlay overlay;
+        private bool Initialized;
 
         public OverlayPage()
         {
             InitializeComponent();
+            Initialized = true;
         }
 
         public OverlayPage(string Tag, Overlay overlay, ILogger logger) : this()
@@ -179,6 +181,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void SliderControllerSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!Initialized)
+                return;
+
             if (overlay == null)
                 return;
 
@@ -192,6 +197,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void SliderTrackpadsSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!Initialized)
+                return;
+
             if (overlay == null)
                 return;
 
@@ -215,7 +223,10 @@ namespace HandheldCompanion.Views.Pages
 
         private void OverlayModel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            switch((OverlayModelMode)OverlayModel.SelectedIndex)
+            if (!Initialized)
+                return;
+
+            switch ((OverlayModelMode)OverlayModel.SelectedIndex)
             {
                 case OverlayModelMode.Toy:
                     overlay.UpdateBonusModel(new ModelToyController());
@@ -251,6 +262,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void SliderTrackpadsOpacity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!Initialized)
+                return;
+
             if (overlay == null)
                 return;
 
