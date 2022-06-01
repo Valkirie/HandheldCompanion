@@ -35,15 +35,15 @@ namespace ControllerCommon
         {
             Task.Run(() =>
             {
-                logger.LogDebug("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaSeconds);
+                logger.LogTrace("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaSeconds);
 
-                logger.LogDebug("Plot XInputSensorFusion_AngularVelocityX {0} {1}", TotalMilliseconds, AngularVelocity.X);
-                logger.LogDebug("Plot XInputSensorFusion_AngularVelocityY {0} {1}", TotalMilliseconds, AngularVelocity.Y);
-                logger.LogDebug("Plot XInputSensorFusion_AngularVelocityZ {0} {1}", TotalMilliseconds, AngularVelocity.Z);
+                logger.LogTrace("Plot XInputSensorFusion_AngularVelocityX {0} {1}", TotalMilliseconds, AngularVelocity.X);
+                logger.LogTrace("Plot XInputSensorFusion_AngularVelocityY {0} {1}", TotalMilliseconds, AngularVelocity.Y);
+                logger.LogTrace("Plot XInputSensorFusion_AngularVelocityZ {0} {1}", TotalMilliseconds, AngularVelocity.Z);
 
-                logger.LogDebug("Plot XInputSensorFusion_AccelerationX {0} {1}", TotalMilliseconds, Acceleration.X);
-                logger.LogDebug("Plot XInputSensorFusion_AccelerationY {0} {1}", TotalMilliseconds, Acceleration.Y);
-                logger.LogDebug("Plot XInputSensorFusion_AccelerationZ {0} {1}", TotalMilliseconds, Acceleration.Z);
+                logger.LogTrace("Plot XInputSensorFusion_AccelerationX {0} {1}", TotalMilliseconds, Acceleration.X);
+                logger.LogTrace("Plot XInputSensorFusion_AccelerationY {0} {1}", TotalMilliseconds, Acceleration.Y);
+                logger.LogTrace("Plot XInputSensorFusion_AccelerationZ {0} {1}", TotalMilliseconds, Acceleration.Z);
             });
 
             // Check for empty inputs, prevent NaN computes
@@ -51,7 +51,7 @@ namespace ControllerCommon
 
             if (AngularVelocity.Equals(EmptyVector) || Acceleration.Equals(EmptyVector))
             {
-                logger.LogDebug("Sensorfusion prevented from calculating with empty vectors.");
+                logger.LogTrace("Sensorfusion prevented from calculating with empty vectors.");
                 return;
             }
 
@@ -91,9 +91,9 @@ namespace ControllerCommon
 
             Task.Run(() =>
             {
-                logger.LogDebug("Plot XInputSensorFusion_GravityVectorSimpleEndX {0} {1}", TotalMilliseconds, GravityVectorSimple.X);
-                logger.LogDebug("Plot XInputSensorFusion_GravityVectorSimpleEndY {0} {1}", TotalMilliseconds, GravityVectorSimple.Y);
-                logger.LogDebug("Plot XInputSensorFusion_GravityVectorSimpleEndZ {0} {1}", TotalMilliseconds, GravityVectorSimple.Z);
+                logger.LogTrace("Plot XInputSensorFusion_GravityVectorSimpleEndX {0} {1}", TotalMilliseconds, GravityVectorSimple.X);
+                logger.LogTrace("Plot XInputSensorFusion_GravityVectorSimpleEndY {0} {1}", TotalMilliseconds, GravityVectorSimple.Y);
+                logger.LogTrace("Plot XInputSensorFusion_GravityVectorSimpleEndZ {0} {1}", TotalMilliseconds, GravityVectorSimple.Z);
             });
         }
 
@@ -139,10 +139,10 @@ namespace ControllerCommon
 
             Task.Run(() =>
             {
-                logger.LogDebug("Plot vigemtarget_reverseRotationy.X {0} {1}", TotalMilliseconds, reverseRotation.X);
-                logger.LogDebug("Plot vigemtarget_reverseRotationy.Y {0} {1}", TotalMilliseconds, reverseRotation.Y);
-                logger.LogDebug("Plot vigemtarget_reverseRotationy.Z {0} {1}", TotalMilliseconds, reverseRotation.Z);
-                logger.LogDebug("Plot vigemtarget_reverseRotationy.W {0} {1}", TotalMilliseconds, reverseRotation.W);
+                logger.LogTrace("Plot vigemtarget_reverseRotationy.X {0} {1}", TotalMilliseconds, reverseRotation.X);
+                logger.LogTrace("Plot vigemtarget_reverseRotationy.Y {0} {1}", TotalMilliseconds, reverseRotation.Y);
+                logger.LogTrace("Plot vigemtarget_reverseRotationy.Z {0} {1}", TotalMilliseconds, reverseRotation.Z);
+                logger.LogTrace("Plot vigemtarget_reverseRotationy.W {0} {1}", TotalMilliseconds, reverseRotation.W);
             });
 
             // rotate gravity vector
@@ -153,13 +153,13 @@ namespace ControllerCommon
 
             Task.Run(() =>
             {
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_after_rotate_x {0} {1}", TotalMilliseconds, GravityVectorFancy.X);
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_after_rotate_y {0} {1}", TotalMilliseconds, GravityVectorFancy.Y);
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_after_rotate_z {0} {1}", TotalMilliseconds, GravityVectorFancy.Z);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_after_rotate_x {0} {1}", TotalMilliseconds, GravityVectorFancy.X);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_after_rotate_y {0} {1}", TotalMilliseconds, GravityVectorFancy.Y);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_after_rotate_z {0} {1}", TotalMilliseconds, GravityVectorFancy.Z);
 
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_SmoothAccel_x {0} {1}", TotalMilliseconds, SmoothAccel.X);
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_SmoothAccel_y {0} {1}", TotalMilliseconds, SmoothAccel.Y);
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_SmoothAccel_z {0} {1}", TotalMilliseconds, SmoothAccel.Z);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_SmoothAccel_x {0} {1}", TotalMilliseconds, SmoothAccel.X);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_SmoothAccel_y {0} {1}", TotalMilliseconds, SmoothAccel.Y);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_SmoothAccel_z {0} {1}", TotalMilliseconds, SmoothAccel.Z);
             });
 
             // Note to self, SmoothAccel seems OK.
@@ -172,13 +172,13 @@ namespace ControllerCommon
 
             Task.Run(() =>
             {
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_smoothInterpolator {0} {1}", TotalMilliseconds, smoothInterpolator);
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_ShakinessTimesInterpolator {0} {1}", TotalMilliseconds, Shakiness);
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_Shakiness {0} {1}", TotalMilliseconds, Shakiness);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_smoothInterpolator {0} {1}", TotalMilliseconds, smoothInterpolator);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_ShakinessTimesInterpolator {0} {1}", TotalMilliseconds, Shakiness);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_Shakiness {0} {1}", TotalMilliseconds, Shakiness);
 
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_x {0} {1}", TotalMilliseconds, SmoothAccel.X);
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_y {0} {1}", TotalMilliseconds, SmoothAccel.Y);
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_z {0} {1}", TotalMilliseconds, SmoothAccel.Z);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_x {0} {1}", TotalMilliseconds, SmoothAccel.X);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_y {0} {1}", TotalMilliseconds, SmoothAccel.Y);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_z {0} {1}", TotalMilliseconds, SmoothAccel.Z);
             });
 
             Vector3 gravityDelta = Vector3.Subtract(-Acceleration, GravityVectorFancy);
@@ -192,7 +192,7 @@ namespace ControllerCommon
 
                 Task.Run(() =>
                 {
-                    logger.LogDebug("Plot vigemtarget_GravityVectorFancy_stillOrShaky {0} {1}", TotalMilliseconds, stillOrShaky);
+                    logger.LogTrace("Plot vigemtarget_GravityVectorFancy_stillOrShaky {0} {1}", TotalMilliseconds, stillOrShaky);
                 });
 
                 correctionRate = CorrectionStillRate + (CorrectionShakyRate - CorrectionStillRate) * stillOrShaky;
@@ -216,10 +216,10 @@ namespace ControllerCommon
 
             Task.Run(() =>
             {
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_correctionRate {0} {1}", TotalMilliseconds, correctionRate);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_correctionRate {0} {1}", TotalMilliseconds, correctionRate);
 
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_angleRate {0} {1}", TotalMilliseconds, angleRate);
-                logger.LogDebug("Plot vigemtarget_GravityVectorFancy_correctionLimit {0} {1}", TotalMilliseconds, correctionLimit);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_angleRate {0} {1}", TotalMilliseconds, angleRate);
+                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_correctionLimit {0} {1}", TotalMilliseconds, correctionLimit);
             });
 
             if (correctionRate > correctionLimit)
@@ -281,8 +281,8 @@ namespace ControllerCommon
 
             Task.Run(() =>
             {
-                logger.LogDebug("Plot XInputSensorFusion_CameraYawDelta {0} {1}", TotalMilliseconds, CameraYawDelta);
-                logger.LogDebug("Plot XInputSensorFusion_CameraPitchDelta {0} {1}", TotalMilliseconds, CameraPitchDelta);
+                logger.LogTrace("Plot XInputSensorFusion_CameraYawDelta {0} {1}", TotalMilliseconds, CameraYawDelta);
+                logger.LogTrace("Plot XInputSensorFusion_CameraPitchDelta {0} {1}", TotalMilliseconds, CameraPitchDelta);
             });
         }
 
@@ -296,7 +296,7 @@ namespace ControllerCommon
 
             Task.Run(() =>
             {
-                logger.LogDebug("Plot XInputSensorFusion_DeviceAngle.Y {0} {1}", TotalMilliseconds, DeviceAngle.Y);
+                logger.LogTrace("Plot XInputSensorFusion_DeviceAngle.Y {0} {1}", TotalMilliseconds, DeviceAngle.Y);
             });
         }
     }
