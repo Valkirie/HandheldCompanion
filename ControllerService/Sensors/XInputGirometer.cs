@@ -61,9 +61,9 @@ namespace ControllerService.Sensors
 
         private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
         {
-            this.reading.X = this.reading_fixed.X = (float)AngularVelocityDeg.X * ControllerService.handheldDevice.AngularVelocityAxis.X;
-            this.reading.Y = this.reading_fixed.Y = (float)AngularVelocityDeg.Y * ControllerService.handheldDevice.AngularVelocityAxis.Y;
-            this.reading.Z = this.reading_fixed.Z = (float)AngularVelocityDeg.Z * ControllerService.handheldDevice.AngularVelocityAxis.Z;
+            this.reading.X = this.reading_fixed.X = (float)AngularVelocityDeg.X;
+            this.reading.Y = this.reading_fixed.Y = (float)AngularVelocityDeg.Y;
+            this.reading.Z = this.reading_fixed.Z = (float)AngularVelocityDeg.Z;
 
             base.ReadingChanged();
         }
