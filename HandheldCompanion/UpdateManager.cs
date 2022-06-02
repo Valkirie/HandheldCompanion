@@ -18,6 +18,7 @@ namespace HandheldCompanion
         CheckingATOM,
         CheckingMETA,
         Ready,
+        Download,
         Downloading,
         Downloaded,
         Failed
@@ -25,6 +26,7 @@ namespace HandheldCompanion
 
     public class UpdateFile
     {
+        public short idx;
         public Uri uri;
         public double filesize = 0.0d;
         public string filename;
@@ -38,12 +40,13 @@ namespace HandheldCompanion
         private Random random = new();
 
         private Version build;
-        private List<UpdateFile> updateFiles = new();
+        private Dictionary<string, UpdateFile> updateFiles = new();
 
         private UpdateStatus status;
+        private string path;
 
         public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(UpdateStatus status, object value);
+        public delegate void UpdatedEventHandler(UpdateStatus status, UpdateFile update, object value);
 
         public UpdateManager()
         {
@@ -51,8 +54,14 @@ namespace HandheldCompanion
             assembly = Assembly.GetExecutingAssembly();
             build = assembly.GetName().Version;
 
+            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "cache");
+
+            // initialize folder
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
             webClient = new WebClient();
-            webClient.CachePolicy = new RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
+            webClient.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
             webClient.DownloadStringCompleted += WebClient_DownloadStringCompleted;
             webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
@@ -76,18 +85,29 @@ namespace HandheldCompanion
 
         private void WebClient_DownloadFileCompleted(object? sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
+            if (e.UserState is null)
+                return;
+
             var filename = (string)e.UserState;
-            status = UpdateStatus.Downloaded;
-            Updated?.Invoke(status, filename);
+
+            if (!updateFiles.ContainsKey(filename))
+                return;
+
+            UpdateFile update = updateFiles[filename];
+            Updated?.Invoke(UpdateStatus.Downloaded, update, null);
         }
 
         private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            switch (status)
+            if (e.UserState is null)
+                return;
+
+            var filename = (string)e.UserState;
+
+            if (updateFiles.ContainsKey(filename))
             {
-                case UpdateStatus.Downloading:
-                    Updated?.Invoke(UpdateStatus.Downloading, e.ProgressPercentage);
-                    break;
+                UpdateFile update = updateFiles[filename];
+                Updated?.Invoke(UpdateStatus.Downloading, update, e.ProgressPercentage);
             }
         }
 
@@ -96,7 +116,16 @@ namespace HandheldCompanion
             // something went wrong with the connection
             if (e.Error != null)
             {
-                Updated?.Invoke(UpdateStatus.Failed, e.Error);
+                UpdateFile update = null;
+
+                if (e.UserState != null)
+                {
+                    var filename = (string)e.UserState;
+                    if (updateFiles.ContainsKey(filename))
+                        update = updateFiles[filename];
+                }
+
+                Updated?.Invoke(UpdateStatus.Failed, update, e.Error);
                 return;
             }
 
@@ -111,10 +140,12 @@ namespace HandheldCompanion
             }
         }
 
+        private short resultIdx;
         private void ParseMETA(string Result)
         {            
             try
             {
+                resultIdx = 0;
                 updateFiles.Clear();
 
                 string assets = CommonUtils.Between(Result, "Assets</h3>", "</details>");
@@ -126,20 +157,20 @@ namespace HandheldCompanion
 
                     UpdateFile update = new UpdateFile()
                     {
-                        filename = System.IO.Path.GetFileName(href.LocalPath),
+                        idx = resultIdx,
+                        filename = Path.GetFileName(href.LocalPath),
                         uri = href,
                         filesize = GetFileSize(href)
                     };
 
-#if !DEBUG
                     if (update.filesize != 0)
-#endif
-                    updateFiles.Add(update);
+                        updateFiles.Add(update.filename, update);
 
                     assets = assets.Replace(asset, null);
 
                     // get next iteration
                     asset = CommonUtils.Between(assets, "<a", "</a>", true);
+                    resultIdx++;
                 }
 
                 // asset_size = double.Parse(CommonUtils.Between(Result, "asset-size-label\">", " MB</span>"), CultureInfo.InvariantCulture);
@@ -148,18 +179,22 @@ namespace HandheldCompanion
 
             if (updateFiles.Count == 0)
             {
-                status = UpdateStatus.Failed;
-                Updated?.Invoke(status, null);
+                Updated?.Invoke(UpdateStatus.Failed, null, null);
                 return;
             }
 
-            status = UpdateStatus.Ready;
-            Updated?.Invoke(status, updateFiles);
+            Updated?.Invoke(UpdateStatus.Ready, null, updateFiles);
+        }
 
-            /* download release
-            webClient.DownloadFileAsync(updateFile.uri, updateFile.filename);
-            status = UpdateStatus.Downloading;
-            Updated?.Invoke(status, 0); */
+        public void DownloadUpdateFile(UpdateFile update)
+        {
+            if (webClient.IsBusy)
+                return; // lazy
+
+            // download release
+            string filename = Path.Combine(path, update.filename);
+            webClient.DownloadFileAsync(update.uri, filename, update.filename);
+            Updated?.Invoke(UpdateStatus.Download, update, null);
         }
 
         private void ParseATOM(string Result)
@@ -207,19 +242,17 @@ namespace HandheldCompanion
 
             UpdateTime();
 
-#if !DEBUG
             if (latestBuild <= build)
             {
-                Updated?.Invoke(UpdateStatus.Updated, null);
+                Updated?.Invoke(UpdateStatus.Updated, null, null);
                 return;
             }
 
             if (latestHref == null)
             {
-                Updated?.Invoke(UpdateStatus.Failed, null);
+                Updated?.Invoke(UpdateStatus.Failed, null, null);
                 return;
             }
-#endif
 
             status = UpdateStatus.CheckingMETA;
             webClient.DownloadStringAsync(latestHref);
@@ -229,7 +262,7 @@ namespace HandheldCompanion
         {
             DateTime dateTime = Properties.Settings.Default.UpdateLastChecked;
             lastchecked = dateTime;
-            Updated?.Invoke(UpdateStatus.Initialized, null);
+            Updated?.Invoke(UpdateStatus.Initialized, null, null);
         }
 
         public DateTime GetTime()
@@ -248,22 +281,21 @@ namespace HandheldCompanion
         {
             // Update UI
             status = UpdateStatus.CheckingATOM;
-            Updated?.Invoke(status, null);
+            Updated?.Invoke(status, null, null);
 
             // download github
-            string restUrl = $"https://github.com/Valkirie/ControllerService/releases.atom?{random.Next().ToString()}";
+            string restUrl = $"https://github.com/Valkirie/ControllerService/releases.atom?{random.Next()}";
             webClient.DownloadStringAsync(new Uri(restUrl));
         }
 
         public void InstallUpdate(UpdateFile updateFile)
         {
-            if (status != UpdateStatus.Downloaded)
+            string filename = Path.Combine(path, updateFile.filename);
+
+            if (!File.Exists(filename))
                 return;
 
-            if (!File.Exists(updateFile.filename))
-                return;
-
-            Process.Start(updateFile.filename);
+            Process.Start(filename);
             Process.GetCurrentProcess().Kill();
         }
     }
