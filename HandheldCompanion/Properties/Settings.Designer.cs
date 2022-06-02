@@ -145,7 +145,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool StartServiceWithCompanion {
             get {
                 return ((bool)(this["StartServiceWithCompanion"]));
@@ -157,7 +157,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool HaltServiceWithCompanion {
             get {
                 return ((bool)(this["HaltServiceWithCompanion"]));
@@ -229,7 +229,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("33")]
         public int OverlayControllerTrigger {
             get {
                 return ((int)(this["OverlayControllerTrigger"]));
@@ -253,7 +253,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("34")]
         public int OverlayTrackpadsTrigger {
             get {
                 return ((int)(this["OverlayTrackpadsTrigger"]));
@@ -332,6 +332,54 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["OverlayControllerRestingRoll"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SensorPlacementUpsideDown {
+            get {
+                return ((bool)(this["SensorPlacementUpsideDown"]));
+            }
+            set {
+                this["SensorPlacementUpsideDown"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SensorSelection {
+            get {
+                return ((int)(this["SensorSelection"]));
+            }
+            set {
+                this["SensorSelection"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SensorPlacement {
+            get {
+                return ((int)(this["SensorPlacement"]));
+            }
+            set {
+                this["SensorPlacement"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OverlayControllerFisherPrice {
+            get {
+                return ((bool)(this["OverlayControllerFisherPrice"]));
+            }
+            set {
+                this["OverlayControllerFisherPrice"] = value;
             }
         }
     }

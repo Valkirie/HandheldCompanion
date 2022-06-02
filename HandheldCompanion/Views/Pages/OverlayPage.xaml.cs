@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Utils;
+using HandheldCompanion.Models;
 using HandheldCompanion.Views.Windows;
 using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
@@ -17,10 +18,12 @@ namespace HandheldCompanion.Views.Pages
     {
         private ILogger logger;
         private Overlay overlay;
+        private bool Initialized;
 
         public OverlayPage()
         {
             InitializeComponent();
+            Initialized = true;
         }
 
         public OverlayPage(string Tag, Overlay overlay, ILogger logger) : this()
@@ -31,6 +34,9 @@ namespace HandheldCompanion.Views.Pages
             this.overlay.TrackpadsTriggerUpdated += Overlay_TrackpadsTriggerUpdated;
 
             this.logger = logger;
+
+            // controller enabler
+            ToyControllerRadio.IsEnabled = Properties.Settings.Default.OverlayControllerFisherPrice;
 
             // controller model
             OverlayModel.SelectedIndex = Properties.Settings.Default.OverlayModel;
@@ -52,7 +58,7 @@ namespace HandheldCompanion.Views.Pages
             GamepadButtonFlags ControllerButton = (GamepadButtonFlags)Properties.Settings.Default.OverlayControllerTrigger;
             ControllerTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph((GamepadButtonFlagsExt)ControllerButton);
             ControllerTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(ControllerButton);
-            overlay.controllerTrigger = ControllerButton;
+            overlay.controllerTriggerButtons = ControllerButton;
 
             // controller resting angles
             Slider_RestingPitch.Value = Properties.Settings.Default.OverlayControllerRestingPitch;
@@ -71,7 +77,23 @@ namespace HandheldCompanion.Views.Pages
             GamepadButtonFlags TrackpadsButton = (GamepadButtonFlags)Properties.Settings.Default.OverlayTrackpadsTrigger;
             TrackpadsTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph((GamepadButtonFlagsExt)TrackpadsButton);
             TrackpadsTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(TrackpadsButton);
-            overlay.trackpadTrigger = TrackpadsButton;
+            overlay.trackpadTriggerButtons = TrackpadsButton;
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+        }
+
+        public void Page_Closed()
+        {
+        }
+
+        public void UnlockToyController()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                ToyControllerRadio.IsEnabled = true;
+            });
         }
 
         private void UpdateUI_TrackpadsPosition(int trackpadsAlignment)
@@ -157,13 +179,11 @@ namespace HandheldCompanion.Views.Pages
             }
         }
 
-        private void Page_Loaded(object sender, System.Windows.RoutedEventArgs e)
-        {
-            // do something
-        }
-
         private void SliderControllerSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!Initialized)
+                return;
+
             if (overlay == null)
                 return;
 
@@ -177,6 +197,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void SliderTrackpadsSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!Initialized)
+                return;
+
             if (overlay == null)
                 return;
 
@@ -200,6 +223,16 @@ namespace HandheldCompanion.Views.Pages
 
         private void OverlayModel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
+            switch ((OverlayModelMode)OverlayModel.SelectedIndex)
+            {
+                case OverlayModelMode.Toy:
+                    overlay.UpdateBonusModel(new ModelToyController());
+                    break;
+            }
+
             overlay.UpdateModelMode((OverlayModelMode)OverlayModel.SelectedIndex);
 
             // save settings
@@ -229,6 +262,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void SliderTrackpadsOpacity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!Initialized)
+                return;
+
             if (overlay == null)
                 return;
 
@@ -253,7 +289,7 @@ namespace HandheldCompanion.Views.Pages
                 ControllerTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph((GamepadButtonFlagsExt)button);
                 ControllerTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(button);
             });
-            overlay.controllerTrigger = button;
+            overlay.controllerTriggerButtons = button;
 
             // save settings
             Properties.Settings.Default.OverlayControllerTrigger = (int)button;
@@ -273,7 +309,7 @@ namespace HandheldCompanion.Views.Pages
                 TrackpadsTriggerIcon.Glyph = InputUtils.GamepadButtonToGlyph((GamepadButtonFlagsExt)button);
                 TrackpadsTriggerText.Text = EnumUtils.GetDescriptionFromEnumValue(button);
             });
-            overlay.trackpadTrigger = button;
+            overlay.trackpadTriggerButtons = button;
 
             // save settings
             Properties.Settings.Default.OverlayTrackpadsTrigger = (int)button;
@@ -287,7 +323,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Slider_RestingPitch_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            overlay.DesiredAngle.X = Slider_RestingPitch.Value;
+            overlay.DesiredAngleDeg.X = Slider_RestingPitch.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerRestingPitch = Slider_RestingPitch.Value;
@@ -296,7 +332,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Slider_RestingYaw_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            overlay.DesiredAngle.Z = Slider_RestingYaw.Value;
+            overlay.DesiredAngleDeg.Z = Slider_RestingYaw.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerRestingYaw = Slider_RestingYaw.Value;
@@ -305,7 +341,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Slider_RestingRoll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            overlay.DesiredAngle.Y = Slider_RestingRoll.Value;
+            overlay.DesiredAngleDeg.Y = Slider_RestingRoll.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerRestingRoll = Slider_RestingRoll.Value;

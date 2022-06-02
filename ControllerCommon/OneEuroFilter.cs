@@ -4,11 +4,22 @@ namespace ControllerCommon
 {
     public class OneEuroFilter
     {
+        public class OneEuroSettings
+        {
+            public double minCutoff;
+            public double beta;
+
+            public OneEuroSettings(double minCutoff, double beta)
+            {
+                this.minCutoff = minCutoff;
+                this.beta = beta;
+            }
+        }
+
         public OneEuroFilter(double minCutoff, double beta)
         {
+            settings = new OneEuroSettings(minCutoff, beta);
             firstTime = true;
-            this.minCutoff = minCutoff;
-            this.beta = beta;
 
             xFilt = new LowpassFilter();
             dxFilt = new LowpassFilter();
@@ -16,22 +27,21 @@ namespace ControllerCommon
         }
 
         protected bool firstTime;
-        protected double minCutoff;
-        protected double beta;
+        protected OneEuroSettings settings;
         protected LowpassFilter xFilt;
         protected LowpassFilter dxFilt;
         protected double dcutoff;
 
         public double MinCutoff
         {
-            get { return minCutoff; }
-            set { minCutoff = value; }
+            get { return settings.minCutoff; }
+            set { settings.minCutoff = value; }
         }
 
         public double Beta
         {
-            get { return beta; }
-            set { beta = value; }
+            get { return settings.beta; }
+            set { settings.beta = value; }
         }
 
         public double Filter(double x, double rate)
@@ -43,7 +53,7 @@ namespace ControllerCommon
             }
 
             var edx = dxFilt.Filter(dx, Alpha(rate, dcutoff));
-            var cutoff = minCutoff + beta * Math.Abs(edx);
+            var cutoff = settings.minCutoff + settings.beta * Math.Abs(edx);
 
             return xFilt.Filter(x, Alpha(rate, cutoff));
         }

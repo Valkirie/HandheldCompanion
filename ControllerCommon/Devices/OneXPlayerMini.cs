@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using static ControllerCommon.OneEuroFilter;
 
 namespace ControllerCommon.Devices
 {
@@ -14,6 +15,8 @@ namespace ControllerCommon.Devices
 
             this.AngularVelocityAxis = new Vector3(1.0f, 1.0f, 1.0f);
             this.AccelerationAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+
+            oneEuroSettings = new OneEuroSettings(0.002d, 0.008d);
         }
     }
 }

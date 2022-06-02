@@ -1,32 +1,18 @@
 ﻿using ControllerCommon;
 using Microsoft.Extensions.Logging;
-using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.XInput;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Management;
-using System.Runtime.InteropServices;
-using System.Timers;
 
 namespace HandheldCompanion
 {
     public class ControllerManager
     {
-        #region import
-        [DllImport("hid.dll", EntryPoint = "HidD_GetHidGuid")]
-        static internal extern void HidD_GetHidGuidMethod(out Guid hidGuid);
-        #endregion
-
         private ILogger logger;
 
-        private ManagementEventWatcher insertWatcher;
-        private ManagementEventWatcher removeWatcher;
-        private Timer watcherTimer;
+        private SystemManager systemManager;
 
         private Dictionary<string, ControllerEx> controllers;
-
-        private readonly Guid hidClassInterfaceGuid;
         private List<PnPDeviceEx> devices = new();
 
         public event ControllerPluggedEventHandler ControllerPlugged;
@@ -40,120 +26,98 @@ namespace HandheldCompanion
             this.logger = logger;
             this.controllers = new();
 
-            // initialize timers
-            watcherTimer = new Timer(1000) { AutoReset = false };
-            watcherTimer.Elapsed += WatcherTimer_Tick;
-
-            // initialize hid
-            HidD_GetHidGuidMethod(out var interfaceGuid);
-            hidClassInterfaceGuid = interfaceGuid;
+            // initialize manager(s)
+            systemManager = new SystemManager(logger);
+            systemManager.XInputArrived += SystemManager_XInputUpdated;
+            systemManager.XInputRemoved += SystemManager_XInputUpdated;
         }
 
-        public void Start()
+        public void StopListen()
         {
-            insertWatcher = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2"));
-            insertWatcher.EventArrived += new EventArrivedEventHandler(DeviceEvent);
-            insertWatcher.Start();
-
-            removeWatcher = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 3"));
-            removeWatcher.EventArrived += new EventArrivedEventHandler(DeviceEvent);
-            removeWatcher.Start();
-
-            WatcherTimer_Tick(null, null);
+            systemManager.StopListen();
         }
 
-        private bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)
+        public void StartListen()
         {
-            while (device is not null)
+            systemManager.StartListen();
+
+            lock (devices)
             {
-                var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+                devices = systemManager.GetDeviceExs();
 
-                if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
-                    break;
+                // rely on device Last arrival date
+                devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();
 
-                device = PnPDevice.GetDeviceByInstanceId(parentId,
-                    isRemoved
-                        ? DeviceLocationFlags.Phantom
-                        : DeviceLocationFlags.Normal
-                );
-            }
-
-            //
-            // TODO: test how others behave (reWASD, NVIDIA, ...)
-            // 
-            return device is not null &&
-                   (device.InstanceId.StartsWith(@"ROOT\SYSTEM", StringComparison.OrdinalIgnoreCase)
-                    || device.InstanceId.StartsWith(@"ROOT\USB", StringComparison.OrdinalIgnoreCase));
-        }
-
-        private void WatcherTimer_Tick(object? sender, EventArgs e)
-        {
-            int deviceIndex = 0;
-            devices.Clear();
-
-            while (Devcon.Find(hidClassInterfaceGuid, out var path, out var instanceId, deviceIndex++))
-            {
-                var device = PnPDevice.GetDeviceByInterfaceId(path);
-
-                PnPDeviceEx deviceEx = new PnPDeviceEx()
+                for (int idx = 0; idx < 4; idx++)
                 {
-                    device = device,
-                    path = path,
-                    isVirtual = IsVirtualDevice(device),
-                    deviceIndex = deviceIndex,
-                    arrivalDate = device.GetProperty<DateTimeOffset>(DevicePropertyDevice.LastArrivalDate)
-                };
+                    UserIndex userIndex = (UserIndex)idx;
+                    ControllerEx controllerEx = new ControllerEx(userIndex, null, ref devices);
 
-                devices.Add(deviceEx);
-            }
+                    controllers[controllerEx.baseContainerDeviceInstancePath] = controllerEx;
 
-            // rely on device Last arrival date
-            devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();
+                    if (controllerEx.isVirtual)
+                        continue;
 
-            for (int idx = 0; idx < 4; idx++)
-            {
-                UserIndex userIndex = (UserIndex)idx;
-                ControllerEx controllerEx = new ControllerEx(userIndex, null, ref devices);
-
-                controllers[controllerEx.baseContainerDeviceInstancePath] = controllerEx;
-
-                if (controllerEx.isVirtual)
-                    continue;
-
-                if (!controllerEx.IsConnected())
-                    continue;
-
-                // raise event
-                ControllerPlugged?.Invoke(controllerEx);
-            }
-
-            string[] keys = controllers.Keys.ToArray();
-
-            foreach(string key in keys)
-            {
-                ControllerEx controllerEx = controllers[key];
-                if (!controllerEx.IsConnected())
-                {
-                    // controller was unplugged
-                    controllers.Remove(key);
+                    if (!controllerEx.IsConnected())
+                        continue;
 
                     // raise event
-                    ControllerUnplugged?.Invoke(controllerEx);
+                    ControllerPlugged?.Invoke(controllerEx);
                 }
             }
         }
 
-        private void DeviceEvent(object sender, EventArrivedEventArgs e)
+        private void SystemManager_XInputRemoved(PnPDeviceEx device)
         {
-            watcherTimer.Stop();
-            watcherTimer.Start();
+            // todo: implement me
         }
 
-        public void Stop()
+        private void SystemManager_XInputArrived(PnPDeviceEx device)
         {
-            insertWatcher.Stop();
-            removeWatcher.Stop();
-            watcherTimer.Stop();
+            // todo: implement me
+        }
+
+        private void SystemManager_XInputUpdated(PnPDeviceEx device)
+        {
+            lock (devices)
+            {
+                devices = systemManager.GetDeviceExs();
+
+                // rely on device Last arrival date
+                devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();
+
+                for (int idx = 0; idx < 4; idx++)
+                {
+                    UserIndex userIndex = (UserIndex)idx;
+                    ControllerEx controllerEx = new ControllerEx(userIndex, null, ref devices);
+
+                    controllers[controllerEx.baseContainerDeviceInstancePath] = controllerEx;
+
+                    if (controllerEx.isVirtual)
+                        continue;
+
+                    if (!controllerEx.IsConnected())
+                        continue;
+
+                    // raise event
+                    ControllerPlugged?.Invoke(controllerEx);
+                }
+
+                string[] keys = controllers.Keys.ToArray();
+
+                foreach (string key in keys)
+                {
+                    ControllerEx controllerEx = controllers[key];
+                    if (!controllerEx.IsConnected())
+                    {
+                        // controller was unplugged
+                        controllers.Remove(key);
+
+                        // raise event
+                        ControllerUnplugged?.Invoke(controllerEx);
+                    }
+                }
+            }
         }
     }
 }

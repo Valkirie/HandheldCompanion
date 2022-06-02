@@ -150,6 +150,14 @@
   <data name="AboutPage_RelatedLinks" xml:space="preserve">
     <value>Related Links</value>
   </data>
+  <data name="AboutPage_SensorExternal" xml:space="preserve">
+    <value>External</value>
+    <comment>added on 21/05/2022</comment>
+  </data>
+  <data name="AboutPage_SensorInternal" xml:space="preserve">
+    <value>Internal</value>
+    <comment>added on 21/05/2022</comment>
+  </data>
   <data name="AboutPage_SensorName" xml:space="preserve">
     <value>Sensor name</value>
   </data>
@@ -338,6 +346,10 @@
   </data>
   <data name="OverlayPage_StartButton" xml:space="preserve">
     <value>Start</value>
+  </data>
+  <data name="OverlayPage_ToyController" xml:space="preserve">
+    <value>Fisher-Price controller</value>
+    <comment>added on 27/05/2022</comment>
   </data>
   <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
     <value>Trackpads options</value>
@@ -657,6 +669,35 @@
   </data>
   <data name="SettingsPage_OpenAppBackgroundDesc" xml:space="preserve">
     <value>The application will initially start minimized and appear on the taskbar</value>
+  </data>
+  <data name="SettingsPage_SensorExternal" xml:space="preserve">
+    <value>External</value>
+    <comment>added on 21/05/2022</comment>
+  </data>
+  <data name="SettingsPage_SensorInternal" xml:space="preserve">
+    <value>Internal</value>
+    <comment>added on 21/05/2022</comment>
+  </data>
+  <data name="SettingsPage_SensorOptions" xml:space="preserve">
+    <value>Sensor options</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementDirection" xml:space="preserve">
+    <value>External sensor placement direction</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementDirectionDesc" xml:space="preserve">
+    <value>Select on which side of the device the senor has been mounted</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementUpsideDown" xml:space="preserve">
+    <value>External sensor upside down</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementUpsideDownDesc" xml:space="preserve">
+    <value>Sensor has been mounted upside down, possible with USB-C convertor</value>
+  </data>
+  <data name="SettingsPage_SensorSelection" xml:space="preserve">
+    <value>Sensor selection</value>
+  </data>
+  <data name="SettingsPage_SensorSelectionDesc" xml:space="preserve">
+    <value>Select the desired sensor used for motion input</value>
   </data>
   <data name="SettingsPage_ServiceOptions" xml:space="preserve">
     <value>Service options</value>

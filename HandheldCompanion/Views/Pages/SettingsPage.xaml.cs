@@ -27,9 +27,11 @@ namespace HandheldCompanion.Views.Pages
         private PipeClient pipeClient;
         private ServiceManager serviceManager;
 
+        private bool Initialized;
+
         // settings vars
-        public bool ToastEnable, RunAtStartup, StartMinimized, CloseMinimises, StartServiceWithCompanion, HaltServiceWithCompanion;
-        public int ApplicationTheme, ServiceStartup;
+        public bool ToastEnable, RunAtStartup, StartMinimized, CloseMinimises, StartServiceWithCompanion, HaltServiceWithCompanion, SensorPlacementUpsideDown;
+        public int ApplicationTheme, ServiceStartup, SensorSelection;
 
         private UpdateManager updateManager;
 
@@ -42,14 +44,10 @@ namespace HandheldCompanion.Views.Pages
         public event ServiceChangedEventHandler ServiceChanged;
         public delegate void ServiceChangedEventHandler(ServiceStartMode value);
 
-        private void Page_Loaded(object sender, System.Windows.RoutedEventArgs e)
-        {
-            updateManager.Start();
-        }
-
         public SettingsPage()
         {
             InitializeComponent();
+            Initialized = true;
 
             Toggle_AutoStart.IsOn = RunAtStartup = Properties.Settings.Default.RunAtStartup;
             Toggle_Background.IsOn = StartMinimized = Properties.Settings.Default.StartMinimized;
@@ -61,6 +59,11 @@ namespace HandheldCompanion.Views.Pages
 
             Toggle_ServiceStartup.IsOn = StartServiceWithCompanion = Properties.Settings.Default.StartServiceWithCompanion;
             Toggle_ServiceShutdown.IsOn = HaltServiceWithCompanion = Properties.Settings.Default.HaltServiceWithCompanion;
+
+            cB_SensorSelection.SelectedIndex = SensorSelection = Properties.Settings.Default.SensorSelection;
+            var SensorPlacement = Properties.Settings.Default.SensorPlacement;
+            UpdateUI_SensorPlacement(SensorPlacement);
+            Toggle_SensorPlacementUpsideDown.IsOn = SensorPlacementUpsideDown = Properties.Settings.Default.SensorPlacementUpsideDown;
 
             // initialize update manager
             updateManager = new UpdateManager();
@@ -74,6 +77,8 @@ namespace HandheldCompanion.Views.Pages
             this.logger = logger;
 
             this.pipeClient = mainWindow.pipeClient;
+            this.pipeClient.ServerMessage += OnServerMessage;
+
             this.serviceManager = mainWindow.serviceManager;
             this.serviceManager.Updated += OnServiceUpdate;
 
@@ -105,8 +110,44 @@ namespace HandheldCompanion.Views.Pages
             ApplyTheme((ApplicationTheme)cB_Theme.SelectedIndex);
         }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            updateManager.Start();
+        }
+
+        public void Page_Closed()
+        {
+            pipeClient.ServerMessage -= OnServerMessage;
+            serviceManager.Updated -= OnServiceUpdate;
+        }
+
+        private void OnServerMessage(object sender, PipeMessage message)
+        {
+            switch (message.code)
+            {
+                case PipeCode.SERVER_CONTROLLER:
+                    PipeServerHandheld handheldDevice = (PipeServerHandheld)message;
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        SensorInternal.IsEnabled = handheldDevice.hasInternal;
+                        SensorExternal.IsEnabled = handheldDevice.hasExternal;
+                        Toggle_SensorPlacementUpsideDown.IsEnabled = handheldDevice.hasExternal;
+
+                        foreach (SimpleStackPanel panel in SensorPlacementVisualisation.Children)
+                            foreach (Button button in panel.Children)
+                            {
+                                button.IsEnabled = handheldDevice.hasExternal;
+                            }
+                    });
+                    break;
+            }
+        }
+
         private void Toggle_AutoStart_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             Properties.Settings.Default.RunAtStartup = Toggle_AutoStart.IsOn;
             Properties.Settings.Default.Save();
 
@@ -116,6 +157,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_Background_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             Properties.Settings.Default.StartMinimized = Toggle_Background.IsOn;
             Properties.Settings.Default.Save();
 
@@ -124,6 +168,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_StartupType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             ServiceStartMode mode;
             switch (cB_StartupType.SelectedIndex)
             {
@@ -148,6 +195,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_CloseMinimizes_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             Properties.Settings.Default.CloseMinimises = Toggle_CloseMinimizes.IsOn;
             Properties.Settings.Default.Save();
 
@@ -356,6 +406,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_ServiceShutdown_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             Properties.Settings.Default.HaltServiceWithCompanion = Toggle_ServiceShutdown.IsOn;
             Properties.Settings.Default.Save();
 
@@ -364,6 +417,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_ServiceStartup_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             Properties.Settings.Default.StartServiceWithCompanion = Toggle_ServiceStartup.IsOn;
             Properties.Settings.Default.Save();
 
@@ -372,6 +428,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_Language_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             if (cB_Language.SelectedItem == null)
                 return;
 
@@ -390,6 +449,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_Notification_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             Properties.Settings.Default.ToastEnable = Toggle_Notification.IsOn;
             Properties.Settings.Default.Save();
 
@@ -399,6 +461,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_Theme_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             if (cB_Theme.SelectedIndex == -1)
                 return;
 
@@ -425,6 +490,73 @@ namespace HandheldCompanion.Views.Pages
         private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             MainWindow.scrollLock = false;
+        }
+
+        private void cB_SensorSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!Initialized)
+                return;
+
+            if (cB_SensorSelection.SelectedIndex == -1)
+                return;
+
+            // skip if setting is identical to current
+            if (cB_SensorSelection.SelectedIndex == Properties.Settings.Default.SensorSelection)
+                return;
+
+            // save settings
+            Properties.Settings.Default.SensorSelection = cB_SensorSelection.SelectedIndex;
+            Properties.Settings.Default.Save();
+
+            // inform service
+            PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
+            pipeClient?.SendMessage(settings);
+
+            Dialog.ShowAsync($"{Properties.Resources.SettingsPage_AppLanguageWarning}",
+                Properties.Resources.SettingsPage_AppLanguageWarningDesc,
+                ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+
+        }
+        private void SensorPlacement_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            int Tag = int.Parse((string)((Button)sender).Tag);
+
+            UpdateUI_SensorPlacement(Tag);
+
+            // save settings
+            Properties.Settings.Default.SensorPlacement = Tag;
+            Properties.Settings.Default.Save();
+
+            // inform service
+            PipeClientSettings settings = new PipeClientSettings("SensorPlacement", Tag);
+            pipeClient?.SendMessage(settings);
+        }
+
+        private void UpdateUI_SensorPlacement(int SensorPlacement)
+        {
+            foreach (SimpleStackPanel panel in SensorPlacementVisualisation.Children)
+                foreach (Button button in panel.Children)
+                {
+                    if (int.Parse((string)button.Tag) == SensorPlacement)
+                        button.Background = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+                    else
+                        button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
+                }
+
+        }
+        private void Toggle_SensorPlacementUpsideDown_Toggled(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (!Initialized)
+                return;
+
+            Properties.Settings.Default.SensorPlacementUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
+            Properties.Settings.Default.Save();
+
+            SensorPlacementUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
+
+            // inform service
+            PipeClientSettings settings = new PipeClientSettings("SensorPlacementUpsideDown", SensorPlacementUpsideDown);
+            pipeClient?.SendMessage(settings);
         }
 
         #region serviceManager

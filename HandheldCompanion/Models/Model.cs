@@ -39,14 +39,9 @@ namespace HandheldCompanion
         public Vector3D UpwardVisibilityRotationPointLeft;
         public Vector3D UpwardVisibilityRotationPointRight;
 
-        // Default Materials
-        public Color ColorPlasticBlack;
-        public Color ColorPlasticWhite;
-        public Brush ColorHighlight;
-
-        public DiffuseMaterial MaterialPlasticBlack;
-        public DiffuseMaterial MaterialPlasticWhite;
-        public DiffuseMaterial MaterialHighlight;
+        // Materials
+        public Dictionary<Model3DGroup, Material> DefaultMaterials = new();
+        public Dictionary<Model3DGroup, Material> HighlightMaterials = new();
 
         public string ModelName;
 

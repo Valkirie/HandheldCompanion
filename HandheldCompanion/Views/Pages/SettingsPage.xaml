@@ -8,7 +8,7 @@
       xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       mc:Ignorable="d" 
-      d:DesignHeight="1000" d:DesignWidth="1000"
+      d:DesignHeight="2000" d:DesignWidth="1000"
       KeepAlive="True"
       Loaded="Page_Loaded"
       Title="{x:Static resx:Resources.SettingsPage_Settings}">
@@ -257,7 +257,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_ServiceStartup" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceStartup_Toggled" IsEnabled="False">
+                        <ui:ToggleSwitch Name="Toggle_ServiceStartup" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceStartup_Toggled" IsEnabled="False" IsOn="True">
 
                         </ui:ToggleSwitch>
                     </Grid>
@@ -284,7 +284,120 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_ServiceShutdown" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceShutdown_Toggled" IsEnabled="False"/>
+                        <ui:ToggleSwitch Name="Toggle_ServiceShutdown" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceShutdown_Toggled" IsEnabled="False" IsOn="True"/>
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
+
+            <!-- Sensor options -->
+            <ui:SimpleStackPanel Spacing="6">
+                <Label Content="{x:Static resx:Resources.SettingsPage_SensorOptions}" FontWeight="SemiBold"></Label>
+
+                <!-- Sensor Selection -->
+                <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorSelection}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorSelectionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:RadioButtons Name="cB_SensorSelection" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1" SelectionChanged="cB_SensorSelection_SelectionChanged">
+
+                            <RadioButton Name="SensorInternal" IsEnabled="False" >
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="&#xE770;"/>
+                                    <Label Content="{x:Static resx:Resources.SettingsPage_SensorInternal}"></Label>
+                                </ui:SimpleStackPanel>
+                            </RadioButton>
+                            
+                            <RadioButton Name="SensorExternal" IsEnabled="False" >
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="&#xECF1;"/>
+                                    <Label Content="{x:Static resx:Resources.SettingsPage_SensorExternal}"></Label>
+                                </ui:SimpleStackPanel>
+                            </RadioButton>
+                        </ui:RadioButtons>
+                    </Grid>
+                </Border>
+
+                <!-- Sensor Placement Direction -->
+                <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE80A;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirection}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirectionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <Grid Grid.Column="1">
+                            <ui:SimpleStackPanel Name="SensorPlacementVisualisation" Spacing="6" HorizontalAlignment="Right">
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
+                                    <Button Tag="0" Width="50" Height="50" Click="SensorPlacement_Click" IsEnabled="False"></Button>
+                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
+                                </ui:SimpleStackPanel>
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <Button Tag="1" Width="50" Height="50" Click="SensorPlacement_Click" IsEnabled="False"></Button>
+                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
+                                    <Button Tag="2" Width="50" Height="50" Click="SensorPlacement_Click" IsEnabled="False"></Button>
+                                </ui:SimpleStackPanel>
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
+                                    <Button Tag="3" Width="50" Height="50" Click="SensorPlacement_Click" IsEnabled="False"></Button>
+                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
+                                </ui:SimpleStackPanel>
+                            </ui:SimpleStackPanel>
+                        </Grid>
+                    </Grid>
+                </Border>
+                
+                <!-- Sensor Placement Mirror -->
+                <Border                      
+                            Padding="15,12,12,12"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE1CA;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDownDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch Name="Toggle_SensorPlacementUpsideDown" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_SensorPlacementUpsideDown_Toggled" IsEnabled="False"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>

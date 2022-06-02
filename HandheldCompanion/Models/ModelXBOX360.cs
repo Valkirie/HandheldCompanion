@@ -19,13 +19,26 @@ namespace HandheldCompanion.Models
         public ModelXBOX360() : base("XBOX360")
         {
             // colors
-            ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#707477");
-            ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#D4D4D4");
-            ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#707477");
+            var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#D4D4D4");
 
-            MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
-            MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
-            MaterialHighlight = new DiffuseMaterial(ColorHighlight);
+            var ColorPlasticYellow = (Color)ColorConverter.ConvertFromString("#faa51f");
+            var ColorPlasticGreen = (Color)ColorConverter.ConvertFromString("#7cb63b");
+            var ColorPlasticRed = (Color)ColorConverter.ConvertFromString("#ff5f4b");
+            var ColorPlasticBlue = (Color)ColorConverter.ConvertFromString("#6ac4f6");
+
+            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+
+            var MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
+            var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
+
+            var MaterialPlasticYellow = new DiffuseMaterial(new SolidColorBrush(ColorPlasticYellow));
+            var MaterialPlasticGreen = new DiffuseMaterial(new SolidColorBrush(ColorPlasticGreen));
+            var MaterialPlasticRed = new DiffuseMaterial(new SolidColorBrush(ColorPlasticRed));
+            var MaterialPlasticBlue = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlue));
+            var MaterialPlasticTransparent = new SpecularMaterial();
+
+            var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
             // Rotation Points
             JoystickRotationPointCenterLeftMillimeter = new Vector3D(-42.231f, -6.10f, 21.436f);
@@ -78,16 +91,65 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(XboxButtonRing);
             model3DGroup.Children.Add(LeftShoulderBottom);
             model3DGroup.Children.Add(RightShoulderBottom);
-            
-            foreach (Model3DGroup model3D in model3DGroup.Children)
-                ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
 
-            // specific color(s)
-            ((GeometryModel3D)MainBody.Children[0]).Material = MaterialPlasticWhite;
-            ((GeometryModel3D)LeftMotor.Children[0]).Material = MaterialPlasticWhite;
-            ((GeometryModel3D)RightMotor.Children[0]).Material = MaterialPlasticWhite;
-            ((GeometryModel3D)LeftShoulderBottom.Children[0]).Material = MaterialPlasticWhite;
-            ((GeometryModel3D)RightShoulderBottom.Children[0]).Material = MaterialPlasticWhite;
+            foreach (Model3DGroup model3D in model3DGroup.Children)
+            {
+                // generic material(s)
+                HighlightMaterials[model3D] = MaterialHighlight;
+            }
+
+            // specific button material(s)
+            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            {
+                int i = 0;
+                Material buttonMaterial = null;
+
+                if (ButtonMap.ContainsKey(button))
+                    foreach (var model3D in ButtonMap[button])
+                    {
+                        switch (button)
+                        {
+                            case GamepadButtonFlags.X:
+                                buttonMaterial = i == 0 ? MaterialPlasticTransparent : MaterialPlasticBlue;
+                                break;
+                            case GamepadButtonFlags.Y:
+                                buttonMaterial = i == 0 ? MaterialPlasticTransparent : MaterialPlasticYellow;
+                                break;
+                            case GamepadButtonFlags.A:
+                                buttonMaterial = i == 0 ? MaterialPlasticTransparent : MaterialPlasticGreen;
+                                break;
+                            case GamepadButtonFlags.B:
+                                buttonMaterial = i == 0 ? MaterialPlasticTransparent : MaterialPlasticRed;
+                                break;
+                            default:
+                                buttonMaterial = MaterialPlasticBlack;
+                                break;
+                        }
+
+                        DefaultMaterials[model3D] = buttonMaterial;
+                        ((GeometryModel3D)model3D.Children[0]).Material = buttonMaterial;
+
+                        i++;
+                    }
+            }
+
+            foreach (Model3DGroup model3D in model3DGroup.Children)
+            {
+                if (DefaultMaterials.ContainsKey(model3D))
+                    continue;
+
+                // specific material(s)
+                if (model3D == MainBody || model3D == LeftMotor || model3D == RightMotor || model3D == LeftShoulderBottom || model3D == RightShoulderBottom)
+                {
+                    ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
+                    DefaultMaterials[model3D] = MaterialPlasticWhite;
+                    continue;
+                }
+
+                // generic material(s)
+                ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
+                DefaultMaterials[model3D] = MaterialPlasticBlack;
+            }
         }
     }
 }

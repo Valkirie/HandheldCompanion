@@ -1,5 +1,4 @@
 using ControllerCommon;
-using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using ControllerService.Targets;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Threading.Tasks;
+using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerService
 {
@@ -23,9 +23,6 @@ namespace ControllerService
         public Gamepad Gamepad;
         private State GamepadState;
 
-        public Profile profile;
-        private Profile defaultProfile;
-
         public Dictionary<XInputSensorFlags, Vector3> Accelerations = new();
         public Dictionary<XInputSensorFlags, Vector3> AngularVelocities = new();
 
@@ -35,6 +32,7 @@ namespace ControllerService
         public double vibrationStrength = 100.0d;
         public int updateInterval = 10;
 
+        private SensorFamily sensorFamily = SensorFamily.None;
         public XInputGirometer Gyrometer;
         public XInputAccelerometer Accelerometer;
         public XInputInclinometer Inclinometer;
@@ -42,14 +40,12 @@ namespace ControllerService
         public SensorFusion sensorFusion;
         public MadgwickAHRS madgwickAHRS;
 
-        public Device handheldDevice = new DefaultDevice();
-
-        protected readonly Stopwatch stopwatch;
+        protected Stopwatch stopwatch;
         public long CurrentMicroseconds;
 
-        public double TotalMilliseconds;
-        public double UpdateTimePreviousMilliseconds;
-        public double DeltaSeconds;
+        public static double TotalMilliseconds;
+        public static double UpdateTimePreviousMilliseconds;
+        public static double DeltaSeconds = 100.0d;
 
         public DS4Touch Touch;
 
@@ -60,51 +56,63 @@ namespace ControllerService
         private readonly ILogger logger;
         private readonly PipeServer pipeServer;
 
-        public XInputController(ILogger logger, PipeServer pipeServer)
+        public XInputController(SensorFamily sensorFamily, ILogger logger, PipeServer pipeServer)
         {
             this.logger = logger;
             this.pipeServer = pipeServer;
 
-            // initialize sensor(s)
-            UpdateSensors();
+            // initialize sensorfusion and madgwick
+            sensorFusion = new SensorFusion(logger);
+            madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
+
+            // initialize sensors
+            Gyrometer = new XInputGirometer(sensorFamily, updateInterval, logger);
+            Accelerometer = new XInputAccelerometer(sensorFamily, updateInterval, logger);
+            Inclinometer = new XInputInclinometer(sensorFamily, updateInterval, logger);
+            this.sensorFamily = sensorFamily;
 
             // initialize vectors
             Accelerations = new();
             AngularVelocities = new();
             Angle = new();
 
-            // initialize sensorfusion and madgwick
-            sensorFusion = new SensorFusion(logger);
-            madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
-
-            // initialize profile(s)
-            profile = new();
-            defaultProfile = new();
-
             // initialize touch
             Touch = new();
 
             // initialize stopwatch
             stopwatch = new Stopwatch();
-            stopwatch.Start();
 
             // initialize timers
             UpdateTimer = new MultimediaTimer(updateInterval);
+        }
+
+        public void StartListening()
+        {
+            stopwatch.Start();
+
             UpdateTimer.Tick += UpdateTimer_Ticked;
             UpdateTimer.Start();
         }
 
-        internal void SetController(ControllerEx controllerEx)
+        public void StopListening()
         {
-            // initilize controller
-            this.controllerEx = controllerEx;
+            stopwatch.Stop();
+
+            UpdateTimer.Tick -= UpdateTimer_Ticked;
+            UpdateTimer.Stop();
         }
 
         public void UpdateSensors()
         {
-            Gyrometer = new XInputGirometer(this, logger);
-            Accelerometer = new XInputAccelerometer(this, logger);
-            Inclinometer = new XInputInclinometer(this, logger);
+            Gyrometer.UpdateSensor(sensorFamily);
+            Accelerometer.UpdateSensor(sensorFamily);
+            Inclinometer.UpdateSensor(sensorFamily);
+        }
+
+        public void SetController(ControllerEx controllerEx)
+        {
+            // initilize controller
+            this.controllerEx = controllerEx;
         }
 
         private void UpdateTimer_Ticked(object sender, EventArgs e)
@@ -120,7 +128,7 @@ namespace ControllerService
                 // update reading(s)
                 foreach (XInputSensorFlags flags in (XInputSensorFlags[])Enum.GetValues(typeof(XInputSensorFlags)))
                 {
-                    switch(flags)
+                    switch (flags)
                     {
                         case XInputSensorFlags.Default:
                             AngularVelocities[flags] = Gyrometer.GetCurrentReading();
@@ -159,6 +167,16 @@ namespace ControllerService
                 // update sensorFusion (todo: call only when needed ?)
                 sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocities[XInputSensorFlags.Centered], Accelerations[XInputSensorFlags.Default]);
 
+                /*
+                logger.LogTrace("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
+                logger.LogTrace("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
+                logger.LogTrace("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Z);
+                                
+                logger.LogTrace("Plot AngRawX {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].X);
+                logger.LogTrace("Plot AngRawY {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].Y);
+                logger.LogTrace("Plot AngRawZ {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].Z);
+                */
+
                 // async update client(s)
                 Task.Run(() =>
                 {
@@ -195,17 +213,17 @@ namespace ControllerService
 
                 Task.Run(() =>
                 {
-                    logger.LogDebug("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
-                    logger.LogDebug("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
-                    logger.LogDebug("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Z);
+                    logger.LogTrace("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
+                    logger.LogTrace("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
+                    logger.LogTrace("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Z);
 
-                    logger.LogDebug("Plot GyroRawCX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].X);
-                    logger.LogDebug("Plot GyroRawCY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Y);
-                    logger.LogDebug("Plot GyroRawCZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Z);
+                    logger.LogTrace("Plot GyroRawCX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].X);
+                    logger.LogTrace("Plot GyroRawCY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Y);
+                    logger.LogTrace("Plot GyroRawCZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Z);
 
-                    logger.LogDebug("Plot PoseX {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().X);
-                    logger.LogDebug("Plot PoseY {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Y);
-                    logger.LogDebug("Plot PoseZ {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Z);
+                    logger.LogTrace("Plot PoseX {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().X);
+                    logger.LogTrace("Plot PoseY {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Y);
+                    logger.LogTrace("Plot PoseZ {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Z);
                 });
 
                 // get current gamepad state
@@ -220,30 +238,6 @@ namespace ControllerService
 
                 Updated?.Invoke(this);
             }
-        }
-
-        internal void SetDevice(Device handheldDevice)
-        {
-            this.handheldDevice = handheldDevice;
-        }
-
-        public void SetProfile(Profile profile)
-        {
-            // skip if current profile
-            if (profile == this.profile)
-                return;
-
-            // restore default profile
-            if (profile == null)
-                profile = defaultProfile;
-
-            this.profile = profile;
-
-            // update default profile
-            if (profile.isDefault)
-                defaultProfile = profile;
-            else
-                logger.LogInformation("Profile {0} applied.", profile.name);
         }
 
         public void SetPollRate(int HIDrate)
@@ -265,7 +259,7 @@ namespace ControllerService
             SetPollRate(updateInterval);
             SetVibrationStrength(vibrationStrength);
 
-            logger.LogInformation("Virtual {0} attached to {1} on slot {2}", target, ProductName, controllerEx.Controller.UserIndex);
+            logger.LogInformation("{0} attached to {1} on slot {2}", target, ProductName, controllerEx.Controller.UserIndex);
         }
     }
 }

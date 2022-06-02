@@ -160,6 +160,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to External.
+        /// </summary>
+        public static string AboutPage_SensorExternal {
+            get {
+                return ResourceManager.GetString("AboutPage_SensorExternal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internal.
+        /// </summary>
+        public static string AboutPage_SensorInternal {
+            get {
+                return ResourceManager.GetString("AboutPage_SensorInternal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sensor name.
         /// </summary>
         public static string AboutPage_SensorName {
@@ -732,6 +750,15 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_StartButton {
             get {
                 return ResourceManager.GetString("OverlayPage_StartButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fisher-Price controller.
+        /// </summary>
+        public static string OverlayPage_ToyController {
+            get {
+                return ResourceManager.GetString("OverlayPage_ToyController", resourceCulture);
             }
         }
         
@@ -1677,6 +1704,87 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_OpenAppBackgroundDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_OpenAppBackgroundDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to External.
+        /// </summary>
+        public static string SettingsPage_SensorExternal {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorExternal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internal.
+        /// </summary>
+        public static string SettingsPage_SensorInternal {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorInternal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor options.
+        /// </summary>
+        public static string SettingsPage_SensorOptions {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to External sensor placement direction.
+        /// </summary>
+        public static string SettingsPage_SensorPlacementDirection {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorPlacementDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select on which side of the device the senor has been mounted.
+        /// </summary>
+        public static string SettingsPage_SensorPlacementDirectionDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorPlacementDirectionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to External sensor upside down.
+        /// </summary>
+        public static string SettingsPage_SensorPlacementUpsideDown {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorPlacementUpsideDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor has been mounted upside down, possible with USB-C convertor.
+        /// </summary>
+        public static string SettingsPage_SensorPlacementUpsideDownDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorPlacementUpsideDownDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor selection.
+        /// </summary>
+        public static string SettingsPage_SensorSelection {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select the desired sensor used for motion input.
+        /// </summary>
+        public static string SettingsPage_SensorSelectionDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorSelectionDesc", resourceCulture);
             }
         }
         

@@ -123,7 +123,7 @@ namespace ControllerCommon
 
             try
             {
-                process.StartInfo.Arguments = $"create {name} binpath= \"{path}\" start= \"auto\" DisplayName= \"{display}\"";
+                process.StartInfo.Arguments = $"create {name} binpath= \"{path}\" start= \"demand\" DisplayName= \"{display}\"";
                 process.Start();
                 process.WaitForExit();
 
@@ -150,14 +150,16 @@ namespace ControllerCommon
         private int StartTentative;
         public async Task StartServiceAsync()
         {
+            if (type == ServiceStartMode.Disabled)
+                return;
+
             while (status != ServiceControllerStatus.Running)
             {
                 Updated?.Invoke(ServiceControllerStatus.StartPending, -1);
 
                 try
                 {
-                    if (type != ServiceStartMode.Disabled)
-                        controller.Start();
+                    controller.Start();
                 }
                 catch (Exception ex)
                 {
@@ -182,14 +184,16 @@ namespace ControllerCommon
         private int StopTentative;
         public async Task StopServiceAsync()
         {
+            if (status != ServiceControllerStatus.Running)
+                return;
+
             while (status != ServiceControllerStatus.Stopped && status != ServiceControllerStatus.StopPending)
             {
                 Updated?.Invoke(ServiceControllerStatus.StopPending, -1);
 
                 try
                 {
-                    if (status == ServiceControllerStatus.Running)
-                        controller.Stop();
+                    controller.Stop();
                     StopTentative = 0;
                     return;
                 }

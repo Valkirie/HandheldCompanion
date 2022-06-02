@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 
@@ -53,7 +52,8 @@ namespace ControllerCommon.Utils
     public enum OverlayModelMode
     {
         OEM = 0,
-        Virtual = 1
+        Virtual = 1,
+        Toy = 2
     }
 
     public static class InputUtils

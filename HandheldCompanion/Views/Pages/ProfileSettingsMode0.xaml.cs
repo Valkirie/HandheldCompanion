@@ -68,6 +68,11 @@ namespace HandheldCompanion.Views.Pages
         {
         }
 
+        public void Page_Closed()
+        {
+            pipeClient.ServerMessage -= OnServerMessage;
+        }
+
         private void OnServerMessage(object sender, PipeMessage message)
         {
             switch (message.code)

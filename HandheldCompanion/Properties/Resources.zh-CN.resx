@@ -221,23 +221,19 @@
     <value>配置</value>
   </data>
   <data name="MainWindow_OK" xml:space="preserve">
-    <value>OK</value>
-    <comment>update</comment>
+    <value>确认</value>
   </data>
   <data name="MainWindow_serviceDeploy" xml:space="preserve">
     <value>部署服务</value>
   </data>
   <data name="MainWindow_ServiceManager" xml:space="preserve">
-    <value>Service manager</value>
-    <comment>update</comment>
+    <value>服务管理</value>
   </data>
   <data name="MainWindow_ServiceManagerStartIssue" xml:space="preserve">
-    <value>Oups. There was an issue while we tried to start the service.</value>
-    <comment>update</comment>
+    <value>哦不，在我们启动服务时遇到了一些问题</value>
   </data>
   <data name="MainWindow_ServiceManagerStopIssue" xml:space="preserve">
-    <value>Oups. There was an issue while we tried to stop the service.</value>
-    <comment>update</comment>
+    <value>哦不，在我们停止服务时遇到了一些问题</value>
   </data>
   <data name="MainWindow_serviceRemove" xml:space="preserve">
     <value>移除服务</value>
@@ -429,31 +425,25 @@
     <value>修改反游戏死区百分比</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
-    <value>Are you sure you want to delete</value>
-    <comment>update</comment>
+    <value>确认删除？</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
-    <value>This item will be deleted immediatly. You can't undo this action.</value>
-    <comment>update</comment>
+    <value>此项将会立即被删除，你将无法撤回此操作。</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwrite1" xml:space="preserve">
-    <value>Are you sure you want to overwrite</value>
-    <comment>update</comment>
+    <value>确定覆盖？</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
-    <value>This item will be overwriten. You can't undo this action.</value>
-    <comment>update</comment>
+    <value>此项将会被覆盖，你将无法撤回此操作。</value>
   </data>
   <data name="ProfilesPage_Cancel" xml:space="preserve">
-    <value>Cancel</value>
-    <comment>update</comment>
+    <value>取消</value>
   </data>
   <data name="ProfilesPage_CreateNewProfile" xml:space="preserve">
     <value>创建配置</value>
   </data>
   <data name="ProfilesPage_Delete" xml:space="preserve">
-    <value>Delete</value>
-    <comment>update</comment>
+    <value>删除</value>
   </data>
   <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
     <value>删除配置</value>
@@ -501,8 +491,7 @@
     <value>修改全局体感设置</value>
   </data>
   <data name="ProfilesPage_OK" xml:space="preserve">
-    <value>OK</value>
-    <comment>update</comment>
+    <value>确认</value>
   </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
     <value>配置详情</value>
@@ -526,12 +515,10 @@
     <value>配置设置</value>
   </data>
   <data name="ProfilesPage_ProfileUpdated1" xml:space="preserve">
-    <value>Profile updated</value>
-    <comment>update</comment>
+    <value>配置已更新</value>
   </data>
   <data name="ProfilesPage_ProfileUpdated2" xml:space="preserve">
-    <value>was updated.</value>
-    <comment>update</comment>
+    <value>配置更新</value>
   </data>
   <data name="ProfilesPage_Roll" xml:space="preserve">
     <value>横滚</value>
@@ -573,8 +560,7 @@
     <value>航向</value>
   </data>
   <data name="ProfilesPage_Yes" xml:space="preserve">
-    <value>Yes</value>
-    <comment>update</comment>
+    <value>确认</value>
   </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>通过虚拟的DS4手柄，为Windows掌机提供体感支持。如果启用该服务，物理手柄将不会被白名单外的程序识别到。如果服务被关闭，物理手柄将会再次被启用，虚拟DS4也将被关闭。</value>
@@ -629,6 +615,27 @@
   </data>
   <data name="SettingsPage_OpenAppBackgroundDesc" xml:space="preserve">
     <value>应用程序启动时将开始最小化，并出现在任务栏上</value>
+  </data>
+  <data name="SettingsPage_SensorOptions" xml:space="preserve">
+    <value>传感器选项</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementDirection" xml:space="preserve">
+    <value>外置传感器安装方向</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementDirectionDesc" xml:space="preserve">
+    <value>选择外置传感器安装的方向</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementUpsideDown" xml:space="preserve">
+    <value>外置传感器反向</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementUpsideDownDesc" xml:space="preserve">
+    <value>外置传感器面向方向相反，USB C口特性</value>
+  </data>
+  <data name="SettingsPage_SensorSelection" xml:space="preserve">
+    <value>传感器选择</value>
+  </data>
+  <data name="SettingsPage_SensorSelectionDesc" xml:space="preserve">
+    <value>选择体感数据的来源</value>
   </data>
   <data name="SettingsPage_ServiceOptions" xml:space="preserve">
     <value>服务设置</value>

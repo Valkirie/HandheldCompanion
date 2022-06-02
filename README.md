@@ -28,6 +28,7 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 
 ## Supported Sensors
 - Bosch BMI160
+- USB IMU (GY-USB002)
 
 ## Supported Languages
 - English

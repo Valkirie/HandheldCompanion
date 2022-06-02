@@ -1,22 +1,33 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon.Sensors;
+using ControllerCommon.Utils;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Timers;
+using Windows.Devices.Sensors;
+using static ControllerCommon.Utils.CommonUtils;
+using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerService.Sensors
 {
     [Flags]
     public enum XInputSensorFlags
     {
-        Default         =   0000,
-        RawValue        =   0001,
-        Centered        =   0010,
-        WithRatio       =   0100,
-        CenteredRaw     =   RawValue | Centered,
-        CenteredRatio   =   RawValue | WithRatio,
+        Default = 0000,
+        RawValue = 0001,
+        Centered = 0010,
+        WithRatio = 0100,
+        CenteredRaw = RawValue | Centered,
+        CenteredRatio = RawValue | WithRatio,
+    }
+
+    [Flags]
+    public enum XInputSensorStatus
+    {
+        Missing = 0,
+        Ready = 1,
+        Busy = 2
     }
 
     public abstract class XInputSensor
@@ -24,38 +35,53 @@ namespace ControllerService.Sensors
         protected Vector3 reading = new();
         protected Vector3 reading_fixed = new();
 
-        protected XInputController controller;
-
         protected static SensorSpec sensorSpec;
 
-        protected Timer updateTimer;
+        protected Timer centerTimer;
         protected int updateInterval;
+
+        public object sensor;
+        public OneEuroFilter3D filter = new();
 
         protected readonly ILogger logger;
 
-        public event ReadingChangedEventHandler ReadingHasChanged;
-        public delegate void ReadingChangedEventHandler(XInputSensor sender, Vector3 e);
-
-        protected XInputSensor(XInputController controller, ILogger logger)
+        protected XInputSensor(ILogger logger)
         {
-            this.controller = controller;
+            this.logger = logger;
 
-            this.updateInterval = controller.updateInterval;
-
-            this.updateTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 100 };
-            this.updateTimer.Elapsed += Timer_Elapsed;
+            this.centerTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 100 };
+            this.centerTimer.Elapsed += Timer_Elapsed;
         }
 
         protected virtual void ReadingChanged()
         {
             // reset reading after inactivity
-            updateTimer.Stop();
-            updateTimer.Start();
+            centerTimer.Stop();
+            centerTimer.Start();
 
-            // raise event
-            ReadingHasChanged?.Invoke(this, this.reading);
+            Task.Run(() => logger?.LogTrace("{0}.ReadingChanged({1:00.####}, {2:00.####}, {3:00.####})", this.GetType().Name, this.reading.X, this.reading.Y, this.reading.Z));
+        }
 
-            Task.Run(() => logger?.LogDebug("{0}.ReadingChanged({1:00.####}, {2:00.####}, {3:00.####})", this.GetType().Name, this.reading.X, this.reading.Y, this.reading.Z));
+        public static XInputSensorStatus GetStatus(SensorFamily sensorFamily)
+        {
+            switch (sensorFamily)
+            {
+                case SensorFamily.WindowsDevicesSensors:
+                    {
+                        var sensor = Gyrometer.GetDefault();
+                        if (sensor != null)
+                            return XInputSensorStatus.Busy;
+                    }
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    {
+                        var sensor = SerialUSBIMU.GetDefault();
+                        if (sensor != null)
+                            return sensor.IsOpen() ? XInputSensorStatus.Busy : XInputSensorStatus.Ready;
+                    }
+                    break;
+            }
+            return XInputSensorStatus.Missing;
         }
 
         protected virtual void Timer_Elapsed(object sender, ElapsedEventArgs e)

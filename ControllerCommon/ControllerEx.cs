@@ -13,7 +13,8 @@ namespace ControllerCommon
     public struct PnPDeviceEx
     {
         public int deviceIndex;
-        public PnPDevice device;
+        public PnPDevice deviceUSB;
+        public PnPDevice deviceHID;
         public string path;
         public bool isVirtual;
         public DateTimeOffset arrivalDate;
@@ -23,7 +24,7 @@ namespace ControllerCommon
     {
         private ILogger logger;
 
-        private PnPDevice device;
+        private PnPDeviceEx deviceEx;
         public Controller Controller;
         public string Manufacturer, DeviceDesc;
         public UserIndex UserIndex;
@@ -38,9 +39,6 @@ namespace ControllerCommon
 
         private Vibration IdentifyVibration = new Vibration() { LeftMotorSpeed = ushort.MaxValue, RightMotorSpeed = ushort.MaxValue };
         private Timer IdentifyTimer;
-
-        [DllImport("hid.dll", EntryPoint = "HidD_GetHidGuid")]
-        static internal extern void HidD_GetHidGuid(out Guid hidGuid);
 
         [DllImport("hid.dll", EntryPoint = "HidD_GetAttributes")]
         static internal extern bool HidD_GetAttributes(IntPtr hidDeviceObject, ref Attributes attributes);
@@ -82,10 +80,8 @@ namespace ControllerCommon
             if (ProductId is null || VendorId is null)
                 return;
 
-            foreach(PnPDeviceEx deviceEx in devices)
+            foreach (PnPDeviceEx deviceEx in devices)
             {
-                device = deviceEx.device;
-
                 // get attributes
                 Attributes device_attributes = new Attributes();
                 GetHidAttributes(deviceEx.path, out device_attributes);
@@ -93,37 +89,19 @@ namespace ControllerCommon
                 if (device_attributes.ProductID != CapabilitiesEx.ProductId || device_attributes.VendorID != CapabilitiesEx.VendorId)
                     continue;
 
+                // update current device
+                this.deviceEx = deviceEx;
                 isVirtual = deviceEx.isVirtual;
 
                 // update HID
-                deviceInstancePath = device.DeviceId;
+                deviceInstancePath = deviceEx.deviceUSB.DeviceId;
+                baseContainerDeviceInstancePath = deviceEx.deviceHID.DeviceId;
+
+                DeviceDesc = deviceEx.deviceUSB.GetProperty<string>(DevicePropertyDevice.DeviceDesc);
+                Manufacturer = deviceEx.deviceUSB.GetProperty<string>(DevicePropertyDevice.Manufacturer);
+
                 devices.Remove(deviceEx);
                 break;
-            }
-
-            while (device is not null)
-            {
-                // update device details
-                DeviceDesc = device.GetProperty<string>(DevicePropertyDevice.DeviceDesc);
-                Manufacturer = device.GetProperty<string>(DevicePropertyDevice.Manufacturer);
-
-                baseContainerDeviceInstancePath = device.DeviceId;
-
-                var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
-
-                if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
-                    return;
-
-                if (parentId.Contains(@"USB\ROOT", StringComparison.OrdinalIgnoreCase))
-                    return;
-
-                if (parentId.Contains(@"HID\", StringComparison.OrdinalIgnoreCase))
-                    return;
-
-                if (!parentId.Contains(ProductId) && !parentId.Contains(VendorId))
-                    return;
-
-                device = PnPDevice.GetDeviceByInstanceId(parentId, DeviceLocationFlags.Normal);
             }
         }
 
