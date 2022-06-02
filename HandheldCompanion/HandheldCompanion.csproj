@@ -769,6 +769,9 @@
     <Reference Include="ModernWpf.Controls">
       <HintPath>..\dependencies\ModernWpf.Controls.dll</HintPath>
     </Reference>
+    <Reference Include="Nefarius.Utilities.DeviceManagement">
+      <HintPath>..\dependencies\Nefarius.Utilities.DeviceManagement.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
