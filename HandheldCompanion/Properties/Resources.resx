@@ -735,6 +735,22 @@
   <data name="SettingsPage_UpdateCheck" xml:space="preserve">
     <value>Checking for updates...</value>
   </data>
+  <data name="SettingsPage_UpdateFailedDownload" xml:space="preserve">
+    <value>We couldn't download the update file.</value>
+    <comment>added on 02/06/2022</comment>
+  </data>
+  <data name="SettingsPage_UpdateFailedGithub" xml:space="preserve">
+    <value>We couldn't reach github.</value>
+    <comment>added on 02/06/2022</comment>
+  </data>
+  <data name="SettingsPage_UpdateFailedInstall" xml:space="preserve">
+    <value>We couldn't locate the update file.</value>
+    <comment>added on 02/06/2022</comment>
+  </data>
+  <data name="SettingsPage_UpdateWarning" xml:space="preserve">
+    <value>Oups. There was an issue.</value>
+    <comment>added on 02/06/2022</comment>
+  </data>
   <data name="SettingsPage_UpToDate" xml:space="preserve">
     <value>You're up to date</value>
   </data>

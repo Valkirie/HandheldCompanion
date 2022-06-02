@@ -1897,6 +1897,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to We couldn&apos;t download the update file..
+        /// </summary>
+        public static string SettingsPage_UpdateFailedDownload {
+            get {
+                return ResourceManager.GetString("SettingsPage_UpdateFailedDownload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We couldn&apos;t reach github..
+        /// </summary>
+        public static string SettingsPage_UpdateFailedGithub {
+            get {
+                return ResourceManager.GetString("SettingsPage_UpdateFailedGithub", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We couldn&apos;t locate the update file..
+        /// </summary>
+        public static string SettingsPage_UpdateFailedInstall {
+            get {
+                return ResourceManager.GetString("SettingsPage_UpdateFailedInstall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oups. There was an issue..
+        /// </summary>
+        public static string SettingsPage_UpdateWarning {
+            get {
+                return ResourceManager.GetString("SettingsPage_UpdateWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You&apos;re up to date.
         /// </summary>
         public static string SettingsPage_UpToDate {

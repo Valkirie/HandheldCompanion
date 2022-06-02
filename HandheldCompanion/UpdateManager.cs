@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Utils;
+using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -124,6 +125,16 @@ namespace HandheldCompanion
                     var filename = (string)e.UserState;
                     if (updateFiles.ContainsKey(filename))
                         update = updateFiles[filename];
+
+                    Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
+                        Properties.Resources.SettingsPage_UpdateFailedDownload,
+                        ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+                }
+                else
+                {
+                    Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
+                        Properties.Resources.SettingsPage_UpdateFailedGithub,
+                        ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
                 }
 
                 Updated?.Invoke(UpdateStatus.Failed, update, e.Error);
@@ -294,7 +305,12 @@ namespace HandheldCompanion
             string filename = Path.Combine(path, updateFile.filename);
 
             if (!File.Exists(filename))
+            {
+                Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
+                    Properties.Resources.SettingsPage_UpdateFailedInstall,
+                    ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
                 return;
+            }
 
             Process.Start(filename);
             Process.GetCurrentProcess().Kill();
