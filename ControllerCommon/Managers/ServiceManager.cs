@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
-namespace ControllerCommon
+namespace ControllerCommon.Managers
 {
     public enum ServiceControllerStatus
     {

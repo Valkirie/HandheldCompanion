@@ -11,7 +11,7 @@ using System.Resources;
 using System.Text.Json;
 using static ControllerCommon.Utils.ProcessUtils;
 
-namespace ControllerCommon
+namespace ControllerCommon.Managers
 {
     public class ProfileManager
     {
@@ -44,7 +44,7 @@ namespace ControllerCommon
 
         public void Start(string filter = "*.json")
         {
-            this.path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "profiles");
+            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "profiles");
 
             // initialize folder
             if (!Directory.Exists(path))

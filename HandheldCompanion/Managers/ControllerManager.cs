@@ -1,10 +1,11 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using Microsoft.Extensions.Logging;
 using SharpDX.XInput;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace HandheldCompanion
+namespace HandheldCompanion.Managers
 {
     public class ControllerManager
     {
@@ -24,7 +25,7 @@ namespace HandheldCompanion
         public ControllerManager(ILogger logger)
         {
             this.logger = logger;
-            this.controllers = new();
+            controllers = new();
 
             // initialize manager(s)
             systemManager = new SystemManager(logger);

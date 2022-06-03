@@ -10,7 +10,7 @@ using System.Net.Cache;
 using System.Reflection;
 using System.Xml;
 
-namespace HandheldCompanion
+namespace HandheldCompanion.Managers
 {
     public enum UpdateStatus
     {
@@ -73,7 +73,7 @@ namespace HandheldCompanion
         {
             try
             {
-                var webRequest = HttpWebRequest.Create(uriPath);
+                var webRequest = WebRequest.Create(uriPath);
                 webRequest.Method = "HEAD";
 
                 using (var webResponse = webRequest.GetResponse())
@@ -163,7 +163,7 @@ namespace HandheldCompanion
                 string assets = CommonUtils.Between(Result, "Assets</h3>", "</details>");
                 string asset = CommonUtils.Between(assets, "<a", "</a>", true);
 
-                while (!String.IsNullOrEmpty(asset))
+                while (!string.IsNullOrEmpty(asset))
                 {
                     Uri href = new Uri($"https://github.com{CommonUtils.Between(asset, "href=\"", "\"")}");
 
@@ -218,7 +218,7 @@ namespace HandheldCompanion
             XmlNodeList entries = doc.GetElementsByTagName("entry");
             var entry = entries[0];
 
-            Version latestBuild = new Version(0,0,0,0);
+            Version latestBuild = new Version(0, 0, 0, 0);
             Uri latestHref = null;
 
             foreach (XmlNode child in entry.ChildNodes)
