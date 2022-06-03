@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 
-namespace ControllerCommon
+namespace ControllerCommon.Managers
 {
     public class ToastManager
     {

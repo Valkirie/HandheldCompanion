@@ -1,5 +1,7 @@
 using ControllerCommon;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
@@ -20,7 +22,7 @@ using System.Windows.Input;
 using System.Windows.Navigation;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Page = System.Windows.Controls.Page;
-using ServiceControllerStatus = ControllerCommon.ServiceControllerStatus;
+using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
 namespace HandheldCompanion.Views
 {
@@ -69,10 +71,10 @@ namespace HandheldCompanion.Views
 
         // manager(s) vars
         public ToastManager toastManager;
-        public ProcessManager processManager;
+        private ProcessManager processManager;
         public ServiceManager serviceManager;
         public ProfileManager profileManager;
-        public TaskManager taskManager;
+        private TaskManager taskManager;
         private CheatManager cheatManager;
 
         private WindowState prevWindowState;

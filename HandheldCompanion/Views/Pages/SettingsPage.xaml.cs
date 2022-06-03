@@ -1,5 +1,7 @@
 using ControllerCommon;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
+using HandheldCompanion.Managers;
 using Microsoft.Extensions.Logging;
 using ModernWpf;
 using ModernWpf.Controls;
@@ -13,7 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Page = System.Windows.Controls.Page;
-using ServiceControllerStatus = ControllerCommon.ServiceControllerStatus;
+using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
 namespace HandheldCompanion.Views.Pages
 {

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace ControllerCommon
+namespace ControllerCommon.Managers
 {
     public class SystemManager
     {

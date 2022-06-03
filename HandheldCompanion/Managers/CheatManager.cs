@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HandheldCompanion
+namespace HandheldCompanion.Managers
 {
     public class CheatManager
     {
@@ -95,7 +95,7 @@ namespace HandheldCompanion
                 {
                     inputs[inputs_idx] = button;
 
-                        if (inputs_idx < inputs.Count - 1)
+                    if (inputs_idx < inputs.Count - 1)
                         inputs_idx++;
                     else
                         inputs_idx = 0;

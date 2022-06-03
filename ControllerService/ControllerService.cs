@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Devices;
+using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using ControllerService.Targets;

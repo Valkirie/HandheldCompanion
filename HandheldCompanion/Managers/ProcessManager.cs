@@ -7,7 +7,7 @@ using System.Management;
 using System.Timers;
 using Windows.System.Diagnostics;
 
-namespace HandheldCompanion
+namespace HandheldCompanion.Managers
 {
     public struct ProcessDetails
     {
@@ -72,7 +72,7 @@ namespace HandheldCompanion
             stopWatch.Stop();
         }
 
-        private void MonitorHelper(object? sender, System.Timers.ElapsedEventArgs e)
+        private void MonitorHelper(object? sender, ElapsedEventArgs e)
         {
             lock (updateLock)
             {
