@@ -25,26 +25,16 @@ namespace ControllerCommon
         [DllImport("winmm.dll")]
         private static extern int timeEndPeriod(int msec);
 
-        private int interval = 1;
-        public int Interval
-        {
-            get
-            {
-                return interval;
-            }
-            set
-            {
-                if (value <= 0) return;
-
-                interval = value;
-            }
-        }
-
+        public int Interval = 33;
         private int timerID = 0;
 
-        public MultimediaTimer(int i)
+        public MultimediaTimer()
         {
-            Interval = i;
+        }
+
+        public MultimediaTimer(int Interval)
+        {
+            this.Interval = Interval;
         }
 
         public void Start()
@@ -53,7 +43,7 @@ namespace ControllerCommon
 
             timeBeginPeriod(1);
             handler = new TimerEventHandler(TimerHandler);
-            timerID = timeSetEvent(interval, 0, handler, IntPtr.Zero, EVENT_TYPE);
+            timerID = timeSetEvent(Interval, 0, handler, IntPtr.Zero, EVENT_TYPE);
         }
 
         private void TimerHandler(int id, int msg, IntPtr user, int dw1, int dw2)

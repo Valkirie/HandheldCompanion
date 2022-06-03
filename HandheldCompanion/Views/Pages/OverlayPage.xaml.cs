@@ -50,6 +50,13 @@ namespace HandheldCompanion.Views.Pages
             SliderControllerSize.Value = Properties.Settings.Default.OverlayControllerSize;
             SliderControllerSize_ValueChanged(this, null);
 
+            // controller update interval
+            Slider_Framerate.Value = Properties.Settings.Default.OverlayRenderInterval;
+            Slider_Framerate_ValueChanged(this, null);
+
+            Toggle_RenderAA.IsOn = Properties.Settings.Default.OverlayRenderAntialiasing;
+            Toggle_RenderAA_Toggled(this, null);
+
             // trackpads size
             SliderTrackpadsSize.Value = Properties.Settings.Default.OverlayTrackpadsSize;
             SliderTrackpadsSize_ValueChanged(this, null);
@@ -323,6 +330,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Slider_RestingPitch_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!Initialized)
+                return;
+
             overlay.DesiredAngleDeg.X = Slider_RestingPitch.Value;
 
             // save settings
@@ -332,6 +342,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void Slider_RestingYaw_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!Initialized)
+                return;
+
             overlay.DesiredAngleDeg.Z = Slider_RestingYaw.Value;
 
             // save settings
@@ -341,10 +354,37 @@ namespace HandheldCompanion.Views.Pages
 
         private void Slider_RestingRoll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!Initialized)
+                return;
+
             overlay.DesiredAngleDeg.Y = Slider_RestingRoll.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerRestingRoll = Slider_RestingRoll.Value;
+            Properties.Settings.Default.Save();
+        }
+
+        private void Toggle_RenderAA_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!Initialized)
+                return;
+
+            overlay.ModelViewPort.SetValue(RenderOptions.EdgeModeProperty, Toggle_RenderAA.IsOn ? EdgeMode.Unspecified: EdgeMode.Aliased);
+
+            // save settings
+            Properties.Settings.Default.OverlayRenderAntialiasing = Toggle_RenderAA.IsOn;
+            Properties.Settings.Default.Save();
+        }
+
+        private void Slider_Framerate_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (!Initialized)
+                return;
+
+            overlay.UpdateInterval(1000.0d / Slider_Framerate.Value);
+
+            // save settings
+            Properties.Settings.Default.OverlayRenderInterval = Slider_Framerate.Value;
             Properties.Settings.Default.Save();
         }
     }

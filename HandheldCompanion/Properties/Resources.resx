@@ -267,7 +267,7 @@
     <value>Back</value>
   </data>
   <data name="OverlayPage_CameraAngle" xml:space="preserve">
-    <value>3D model stationary angles</value>
+    <value>Stationary angles</value>
   </data>
   <data name="OverlayPage_CameraAngleDesc" xml:space="preserve">
     <value>Change the respective roll, pitch and yaw angles of your stationary 3D overlay controller model</value>
@@ -325,6 +325,30 @@
   </data>
   <data name="OverlayPage_OverlayPreview" xml:space="preserve">
     <value>Overlay preview</value>
+  </data>
+  <data name="OverlayPage_RenderSettings" xml:space="preserve">
+    <value>Render settings</value>
+    <comment>added on 03/06/2022</comment>
+  </data>
+  <data name="OverlayPage_RenderSettingsAntialiasing" xml:space="preserve">
+    <value>Anti-Aliasing</value>
+    <comment>added on 03/06/2022</comment>
+  </data>
+  <data name="OverlayPage_RenderSettingsAntialiasingDesc" xml:space="preserve">
+    <value>Change the render anti-aliasing status</value>
+    <comment>added on 03/06/2022</comment>
+  </data>
+  <data name="OverlayPage_RenderSettingsDesc" xml:space="preserve">
+    <value>Change the render settings of your stationary 3D overlay controller model</value>
+    <comment>added on 03/06/2022</comment>
+  </data>
+  <data name="OverlayPage_RenderSettingsFramerate" xml:space="preserve">
+    <value>Update rate</value>
+    <comment>added on 03/06/2022</comment>
+  </data>
+  <data name="OverlayPage_RenderSettingsFramerateDesc" xml:space="preserve">
+    <value>Change the render update rate, in update per second</value>
+    <comment>added on 03/06/2022</comment>
   </data>
   <data name="OverlayPage_SecondaryTrigger" xml:space="preserve">
     <value>Trigger button(s)</value>

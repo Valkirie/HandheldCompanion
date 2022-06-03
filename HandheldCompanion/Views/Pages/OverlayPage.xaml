@@ -192,6 +192,66 @@
                     </Grid>
                 </Border>
 
+                <!-- Model settings -->
+                <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
+                    <Expander.Header>
+                        <DockPanel Margin="-10,12,12,12">
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8B4;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_RenderSettings}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_RenderSettingsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+                    </Expander.Header>
+
+                    <Expander.Content>
+                        <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
+
+                            <!-- Framerate -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Static resx:Resources.OverlayPage_RenderSettingsFramerate}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.OverlayPage_RenderSettingsFramerateDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=Slider_Framerate, Mode=OneWay}" />
+                                    <Slider Margin="6,0,0,0" Name="Slider_Framerate" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="60" TickFrequency="5" TickPlacement="BottomRight" Minimum="10" IsSnapToTickEnabled="True"
+									MouseEnter="Scrolllock_MouseEnter"
+									MouseLeave="Scrolllock_MouseLeave" LargeChange="10" SmallChange="5" ValueChanged="Slider_Framerate_ValueChanged"/>
+                                </DockPanel>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+
+                            <!-- Anti-Aliasing -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Static resx:Resources.OverlayPage_RenderSettingsAntialiasing}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.OverlayPage_RenderSettingsAntialiasingDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <ui:ToggleSwitch Name="Toggle_RenderAA" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_RenderAA_Toggled" IsOn="False">
+                                    </ui:ToggleSwitch>
+                                </DockPanel>
+                            </Grid>
+                        </ui:SimpleStackPanel>
+                    </Expander.Content>
+                </Expander>
+
                 <!-- Resting angles -->
                 <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
                     <Expander.Header>
