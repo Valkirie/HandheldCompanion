@@ -511,7 +511,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 3D model stationary angles.
+        ///   Looks up a localized string similar to Stationary angles.
         /// </summary>
         public static string OverlayPage_CameraAngle {
             get {
@@ -687,6 +687,60 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_OverlayPreview {
             get {
                 return ResourceManager.GetString("OverlayPage_OverlayPreview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Render settings.
+        /// </summary>
+        public static string OverlayPage_RenderSettings {
+            get {
+                return ResourceManager.GetString("OverlayPage_RenderSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Anti-Aliasing.
+        /// </summary>
+        public static string OverlayPage_RenderSettingsAntialiasing {
+            get {
+                return ResourceManager.GetString("OverlayPage_RenderSettingsAntialiasing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the render anti-aliasing status.
+        /// </summary>
+        public static string OverlayPage_RenderSettingsAntialiasingDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_RenderSettingsAntialiasingDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the render settings of your stationary 3D overlay controller model.
+        /// </summary>
+        public static string OverlayPage_RenderSettingsDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_RenderSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update rate.
+        /// </summary>
+        public static string OverlayPage_RenderSettingsFramerate {
+            get {
+                return ResourceManager.GetString("OverlayPage_RenderSettingsFramerate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the render update rate, in update per second.
+        /// </summary>
+        public static string OverlayPage_RenderSettingsFramerateDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_RenderSettingsFramerateDesc", resourceCulture);
             }
         }
         

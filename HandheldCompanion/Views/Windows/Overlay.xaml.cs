@@ -96,9 +96,8 @@ namespace HandheldCompanion.Views.Windows
             touchsource.Touch += Touchsource_Touch;
 
             // initialize timers
-            UpdateTimer = new MultimediaTimer(10);
+            UpdateTimer = new MultimediaTimer();
             UpdateTimer.Tick += UpdateReport;
-            UpdateTimer.Start();
 
             this.SourceInitialized += Overlay_SourceInitialized;
         }
@@ -109,6 +108,13 @@ namespace HandheldCompanion.Views.Windows
 
             this.pipeClient = pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
+        }
+
+        public void UpdateInterval(double interval)
+        {
+            UpdateTimer.Stop();
+            UpdateTimer.Interval = (int)interval;
+            UpdateTimer.Start();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -147,28 +153,20 @@ namespace HandheldCompanion.Views.Windows
             {
                 case OverlayModelMode.OEM:
                     if (ProductModel != null)
-                    {
                         CurrentModel = ProductModel;
-                        ModelVisual3D.Content = ProductModel.model3DGroup;
-                    }
                     else goto case OverlayModelMode.Virtual;
                     break;
                 case OverlayModelMode.Virtual:
                     if (VirtualModel != null)
-                    {
                         CurrentModel = VirtualModel;
-                        ModelVisual3D.Content = VirtualModel.model3DGroup;
-                    }
                     break;
                 case OverlayModelMode.Toy:
                     if (BonusModel != null)
-                    {
                         CurrentModel = BonusModel;
-                        ModelVisual3D.Content = BonusModel.model3DGroup;
-                    }
                     break;
             }
 
+            ModelVisual3D.Content = CurrentModel.model3DGroup;
             ModelViewPort.ZoomExtents();
         }
 
@@ -286,8 +284,9 @@ namespace HandheldCompanion.Views.Windows
                 switch (VirtualController.Visibility)
                 {
                     case Visibility.Visible:
-                        visibility = Visibility.Hidden;
+                        visibility = Visibility.Collapsed;
                         break;
+                    case Visibility.Collapsed:
                     case Visibility.Hidden:
                         visibility = Visibility.Visible;
                         break;
@@ -304,8 +303,9 @@ namespace HandheldCompanion.Views.Windows
                 switch (VirtualTrackpads.Visibility)
                 {
                     case Visibility.Visible:
-                        visibility = Visibility.Hidden;
+                        visibility = Visibility.Collapsed;
                         break;
+                    case Visibility.Collapsed:
                     case Visibility.Hidden:
                         visibility = Visibility.Visible;
                         break;
@@ -446,12 +446,12 @@ namespace HandheldCompanion.Views.Windows
             // update gamepad state
             prevGamepad = Gamepad;
 
-            // update model
-            UpdateModelVisual3D();
-
             // skip virtual controller update if hidden or collapsed
             if (VirtualController.Visibility != Visibility.Visible)
                 return;
+
+            // update model
+            UpdateModelVisual3D();
 
             this.Dispatcher.Invoke(() =>
             {
@@ -634,12 +634,6 @@ namespace HandheldCompanion.Views.Windows
 
         private void UpdateModelVisual3D()
         {
-            m_ModelVisualUpdate++;
-
-            /* reduce CPU usage by drawing every x calls
-            if (m_ModelVisualUpdate % 2 != 0)
-                return; */
-
             this.Dispatcher.Invoke(() =>
             {
                 Transform3DGroup Transform3DGroupModel = new Transform3DGroup();
@@ -728,7 +722,6 @@ namespace HandheldCompanion.Views.Windows
                                                         );
 
                 CurrentModel.ButtonMap[GamepadButtonFlags.RightShoulder][0] = Placeholder;
-
             });
         }
         #endregion

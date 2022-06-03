@@ -382,5 +382,29 @@ namespace HandheldCompanion.Properties {
                 this["OverlayControllerFisherPrice"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public double OverlayRenderInterval {
+            get {
+                return ((double)(this["OverlayRenderInterval"]));
+            }
+            set {
+                this["OverlayRenderInterval"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OverlayRenderAntialiasing {
+            get {
+                return ((bool)(this["OverlayRenderAntialiasing"]));
+            }
+            set {
+                this["OverlayRenderAntialiasing"] = value;
+            }
+        }
     }
 }
