@@ -1,8 +1,8 @@
 using ControllerCommon;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using ControllerService.Targets;
-using Microsoft.Extensions.Logging;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -53,22 +53,20 @@ namespace ControllerService
         public delegate void UpdatedEventHandler(XInputController controller);
 
         protected object updateLock = new();
-        private readonly ILogger logger;
         private readonly PipeServer pipeServer;
 
-        public XInputController(SensorFamily sensorFamily, ILogger logger, PipeServer pipeServer)
+        public XInputController(SensorFamily sensorFamily, PipeServer pipeServer)
         {
-            this.logger = logger;
             this.pipeServer = pipeServer;
 
             // initialize sensorfusion and madgwick
-            sensorFusion = new SensorFusion(logger);
+            sensorFusion = new SensorFusion();
             madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
 
             // initialize sensors
-            Gyrometer = new XInputGirometer(sensorFamily, updateInterval, logger);
-            Accelerometer = new XInputAccelerometer(sensorFamily, updateInterval, logger);
-            Inclinometer = new XInputInclinometer(sensorFamily, updateInterval, logger);
+            Gyrometer = new XInputGirometer(sensorFamily, updateInterval);
+            Accelerometer = new XInputAccelerometer(sensorFamily, updateInterval);
+            Inclinometer = new XInputInclinometer(sensorFamily, updateInterval);
             this.sensorFamily = sensorFamily;
 
             // initialize vectors
@@ -167,15 +165,15 @@ namespace ControllerService
                 // update sensorFusion (todo: call only when needed ?)
                 sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocities[XInputSensorFlags.Centered], Accelerations[XInputSensorFlags.Default]);
 
-                /*
-                logger.LogTrace("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
-                logger.LogTrace("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
-                logger.LogTrace("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Z);
-                                
-                logger.LogTrace("Plot AngRawX {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].X);
-                logger.LogTrace("Plot AngRawY {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].Y);
-                logger.LogTrace("Plot AngRawZ {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].Z);
-                */
+#if DEBUG
+                LogManager.LogDebug("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
+                LogManager.LogDebug("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
+                LogManager.LogDebug("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Z);
+
+                LogManager.LogDebug("Plot AngRawX {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].X);
+                LogManager.LogDebug("Plot AngRawY {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].Y);
+                LogManager.LogDebug("Plot AngRawZ {0} {1}", TotalMilliseconds, AngularVelocities[XInputSensorFlags.RawValue].Z);
+#endif
 
                 // async update client(s)
                 Task.Run(() =>
@@ -211,20 +209,19 @@ namespace ControllerService
                     }
                 });
 
-                Task.Run(() =>
-                {
-                    logger.LogTrace("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
-                    logger.LogTrace("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
-                    logger.LogTrace("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Z);
+#if DEBUG
+                LogManager.LogDebug("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].X);
+                LogManager.LogDebug("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Y);
+                LogManager.LogDebug("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.RawValue].Z);
 
-                    logger.LogTrace("Plot GyroRawCX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].X);
-                    logger.LogTrace("Plot GyroRawCY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Y);
-                    logger.LogTrace("Plot GyroRawCZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Z);
+                LogManager.LogDebug("Plot GyroRawCX {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].X);
+                LogManager.LogDebug("Plot GyroRawCY {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Y);
+                LogManager.LogDebug("Plot GyroRawCZ {0} {1}", TotalMilliseconds, Accelerations[XInputSensorFlags.CenteredRaw].Z);
 
-                    logger.LogTrace("Plot PoseX {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().X);
-                    logger.LogTrace("Plot PoseY {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Y);
-                    logger.LogTrace("Plot PoseZ {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Z);
-                });
+                LogManager.LogDebug("Plot PoseX {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().X);
+                LogManager.LogDebug("Plot PoseY {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Y);
+                LogManager.LogDebug("Plot PoseZ {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Z);
+#endif
 
                 // get current gamepad state
                 if (controllerEx != null && controllerEx.IsConnected())
@@ -259,7 +256,7 @@ namespace ControllerService
             SetPollRate(updateInterval);
             SetVibrationStrength(vibrationStrength);
 
-            logger.LogInformation("{0} attached to {1} on slot {2}", target, ProductName, controllerEx.Controller.UserIndex);
+            LogManager.LogInformation("{0} attached to {1} on slot {2}", target, ProductName, controllerEx.Controller.UserIndex);
         }
     }
 }
