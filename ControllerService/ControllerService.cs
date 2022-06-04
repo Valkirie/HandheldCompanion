@@ -45,7 +45,7 @@ namespace ControllerService
 
         public static string CurrentExe, CurrentPath, CurrentPathDep;
         public static string CurrentTag;
-        public static int CurrentOverlayStatus = -1;
+        public static int CurrentOverlayStatus = 2;
 
         // settings vars
         Configuration configuration;

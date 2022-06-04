@@ -303,6 +303,15 @@ namespace HandheldCompanion.Views.Windows
                         break;
                     case Visibility.Collapsed:
                     case Visibility.Hidden:
+
+                        // reset position
+                        q_w = 0.0f;
+                        q_x = 0.0f;
+                        q_y = 1.0f;
+                        q_z = 0.0f;
+                        
+                        PoseRad = new Vector3D(0, 3.14, 0);
+                        
                         visibility = Visibility.Visible;
                         break;
                 }
