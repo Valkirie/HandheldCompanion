@@ -1,8 +1,6 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using HandheldCompanion.Views;
-using Microsoft.Extensions.Configuration;
-using Serilog;
-using Serilog.Extensions.Logging;
 using System;
 using System.Globalization;
 using System.IO;
@@ -48,17 +46,10 @@ namespace HandheldCompanion
             {
                 Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
-                var configuration = new ConfigurationBuilder()
-                            .AddJsonFile("HandheldCompanion.json")
-                            .Build();
+                // initialize log manager
+                LogManager.Initialize("HandheldCompanion");
 
-                var serilogLogger = new LoggerConfiguration()
-                    .ReadFrom.Configuration(configuration)
-                    .CreateLogger();
-
-                var logger = new SerilogLoggerFactory(serilogLogger).CreateLogger("HandheldCompanion");
-
-                MainWindow wnd = new MainWindow(Arguments, logger);
+                MainWindow wnd = new MainWindow(Arguments);
                 wnd.Show();
 
                 mutex.ReleaseMutex();

@@ -1,9 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
-using Microsoft.Extensions.Logging;
 using SharpDX.XInput;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -32,7 +30,6 @@ namespace HandheldCompanion.Views.Windows
         public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
         #endregion
 
-        private ILogger logger;
         private PipeClient pipeClient;
 
         private Model CurrentModel;
@@ -103,10 +100,8 @@ namespace HandheldCompanion.Views.Windows
             this.SourceInitialized += Overlay_SourceInitialized;
         }
 
-        public Overlay(ILogger logger, PipeClient pipeClient) : this()
+        public Overlay(PipeClient pipeClient) : this()
         {
-            this.logger = logger;
-
             this.pipeClient = pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
         }
@@ -644,7 +639,7 @@ namespace HandheldCompanion.Views.Windows
             return new DiffuseMaterial(new SolidColorBrush(TransitionColor));
         }
 
-        private void UpwardVisibilityRotationShoulderButtons(float ShoulderButtonsAngleDeg, 
+        private void UpwardVisibilityRotationShoulderButtons(float ShoulderButtonsAngleDeg,
                                                              Vector3D UpwardVisibilityRotationAxis,
                                                              Vector3D UpwardVisibilityRotationPoint,
                                                              float ShoulderTriggerAngleDeg,

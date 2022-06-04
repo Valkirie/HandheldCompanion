@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.ServiceProcess;
@@ -38,8 +37,6 @@ namespace ControllerCommon.Managers
         private Timer MonitorTimer;
         private object updateLock = new();
 
-        private readonly ILogger logger;
-
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(ServiceControllerStatus status, int mode);
 
@@ -49,10 +46,8 @@ namespace ControllerCommon.Managers
         public event StopFailedEventHandler StopFailed;
         public delegate void StopFailedEventHandler(ServiceControllerStatus status);
 
-        public ServiceManager(string name, string display, string description, ILogger logger)
+        public ServiceManager(string name, string display, string description)
         {
-            this.logger = logger;
-
             this.name = name;
             this.display = display;
             this.description = description;
@@ -108,7 +103,7 @@ namespace ControllerCommon.Managers
                 {
                     Updated?.Invoke(status, (int)type);
                     nextStatus = ServiceControllerStatus.None;
-                    logger.LogInformation("Controller Service status has changed to: {0}", status.ToString());
+                    LogManager.LogInformation("Controller Service status has changed to: {0}", status.ToString());
                 }
 
                 prevStatus = (int)status;
@@ -133,7 +128,7 @@ namespace ControllerCommon.Managers
             }
             catch (Exception ex)
             {
-                logger.LogError("Service manager returned error: {0}", ex.Message);
+                LogManager.LogError("Service manager returned error: {0}", ex.Message);
             }
         }
 
@@ -164,7 +159,7 @@ namespace ControllerCommon.Managers
                 catch (Exception ex)
                 {
                     await Task.Delay(2000);
-                    logger.LogError("Service manager returned error: {0}", ex.Message);
+                    LogManager.LogError("Service manager returned error: {0}", ex.Message);
                     StartTentative++;
 
                     // exit loop
@@ -200,7 +195,7 @@ namespace ControllerCommon.Managers
                 catch (Exception ex)
                 {
                     await Task.Delay(2000);
-                    logger.LogError("Service manager returned error: {0}", ex.Message);
+                    LogManager.LogError("Service manager returned error: {0}", ex.Message);
                     StopTentative++;
 
                     // exit loop

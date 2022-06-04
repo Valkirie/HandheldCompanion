@@ -1,7 +1,7 @@
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using Force.Crc32;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -99,7 +99,6 @@ namespace ControllerService
             meta = padMeta;
         }
 
-        private readonly ILogger logger;
         public string ip;
         public int port;
         private Vector3 empty = new();
@@ -110,9 +109,8 @@ namespace ControllerService
         public event StoppedEventHandler Stopped;
         public delegate void StoppedEventHandler(DSUServer server);
 
-        public DSUServer(string ipString, int port, ILogger logger)
+        public DSUServer(string ipString, int port)
         {
-            this.logger = logger;
             this.ip = ipString;
             this.port = port;
 
@@ -512,7 +510,7 @@ namespace ControllerService
             }
             catch (SocketException)
             {
-                logger.LogCritical("{0} couldn't listen to ip: {1} port: {2}", this.ToString(), ip, port);
+                LogManager.LogCritical("{0} couldn't listen to ip: {1} port: {2}", this.ToString(), ip, port);
                 this.Stop();
                 return running;
             }
@@ -527,7 +525,7 @@ namespace ControllerService
             BatteryTimer.Enabled = true;
             BatteryTimer.Start();
 
-            logger.LogInformation("{0} has started. Listening to ip: {1} port: {2}", this.ToString(), ip, port);
+            LogManager.LogInformation("{0} has started. Listening to ip: {1} port: {2}", this.ToString(), ip, port);
             Started?.Invoke(this);
 
             return running;
@@ -542,7 +540,7 @@ namespace ControllerService
             }
             running = false;
 
-            logger.LogInformation($"{0} has stopped", this.ToString());
+            LogManager.LogInformation($"{0} has stopped", this.ToString());
             Stopped?.Invoke(this);
         }
 

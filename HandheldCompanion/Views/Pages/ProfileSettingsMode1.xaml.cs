@@ -1,7 +1,6 @@
 ﻿using ControllerCommon;
 using LiveCharts;
 using LiveCharts.Defaults;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +12,6 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class ProfileSettingsMode1 : Page
     {
-        private ILogger logger;
         private Profile profileCurrent;
         private PipeClient pipeClient;
 
@@ -34,10 +32,9 @@ namespace HandheldCompanion.Views.Pages
             lvLineSeriesDefault.Values = new ChartValues<double>() { 0, 1 };
         }
 
-        public ProfileSettingsMode1(string Tag, Profile profileCurrent, PipeClient pipeClient, ILogger logger) : this()
+        public ProfileSettingsMode1(string Tag, Profile profileCurrent, PipeClient pipeClient) : this()
         {
             this.Tag = Tag;
-            this.logger = logger;
 
             this.profileCurrent = profileCurrent;
             this.pipeClient = pipeClient;

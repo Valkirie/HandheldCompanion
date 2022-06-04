@@ -2,7 +2,6 @@ using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -26,7 +25,6 @@ namespace HandheldCompanion.Views.Pages
         private readonly HidHide Hidder;
         private readonly ToastManager toastManager;
 
-        private readonly ILogger logger;
         private ServiceManager serviceManager;
 
         // pipe vars
@@ -55,21 +53,19 @@ namespace HandheldCompanion.Views.Pages
                 cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
 
             // initialize controller manager
-            controllerManager = new ControllerManager(logger);
+            controllerManager = new ControllerManager();
             controllerManager.ControllerPlugged += ControllerPlugged;
             controllerManager.ControllerUnplugged += ControllerUnplugged;
             controllerManager.StartListen();
         }
 
-        public ControllerPage(string Tag, MainWindow mainWindow, ILogger logger) : this()
+        public ControllerPage(string Tag, MainWindow mainWindow) : this()
         {
             this.Tag = Tag;
 
             this.mainWindow = mainWindow;
             this.Hidder = mainWindow.Hidder;
             this.toastManager = mainWindow.toastManager;
-
-            this.logger = logger;
 
             this.pipeClient = mainWindow.pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;

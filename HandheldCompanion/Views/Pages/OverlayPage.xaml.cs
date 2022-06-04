@@ -1,7 +1,6 @@
 ﻿using ControllerCommon.Utils;
 using HandheldCompanion.Models;
 using HandheldCompanion.Views.Windows;
-using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +15,6 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class OverlayPage : Page
     {
-        private ILogger logger;
         private Overlay overlay;
         private bool Initialized;
 
@@ -26,14 +24,12 @@ namespace HandheldCompanion.Views.Pages
             Initialized = true;
         }
 
-        public OverlayPage(string Tag, Overlay overlay, ILogger logger) : this()
+        public OverlayPage(string Tag, Overlay overlay) : this()
         {
             this.Tag = Tag;
             this.overlay = overlay;
             this.overlay.ControllerTriggerUpdated += Overlay_ControllerTriggerUpdated;
             this.overlay.TrackpadsTriggerUpdated += Overlay_TrackpadsTriggerUpdated;
-
-            this.logger = logger;
 
             // controller enabler
             ToyControllerRadio.IsEnabled = Properties.Settings.Default.OverlayControllerFisherPrice;
@@ -369,7 +365,7 @@ namespace HandheldCompanion.Views.Pages
             if (!Initialized)
                 return;
 
-            overlay.ModelViewPort.SetValue(RenderOptions.EdgeModeProperty, Toggle_RenderAA.IsOn ? EdgeMode.Unspecified: EdgeMode.Aliased);
+            overlay.ModelViewPort.SetValue(RenderOptions.EdgeModeProperty, Toggle_RenderAA.IsOn ? EdgeMode.Unspecified : EdgeMode.Aliased);
 
             // save settings
             Properties.Settings.Default.OverlayRenderAntialiasing = Toggle_RenderAA.IsOn;

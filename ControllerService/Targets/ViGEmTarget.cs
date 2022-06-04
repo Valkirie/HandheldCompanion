@@ -1,7 +1,7 @@
 using ControllerCommon;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
-using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
 using System;
@@ -39,8 +39,6 @@ namespace ControllerService.Targets
 
         public HIDmode HID = HIDmode.NoController;
 
-        protected readonly ILogger logger;
-
         protected ViGEmClient client { get; }
         protected IVirtualGamepad virtualController;
 
@@ -59,12 +57,10 @@ namespace ControllerService.Targets
 
         protected bool IsConnected;
 
-        protected ViGEmTarget(XInputController xinput, ViGEmClient client, ILogger logger)
+        protected ViGEmTarget(XInputController xinput, ViGEmClient client)
         {
-            this.logger = logger;
-
             // initialize flick stick
-            flickStick = new FlickStick(logger);
+            flickStick = new FlickStick();
 
             // initialize secret state
             state_s = new();
@@ -82,7 +78,7 @@ namespace ControllerService.Targets
         public void SetVibrationStrength(double strength)
         {
             vibrationStrength = strength / 100.0f;
-            logger.LogInformation("{0} vibration strength set to {1}%", this, strength);
+            LogManager.LogInformation("{0} vibration strength set to {1}%", this, strength);
         }
 
         public override string ToString()
@@ -94,14 +90,14 @@ namespace ControllerService.Targets
         {
             IsConnected = true;
             Connected?.Invoke(this);
-            logger.LogInformation("{0} connected", ToString());
+            LogManager.LogInformation("{0} connected", ToString());
         }
 
         public virtual void Disconnect()
         {
             IsConnected = false;
             Disconnected?.Invoke(this);
-            logger.LogInformation("{0} disconnected", ToString());
+            LogManager.LogInformation("{0} disconnected", ToString());
         }
 
 

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Nefarius.Utilities.DeviceManagement.PnP;
+﻿using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
 using SharpDX.XInput;
 using System;
@@ -22,8 +21,6 @@ namespace ControllerCommon
 
     public class ControllerEx
     {
-        private ILogger logger;
-
         private PnPDeviceEx deviceEx;
         public Controller Controller;
         public string Manufacturer, DeviceDesc;
@@ -54,10 +51,8 @@ namespace ControllerCommon
 
         private readonly Guid hidClassInterfaceGuid;
 
-        public ControllerEx(UserIndex index, ILogger logger)
+        public ControllerEx(UserIndex index)
         {
-            this.logger = logger;
-
             this.Controller = new Controller(index);
             this.UserIndex = index;
 
@@ -75,7 +70,7 @@ namespace ControllerCommon
             }
         }
 
-        public ControllerEx(UserIndex index, ILogger logger, ref List<PnPDeviceEx> devices) : this(index, logger)
+        public ControllerEx(UserIndex index, ref List<PnPDeviceEx> devices) : this(index)
         {
             if (ProductId is null || VendorId is null)
                 return;

@@ -2,7 +2,6 @@ using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
-using Microsoft.Extensions.Logging;
 using ModernWpf;
 using ModernWpf.Controls;
 using System;
@@ -25,7 +24,6 @@ namespace HandheldCompanion.Views.Pages
     public partial class SettingsPage : Page
     {
         private MainWindow mainWindow;
-        private ILogger logger;
         private PipeClient pipeClient;
         private ServiceManager serviceManager;
 
@@ -72,11 +70,10 @@ namespace HandheldCompanion.Views.Pages
             updateManager.Updated += UpdateManager_Updated;
         }
 
-        public SettingsPage(string Tag, MainWindow mainWindow, ILogger logger) : this()
+        public SettingsPage(string Tag, MainWindow mainWindow) : this()
         {
             this.Tag = Tag;
             this.mainWindow = mainWindow;
-            this.logger = logger;
 
             this.pipeClient = mainWindow.pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;

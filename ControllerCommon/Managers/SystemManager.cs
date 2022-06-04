@@ -1,6 +1,5 @@
 ﻿using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
-using Microsoft.Extensions.Logging;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
@@ -14,8 +13,6 @@ namespace ControllerCommon.Managers
         [DllImport("hid.dll", EntryPoint = "HidD_GetHidGuid")]
         static internal extern void HidD_GetHidGuidMethod(out Guid hidGuid);
         #endregion
-
-        private ILogger logger;
 
         public static Guid HidDevice;
         private DeviceNotificationListener hidListener;
@@ -33,10 +30,8 @@ namespace ControllerCommon.Managers
         public event SerialRemovedEventHandler SerialRemoved;
         public delegate void SerialRemovedEventHandler(PnPDevice device);
 
-        public SystemManager(ILogger logger)
+        public SystemManager()
         {
-            this.logger = logger;
-
             // initialize hid
             HidD_GetHidGuidMethod(out var interfaceGuid);
             HidDevice = interfaceGuid;

@@ -1,5 +1,5 @@
+using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Numerics;
 using Windows.Devices.Sensors;
@@ -9,7 +9,7 @@ namespace ControllerService.Sensors
 {
     public class XInputInclinometer : XInputSensor
     {
-        public XInputInclinometer(SensorFamily sensorFamily, int updateInterval, ILogger logger) : base(logger)
+        public XInputInclinometer(SensorFamily sensorFamily, int updateInterval) : base()
         {
             this.updateInterval = updateInterval;
             UpdateSensor(sensorFamily);
@@ -23,13 +23,13 @@ namespace ControllerService.Sensors
                     sensor = Accelerometer.GetDefault();
                     break;
                 case SensorFamily.SerialUSBIMU:
-                    sensor = SerialUSBIMU.GetDefault(logger);
+                    sensor = SerialUSBIMU.GetDefault();
                     break;
             }
 
             if (sensor == null)
             {
-                logger.LogWarning("{0} not initialised as a {1}.", this.ToString(), sensorFamily.ToString());
+                LogManager.LogWarning("{0} not initialised as a {1}.", this.ToString(), sensorFamily.ToString());
                 return;
             }
 
@@ -40,13 +40,13 @@ namespace ControllerService.Sensors
                     ((Accelerometer)sensor).ReadingChanged += ReadingChanged;
                     filter.SetFilterAttrs(ControllerService.handheldDevice.oneEuroSettings.minCutoff, ControllerService.handheldDevice.oneEuroSettings.beta);
 
-                    logger.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
+                    LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
                     break;
                 case SensorFamily.SerialUSBIMU:
                     ((SerialUSBIMU)sensor).ReadingChanged += ReadingChanged;
                     filter.SetFilterAttrs(((SerialUSBIMU)sensor).GetFilterCutoff(), ((SerialUSBIMU)sensor).GetFilterBeta());
 
-                    logger.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
+                    LogManager.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
                     break;
             }
         }
