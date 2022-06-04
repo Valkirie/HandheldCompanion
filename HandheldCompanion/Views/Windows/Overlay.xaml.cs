@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using TouchEventSample;
 using static TouchEventSample.TouchSourceWinTouch;
@@ -455,6 +456,8 @@ namespace HandheldCompanion.Views.Windows
 
             this.Dispatcher.Invoke(() =>
             {
+                float GradientFactor; // Used for multiple models
+
                 // TODO update motor placeholders!
                 // Motor Left
                 model = CurrentModel.LeftMotor.Children[0] as GeometryModel3D;
@@ -466,13 +469,34 @@ namespace HandheldCompanion.Views.Windows
 
                 // ShoulderLeftTrigger
                 model = CurrentModel.LeftShoulderTrigger.Children[0] as GeometryModel3D;
-                model.Material = Gamepad.LeftTrigger > 0 ? CurrentModel.HighlightMaterials[CurrentModel.LeftShoulderTrigger] : CurrentModel.DefaultMaterials[CurrentModel.LeftShoulderTrigger];
+                if (Gamepad.LeftTrigger > 0)
+                {
+                    GradientFactor = 1 * (float)Gamepad.LeftTrigger / (float)byte.MaxValue;
+                    model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.LeftShoulderTrigger],
+                                                       CurrentModel.HighlightMaterials[CurrentModel.LeftShoulderTrigger],
+                                                       GradientFactor);
+                }
+                else
+                {
+                    model.Material = CurrentModel.DefaultMaterials[CurrentModel.LeftShoulderTrigger];
+                }
 
                 TriggerAngleShoulderLeft = -1 * CurrentModel.TriggerMaxAngleDeg * (float)Gamepad.LeftTrigger / (float)byte.MaxValue;
 
                 // ShoulderRightTrigger
                 model = CurrentModel.RightShoulderTrigger.Children[0] as GeometryModel3D;
-                model.Material = Gamepad.RightTrigger > 0 ? CurrentModel.HighlightMaterials[CurrentModel.RightShoulderTrigger] : CurrentModel.DefaultMaterials[CurrentModel.RightShoulderTrigger];
+
+                if (Gamepad.RightTrigger > 0)
+                {
+                    GradientFactor = 1 * (float)Gamepad.RightTrigger / (float)byte.MaxValue;
+                    model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.RightShoulderTrigger],
+                                                       CurrentModel.HighlightMaterials[CurrentModel.RightShoulderTrigger],
+                                                       GradientFactor);
+                }
+                else
+                {
+                    model.Material = CurrentModel.DefaultMaterials[CurrentModel.RightShoulderTrigger];
+                }
 
                 TriggerAngleShoulderRight = -1 * CurrentModel.TriggerMaxAngleDeg * (float)Gamepad.RightTrigger / (float)byte.MaxValue;
 
@@ -481,7 +505,12 @@ namespace HandheldCompanion.Views.Windows
                 if (Gamepad.LeftThumbX != 0 || Gamepad.LeftThumbY != 0)
                 {
                     // Adjust color
-                    model.Material = CurrentModel.HighlightMaterials[CurrentModel.LeftThumbRing];
+                    GradientFactor = Math.Max(Math.Abs(1 * (float)Gamepad.LeftThumbX / (float)short.MaxValue),
+                                              Math.Abs(1 * (float)Gamepad.LeftThumbY / (float)short.MaxValue));
+
+                    model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.LeftThumbRing],
+                                                       CurrentModel.HighlightMaterials[CurrentModel.LeftThumbRing],
+                                                       GradientFactor);
 
                     // Define and compute
                     Transform3DGroup Transform3DGroupJoystickLeft = new Transform3DGroup();
@@ -535,7 +564,13 @@ namespace HandheldCompanion.Views.Windows
                 model = CurrentModel.RightThumbRing.Children[0] as GeometryModel3D;
                 if (Gamepad.RightThumbX != 0 || Gamepad.RightThumbY != 0)
                 {
-                    model.Material = CurrentModel.HighlightMaterials[CurrentModel.RightThumbRing];
+                    // Adjust color
+                    GradientFactor = Math.Max(Math.Abs(1 * (float)Gamepad.RightThumbX / (float)short.MaxValue),
+                                              Math.Abs(1 * (float)Gamepad.RightThumbY / (float)short.MaxValue));
+
+                    model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.RightThumbRing],
+                                                       CurrentModel.HighlightMaterials[CurrentModel.RightThumbRing],
+                                                       GradientFactor);
 
                     // Define and compute
                     Transform3DGroup Transform3DGroupJoystickRight = new Transform3DGroup();
@@ -586,7 +621,29 @@ namespace HandheldCompanion.Views.Windows
                 }
             });
         }
-        
+
+        private Material GradientHighlight(Material DefaultMaterial, Material HighlightMaterial, float Factor)
+        {
+            // Determine colors from brush from materials
+            Brush DefaultMaterialBrush = ((DiffuseMaterial)DefaultMaterial).Brush;
+            Color StartColor = ((SolidColorBrush)DefaultMaterialBrush).Color;
+            Brush HighlightMaterialBrush = ((DiffuseMaterial)HighlightMaterial).Brush;
+            Color EndColor = ((SolidColorBrush)HighlightMaterialBrush).Color;
+
+            // Linear interpolate color
+            float bk = (1 - Factor);
+            float a = StartColor.A * bk + EndColor.A * Factor;
+            float r = StartColor.R * bk + EndColor.R * Factor;
+            float g = StartColor.G * bk + EndColor.G * Factor;
+            float b = StartColor.B * bk + EndColor.B * Factor;
+
+            // Define color
+            Color TransitionColor = Color.FromArgb((byte)a, (byte)r, (byte)g, (byte)b);
+
+            // Return material with transition color
+            return new DiffuseMaterial(new SolidColorBrush(TransitionColor));
+        }
+
         private void UpwardVisibilityRotationShoulderButtons(float ShoulderButtonsAngleDeg, 
                                                              Vector3D UpwardVisibilityRotationAxis,
                                                              Vector3D UpwardVisibilityRotationPoint,
