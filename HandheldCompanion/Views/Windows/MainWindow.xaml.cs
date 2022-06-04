@@ -191,7 +191,7 @@ namespace HandheldCompanion.Views
             profileManager = new ProfileManager(pipeClient);
 
             // initialize toast manager
-            toastManager = new ToastManager("ControllerService");
+            toastManager = new ToastManager("HandheldCompanion");
 
             // initialize overlay
             overlay = new Overlay(pipeClient);
@@ -220,7 +220,8 @@ namespace HandheldCompanion.Views
             };
 
             // initialize task manager
-            taskManager = new TaskManager("ControllerService", CurrentExe);
+            taskManager = new TaskManager("HandheldCompanion", CurrentExe);
+            taskManager.UpdateTask(Properties.Settings.Default.RunAtStartup);
 
             // initialize cheat manager
             cheatManager = new CheatManager();

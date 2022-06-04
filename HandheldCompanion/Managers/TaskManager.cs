@@ -2,12 +2,12 @@
 using Microsoft.Win32.TaskScheduler;
 using System;
 
-namespace HandheldCompanion
+namespace HandheldCompanion.Managers
 {
     public class TaskManager
     {
         // TaskManager vars
-        private Task CurrentTask;
+        private Task task;
         private string ServiceName, ServiceExecutable;
 
         public TaskManager(string ServiceName, string ServiceExecutable)
@@ -19,7 +19,10 @@ namespace HandheldCompanion
                 return;
 
             TaskService TaskServ = new TaskService();
-            CurrentTask = TaskServ.FindTask(ServiceName);
+            task = TaskServ.FindTask(ServiceName);
+
+            if (task != null)
+                return;
 
             TaskDefinition td = TaskService.Instance.NewTask();
             td.Principal.RunLevel = TaskRunLevel.Highest;
@@ -30,15 +33,19 @@ namespace HandheldCompanion
             td.Settings.Enabled = false;
             td.Triggers.Add(new LogonTrigger());
             td.Actions.Add(new ExecAction(ServiceExecutable));
-            CurrentTask = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, td);
+            task = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, td);
         }
 
         public void UpdateTask(bool value)
         {
-            if (CurrentTask == null)
+            if (task == null)
                 return;
 
-            CurrentTask.Enabled = value;
+            try
+            {
+                task.Enabled = value;
+            }
+            catch (Exception) { }
         }
     }
 }
