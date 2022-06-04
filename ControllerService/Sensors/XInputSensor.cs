@@ -1,9 +1,8 @@
-﻿using ControllerCommon.Sensors;
+﻿using ControllerCommon.Managers;
+using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Numerics;
-using System.Threading.Tasks;
 using System.Timers;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.CommonUtils;
@@ -43,12 +42,8 @@ namespace ControllerService.Sensors
         public object sensor;
         public OneEuroFilter3D filter = new();
 
-        protected readonly ILogger logger;
-
-        protected XInputSensor(ILogger logger)
+        protected XInputSensor()
         {
-            this.logger = logger;
-
             this.centerTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 100 };
             this.centerTimer.Elapsed += Timer_Elapsed;
         }
@@ -59,7 +54,9 @@ namespace ControllerService.Sensors
             centerTimer.Stop();
             centerTimer.Start();
 
-            Task.Run(() => logger?.LogTrace("{0}.ReadingChanged({1:00.####}, {2:00.####}, {3:00.####})", this.GetType().Name, this.reading.X, this.reading.Y, this.reading.Z));
+#if DEBUG
+            LogManager.LogDebug("{0}.ReadingChanged({1:00.####}, {2:00.####}, {3:00.####})", this.GetType().Name, this.reading.X, this.reading.Y, this.reading.Z);
+#endif
         }
 
         public static XInputSensorStatus GetStatus(SensorFamily sensorFamily)

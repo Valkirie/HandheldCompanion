@@ -1,6 +1,5 @@
 ﻿using ControllerCommon.Utils;
 using ControllerService.Sensors;
-using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
@@ -49,7 +48,7 @@ namespace ControllerService.Targets
 
         private new IDualShock4Controller virtualController;
 
-        public DualShock4Target(XInputController xinput, ViGEmClient client, ILogger logger) : base(xinput, client, logger)
+        public DualShock4Target(XInputController xinput, ViGEmClient client) : base(xinput, client)
         {
             // initialize controller
             HID = HIDmode.DualShock4Controller;
@@ -219,7 +218,7 @@ namespace ControllerService.Targets
             {
                 virtualController.SubmitRawReport(rawOutReportEx);
             }
-            catch(VigemBusNotFoundException)
+            catch (VigemBusNotFoundException)
             {
                 // todo: prevent this from happening !
             }

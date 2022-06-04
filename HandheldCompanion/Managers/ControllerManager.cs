@@ -1,6 +1,5 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Managers;
-using Microsoft.Extensions.Logging;
 using SharpDX.XInput;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +8,6 @@ namespace HandheldCompanion.Managers
 {
     public class ControllerManager
     {
-        private ILogger logger;
-
         private SystemManager systemManager;
 
         private Dictionary<string, ControllerEx> controllers;
@@ -22,13 +19,12 @@ namespace HandheldCompanion.Managers
         public event ControllerUnpluggedEventHandler ControllerUnplugged;
         public delegate void ControllerUnpluggedEventHandler(ControllerEx controller);
 
-        public ControllerManager(ILogger logger)
+        public ControllerManager()
         {
-            this.logger = logger;
             controllers = new();
 
             // initialize manager(s)
-            systemManager = new SystemManager(logger);
+            systemManager = new SystemManager();
             systemManager.XInputArrived += SystemManager_XInputUpdated;
             systemManager.XInputRemoved += SystemManager_XInputUpdated;
         }
@@ -52,7 +48,7 @@ namespace HandheldCompanion.Managers
                 for (int idx = 0; idx < 4; idx++)
                 {
                     UserIndex userIndex = (UserIndex)idx;
-                    ControllerEx controllerEx = new ControllerEx(userIndex, null, ref devices);
+                    ControllerEx controllerEx = new ControllerEx(userIndex, ref devices);
 
                     controllers[controllerEx.baseContainerDeviceInstancePath] = controllerEx;
 
@@ -90,7 +86,7 @@ namespace HandheldCompanion.Managers
                 for (int idx = 0; idx < 4; idx++)
                 {
                     UserIndex userIndex = (UserIndex)idx;
-                    ControllerEx controllerEx = new ControllerEx(userIndex, null, ref devices);
+                    ControllerEx controllerEx = new ControllerEx(userIndex, ref devices);
 
                     controllers[controllerEx.baseContainerDeviceInstancePath] = controllerEx;
 

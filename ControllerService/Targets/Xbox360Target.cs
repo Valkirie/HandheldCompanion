@@ -1,5 +1,4 @@
 ﻿using ControllerCommon.Utils;
-using Microsoft.Extensions.Logging;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
@@ -47,7 +46,7 @@ namespace ControllerService.Targets
 
         private new IXbox360Controller virtualController;
 
-        public Xbox360Target(XInputController xinput, ViGEmClient client, ILogger logger) : base(xinput, client, logger)
+        public Xbox360Target(XInputController xinput, ViGEmClient client) : base(xinput, client)
         {
             // initialize controller
             HID = HIDmode.Xbox360Controller;

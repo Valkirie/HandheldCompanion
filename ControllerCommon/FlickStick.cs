@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Numerics;
 using static ControllerCommon.Utils.CommonUtils;
 
@@ -25,11 +24,8 @@ namespace ControllerCommon
         private float FlickTime = 0.1f;
         private float FlickTimePartial = 0.01f;
 
-        private readonly ILogger logger;
-
-        public FlickStick(ILogger logger)
+        public FlickStick()
         {
-            this.logger = logger;
         }
 
         // Flick stick, flick to initial angle, allow for stick rotation in horizontal plane after
