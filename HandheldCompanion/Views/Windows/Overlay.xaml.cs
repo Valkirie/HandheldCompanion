@@ -300,6 +300,11 @@ namespace HandheldCompanion.Views.Windows
                 {
                     case Visibility.Visible:
                         visibility = Visibility.Collapsed;
+
+                        // reset position
+                        q_w = q_x = q_y = q_z = 0.0f;
+                        PoseRad = new Vector3D(0.0d, 3.14d, 0.0d);
+
                         break;
                     case Visibility.Collapsed:
                     case Visibility.Hidden:
@@ -321,16 +326,7 @@ namespace HandheldCompanion.Views.Windows
                         visibility = Visibility.Collapsed;
                         break;
                     case Visibility.Collapsed:
-                    case Visibility.Hidden:
-
-                        // reset position
-                        q_w = 0.0f;
-                        q_x = 0.0f;
-                        q_y = 1.0f;
-                        q_z = 0.0f;
-                        
-                        PoseRad = new Vector3D(0, 3.14, 0);
-                        
+                    case Visibility.Hidden:                        
                         visibility = Visibility.Visible;
                         break;
                 }
@@ -713,7 +709,7 @@ namespace HandheldCompanion.Views.Windows
         }
 
         public Vector3D DesiredAngleDeg = new Vector3D(0, 0, 0);
-        private float q_w = 0.0f, q_x = 0.0f, q_y = 1.0f, q_z = 0.0f;
+        private float q_w = 0.0f, q_x = 0.0f, q_y = 0.0f, q_z = 0.0f;
         private Vector3D PoseRad = new Vector3D(0, 3.14, 0);
 
         private void UpdateModelVisual3D()
