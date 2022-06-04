@@ -92,12 +92,6 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(LeftShoulderBottom);
             model3DGroup.Children.Add(RightShoulderBottom);
 
-            foreach (Model3DGroup model3D in model3DGroup.Children)
-            {
-                // generic material(s)
-                HighlightMaterials[model3D] = MaterialHighlight;
-            }
-
             // specific button material(s)
             foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
             {
@@ -150,6 +144,8 @@ namespace HandheldCompanion.Models
                 ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
             }
+
+            DrawHighligths();
         }
     }
 }

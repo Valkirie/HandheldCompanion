@@ -461,6 +461,10 @@ namespace HandheldCompanion.Views.Windows
                         foreach (Model3DGroup modelgroup in CurrentModel.ButtonMap[button])
                         {
                             model = (GeometryModel3D)modelgroup.Children.FirstOrDefault();
+
+                            if (model.Material.GetType() != typeof(DiffuseMaterial))
+                                continue;
+
                             model.Material = Gamepad.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
                         }
                     }

@@ -72,12 +72,6 @@ namespace HandheldCompanion.Models
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
             {
-                // generic material(s)
-                HighlightMaterials[model3D] = MaterialHighlight;
-            }
-
-            foreach (Model3DGroup model3D in model3DGroup.Children)
-            {
                 if (DefaultMaterials.ContainsKey(model3D))
                     continue;
 
@@ -93,6 +87,8 @@ namespace HandheldCompanion.Models
                 ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
             }
+
+            DrawHighligths();
         }
     }
 }
