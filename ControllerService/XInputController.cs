@@ -200,12 +200,6 @@ namespace ControllerService
 
                             pipeServer?.SendMessage(new PipeSensor(madgwickAHRS.GetEuler(), madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
                             break;
-                        case 1: // Hidden
-                        case 2: // Collapsed
-                            madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
-                            pipeServer?.SendMessage(new PipeSensor(madgwickAHRS.GetEuler(), madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
-                            ControllerService.CurrentOverlayStatus = 3; // leave the loop
-                            break;
                     }
                 });
 
