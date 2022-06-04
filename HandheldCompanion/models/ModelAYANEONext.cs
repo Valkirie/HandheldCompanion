@@ -20,11 +20,9 @@ namespace HandheldCompanion.Models
             // colors
             var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#333333");
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#F0EFF0");
-            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
 
             var MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
             var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
-            var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
             // Rotation Points
             JoystickRotationPointCenterLeftMillimeter = new Vector3D(-109.0f, -8.0f, 23.0f);
@@ -76,6 +74,18 @@ namespace HandheldCompanion.Models
             }
 
             DrawHighligths();
+        }
+
+        private new void DrawHighligths()
+        {
+            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
+
+            foreach (Model3DGroup model3D in model3DGroup.Children)
+            {
+                // generic material(s)
+                HighlightMaterials[model3D] = MaterialHighlight;
+            }
         }
     }
 }
