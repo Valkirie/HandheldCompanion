@@ -302,7 +302,8 @@ namespace HandheldCompanion.Views.Windows
                         visibility = Visibility.Collapsed;
 
                         // reset position
-                        q_w = q_x = q_y = q_z = 0.0f;
+                        q_w = q_x = q_z = 0.0f;
+                        q_y = 1.0f;
                         PoseRad = new Vector3D(0.0d, 3.14d, 0.0d);
 
                         break;
@@ -359,20 +360,25 @@ namespace HandheldCompanion.Views.Windows
             switch (message.code)
             {
                 case PipeCode.SERVER_SENSOR:
-                    PipeSensor sensor = (PipeSensor)message;
-
-                    switch (sensor.type)
                     {
-                        case SensorType.Quaternion:
-                            q_w = sensor.q_w;
-                            q_x = sensor.q_x;
-                            q_y = sensor.q_y;
-                            q_z = sensor.q_z;
+                        // prevent late PipeMessage to apply
+                        if (this.Visibility != Visibility.Visible)
+                            return;
 
-                            PoseRad.X = sensor.x;
-                            PoseRad.Y = sensor.y;
-                            PoseRad.Z = sensor.z;
-                            break;
+                        PipeSensor sensor = (PipeSensor)message;
+                        switch (sensor.type)
+                        {
+                            case SensorType.Quaternion:
+                                q_w = sensor.q_w;
+                                q_x = sensor.q_x;
+                                q_y = sensor.q_y;
+                                q_z = sensor.q_z;
+
+                                PoseRad.X = sensor.x;
+                                PoseRad.Y = sensor.y;
+                                PoseRad.Z = sensor.z;
+                                break;
+                        }
                     }
                     break;
             }
@@ -709,7 +715,7 @@ namespace HandheldCompanion.Views.Windows
         }
 
         public Vector3D DesiredAngleDeg = new Vector3D(0, 0, 0);
-        private float q_w = 0.0f, q_x = 0.0f, q_y = 0.0f, q_z = 0.0f;
+        private float q_w = 0.0f, q_x = 0.0f, q_y = 1.0f, q_z = 0.0f;
         private Vector3D PoseRad = new Vector3D(0, 3.14, 0);
 
         private void UpdateModelVisual3D()
