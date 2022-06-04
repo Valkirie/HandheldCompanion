@@ -121,24 +121,36 @@ namespace HandheldCompanion.Views.Windows
 
         public void UpdateProductModel(Model ProductModel)
         {
+            if (this.ProductModel == ProductModel)
+                return;
+
             this.ProductModel = ProductModel;
             UpdateModel();
         }
 
         public void UpdateVirtualModel(Model VirtualModel)
         {
+            if (this.ProductModel == VirtualModel)
+                return;
+
             this.VirtualModel = VirtualModel;
             UpdateModel();
         }
 
         public void UpdateBonusModel(Model BonusModel)
         {
+            if (this.ProductModel == BonusModel)
+                return;
+
             this.BonusModel = BonusModel;
             UpdateModel();
         }
 
         public void UpdateModelMode(OverlayModelMode ModelMode)
         {
+            if (this.ModelMode == ModelMode)
+                return;
+
             this.ModelMode = ModelMode;
             UpdateModel();
         }
@@ -147,20 +159,27 @@ namespace HandheldCompanion.Views.Windows
         {
             switch (this.ModelMode)
             {
+                default:
                 case OverlayModelMode.OEM:
                     if (ProductModel != null)
                         CurrentModel = ProductModel;
                     else goto case OverlayModelMode.Virtual;
                     break;
+
                 case OverlayModelMode.Virtual:
                     if (VirtualModel != null)
                         CurrentModel = VirtualModel;
                     break;
+
                 case OverlayModelMode.Toy:
                     if (BonusModel != null)
                         CurrentModel = BonusModel;
                     break;
             }
+
+            // should not happen
+            if (CurrentModel is null)
+                return;
 
             ModelVisual3D.Content = CurrentModel.model3DGroup;
             ModelViewPort.ZoomExtents();
@@ -303,6 +322,15 @@ namespace HandheldCompanion.Views.Windows
                         break;
                     case Visibility.Collapsed:
                     case Visibility.Hidden:
+
+                        // reset position
+                        q_w = 0.0f;
+                        q_x = 0.0f;
+                        q_y = 1.0f;
+                        q_z = 0.0f;
+                        
+                        PoseRad = new Vector3D(0, 3.14, 0);
+                        
                         visibility = Visibility.Visible;
                         break;
                 }
@@ -433,6 +461,10 @@ namespace HandheldCompanion.Views.Windows
                         foreach (Model3DGroup modelgroup in CurrentModel.ButtonMap[button])
                         {
                             model = (GeometryModel3D)modelgroup.Children.FirstOrDefault();
+
+                            if (model.Material.GetType() != typeof(DiffuseMaterial))
+                                continue;
+
                             model.Material = Gamepad.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
                         }
                     }

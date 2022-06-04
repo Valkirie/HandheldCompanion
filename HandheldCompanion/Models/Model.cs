@@ -3,6 +3,7 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion
@@ -90,6 +91,27 @@ namespace HandheldCompanion
             model3DGroup.Children.Add(MainBody);
             model3DGroup.Children.Add(LeftShoulderTrigger);
             model3DGroup.Children.Add(RightShoulderTrigger);
+        }
+
+        protected void DrawHighligths()
+        {
+            foreach (Model3DGroup model3D in model3DGroup.Children)
+            {
+                var material = DefaultMaterials[model3D];
+                if (material.GetType() != typeof(DiffuseMaterial))
+                    continue;
+
+                // Determine colors from brush from materials
+                Brush DefaultMaterialBrush = ((DiffuseMaterial)material).Brush;
+                Color StartColor = ((SolidColorBrush)DefaultMaterialBrush).Color;
+
+                // generic material(s)
+                var drawingColor = System.Windows.Forms.ControlPaint.LightLight(System.Drawing.Color.FromArgb(StartColor.A, StartColor.R, StartColor.G, StartColor.B));
+                var outColor = Color.FromArgb(drawingColor.A, drawingColor.R, drawingColor.G, drawingColor.B);
+                var solidColod = new SolidColorBrush(outColor);
+
+                HighlightMaterials[model3D] = new DiffuseMaterial(solidColod);
+            }
         }
     }
 }
