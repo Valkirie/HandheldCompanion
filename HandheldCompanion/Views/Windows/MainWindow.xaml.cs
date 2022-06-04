@@ -230,7 +230,7 @@ namespace HandheldCompanion.Views
                 switch (cheat)
                 {
                     case "OverlayControllerFisherPrice":
-                        overlayPage.UnlockToyController();
+                        overlayPage?.UnlockToyController();
                         break;
                 }
             };
