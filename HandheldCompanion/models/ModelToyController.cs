@@ -29,7 +29,7 @@ namespace HandheldCompanion.Models
         Model3DGroup YLetter;
         Model3DGroup YLetterInside1;
         Model3DGroup YLetterInside2;
-            
+
         Model3DGroup DPadLeft1;
         Model3DGroup DPadUp2;
         Model3DGroup DPadRight3;
@@ -87,7 +87,7 @@ namespace HandheldCompanion.Models
             Smile4 = modelImporter.Load($"models/{ModelName}/Smile4.obj");
             Smile5 = modelImporter.Load($"models/{ModelName}/Smile5.obj");
             Smile6 = modelImporter.Load($"models/{ModelName}/Smile6.obj");
-            
+
             ALetter = modelImporter.Load($"models/{ModelName}/ALetter.obj");
             ALetterInside = modelImporter.Load($"models/{ModelName}/ALetterInside.obj");
             BLetter = modelImporter.Load($"models/{ModelName}/BLetter.obj");
@@ -223,7 +223,7 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == Smile1 || model3D == Smile2 
+                if (model3D == MainBody || model3D == Smile1 || model3D == Smile2
                     || model3D == DPadLeft1 || model3D == DPadUp2 || model3D == DPadRight3 || model3D == DPadDown4
                     || model3D == ALetter || model3D == BLetter || model3D == XLetter || model3D == YLetter
                     )
@@ -246,7 +246,7 @@ namespace HandheldCompanion.Models
                 }
 
 
-                if (model3D == JoystickLeftCover || model3D == JoystickRightCover 
+                if (model3D == JoystickLeftCover || model3D == JoystickRightCover
                     || model3D == LeftThumbRing || model3D == RightThumbRing
                     || model3D == YLetterInside1 || model3D == YLetterInside2)
                 {

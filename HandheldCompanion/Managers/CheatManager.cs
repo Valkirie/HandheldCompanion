@@ -1,11 +1,8 @@
 ﻿using ControllerCommon;
-using Microsoft.Extensions.Logging;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers
 {
@@ -18,15 +15,11 @@ namespace HandheldCompanion.Managers
         private Gamepad prevGamepad;
         private State GamepadState;
 
-        private ILogger logger;
-
         public event CheatedEventHandler Cheated;
         public delegate void CheatedEventHandler(string cheat);
 
-        public CheatManager(ILogger logger)
+        public CheatManager()
         {
-            this.logger = logger;
-
             // initialize timers
             UpdateTimer = new MultimediaTimer(10);
         }

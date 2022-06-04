@@ -1,9 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using ControllerCommon.Managers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Serilog;
-using Serilog.Core;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -12,26 +10,19 @@ namespace ControllerService
 {
     internal static class Program
     {
-        private static Logger logger;
-
         public static void Main(string[] args)
         {
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
-            var configuration = new ConfigurationBuilder()
-                        .AddJsonFile("ControllerService.json")
-                        .Build();
-
-            logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
+            // initialize log manager
+            LogManager.Initialize("ControllerService");
 
             string proc = Process.GetCurrentProcess().ProcessName;
             Process[] processes = Process.GetProcessesByName(proc);
 
             if (processes.Length > 1)
             {
-                logger.Fatal("{0} is already running. Exiting.", proc);
+                LogManager.LogCritical("{0} is already running. Exiting.", proc);
                 return;
             }
 
@@ -47,10 +38,7 @@ namespace ControllerService
                     services.AddLogging(builder =>
                     {
                         builder.SetMinimumLevel(LogLevel.Information);
-                        builder.AddSerilog(logger, true);
                     });
-
-                    services.AddSingleton(new LoggerFactory().AddSerilog(logger));
 
                     services.AddHostedService<ControllerService>();
                 });

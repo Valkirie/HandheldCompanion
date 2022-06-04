@@ -1,8 +1,7 @@
-﻿using ControllerCommon.Utils;
-using Microsoft.Extensions.Logging;
+﻿using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using System;
 using System.Numerics;
-using System.Threading.Tasks;
 
 namespace ControllerCommon
 {
@@ -24,36 +23,29 @@ namespace ControllerCommon
         // Device Angle
         public Vector2 DeviceAngle;
 
-        private readonly ILogger logger;
-
-        public SensorFusion(ILogger logger)
+        public SensorFusion()
         {
-            this.logger = logger;
         }
 
         public void UpdateReport(double TotalMilliseconds, double DeltaSeconds, Vector3 AngularVelocity, Vector3 Acceleration)
         {
-            Task.Run(() =>
-            {
-                logger.LogTrace("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaSeconds);
+#if DEBUG
+            LogManager.LogDebug("Plot XInputSensorFusion_DeltaSeconds {0} {1}", TotalMilliseconds, DeltaSeconds);
 
-                logger.LogTrace("Plot XInputSensorFusion_AngularVelocityX {0} {1}", TotalMilliseconds, AngularVelocity.X);
-                logger.LogTrace("Plot XInputSensorFusion_AngularVelocityY {0} {1}", TotalMilliseconds, AngularVelocity.Y);
-                logger.LogTrace("Plot XInputSensorFusion_AngularVelocityZ {0} {1}", TotalMilliseconds, AngularVelocity.Z);
+            LogManager.LogDebug("Plot XInputSensorFusion_AngularVelocityX {0} {1}", TotalMilliseconds, AngularVelocity.X);
+            LogManager.LogDebug("Plot XInputSensorFusion_AngularVelocityY {0} {1}", TotalMilliseconds, AngularVelocity.Y);
+            LogManager.LogDebug("Plot XInputSensorFusion_AngularVelocityZ {0} {1}", TotalMilliseconds, AngularVelocity.Z);
 
-                logger.LogTrace("Plot XInputSensorFusion_AccelerationX {0} {1}", TotalMilliseconds, Acceleration.X);
-                logger.LogTrace("Plot XInputSensorFusion_AccelerationY {0} {1}", TotalMilliseconds, Acceleration.Y);
-                logger.LogTrace("Plot XInputSensorFusion_AccelerationZ {0} {1}", TotalMilliseconds, Acceleration.Z);
-            });
+            LogManager.LogDebug("Plot XInputSensorFusion_AccelerationX {0} {1}", TotalMilliseconds, Acceleration.X);
+            LogManager.LogDebug("Plot XInputSensorFusion_AccelerationY {0} {1}", TotalMilliseconds, Acceleration.Y);
+            LogManager.LogDebug("Plot XInputSensorFusion_AccelerationZ {0} {1}", TotalMilliseconds, Acceleration.Z);
+#endif
 
             // Check for empty inputs, prevent NaN computes
             Vector3 EmptyVector = new(0f, 0f, 0f);
 
             if (AngularVelocity.Equals(EmptyVector) || Acceleration.Equals(EmptyVector))
-            {
-                logger.LogTrace("Sensorfusion prevented from calculating with empty vectors.");
                 return;
-            }
 
             // Perform calculations 
             // Todo, kickstart gravity vector with = acceleration when calculation is either
@@ -89,12 +81,11 @@ namespace ControllerCommon
 
             GravityVectorSimple += Vector3.Multiply(0.02f, Vector3.Normalize(gravityDelta));
 
-            Task.Run(() =>
-            {
-                logger.LogTrace("Plot XInputSensorFusion_GravityVectorSimpleEndX {0} {1}", TotalMilliseconds, GravityVectorSimple.X);
-                logger.LogTrace("Plot XInputSensorFusion_GravityVectorSimpleEndY {0} {1}", TotalMilliseconds, GravityVectorSimple.Y);
-                logger.LogTrace("Plot XInputSensorFusion_GravityVectorSimpleEndZ {0} {1}", TotalMilliseconds, GravityVectorSimple.Z);
-            });
+#if DEBUG
+            LogManager.LogDebug("Plot XInputSensorFusion_GravityVectorSimpleEndX {0} {1}", TotalMilliseconds, GravityVectorSimple.X);
+            LogManager.LogDebug("Plot XInputSensorFusion_GravityVectorSimpleEndY {0} {1}", TotalMilliseconds, GravityVectorSimple.Y);
+            LogManager.LogDebug("Plot XInputSensorFusion_GravityVectorSimpleEndZ {0} {1}", TotalMilliseconds, GravityVectorSimple.Z);
+#endif
         }
 
         public void CalculateGravityFancy(double TotalMilliseconds, double DeltaTimeSec, Vector3 AngularVelocity, Vector3 Acceleration)
@@ -137,13 +128,12 @@ namespace ControllerCommon
             // convert gyro input to reverse rotation  
             Quaternion reverseRotation = Quaternion.CreateFromAxisAngle(-AngularVelocityRad, AngularVelocityRad.Length() * (float)DeltaTimeSec);
 
-            Task.Run(() =>
-            {
-                logger.LogTrace("Plot vigemtarget_reverseRotationy.X {0} {1}", TotalMilliseconds, reverseRotation.X);
-                logger.LogTrace("Plot vigemtarget_reverseRotationy.Y {0} {1}", TotalMilliseconds, reverseRotation.Y);
-                logger.LogTrace("Plot vigemtarget_reverseRotationy.Z {0} {1}", TotalMilliseconds, reverseRotation.Z);
-                logger.LogTrace("Plot vigemtarget_reverseRotationy.W {0} {1}", TotalMilliseconds, reverseRotation.W);
-            });
+#if DEBUG
+            LogManager.LogDebug("Plot vigemtarget_reverseRotationy.X {0} {1}", TotalMilliseconds, reverseRotation.X);
+            LogManager.LogDebug("Plot vigemtarget_reverseRotationy.Y {0} {1}", TotalMilliseconds, reverseRotation.Y);
+            LogManager.LogDebug("Plot vigemtarget_reverseRotationy.Z {0} {1}", TotalMilliseconds, reverseRotation.Z);
+            LogManager.LogDebug("Plot vigemtarget_reverseRotationy.W {0} {1}", TotalMilliseconds, reverseRotation.W);
+#endif
 
             // rotate gravity vector
             GravityVectorFancy = Vector3.Transform(GravityVectorFancy, reverseRotation);
@@ -151,16 +141,15 @@ namespace ControllerCommon
             // Correction factor variables
             SmoothAccel = Vector3.Transform(SmoothAccel, reverseRotation);
 
-            Task.Run(() =>
-            {
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_after_rotate_x {0} {1}", TotalMilliseconds, GravityVectorFancy.X);
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_after_rotate_y {0} {1}", TotalMilliseconds, GravityVectorFancy.Y);
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_after_rotate_z {0} {1}", TotalMilliseconds, GravityVectorFancy.Z);
+#if DEBUG
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_after_rotate_x {0} {1}", TotalMilliseconds, GravityVectorFancy.X);
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_after_rotate_y {0} {1}", TotalMilliseconds, GravityVectorFancy.Y);
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_after_rotate_z {0} {1}", TotalMilliseconds, GravityVectorFancy.Z);
 
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_SmoothAccel_x {0} {1}", TotalMilliseconds, SmoothAccel.X);
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_SmoothAccel_y {0} {1}", TotalMilliseconds, SmoothAccel.Y);
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_SmoothAccel_z {0} {1}", TotalMilliseconds, SmoothAccel.Z);
-            });
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_SmoothAccel_x {0} {1}", TotalMilliseconds, SmoothAccel.X);
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_SmoothAccel_y {0} {1}", TotalMilliseconds, SmoothAccel.Y);
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_SmoothAccel_z {0} {1}", TotalMilliseconds, SmoothAccel.Z);
+#endif
 
             // Note to self, SmoothAccel seems OK.
             float smoothInterpolator = (float)Math.Pow(2, (-(float)DeltaTimeSec / SmoothingHalfTime));
@@ -170,16 +159,15 @@ namespace ControllerCommon
             Shakiness = Math.Max(Shakiness, Vector3.Subtract(Acceleration, SmoothAccel).Length()); // Does this apply vector subtract and length correctly?
             SmoothAccel = Vector3.Lerp(Acceleration, SmoothAccel, smoothInterpolator); // smoothInterpolator is a negative value, correct?
 
-            Task.Run(() =>
-            {
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_smoothInterpolator {0} {1}", TotalMilliseconds, smoothInterpolator);
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_ShakinessTimesInterpolator {0} {1}", TotalMilliseconds, Shakiness);
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_Shakiness {0} {1}", TotalMilliseconds, Shakiness);
+#if DEBUG
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_smoothInterpolator {0} {1}", TotalMilliseconds, smoothInterpolator);
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_ShakinessTimesInterpolator {0} {1}", TotalMilliseconds, Shakiness);
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_Shakiness {0} {1}", TotalMilliseconds, Shakiness);
 
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_x {0} {1}", TotalMilliseconds, SmoothAccel.X);
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_y {0} {1}", TotalMilliseconds, SmoothAccel.Y);
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_z {0} {1}", TotalMilliseconds, SmoothAccel.Z);
-            });
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_x {0} {1}", TotalMilliseconds, SmoothAccel.X);
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_y {0} {1}", TotalMilliseconds, SmoothAccel.Y);
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_SmoothAccel2_z {0} {1}", TotalMilliseconds, SmoothAccel.Z);
+#endif
 
             Vector3 gravityDelta = Vector3.Subtract(-Acceleration, GravityVectorFancy);
             Vector3 gravityDirection = Vector3.Normalize(gravityDelta);
@@ -190,10 +178,9 @@ namespace ControllerCommon
             {
                 float stillOrShaky = Math.Clamp((Shakiness - ShakinessMinThreshold) / (ShakinessMaxThreshold - ShakinessMaxThreshold), 0, 1);
 
-                Task.Run(() =>
-                {
-                    logger.LogTrace("Plot vigemtarget_GravityVectorFancy_stillOrShaky {0} {1}", TotalMilliseconds, stillOrShaky);
-                });
+#if DEBUG
+                LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_stillOrShaky {0} {1}", TotalMilliseconds, stillOrShaky);
+#endif
 
                 correctionRate = CorrectionStillRate + (CorrectionShakyRate - CorrectionStillRate) * stillOrShaky;
                 // 1 + (0.1 - 1) * 1 = 0.1
@@ -214,13 +201,12 @@ namespace ControllerCommon
             float angleRate = AngularVelocity.Length() * (float)Math.PI / 180;
             float correctionLimit = angleRate * GravityVectorFancy.Length() * CorrectionGyroFactor;
 
-            Task.Run(() =>
-            {
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_correctionRate {0} {1}", TotalMilliseconds, correctionRate);
+#if DEBUG
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_correctionRate {0} {1}", TotalMilliseconds, correctionRate);
 
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_angleRate {0} {1}", TotalMilliseconds, angleRate);
-                logger.LogTrace("Plot vigemtarget_GravityVectorFancy_correctionLimit {0} {1}", TotalMilliseconds, correctionLimit);
-            });
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_angleRate {0} {1}", TotalMilliseconds, angleRate);
+            LogManager.LogDebug("Plot vigemtarget_GravityVectorFancy_correctionLimit {0} {1}", TotalMilliseconds, correctionLimit);
+#endif
 
             if (correctionRate > correctionLimit)
             {
@@ -279,11 +265,10 @@ namespace ControllerCommon
             // Pitch (local space)
             CameraPitchDelta = AngularVelocity.X * AdditionalFactor * DeltaSeconds;
 
-            Task.Run(() =>
-            {
-                logger.LogTrace("Plot XInputSensorFusion_CameraYawDelta {0} {1}", TotalMilliseconds, CameraYawDelta);
-                logger.LogTrace("Plot XInputSensorFusion_CameraPitchDelta {0} {1}", TotalMilliseconds, CameraPitchDelta);
-            });
+#if DEBUG
+            LogManager.LogDebug("Plot XInputSensorFusion_CameraYawDelta {0} {1}", TotalMilliseconds, CameraYawDelta);
+            LogManager.LogDebug("Plot XInputSensorFusion_CameraPitchDelta {0} {1}", TotalMilliseconds, CameraPitchDelta);
+#endif
         }
 
         private void DeviceAngles(double TotalMilliseconds, Vector3 GravityVector)
@@ -294,10 +279,9 @@ namespace ControllerCommon
             DeviceAngle.X = (float)((Math.Atan(GravityVector.Y / (Math.Sqrt(Math.Pow(GravityVector.X, 2) + Math.Pow(GravityVector.Z, 2))))) * 180 / Math.PI);
             DeviceAngle.Y = (float)((Math.Atan(GravityVector.X / (Math.Sqrt(Math.Pow(GravityVector.Y, 2) + Math.Pow(GravityVector.Z, 2))))) * 180 / Math.PI);
 
-            Task.Run(() =>
-            {
-                logger.LogTrace("Plot XInputSensorFusion_DeviceAngle.Y {0} {1}", TotalMilliseconds, DeviceAngle.Y);
-            });
+#if DEBUG
+            LogManager.LogDebug("Plot XInputSensorFusion_DeviceAngle.Y {0} {1}", TotalMilliseconds, DeviceAngle.Y);
+#endif
         }
     }
 }

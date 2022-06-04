@@ -1,6 +1,5 @@
 ﻿using ControllerCommon.Utils;
 using Force.Crc32;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,12 +32,10 @@ namespace ControllerCommon.Managers
 
         public PipeClient PipeClient;
 
-        private readonly ILogger logger;
         private string path;
 
-        public ProfileManager(ILogger logger, PipeClient PipeClient = null)
+        public ProfileManager(PipeClient PipeClient = null)
         {
-            this.logger = logger;
             this.PipeClient = PipeClient;
         }
 
@@ -152,13 +149,13 @@ namespace ControllerCommon.Managers
             }
             catch (Exception ex)
             {
-                logger.LogError("Could not parse {0}. {1}", fileName, ex.Message);
+                LogManager.LogError("Could not parse {0}. {1}", fileName, ex.Message);
             }
 
             // failed to parse
             if (profile == null || profile.name == null || profile.path == null)
             {
-                logger.LogError("Could not parse {0}.", fileName);
+                LogManager.LogError("Could not parse {0}.", fileName);
                 return;
             }
 
@@ -177,7 +174,7 @@ namespace ControllerCommon.Managers
                 UnregisterApplication(profile);
                 profiles.Remove(profile.name);
                 Deleted?.Invoke(profile);
-                logger.LogInformation("Deleted profile {0}", settingsPath);
+                LogManager.LogInformation("Deleted profile {0}", settingsPath);
             }
 
             File.Delete(settingsPath);
@@ -228,7 +225,7 @@ namespace ControllerCommon.Managers
 
             if (profile.error != ProfileErrorCode.None && !profile.isDefault)
             {
-                logger.LogError("Profile {0} returned error code {1}", profile.name, profile.error);
+                LogManager.LogError("Profile {0} returned error code {1}", profile.name, profile.error);
                 return;
             }
 

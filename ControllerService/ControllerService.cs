@@ -5,7 +5,6 @@ using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using Nefarius.ViGEm.Client;
@@ -57,8 +56,6 @@ namespace ControllerService
         private HIDmode HIDmode = HIDmode.NoController;
         private HIDstatus HIDstatus = HIDstatus.Disconnected;
 
-        private readonly ILogger<ControllerService> logger;
-
         // sensor vars
         private static SensorFamily SensorSelection;
         private static int SensorPlacement;
@@ -68,10 +65,8 @@ namespace ControllerService
         public static Profile profile = new();
         public static Profile defaultProfile = new();
 
-        public ControllerService(ILogger<ControllerService> logger, IHostApplicationLifetime lifetime)
+        public ControllerService(IHostApplicationLifetime lifetime)
         {
-            this.logger = logger;
-
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
@@ -105,7 +100,7 @@ namespace ControllerService
             baseContainerDeviceInstancePath = configuration.AppSettings.Settings["baseContainerDeviceInstancePath"].Value; // Properties.Settings.Default.baseContainerDeviceInstancePath;
 
             // initialize log
-            logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
+            LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
 
             // verifying ViGEm is installed
             try
@@ -114,22 +109,22 @@ namespace ControllerService
             }
             catch (Exception)
             {
-                logger.LogCritical("ViGEm is missing. Please get it from: {0}", "https://github.com/ViGEm/ViGEmBus/releases");
+                LogManager.LogCritical("ViGEm is missing. Please get it from: {0}", "https://github.com/ViGEm/ViGEmBus/releases");
                 throw new InvalidOperationException();
             }
 
             // initialize HidHide
-            Hidder = new HidHide(logger);
+            Hidder = new HidHide();
             Hidder.RegisterApplication(CurrentExe);
 
             // initialize PipeServer
-            pipeServer = new PipeServer("ControllerService", logger);
+            pipeServer = new PipeServer("ControllerService");
             pipeServer.Connected += OnClientConnected;
             pipeServer.Disconnected += OnClientDisconnected;
             pipeServer.ClientMessage += OnClientMessage;
 
             // initialize manager(s)
-            systemManager = new SystemManager(logger);
+            systemManager = new SystemManager();
             systemManager.SerialArrived += SystemManager_SerialArrived;
             systemManager.SerialRemoved += SystemManager_SerialRemoved;
             systemManager.StartListen();
@@ -156,13 +151,13 @@ namespace ControllerService
                     break;
                 default:
                     handheldDevice = new DefaultDevice();
-                    logger.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
+                    LogManager.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
                     break;
             }
             handheldDevice.Initialize(ManufacturerName, ProductName);
 
             // XInputController settings
-            XInputController = new XInputController(SensorSelection, logger, pipeServer);
+            XInputController = new XInputController(SensorSelection, pipeServer);
             XInputController.SetVibrationStrength(HIDstrength);
             XInputController.SetPollRate(HIDrate);
             XInputController.Updated += OnTargetSubmited;
@@ -172,12 +167,12 @@ namespace ControllerService
             SetControllerIdx(HIDidx, deviceInstancePath, baseContainerDeviceInstancePath);
 
             // initialize DSUClient
-            DSUServer = new DSUServer(DSUip, DSUport, logger);
+            DSUServer = new DSUServer(DSUip, DSUport);
             DSUServer.Started += OnDSUStarted;
             DSUServer.Stopped += OnDSUStopped;
 
             // initialize Profile Manager
-            profileManager = new ProfileManager(logger);
+            profileManager = new ProfileManager();
             profileManager.Updated += ProfileUpdated;
         }
 
@@ -188,7 +183,7 @@ namespace ControllerService
             {
                 case SensorFamily.SerialUSBIMU:
                     {
-                        sensor = SerialUSBIMU.GetDefault(logger);
+                        sensor = SerialUSBIMU.GetDefault();
 
                         if (sensor is null)
                             break;
@@ -226,7 +221,7 @@ namespace ControllerService
 
         private void SetControllerIdx(UserIndex idx, string deviceInstancePath, string baseContainerDeviceInstancePath)
         {
-            ControllerEx controller = new ControllerEx(idx, logger);
+            ControllerEx controller = new ControllerEx(idx);
             controller.deviceInstancePath = deviceInstancePath;
             controller.baseContainerDeviceInstancePath = baseContainerDeviceInstancePath;
 
@@ -234,7 +229,7 @@ namespace ControllerService
 
             if (!controller.IsConnected())
             {
-                logger.LogWarning("No physical controller detected on UserIndex: {0}", idx);
+                LogManager.LogWarning("No physical controller detected on UserIndex: {0}", idx);
                 return;
             }
 
@@ -242,7 +237,7 @@ namespace ControllerService
                 this.baseContainerDeviceInstancePath == baseContainerDeviceInstancePath)
                 return;
 
-            logger.LogInformation("Listening to physical controller on UserIndex: {0}", idx);
+            LogManager.LogInformation("Listening to physical controller on UserIndex: {0}", idx);
 
             // clear previous values
             List<string> deviceInstancePaths = Hidder.GetRegisteredDevices();
@@ -285,10 +280,10 @@ namespace ControllerService
                     VirtualTarget = null;
                     break;
                 case HIDmode.DualShock4Controller:
-                    VirtualTarget = new DualShock4Target(XInputController, VirtualClient, logger);
+                    VirtualTarget = new DualShock4Target(XInputController, VirtualClient);
                     break;
                 case HIDmode.Xbox360Controller:
-                    VirtualTarget = new Xbox360Target(XInputController, VirtualClient, logger);
+                    VirtualTarget = new Xbox360Target(XInputController, VirtualClient);
                     break;
             }
 
@@ -473,7 +468,7 @@ namespace ControllerService
             if (profile.isDefault)
                 defaultProfile = profile;
             else
-                logger.LogInformation("Profile {0} applied.", profile.name);
+                LogManager.LogInformation("Profile {0} applied.", profile.name);
         }
 
         public void UpdateSettings(Dictionary<string, object> args)
@@ -490,7 +485,7 @@ namespace ControllerService
                 }
 
                 ApplySetting(name, property);
-                logger.LogDebug("{0} set to {1}", name, property);
+                LogManager.LogDebug("{0} set to {1}", name, property);
             }
         }
 
@@ -571,12 +566,12 @@ namespace ControllerService
                         sensor?.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
                     }
                     break;
-                /* case "SensorSelection":
-                    {
-                        SensorFamily value = Enum.Parse<SensorFamily>(property);
-                        SensorSelection = value;
-                    }
-                    break; */
+                    /* case "SensorSelection":
+                        {
+                            SensorFamily value = Enum.Parse<SensorFamily>(property);
+                            SensorSelection = value;
+                        }
+                        break; */
             }
         }
 
@@ -633,7 +628,7 @@ namespace ControllerService
 
         private void OnPowerChange(object s, PowerModeChangedEventArgs e)
         {
-            logger.LogInformation("Device power mode set to {0}", e.Mode);
+            LogManager.LogInformation("Device power mode set to {0}", e.Mode);
 
             switch (e.Mode)
             {

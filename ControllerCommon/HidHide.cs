@@ -1,5 +1,5 @@
-﻿using ControllerCommon.Utils;
-using Microsoft.Extensions.Logging;
+﻿using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,17 +11,14 @@ namespace ControllerCommon
     {
         private Process process;
 
-        private readonly ILogger logger;
         private readonly string path = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
 
-        public HidHide(ILogger logger)
+        public HidHide()
         {
-            this.logger = logger;
-
             // verifying HidHide is installed
             if (!File.Exists(path))
             {
-                logger.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
+                LogManager.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
                 throw new InvalidOperationException();
             }
 
@@ -134,12 +131,12 @@ namespace ControllerCommon
             process.WaitForExit();
             process.StandardOutput.ReadToEnd();
 
-            logger.LogInformation("{0} cloak status set to {1}", ProductName, status);
+            LogManager.LogInformation("{0} cloak status set to {1}", ProductName, status);
         }
 
         public void UnregisterController(string deviceInstancePath)
         {
-            logger.LogInformation("HideDevice unhiding DeviceID: {0}", deviceInstancePath);
+            LogManager.LogInformation("HideDevice unhiding DeviceID: {0}", deviceInstancePath);
             process.StartInfo.Arguments = $"--dev-unhide \"{deviceInstancePath}\"";
             process.Start();
             process.WaitForExit();
@@ -148,7 +145,7 @@ namespace ControllerCommon
 
         public void RegisterController(string deviceInstancePath)
         {
-            logger.LogInformation("HideDevice hiding DeviceID: {0}", deviceInstancePath);
+            LogManager.LogInformation("HideDevice hiding DeviceID: {0}", deviceInstancePath);
             process.StartInfo.Arguments = $"--dev-hide \"{deviceInstancePath}\"";
             process.Start();
             process.WaitForExit();

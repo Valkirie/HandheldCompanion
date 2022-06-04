@@ -5,7 +5,6 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
-using Microsoft.Extensions.Logging;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
@@ -31,7 +30,6 @@ namespace HandheldCompanion.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly ILogger logger;
         private StartupEventArgs arguments;
         public FileVersionInfo fileVersionInfo;
         public static new string Name;
@@ -83,12 +81,11 @@ namespace HandheldCompanion.Views
         public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
         private bool FirstStart, appClosing;
 
-        public MainWindow(StartupEventArgs arguments, ILogger logger)
+        public MainWindow(StartupEventArgs arguments)
         {
             InitializeComponent();
             Name = this.Title;
 
-            this.logger = logger;
             this.arguments = arguments;
 
             // get the actual handheld device
@@ -114,13 +111,13 @@ namespace HandheldCompanion.Views
             // default model before connecting to the service
             VirtualModel = new ModelXBOX360();
 
-            logger.LogInformation("{0} ({1})", ManufacturerName, ProductName);
+            LogManager.LogInformation("{0} ({1})", ManufacturerName, ProductName);
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
 
             // initialize log
-            logger.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
+            LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
             // initialize notifyIcon
             notifyIcon = new()
@@ -136,7 +133,7 @@ namespace HandheldCompanion.Views
                 WindowState = prevWindowState;
             };
 
-            foreach(NavigationViewItem item in navView.FooterMenuItems)
+            foreach (NavigationViewItem item in navView.FooterMenuItems)
             {
                 ToolStripMenuItem menuItem = new ToolStripMenuItem(item.Content.ToString());
                 menuItem.Tag = item.Tag;
@@ -161,7 +158,7 @@ namespace HandheldCompanion.Views
             CurrentPathLogs = Path.Combine(CurrentPath, "Logs");
 
             // initialize HidHide
-            Hidder = new HidHide(logger);
+            Hidder = new HidHide();
             Hidder.RegisterApplication(CurrentExe);
 
             // settings
@@ -173,28 +170,28 @@ namespace HandheldCompanion.Views
             // verifying HidHide is installed
             if (!File.Exists(CurrentPathService))
             {
-                logger.LogCritical("Controller Service executable is missing");
+                LogManager.LogCritical("Controller Service executable is missing");
                 throw new InvalidOperationException();
             }
 
             // initialize pipe client
-            pipeClient = new PipeClient("ControllerService", logger);
+            pipeClient = new PipeClient("ControllerService");
             pipeClient.ServerMessage += OnServerMessage;
             pipeClient.Connected += OnClientConnected;
             pipeClient.Disconnected += OnClientDisconnected;
 
             // initialize pipe server
-            pipeServer = new PipeServer("HandheldCompanion", logger);
+            pipeServer = new PipeServer("HandheldCompanion");
             pipeServer.ClientMessage += OnClientMessage;
 
             // initialize Profile Manager
-            profileManager = new ProfileManager(logger, pipeClient);
+            profileManager = new ProfileManager(pipeClient);
 
             // initialize toast manager
             toastManager = new ToastManager("ControllerService");
 
             // initialize overlay
-            overlay = new Overlay(logger, pipeClient);
+            overlay = new Overlay(pipeClient);
             overlay.UpdateProductModel(ProductModel);
             overlay.UpdateVirtualModel(VirtualModel);
 
@@ -205,7 +202,7 @@ namespace HandheldCompanion.Views
             processManager.ProcessStopped += ProcessManager_ProcessStopped;
 
             // initialize service manager
-            serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription, logger);
+            serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
             serviceManager.Updated += OnServiceUpdate;
             serviceManager.StartFailed += (status) =>
             {
@@ -220,7 +217,7 @@ namespace HandheldCompanion.Views
             taskManager = new TaskManager("ControllerService", CurrentExe);
 
             // initialize cheat manager
-            cheatManager = new CheatManager(logger);
+            cheatManager = new CheatManager();
             cheatManager.Cheated += (cheat) =>
             {
                 switch (cheat)
@@ -232,14 +229,14 @@ namespace HandheldCompanion.Views
             };
 
             // initialize pages
-            controllerPage = new ControllerPage("controller", this, logger);
-            profilesPage = new ProfilesPage("profiles", this, logger);
-            settingsPage = new SettingsPage("settings", this, logger);
-            aboutPage = new AboutPage("about", this, logger);
-            overlayPage = new OverlayPage("overlay", overlay, logger);
+            controllerPage = new ControllerPage("controller", this);
+            profilesPage = new ProfilesPage("profiles", this);
+            settingsPage = new SettingsPage("settings", this);
+            aboutPage = new AboutPage("about", this);
+            overlayPage = new OverlayPage("overlay", overlay);
 
             // initialize command parser
-            cmdParser = new CmdParser(pipeClient, this, logger);
+            cmdParser = new CmdParser(pipeClient, this);
             cmdParser.ParseArgs(arguments.Args, true);
 
             // handle settingsPage events
@@ -379,7 +376,7 @@ namespace HandheldCompanion.Views
                 // inform service & mouseHook
                 pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
 
-                logger.LogDebug("Profile {0} applied", currentProfile.name);
+                LogManager.LogDebug("Profile {0} applied", currentProfile.name);
             }
             catch (Exception) { }
         }
