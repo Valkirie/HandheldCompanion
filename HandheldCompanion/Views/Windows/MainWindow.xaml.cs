@@ -63,10 +63,6 @@ namespace HandheldCompanion.Views
         // Command parser vars
         public CmdParser cmdParser;
 
-        // Handheld devices vars
-        private Model VirtualModel;
-        private Model ProductModel;
-
         // manager(s) vars
         public ToastManager toastManager;
         private ProcessManager processManager;
@@ -91,25 +87,6 @@ namespace HandheldCompanion.Views
             // get the actual handheld device
             var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
             var ProductName = MotherboardInfo.Product;
-
-            switch (ProductName)
-            {
-                case "AYANEO 2021":
-                case "AYANEO 2021 Pro":
-                case "AYANEO 2021 Pro Retro Power":
-                    ProductModel = new ModelAYANEO2021();
-                    break;
-                case "NEXT Pro":
-                case "NEXT Advance":
-                case "NEXT":
-                    ProductModel = new ModelAYANEONext();
-                    break;
-                default:
-                    break;
-            }
-
-            // default model before connecting to the service
-            VirtualModel = new ModelXBOX360();
 
             LogManager.LogInformation("{0} ({1})", ManufacturerName, ProductName);
 
@@ -191,9 +168,7 @@ namespace HandheldCompanion.Views
             toastManager = new ToastManager("HandheldCompanion");
 
             // initialize overlay
-            overlay = new Overlay(pipeClient);
-            overlay.UpdateProductModel(ProductModel);
-            overlay.UpdateVirtualModel(VirtualModel);
+            overlay = new Overlay(pipeClient, ProductName);
 
             // initialize process manager
             processManager = new ProcessManager();
@@ -257,21 +232,7 @@ namespace HandheldCompanion.Views
             // handle controllerPage events
             controllerPage.HIDchanged += (HID) =>
             {
-                this.Dispatcher.Invoke(() =>
-                {
-                    switch (HID)
-                    {
-                        default:
-                        case HIDmode.DualShock4Controller:
-                            VirtualModel = new ModelDS4();
-                            break;
-                        case HIDmode.Xbox360Controller:
-                            VirtualModel = new ModelXBOX360();
-                            break;
-                    }
-
-                    overlay.UpdateVirtualModel(VirtualModel);
-                });
+                overlay.UpdateHIDMode(HID);
             };
             controllerPage.ControllerChanged += (Controller) =>
             {
