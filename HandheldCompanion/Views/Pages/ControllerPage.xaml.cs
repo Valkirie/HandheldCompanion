@@ -52,6 +52,9 @@ namespace HandheldCompanion.Views.Pages
             foreach (HIDmode mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.NoController))
                 cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
 
+            // pull Hidmode
+            cB_HidMode.SelectedIndex = Properties.Settings.Default.HIDmode;
+
             // initialize controller manager
             controllerManager = new ControllerManager();
             controllerManager.ControllerPlugged += ControllerPlugged;
@@ -279,7 +282,7 @@ namespace HandheldCompanion.Views.Pages
             HIDchanged?.Invoke(controllerMode);
 
             PipeClientSettings settings = new PipeClientSettings("HIDmode", controllerMode);
-            mainWindow.pipeClient.SendMessage(settings);
+            pipeClient?.SendMessage(settings);
 
             UpdateController();
         }

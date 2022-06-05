@@ -229,14 +229,8 @@ namespace HandheldCompanion.Views.Pages
             if (!Initialized)
                 return;
 
-            switch ((OverlayModelMode)OverlayModel.SelectedIndex)
-            {
-                case OverlayModelMode.Toy:
-                    overlay.UpdateBonusModel(new ModelToyController());
-                    break;
-            }
-
-            overlay.UpdateModelMode((OverlayModelMode)OverlayModel.SelectedIndex);
+            // update overlay
+            overlay.UpdateOverlayMode((OverlayModelMode)OverlayModel.SelectedIndex);
 
             // save settings
             Properties.Settings.Default.OverlayModel = OverlayModel.SelectedIndex;

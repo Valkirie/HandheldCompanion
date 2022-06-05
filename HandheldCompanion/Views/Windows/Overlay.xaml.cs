@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
+using HandheldCompanion.Models;
 using SharpDX.XInput;
 using System;
 using System.Linq;
@@ -32,12 +33,10 @@ namespace HandheldCompanion.Views.Windows
 
         private PipeClient pipeClient;
 
+        private string ProductName;
         private Model CurrentModel;
-        private Model ProductModel;
-        private Model VirtualModel;
-        private Model BonusModel;
-
-        private OverlayModelMode ModelMode;
+        private OverlayModelMode Modelmode;
+        private HIDmode HIDmode;
 
         private Point OverlayPosition;
         private Point LeftTrackPadPosition;
@@ -45,16 +44,14 @@ namespace HandheldCompanion.Views.Windows
 
         private enum TouchTarget
         {
-            SwipeTop = 0,
-            TrackpadLeft = 1,
-            TrackpadRight = 2
+            TrackpadLeft = 0,
+            TrackpadRight = 1
         }
 
         private TouchSourceWinTouch touchsource;
         private long prevLeftTrackPadTime;
         private long prevRightTrackPadTime;
         private TouchTarget target;
-        private TouchArgs swipe;
 
         // Gamepad vars
         private MultimediaTimer UpdateTimer;
@@ -100,10 +97,14 @@ namespace HandheldCompanion.Views.Windows
             this.SourceInitialized += Overlay_SourceInitialized;
         }
 
-        public Overlay(PipeClient pipeClient) : this()
+        public Overlay(PipeClient pipeClient, string ProductName) : this()
         {
             this.pipeClient = pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
+
+            this.ProductName = ProductName;
+
+            UpdateModel();
         }
 
         public void UpdateInterval(double interval)
@@ -119,70 +120,89 @@ namespace HandheldCompanion.Views.Windows
             UpdateTimer.Stop();
         }
 
-        public void UpdateProductModel(Model ProductModel)
+        public void UpdateHIDMode(HIDmode HIDmode)
         {
-            if (this.ProductModel == ProductModel)
+            if (this.HIDmode == HIDmode)
                 return;
 
-            this.ProductModel = ProductModel;
-            UpdateModel();
+            this.HIDmode = HIDmode;
+            this.Dispatcher.Invoke(() =>
+            {
+                UpdateModel();
+            });
         }
 
-        public void UpdateVirtualModel(Model VirtualModel)
+        public void UpdateOverlayMode(OverlayModelMode Modelmode)
         {
-            if (this.ProductModel == VirtualModel)
+            if (this.Modelmode == Modelmode)
                 return;
 
-            this.VirtualModel = VirtualModel;
-            UpdateModel();
-        }
-
-        public void UpdateBonusModel(Model BonusModel)
-        {
-            if (this.ProductModel == BonusModel)
-                return;
-
-            this.BonusModel = BonusModel;
-            UpdateModel();
-        }
-
-        public void UpdateModelMode(OverlayModelMode ModelMode)
-        {
-            if (this.ModelMode == ModelMode)
-                return;
-
-            this.ModelMode = ModelMode;
-            UpdateModel();
+            this.Modelmode = Modelmode;
+            this.Dispatcher.Invoke(() =>
+            {
+                UpdateModel();
+            });
         }
 
         public void UpdateModel()
         {
-            switch (this.ModelMode)
+            VirtualLoading.IsActive = true;
+
+            Model newModel = null;
+            switch (Modelmode)
             {
                 default:
                 case OverlayModelMode.OEM:
-                    if (ProductModel != null)
-                        CurrentModel = ProductModel;
-                    else goto case OverlayModelMode.Virtual;
+                    {
+                        switch (ProductName)
+                        {
+                            case "AYANEO 2021":
+                            case "AYANEO 2021 Pro":
+                            case "AYANEO 2021 Pro Retro Power":
+                                newModel = new ModelAYANEO2021();
+                                break;
+                            case "NEXT Pro":
+                            case "NEXT Advance":
+                            case "NEXT":
+                                newModel = new ModelAYANEONext();
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                     break;
-
                 case OverlayModelMode.Virtual:
-                    if (VirtualModel != null)
-                        CurrentModel = VirtualModel;
+                    {
+                        switch(HIDmode)
+                        {
+                            default:
+                            case HIDmode.DualShock4Controller:
+                                newModel = new ModelDS4();
+                                break;
+                            case HIDmode.Xbox360Controller:
+                                newModel = new ModelXBOX360();
+                                break;
+                        }
+                    }
                     break;
-
                 case OverlayModelMode.Toy:
-                    if (BonusModel != null)
-                        CurrentModel = BonusModel;
+                    {
+                        newModel = new ModelToyController();
+                    }
                     break;
             }
 
-            // should not happen
-            if (CurrentModel is null)
-                return;
+            if (newModel != CurrentModel)
+            {
+                CurrentModel = null;
+                CurrentModel = newModel;
+                GC.Collect();
 
-            ModelVisual3D.Content = CurrentModel.model3DGroup;
-            ModelViewPort.ZoomExtents();
+                ModelVisual3D.Content = CurrentModel.model3DGroup;
+                ModelViewPort.ZoomExtents();
+            }
+
+            VirtualLoading.IsActive = false;
         }
 
         private void Overlay_SourceInitialized(object? sender, EventArgs e)
@@ -196,7 +216,7 @@ namespace HandheldCompanion.Views.Windows
         private void Touchsource_Touch(TouchArgs args, long time)
         {
             double X = args.LocationX - this.OverlayPosition.X;
-            double Y = args.LocationY - this.OverlayPosition.Y;
+            // double Y = args.LocationY - this.OverlayPosition.Y;
 
             double CenterX = this.ActualWidth / 2;
             target = X < CenterX ? TouchTarget.TrackpadLeft : TouchTarget.TrackpadRight;
@@ -215,10 +235,6 @@ namespace HandheldCompanion.Views.Windows
                     Button = CursorButton.TouchRight;
                     CurrentPoint = RightTrackPadPosition;
                     break;
-                case TouchTarget.SwipeTop:
-                    if (args.Status == CursorEvent.EventType.DOWN)
-                        swipe = args;
-                    return;
             }
 
             // normalized
@@ -354,7 +370,6 @@ namespace HandheldCompanion.Views.Windows
         private RotateTransform3D TransformTriggerPositionLeft;
         private RotateTransform3D TransformTriggerPositionRight;
 
-        private int m_ModelVisualUpdate;
         private void OnServerMessage(object sender, PipeMessage message)
         {
             switch (message.code)
@@ -451,6 +466,9 @@ namespace HandheldCompanion.Views.Windows
                         TrackpadsTriggerListening = false;
                     }
                 }
+
+                if (CurrentModel is null)
+                    return;
 
                 this.Dispatcher.Invoke(() =>
                 {
