@@ -261,7 +261,8 @@ namespace ControllerService
 
         private void SetControllerMode(HIDmode mode)
         {
-            HIDmode = mode;
+            if (HIDmode == mode && VirtualTarget != null)
+                return;
 
             // disconnect current virtual controller
             // todo: do not disconnect if similar to incoming mode
@@ -271,7 +272,9 @@ namespace ControllerService
             {
                 default:
                 case HIDmode.NoController:
+                    VirtualTarget.Dispose();
                     VirtualTarget = null;
+                    XInputController.DetachTarget();
                     break;
                 case HIDmode.DualShock4Controller:
                     VirtualTarget = new DualShock4Target(XInputController, VirtualClient);
@@ -281,28 +284,38 @@ namespace ControllerService
                     break;
             }
 
-            if (VirtualTarget == null)
-                return;
+            if (VirtualTarget != null)
+            {
+                VirtualTarget.Connected += OnTargetConnected;
+                VirtualTarget.Disconnected += OnTargetDisconnected;
+                XInputController.AttachTarget(VirtualTarget);
+            }
 
-            VirtualTarget.Connected += OnTargetConnected;
-            VirtualTarget.Disconnected += OnTargetDisconnected;
-
-            XInputController.SetViGEmTarget(VirtualTarget);
+            // update status
             SetControllerStatus(HIDstatus);
+
+            // update value
+            HIDmode = mode;
         }
 
         private void SetControllerStatus(HIDstatus status)
         {
-            HIDstatus = status;
+            if (VirtualTarget == null)
+                return;
+
             switch (status)
             {
+                default:
                 case HIDstatus.Connected:
-                    VirtualTarget?.Connect();
+                    VirtualTarget.Connect();
                     break;
                 case HIDstatus.Disconnected:
-                    VirtualTarget?.Disconnect();
+                    VirtualTarget.Disconnect();
                     break;
             }
+
+            // update value
+            HIDstatus = status;
         }
 
         private void OnTargetDisconnected(ViGEmTarget target)
@@ -582,13 +595,15 @@ namespace ControllerService
 
             // update virtual controller
             SetControllerMode(HIDmode);
-            SetControllerStatus(HIDstatus);
 
             // start Pipe Server
             pipeServer.Start();
 
             // listen to system events
             SystemEvents.PowerModeChanged += OnPowerChange;
+
+            // OnPowerChange(null, new PowerModeChangedEventArgs(PowerModes.Suspend));
+            // OnPowerChange(null, new PowerModeChangedEventArgs(PowerModes.Resume));
 
             return Task.CompletedTask;
         }
@@ -602,7 +617,7 @@ namespace ControllerService
             Hidder?.SetCloaking(!HIDuncloakonclose, XInputController.ProductName);
 
             // update virtual controller
-            SetControllerStatus(HIDstatus.Disconnected);
+            SetControllerMode(HIDmode.NoController);
 
             // stop listening to system events
             SystemEvents.PowerModeChanged -= OnPowerChange;
@@ -629,18 +644,27 @@ namespace ControllerService
                 case PowerModes.StatusChange:
                     break;
                 case PowerModes.Resume:
-                    // (re)initialize sensors
-                    XInputController?.UpdateSensors();
+                    {
+                        // resume delay (arbitrary)
+                        Thread.Sleep(5000);
 
-                    // (re)initialize ViGEm
-                    VirtualClient = new ViGEmClient();
+                        // (re)initialize sensors
+                        XInputController?.UpdateSensors();
 
-                    // update virtual controller
-                    SetControllerMode(HIDmode);
-                    SetControllerStatus(HIDstatus);
+                        // (re)initialize ViGEm
+                        VirtualClient = new ViGEmClient();
+
+                        SetControllerMode(HIDmode);
+                    }
                     break;
                 case PowerModes.Suspend:
-                    VirtualClient.Dispose();
+                    {
+                        VirtualTarget.Dispose();
+                        VirtualTarget = null;
+
+                        VirtualClient.Dispose();
+                        VirtualClient = null;
+                    }
                     break;
             }
         }

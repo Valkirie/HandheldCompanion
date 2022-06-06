@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Exceptions;
@@ -56,6 +57,8 @@ namespace ControllerService.Targets
             virtualController = client.CreateDualShock4Controller();
             virtualController.AutoSubmitReport = false;
             virtualController.FeedbackReceived += FeedbackReceived;
+
+            LogManager.LogInformation("{0} initialized, {1}", ToString(), virtualController);
         }
 
         public override void Connect()
@@ -218,12 +221,18 @@ namespace ControllerService.Targets
             {
                 virtualController.SubmitRawReport(rawOutReportEx);
             }
-            catch (VigemBusNotFoundException)
+            catch (VigemBusNotFoundException ex)
             {
-                // todo: prevent this from happening !
+                LogManager.LogCritical(ex.Message);
             }
 
             base.SubmitReport();
+        }
+
+        public override void Dispose()
+        {
+            Disconnect();
+            base.Dispose();
         }
     }
 }

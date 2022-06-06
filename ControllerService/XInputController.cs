@@ -247,14 +247,26 @@ namespace ControllerService
             this.virtualTarget?.SetVibrationStrength(vibrationStrength);
         }
 
-        public void SetViGEmTarget(ViGEmTarget target)
+        public void AttachTarget(ViGEmTarget target)
         {
+            if (target is null)
+                return;
+
             this.virtualTarget = target;
 
             SetPollRate(updateInterval);
             SetVibrationStrength(vibrationStrength);
 
             LogManager.LogInformation("{0} attached to {1} on slot {2}", target, ProductName, controllerEx.Controller.UserIndex);
+        }
+
+        public void DetachTarget()
+        {
+            if (virtualTarget is null)
+                return;
+
+            LogManager.LogInformation("{0} detached from {1} on slot {2}", virtualTarget, ProductName, controllerEx.Controller.UserIndex);
+            this.virtualTarget = null;
         }
     }
 }
