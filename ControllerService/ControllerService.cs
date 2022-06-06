@@ -32,7 +32,6 @@ namespace ControllerService
         public XInputController XInputController;
 
         private PipeServer pipeServer;
-        private ProfileManager profileManager;
         private SystemManager systemManager;
         private DSUServer DSUServer;
         public HidHide Hidder;
@@ -170,10 +169,6 @@ namespace ControllerService
             DSUServer = new DSUServer(DSUip, DSUport);
             DSUServer.Started += OnDSUStarted;
             DSUServer.Stopped += OnDSUStopped;
-
-            // initialize Profile Manager
-            profileManager = new ProfileManager();
-            profileManager.Updated += ProfileUpdated;
         }
 
         private SerialUSBIMU sensor;
@@ -589,10 +584,6 @@ namespace ControllerService
 
             // start Pipe Server
             pipeServer.Start();
-
-            // start and stop Profile Manager
-            profileManager.Start("Default.json");
-            profileManager.Stop();
 
             // listen to system events
             SystemEvents.PowerModeChanged += OnPowerChange;
