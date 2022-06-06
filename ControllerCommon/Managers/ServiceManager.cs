@@ -82,6 +82,24 @@ namespace ControllerCommon.Managers
             MonitorTimer = null;
         }
 
+        public bool Exists()
+        {
+            try
+            {
+                process.StartInfo.Arguments = $"interrogate {name}";
+                process.Start();
+                process.WaitForExit();
+                string output = process.StandardOutput.ReadToEnd();
+                return !output.Contains("FAILED 1062");
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Service manager returned error: {0}", ex.Message);
+            }
+
+            return false;
+        }
+
         private void MonitorHelper(object sender, ElapsedEventArgs e)
         {
             lock (updateLock)

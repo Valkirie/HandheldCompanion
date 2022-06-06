@@ -47,14 +47,42 @@ namespace ControllerService.Sensors
             {
                 case SensorFamily.WindowsDevicesSensors:
                     ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
-                    ((Gyrometer)sensor).ReadingChanged += ReadingChanged;
 
                     LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
                     break;
                 case SensorFamily.SerialUSBIMU:
-                    ((SerialUSBIMU)sensor).ReadingChanged += ReadingChanged;
-
                     LogManager.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
+                    break;
+            }
+
+            StartListening(sensorFamily);
+        }
+
+        public void StartListening(SensorFamily sensorFamily)
+        {
+            switch (sensorFamily)
+            {
+                case SensorFamily.WindowsDevicesSensors:
+                    ((Gyrometer)sensor).ReadingChanged += ReadingChanged;
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    ((SerialUSBIMU)sensor).ReadingChanged += ReadingChanged;
+                    break;
+            }
+        }
+
+        public void StopListening(SensorFamily sensorFamily)
+        {
+            if (sensor is null)
+                return;
+
+            switch (sensorFamily)
+            {
+                case SensorFamily.WindowsDevicesSensors:
+                    ((Gyrometer)sensor).ReadingChanged -= ReadingChanged;
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    ((SerialUSBIMU)sensor).ReadingChanged -= ReadingChanged;
                     break;
             }
         }

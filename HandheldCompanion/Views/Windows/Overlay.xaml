@@ -7,7 +7,6 @@
         xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
-        ui:WindowHelper.UseModernWindowStyle="True"
         Title="Overlay" Visibility="Collapsed" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" Focusable="False" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" Closing="Window_Closing">
 
     <Grid Name="MainGrid">

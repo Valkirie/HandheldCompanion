@@ -11,7 +11,7 @@ using GamepadButtonFlagsExt = ControllerCommon.Utils.GamepadButtonFlagsExt;
 
 namespace ControllerService.Targets
 {
-    public abstract class ViGEmTarget
+    public abstract class ViGEmTarget : IDisposable
     {
         #region imports
         [StructLayout(LayoutKind.Sequential)]
@@ -55,7 +55,7 @@ namespace ControllerService.Targets
         public event DisconnectedEventHandler Disconnected;
         public delegate void DisconnectedEventHandler(ViGEmTarget target);
 
-        protected bool IsConnected;
+        public bool IsConnected = false;
 
         protected ViGEmTarget(XInputController xinput, ViGEmClient client)
         {
@@ -78,12 +78,12 @@ namespace ControllerService.Targets
         public void SetVibrationStrength(double strength)
         {
             vibrationStrength = strength / 100.0f;
-            LogManager.LogInformation("{0} vibration strength set to {1}%", this, strength);
+            LogManager.LogInformation("{0} vibration strength set to {1}%", ToString(), strength);
         }
 
         public override string ToString()
         {
-            return EnumUtils.GetDescriptionFromEnumValue(this.HID);
+            return EnumUtils.GetDescriptionFromEnumValue(HID);
         }
 
         public virtual void Connect()
@@ -99,7 +99,6 @@ namespace ControllerService.Targets
             Disconnected?.Invoke(this);
             LogManager.LogInformation("{0} disconnected", ToString());
         }
-
 
         public virtual unsafe void UpdateReport(Gamepad Gamepad)
         {
@@ -228,7 +227,10 @@ namespace ControllerService.Targets
 
         internal void SubmitReport()
         {
-            // do something
+        }
+
+        public virtual void Dispose()
+        {
         }
     }
 }

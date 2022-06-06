@@ -49,6 +49,37 @@ namespace ControllerService.Sensors
                     LogManager.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
                     break;
             }
+
+            StartListening(sensorFamily);
+        }
+
+        public void StartListening(SensorFamily sensorFamily)
+        {
+            switch (sensorFamily)
+            {
+                case SensorFamily.WindowsDevicesSensors:
+                    ((Accelerometer)sensor).ReadingChanged += ReadingChanged;
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    ((SerialUSBIMU)sensor).ReadingChanged += ReadingChanged;
+                    break;
+            }
+        }
+
+        public void StopListening(SensorFamily sensorFamily)
+        {
+            if (sensor is null)
+                return;
+
+            switch (sensorFamily)
+            {
+                case SensorFamily.WindowsDevicesSensors:
+                    ((Accelerometer)sensor).ReadingChanged -= ReadingChanged;
+                    break;
+                case SensorFamily.SerialUSBIMU:
+                    ((SerialUSBIMU)sensor).ReadingChanged -= ReadingChanged;
+                    break;
+            }
         }
 
         private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)

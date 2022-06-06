@@ -394,7 +394,12 @@ namespace HandheldCompanion.Views
             {
                 // start service with companion
                 if (settingsPage.StartServiceWithCompanion)
+                {
+                    if (!serviceManager.Exists())
+                        serviceManager.CreateService(CurrentPathService);
+
                     serviceManager.StartServiceAsync();
+                }
             }
         }
 
