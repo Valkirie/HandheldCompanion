@@ -160,7 +160,6 @@ namespace ControllerService
             XInputController.SetVibrationStrength(HIDstrength);
             XInputController.SetPollRate(HIDrate);
             XInputController.Updated += OnTargetSubmited;
-            XInputController.StartListening();
 
             // prepare physical controller
             SetControllerIdx(HIDidx, deviceInstancePath, baseContainerDeviceInstancePath);
@@ -572,6 +571,9 @@ namespace ControllerService
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            // start listening to controller
+            XInputController.StartListening();
+
             // turn on cloaking
             Hidder.SetCloaking(HIDcloaked, XInputController.ProductName);
 

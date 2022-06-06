@@ -94,6 +94,10 @@ namespace ControllerService
 
         public void StopListening()
         {
+            Gyrometer.StopListening(sensorFamily);
+            Accelerometer.StopListening(sensorFamily);
+            Inclinometer.StopListening(sensorFamily);
+
             stopwatch.Stop();
 
             UpdateTimer.Tick -= UpdateTimer_Ticked;
