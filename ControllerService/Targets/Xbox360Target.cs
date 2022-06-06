@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
@@ -54,6 +55,8 @@ namespace ControllerService.Targets
             virtualController = client.CreateXbox360Controller();
             virtualController.AutoSubmitReport = false;
             virtualController.FeedbackReceived += FeedbackReceived;
+
+            LogManager.LogInformation("{0} initialized, {1}", ToString(), virtualController);
         }
 
         public override void Connect()
@@ -115,12 +118,18 @@ namespace ControllerService.Targets
             {
                 virtualController.SubmitReport();
             }
-            catch (VigemBusNotFoundException)
+            catch (VigemBusNotFoundException ex)
             {
-                // todo: prevent this from happening !
+                LogManager.LogCritical(ex.Message);
             }
 
             base.SubmitReport();
+        }
+
+        public override void Dispose()
+        {
+            Disconnect();
+            base.Dispose();
         }
     }
 }
