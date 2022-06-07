@@ -77,7 +77,7 @@
     <PackageReference Include="CodeHollow.FeedReader" Version="1.2.4" />
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="FluentWPF" Version="0.10.2" />
-    <PackageReference Include="HelixToolkit.Wpf" Version="2.20.2" />
+    <PackageReference Include="HelixToolkit.Wpf" Version="2.21.0" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1" />
@@ -768,6 +768,9 @@
     </Reference>
     <Reference Include="ModernWpf.Controls">
       <HintPath>..\dependencies\ModernWpf.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="ModernWpf.MahApps">
+      <HintPath>..\dependencies\ModernWpf.MahApps.dll</HintPath>
     </Reference>
     <Reference Include="Nefarius.Utilities.DeviceManagement">
       <HintPath>..\dependencies\Nefarius.Utilities.DeviceManagement.dll</HintPath>
