@@ -1,19 +1,115 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
 using System.Timers;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using Windows.System.Diagnostics;
 
 namespace HandheldCompanion.Managers
 {
-    public struct ProcessDetails
+    public class ProcessEx
     {
-        public uint processId;
-        public string processExec;
-        public string processPath;
+        public Process Process;
+        public uint Id;
+        public string Executable;
+        public string Path;
+        public bool Status; // suspended / resumed
+        public IntPtr MainHandle;
+
+        // UI vars
+        public Border updateBorder;
+        public Grid updateGrid;
+        public TextBlock updateFilename;
+        public TextBlock updatePercentage;
+        public Button updateDownload;
+        public Button updateInstall;
+
+        public Border GetBorder()
+        {
+            return updateBorder;
+        }
+
+        public void Draw()
+        {
+            updateBorder = new Border()
+            {
+                Padding = new Thickness(20, 12, 12, 12),
+                Background = (Brush)Application.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"],
+                Tag = Executable
+            };
+
+            // Create Grid
+            updateGrid = new();
+
+            // Define the Columns
+            ColumnDefinition colDef1 = new ColumnDefinition()
+            {
+                Width = new GridLength(5, GridUnitType.Star),
+                MinWidth = 200
+            };
+            updateGrid.ColumnDefinitions.Add(colDef1);
+
+            ColumnDefinition colDef2 = new ColumnDefinition()
+            {
+                Width = new GridLength(3, GridUnitType.Star),
+                MinWidth = 120
+            };
+            updateGrid.ColumnDefinitions.Add(colDef2);
+
+            // Create TextBlock
+            updateFilename = new TextBlock()
+            {
+                FontSize = 14,
+                Text = Executable,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetColumn(updateFilename, 0);
+            updateGrid.Children.Add(updateFilename);
+
+            // Create TextBlock
+            updatePercentage = new TextBlock()
+            {
+                FontSize = 14,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Visibility = Visibility.Collapsed
+            };
+            Grid.SetColumn(updatePercentage, 1);
+            updateGrid.Children.Add(updatePercentage);
+
+            // Create Download Button
+            updateDownload = new Button()
+            {
+                FontSize = 14,
+                Content = Properties.Resources.SettingsPage_Download,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+
+            Grid.SetColumn(updateDownload, 1);
+            updateGrid.Children.Add(updateDownload);
+
+            // Create Install Button
+            updateInstall = new Button()
+            {
+                FontSize = 14,
+                Content = Properties.Resources.SettingsPage_InstallNow,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Visibility = Visibility.Collapsed
+            };
+
+            Grid.SetColumn(updateInstall, 1);
+            updateGrid.Children.Add(updateInstall);
+
+            updateBorder.Child = updateGrid;
+        }
     }
 
     public class ProcessManager
@@ -22,28 +118,28 @@ namespace HandheldCompanion.Managers
         private Timer MonitorTimer;
         private ManagementEventWatcher startWatch;
         private ManagementEventWatcher stopWatch;
-        private Dictionary<uint, ProcessDetails> CurrentProcesses = new();
+        private Dictionary<uint, ProcessEx> CurrentProcesses = new();
 
         private uint CurrentProcess;
         private object updateLock = new();
         private bool isRunning;
 
         public event ForegroundChangedEventHandler ForegroundChanged;
-        public delegate void ForegroundChangedEventHandler(uint processid, string path, string exec);
+        public delegate void ForegroundChangedEventHandler(ProcessEx processEx);
 
         public event ProcessStartedEventHandler ProcessStarted;
-        public delegate void ProcessStartedEventHandler(uint processid, string path, string exec);
+        public delegate void ProcessStartedEventHandler(ProcessEx processEx);
 
         public event ProcessStoppedEventHandler ProcessStopped;
-        public delegate void ProcessStoppedEventHandler(uint processid, string path, string exec);
+        public delegate void ProcessStoppedEventHandler(ProcessEx processEx);
 
         public ProcessManager()
         {
             startWatch = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStartTrace"));
-            startWatch.EventArrived += new EventArrivedEventHandler(startWatch_EventArrived);
+            startWatch.EventArrived += new EventArrivedEventHandler(ProcessCreated);
 
             stopWatch = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
-            stopWatch.EventArrived += new EventArrivedEventHandler(stopWatch_EventArrived);
+            stopWatch.EventArrived += new EventArrivedEventHandler(ProcessHalted);
         }
 
         public void Start()
@@ -97,14 +193,22 @@ namespace HandheldCompanion.Managers
                     path = ProcessUtils.GetPathToApp(proc);
                     exec = process.ExecutableFileName;
 
-                    ForegroundChanged?.Invoke(processId, path, exec);
+                    ProcessEx processEx = new ProcessEx()
+                    {
+                        Process = proc,
+                        Id = processId,
+                        Executable = exec,
+                        Path = path
+                    };
+
+                    ForegroundChanged?.Invoke(processEx);
 
                     CurrentProcess = processId;
                 }
             }
         }
 
-        void stopWatch_EventArrived(object sender, EventArrivedEventArgs e)
+        void ProcessHalted(object sender, EventArrivedEventArgs e)
         {
             try
             {
@@ -112,18 +216,18 @@ namespace HandheldCompanion.Managers
 
                 if (CurrentProcesses.ContainsKey(processId))
                 {
-                    ProcessDetails proc = CurrentProcesses[processId];
+                    ProcessEx processEx = CurrentProcesses[processId];
                     CurrentProcesses.Remove(processId);
 
-                    ProcessStopped?.Invoke(proc.processId, proc.processPath, proc.processExec);
+                    ProcessStopped?.Invoke(processEx);
                 }
             }
-            catch (Exception ex) { }
+            catch (Exception) { }
 
-            Console.WriteLine("Process stopped: {0}", e.NewEvent.Properties["ProcessName"].Value);
+            LogManager.LogDebug("Process halted: {0}", e.NewEvent.Properties["ProcessName"].Value);
         }
 
-        void startWatch_EventArrived(object sender, EventArrivedEventArgs e)
+        void ProcessCreated(object sender, EventArrivedEventArgs e)
         {
             try
             {
@@ -132,21 +236,25 @@ namespace HandheldCompanion.Managers
                 string path = ProcessUtils.GetPathToApp(proc);
                 string exec = Path.GetFileName(path);
 
-                ProcessDetails details = new ProcessDetails()
+                ProcessEx processEx = new ProcessEx()
                 {
-                    processId = processId,
-                    processExec = exec,
-                    processPath = path
+                    Process = proc,
+                    Id = processId,
+                    Executable = exec,
+                    Path = path
                 };
 
+                if (exec == "")
+                    return;
+
                 if (!CurrentProcesses.ContainsKey(processId))
-                    CurrentProcesses.Add(processId, details);
+                    CurrentProcesses.Add(processId, processEx);
 
-                ProcessStarted?.Invoke(processId, path, exec);
+                ProcessStarted?.Invoke(processEx);
             }
-            catch (Exception ex) { }
+            catch (Exception) { }
 
-            Console.WriteLine("Process started: {0}", e.NewEvent.Properties["ProcessName"].Value);
+            LogManager.LogDebug("Process created: {0}", e.NewEvent.Properties["ProcessName"].Value);
         }
     }
 }

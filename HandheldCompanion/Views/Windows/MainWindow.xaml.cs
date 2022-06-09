@@ -6,6 +6,7 @@ using HandheldCompanion.Models;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using ModernWpf.Controls;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -44,10 +45,9 @@ namespace HandheldCompanion.Views
         public AboutPage aboutPage;
         public OverlayPage overlayPage;
 
-        // overlay vars
+        // overlay(s) vars
+        private InputsManager inputsManager;
         private Overlay overlay;
-
-        // suspender vars
         private Suspender suspender;
 
         // touchscroll vars
@@ -170,17 +170,19 @@ namespace HandheldCompanion.Views
             // initialize toast manager
             toastManager = new ToastManager("HandheldCompanion");
 
-            // initialize overlay
-            overlay = new Overlay(pipeClient, ProductName);
-
-            // initialize suspender
-            suspender = new Suspender(logger, pipeClient);
-
             // initialize process manager
             processManager = new ProcessManager();
             processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
             processManager.ProcessStarted += ProcessManager_ProcessStarted;
             processManager.ProcessStopped += ProcessManager_ProcessStopped;
+
+
+            // initialize overlay(s)
+            inputsManager = new InputsManager();
+            inputsManager.TriggerRaised += InputsManager_TriggerRaised;
+
+            overlay = new Overlay(pipeClient, ProductName, inputsManager);
+            suspender = new Suspender(pipeClient, processManager);
 
             // initialize service manager
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
@@ -215,7 +217,7 @@ namespace HandheldCompanion.Views
             profilesPage = new ProfilesPage("profiles", this);
             settingsPage = new SettingsPage("settings", this);
             aboutPage = new AboutPage("about", this);
-            overlayPage = new OverlayPage("overlay", overlay);
+            overlayPage = new OverlayPage("overlay", overlay, inputsManager);
 
             // initialize command parser
             cmdParser = new CmdParser(pipeClient, this);
@@ -242,9 +244,8 @@ namespace HandheldCompanion.Views
             };
             controllerPage.ControllerChanged += (Controller) =>
             {
-                overlay.UpdateController(Controller);
-                cheatManager.UpdateController(Controller);
-                suspender.UpdateController(Controller);
+                cheatManager.UpdateController(Controller); // update me
+                inputsManager.UpdateController(Controller);
             };
 
             _pages.Add("ControllerPage", controllerPage);
@@ -258,6 +259,25 @@ namespace HandheldCompanion.Views
                 foreach (NavigationViewItem item in navView.FooterMenuItems)
                     item.ToolTip = Properties.Resources.WarningElevated;
             }
+        }
+
+        private void InputsManager_TriggerRaised(string listener, GamepadButtonFlags button)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                switch (listener)
+                {
+                    case "suspender":
+                            suspender.UpdateVisibility();
+                        break;
+                    case "overlayGamepad":
+                            overlay.UpdateControllerVisibility();
+                        break;
+                    case "overlayTrackpads":
+                            overlay.UpdateTrackpadsVisibility();
+                        break;
+                }
+            });
         }
 
         private void MenuItem_Click(object? sender, EventArgs e)
@@ -283,16 +303,16 @@ namespace HandheldCompanion.Views
             }
         }
 
-        private void ProcessManager_ProcessStopped(uint processid, string path, string exec)
+        private void ProcessManager_ProcessStopped(ProcessEx processEx)
         {
             try
             {
-                Profile currentProfile = profileManager.GetProfileFromExec(exec);
+                Profile currentProfile = profileManager.GetProfileFromExec(processEx.Executable);
 
                 if (currentProfile == null)
                     return;
 
-                currentProfile.fullpath = path;
+                currentProfile.fullpath = processEx.Path;
                 currentProfile.isApplied = false;
 
                 // update profile and inform settings page
@@ -301,16 +321,16 @@ namespace HandheldCompanion.Views
             catch (Exception) { }
         }
 
-        private void ProcessManager_ProcessStarted(uint processid, string path, string exec)
+        private void ProcessManager_ProcessStarted(ProcessEx processEx)
         {
             try
             {
-                Profile currentProfile = profileManager.GetProfileFromExec(exec);
+                Profile currentProfile = profileManager.GetProfileFromExec(processEx.Executable);
 
                 if (currentProfile == null)
                     return;
 
-                currentProfile.fullpath = path;
+                currentProfile.fullpath = processEx.Path;
                 currentProfile.isApplied = true;
 
                 // update profile and inform settings page
@@ -319,11 +339,11 @@ namespace HandheldCompanion.Views
             catch (Exception) { }
         }
 
-        private void ProcessManager_ForegroundChanged(uint processid, string path, string exec)
+        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
         {
             try
             {
-                Profile currentProfile = profileManager.GetProfileFromExec(exec);
+                Profile currentProfile = profileManager.GetProfileFromExec(processEx.Executable);
 
                 if (currentProfile == null)
                     currentProfile = profileManager.GetDefault();
@@ -336,7 +356,7 @@ namespace HandheldCompanion.Views
                 // do not update default profile path
                 if (!currentProfile.isDefault)
                 {
-                    currentProfile.fullpath = path;
+                    currentProfile.fullpath = processEx.Path;
 
                     // update profile and inform settings page
                     profileManager.UpdateOrCreateProfile(currentProfile);
@@ -396,6 +416,7 @@ namespace HandheldCompanion.Views
 
             // start Cheat Manager
             cheatManager.StartListening();
+            inputsManager.Start();
 
             if (IsElevated)
             {
@@ -657,17 +678,14 @@ namespace HandheldCompanion.Views
 
             if (Math.Abs(diff) >= 3)
             {
-                Debug.WriteLine("hasScrolled: {0} by: {1}", true, diff);
                 scrollViewer.ScrollToVerticalOffset(scrollOffset + diff);
                 hasScrolled = true;
                 e.Handled = true;
             }
             else
             {
-                Debug.WriteLine("hasScrolled: {0}", false);
                 hasScrolled = false;
                 e.Handled = false;
-                // do nothing
             }
         }
 
@@ -681,10 +699,7 @@ namespace HandheldCompanion.Views
             notifyIcon.Dispose();
 
             overlay.Close();
-
             suspender.Close();
-
-            serviceManager.Stop();
 
             if (pipeClient.connected)
                 pipeClient.Stop();
@@ -693,6 +708,7 @@ namespace HandheldCompanion.Views
                 pipeServer.Stop();
 
             cheatManager.StopListening();
+            inputsManager.Stop();
 
             // closing page(s)
             controllerPage.Page_Closed();

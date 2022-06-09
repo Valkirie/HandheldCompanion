@@ -4,12 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HandheldCompanion.Views.Windows"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
-        Title="Suspender" Height="250" Width="600" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" Focusable="False" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
-    
+        ui:WindowHelper.UseModernWindowStyle="True"
+        Width="400" Height="600"
+        Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+        Title="Suspender">
+
     <Border Background="White" CornerRadius="{DynamicResource ControlCornerRadius}">
-        <Grid>
-        
-        </Grid>
+        <!-- Processe(s) -->
+        <ui:SimpleStackPanel Name="CurrentProcesses" Spacing="6"/>
     </Border>
 </Window>

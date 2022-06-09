@@ -1,8 +1,10 @@
 ﻿using ControllerCommon;
+using HandheldCompanion.Managers;
 using Microsoft.Extensions.Logging;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -35,93 +37,70 @@ namespace HandheldCompanion.Views.Windows
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
         #endregion
 
-        private ILogger logger;
         private PipeClient pipeClient;
 
-        // Gamepad vars
-        private MultimediaTimer UpdateTimer;
-        private ControllerEx controllerEx;
-        private Gamepad Gamepad;
-        private State GamepadState;
+        // Process vars
+        private ProcessManager processManager;
 
         // Gamepad triggers
-        private bool TriggerListening = false;
-        private bool Triggered = false;
-        public GamepadButtonFlags TriggerButtons = GamepadButtonFlags.Back | GamepadButtonFlags.RightThumb;
-
-        public event TriggerUpdatedEventHandler TriggerUpdated;
-        public delegate void TriggerUpdatedEventHandler(GamepadButtonFlags button);
+        private InputsManager inputsManager;
 
         public Suspender()
         {
             InitializeComponent();
-
-            // initialize timers
-            UpdateTimer = new MultimediaTimer(10);
-            UpdateTimer.Tick += UpdateReport;
-            UpdateTimer.Start();
         }
 
-        public Suspender(ILogger logger, PipeClient pipeClient) : this()
+        public Suspender(PipeClient pipeClient, ProcessManager processManager) : this()
         {
-            this.logger = logger;
-
             this.pipeClient = pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
+
+            this.processManager = processManager;
+            this.processManager.ProcessStarted += ProcessStarted;
+            this.processManager.ProcessStopped += ProcessStopped;
         }
 
-        public void UpdateController(ControllerEx controllerEx)
-        {
-            this.controllerEx = controllerEx;
-        }
-
-        private void UpdateReport(object? sender, EventArgs e)
-        {
-            // get current gamepad state
-            if (controllerEx != null && controllerEx.IsConnected())
-            {
-                GamepadState = controllerEx.GetState();
-                Gamepad = GamepadState.Gamepad;
-            }
-
-            // Handle controller trigger(s)
-            if (!TriggerListening && Gamepad.Buttons.HasFlag(TriggerButtons))
-            {
-                if (!Triggered)
-                {
-                    UpdateVisibility();
-                    Triggered = true;
-                }
-            }
-            else if (Triggered)
-            {
-                Triggered = false;
-            }
-
-            // handle controller trigger(s) update
-            if (TriggerListening)
-            {
-                if (Gamepad.Buttons != 0)
-                    TriggerButtons |= Gamepad.Buttons;
-                else if (Gamepad.Buttons == 0 && TriggerButtons != 0)
-                {
-                    TriggerUpdated?.Invoke(TriggerButtons);
-                    TriggerListening = false;
-                }
-            }
-        }
-
-        private void UpdateVisibility()
+        private void ProcessStopped(ProcessEx processEx)
         {
             this.Dispatcher.Invoke(() =>
             {
-                this.Visibility = this.Visibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
+                var element = processEx.GetBorder();
+                CurrentProcesses.Children.Remove(element);
+            });
+        }
+
+        private void ProcessStarted(ProcessEx processEx)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                processEx.Draw();
+                var element = processEx.GetBorder();
+                CurrentProcesses.Children.Add(element);
             });
         }
 
         private void OnServerMessage(object sender, PipeMessage e)
         {
             // do something
+        }
+
+        public void UpdateVisibility()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                Visibility visibility = Visibility.Visible;
+                switch (Visibility)
+                {
+                    case Visibility.Visible:
+                        visibility = Visibility.Collapsed;
+                        break;
+                    case Visibility.Collapsed:
+                    case Visibility.Hidden:
+                        visibility = Visibility.Visible;
+                        break;
+                }
+                Visibility = visibility;
+            });
         }
     }
 }

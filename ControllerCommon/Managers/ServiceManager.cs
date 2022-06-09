@@ -1,3 +1,4 @@
+using ControllerCommon.Utils;
 using System;
 using System.Diagnostics;
 using System.ServiceProcess;
@@ -90,7 +91,15 @@ namespace ControllerCommon.Managers
                 process.Start();
                 process.WaitForExit();
                 string output = process.StandardOutput.ReadToEnd();
-                return !output.Contains("FAILED 1062");
+                string error = CommonUtils.Between(output, "FAILED ", ":");
+
+                switch(error)
+                {
+                    case "1060":
+                        return false;
+                    default:
+                        return true;
+                }
             }
             catch (Exception ex)
             {

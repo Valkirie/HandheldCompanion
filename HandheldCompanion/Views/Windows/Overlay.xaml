@@ -7,12 +7,13 @@
         xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
-        Title="Overlay" Visibility="Collapsed" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" Focusable="False" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" Closing="Window_Closing">
+        Closing="Window_Closing"
+        Title="Overlay" WindowStyle="None" Visibility="Collapsed" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" Focusable="False" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Maximized">
 
     <Grid Name="MainGrid">
         <Grid Margin="20">
             <!-- Trackpad -->
-            <Grid Name="VirtualTrackpads" Visibility="Hidden">
+            <Grid Name="VirtualTrackpads" Visibility="Collapsed">
                 <!-- Left Trackpad -->
                 <Border
                     Name="LeftTrackpad"
@@ -33,7 +34,7 @@
             </Grid>
         
             <!-- Virtual Controller -->
-            <Grid Name="VirtualController" Margin="-15" Height="100" Width="100" Visibility="Hidden">
+            <Grid Name="VirtualController" Visibility="Collapsed" Margin="-15" Height="100" Width="100">
 
                 <!-- The HelixViewport3D supports camera manipulation, and can be used just like the Viewport3D -->
                 <HelixToolkit:HelixViewport3D 
@@ -63,12 +64,6 @@
                     </HelixToolkit:HelixViewport3D.Camera>
 
                 </HelixToolkit:HelixViewport3D>
-
-                <ui:ProgressRing
-                    Name="VirtualLoading"
-                    VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Height="60" Width="60"/>
-
             </Grid>
         </Grid>
     </Grid>

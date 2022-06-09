@@ -418,5 +418,17 @@ namespace HandheldCompanion.Properties {
                 this["HIDmode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("40")]
+        public int SuspenderTrigger {
+            get {
+                return ((int)(this["SuspenderTrigger"]));
+            }
+            set {
+                this["SuspenderTrigger"] = value;
+            }
+        }
     }
 }
