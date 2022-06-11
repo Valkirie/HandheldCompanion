@@ -1,114 +1,252 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
+using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Management;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 using Windows.System.Diagnostics;
+using Brush = System.Windows.Media.Brush;
+using Image = System.Windows.Controls.Image;
+using ThreadState = System.Diagnostics.ThreadState;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
 {
     public class ProcessEx
     {
+        #region imports
+        [DllImport("ntdll.dll", EntryPoint = "NtSuspendProcess", SetLastError = true, ExactSpelling = false)]
+        private static extern UIntPtr NtSuspendProcess(IntPtr processHandle);
+        [DllImport("ntdll.dll", EntryPoint = "NtResumeProcess", SetLastError = true, ExactSpelling = false)]
+        private static extern UIntPtr NtResumeProcess(IntPtr processHandle);
+
+        public enum ShowWindowCommands : int
+        {
+            Hide = 0,
+            Normal = 1,
+            Minimized = 2,
+            Maximized = 3,
+        }
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+        #endregion
+
         public Process Process;
         public uint Id;
+        public string Name;
         public string Executable;
         public string Path;
-        public bool Status; // suspended / resumed
-        public IntPtr MainHandle;
+
+        private Timer Timer;
+        private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
 
         // UI vars
-        public Border updateBorder;
-        public Grid updateGrid;
-        public TextBlock updateFilename;
-        public TextBlock updatePercentage;
-        public Button updateDownload;
-        public Button updateInstall;
+        public Border processBorder;
+        public Grid processGrid;
+        public TextBlock processName;
+        public Image processIcon;
+        public Button processSuspend;
+        public Button processResume;
+
+        public ProcessEx(Process process)
+        {
+            this.Process = process;
+
+            this.Id = (uint)process.Id;
+
+            Timer = new Timer(1000);
+            Timer.Elapsed += Timer_Tick;
+            Timer.Start();
+        }
+
+        public void Stop()
+        {
+            Timer.Stop();
+            Timer.Elapsed -= Timer_Tick;
+        }
+
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+            try
+            {
+                Process.Refresh();
+
+                var processThread = Process.Threads[0];
+
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    if (string.IsNullOrEmpty(Process.MainWindowTitle))
+                        processName.Text = Process.ProcessName;
+                    else
+                        processName.Text = Process.MainWindowTitle;
+
+                    switch (processThread.ThreadState)
+                    {
+                        case ThreadState.Wait:
+
+                            if (processThread.WaitReason != threadWaitReason)
+                            {
+                                switch (processThread.WaitReason)
+                                {
+                                    case ThreadWaitReason.Suspended:
+                                        processSuspend.Visibility = Visibility.Collapsed;
+                                        processResume.Visibility = Visibility.Visible;
+                                        break;
+                                    default:
+                                        processSuspend.Visibility = Visibility.Visible;
+                                        processResume.Visibility = Visibility.Collapsed;
+                                        break;
+                                }
+                            }
+
+                            threadWaitReason = processThread.WaitReason;
+                            break;
+                        default:
+                            threadWaitReason = ThreadWaitReason.UserRequest;
+                            break;
+                    }
+                }), DispatcherPriority.ContextIdle);
+            }
+            catch (Exception) { }
+        }
 
         public Border GetBorder()
         {
-            return updateBorder;
+            return processBorder;
         }
 
         public void Draw()
         {
-            updateBorder = new Border()
+            processBorder = new Border()
             {
                 Padding = new Thickness(20, 12, 12, 12),
                 Background = (Brush)Application.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"],
-                Tag = Executable
+                Tag = Name
             };
 
             // Create Grid
-            updateGrid = new();
+            processGrid = new();
 
             // Define the Columns
+            ColumnDefinition colDef0 = new ColumnDefinition()
+            {
+                Width = new GridLength(32, GridUnitType.Pixel),
+                MinWidth = 32
+            };
+            processGrid.ColumnDefinitions.Add(colDef0);
+
             ColumnDefinition colDef1 = new ColumnDefinition()
             {
                 Width = new GridLength(5, GridUnitType.Star),
                 MinWidth = 200
             };
-            updateGrid.ColumnDefinitions.Add(colDef1);
+            processGrid.ColumnDefinitions.Add(colDef1);
 
             ColumnDefinition colDef2 = new ColumnDefinition()
             {
                 Width = new GridLength(3, GridUnitType.Star),
                 MinWidth = 120
             };
-            updateGrid.ColumnDefinitions.Add(colDef2);
+            processGrid.ColumnDefinitions.Add(colDef2);
 
-            // Create TextBlock
-            updateFilename = new TextBlock()
+            // Create PersonPicture
+            var icon = Icon.ExtractAssociatedIcon(Path);
+            processIcon = new Image()
+            {
+                Height = 32,
+                Width = 32,
+                Source = icon.ToImageSource()
+            };
+            Grid.SetColumn(processIcon, 0);
+            processGrid.Children.Add(processIcon);
+
+            // Create SimpleStackPanel
+            var StackPanel = new SimpleStackPanel()
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(12, 0, 0, 0)
+            };
+
+            // Create TextBlock(s)
+            processName = new TextBlock()
             {
                 FontSize = 14,
-                Text = Executable,
+                Text = Process.ProcessName,
                 VerticalAlignment = VerticalAlignment.Center
             };
-            Grid.SetColumn(updateFilename, 0);
-            updateGrid.Children.Add(updateFilename);
+            StackPanel.Children.Add(processName);
 
-            // Create TextBlock
-            updatePercentage = new TextBlock()
+            var processExecutable = new TextBlock()
             {
-                FontSize = 14,
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Visibility = Visibility.Collapsed
+                FontSize = 12,
+                Foreground = (Brush)Application.Current.Resources["SystemControlForegroundBaseMediumBrush"],
+                Text = Executable,
+                TextWrapping = TextWrapping.Wrap,
+                VerticalAlignment = VerticalAlignment.Center
             };
-            Grid.SetColumn(updatePercentage, 1);
-            updateGrid.Children.Add(updatePercentage);
+            StackPanel.Children.Add(processExecutable);
+
+            Grid.SetColumn(StackPanel, 1);
+            processGrid.Children.Add(StackPanel);
 
             // Create Download Button
-            updateDownload = new Button()
+            processSuspend = new Button()
             {
                 FontSize = 14,
-                Content = Properties.Resources.SettingsPage_Download,
+                Content = "Suspend", // localize me !
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Right
             };
+            processSuspend.Click += ProcessSuspend_Click;
 
-            Grid.SetColumn(updateDownload, 1);
-            updateGrid.Children.Add(updateDownload);
+            Grid.SetColumn(processSuspend, 2);
+            processGrid.Children.Add(processSuspend);
 
             // Create Install Button
-            updateInstall = new Button()
+            processResume = new Button()
             {
                 FontSize = 14,
-                Content = Properties.Resources.SettingsPage_InstallNow,
+                Content = "Resume", // localize me !
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Visibility = Visibility.Collapsed
             };
+            processResume.Click += ProcessResume_Click;
 
-            Grid.SetColumn(updateInstall, 1);
-            updateGrid.Children.Add(updateInstall);
+            Grid.SetColumn(processResume, 2);
+            processGrid.Children.Add(processResume);
 
-            updateBorder.Child = updateGrid;
+            processBorder.Child = processGrid;
+        }
+
+        private void ProcessResume_Click(object sender, RoutedEventArgs e)
+        {
+            NtResumeProcess(Process.Handle);
+            Thread.Sleep(500); // breathing
+            ShowWindow(Process.MainWindowHandle, 9);
+        }
+
+        private void ProcessSuspend_Click(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(Process.MainWindowHandle, 2);
+            Thread.Sleep(500); // breathing
+            NtSuspendProcess(Process.Handle);
         }
     }
 
@@ -144,8 +282,11 @@ namespace HandheldCompanion.Managers
 
         public void Start()
         {
+            // list all current processes
+            ListProcess();
+
             // start processes monitor
-            MonitorTimer = new Timer(250) { AutoReset = true };
+            MonitorTimer = new Timer(1000);
             MonitorTimer.Elapsed += MonitorHelper;
             MonitorTimer.Start();
 
@@ -160,6 +301,9 @@ namespace HandheldCompanion.Managers
             if (!isRunning)
                 return;
 
+            foreach(ProcessEx processEx in CurrentProcesses.Values)
+                processEx.Stop();
+
             // stop processes monitor
             MonitorTimer.Elapsed -= MonitorHelper;
             MonitorTimer.Stop();
@@ -168,7 +312,16 @@ namespace HandheldCompanion.Managers
             stopWatch.Stop();
         }
 
-        private void MonitorHelper(object? sender, ElapsedEventArgs e)
+        private void ListProcess()
+        {
+            Process[] processCollection = Process.GetProcesses();
+            foreach (Process proc in processCollection)
+            {
+                ProcessCreated(proc);
+            }
+        }
+
+        private void MonitorHelper(object? sender, EventArgs e)
         {
             lock (updateLock)
             {
@@ -189,21 +342,13 @@ namespace HandheldCompanion.Managers
 
                 if (processId != CurrentProcess)
                 {
-                    Process proc = Process.GetProcessById((int)processId);
-                    path = ProcessUtils.GetPathToApp(proc);
-                    exec = process.ExecutableFileName;
-
-                    ProcessEx processEx = new ProcessEx()
+                    if (CurrentProcesses.ContainsKey(processId))
                     {
-                        Process = proc,
-                        Id = processId,
-                        Executable = exec,
-                        Path = path
-                    };
+                        ProcessEx processEx = CurrentProcesses[processId];
 
-                    ForegroundChanged?.Invoke(processEx);
-
-                    CurrentProcess = processId;
+                        ForegroundChanged?.Invoke(processEx);
+                        CurrentProcess = processId;
+                    }
                 }
             }
         }
@@ -213,18 +358,22 @@ namespace HandheldCompanion.Managers
             try
             {
                 uint processId = (uint)e.NewEvent.Properties["ProcessID"].Value;
-
-                if (CurrentProcesses.ContainsKey(processId))
-                {
-                    ProcessEx processEx = CurrentProcesses[processId];
-                    CurrentProcesses.Remove(processId);
-
-                    ProcessStopped?.Invoke(processEx);
-                }
+                ProcessHalted(processId);
             }
             catch (Exception) { }
+        }
 
-            LogManager.LogDebug("Process halted: {0}", e.NewEvent.Properties["ProcessName"].Value);
+        void ProcessHalted(uint processId)
+        {
+            if (CurrentProcesses.ContainsKey(processId))
+            {
+                ProcessEx processEx = CurrentProcesses[processId];
+                CurrentProcesses.Remove(processId);
+
+                ProcessStopped?.Invoke(processEx);
+
+                LogManager.LogDebug("Process halted: {0}", processEx.Process.ProcessName);
+            }
         }
 
         void ProcessCreated(object sender, EventArrivedEventArgs e)
@@ -233,28 +382,49 @@ namespace HandheldCompanion.Managers
             {
                 uint processId = (uint)e.NewEvent.Properties["ProcessID"].Value;
                 Process proc = Process.GetProcessById((int)processId);
+                ProcessCreated(proc);
+            }
+            catch(Exception) { }
+        }
+
+        void ProcessCreated(Process proc)
+        {
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+
+                // breating
+                Thread.Sleep(1000);
+
+                // no main window
+                if (proc.MainWindowHandle == IntPtr.Zero)
+                    return;
+
                 string path = ProcessUtils.GetPathToApp(proc);
+
+                // todo : implement proper filtering
+                if (string.IsNullOrEmpty(path))
+                    return;
+
+                if (path.ToLower().Contains(Environment.GetEnvironmentVariable("windir").ToLower()))
+                    return;
+
                 string exec = Path.GetFileName(path);
 
-                ProcessEx processEx = new ProcessEx()
+                ProcessEx processEx = new ProcessEx(proc)
                 {
-                    Process = proc,
-                    Id = processId,
+                    Name = exec,
                     Executable = exec,
                     Path = path
                 };
 
-                if (exec == "")
-                    return;
-
-                if (!CurrentProcesses.ContainsKey(processId))
-                    CurrentProcesses.Add(processId, processEx);
+                if (!CurrentProcesses.ContainsKey(processEx.Id))
+                    CurrentProcesses.Add(processEx.Id, processEx);
 
                 ProcessStarted?.Invoke(processEx);
-            }
-            catch (Exception) { }
 
-            LogManager.LogDebug("Process created: {0}", e.NewEvent.Properties["ProcessName"].Value);
+                LogManager.LogDebug("Process created: {0}", proc.ProcessName);
+            }).Start();
         }
     }
 }

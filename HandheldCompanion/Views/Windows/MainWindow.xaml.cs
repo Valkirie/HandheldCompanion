@@ -176,7 +176,6 @@ namespace HandheldCompanion.Views
             processManager.ProcessStarted += ProcessManager_ProcessStarted;
             processManager.ProcessStopped += ProcessManager_ProcessStopped;
 
-
             // initialize overlay(s)
             inputsManager = new InputsManager();
             inputsManager.TriggerRaised += InputsManager_TriggerRaised;
@@ -307,12 +306,12 @@ namespace HandheldCompanion.Views
         {
             try
             {
-                Profile currentProfile = profileManager.GetProfileFromExec(processEx.Executable);
+                Profile currentProfile = profileManager.GetProfileFromExec(processEx.Name);
 
                 if (currentProfile == null)
                     return;
 
-                currentProfile.fullpath = processEx.Path;
+                currentProfile.fullpath = processEx.Executable;
                 currentProfile.isApplied = false;
 
                 // update profile and inform settings page
@@ -325,12 +324,12 @@ namespace HandheldCompanion.Views
         {
             try
             {
-                Profile currentProfile = profileManager.GetProfileFromExec(processEx.Executable);
+                Profile currentProfile = profileManager.GetProfileFromExec(processEx.Name);
 
                 if (currentProfile == null)
                     return;
 
-                currentProfile.fullpath = processEx.Path;
+                currentProfile.fullpath = processEx.Executable;
                 currentProfile.isApplied = true;
 
                 // update profile and inform settings page
@@ -343,7 +342,7 @@ namespace HandheldCompanion.Views
         {
             try
             {
-                Profile currentProfile = profileManager.GetProfileFromExec(processEx.Executable);
+                Profile currentProfile = profileManager.GetProfileFromExec(processEx.Name);
 
                 if (currentProfile == null)
                     currentProfile = profileManager.GetDefault();
@@ -356,7 +355,7 @@ namespace HandheldCompanion.Views
                 // do not update default profile path
                 if (!currentProfile.isDefault)
                 {
-                    currentProfile.fullpath = processEx.Path;
+                    currentProfile.fullpath = processEx.Executable;
 
                     // update profile and inform settings page
                     profileManager.UpdateOrCreateProfile(currentProfile);
@@ -372,12 +371,6 @@ namespace HandheldCompanion.Views
 
         private void OnClientConnected(object sender)
         {
-            if (IsElevated)
-            {
-                // start process manager
-                processManager.Start();
-            }
-
             // send all local settings to server ?
             PipeClientSettings settings = new PipeClientSettings();
             foreach (SettingsProperty currentProperty in Properties.Settings.Default.Properties)
@@ -387,8 +380,7 @@ namespace HandheldCompanion.Views
 
         private void OnClientDisconnected(object sender)
         {
-            // stop process manager
-            processManager.Stop();
+            // do something
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -404,8 +396,22 @@ namespace HandheldCompanion.Views
             WindowState = settingsPage.StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
             toastManager.Enabled = settingsPage.ToastEnable;
 
-            // start Service Manager
-            serviceManager.Start();
+            if (IsElevated)
+            {
+                // start process manager
+                processManager.Start();
+
+                // start service manager
+                serviceManager.Start();
+
+                if (settingsPage.StartServiceWithCompanion)
+                {
+                    if (!serviceManager.Exists())
+                        serviceManager.CreateService(CurrentPathService);
+
+                    serviceManager.StartServiceAsync();
+                }
+            }
 
             // start Profile Manager
             profileManager.Start();
@@ -417,18 +423,6 @@ namespace HandheldCompanion.Views
             // start Cheat Manager
             cheatManager.StartListening();
             inputsManager.Start();
-
-            if (IsElevated)
-            {
-                // start service with companion
-                if (settingsPage.StartServiceWithCompanion)
-                {
-                    if (!serviceManager.Exists())
-                        serviceManager.CreateService(CurrentPathService);
-
-                    serviceManager.StartServiceAsync();
-                }
-            }
         }
 
         public void UpdateSettings(Dictionary<string, string> args)
@@ -699,7 +693,7 @@ namespace HandheldCompanion.Views
             notifyIcon.Dispose();
 
             overlay.Close();
-            suspender.Close();
+            suspender.Close(true);
 
             if (pipeClient.connected)
                 pipeClient.Stop();

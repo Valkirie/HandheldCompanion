@@ -25,18 +25,6 @@ namespace HandheldCompanion.Views.Windows
     /// </summary>
     public partial class Suspender : Window
     {
-        #region imports
-        [DllImport("ntdll.dll", EntryPoint = "NtSuspendProcess", SetLastError = true, ExactSpelling = false)]
-        private static extern UIntPtr NtSuspendProcess(IntPtr processHandle);
-        [DllImport("ntdll.dll", EntryPoint = "NtResumeProcess", SetLastError = true, ExactSpelling = false)]
-        private static extern UIntPtr NtResumeProcess(IntPtr processHandle);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-        #endregion
-
         private PipeClient pipeClient;
 
         // Process vars
@@ -101,6 +89,19 @@ namespace HandheldCompanion.Views.Windows
                 }
                 Visibility = visibility;
             });
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = !isClosing;
+            this.Visibility = Visibility.Collapsed;
+        }
+
+        private bool isClosing;
+        public void Close(bool v)
+        {
+            isClosing = v;
+            this.Close();
         }
     }
 }

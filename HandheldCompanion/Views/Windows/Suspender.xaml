@@ -7,12 +7,15 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
         ui:WindowHelper.UseModernWindowStyle="True"
-        Width="400" Height="600"
+        Width="800" Height="600"
+        Closing="Window_Closing"
         Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-        Title="Suspender">
+        Title="Suspender" Topmost="True" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize" WindowStyle="ToolWindow">
 
     <Border Background="White" CornerRadius="{DynamicResource ControlCornerRadius}">
         <!-- Processe(s) -->
-        <ui:SimpleStackPanel Name="CurrentProcesses" Spacing="6"/>
+        <ScrollViewer>
+            <ui:SimpleStackPanel Name="CurrentProcesses" Spacing="6"/>
+        </ScrollViewer>
     </Border>
 </Window>
