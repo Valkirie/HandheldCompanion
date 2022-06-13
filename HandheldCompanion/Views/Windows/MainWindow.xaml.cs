@@ -181,7 +181,7 @@ namespace HandheldCompanion.Views
             inputsManager.TriggerRaised += InputsManager_TriggerRaised;
 
             overlay = new Overlay(pipeClient, ProductName, inputsManager);
-            suspender = new Suspender(pipeClient, processManager);
+            suspender = new Suspender(processManager);
 
             // initialize service manager
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);

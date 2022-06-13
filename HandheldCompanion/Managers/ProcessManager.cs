@@ -3,6 +3,7 @@ using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -71,14 +72,18 @@ namespace HandheldCompanion.Managers
             this.Id = (uint)process.Id;
 
             Timer = new Timer(1000);
+        }
+
+        public void Start()
+        {
             Timer.Elapsed += Timer_Tick;
             Timer.Start();
         }
 
         public void Stop()
         {
-            Timer.Stop();
             Timer.Elapsed -= Timer_Tick;
+            Timer.Stop();
         }
 
         private void Timer_Tick(object? sender, EventArgs e)
@@ -211,7 +216,8 @@ namespace HandheldCompanion.Managers
                 FontSize = 14,
                 Content = "Suspend", // localize me !
                 VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Right
+                HorizontalAlignment = HorizontalAlignment.Right,
+                // Style = Application.Current.FindResource("DefaultButtonStyle") as Style
             };
             processSuspend.Click += ProcessSuspend_Click;
 
@@ -225,7 +231,8 @@ namespace HandheldCompanion.Managers
                 Content = "Resume", // localize me !
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Right,
-                Visibility = Visibility.Collapsed
+                Visibility = Visibility.Collapsed,
+                Style = Application.Current.FindResource("AccentButtonStyle") as Style
             };
             processResume.Click += ProcessResume_Click;
 
@@ -256,7 +263,7 @@ namespace HandheldCompanion.Managers
         private Timer MonitorTimer;
         private ManagementEventWatcher startWatch;
         private ManagementEventWatcher stopWatch;
-        private Dictionary<uint, ProcessEx> CurrentProcesses = new();
+        private ConcurrentDictionary<uint, ProcessEx> CurrentProcesses = new();
 
         private uint CurrentProcess;
         private object updateLock = new();
@@ -316,9 +323,7 @@ namespace HandheldCompanion.Managers
         {
             Process[] processCollection = Process.GetProcesses();
             foreach (Process proc in processCollection)
-            {
                 ProcessCreated(proc);
-            }
         }
 
         private void MonitorHelper(object? sender, EventArgs e)
@@ -368,7 +373,9 @@ namespace HandheldCompanion.Managers
             if (CurrentProcesses.ContainsKey(processId))
             {
                 ProcessEx processEx = CurrentProcesses[processId];
-                CurrentProcesses.Remove(processId);
+                processEx.Stop();
+
+                CurrentProcesses.TryRemove(new KeyValuePair<uint, ProcessEx>(processId, processEx));
 
                 ProcessStopped?.Invoke(processEx);
 
@@ -417,9 +424,10 @@ namespace HandheldCompanion.Managers
                     Executable = exec,
                     Path = path
                 };
+                processEx.Start();
 
                 if (!CurrentProcesses.ContainsKey(processEx.Id))
-                    CurrentProcesses.Add(processEx.Id, processEx);
+                    CurrentProcesses.TryAdd(processEx.Id, processEx);
 
                 ProcessStarted?.Invoke(processEx);
 

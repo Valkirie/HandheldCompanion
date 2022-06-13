@@ -25,24 +25,16 @@ namespace HandheldCompanion.Views.Windows
     /// </summary>
     public partial class Suspender : Window
     {
-        private PipeClient pipeClient;
-
         // Process vars
         private ProcessManager processManager;
-
-        // Gamepad triggers
-        private InputsManager inputsManager;
 
         public Suspender()
         {
             InitializeComponent();
         }
 
-        public Suspender(PipeClient pipeClient, ProcessManager processManager) : this()
+        public Suspender(ProcessManager processManager) : this()
         {
-            this.pipeClient = pipeClient;
-            this.pipeClient.ServerMessage += OnServerMessage;
-
             this.processManager = processManager;
             this.processManager.ProcessStarted += ProcessStarted;
             this.processManager.ProcessStopped += ProcessStopped;
@@ -65,11 +57,6 @@ namespace HandheldCompanion.Views.Windows
                 var element = processEx.GetBorder();
                 CurrentProcesses.Children.Add(element);
             });
-        }
-
-        private void OnServerMessage(object sender, PipeMessage e)
-        {
-            // do something
         }
 
         public void UpdateVisibility()
