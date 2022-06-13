@@ -13,7 +13,6 @@ namespace HandheldCompanion.Views.Pages
     public partial class ProfileSettingsMode1 : Page
     {
         private Profile profileCurrent;
-        private PipeClient pipeClient;
 
         private int SteeringArraySize = 30;
         private ChartValues<ObservablePoint> SteeringLinearityPoints;
@@ -32,13 +31,12 @@ namespace HandheldCompanion.Views.Pages
             lvLineSeriesDefault.Values = new ChartValues<double>() { 0, 1 };
         }
 
-        public ProfileSettingsMode1(string Tag, Profile profileCurrent, PipeClient pipeClient) : this()
+        public ProfileSettingsMode1(string Tag, Profile profileCurrent) : this()
         {
             this.Tag = Tag;
 
             this.profileCurrent = profileCurrent;
-            this.pipeClient = pipeClient;
-            this.pipeClient.ServerMessage += OnServerMessage;
+            MainWindow.pipeClient.ServerMessage += OnServerMessage;
 
             SliderDeadzoneAngle.Value = profileCurrent.steering_deadzone;
             SliderPower.Value = profileCurrent.steering_power;
@@ -53,7 +51,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
-            pipeClient.ServerMessage -= OnServerMessage;
+            MainWindow.pipeClient.ServerMessage -= OnServerMessage;
         }
 
         private void OnServerMessage(object sender, PipeMessage message)

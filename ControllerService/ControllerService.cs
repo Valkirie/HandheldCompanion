@@ -37,7 +37,7 @@ namespace ControllerService
         public HidHide Hidder;
 
         // devices vars
-        public static Device handheldDevice = new DefaultDevice();
+        public static Device handheldDevice;
         private UserIndex HIDidx;
         private string deviceInstancePath;
         private string baseContainerDeviceInstancePath;
@@ -126,34 +126,11 @@ namespace ControllerService
             systemManager = new SystemManager();
             systemManager.SerialArrived += SystemManager_SerialArrived;
             systemManager.SerialRemoved += SystemManager_SerialRemoved;
-            systemManager.StartListen();
+            systemManager.Start();
             SystemManager_SerialArrived(null);
 
-            // get the actual handheld device
-            var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
-            var ProductName = MotherboardInfo.Product;
-
-            switch (ProductName)
-            {
-                case "AYANEO 2021":
-                case "AYANEO 2021 Pro":
-                case "AYANEO 2021 Pro Retro Power":
-                    handheldDevice = new AYANEO2021();
-                    break;
-                case "NEXT Pro":
-                case "NEXT Advance":
-                case "NEXT":
-                    handheldDevice = new AYANEONEXT();
-                    break;
-                case "ONE XPLAYER": // MINI ?
-                    handheldDevice = new OneXPlayerMini();
-                    break;
-                default:
-                    handheldDevice = new DefaultDevice();
-                    LogManager.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
-                    break;
-            }
-            handheldDevice.Initialize(ManufacturerName, ProductName);
+            // initialize device
+            handheldDevice = Device.GetDefault();
 
             // XInputController settings
             XInputController = new XInputController(SensorSelection, pipeServer);
@@ -190,8 +167,7 @@ namespace ControllerService
                     break;
             }
 
-            // send controller details
-            pipeServer.SendMessage(handheldDevice.ToPipe());
+            // todo : warn UI serial has arrived !
         }
 
         private void SystemManager_SerialRemoved(PnPDevice device)
@@ -209,8 +185,7 @@ namespace ControllerService
                     break;
             }
 
-            // send controller details
-            pipeServer.SendMessage(handheldDevice.ToPipe());
+            // todo : warn UI serial has left !
         }
 
         private void SetControllerIdx(UserIndex idx, string deviceInstancePath, string baseContainerDeviceInstancePath)
@@ -452,9 +427,6 @@ namespace ControllerService
 
         private void OnClientConnected(object sender)
         {
-            // send controller details
-            pipeServer.SendMessage(handheldDevice.ToPipe());
-
             // send server settings
             pipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
         }
@@ -597,7 +569,7 @@ namespace ControllerService
             SetControllerMode(HIDmode);
 
             // start Pipe Server
-            pipeServer.Start();
+            pipeServer.Open();
 
             // listen to system events
             SystemEvents.PowerModeChanged += OnPowerChange;
@@ -626,10 +598,10 @@ namespace ControllerService
             DSUServer?.Stop();
 
             // stop Pipe Server
-            pipeServer?.Stop();
+            pipeServer?.Close();
 
             // stop System Manager
-            systemManager.StopListen();
+            systemManager.Stop();
 
             return Task.CompletedTask;
         }

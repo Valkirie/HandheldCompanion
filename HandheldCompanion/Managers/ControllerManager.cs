@@ -1,5 +1,6 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Managers;
+using HandheldCompanion.Views;
 using SharpDX.XInput;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,6 @@ namespace HandheldCompanion.Managers
 {
     public class ControllerManager
     {
-        private SystemManager systemManager;
-
         private Dictionary<string, ControllerEx> controllers;
         private List<PnPDeviceEx> devices = new();
 
@@ -23,24 +22,21 @@ namespace HandheldCompanion.Managers
         {
             controllers = new();
 
-            // initialize manager(s)
-            systemManager = new SystemManager();
-            systemManager.XInputArrived += SystemManager_XInputUpdated;
-            systemManager.XInputRemoved += SystemManager_XInputUpdated;
+            MainWindow.systemManager.XInputArrived += SystemManager_XInputUpdated;
+            MainWindow.systemManager.XInputRemoved += SystemManager_XInputUpdated;
         }
 
         public void StopListen()
         {
-            systemManager.StopListen();
+            MainWindow.systemManager.XInputArrived -= SystemManager_XInputUpdated;
+            MainWindow.systemManager.XInputRemoved -= SystemManager_XInputUpdated;
         }
 
         public void StartListen()
         {
-            systemManager.StartListen();
-
             lock (devices)
             {
-                devices = systemManager.GetDeviceExs();
+                devices = MainWindow.systemManager.GetDeviceExs();
 
                 // rely on device Last arrival date
                 devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();
@@ -78,7 +74,7 @@ namespace HandheldCompanion.Managers
         {
             lock (devices)
             {
-                devices = systemManager.GetDeviceExs();
+                devices = MainWindow.systemManager.GetDeviceExs();
 
                 // rely on device Last arrival date
                 devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();

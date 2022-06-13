@@ -25,8 +25,7 @@ namespace ControllerCommon
         SERVER_SETTINGS = 6,                // Sent to client during initialization
                                             // args: ...
 
-        SERVER_CONTROLLER = 7,              // Sent to client during initialization
-                                            // args: ...
+        OBSOLETE_0 = 7,                     // OBSOLETE, REUSEME
 
         CLIENT_SETTINGS = 8,                // Sent to server to update settings
                                             // args: ...
@@ -109,13 +108,13 @@ namespace ControllerCommon
             this.logger = logger;
         }
 
-        public void Start()
+        public void Open()
         {
             server?.Start();
             logger?.LogInformation("{0} has started", this.ToString());
         }
 
-        public void Stop()
+        public void Close()
         {
             server?.Stop();
             logger?.LogInformation("{0} has stopped", this.ToString());

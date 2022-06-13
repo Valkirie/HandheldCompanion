@@ -4,6 +4,7 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using ModernWpf;
 using ModernWpf.Controls;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -23,10 +24,6 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class SettingsPage : Page
     {
-        private MainWindow mainWindow;
-        private PipeClient pipeClient;
-        private ServiceManager serviceManager;
-
         private bool Initialized;
 
         // settings vars
@@ -70,16 +67,12 @@ namespace HandheldCompanion.Views.Pages
             updateManager.Updated += UpdateManager_Updated;
         }
 
-        public SettingsPage(string Tag, MainWindow mainWindow) : this()
+        public SettingsPage(string Tag) : this()
         {
             this.Tag = Tag;
-            this.mainWindow = mainWindow;
 
-            this.pipeClient = mainWindow.pipeClient;
-            this.pipeClient.ServerMessage += OnServerMessage;
-
-            this.serviceManager = mainWindow.serviceManager;
-            this.serviceManager.Updated += OnServiceUpdate;
+            // initialize manager(s)
+            MainWindow.serviceManager.Updated += OnServiceUpdate;
 
             foreach (ServiceStartMode mode in ((ServiceStartMode[])Enum.GetValues(typeof(ServiceStartMode))).Where(mode => mode >= ServiceStartMode.Automatic))
                 cB_StartupType.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
@@ -107,6 +100,20 @@ namespace HandheldCompanion.Views.Pages
 
             cB_Theme.SelectedIndex = Properties.Settings.Default.MainWindowTheme;
             ApplyTheme((ApplicationTheme)cB_Theme.SelectedIndex);
+
+            // call functions
+            UpdateDevice(null);
+        }
+
+        public void UpdateDevice(PnPDevice device)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                SensorInternal.IsEnabled = MainWindow.handheldDevice.hasInternal;
+                SensorExternal.IsEnabled = MainWindow.handheldDevice.hasExternal;
+            });
+
+            cB_SensorSelection_SelectionChanged(null, null);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -116,30 +123,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
-            pipeClient.ServerMessage -= OnServerMessage;
-            serviceManager.Updated -= OnServiceUpdate;
-        }
-
-        private void OnServerMessage(object sender, PipeMessage message)
-        {
-            switch (message.code)
-            {
-                case PipeCode.SERVER_CONTROLLER:
-                    PipeServerHandheld handheldDevice = (PipeServerHandheld)message;
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        SensorInternal.IsEnabled = handheldDevice.hasInternal;
-                        SensorExternal.IsEnabled = handheldDevice.hasExternal;
-                        Toggle_SensorPlacementUpsideDown.IsEnabled = handheldDevice.hasExternal;
-
-                        foreach (SimpleStackPanel panel in SensorPlacementVisualisation.Children)
-                            foreach (Button button in panel.Children)
-                            {
-                                button.IsEnabled = handheldDevice.hasExternal;
-                            }
-                    });
-                    break;
-            }
+            MainWindow.serviceManager.Updated -= OnServiceUpdate;
         }
 
         private void Toggle_AutoStart_Toggled(object sender, System.Windows.RoutedEventArgs e)
@@ -406,13 +390,19 @@ namespace HandheldCompanion.Views.Pages
             if (cB_SensorSelection.SelectedIndex == Properties.Settings.Default.SensorSelection)
                 return;
 
+            Toggle_SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == 1 ? true : false;
+
+            foreach (SimpleStackPanel panel in SensorPlacementVisualisation.Children)
+                foreach (Button button in panel.Children)
+                    button.IsEnabled = cB_SensorSelection.SelectedIndex == 1 ? true : false;
+
             // save settings
             Properties.Settings.Default.SensorSelection = cB_SensorSelection.SelectedIndex;
             Properties.Settings.Default.Save();
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
-            pipeClient?.SendMessage(settings);
+            MainWindow.pipeClient?.SendMessage(settings);
 
             Dialog.ShowAsync($"{Properties.Resources.SettingsPage_AppLanguageWarning}",
                 Properties.Resources.SettingsPage_AppLanguageWarningDesc,
@@ -431,7 +421,7 @@ namespace HandheldCompanion.Views.Pages
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorPlacement", Tag);
-            pipeClient?.SendMessage(settings);
+            MainWindow.pipeClient?.SendMessage(settings);
         }
 
         private void UpdateUI_SensorPlacement(int SensorPlacement)
@@ -458,7 +448,7 @@ namespace HandheldCompanion.Views.Pages
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorPlacementUpsideDown", SensorPlacementUpsideDown);
-            pipeClient?.SendMessage(settings);
+            MainWindow.pipeClient?.SendMessage(settings);
         }
 
         #region serviceManager

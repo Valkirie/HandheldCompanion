@@ -12,13 +12,8 @@ namespace HandheldCompanion
 {
     public class CmdParser
     {
-        private readonly PipeClient pipeClient;
-        private readonly MainWindow mainWindow;
-
-        public CmdParser(PipeClient pipeClient, MainWindow mainWindow)
+        public CmdParser()
         {
-            this.pipeClient = pipeClient;
-            this.mainWindow = mainWindow;
         }
 
         public void ParseArgs(string[] args, bool init = false)
@@ -40,8 +35,7 @@ namespace HandheldCompanion
 
         private bool CmdDevice(DeviceOption option, bool init = false)
         {
-            mainWindow.UpdateHID(option.mode);
-            mainWindow.UpdateCloak(option.cloak);
+            // implement me
             return true;
         }
 
@@ -66,8 +60,8 @@ namespace HandheldCompanion
 
             profile.flickstick_enabled = option.flickstick;
 
-            mainWindow.profileManager.UpdateOrCreateProfile(profile);
-            mainWindow.profileManager.SerializeProfile(profile);
+            MainWindow.profileManager.UpdateOrCreateProfile(profile);
+            MainWindow.profileManager.SerializeProfile(profile);
 
             return true;
         }
@@ -77,26 +71,26 @@ namespace HandheldCompanion
             switch (option.action)
             {
                 case ProfileServiceAction.create:
-                    mainWindow.serviceManager.CreateService(mainWindow.CurrentPathService);
+                    MainWindow.serviceManager.CreateService(MainWindow.CurrentPathService);
                     break;
                 case ProfileServiceAction.delete:
-                    mainWindow.serviceManager.DeleteService();
+                    MainWindow.serviceManager.DeleteService();
                     break;
                 case ProfileServiceAction.start:
-                    mainWindow.serviceManager.StartServiceAsync();
+                    MainWindow.serviceManager.StartServiceAsync();
                     break;
                 case ProfileServiceAction.stop:
-                    mainWindow.serviceManager.StopServiceAsync();
+                    MainWindow.serviceManager.StopServiceAsync();
                     break;
                 case ProfileServiceAction.install:
-                    mainWindow.serviceManager.CreateService(mainWindow.CurrentPathService);
-                    mainWindow.serviceManager.SetStartType(System.ServiceProcess.ServiceStartMode.Automatic);
-                    mainWindow.serviceManager.StartServiceAsync();
+                    MainWindow.serviceManager.CreateService(MainWindow.CurrentPathService);
+                    MainWindow.serviceManager.SetStartType(System.ServiceProcess.ServiceStartMode.Automatic);
+                    MainWindow.serviceManager.StartServiceAsync();
                     break;
                 case ProfileServiceAction.uninstall:
-                    pipeClient.SendMessage(new PipeShutdown());
-                    mainWindow.serviceManager.StopServiceAsync();
-                    mainWindow.serviceManager.DeleteService();
+                    MainWindow.pipeClient.SendMessage(new PipeShutdown());
+                    MainWindow.serviceManager.StopServiceAsync();
+                    MainWindow.serviceManager.DeleteService();
                     if (init) Process.GetCurrentProcess().Kill();
                     break;
                 default:

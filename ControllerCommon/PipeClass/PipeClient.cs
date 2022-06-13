@@ -60,13 +60,13 @@ namespace ControllerCommon
             connected = false;
         }
 
-        public void Start()
+        public void Open()
         {
             client?.Start();
             logger?.LogInformation("{0} has started", this.ToString());
         }
 
-        public void Stop()
+        public void Close()
         {
             client?.Stop();
             logger?.LogInformation("{0} has stopped", this.ToString());

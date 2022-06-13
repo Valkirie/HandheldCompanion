@@ -40,7 +40,7 @@ namespace ControllerCommon.Managers
             xinputListener = new DeviceNotificationListener();
         }
 
-        public void StartListen()
+        public void Start()
         {
             hidListener.StartListen(DeviceInterfaceIds.UsbDevice);
             hidListener.DeviceArrived += Listener_DeviceArrived;
@@ -51,7 +51,7 @@ namespace ControllerCommon.Managers
             xinputListener.DeviceRemoved += XinputListener_DeviceRemoved;
         }
 
-        public void StopListen()
+        public void Stop()
         {
             hidListener.StopListen(DeviceInterfaceIds.UsbDevice);
             hidListener.DeviceArrived -= Listener_DeviceArrived;

@@ -34,26 +34,6 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public partial class PipeServerHandheld : PipeMessage
-    {
-        public string ManufacturerName;
-        public string ProductName;
-        public string ProductIllustration;
-        public bool ProductSupported;
-
-        public string InternalSensorName;
-        public string ExternalSensorName;
-
-        public bool hasInternal;
-        public bool hasExternal;
-
-        public PipeServerHandheld()
-        {
-            code = PipeCode.SERVER_CONTROLLER;
-        }
-    }
-
-    [Serializable]
     public partial class PipeServerSettings : PipeMessage
     {
         public Dictionary<string, string> settings = new();

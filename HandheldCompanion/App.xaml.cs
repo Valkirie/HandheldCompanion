@@ -61,7 +61,7 @@ namespace HandheldCompanion
                 m_PipeClient = new PipeClient("HandheldCompanion");
                 m_PipeClient.Connected += OnServerConnected;
                 m_PipeClient.ServerMessage += OnServerMessage;
-                m_PipeClient.Start();
+                m_PipeClient.Open();
 
                 // Wait for work method to signal and kill after 4seconds
                 autoEvent.WaitOne(4000);

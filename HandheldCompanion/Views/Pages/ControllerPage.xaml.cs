@@ -21,14 +21,7 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class ControllerPage : Page
     {
-        private MainWindow mainWindow;
-        private readonly HidHide Hidder;
-        private readonly ToastManager toastManager;
-
-        private ServiceManager serviceManager;
-
         // pipe vars
-        PipeClient pipeClient;
         bool isConnected;
         bool isLoading;
         bool hasSettings;
@@ -54,6 +47,14 @@ namespace HandheldCompanion.Views.Pages
 
             // pull Hidmode
             cB_HidMode.SelectedIndex = Properties.Settings.Default.HIDmode;
+        }
+
+        public ControllerPage(string Tag) : this()
+        {
+            this.Tag = Tag;
+
+            MainWindow.pipeClient.ServerMessage += OnServerMessage;
+            MainWindow.serviceManager.Updated += OnServiceUpdate;
 
             // initialize controller manager
             controllerManager = new ControllerManager();
@@ -62,29 +63,14 @@ namespace HandheldCompanion.Views.Pages
             controllerManager.StartListen();
         }
 
-        public ControllerPage(string Tag, MainWindow mainWindow) : this()
-        {
-            this.Tag = Tag;
-
-            this.mainWindow = mainWindow;
-            this.Hidder = mainWindow.Hidder;
-            this.toastManager = mainWindow.toastManager;
-
-            this.pipeClient = mainWindow.pipeClient;
-            this.pipeClient.ServerMessage += OnServerMessage;
-
-            this.serviceManager = mainWindow.serviceManager;
-            this.serviceManager.Updated += OnServiceUpdate;
-        }
-
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
         }
 
         public void Page_Closed()
         {
-            pipeClient.ServerMessage -= OnServerMessage;
-            serviceManager.Updated -= OnServiceUpdate;
+            MainWindow.pipeClient.ServerMessage -= OnServerMessage;
+            MainWindow.serviceManager.Updated -= OnServiceUpdate;
             controllerManager.StopListen();
         }
 
@@ -282,7 +268,7 @@ namespace HandheldCompanion.Views.Pages
             HIDchanged?.Invoke(controllerMode);
 
             PipeClientSettings settings = new PipeClientSettings("HIDmode", controllerMode);
-            pipeClient?.SendMessage(settings);
+            MainWindow.pipeClient?.SendMessage(settings);
 
             UpdateController();
         }
@@ -292,7 +278,7 @@ namespace HandheldCompanion.Views.Pages
             controllerStatus = controllerStatus == HIDstatus.Connected ? HIDstatus.Disconnected : HIDstatus.Connected;
 
             PipeClientSettings settings = new PipeClientSettings("HIDstatus", controllerStatus);
-            mainWindow.pipeClient.SendMessage(settings);
+            MainWindow.pipeClient?.SendMessage(settings);
 
             UpdateController();
         }
@@ -300,19 +286,19 @@ namespace HandheldCompanion.Views.Pages
         private void Toggle_Cloaked_Toggled(object sender, RoutedEventArgs e)
         {
             PipeClientSettings settings = new PipeClientSettings("HIDcloaked", Toggle_Cloaked.IsOn);
-            pipeClient?.SendMessage(settings);
+            MainWindow.pipeClient?.SendMessage(settings);
         }
 
         private void Toggle_Uncloak_Toggled(object sender, RoutedEventArgs e)
         {
             PipeClientSettings settings = new PipeClientSettings("HIDuncloakonclose", Toggle_Uncloak.IsOn);
-            pipeClient?.SendMessage(settings);
+            MainWindow.pipeClient?.SendMessage(settings);
         }
 
         private void SliderStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             PipeClientSettings settings = new PipeClientSettings("HIDstrength", SliderStrength.Value);
-            pipeClient?.SendMessage(settings);
+            MainWindow.pipeClient?.SendMessage(settings);
         }
 
         private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -340,7 +326,7 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // notify user
-            toastManager.SendToast(currentController.ToString(), Properties.Resources.ToastNewControllerEx);
+            MainWindow.toastManager.SendToast(currentController.ToString(), Properties.Resources.ToastNewControllerEx);
             currentController.Identify();
 
             // raise events
@@ -352,7 +338,7 @@ namespace HandheldCompanion.Views.Pages
             ControllerChanged?.Invoke(currentController);
 
             PipeControllerIndex settings = new PipeControllerIndex((int)currentController.UserIndex, currentController.deviceInstancePath, currentController.baseContainerDeviceInstancePath);
-            pipeClient?.SendMessage(settings);
+            MainWindow.pipeClient?.SendMessage(settings);
         }
     }
 }

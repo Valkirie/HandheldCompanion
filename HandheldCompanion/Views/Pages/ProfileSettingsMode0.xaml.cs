@@ -15,20 +15,18 @@ namespace HandheldCompanion.Views.Pages
     public partial class ProfileSettingsMode0 : Page
     {
         private Profile profileCurrent;
-        private PipeClient pipeClient;
 
         public ProfileSettingsMode0()
         {
             InitializeComponent();
         }
 
-        public ProfileSettingsMode0(string Tag, Profile profileCurrent, PipeClient pipeClient) : this()
+        public ProfileSettingsMode0(string Tag, Profile profileCurrent) : this()
         {
             this.Tag = Tag;
 
             this.profileCurrent = profileCurrent;
-            this.pipeClient = pipeClient;
-            this.pipeClient.ServerMessage += OnServerMessage;
+            MainWindow.pipeClient.ServerMessage += OnServerMessage;
 
             SliderSensivity.Value = profileCurrent.aiming_sensivity;
             Toggle_FlickStick.IsOn = profileCurrent.flickstick_enabled;
@@ -67,7 +65,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
-            pipeClient.ServerMessage -= OnServerMessage;
+            MainWindow.pipeClient.ServerMessage -= OnServerMessage;
         }
 
         private void OnServerMessage(object sender, PipeMessage message)

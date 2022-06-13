@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
@@ -36,7 +37,6 @@ namespace HandheldCompanion.Views.Windows
         private PipeClient pipeClient;
         private MultimediaTimer UpdateTimer;
 
-        private string ProductName;
         private InputsManager inputsManager;
         private Model CurrentModel;
         private OverlayModelMode Modelmode;
@@ -77,12 +77,11 @@ namespace HandheldCompanion.Views.Windows
             this.SourceInitialized += Overlay_SourceInitialized;
         }
 
-        public Overlay(PipeClient pipeClient, string ProductName, InputsManager inputsManager) : this()
+        public Overlay(PipeClient pipeClient, InputsManager inputsManager) : this()
         {
             this.pipeClient = pipeClient;
             this.pipeClient.ServerMessage += OnServerMessage;
 
-            this.ProductName = ProductName;
             this.inputsManager = inputsManager;
             this.inputsManager.Updated += UpdateReport;
 
@@ -144,7 +143,7 @@ namespace HandheldCompanion.Views.Windows
                 default:
                 case OverlayModelMode.OEM:
                     {
-                        switch (ProductName)
+                        switch (MainWindow.handheldDevice.ProductName)
                         {
                             case "AYANEO 2021":
                             case "AYANEO 2021 Pro":

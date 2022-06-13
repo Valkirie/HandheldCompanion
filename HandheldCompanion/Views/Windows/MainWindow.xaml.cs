@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
@@ -6,6 +7,7 @@ using HandheldCompanion.Models;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using ModernWpf.Controls;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -32,8 +34,11 @@ namespace HandheldCompanion.Views
     public partial class MainWindow : Window
     {
         private StartupEventArgs arguments;
-        public FileVersionInfo fileVersionInfo;
+        public static FileVersionInfo fileVersionInfo;
         public static new string Name;
+
+        // devices vars
+        public static Device handheldDevice;
 
         // page vars
         private Dictionary<string, Page> _pages = new();
@@ -46,9 +51,9 @@ namespace HandheldCompanion.Views
         public OverlayPage overlayPage;
 
         // overlay(s) vars
-        private InputsManager inputsManager;
-        private Overlay overlay;
-        private Suspender suspender;
+        public static InputsManager inputsManager;
+        public static Overlay overlay;
+        public static Suspender suspender;
 
         // touchscroll vars
         Point scrollPoint = new Point();
@@ -57,41 +62,38 @@ namespace HandheldCompanion.Views
         public static bool IsElevated = false;
 
         // connectivity vars
-        public PipeClient pipeClient;
-        public PipeServer pipeServer;
+        public static PipeClient pipeClient;
+        public static PipeServer pipeServer;
 
         // Hidder vars
-        public HidHide Hidder;
+        public static HidHide Hidder;
 
         // Command parser vars
-        public CmdParser cmdParser;
+        public static CmdParser cmdParser;
 
         // manager(s) vars
-        public ToastManager toastManager;
-        private ProcessManager processManager;
-        public ServiceManager serviceManager;
-        public ProfileManager profileManager;
-        private TaskManager taskManager;
-        private CheatManager cheatManager;
+        public static ToastManager toastManager;
+        public static ProcessManager processManager;
+        public static ServiceManager serviceManager;
+        public static ProfileManager profileManager;
+        public static TaskManager taskManager;
+        public static CheatManager cheatManager;
+        public static SystemManager systemManager;
 
         private WindowState prevWindowState;
         private NotifyIcon notifyIcon;
 
-        public string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
+        public static string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
         private bool FirstStart, appClosing;
 
+        private static MainWindow window;
         public MainWindow(StartupEventArgs arguments)
         {
             InitializeComponent();
             Name = this.Title;
 
             this.arguments = arguments;
-
-            // get the actual handheld device
-            var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
-            var ProductName = MotherboardInfo.Product;
-
-            LogManager.LogInformation("{0} ({1})", ManufacturerName, ProductName);
+            window = this;
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
@@ -137,6 +139,13 @@ namespace HandheldCompanion.Views
             CurrentPathService = Path.Combine(CurrentPath, "ControllerService.exe");
             CurrentPathLogs = Path.Combine(CurrentPath, "Logs");
 
+            // verifying HidHide is installed
+            if (!File.Exists(CurrentPathService))
+            {
+                LogManager.LogCritical("Controller Service executable is missing");
+                throw new InvalidOperationException();
+            }
+
             // initialize HidHide
             Hidder = new HidHide();
             Hidder.RegisterApplication(CurrentExe);
@@ -147,12 +156,9 @@ namespace HandheldCompanion.Views
             // initialize title
             this.Title += $" ({fileVersionInfo.FileVersion}) ({(IsElevated ? Properties.Resources.Administrator : Properties.Resources.User)})";
 
-            // verifying HidHide is installed
-            if (!File.Exists(CurrentPathService))
-            {
-                LogManager.LogCritical("Controller Service executable is missing");
-                throw new InvalidOperationException();
-            }
+            // initialize device
+            handheldDevice = Device.GetDefault();
+            handheldDevice.PullSensors();
 
             // initialize pipe client
             pipeClient = new PipeClient("ControllerService");
@@ -180,7 +186,7 @@ namespace HandheldCompanion.Views
             inputsManager = new InputsManager();
             inputsManager.TriggerRaised += InputsManager_TriggerRaised;
 
-            overlay = new Overlay(pipeClient, ProductName, inputsManager);
+            overlay = new Overlay(pipeClient, inputsManager);
             suspender = new Suspender(processManager);
 
             // initialize service manager
@@ -211,15 +217,20 @@ namespace HandheldCompanion.Views
                 }
             };
 
+            // initialize system manager
+            systemManager = new SystemManager();
+            systemManager.SerialArrived += SerialUpdated;
+            systemManager.SerialRemoved += SerialUpdated;
+
             // initialize pages
-            controllerPage = new ControllerPage("controller", this);
-            profilesPage = new ProfilesPage("profiles", this);
-            settingsPage = new SettingsPage("settings", this);
-            aboutPage = new AboutPage("about", this);
-            overlayPage = new OverlayPage("overlay", overlay, inputsManager);
+            controllerPage = new ControllerPage("controller");
+            profilesPage = new ProfilesPage("profiles");
+            settingsPage = new SettingsPage("settings");
+            aboutPage = new AboutPage("about");
+            overlayPage = new OverlayPage("overlay");
 
             // initialize command parser
-            cmdParser = new CmdParser(pipeClient, this);
+            cmdParser = new CmdParser();
             cmdParser.ParseArgs(arguments.Args, true);
 
             // handle settingsPage events
@@ -258,6 +269,14 @@ namespace HandheldCompanion.Views
                 foreach (NavigationViewItem item in navView.FooterMenuItems)
                     item.ToolTip = Properties.Resources.WarningElevated;
             }
+        }
+
+        private void SerialUpdated(PnPDevice device)
+        {
+            handheldDevice.PullSensors();
+
+            aboutPage.UpdateDevice(device);
+            settingsPage.UpdateDevice(device);
         }
 
         private void InputsManager_TriggerRaised(string listener, GamepadButtonFlags button)
@@ -300,6 +319,11 @@ namespace HandheldCompanion.Views
                     this.Close();
                     break;
             }
+        }
+
+        internal static MainWindow GetDefault()
+        {
+            return window;
         }
 
         private void ProcessManager_ProcessStopped(ProcessEx processEx)
@@ -398,10 +422,8 @@ namespace HandheldCompanion.Views
 
             if (IsElevated)
             {
-                // start process manager
+                // start manager(s)
                 processManager.Start();
-
-                // start service manager
                 serviceManager.Start();
 
                 if (settingsPage.StartServiceWithCompanion)
@@ -413,16 +435,15 @@ namespace HandheldCompanion.Views
                 }
             }
 
-            // start Profile Manager
+            // open pipe(s)
+            pipeClient.Open();
+            pipeServer.Open();
+
+            // start manager(s)
             profileManager.Start();
-
-            // start pipe client and server
-            pipeClient.Start();
-            pipeServer.Start();
-
-            // start Cheat Manager
-            cheatManager.StartListening();
+            cheatManager.Start();
             inputsManager.Start();
+            systemManager.Start();
         }
 
         public void UpdateSettings(Dictionary<string, string> args)
@@ -445,18 +466,6 @@ namespace HandheldCompanion.Views
                 }
             }
         }
-
-        #region cmdParser
-        internal void UpdateCloak(bool cloak)
-        {
-            // implement me
-        }
-
-        internal void UpdateHID(HIDmode mode)
-        {
-            // implement me
-        }
-        #endregion
 
         #region pipeClient
         private void OnServerMessage(object sender, PipeMessage message)
@@ -570,18 +579,6 @@ namespace HandheldCompanion.Views
         }
         #endregion
 
-        #region profileManager
-        private void ProfileUpdated(Profile profile)
-        {
-            // implement me
-        }
-
-        private void ProfileDeleted(Profile profile)
-        {
-            // implement me
-        }
-        #endregion
-
         #region pipeServer
         private void OnClientMessage(object sender, PipeMessage e)
         {
@@ -665,7 +662,7 @@ namespace HandheldCompanion.Views
             if (scrollPoint == new Point())
                 return;
 
-            if (MainWindow.scrollLock)
+            if (scrollLock)
                 return;
 
             double diff = (scrollPoint.Y - e.GetPosition(scrollViewer).Y);
@@ -688,6 +685,7 @@ namespace HandheldCompanion.Views
             processManager.Stop();
             serviceManager.Stop();
             profileManager.Stop();
+            systemManager.Stop();
 
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
@@ -696,19 +694,18 @@ namespace HandheldCompanion.Views
             suspender.Close(true);
 
             if (pipeClient.connected)
-                pipeClient.Stop();
+                pipeClient.Close();
 
             if (pipeServer.connected)
-                pipeServer.Stop();
+                pipeServer.Close();
 
-            cheatManager.StopListening();
+            cheatManager.Stop();
             inputsManager.Stop();
 
             // closing page(s)
             controllerPage.Page_Closed();
             profilesPage.Page_Closed();
             settingsPage.Page_Closed();
-            aboutPage.Page_Closed();
             overlayPage.Page_Closed();
         }
 
@@ -799,7 +796,7 @@ namespace HandheldCompanion.Views
             {
                 var preNavPageType = ContentFrame.CurrentSourcePageType;
                 var preNavPageName = preNavPageType.Name;
-                this.pipeClient.SendMessage(new PipeNavigation((string)preNavPageName));
+                pipeClient.SendMessage(new PipeNavigation((string)preNavPageName));
 
                 var NavViewItem = navView.MenuItems
                     .OfType<NavigationViewItem>()

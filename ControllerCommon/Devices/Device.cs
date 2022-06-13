@@ -1,7 +1,11 @@
-﻿using ControllerCommon.Sensors;
+﻿using ControllerCommon.Managers;
+using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
+using System.Collections.Generic;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using WindowsInput.Events;
+using WindowsInput.Events.Sources;
 using static ControllerCommon.OneEuroFilter;
 using static ControllerCommon.Utils.DeviceUtils;
 
@@ -27,14 +31,44 @@ namespace ControllerCommon.Devices
         public Vector3 AccelerationAxis = new Vector3(1.0f, 1.0f, 1.0f);
         public OneEuroSettings oneEuroSettings = new OneEuroSettings(0.0d, 0.0d);
 
-        protected Device()
-        {
-        }
+        // trigger specific settings
+        public Dictionary<string, ChordClick> listeners = new();
 
-        public void Initialize(string ManufacturerName, string ProductName)
+        private static Device device;
+        public static Device GetDefault()
         {
-            this.ManufacturerName = ManufacturerName;
-            this.ProductName = ProductName;
+            if (device != null)
+                return device;
+
+            var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
+            var ProductName = MotherboardInfo.Product;
+
+            switch (ProductName)
+            {
+                case "AYANEO 2021":
+                case "AYANEO 2021 Pro":
+                case "AYANEO 2021 Pro Retro Power":
+                    device = new AYANEO2021();
+                    break;
+                case "NEXT Pro":
+                case "NEXT Advance":
+                case "NEXT":
+                    device = new AYANEONEXT();
+                    break;
+                case "ONE XPLAYER": // MINI ?
+                    device = new OneXPlayerMini();
+                    break;
+                default:
+                    device = new DefaultDevice();
+                    LogManager.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
+                    break;
+            }
+
+            // get the actual handheld device
+            device.ManufacturerName = ManufacturerName;
+            device.ProductName = ProductName;
+
+            return device;
         }
 
         public void PullSensors()
@@ -69,26 +103,6 @@ namespace ControllerCommon.Devices
                 ExternalSensorName = "N/A";
                 hasExternal = false;
             }
-        }
-
-        public PipeServerHandheld ToPipe()
-        {
-            // refresh sensors status
-            PullSensors();
-
-            return new PipeServerHandheld()
-            {
-                ManufacturerName = ManufacturerName,
-                ProductName = ProductName,
-                ProductIllustration = ProductIllustration,
-
-                InternalSensorName = InternalSensorName,
-                ExternalSensorName = ExternalSensorName,
-                ProductSupported = ProductSupported,
-
-                hasInternal = hasInternal,
-                hasExternal = hasExternal
-            };
         }
     }
 }

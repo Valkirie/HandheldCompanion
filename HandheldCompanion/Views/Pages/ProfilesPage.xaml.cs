@@ -20,36 +20,25 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class ProfilesPage : Page
     {
-        private MainWindow mainWindow;
-
-        private ProfileManager profileManager;
         private Profile profileCurrent;
 
         private Dictionary<GamepadButtonFlagsExt, CheckBox> activators = new();
-
-        // pipe vars
-        PipeClient pipeClient;
 
         public ProfilesPage()
         {
             InitializeComponent();
         }
 
-        public ProfilesPage(string Tag, MainWindow mainWindow) : this()
+        public ProfilesPage(string Tag) : this()
         {
             this.Tag = Tag;
 
-            this.mainWindow = mainWindow;
-
-            this.pipeClient = mainWindow.pipeClient;
-            this.pipeClient.ServerMessage += OnServerMessage;
-
-            this.profileManager = mainWindow.profileManager;
+            MainWindow.pipeClient.ServerMessage += OnServerMessage;
 
             // initialize Profile Manager
-            profileManager.Deleted += ProfileDeleted;
-            profileManager.Updated += ProfileUpdated;
-            profileManager.Loaded += ProfileLoaded;
+            MainWindow.profileManager.Deleted += ProfileDeleted;
+            MainWindow.profileManager.Updated += ProfileUpdated;
+            MainWindow.profileManager.Loaded += ProfileLoaded;
 
             // draw buttons
             foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
@@ -149,7 +138,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
-            pipeClient.ServerMessage -= OnServerMessage;
+            MainWindow.pipeClient.ServerMessage -= OnServerMessage;
         }
 
         #region UI
@@ -157,7 +146,7 @@ namespace HandheldCompanion.Views.Pages
         {
             // inform Service we have a new default profile
             if (profile.isDefault)
-                pipeClient.SendMessage(new PipeClientProfile() { profile = profile });
+                MainWindow.pipeClient?.SendMessage(new PipeClientProfile() { profile = profile });
 
             this.Dispatcher.Invoke(async () =>
             {
@@ -195,7 +184,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void ProfileLoaded()
         {
-            cB_Profiles.SelectedItem = profileManager.GetDefault();
+            cB_Profiles.SelectedItem = MainWindow.profileManager.GetDefault();
         }
         #endregion
 
@@ -259,7 +248,7 @@ namespace HandheldCompanion.Views.Pages
 
                     bool exists = false;
 
-                    if (profileManager.Contains(profile))
+                    if (MainWindow.profileManager.Contains(profile))
                     {
                         Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureOverwrite1} \"{profile.name}\"?",
                                                                             $"{Properties.Resources.ProfilesPage_AreYouSureOverwrite2}",
@@ -281,8 +270,8 @@ namespace HandheldCompanion.Views.Pages
 
                     if (!exists)
                     {
-                        profileManager.UpdateOrCreateProfile(profile, false);
-                        profileManager.SerializeProfile(profile);
+                        MainWindow.profileManager.UpdateOrCreateProfile(profile, false);
+                        MainWindow.profileManager.SerializeProfile(profile);
                     }
                 }
                 catch (Exception ex)
@@ -303,13 +292,13 @@ namespace HandheldCompanion.Views.Pages
                 default:
                 case Input.JoystickCamera:
                 case Input.PlayerSpace:
-                    page = new ProfileSettingsMode0("ProfileSettingsMode0", profileCurrent, pipeClient);
+                    page = new ProfileSettingsMode0("ProfileSettingsMode0", profileCurrent);
                     break;
                 case Input.JoystickSteering:
-                    page = new ProfileSettingsMode1("ProfileSettingsMode1", profileCurrent, pipeClient);
+                    page = new ProfileSettingsMode1("ProfileSettingsMode1", profileCurrent);
                     break;
             }
-            mainWindow.NavView_Navigate(page);
+            MainWindow.GetDefault().NavView_Navigate(page);
         }
 
         private void cB_Profiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -410,7 +399,7 @@ namespace HandheldCompanion.Views.Pages
             switch (result.Result)
             {
                 case ContentDialogResult.Primary:
-                    profileManager.DeleteProfile(profileCurrent);
+                    MainWindow.profileManager.DeleteProfile(profileCurrent);
                     cB_Profiles.SelectedIndex = 0;
                     break;
                 default:
@@ -453,9 +442,9 @@ namespace HandheldCompanion.Views.Pages
                 if ((bool)activators[button].IsChecked)
                     profileCurrent.umc_trigger |= button;
 
-            profileManager.profiles[profileCurrent.name] = profileCurrent;
-            profileManager.UpdateOrCreateProfile(profileCurrent, false);
-            profileManager.SerializeProfile(profileCurrent);
+            MainWindow.profileManager.profiles[profileCurrent.name] = profileCurrent;
+            MainWindow.profileManager.UpdateOrCreateProfile(profileCurrent, false);
+            MainWindow.profileManager.SerializeProfile(profileCurrent);
         }
 
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)

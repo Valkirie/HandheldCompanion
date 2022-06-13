@@ -24,13 +24,13 @@ namespace HandheldCompanion.Managers
             UpdateTimer = new MultimediaTimer(10);
         }
 
-        public void StartListening()
+        public void Start()
         {
             UpdateTimer.Tick += UpdateReport;
             UpdateTimer.Start();
         }
 
-        public void StopListening()
+        public void Stop()
         {
             UpdateTimer.Tick -= UpdateReport;
             UpdateTimer.Stop();
