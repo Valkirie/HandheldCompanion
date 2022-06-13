@@ -106,9 +106,9 @@ namespace HandheldCompanion.Views.Pages
             foreach (Button button in OverlayTrackpadsAlignment.Children)
             {
                 if (int.Parse((string)button.Tag) == trackpadsAlignment)
-                    button.Background = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+                    button.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
                 else
-                    button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
+                    button.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
             }
 
             switch (trackpadsAlignment)
@@ -134,9 +134,9 @@ namespace HandheldCompanion.Views.Pages
                 foreach (Button button in panel.Children)
                 {
                     if (int.Parse((string)button.Tag) == controllerAlignment)
-                        button.Background = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+                        button.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
                     else
-                        button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
+                        button.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
                 }
 
             switch (controllerAlignment)

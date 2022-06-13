@@ -36,7 +36,7 @@
                         <ui:ProgressRing Name="navLoad" IsActive="True" Width="50" Height="50" Visibility="Hidden"/>
                         <ui:SimpleStackPanel Spacing="18" VerticalAlignment="Bottom">
                             <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal">
-                                <Button Name="B_ServiceSwitch" Content="{x:Static resx:Resources.ControllerPage_Connect}" Width="Auto" Background="{DynamicResource SystemControlHighlightListAccentLowBrush}" Click="B_ServiceSwitch_Click"/>
+                                <Button Name="B_ServiceSwitch" Content="{x:Static resx:Resources.ControllerPage_Connect}" Width="Auto" Style="{DynamicResource AccentButtonStyle}" Click="B_ServiceSwitch_Click"/>
                                 <ComboBox Name="cB_HidMode" Width="Auto" SelectionChanged="cB_HidMode_SelectionChanged" BorderThickness="0"/>
                             </ui:SimpleStackPanel>
                             
