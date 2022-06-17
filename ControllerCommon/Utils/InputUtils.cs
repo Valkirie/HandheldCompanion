@@ -53,7 +53,9 @@ namespace ControllerCommon.Utils
     {
         OEM = 0,
         Virtual = 1,
-        Toy = 2
+        ZDOPlus = 2,
+        Toy = 3
+
     }
 
     public static class InputUtils

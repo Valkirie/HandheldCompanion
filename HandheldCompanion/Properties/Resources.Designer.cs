@@ -826,6 +826,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ZD O+.
+        /// </summary>
+        public static string OverlayPage_ZDOPlusController {
+            get {
+                return ResourceManager.GetString("OverlayPage_ZDOPlusController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Additional settings.
         /// </summary>
         public static string ProfileSettingsMode0_AdditionalSettings {

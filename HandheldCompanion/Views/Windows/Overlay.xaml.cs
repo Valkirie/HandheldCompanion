@@ -174,6 +174,11 @@ namespace HandheldCompanion.Views.Windows
                         }
                     }
                     break;
+                case OverlayModelMode.ZDOPlus:
+                    {
+                        newModel = new ModelZDOPlus();
+                    }
+                    break;
                 case OverlayModelMode.Toy:
                     {
                         newModel = new ModelToyController();
