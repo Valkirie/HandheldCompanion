@@ -28,10 +28,10 @@ namespace ControllerCommon.Managers
         private string description;
 
         private ServiceController controller;
-        public ServiceControllerStatus status;
+        public ServiceControllerStatus status = ServiceControllerStatus.None;
         private int prevStatus, prevType = -1;
         private ServiceControllerStatus nextStatus;
-        private ServiceStartMode type;
+        private ServiceStartMode type = ServiceStartMode.Disabled;
 
         private Process process;
 
@@ -117,10 +117,14 @@ namespace ControllerCommon.Managers
                 try
                 {
                     controller.Refresh();
-                    status = (ServiceControllerStatus)controller.Status;
-                    type = controller.StartType;
+
+                    if (controller.Container != null)
+                    {
+                        status = (ServiceControllerStatus)controller.Status;
+                        type = controller.StartType;
+                    }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     status = ServiceControllerStatus.None;
                     type = ServiceStartMode.Disabled;
