@@ -219,8 +219,8 @@ namespace HandheldCompanion.Views
 
             // initialize system manager
             systemManager = new SystemManager();
-            systemManager.SerialArrived += SerialUpdated;
-            systemManager.SerialRemoved += SerialUpdated;
+            systemManager.SerialArrived += SystemManager_Updated;
+            systemManager.SerialRemoved += SystemManager_Updated;
 
             // initialize pages
             controllerPage = new ControllerPage("controller");
@@ -271,7 +271,7 @@ namespace HandheldCompanion.Views
             }
         }
 
-        private void SerialUpdated(PnPDevice device)
+        private void SystemManager_Updated(PnPDevice device)
         {
             handheldDevice.PullSensors();
 
@@ -279,7 +279,7 @@ namespace HandheldCompanion.Views
             settingsPage.UpdateDevice(device);
         }
 
-        private void InputsManager_TriggerRaised(string listener, GamepadButtonFlags button)
+        private void InputsManager_TriggerRaised(string listener, TriggerInputs input)
         {
             this.Dispatcher.Invoke(() =>
             {

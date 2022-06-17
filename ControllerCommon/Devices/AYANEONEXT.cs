@@ -27,7 +27,8 @@ namespace ControllerCommon.Devices
             */
 
             listeners.Add("Custom key BIG", new ChordClick(KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12));
-            listeners.Add("Custom key Small", new ChordClick(KeyCode.LWin, KeyCode.D));
+            listeners.Add("Custom key Small Short Press", new ChordClick(KeyCode.LWin, KeyCode.D));
+            listeners.Add("Custom key Small Long Press", new ChordClick(KeyCode.LControl, KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete));
         }
     }
 }

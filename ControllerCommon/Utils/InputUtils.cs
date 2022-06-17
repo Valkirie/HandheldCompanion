@@ -98,6 +98,18 @@ namespace ControllerCommon.Utils
             }
         }
 
+        public static string TriggerTypeToGlyph(TriggerInputsType type)
+        {
+            switch (type)
+            {
+                default:
+                case TriggerInputsType.Gamepad:
+                    return "\uE7FC";
+                case TriggerInputsType.Keyboard:
+                    return "\uE765";
+            }
+        }
+
         public static float Clamp(float value, float min, float max)
         {
             return Math.Min(max, Math.Max(min, value));

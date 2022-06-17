@@ -181,18 +181,6 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int OverlayTrigger {
-            get {
-                return ((int)(this["OverlayTrigger"]));
-            }
-            set {
-                this["OverlayTrigger"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int OverlayModel {
             get {
@@ -230,12 +218,12 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("33")]
-        public int OverlayControllerTrigger {
+        public string OverlayControllerTriggerValue {
             get {
-                return ((int)(this["OverlayControllerTrigger"]));
+                return ((string)(this["OverlayControllerTriggerValue"]));
             }
             set {
-                this["OverlayControllerTrigger"] = value;
+                this["OverlayControllerTriggerValue"] = value;
             }
         }
         
@@ -254,12 +242,12 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("34")]
-        public int OverlayTrackpadsTrigger {
+        public string OverlayTrackpadsTriggerValue {
             get {
-                return ((int)(this["OverlayTrackpadsTrigger"]));
+                return ((string)(this["OverlayTrackpadsTriggerValue"]));
             }
             set {
-                this["OverlayTrackpadsTrigger"] = value;
+                this["OverlayTrackpadsTriggerValue"] = value;
             }
         }
         
@@ -422,12 +410,48 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("40")]
-        public int SuspenderTrigger {
+        public string SuspenderTriggerValue {
             get {
-                return ((int)(this["SuspenderTrigger"]));
+                return ((string)(this["SuspenderTriggerValue"]));
             }
             set {
-                this["SuspenderTrigger"] = value;
+                this["SuspenderTriggerValue"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OverlayControllerTriggerType {
+            get {
+                return ((int)(this["OverlayControllerTriggerType"]));
+            }
+            set {
+                this["OverlayControllerTriggerType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OverlayTrackpadsTriggerType {
+            get {
+                return ((int)(this["OverlayTrackpadsTriggerType"]));
+            }
+            set {
+                this["OverlayTrackpadsTriggerType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SuspenderTriggerType {
+            get {
+                return ((int)(this["SuspenderTriggerType"]));
+            }
+            set {
+                this["SuspenderTriggerType"] = value;
             }
         }
     }
