@@ -82,7 +82,6 @@
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1" />
-    <PackageReference Include="MouseKeyHook" Version="5.6.0" />
     <PackageReference Include="Serilog" Version="2.11.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
@@ -900,6 +899,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Gma.System.MouseKeyHook">
+      <HintPath>..\dependencies\Gma.System.MouseKeyHook.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Win32.TaskScheduler">
       <HintPath>..\dependencies\Microsoft.Win32.TaskScheduler.dll</HintPath>
     </Reference>
@@ -912,8 +914,14 @@
     <Reference Include="ModernWpf.MahApps">
       <HintPath>..\dependencies\ModernWpf.MahApps.dll</HintPath>
     </Reference>
+    <Reference Include="MouseKeyHook.Rx">
+      <HintPath>..\dependencies\MouseKeyHook.Rx.dll</HintPath>
+    </Reference>
     <Reference Include="Nefarius.Utilities.DeviceManagement">
       <HintPath>..\dependencies\Nefarius.Utilities.DeviceManagement.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive">
+      <HintPath>..\dependencies\System.Reactive.dll</HintPath>
     </Reference>
   </ItemGroup>
 

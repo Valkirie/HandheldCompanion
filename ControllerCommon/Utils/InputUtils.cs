@@ -108,7 +108,7 @@ namespace ControllerCommon.Utils
                 case TriggerInputsType.Gamepad:
                     return "\uE7FC";
                 case TriggerInputsType.Keyboard:
-                    return "\uE765";
+                    return "\uED4C";
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using Gma.System.MouseKeyHook;
 using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
@@ -27,12 +28,16 @@ namespace HandheldCompanion.Managers
         private MultimediaTimer UpdateTimer;
         private MultimediaTimer ResetTimer;
 
+        private Dictionary<string, long> prevTimestamp = new();
+
         private ControllerEx controllerEx;
         private Gamepad Gamepad;
         private Gamepad prevGamepad;
         private State GamepadState;
 
-        private int TriggerIdx;
+        private const int TIME_BURST = 150;
+        private const int TIME_LONG = 2000;
+
         private bool TriggerLock;
         private string TriggerListener = string.Empty;
         private List<KeyEventArgsExt> TriggerBuffer = new();
@@ -72,6 +77,21 @@ namespace HandheldCompanion.Managers
             m_InputSimulator = new InputSimulator();
         }
 
+        private void InjectModifiers(KeyEventArgsExt args)
+        {
+            if (args.Modifiers == Keys.None)
+                return;
+
+            foreach (Keys mode in ((Keys[])Enum.GetValues(typeof(Keys))).Where(a => a != Keys.None))
+            {
+                if (args.Modifiers.HasFlag(mode))
+                {
+                    KeyEventArgsExt mod = new KeyEventArgsExt(mode, args.ScanCode, args.Timestamp, args.IsKeyDown, args.IsKeyUp, true);
+                    TriggerBuffer.Add(mod);
+                }
+            }
+        }
+
         private void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
         {
             ResetTimer.Stop();
@@ -82,42 +102,81 @@ namespace HandheldCompanion.Managers
             KeyEventArgsExt args = (KeyEventArgsExt)e;
             args.SuppressKeyPress = true;
 
-            Debug.WriteLine("Key: {0}, IsKeyDown: {1}, IsKeyUp: {2}", args.KeyCode, args.IsKeyDown, args.IsKeyUp);
+            Debug.WriteLine("KeyValue: {0}, KeyCode:{1}, IsDown:{2}, IsUp:{3}, Timestamp:{4}", args.KeyValue, args.KeyCode, args.IsKeyDown, args.IsKeyUp, args.Timestamp);
+
+            // search for modifiers (improve me)
+            if (args.IsKeyDown)
+                InjectModifiers(args);
 
             TriggerBuffer.Add(args);
 
+            if (args.IsKeyUp)
+                InjectModifiers(args);
+
             // search for matching triggers
-            foreach (var pair in Triggers)
+            foreach (var pair in MainWindow.handheldDevice.listeners)
             {
                 string listener = pair.Key;
-                TriggerInputs inputs = pair.Value;
-
-                if (inputs.type != TriggerInputsType.Keyboard)
-                    continue;
+                ChordClick chord = pair.Value;
 
                 // compare ordered enumerable
-                var chord_keys = inputs.chord.Keys.OrderBy(key => key);
+                var chord_keys = chord.Keys.OrderBy(key => key);
                 var buffer_keys = GetBufferKeys().OrderBy(key => key);
 
                 if (Enumerable.SequenceEqual(chord_keys, buffer_keys))
                 {
                     TriggerBuffer.Clear();
 
-                    // IsKeyDown, IsKeyUp
-                    TriggerIdx++;
-                    if (TriggerIdx % 2 == 0)
+                    // todo: implement long press support
+                    var time_diff = args.Timestamp - prevTimestamp[listener];
+                    if (Math.Abs(time_diff) <= TIME_BURST)
                     {
-                        Triggered[listener] = true;
-                        TriggerRaised?.Invoke(listener, Triggers[listener]);
-
-                        Debug.WriteLine("Triggered: {0}:{1}", listener, Triggered[listener]);
-                        TriggerIdx = 0;
+                        prevTimestamp[listener] = args.Timestamp;
+                        break;
                     }
+
+                    prevTimestamp[listener] = args.Timestamp;
+#if DEBUG
+                    LogManager.LogDebug("Triggered: {0} at {1}", listener, args.Timestamp);
+#endif
+
+                    if (string.IsNullOrEmpty(TriggerListener))
+                    {
+                        string trigger = GetTriggerFromName(listener);
+
+                        if (string.IsNullOrEmpty(trigger))
+                            break;
+
+                        TriggerRaised?.Invoke(trigger, Triggers[trigger]);
+                    }
+                    else
+                    {
+                        TriggerInputs inputs = new TriggerInputs(TriggerInputsType.Keyboard, string.Join(",", chord.Keys), listener);
+                        Triggers[TriggerListener] = inputs;
+
+                        TriggerUpdated?.Invoke(TriggerListener, inputs);
+                        TriggerListener = string.Empty;
+                    }
+
                     return;
                 }
             }
 
             ResetTimer.Start();
+        }
+
+        private string GetTriggerFromName(string name)
+        {
+            foreach(var pair in Triggers)
+            {
+                string p_trigger = pair.Key;
+                string p_name = pair.Value.name;
+
+                if (p_name == name)
+                    return p_trigger;
+            }
+
+            return "";
         }
 
         private void ReleaseBuffer()
@@ -130,26 +189,39 @@ namespace HandheldCompanion.Managers
             for (int i = 0; i < TriggerBuffer.Count; i++)
             {
                 KeyEventArgsExt args = TriggerBuffer[i];
+
                 int Timestamp = TriggerBuffer[i].Timestamp;
                 int n_Timestamp = Timestamp;
-                
+
                 if (i + 1 < TriggerBuffer.Count)
                     n_Timestamp = TriggerBuffer[i + 1].Timestamp;
 
                 int d_Timestamp = n_Timestamp - Timestamp;
 
+                // dirty
+                VirtualKeyCode key = (VirtualKeyCode)args.KeyValue;
+                if (args.KeyValue == 0)
+                {
+                    if (args.Control)
+                        key = VirtualKeyCode.LCONTROL;
+                    else if (args.Alt)
+                        key = VirtualKeyCode.RMENU;
+                    else if (args.Shift)
+                        key = VirtualKeyCode.RSHIFT;
+                }
+
                 switch (args.IsKeyDown)
                 {
                     case true:
-                        m_InputSimulator.Keyboard.KeyDown((VirtualKeyCode)args.KeyValue);
+                        m_InputSimulator.Keyboard.KeyDown(key);
                         break;
                     case false:
-                        m_InputSimulator.Keyboard.KeyUp((VirtualKeyCode)args.KeyValue);
+                        m_InputSimulator.Keyboard.KeyUp(key);
                         break;
                 }
 
                 // send after initial delay
-                Thread.Sleep(d_Timestamp);
+                m_InputSimulator.Keyboard.Sleep(d_Timestamp);
             }
 
             TriggerLock = false;
@@ -168,57 +240,18 @@ namespace HandheldCompanion.Managers
             return keys;
         }
 
-        private void Listener_Triggered(IKeyboardEventSource Keyboard, object sender, KeyChordEventArgs e)
-        {
-            if (string.IsNullOrEmpty(TriggerListener))
-            {
-                // handle triggers
-                foreach (var pair in Triggers)
-                {
-                    string listener = pair.Key;
-                    TriggerInputs inputs = pair.Value;
-
-                    if (inputs.type != TriggerInputsType.Keyboard)
-                        continue;
-
-                    ChordClick chord = inputs.chord;
-
-                    if (chord.Keys.SequenceEqual(e.Chord.Keys))
-                    {
-                        Triggered[listener] = true;
-                        TriggerRaised?.Invoke(listener, Triggers[listener]);
-
-                        // clear buffer
-                        TriggerBuffer.Clear();
-                    }
-                    else if (Triggered.ContainsKey(listener) && Triggered[listener])
-                        Triggered[listener] = false;
-                }
-            }
-            else
-            {
-                // handle listener
-                foreach (ChordClick chord in MainWindow.handheldDevice.listeners.Values)
-                {
-                    if (e.Chord == chord)
-                    {
-                        TriggerInputs inputs = new TriggerInputs(TriggerInputsType.Keyboard, string.Join(",", e.Chord.Keys));
-                        Triggers[TriggerListener] = inputs;
-
-                        TriggerUpdated?.Invoke(TriggerListener, inputs);
-                        TriggerListener = string.Empty;
-                        return;
-                    }
-                }
-            }
-
-            Debug.WriteLine(string.Join(",", e.Chord.Keys));
-        }
-
         public void Start()
         {
             foreach (var pair in Triggers)
                 Triggered[pair.Key] = false;
+
+            foreach (var pair in MainWindow.handheldDevice.listeners)
+            {
+                string listener = pair.Key;
+                ChordClick chord = pair.Value;
+
+                prevTimestamp[listener] = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+            }
             
             UpdateTimer.Start();
 
@@ -298,7 +331,6 @@ namespace HandheldCompanion.Managers
             TriggerBuffer = new();
 
             Triggers[TriggerListener].buttons = 0;
-            Triggers[TriggerListener].chord = new();
         }
 
         public void UpdateController(ControllerEx controllerEx)

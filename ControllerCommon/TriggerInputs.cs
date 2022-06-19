@@ -20,8 +20,8 @@ namespace ControllerCommon
     {
         public TriggerInputsType type;
         public GamepadButtonFlags buttons;
-        public ChordClick chord = new();
         public string raw;
+        public string name;
 
         public TriggerInputs(TriggerInputsType type, string value)
         {
@@ -39,21 +39,15 @@ namespace ControllerCommon
 
                 case TriggerInputsType.Keyboard:
                     {
-                        string[] keys = value.Split(',').ToArray();
-                        List<KeyCode> keys2 = new();
-
-                        foreach (string key in keys)
-                        {
-                            try
-                            {
-                                KeyCode code = (KeyCode)Enum.Parse(typeof(KeyCode), key, true);
-                                keys2.Add(code);
-                            } catch (Exception) { }
-                        }
-                        this.chord = new ChordClick(keys2);
+                        this.name = value;
                     }
                     break;
             }
+        }
+
+        public TriggerInputs(TriggerInputsType type, string value, string name) : this(type, value)
+        {
+            this.name = name;
         }
 
         public string GetValue()
@@ -65,7 +59,7 @@ namespace ControllerCommon
                     return this.buttons.ToString();
 
                 case TriggerInputsType.Keyboard:
-                    return string.Join(",", this.chord.Keys);
+                    return this.name;
             }
         }
     }

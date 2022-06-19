@@ -283,7 +283,7 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case TriggerInputsType.Keyboard:
                         // todo, display custom button name instead
-                        text = string.Join(", ", input.chord.Keys);
+                        text = string.Join(", ", input.name);
                         break;
                 }
 
