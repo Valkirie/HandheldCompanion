@@ -1,11 +1,16 @@
 ﻿using ControllerCommon;
+using Gma.System.MouseKeyHook;
+using GregsStack.InputSimulatorStandard;
+using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Views;
 using SharpDX.XInput;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsInput;
@@ -20,15 +25,17 @@ namespace HandheldCompanion.Managers
     {
         // Gamepad vars
         private MultimediaTimer UpdateTimer;
-        private Timer ResetTimer;
+        private MultimediaTimer ResetTimer;
 
         private ControllerEx controllerEx;
         private Gamepad Gamepad;
         private Gamepad prevGamepad;
         private State GamepadState;
 
+        private int TriggerIdx;
+        private bool TriggerLock;
         private string TriggerListener = string.Empty;
-        private List<KeyCode> TriggerBuffer = new();
+        private List<KeyEventArgsExt> TriggerBuffer = new();
 
         private Dictionary<string, bool> Triggered = new Dictionary<string, bool>();
 
@@ -40,7 +47,8 @@ namespace HandheldCompanion.Managers
         };
 
         // Keyboard vars
-        private IKeyboardEventSource m_GlobalHook;
+        private IKeyboardMouseEvents m_GlobalHook;
+        private InputSimulator m_InputSimulator;
 
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(Gamepad gamepad);
@@ -57,19 +65,28 @@ namespace HandheldCompanion.Managers
             UpdateTimer = new MultimediaTimer(10);
             UpdateTimer.Tick += UpdateReport;
 
-            ResetTimer = new Timer(10);
-            ResetTimer.AutoReset = false;
-            ResetTimer.Elapsed += (sender, e) => { ReleaseBuffer(); };
+            ResetTimer = new MultimediaTimer(10);
+            ResetTimer.Tick += (sender, e) => { ReleaseBuffer(); };
 
-            m_GlobalHook = Capture.Global.Keyboard();
+            m_GlobalHook = Hook.GlobalEvents();
+            m_InputSimulator = new InputSimulator();
         }
 
-        private int TriggerIdx = 0;
-        private void Keyboard_KeyDown(object? sender, EventSourceEventArgs<KeyDown> e)
+        private void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
         {
-            KeyCode key = e.Data.Key;
-            bool found = false;
+            ResetTimer.Stop();
 
+            if (TriggerLock)
+                return;
+
+            KeyEventArgsExt args = (KeyEventArgsExt)e;
+            args.SuppressKeyPress = true;
+
+            Debug.WriteLine("Key: {0}, IsKeyDown: {1}, IsKeyUp: {2}", args.KeyCode, args.IsKeyDown, args.IsKeyUp);
+
+            TriggerBuffer.Add(args);
+
+            // search for matching triggers
             foreach (var pair in Triggers)
             {
                 string listener = pair.Key;
@@ -78,34 +95,77 @@ namespace HandheldCompanion.Managers
                 if (inputs.type != TriggerInputsType.Keyboard)
                     continue;
 
-                // is the first key the one just typed ?
-                TriggerBuffer.Add(key);
-                e.Next_Hook_Enabled = false;
+                // compare ordered enumerable
+                var chord_keys = inputs.chord.Keys.OrderBy(key => key);
+                var buffer_keys = GetBufferKeys().OrderBy(key => key);
 
-                if (inputs.chord.Keys.ElementAt(TriggerIdx) == key)
+                if (Enumerable.SequenceEqual(chord_keys, buffer_keys))
                 {
-                    found = true;
+                    TriggerBuffer.Clear();
+
+                    // IsKeyDown, IsKeyUp
                     TriggerIdx++;
-                    ResetTimer.Start(); // release the key after a few ms
+                    if (TriggerIdx % 2 == 0)
+                    {
+                        Triggered[listener] = true;
+                        TriggerRaised?.Invoke(listener, Triggers[listener]);
+
+                        Debug.WriteLine("Triggered: {0}:{1}", listener, Triggered[listener]);
+                        TriggerIdx = 0;
+                    }
+                    return;
                 }
             }
 
-            if (!found)
-                ReleaseBuffer();
-            
-            Debug.WriteLine("KeyDown: \t{0}", e.Data.Key);
+            ResetTimer.Start();
         }
 
         private void ReleaseBuffer()
         {
-            // release the key(s)
-            if (TriggerBuffer.Count == 1)
-                Simulate.Events().Click(TriggerBuffer).Invoke();
-            else
-                Simulate.Events().ClickChord(TriggerBuffer).Invoke();
+            if (TriggerBuffer.Count == 0)
+                return;
+
+            TriggerLock = true;
+
+            for (int i = 0; i < TriggerBuffer.Count; i++)
+            {
+                KeyEventArgsExt args = TriggerBuffer[i];
+                int Timestamp = TriggerBuffer[i].Timestamp;
+                int n_Timestamp = Timestamp;
+                
+                if (i + 1 < TriggerBuffer.Count)
+                    n_Timestamp = TriggerBuffer[i + 1].Timestamp;
+
+                int d_Timestamp = n_Timestamp - Timestamp;
+
+                switch (args.IsKeyDown)
+                {
+                    case true:
+                        m_InputSimulator.Keyboard.KeyDown((VirtualKeyCode)args.KeyValue);
+                        break;
+                    case false:
+                        m_InputSimulator.Keyboard.KeyUp((VirtualKeyCode)args.KeyValue);
+                        break;
+                }
+
+                // send after initial delay
+                Thread.Sleep(d_Timestamp);
+            }
+
+            TriggerLock = false;
 
             // clear buffer
             TriggerBuffer.Clear();
+        }
+
+        private List<KeyCode> GetBufferKeys()
+        {
+            List<KeyCode> keys = new List<KeyCode>();
+
+            foreach(KeyEventArgsExt e in TriggerBuffer)
+                keys.Add((KeyCode)e.KeyValue);
+
+            return keys;
         }
 
         private void Listener_Triggered(IKeyboardEventSource Keyboard, object sender, KeyChordEventArgs e)
@@ -162,23 +222,18 @@ namespace HandheldCompanion.Managers
             
             UpdateTimer.Start();
 
-            m_GlobalHook.KeyDown += Keyboard_KeyDown;
-            m_GlobalHook.Enabled = true;
-
-            foreach (ChordClick chord in MainWindow.handheldDevice.listeners.Values)
-            {
-                var Listener = new KeyChordEventSource(m_GlobalHook, chord);
-                Listener.Triggered += (x, y) => Listener_Triggered(m_GlobalHook, x, y);
-                Listener.Enabled = true;
-            }
+            m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
+            m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
         }
 
         public void Stop()
         {
             UpdateTimer.Stop();
 
-            m_GlobalHook.KeyDown -= Keyboard_KeyDown;
-            m_GlobalHook.Enabled = false;
+            //It is recommened to dispose it
+            m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
+            m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
+            m_GlobalHook.Dispose();
         }
 
         private void UpdateReport(object? sender, EventArgs e)
