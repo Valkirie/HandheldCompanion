@@ -59,7 +59,7 @@ namespace HandheldCompanion.Managers
 
             ResetTimer = new Timer(10);
             ResetTimer.AutoReset = false;
-            ResetTimer.Elapsed += (sender, e) => { };
+            ResetTimer.Elapsed += (sender, e) => { ReleaseBuffer(); };
 
             m_GlobalHook = Capture.Global.Keyboard();
         }
@@ -68,6 +68,7 @@ namespace HandheldCompanion.Managers
         private void Keyboard_KeyDown(object? sender, EventSourceEventArgs<KeyDown> e)
         {
             KeyCode key = e.Data.Key;
+            bool found = false;
 
             foreach (var pair in Triggers)
             {
@@ -76,9 +77,35 @@ namespace HandheldCompanion.Managers
 
                 if (inputs.type != TriggerInputsType.Keyboard)
                     continue;
+
+                // is the first key the one just typed ?
+                TriggerBuffer.Add(key);
+                e.Next_Hook_Enabled = false;
+
+                if (inputs.chord.Keys.ElementAt(TriggerIdx) == key)
+                {
+                    found = true;
+                    TriggerIdx++;
+                    ResetTimer.Start(); // release the key after a few ms
+                }
             }
+
+            if (!found)
+                ReleaseBuffer();
             
             Debug.WriteLine("KeyDown: \t{0}", e.Data.Key);
+        }
+
+        private void ReleaseBuffer()
+        {
+            // release the key(s)
+            if (TriggerBuffer.Count == 1)
+                Simulate.Events().Click(TriggerBuffer).Invoke();
+            else
+                Simulate.Events().ClickChord(TriggerBuffer).Invoke();
+
+            // clear buffer
+            TriggerBuffer.Clear();
         }
 
         private void Listener_Triggered(IKeyboardEventSource Keyboard, object sender, KeyChordEventArgs e)
@@ -100,6 +127,9 @@ namespace HandheldCompanion.Managers
                     {
                         Triggered[listener] = true;
                         TriggerRaised?.Invoke(listener, Triggers[listener]);
+
+                        // clear buffer
+                        TriggerBuffer.Clear();
                     }
                     else if (Triggered.ContainsKey(listener) && Triggered[listener])
                         Triggered[listener] = false;
