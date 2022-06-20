@@ -76,10 +76,10 @@
                         </DockPanel>
 
                         <ui:RadioButtons Name="OverlayModel" Grid.Column="1" HorizontalAlignment="Right" SelectionChanged="OverlayModel_SelectionChanged">
-                            <RadioButton>
+                            <RadioButton Name="OEMControllerRadio" IsEnabled="False">
                                 <Label Content="{x:Static resx:Resources.OverlayPage_OEMController}"></Label>
                             </RadioButton>
-                            <RadioButton>
+                            <RadioButton Name="VirtualControllerRadio">
                                 <Label Content="{x:Static resx:Resources.OverlayPage_EmulatedController}"></Label>
                             </RadioButton>
                             <RadioButton Name="ToyControllerRadio" IsEnabled="False">

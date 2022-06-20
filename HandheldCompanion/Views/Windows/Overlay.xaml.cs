@@ -156,6 +156,8 @@ namespace HandheldCompanion.Views.Windows
                                 newModel = new ModelAYANEONext();
                                 break;
                             default:
+                                // default model if unsupported OEM
+                                newModel = new ModelXBOX360();
                                 break;
                         }
                     }

@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon;
+using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
 using HandheldCompanion.Views.Windows;
@@ -32,6 +33,7 @@ namespace HandheldCompanion.Views.Pages
 
             // controller enabler
             ToyControllerRadio.IsEnabled = Properties.Settings.Default.OverlayControllerFisherPrice;
+            OEMControllerRadio.IsEnabled = MainWindow.handheldDevice.ProductSupported;
 
             // controller model
             OverlayModel.SelectedIndex = Properties.Settings.Default.OverlayModel;
