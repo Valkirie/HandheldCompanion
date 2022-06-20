@@ -118,7 +118,7 @@ namespace ControllerCommon.Managers
                 {
                     controller.Refresh();
 
-                    if (controller.Container != null)
+                    if (!string.IsNullOrEmpty(controller.ServiceName))
                     {
                         status = (ServiceControllerStatus)controller.Status;
                         type = controller.StartType;
