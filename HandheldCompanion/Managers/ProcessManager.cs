@@ -112,10 +112,14 @@ namespace HandheldCompanion.Managers
                                     case ThreadWaitReason.Suspended:
                                         processSuspend.Visibility = Visibility.Collapsed;
                                         processResume.Visibility = Visibility.Visible;
+
+                                        processResume.IsEnabled = true;
                                         break;
                                     default:
                                         processSuspend.Visibility = Visibility.Visible;
                                         processResume.Visibility = Visibility.Collapsed;
+
+                                        processSuspend.IsEnabled = true;
                                         break;
                                 }
                             }
@@ -244,6 +248,11 @@ namespace HandheldCompanion.Managers
 
         private void ProcessResume_Click(object sender, RoutedEventArgs e)
         {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                processResume.IsEnabled = false;
+            }));
+            
             NtResumeProcess(Process.Handle);
             Thread.Sleep(500); // breathing
             ShowWindow(Process.MainWindowHandle, 9);
@@ -251,6 +260,11 @@ namespace HandheldCompanion.Managers
 
         private void ProcessSuspend_Click(object sender, RoutedEventArgs e)
         {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                processSuspend.IsEnabled = false;
+            }));
+
             ShowWindow(Process.MainWindowHandle, 2);
             Thread.Sleep(500); // breathing
             NtSuspendProcess(Process.Handle);
