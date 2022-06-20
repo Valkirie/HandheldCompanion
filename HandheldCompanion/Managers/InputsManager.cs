@@ -105,9 +105,6 @@ namespace HandheldCompanion.Managers
             Debug.WriteLine("KeyValue: {0}, KeyCode:{1}, IsDown:{2}, IsUp:{3}, Timestamp:{4}", args.KeyValue, args.KeyCode, args.IsKeyDown, args.IsKeyUp, args.Timestamp);
 
             // search for modifiers (improve me)
-            if (args.IsKeyDown && (args.IsExtendedKey))
-                InjectModifiers(args);
-
             TriggerBuffer.Add(args);
 
             if (args.IsKeyUp && (args.IsExtendedKey))
