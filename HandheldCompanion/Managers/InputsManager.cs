@@ -28,15 +28,16 @@ namespace HandheldCompanion.Managers
         private MultimediaTimer UpdateTimer;
         private MultimediaTimer ResetTimer;
 
-        private Dictionary<string, long> prevTimestamp = new();
+        private Dictionary<string, long> prevKeyDown = new();
+        private Dictionary<string, long> prevKeyUp = new();
 
         private ControllerEx controllerEx;
         private Gamepad Gamepad;
         private Gamepad prevGamepad;
         private State GamepadState;
 
-        private const int TIME_BURST = 150;
-        private const int TIME_LONG = 2000;
+        private const int TIME_BURST = 200;
+        private const int TIME_LONG = 800;
 
         private bool TriggerLock;
         private string TriggerListener = string.Empty;
@@ -102,12 +103,10 @@ namespace HandheldCompanion.Managers
             KeyEventArgsExt args = (KeyEventArgsExt)e;
             args.SuppressKeyPress = true;
 
-            Debug.WriteLine("KeyValue: {0}, KeyCode:{1}, IsDown:{2}, IsUp:{3}, Timestamp:{4}", args.KeyValue, args.KeyCode, args.IsKeyDown, args.IsKeyUp, args.Timestamp);
-
             // search for modifiers (improve me)
             TriggerBuffer.Add(args);
 
-            if (args.IsKeyUp && (args.IsExtendedKey))
+            if (args.IsKeyUp && args.IsExtendedKey)
                 InjectModifiers(args);
 
             // search for matching triggers
@@ -124,19 +123,36 @@ namespace HandheldCompanion.Managers
                 {
                     TriggerBuffer.Clear();
 
-                    // todo: implement long press support
-                    var time_diff = args.Timestamp - prevTimestamp[listener];
-                    if (Math.Abs(time_diff) <= TIME_BURST)
-                    {
-                        prevTimestamp[listener] = args.Timestamp;
-                        break;
-                    }
+                    long time_last = TIME_BURST;
+                    long time_duration = time_last;
 
-                    prevTimestamp[listener] = args.Timestamp;
+                    if (args.IsKeyDown)
+                    {
+                        time_last = args.Timestamp - prevKeyDown[listener];
+                        prevKeyDown[listener] = args.Timestamp;
+                    }
+                    else if (args.IsKeyUp)
+                    {
+                        time_last = args.Timestamp - prevKeyUp[listener];
+                        prevKeyUp[listener] = args.Timestamp;
+                    }
+                    
+                    // skip call if too close
+                    if (time_last < TIME_BURST)
+                        return;
+                    
+                    // only send trigger on release
+                    if (!args.IsKeyUp)
+                        return;
+
+                    time_duration = args.Timestamp - prevKeyDown[listener];
+                    if (time_duration > TIME_LONG)
+                        listener += " (HOLD)";
+
 #if DEBUG
                     LogManager.LogDebug("Triggered: {0} at {1}", listener, args.Timestamp);
 #endif
-
+                    
                     if (string.IsNullOrEmpty(TriggerListener))
                     {
                         string trigger = GetTriggerFromName(listener);
@@ -181,50 +197,55 @@ namespace HandheldCompanion.Managers
             if (TriggerBuffer.Count == 0)
                 return;
 
-            TriggerLock = true;
-
-            for (int i = 0; i < TriggerBuffer.Count; i++)
+            try
             {
-                KeyEventArgsExt args = TriggerBuffer[i];
+                TriggerLock = true;
 
-                int Timestamp = TriggerBuffer[i].Timestamp;
-                int n_Timestamp = Timestamp;
-
-                if (i + 1 < TriggerBuffer.Count)
-                    n_Timestamp = TriggerBuffer[i + 1].Timestamp;
-
-                int d_Timestamp = n_Timestamp - Timestamp;
-
-                // dirty
-                VirtualKeyCode key = (VirtualKeyCode)args.KeyValue;
-                if (args.KeyValue == 0)
+                for (int i = 0; i < TriggerBuffer.Count; i++)
                 {
-                    if (args.Control)
-                        key = VirtualKeyCode.LCONTROL;
-                    else if (args.Alt)
-                        key = VirtualKeyCode.RMENU;
-                    else if (args.Shift)
-                        key = VirtualKeyCode.RSHIFT;
+                    KeyEventArgsExt args = TriggerBuffer[i];
+
+                    // improve me
+                    VirtualKeyCode key = (VirtualKeyCode)args.KeyValue;
+                    if (args.KeyValue == 0)
+                    {
+                        if (args.Control)
+                            key = VirtualKeyCode.LCONTROL;
+                        else if (args.Alt)
+                            key = VirtualKeyCode.RMENU;
+                        else if (args.Shift)
+                            key = VirtualKeyCode.RSHIFT;
+                    }
+
+                    switch (args.IsKeyDown)
+                    {
+                        case true:
+                            m_InputSimulator.Keyboard.KeyDown(key);
+                            break;
+                        case false:
+                            m_InputSimulator.Keyboard.KeyUp(key);
+                            break;
+                    }
+
+                    // send after initial delay
+                    int Timestamp = TriggerBuffer[i].Timestamp;
+                    int n_Timestamp = Timestamp;
+
+                    if (i + 1 < TriggerBuffer.Count)
+                        n_Timestamp = TriggerBuffer[i + 1].Timestamp;
+
+                    int d_Timestamp = n_Timestamp - Timestamp;
+                    m_InputSimulator.Keyboard.Sleep(d_Timestamp);
                 }
 
-                switch (args.IsKeyDown)
-                {
-                    case true:
-                        m_InputSimulator.Keyboard.KeyDown(key);
-                        break;
-                    case false:
-                        m_InputSimulator.Keyboard.KeyUp(key);
-                        break;
-                }
+                TriggerLock = false;
 
-                // send after initial delay
-                m_InputSimulator.Keyboard.Sleep(d_Timestamp);
+                // clear buffer
+                TriggerBuffer.Clear();
             }
-
-            TriggerLock = false;
-
-            // clear buffer
-            TriggerBuffer.Clear();
+            catch(Exception)
+            {
+            }
         }
 
         private List<KeyCode> GetBufferKeys()
@@ -237,8 +258,7 @@ namespace HandheldCompanion.Managers
             return keys;
         }
 
-        public void Start()
-        {
+        public void Start()        {
             foreach (var pair in Triggers)
                 Triggered[pair.Key] = false;
 
@@ -247,7 +267,8 @@ namespace HandheldCompanion.Managers
                 string listener = pair.Key;
                 ChordClick chord = pair.Value;
 
-                prevTimestamp[listener] = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+                prevKeyUp[listener] = TIME_BURST;
+                prevKeyDown[listener] = TIME_BURST;
             }
             
             UpdateTimer.Start();
