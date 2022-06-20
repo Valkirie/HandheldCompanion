@@ -53,7 +53,9 @@ namespace ControllerCommon.Utils
     {
         OEM = 0,
         Virtual = 1,
-        Toy = 2
+        ZDOPlus = 2,
+        Toy = 3
+
     }
 
     public static class InputUtils
@@ -95,6 +97,18 @@ namespace ControllerCommon.Utils
                     return "\uE7E8";
                 default:
                     return "\uE783";
+            }
+        }
+
+        public static string TriggerTypeToGlyph(TriggerInputsType type)
+        {
+            switch (type)
+            {
+                default:
+                case TriggerInputsType.Gamepad:
+                    return "\uE7FC";
+                case TriggerInputsType.Keyboard:
+                    return "\uED4C";
             }
         }
 

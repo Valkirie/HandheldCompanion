@@ -82,6 +82,9 @@
                             <RadioButton Name="VirtualControllerRadio">
                                 <Label Content="{x:Static resx:Resources.OverlayPage_EmulatedController}"></Label>
                             </RadioButton>
+                            <RadioButton Name="ZDOPlusRadio">
+                                <Label Content="{x:Static resx:Resources.OverlayPage_ZDOPlusController}"></Label>
+                            </RadioButton>
                             <RadioButton Name="ToyControllerRadio" IsEnabled="False">
                                 <Label Content="{x:Static resx:Resources.OverlayPage_ToyController}"></Label>
                             </RadioButton>

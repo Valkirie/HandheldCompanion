@@ -41,9 +41,6 @@
     <Setting Name="UpdateLastChecked" Type="System.DateTime" Scope="User">
       <Value Profile="(Default)">2022-03-16</Value>
     </Setting>
-    <Setting Name="OverlayTrigger" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
     <Setting Name="OverlayModel" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
@@ -53,13 +50,13 @@
     <Setting Name="OverlayControllerSize" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">400</Value>
     </Setting>
-    <Setting Name="OverlayControllerTrigger" Type="System.Int32" Scope="User">
+    <Setting Name="OverlayControllerTriggerValue" Type="System.String" Scope="User">
       <Value Profile="(Default)">33</Value>
     </Setting>
     <Setting Name="OverlayTrackpadsAlignment" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="OverlayTrackpadsTrigger" Type="System.Int32" Scope="User">
+    <Setting Name="OverlayTrackpadsTriggerValue" Type="System.String" Scope="User">
       <Value Profile="(Default)">34</Value>
     </Setting>
     <Setting Name="OverlayTrackpadsOpacity" Type="System.Double" Scope="User">
@@ -101,8 +98,17 @@
     <Setting Name="HIDmode" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="SuspenderTrigger" Type="System.Int32" Scope="User">
+    <Setting Name="SuspenderTriggerValue" Type="System.String" Scope="User">
       <Value Profile="(Default)">40</Value>
+    </Setting>
+    <Setting Name="OverlayControllerTriggerType" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="OverlayTrackpadsTriggerType" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="SuspenderTriggerType" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -319,6 +319,9 @@
   <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
     <value>触摸板选项</value>
   </data>
+  <data name="OverlayPage_ZDOPlusController" xml:space="preserve">
+    <value>ZD O+</value>
+  </data>
   <data name="Overlay_Overlay" xml:space="preserve">
     <value>展示</value>
   </data>
