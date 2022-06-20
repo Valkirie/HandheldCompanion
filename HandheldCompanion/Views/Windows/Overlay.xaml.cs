@@ -102,6 +102,9 @@ namespace HandheldCompanion.Views.Windows
             WindowInteropHelper helper = new WindowInteropHelper(this);
             SetWindowLong(helper.Handle, GWL_EXSTYLE,
                 GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
+
+            this.LeftTrackPadPosition = LeftTrackpad.PointToScreen(new Point(0, 0));
+            this.RightTrackPadPosition = RightTrackpad.PointToScreen(new Point(0, 0));
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
