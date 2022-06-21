@@ -104,7 +104,7 @@ namespace ControllerService.Sensors
         {
             foreach (char axis in reading_axis.Keys)
             {
-                switch (ControllerService.handheldDevice.AngularVelocityAxisSwap[axis])
+                switch (ControllerService.handheldDevice.AccelerationAxisSwap[axis])
                 {
                     default:
                     case 'X':
