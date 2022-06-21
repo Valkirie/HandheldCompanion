@@ -38,6 +38,9 @@ namespace ControllerCommon.Managers
         private Timer MonitorTimer;
         private object updateLock = new();
 
+        public event ReadyEventHandler Ready;
+        public delegate void ReadyEventHandler();
+
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(ServiceControllerStatus status, int mode);
 
@@ -140,6 +143,8 @@ namespace ControllerCommon.Managers
                 prevStatus = (int)status;
                 prevType = (int)type;
             }
+
+            Ready?.Invoke();
         }
 
         public void CreateService(string path)

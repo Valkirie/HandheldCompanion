@@ -192,6 +192,16 @@ namespace HandheldCompanion.Views
             // initialize service manager
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
             serviceManager.Updated += OnServiceUpdate;
+            serviceManager.Ready += () =>
+            {
+                if (settingsPage.StartServiceWithCompanion)
+                {
+                    if (!serviceManager.Exists())
+                        serviceManager.CreateService(CurrentPathService);
+
+                    serviceManager.StartServiceAsync();
+                }
+            };
             serviceManager.StartFailed += (status) =>
             {
                 Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStartIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
@@ -425,14 +435,6 @@ namespace HandheldCompanion.Views
                 // start manager(s)
                 processManager.Start();
                 serviceManager.Start();
-
-                if (settingsPage.StartServiceWithCompanion)
-                {
-                    if (!serviceManager.Exists())
-                        serviceManager.CreateService(CurrentPathService);
-
-                    serviceManager.StartServiceAsync();
-                }
             }
 
             // open pipe(s)
