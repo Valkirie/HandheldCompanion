@@ -3,7 +3,9 @@ using ControllerCommon.Utils;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace ControllerCommon.Managers
 {
@@ -17,6 +19,7 @@ namespace ControllerCommon.Managers
         public static Guid HidDevice;
         private DeviceNotificationListener hidListener;
         private DeviceNotificationListener xinputListener;
+        private List<PnPDeviceEx> devices = new();
 
         public event XInputArrivedEventHandler XInputArrived;
         public delegate void XInputArrivedEventHandler(PnPDeviceEx device);
@@ -105,7 +108,7 @@ namespace ControllerCommon.Managers
 
                     if (parentId == owner.DeviceId)
                     {
-                        return new PnPDeviceEx()
+                        deviceEx = new PnPDeviceEx()
                         {
                             deviceUSB = device,
                             deviceHID = pnpDevice,
@@ -114,6 +117,7 @@ namespace ControllerCommon.Managers
                             deviceIndex = deviceIndex,
                             arrivalDate = pnpDevice.GetProperty<DateTimeOffset>(DevicePropertyDevice.LastArrivalDate)
                         };
+                        devices.Add(deviceEx);
                     }
 
                     if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
@@ -131,10 +135,10 @@ namespace ControllerCommon.Managers
 
             return deviceEx;
         }
-
+        
         public List<PnPDeviceEx> GetDeviceExs()
         {
-            List<PnPDeviceEx> devices = new();
+            devices.Clear();
 
             int deviceIndex = 0;
             while (Devcon.Find(HidDevice, out var path, out var instanceId, deviceIndex++))
@@ -175,13 +179,22 @@ namespace ControllerCommon.Managers
             return devices;
         }
 
+        private PnPDeviceEx GetPnPDeviceEx(string InstanceId)
+        {
+            return devices.Where(a => a.deviceUSB.InstanceId == InstanceId).FirstOrDefault();
+        }
+
         private void XinputListener_DeviceRemoved(DeviceEventArgs obj)
         {
             // XInput device removed
             try
             {
-                var device = PnPDevice.GetDeviceByInterfaceId(obj.SymLink);
-                var deviceEx = GetDeviceEx(device);
+                string InstanceId = obj.SymLink.Replace("#", @"\");
+                InstanceId = CommonUtils.Between(InstanceId, @"\\?\", @"\{");
+
+                var deviceEx = GetPnPDeviceEx(InstanceId);
+                devices.Remove(deviceEx);
+
                 XInputRemoved?.Invoke(deviceEx);
             }
             catch (Exception) { }
@@ -193,6 +206,7 @@ namespace ControllerCommon.Managers
             try
             {
                 var device = PnPDevice.GetDeviceByInterfaceId(obj.SymLink);
+                Thread.Sleep(500); // breathing space
                 var deviceEx = GetDeviceEx(device);
                 XInputArrived?.Invoke(deviceEx);
             }

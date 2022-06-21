@@ -166,8 +166,6 @@ namespace ControllerService
                     }
                     break;
             }
-
-            // todo : warn UI serial has arrived !
         }
 
         private void SystemManager_SerialRemoved(PnPDevice device)
@@ -184,8 +182,6 @@ namespace ControllerService
                     }
                     break;
             }
-
-            // todo : warn UI serial has left !
         }
 
         private void SetControllerIdx(UserIndex idx, string deviceInstancePath, string baseContainerDeviceInstancePath)

@@ -49,8 +49,6 @@ namespace ControllerCommon
             public short VersionNumber;
         }
 
-        private readonly Guid hidClassInterfaceGuid;
-
         public ControllerEx(UserIndex index)
         {
             this.Controller = new Controller(index);
