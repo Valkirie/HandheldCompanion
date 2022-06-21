@@ -1,6 +1,7 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
+using System.Collections.Generic;
 using System.Numerics;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.DeviceUtils;
@@ -98,10 +99,26 @@ namespace ControllerService.Sensors
 
         private void ReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
         {
-            // swapping Y and Z
-            this.reading.X = this.reading_fixed.X = (float)args.Reading.AngularVelocityX * ControllerService.handheldDevice.AngularVelocityAxis.X;
-            this.reading.Y = this.reading_fixed.Y = (float)args.Reading.AngularVelocityZ * ControllerService.handheldDevice.AngularVelocityAxis.Z;
-            this.reading.Z = this.reading_fixed.Z = (float)args.Reading.AngularVelocityY * ControllerService.handheldDevice.AngularVelocityAxis.Y;
+            foreach (char axis in reading_axis.Keys)
+            {
+                switch (ControllerService.handheldDevice.AngularVelocityAxisSwap[axis])
+                {
+                    default:
+                    case 'X':
+                        reading_axis[axis] = args.Reading.AngularVelocityX;
+                        break;
+                    case 'Y':
+                        reading_axis[axis] = args.Reading.AngularVelocityY;
+                        break;
+                    case 'Z':
+                        reading_axis[axis] = args.Reading.AngularVelocityZ;
+                        break;
+                }
+            }
+
+            this.reading.X = this.reading_fixed.X = (float)reading_axis['X'] * ControllerService.handheldDevice.AngularVelocityAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)reading_axis['Y'] * ControllerService.handheldDevice.AngularVelocityAxis.Y;
+            this.reading.Z = this.reading_fixed.Z = (float)reading_axis['Z'] * ControllerService.handheldDevice.AngularVelocityAxis.Z;
 
             base.ReadingChanged();
         }

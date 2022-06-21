@@ -13,14 +13,22 @@ namespace ControllerCommon.Devices
             this.WidthHeightRatio = 2.4f;
             this.ProductIllustration = "device_aya_next";
 
-            oneEuroSettings = new OneEuroSettings(0.002d, 0.008d);
+            this.AngularVelocityAxisSwap = new()
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' },
+            };
+
+            this.AccelerationAxisSwap = new()
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' },
+            };
 
             listeners.Add("Custom key BIG", new ChordClick(KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12));
-            listeners.Add("Custom key Small Short Press", new ChordClick(KeyCode.LWin, KeyCode.D));
-
-            /* we can't (re)root CTRL + ALT + DELETE
-            listeners.Add("Custom key Small Long Press", new ChordClick(KeyCode.LControl, KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete));
-            */
+            listeners.Add("Custom key Small", new ChordClick(KeyCode.LWin, KeyCode.D));
         }
     }
 }

@@ -27,9 +27,25 @@ namespace ControllerCommon.Devices
 
         // device specific settings
         public float WidthHeightRatio = 1.0f;
+
         public Vector3 AngularVelocityAxis = new Vector3(1.0f, 1.0f, 1.0f);
+        public Dictionary<char, char> AngularVelocityAxisSwap = new()
+        {
+            { 'X', 'X' },
+            { 'Y', 'Y' },
+            { 'Z', 'Z' },
+        };
+
         public Vector3 AccelerationAxis = new Vector3(1.0f, 1.0f, 1.0f);
-        public OneEuroSettings oneEuroSettings = new OneEuroSettings(0.0d, 0.0d);
+        public Dictionary<char, char> AccelerationAxisSwap = new()
+        {
+            { 'X', 'X' },
+            { 'Y', 'Y' },
+            { 'Z', 'Z' },
+        };
+
+        // filter settings
+        public OneEuroSettings oneEuroSettings = new OneEuroSettings(0.002d, 0.008d);
 
         // trigger specific settings
         public Dictionary<string, ChordClick> listeners = new();
@@ -42,26 +58,57 @@ namespace ControllerCommon.Devices
 
             var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
             var ProductName = MotherboardInfo.Product;
+            var SystemName = MotherboardInfo.SystemName;
+            var Version = MotherboardInfo.Version;
 
-            switch (ProductName)
+            switch (ManufacturerName)
             {
-                case "AYANEO 2021":
-                case "AYANEO 2021 Pro":
-                case "AYANEO 2021 Pro Retro Power":
-                    device = new AYANEO2021();
-                    break;
-                case "NEXT Pro":
-                case "NEXT Advance":
-                case "NEXT":
-                    device = new AYANEONEXT();
-                    break;
-                case "ONE XPLAYER": // MINI ?
-                    device = new OneXPlayerMini();
-                    break;
-                default:
-                    device = new DefaultDevice();
-                    LogManager.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
-                    break;
+                case "AYANEO":
+                {
+                    switch (ProductName)
+                    {
+                        case "AYANEO 2021":
+                        case "AYANEO 2021 Pro":
+                        case "AYANEO 2021 Pro Retro Power":
+                            device = new AYANEO2021();
+                            break;
+                        case "NEXT Pro":
+                        case "NEXT Advance":
+                        case "NEXT":
+                            device = new AYANEONEXT();
+                            break;
+                    }
+                }
+                break;
+
+                case "ONE-NETBOOK TECHNOLOGY CO., LTD.":
+                {
+                    switch (ProductName)
+                    {
+                        case "ONE XPLAYER":
+                            {
+                                switch (Version)
+                                {
+                                    default:
+                                    case "V01":
+                                        device = new OneXPlayerMiniAMD();
+                                        break;
+                                    case "1002-C":
+                                        device = new OneXPlayerMiniIntel();
+                                        break;
+                                }
+                                break;
+                            }
+                            break;
+                    }
+                }
+                break;
+            }
+
+            if (device is null)
+            {
+                device = new DefaultDevice();
+                LogManager.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
             }
 
             // get the actual handheld device
