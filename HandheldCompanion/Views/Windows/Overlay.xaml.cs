@@ -199,7 +199,7 @@ namespace HandheldCompanion.Views.Windows
 
         public double GetWindowsScaling()
         {
-            return SystemParameters.PrimaryScreenWidth / Screen.PrimaryScreen.Bounds.Width;
+            return Screen.PrimaryScreen.Bounds.Width / SystemParameters.PrimaryScreenWidth;
         }
 
         private void Touchsource_Touch(TouchArgs args, long time)
@@ -226,18 +226,13 @@ namespace HandheldCompanion.Views.Windows
                     break;
             }
 
-            var dpi = GetWindowsScaling(); // todo: use me !
+            var dpi = GetWindowsScaling();
 
-            var relativeX = Math.Clamp(args.LocationX - CurrentPoint.X, 0, LeftTrackpad.ActualWidth);
-            var relativeY = Math.Clamp(args.LocationY - CurrentPoint.Y, 0, LeftTrackpad.ActualHeight);
+            var relativeX = Math.Max(args.LocationX - CurrentPoint.X, 0);
+            var relativeY = Math.Max(args.LocationY - CurrentPoint.Y, 0);
 
-            var normalizedX = (relativeX / LeftTrackpad.ActualWidth) / 2.0d;
-            var normalizedY = relativeY / LeftTrackpad.ActualHeight;
-
-            Debug.WriteLine("touchX:{0}, touchY:{1}", args.LocationX, args.LocationY);
-            Debug.WriteLine("CurrentPointX:{0}, CurrentPointY:{1}", CurrentPoint.X, CurrentPoint.Y);
-            Debug.WriteLine("relativeX:{0}, relativeY:{1}", relativeX, relativeY);
-            Debug.WriteLine("normalizedX:{0}, normalizedY:{1}", normalizedX, normalizedY);
+            var normalizedX = (relativeX / (LeftTrackpad.ActualWidth * dpi)) / 2.0d;
+            var normalizedY = relativeY / (LeftTrackpad.ActualHeight * dpi);
 
             switch (target)
             {
