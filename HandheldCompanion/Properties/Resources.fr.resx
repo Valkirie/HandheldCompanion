@@ -260,11 +260,23 @@
   <data name="OverlayPage_BackButton" xml:space="preserve">
     <value>Retour</value>
   </data>
+  <data name="OverlayPage_CameraAnglePitch" xml:space="preserve">
+    <value>Stationary pitch</value>
+  </data>
+  <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
+    <value>Change the angle, in degree</value>
+  </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
     <value>Options du contrôleur</value>
   </data>
   <data name="OverlayPage_EmulatedController" xml:space="preserve">
     <value>Contrôleur émulé</value>
+  </data>
+  <data name="OverlayPage_FaceCamera" xml:space="preserve">
+    <value>Face camera</value>
+  </data>
+  <data name="OverlayPage_FaceCameraDesc" xml:space="preserve">
+    <value>3D Model slowly rotates to face camera as default position</value>
   </data>
   <data name="OverlayPage_MainTrigger" xml:space="preserve">
     <value>Déclencheur principal</value>

@@ -267,27 +267,15 @@
     <value>Back</value>
   </data>
   <data name="OverlayPage_CameraAngle" xml:space="preserve">
-    <value>Stationary angles</value>
+    <value>Face camera</value>
   </data>
   <data name="OverlayPage_CameraAngleDesc" xml:space="preserve">
-    <value>Change the respective roll, pitch and yaw angles of your stationary 3D overlay controller model</value>
+    <value>Change 3D overlay controller model behaviour for facing the camera</value>
   </data>
   <data name="OverlayPage_CameraAnglePitch" xml:space="preserve">
-    <value>Pitch</value>
+    <value>Stationary pitch</value>
   </data>
   <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
-    <value>Change the angle, in degree</value>
-  </data>
-  <data name="OverlayPage_CameraAngleRoll" xml:space="preserve">
-    <value>Roll</value>
-  </data>
-  <data name="OverlayPage_CameraAngleRollDesc" xml:space="preserve">
-    <value>Change the angle, in degree</value>
-  </data>
-  <data name="OverlayPage_CameraAngleYaw" xml:space="preserve">
-    <value>Yaw</value>
-  </data>
-  <data name="OverlayPage_CameraAngleYawDesc" xml:space="preserve">
     <value>Change the angle, in degree</value>
   </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
@@ -295,6 +283,12 @@
   </data>
   <data name="OverlayPage_EmulatedController" xml:space="preserve">
     <value>Emulated controller</value>
+  </data>
+  <data name="OverlayPage_FaceCamera" xml:space="preserve">
+    <value>Face camera</value>
+  </data>
+  <data name="OverlayPage_FaceCameraDesc" xml:space="preserve">
+    <value>3D Model slowly rotates to face camera as default position</value>
   </data>
   <data name="OverlayPage_Listening" xml:space="preserve">
     <value>Listening...</value>
