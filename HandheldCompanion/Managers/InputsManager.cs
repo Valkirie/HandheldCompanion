@@ -6,19 +6,10 @@ using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Views;
 using SharpDX.XInput;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using WindowsInput;
 using WindowsInput.Events;
-using WindowsInput.Events.Sources;
-using static ControllerCommon.TriggerInputs;
-using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
 {
@@ -158,7 +149,8 @@ namespace HandheldCompanion.Managers
                         {
                             TriggerBuffer.AddRange(Intercepted);
                             break;
-                        }else if (args.IsKeyUp)
+                        }
+                        else if (args.IsKeyUp)
                             TriggerRaised?.Invoke(trigger, Triggers[trigger]);
                     }
                     else

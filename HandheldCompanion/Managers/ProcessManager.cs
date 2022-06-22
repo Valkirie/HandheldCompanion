@@ -1,5 +1,4 @@
-﻿using ControllerCommon;
-using ControllerCommon.Managers;
+﻿using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System;
@@ -11,11 +10,8 @@ using System.IO;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Threading;
 using Windows.System.Diagnostics;
 using Brush = System.Windows.Media.Brush;
@@ -252,7 +248,7 @@ namespace HandheldCompanion.Managers
             {
                 processResume.IsEnabled = false;
             }));
-            
+
             NtResumeProcess(Process.Handle);
             Thread.Sleep(500); // breathing
             ShowWindow(Process.MainWindowHandle, 9);
@@ -322,7 +318,7 @@ namespace HandheldCompanion.Managers
             if (!isRunning)
                 return;
 
-            foreach(ProcessEx processEx in CurrentProcesses.Values)
+            foreach (ProcessEx processEx in CurrentProcesses.Values)
                 processEx.Stop();
 
             // stop processes monitor
@@ -408,7 +404,7 @@ namespace HandheldCompanion.Managers
                 Process proc = Process.GetProcessById((int)processId);
                 ProcessCreated(proc);
             }
-            catch(Exception) { }
+            catch (Exception) { }
         }
 
         void ProcessCreated(Process proc)

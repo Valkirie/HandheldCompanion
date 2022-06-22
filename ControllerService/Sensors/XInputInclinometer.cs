@@ -1,7 +1,6 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.DeviceUtils;

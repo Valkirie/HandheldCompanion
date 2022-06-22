@@ -1,12 +1,9 @@
 using ControllerCommon;
-using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
 using SharpDX.XInput;
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -164,7 +161,7 @@ namespace HandheldCompanion.Views.Windows
                     break;
                 case OverlayModelMode.Virtual:
                     {
-                        switch(HIDmode)
+                        switch (HIDmode)
                         {
                             default:
                             case HIDmode.DualShock4Controller:
@@ -317,7 +314,7 @@ namespace HandheldCompanion.Views.Windows
                         visibility = Visibility.Collapsed;
                         break;
                     case Visibility.Collapsed:
-                    case Visibility.Hidden:                        
+                    case Visibility.Hidden:
                         visibility = Visibility.Visible;
                         break;
                 }
@@ -668,7 +665,7 @@ namespace HandheldCompanion.Views.Windows
 
                 // Correction amount for camera, increase slowly
                 FaceCameraObjectAlignment += DiffAngle * 0.0006; // 0.0015 = ~90 degrees in 30 seconds
-                
+
                 // Devices rotates (slowly) towards a default position facing the camara 
                 // Calculation above is done to:
                 // - "quickly" move to the correct pose when enabled as it's calculated in the background

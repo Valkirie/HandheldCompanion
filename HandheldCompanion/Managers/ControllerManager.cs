@@ -1,5 +1,4 @@
 ﻿using ControllerCommon;
-using ControllerCommon.Managers;
 using HandheldCompanion.Views;
 using SharpDX.XInput;
 using System.Collections.Generic;

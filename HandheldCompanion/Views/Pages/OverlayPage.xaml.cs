@@ -1,13 +1,9 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Utils;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Models;
-using HandheldCompanion.Views.Windows;
 using ModernWpf.Controls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
@@ -305,7 +301,7 @@ namespace HandheldCompanion.Views.Pages
                         break;
                 }
             });
-            
+
             Properties.Settings.Default.Save();
         }
 

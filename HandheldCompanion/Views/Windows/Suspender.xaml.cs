@@ -1,22 +1,5 @@
-﻿using ControllerCommon;
-using HandheldCompanion.Managers;
-using Microsoft.Extensions.Logging;
-using SharpDX.XInput;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HandheldCompanion.Managers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace HandheldCompanion.Views.Windows
 {

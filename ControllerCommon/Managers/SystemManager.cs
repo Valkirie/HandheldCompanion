@@ -135,7 +135,7 @@ namespace ControllerCommon.Managers
 
             return deviceEx;
         }
-        
+
         public List<PnPDeviceEx> GetDeviceExs()
         {
             devices.Clear();

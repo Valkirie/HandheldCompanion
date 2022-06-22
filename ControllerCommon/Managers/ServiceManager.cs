@@ -96,7 +96,7 @@ namespace ControllerCommon.Managers
                 string output = process.StandardOutput.ReadToEnd();
                 string error = CommonUtils.Between(output, "FAILED ", ":");
 
-                switch(error)
+                switch (error)
                 {
                     case "1060":
                         return false;

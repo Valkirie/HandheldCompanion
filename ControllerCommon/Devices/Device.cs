@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Numerics;
 using Windows.Devices.Sensors;
 using WindowsInput.Events;
-using WindowsInput.Events.Sources;
 using static ControllerCommon.OneEuroFilter;
 using static ControllerCommon.Utils.DeviceUtils;
 
@@ -66,45 +65,45 @@ namespace ControllerCommon.Devices
             switch (ManufacturerName)
             {
                 case "AYANEO":
-                {
-                    switch (ProductName)
                     {
-                        case "AYANEO 2021":
-                        case "AYANEO 2021 Pro":
-                        case "AYANEO 2021 Pro Retro Power":
-                            device = new AYANEO2021();
-                            break;
-                        case "NEXT Pro":
-                        case "NEXT Advance":
-                        case "NEXT":
-                            device = new AYANEONEXT();
-                            break;
+                        switch (ProductName)
+                        {
+                            case "AYANEO 2021":
+                            case "AYANEO 2021 Pro":
+                            case "AYANEO 2021 Pro Retro Power":
+                                device = new AYANEO2021();
+                                break;
+                            case "NEXT Pro":
+                            case "NEXT Advance":
+                            case "NEXT":
+                                device = new AYANEONEXT();
+                                break;
+                        }
                     }
-                }
-                break;
+                    break;
 
                 case "ONE-NETBOOK TECHNOLOGY CO., LTD.":
-                {
-                    switch (ProductName)
                     {
-                        case "ONE XPLAYER":
-                            {
-                                switch (Version)
+                        switch (ProductName)
+                        {
+                            case "ONE XPLAYER":
                                 {
-                                    default:
-                                    case "V01":
-                                        device = new OneXPlayerMiniAMD();
-                                        break;
-                                    case "1002-C":
-                                        device = new OneXPlayerMiniIntel();
-                                        break;
+                                    switch (Version)
+                                    {
+                                        default:
+                                        case "V01":
+                                            device = new OneXPlayerMiniAMD();
+                                            break;
+                                        case "1002-C":
+                                            device = new OneXPlayerMiniIntel();
+                                            break;
+                                    }
+                                    break;
                                 }
                                 break;
-                            }
-                            break;
+                        }
                     }
-                }
-                break;
+                    break;
             }
 
             if (device is null)

@@ -1,6 +1,3 @@
-using ControllerCommon;
-using ControllerCommon.Devices;
-using ControllerCommon.Managers;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Windows;

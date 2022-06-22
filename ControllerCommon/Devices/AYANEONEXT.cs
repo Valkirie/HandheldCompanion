@@ -1,5 +1,4 @@
 ﻿using WindowsInput.Events;
-using static ControllerCommon.OneEuroFilter;
 
 namespace ControllerCommon.Devices
 {

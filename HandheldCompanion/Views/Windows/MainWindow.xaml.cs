@@ -3,12 +3,10 @@ using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Models;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using ModernWpf.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -296,13 +294,13 @@ namespace HandheldCompanion.Views
                 switch (listener)
                 {
                     case "suspender":
-                            suspender.UpdateVisibility();
+                        suspender.UpdateVisibility();
                         break;
                     case "overlayGamepad":
-                            overlay.UpdateControllerVisibility();
+                        overlay.UpdateControllerVisibility();
                         break;
                     case "overlayTrackpads":
-                            overlay.UpdateTrackpadsVisibility();
+                        overlay.UpdateTrackpadsVisibility();
                         break;
                 }
             });

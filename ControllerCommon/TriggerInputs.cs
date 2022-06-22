@@ -1,11 +1,5 @@
 ﻿using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WindowsInput.Events;
-using WindowsInput.Events.Sources;
 
 namespace ControllerCommon
 {
@@ -28,7 +22,7 @@ namespace ControllerCommon
             this.type = type;
             this.raw = value;
 
-            switch(type)
+            switch (type)
             {
                 default:
                 case TriggerInputsType.Gamepad:
@@ -52,7 +46,7 @@ namespace ControllerCommon
 
         public string GetValue()
         {
-            switch(type)
+            switch (type)
             {
                 default:
                 case TriggerInputsType.Gamepad:

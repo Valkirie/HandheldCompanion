@@ -1,4 +1,3 @@
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -63,7 +62,7 @@ namespace HandheldCompanion.Models
             BLetter = modelImporter.Load($"models/{ModelName}/BLetter.obj");
             BLetterInside1 = modelImporter.Load($"models/{ModelName}/BLetterInside1.obj");
             BLetterInside2 = modelImporter.Load($"models/{ModelName}/BLetterInside2.obj");
-            Screen= modelImporter.Load($"models/{ModelName}/Screen.obj");
+            Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
             Home = modelImporter.Load($"models/{ModelName}/Home.obj");
             LED = modelImporter.Load($"models/{ModelName}/LED.obj");
             LeftBaseRing = modelImporter.Load($"models/{ModelName}/LeftBaseRing.obj");
@@ -79,7 +78,7 @@ namespace HandheldCompanion.Models
             XLetter = modelImporter.Load($"models/{ModelName}/XLetter.obj");
             YLetter = modelImporter.Load($"models/{ModelName}/YLetter.obj");
             // pull model(s)
-            
+
             model3DGroup.Children.Add(ALetter);
             model3DGroup.Children.Add(ALetterInside);
             model3DGroup.Children.Add(BackGrillShadow);
