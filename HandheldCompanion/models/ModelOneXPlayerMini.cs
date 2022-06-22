@@ -33,18 +33,18 @@ namespace HandheldCompanion.Models
         public ModelOneXPlayerMini() : base("OneXPlayerMini")
         {
             // colors
-            var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#333333");
-            var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#F0EFF0");
-            var ColorPlasticOrange = (Color)ColorConverter.ConvertFromString("#F84809");
+            var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#111612");
+            var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#EBEBEB");
+            var ColorPlasticOrange = (Color)ColorConverter.ConvertFromString("#DC633C");
 
             var MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
             var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
             var MaterialPlasticOrange = new DiffuseMaterial(new SolidColorBrush(ColorPlasticOrange));
 
             // Rotation Points
-            JoystickRotationPointCenterLeftMillimeter = new Vector3D(-109.0f, -8.0f, 23.0f);
-            JoystickRotationPointCenterRightMillimeter = new Vector3D(104.0f, -8.0f, -6.0f);
-            JoystickMaxAngleDeg = 19.0f;
+            JoystickRotationPointCenterLeftMillimeter = new Vector3D(-108.5f, 9.0f, 21.0f);
+            JoystickRotationPointCenterRightMillimeter = new Vector3D(103.0f, 9.0f, -9.0f);
+            JoystickMaxAngleDeg = 10.0f;
 
             ShoulderTriggerRotationPointCenterLeftMillimeter = new Vector3D(-105.951f, 1.25f, 46.814f);
             ShoulderTriggerRotationPointCenterRightMillimeter = new Vector3D(105.951f, 1.25f, 46.814f);
@@ -137,11 +137,10 @@ namespace HandheldCompanion.Models
 
             DrawHighligths();
         }
-
         private new void DrawHighligths()
         {
-            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
-            var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
+            var ColorHighlight = (Color)ColorConverter.ConvertFromString("#DC633C");
+            var MaterialHighlight = new DiffuseMaterial(new SolidColorBrush(ColorHighlight));
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
             {
