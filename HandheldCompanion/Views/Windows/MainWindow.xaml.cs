@@ -376,29 +376,33 @@ namespace HandheldCompanion.Views
         {
             try
             {
-                Profile currentProfile = profileManager.GetProfileFromExec(processEx.Name);
+                var profile = profileManager.GetProfileFromExec(processEx.Name);
 
-                if (currentProfile == null)
-                    currentProfile = profileManager.GetDefault();
+                if (profile == null)
+                    profile = profileManager.GetDefault();
 
-                if (!currentProfile.isEnabled)
+                if (!profile.isEnabled)
                     return;
 
-                currentProfile.isApplied = true;
+                if (profileManager.CurrentProfile == profile)
+                    return;
+
+                profile.isApplied = true;
+
+                // inform service
+                pipeClient.SendMessage(new PipeClientProfile { profile = profile });
+
+                // update current profile
+                profileManager.CurrentProfile = profile;
+
+                LogManager.LogDebug("Profile {0} applied", profile.name);
 
                 // do not update default profile path
-                if (!currentProfile.isDefault)
-                {
-                    currentProfile.fullpath = processEx.Executable;
+                if (profile.isDefault)
+                    return;
 
-                    // update profile and inform settings page
-                    profileManager.UpdateOrCreateProfile(currentProfile);
-                }
-
-                // inform service & mouseHook
-                pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
-
-                LogManager.LogDebug("Profile {0} applied", currentProfile.name);
+                profile.fullpath = processEx.Executable;
+                profileManager.UpdateOrCreateProfile(profile);
             }
             catch (Exception) { }
         }

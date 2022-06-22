@@ -364,6 +364,9 @@ namespace HandheldCompanion.Managers
                     if (CurrentProcesses.ContainsKey(processId))
                     {
                         ProcessEx processEx = CurrentProcesses[processId];
+                        path = ProcessUtils.GetPathToApp(processEx.Process);
+
+                        LogManager.LogDebug("ActiveWindow Title: {0}, Path: {1}", name, path);
 
                         ForegroundChanged?.Invoke(processEx);
                         CurrentProcess = processId;

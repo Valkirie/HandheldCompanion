@@ -31,6 +31,7 @@ namespace ControllerCommon.Managers
         public delegate void LoadedEventHandler();
 
         public PipeClient PipeClient;
+        public Profile CurrentProfile;
 
         private string path;
 
