@@ -20,7 +20,9 @@ namespace ControllerCommon.Devices
 
         public string ManufacturerName;
         public string ProductName;
+
         public string ProductIllustration = "device_generic";
+        public string ProductModel = "default";
 
         public bool hasInternal;
         public bool hasExternal;

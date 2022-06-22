@@ -13,6 +13,7 @@ namespace ControllerCommon.Devices
             // device specific settings
             this.WidthHeightRatio = 2.4f;
             this.ProductIllustration = "device_onexplayer_mini";
+            this.ProductModel = "ONEXPLAYERMini";
 
             this.AngularVelocityAxisSwap = new()
             {

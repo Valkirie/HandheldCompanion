@@ -143,18 +143,17 @@ namespace HandheldCompanion.Views.Windows
                 default:
                 case OverlayModelMode.OEM:
                     {
-                        switch (MainWindow.handheldDevice.ProductName)
+                        switch (MainWindow.handheldDevice.ProductModel)
                         {
-                            case "AYANEO 2021":
-                            case "AYANEO 2021 Pro":
-                            case "AYANEO 2021 Pro Retro Power":
+                            case "AYANEO2021":
                                 newModel = new ModelAYANEO2021();
                                 break;
-                            case "NEXT Pro":
-                            case "NEXT Advance":
-                            case "NEXT":
+                            case "AYANEONext":
                                 newModel = new ModelAYANEONext();
                                 break;
+                            /* case "ONEXPLAYERMini":
+                                newModel = new ModelXBOX360();
+                                break; */
                             default:
                                 // default model if unsupported OEM
                                 newModel = new ModelXBOX360();
