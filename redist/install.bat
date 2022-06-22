@@ -33,4 +33,7 @@ echo Installing .NET Desktop Runtime 6.0.6
 windowsdesktop-runtime-6.0.6-win-x64.exe /passive /norestart
 
 echo Installing .NET Runtime 6.0.6
-dotnet-runtime-6.0.6-win-x64 /passive /norestart
+dotnet-runtime-6.0.6-win-x64.exe /passive /norestart
+
+echo Please restart your computer to complete the installation process.
+pause
