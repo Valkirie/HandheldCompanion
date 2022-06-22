@@ -26,8 +26,7 @@
                 <Border
                     Height="300"
                     Padding="15,12,12,12"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid Name="ControllerGrid">
                         <Grid.Background>

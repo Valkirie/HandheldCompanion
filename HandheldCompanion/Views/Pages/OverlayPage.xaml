@@ -198,7 +198,7 @@
                 <!-- Model settings -->
                 <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
                     <Expander.Header>
-                        <DockPanel Margin="-10,12,12,12">
+                        <DockPanel Margin="0,12,12,12">
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8B4;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
@@ -258,7 +258,7 @@
                 <!-- Resting angles -->
                 <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
                     <Expander.Header>
-                        <DockPanel Margin="-10,12,12,12">
+                        <DockPanel Margin="0,12,12,12">
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8B4;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">

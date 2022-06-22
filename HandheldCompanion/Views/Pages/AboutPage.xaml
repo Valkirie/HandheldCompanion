@@ -68,7 +68,7 @@
             <!-- Sensor specifications -->
             <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsExpanded="True">
                 <Expander.Header>
-                    <DockPanel Margin="-10,12,12,12">
+                    <DockPanel Margin="0,12,12,12">
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
@@ -104,7 +104,7 @@
             <!-- Service -->
             <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsExpanded="True">
                 <Expander.Header>
-                    <DockPanel Margin="-10,12,12,12">
+                    <DockPanel Margin="0,12,12,12">
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE74C;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">

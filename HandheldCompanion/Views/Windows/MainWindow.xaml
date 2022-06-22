@@ -13,8 +13,7 @@
         Closing="Window_Closing"
         StateChanged="Window_StateChanged"
         ui:WindowHelper.UseModernWindowStyle="True"
-        MinWidth="600" MinHeight="500"
-        Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Icon="/Resources/icon.png">
+        MinWidth="600" MinHeight="500" Icon="/Resources/icon.png">
 
     <ui:NavigationView
         Name="navView" PaneDisplayMode="Auto"
@@ -25,14 +24,7 @@
         Loaded="navView_Loaded"
         BackRequested="navView_BackRequested" IsSettingsVisible="False">
 
-        <ui:NavigationView.Resources>
-            <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{DynamicResource SystemChromeMediumColor}"/>
-            <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="{DynamicResource SystemChromeMediumColor}" />
-        </ui:NavigationView.Resources>
-
         <ui:NavigationView.MenuItems>
-            <ui:NavigationViewItemSeparator></ui:NavigationViewItemSeparator>
-
             <!-- Game icon -->
             <ui:NavigationViewItem Name="navController" Content="{x:Static resx:Resources.MainWindow_navController}" Tag="ControllerPage">
                 <ui:NavigationViewItem.Icon>
@@ -72,16 +64,16 @@
         <ui:NavigationView.FooterMenuItems>
             <ui:NavigationViewItem
                 ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100"
-                Icon="Stop" Content="{x:Static resx:Resources.MainWindow_serviceStop}" Name="b_ServiceStop" Tag="ServiceStop" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" Visibility="Hidden" />
+                Icon="Stop" Content="{x:Static resx:Resources.MainWindow_serviceStop}" Name="b_ServiceStop" Tag="ServiceStop" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" />
             <ui:NavigationViewItem
                 ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100"
-                Icon="Play" Content="{x:Static resx:Resources.MainWindow_serviceStart}" Name="b_ServiceStart" Tag="ServiceStart" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" Visibility="Hidden" />
+                Icon="Play" Content="{x:Static resx:Resources.MainWindow_serviceStart}" Name="b_ServiceStart" Tag="ServiceStart" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" />
             <ui:NavigationViewItem
                 ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100"
-                Icon="Refresh" Content="{x:Static resx:Resources.MainWindow_serviceDeploy}" Name="b_ServiceInstall" Tag="ServiceInstall" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" Visibility="Hidden" />
+                Icon="Refresh" Content="{x:Static resx:Resources.MainWindow_serviceDeploy}" Name="b_ServiceInstall" Tag="ServiceInstall" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" />
             <ui:NavigationViewItem
                 ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100"
-                Icon="Delete" Content="{x:Static resx:Resources.MainWindow_serviceRemove}" Name="b_ServiceDelete" Tag="ServiceDelete" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" Visibility="Hidden" />
+                Icon="Delete" Content="{x:Static resx:Resources.MainWindow_serviceRemove}" Name="b_ServiceDelete" Tag="ServiceDelete" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" />
         </ui:NavigationView.FooterMenuItems>
 
         <ui:ScrollViewerEx

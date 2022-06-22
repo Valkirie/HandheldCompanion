@@ -508,10 +508,10 @@ namespace HandheldCompanion.Views
                 {
                     case ServiceControllerStatus.Paused:
                     case ServiceControllerStatus.Stopped:
-                        b_ServiceStop.Visibility = Visibility.Collapsed;
-                        b_ServiceStart.Visibility = Visibility.Visible;
-                        b_ServiceInstall.Visibility = Visibility.Collapsed;
-                        b_ServiceDelete.Visibility = Visibility.Visible;
+                        b_ServiceStop.IsEnabled = false;
+                        b_ServiceStart.IsEnabled = true;
+                        b_ServiceInstall.IsEnabled = false;
+                        b_ServiceDelete.IsEnabled = true;
 
                         if (notifyIcon.ContextMenuStrip != null)
                         {
@@ -525,10 +525,10 @@ namespace HandheldCompanion.Views
                         b_ServiceStart.IsEnabled = IsElevated;
                         break;
                     case ServiceControllerStatus.Running:
-                        b_ServiceStop.Visibility = Visibility.Visible;
-                        b_ServiceStart.Visibility = Visibility.Collapsed;
-                        b_ServiceInstall.Visibility = Visibility.Collapsed;
-                        b_ServiceDelete.Visibility = Visibility.Collapsed;
+                        b_ServiceStop.IsEnabled = true;
+                        b_ServiceStart.IsEnabled = false;
+                        b_ServiceInstall.IsEnabled = false;
+                        b_ServiceDelete.IsEnabled = false;
 
                         if (notifyIcon.ContextMenuStrip != null)
                         {
@@ -558,10 +558,10 @@ namespace HandheldCompanion.Views
                         }
                         break;
                     default:
-                        b_ServiceStop.Visibility = Visibility.Collapsed;
-                        b_ServiceStart.Visibility = Visibility.Collapsed;
-                        b_ServiceInstall.Visibility = Visibility.Visible;
-                        b_ServiceDelete.Visibility = Visibility.Collapsed;
+                        b_ServiceStop.IsEnabled = false;
+                        b_ServiceStart.IsEnabled = false;
+                        b_ServiceInstall.IsEnabled = true;
+                        b_ServiceDelete.IsEnabled = false;
 
                         if (notifyIcon.ContextMenuStrip != null)
                         {
