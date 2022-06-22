@@ -42,6 +42,7 @@ namespace HandheldCompanion.Managers
         private bool TriggerLock;
         private string TriggerListener = string.Empty;
         private List<KeyEventArgsExt> TriggerBuffer = new();
+        private List<KeyEventArgsExt> Intercepted = new();
 
         private Dictionary<string, bool> Triggered = new Dictionary<string, bool>();
 
@@ -119,6 +120,11 @@ namespace HandheldCompanion.Managers
 
                 if (Enumerable.SequenceEqual(chord_keys, buffer_keys))
                 {
+                    Intercepted.Clear();
+                    Intercepted.AddRange(TriggerBuffer);
+
+                    TriggerBuffer.Clear();
+
                     long time_last = TIME_BURST;
                     long time_duration = time_last;
 
@@ -132,44 +138,42 @@ namespace HandheldCompanion.Managers
                         time_last = args.Timestamp - prevKeyUp[listener];
                         prevKeyUp[listener] = args.Timestamp;
                     }
-                    
+
                     // skip call if too close
                     if (time_last < TIME_BURST)
-                        break;
-                    
-                    // only send trigger on release
-                    if (!args.IsKeyUp)
                         break;
 
                     time_duration = args.Timestamp - prevKeyDown[listener];
                     if (time_duration > TIME_LONG)
                         listener += " (HOLD)";
 
-                    LogManager.LogDebug("Success: {0} at {1}", listener, args.Timestamp);
-                    
+                    LogManager.LogDebug("Triggered: {0} at {1}", listener, args.Timestamp);
+
                     if (string.IsNullOrEmpty(TriggerListener))
                     {
                         string trigger = GetTriggerFromName(listener);
 
+                        // trigger isn't used
                         if (string.IsNullOrEmpty(trigger))
+                        {
+                            TriggerBuffer.AddRange(Intercepted);
                             break;
-
-                        TriggerBuffer.Clear();
-                        TriggerRaised?.Invoke(trigger, Triggers[trigger]);
-
-                        return;
+                        }else if (args.IsKeyUp)
+                            TriggerRaised?.Invoke(trigger, Triggers[trigger]);
                     }
                     else
                     {
                         TriggerInputs inputs = new TriggerInputs(TriggerInputsType.Keyboard, string.Join(",", chord.Keys), listener);
                         Triggers[TriggerListener] = inputs;
 
-                        TriggerBuffer.Clear();
-                        TriggerUpdated?.Invoke(TriggerListener, inputs);
-                        TriggerListener = string.Empty;
-
-                        return;
+                        if (args.IsKeyUp)
+                        {
+                            TriggerUpdated?.Invoke(TriggerListener, inputs);
+                            TriggerListener = string.Empty;
+                        }
                     }
+
+                    return;
                 }
             }
 
@@ -178,7 +182,7 @@ namespace HandheldCompanion.Managers
 
         private string GetTriggerFromName(string name)
         {
-            foreach(var pair in Triggers)
+            foreach (var pair in Triggers)
             {
                 string p_trigger = pair.Key;
                 string p_name = pair.Value.name;
@@ -241,7 +245,7 @@ namespace HandheldCompanion.Managers
                 // clear buffer
                 TriggerBuffer.Clear();
             }
-            catch(Exception)
+            catch (Exception)
             {
             }
         }
@@ -250,13 +254,14 @@ namespace HandheldCompanion.Managers
         {
             List<KeyCode> keys = new List<KeyCode>();
 
-            foreach(KeyEventArgsExt e in TriggerBuffer)
+            foreach (KeyEventArgsExt e in TriggerBuffer)
                 keys.Add((KeyCode)e.KeyValue);
 
             return keys;
         }
 
-        public void Start()        {
+        public void Start()
+        {
             foreach (var pair in Triggers)
                 Triggered[pair.Key] = false;
 
@@ -268,7 +273,7 @@ namespace HandheldCompanion.Managers
                 prevKeyUp[listener] = TIME_BURST;
                 prevKeyDown[listener] = TIME_BURST;
             }
-            
+
             UpdateTimer.Start();
 
             m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
@@ -346,7 +351,9 @@ namespace HandheldCompanion.Managers
             TriggerListener = listener;
             TriggerBuffer = new();
 
+            // reset trigger
             Triggers[TriggerListener].buttons = 0;
+            Triggers[TriggerListener].name = "";
         }
 
         public void UpdateController(ControllerEx controllerEx)
