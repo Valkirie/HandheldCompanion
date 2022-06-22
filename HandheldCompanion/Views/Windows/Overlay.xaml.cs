@@ -60,6 +60,7 @@ namespace HandheldCompanion.Views.Windows
 
         private Vector3D FaceCameraObjectAlignment = new Vector3D(0.0d, 0.0d, 0.0d);
 
+        public Boolean FaceCamera = false;
         public Vector3D DesiredAngleDeg = new Vector3D(0, 0, 0);
         private float q_w = 0.0f, q_x = 0.0f, q_y = 1.0f, q_z = 0.0f;
         private Vector3D PoseRad = new Vector3D(0, 3.14, 0);
@@ -654,7 +655,7 @@ namespace HandheldCompanion.Views.Windows
                 DeviceRotateTransform = new RotateTransform3D(Ax3DDevicePose);
                 Transform3DGroupModel.Children.Add(DeviceRotateTransform);
 
-                // Angles
+                // Face camera
                 Vector3D DiffAngle = new Vector3D(0, 0, 0);
 
                 // Determine diff angles
@@ -666,20 +667,28 @@ namespace HandheldCompanion.Views.Windows
                 DiffAngle.Y = ((float)PoseRad.Y < 0.0) ? DiffAngle.Y += 180.0f : DiffAngle.Y -= 180.0f;
 
                 // Correction amount for camera, increase slowly
-                FaceCameraObjectAlignment += DiffAngle * 0.0005; // 0.0015 = ~90 degrees in 30 seconds
+                FaceCameraObjectAlignment += DiffAngle * 0.0006; // 0.0015 = ~90 degrees in 30 seconds
+                
+                // Devices rotates (slowly) towards a default position facing the camara 
+                // Calculation above is done to:
+                // - "quickly" move to the correct pose when enabled as it's calculated in the background
+                // - rotate shoulder buttons into view requires angle value
 
-                // Transform YZX
-                var Ax3DFaceCameraY = new AxisAngleRotation3D(new Vector3D(0, 1, 0), FaceCameraObjectAlignment.Y);
-                DeviceRotateTransformFaceCameraY = new RotateTransform3D(Ax3DFaceCameraY);
-                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraY);
+                if (FaceCamera)
+                {
+                    // Transform YZX
+                    var Ax3DFaceCameraY = new AxisAngleRotation3D(new Vector3D(0, 1, 0), FaceCameraObjectAlignment.Y);
+                    DeviceRotateTransformFaceCameraY = new RotateTransform3D(Ax3DFaceCameraY);
+                    Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraY);
 
-                var Ax3DFaceCameraZ = new AxisAngleRotation3D(new Vector3D(0, 0, 1), -FaceCameraObjectAlignment.Z);
-                DeviceRotateTransformFaceCameraZ = new RotateTransform3D(Ax3DFaceCameraZ);
-                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraZ);
+                    var Ax3DFaceCameraZ = new AxisAngleRotation3D(new Vector3D(0, 0, 1), -FaceCameraObjectAlignment.Z);
+                    DeviceRotateTransformFaceCameraZ = new RotateTransform3D(Ax3DFaceCameraZ);
+                    Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraZ);
 
-                var Ax3DFaceCameraX = new AxisAngleRotation3D(new Vector3D(1, 0, 0), FaceCameraObjectAlignment.X);
-                DeviceRotateTransformFaceCameraX = new RotateTransform3D(Ax3DFaceCameraX);
-                Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraX);
+                    var Ax3DFaceCameraX = new AxisAngleRotation3D(new Vector3D(1, 0, 0), FaceCameraObjectAlignment.X);
+                    DeviceRotateTransformFaceCameraX = new RotateTransform3D(Ax3DFaceCameraX);
+                    Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraX);
+                }
 
                 // Transform mode with group
                 ModelVisual3D.Content.Transform = Transform3DGroupModel;

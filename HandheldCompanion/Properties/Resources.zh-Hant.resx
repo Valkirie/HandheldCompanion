@@ -258,11 +258,23 @@
   <data name="OverlayPage_BackButton" xml:space="preserve">
     <value>Back</value>
   </data>
+  <data name="OverlayPage_CameraAnglePitch" xml:space="preserve">
+    <value>Stationary pitch</value>
+  </data>
+  <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
+    <value>Change the angle, in degree</value>
+  </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
     <value>手柄選項</value>
   </data>
   <data name="OverlayPage_EmulatedController" xml:space="preserve">
     <value>模擬手柄</value>
+  </data>
+  <data name="OverlayPage_FaceCamera" xml:space="preserve">
+    <value>Face camera</value>
+  </data>
+  <data name="OverlayPage_FaceCameraDesc" xml:space="preserve">
+    <value>3D Model slowly rotates to face camera as default position</value>
   </data>
   <data name="OverlayPage_Listening" xml:space="preserve">
     <value>偵聽中...</value>

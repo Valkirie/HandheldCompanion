@@ -62,10 +62,9 @@ namespace HandheldCompanion.Views.Pages
             TriggerUpdated("overlayGamepad", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayControllerTriggerType, Properties.Settings.Default.OverlayControllerTriggerValue));
             TriggerUpdated("overlayTrackpads", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayTrackpadsTriggerType, Properties.Settings.Default.OverlayTrackpadsTriggerValue));
 
-            // controller resting angles
+            // controller face camera and resting angle
+            Toggle_FaceCamera.IsOn = Properties.Settings.Default.OverlayFaceCamera;
             Slider_RestingPitch.Value = Properties.Settings.Default.OverlayControllerRestingPitch;
-            Slider_RestingRoll.Value = Properties.Settings.Default.OverlayControllerRestingRoll;
-            Slider_RestingYaw.Value = Properties.Settings.Default.OverlayControllerRestingYaw;
 
             // trackpads alignment
             var TrackpadsAlignment = Properties.Settings.Default.OverlayTrackpadsAlignment;
@@ -315,39 +314,27 @@ namespace HandheldCompanion.Views.Pages
             ((Expander)sender).BringIntoView();
         }
 
+        private void Toggle_FaceCamera_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!Initialized)
+                return;
+
+            MainWindow.overlay.FaceCamera = Toggle_FaceCamera.IsOn;
+            Slider_RestingPitch.IsEnabled = Toggle_FaceCamera.IsOn == true ? true : false;
+
+            // save settings
+            Properties.Settings.Default.OverlayFaceCamera = Toggle_FaceCamera.IsOn;
+            Properties.Settings.Default.Save();
+        }
         private void Slider_RestingPitch_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (!Initialized)
                 return;
 
-            MainWindow.overlay.DesiredAngleDeg.X = Slider_RestingPitch.Value;
+            MainWindow.overlay.DesiredAngleDeg.X = -1 * Slider_RestingPitch.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerRestingPitch = Slider_RestingPitch.Value;
-            Properties.Settings.Default.Save();
-        }
-
-        private void Slider_RestingYaw_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (!Initialized)
-                return;
-
-            MainWindow.overlay.DesiredAngleDeg.Z = Slider_RestingYaw.Value;
-
-            // save settings
-            Properties.Settings.Default.OverlayControllerRestingYaw = Slider_RestingYaw.Value;
-            Properties.Settings.Default.Save();
-        }
-
-        private void Slider_RestingRoll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (!Initialized)
-                return;
-
-            MainWindow.overlay.DesiredAngleDeg.Y = Slider_RestingRoll.Value;
-
-            // save settings
-            Properties.Settings.Default.OverlayControllerRestingRoll = Slider_RestingRoll.Value;
             Properties.Settings.Default.Save();
         }
 
