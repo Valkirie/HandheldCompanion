@@ -1,4 +1,5 @@
 ﻿using static ControllerCommon.OneEuroFilter;
+using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
@@ -26,6 +27,11 @@ namespace ControllerCommon.Devices
                 { 'Y', 'Z' },
                 { 'Z', 'Y' },
             };
+
+            listeners.Add("WIN key", new ChordClick(KeyCode.LWin));
+            //listeners.Add("TM key", new ChordClick(KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete)); // Conflicts with OS
+            listeners.Add("ESC key", new ChordClick(KeyCode.Escape));
+            listeners.Add("KB key", new ChordClick(KeyCode.RControlKey, KeyCode.LWin)); // Conflicts with Ayaspace when installed
         }
     }
 }
