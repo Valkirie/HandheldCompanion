@@ -1,6 +1,7 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.DeviceUtils;
@@ -93,9 +94,26 @@ namespace ControllerService.Sensors
 
         private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
-            this.reading.X = this.reading_fixed.X = (float)filter.axis1Filter.Filter(args.Reading.AccelerationX * ControllerService.handheldDevice.AccelerationAxis.X, XInputController.DeltaSeconds);
-            this.reading.Y = this.reading_fixed.Y = (float)filter.axis2Filter.Filter(args.Reading.AccelerationZ * ControllerService.handheldDevice.AccelerationAxis.Z, XInputController.DeltaSeconds);
-            this.reading.Z = this.reading_fixed.Z = (float)filter.axis3Filter.Filter(args.Reading.AccelerationY * ControllerService.handheldDevice.AccelerationAxis.Y, XInputController.DeltaSeconds);
+            foreach (char axis in reading_axis.Keys)
+            {
+                switch (ControllerService.handheldDevice.AccelerationAxisSwap[axis])
+                {
+                    default:
+                    case 'X':
+                        reading_axis[axis] = args.Reading.AccelerationX;
+                        break;
+                    case 'Y':
+                        reading_axis[axis] = args.Reading.AccelerationY;
+                        break;
+                    case 'Z':
+                        reading_axis[axis] = args.Reading.AccelerationZ;
+                        break;
+                }
+            }
+
+            this.reading.X = this.reading_fixed.X = (float)reading_axis['X'] * ControllerService.handheldDevice.AccelerationAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)reading_axis['Y'] * ControllerService.handheldDevice.AccelerationAxis.Y;
+            this.reading.Z = this.reading_fixed.Z = (float)reading_axis['Z'] * ControllerService.handheldDevice.AccelerationAxis.Z;
 
             base.ReadingChanged();
         }

@@ -2,6 +2,7 @@
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Timers;
 using Windows.Devices.Sensors;
@@ -41,6 +42,13 @@ namespace ControllerService.Sensors
 
         public object sensor;
         public OneEuroFilter3D filter = new();
+
+        protected Dictionary<char, double> reading_axis = new Dictionary<char, double>()
+        {
+            { 'X', 0.0d },
+            { 'Y', 0.0d },
+            { 'Z', 0.0d },
+        };
 
         protected XInputSensor()
         {

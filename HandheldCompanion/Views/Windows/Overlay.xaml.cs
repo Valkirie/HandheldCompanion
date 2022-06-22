@@ -6,9 +6,11 @@ using HandheldCompanion.Models;
 using SharpDX.XInput;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -44,8 +46,6 @@ namespace HandheldCompanion.Views.Windows
 
         private GeometryModel3D model;
         private Point OverlayPosition;
-        private Point LeftTrackPadPosition;
-        private Point RightTrackPadPosition;
 
         private enum TouchTarget
         {
@@ -102,9 +102,6 @@ namespace HandheldCompanion.Views.Windows
             WindowInteropHelper helper = new WindowInteropHelper(this);
             SetWindowLong(helper.Handle, GWL_EXSTYLE,
                 GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
-
-            this.LeftTrackPadPosition = LeftTrackpad.PointToScreen(new Point(0, 0));
-            this.RightTrackPadPosition = RightTrackpad.PointToScreen(new Point(0, 0));
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -200,12 +197,17 @@ namespace HandheldCompanion.Views.Windows
             }
         }
 
+        public double GetWindowsScaling()
+        {
+            return Screen.PrimaryScreen.Bounds.Width / SystemParameters.PrimaryScreenWidth;
+        }
+
         private void Touchsource_Touch(TouchArgs args, long time)
         {
             double X = args.LocationX - this.OverlayPosition.X;
             // double Y = args.LocationY - this.OverlayPosition.Y;
 
-            double CenterX = this.ActualWidth / 2;
+            double CenterX = Screen.PrimaryScreen.Bounds.Width / 2;
             target = X < CenterX ? TouchTarget.TrackpadLeft : TouchTarget.TrackpadRight;
 
             CursorButton Button = CursorButton.None;
@@ -216,20 +218,21 @@ namespace HandheldCompanion.Views.Windows
                 default:
                 case TouchTarget.TrackpadLeft:
                     Button = CursorButton.TouchLeft;
-                    CurrentPoint = LeftTrackPadPosition;
+                    CurrentPoint = LeftTrackpad.PointToScreen(new Point(0, 0));
                     break;
                 case TouchTarget.TrackpadRight:
                     Button = CursorButton.TouchRight;
-                    CurrentPoint = RightTrackPadPosition;
+                    CurrentPoint = RightTrackpad.PointToScreen(new Point(0, 0));
                     break;
             }
 
-            // normalized
-            var relativeX = Math.Clamp(args.LocationX - CurrentPoint.X, 0, LeftTrackpad.ActualWidth);
-            var relativeY = Math.Clamp(args.LocationY - CurrentPoint.Y, 0, LeftTrackpad.ActualHeight);
+            var dpi = GetWindowsScaling();
 
-            var normalizedX = (relativeX / LeftTrackpad.ActualWidth) / 2.0d;
-            var normalizedY = relativeY / LeftTrackpad.ActualHeight;
+            var relativeX = Math.Max(args.LocationX - CurrentPoint.X, 0);
+            var relativeY = Math.Max(args.LocationY - CurrentPoint.Y, 0);
+
+            var normalizedX = (relativeX / (LeftTrackpad.ActualWidth * dpi)) / 2.0d;
+            var normalizedY = relativeY / (LeftTrackpad.ActualHeight * dpi);
 
             switch (target)
             {

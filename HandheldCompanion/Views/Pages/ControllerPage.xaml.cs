@@ -121,7 +121,10 @@ namespace HandheldCompanion.Views.Pages
                 }
 
                 if (RadioControllers.Items.Count == 0)
+                {
+                    currentController = null;
                     InputDevices.Visibility = Visibility.Collapsed;
+                }
                 else
                 {
                     // current controller was unplugged, pick another one from the list
@@ -152,6 +155,7 @@ namespace HandheldCompanion.Views.Pages
 
                 RadioControllers.Items.Add(controller);
 
+                // no controller is currently selected, pick the first one
                 if (currentController is null)
                     RadioControllers.SelectedIndex = 0;
 
