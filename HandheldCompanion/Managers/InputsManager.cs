@@ -26,7 +26,7 @@ namespace HandheldCompanion.Managers
     {
         // Gamepad vars
         private MultimediaTimer UpdateTimer;
-        private Timer ResetTimer;
+        private MultimediaTimer ResetTimer;
 
         private Dictionary<string, long> prevKeyDown = new();
         private Dictionary<string, long> prevKeyUp = new();
@@ -71,8 +71,8 @@ namespace HandheldCompanion.Managers
             UpdateTimer = new MultimediaTimer(10);
             UpdateTimer.Tick += UpdateReport;
 
-            ResetTimer = new Timer(10) { AutoReset = false };
-            ResetTimer.Elapsed += (sender, e) => { ReleaseBuffer(); };
+            ResetTimer = new MultimediaTimer(20) { AutoReset = false };
+            ResetTimer.Tick += (sender, e) => { ReleaseBuffer(); };
 
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();

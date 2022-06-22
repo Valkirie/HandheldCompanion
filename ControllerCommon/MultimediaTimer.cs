@@ -25,6 +25,7 @@ namespace ControllerCommon
         [DllImport("winmm.dll")]
         private static extern int timeEndPeriod(int msec);
 
+        public bool AutoReset = true;
         public int Interval = 33;
         private int timerID = 0;
 
@@ -50,6 +51,9 @@ namespace ControllerCommon
         {
             if (Tick != null)
                 Tick(this, new EventArgs());
+
+            if (!AutoReset)
+                Stop();
         }
 
         public void Stop()
