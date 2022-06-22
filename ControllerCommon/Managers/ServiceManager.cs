@@ -26,6 +26,7 @@ namespace ControllerCommon.Managers
         private string name;
         private string display;
         private string description;
+        private bool initialized;
 
         private ServiceController controller;
         public ServiceControllerStatus status = ServiceControllerStatus.None;
@@ -144,7 +145,11 @@ namespace ControllerCommon.Managers
                 prevType = (int)type;
             }
 
-            Ready?.Invoke();
+            if (!initialized)
+            {
+                Ready?.Invoke();
+                initialized = true;
+            }
         }
 
         public void CreateService(string path)
