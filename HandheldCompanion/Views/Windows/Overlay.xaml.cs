@@ -151,9 +151,9 @@ namespace HandheldCompanion.Views.Windows
                             case "AYANEONext":
                                 newModel = new ModelAYANEONext();
                                 break;
-                            /* case "ONEXPLAYERMini":
-                                newModel = new ModelXBOX360();
-                                break; */
+                            case "ONEXPLAYERMini":
+                                newModel = new ModelOneXPlayerMini();
+                                break;
                             default:
                                 // default model if unsupported OEM
                                 newModel = new ModelXBOX360();
