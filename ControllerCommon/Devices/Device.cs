@@ -83,6 +83,17 @@ namespace ControllerCommon.Devices
                 }
                 break;
 
+                case "GPD":
+                    {
+                        switch (ProductName)
+                        {
+                            case "G1619-03":
+                                device = new GPDWinMax2();
+                                break;
+                        }
+                    }
+                    break;
+
                 case "ONE-NETBOOK TECHNOLOGY CO., LTD.":
                 {
                     switch (ProductName)
