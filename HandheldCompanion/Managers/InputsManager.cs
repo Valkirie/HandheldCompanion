@@ -26,7 +26,7 @@ namespace HandheldCompanion.Managers
     {
         // Gamepad vars
         private MultimediaTimer UpdateTimer;
-        private MultimediaTimer ResetTimer;
+        private Timer ResetTimer;
 
         private Dictionary<string, long> prevKeyDown = new();
         private Dictionary<string, long> prevKeyUp = new();
@@ -71,8 +71,8 @@ namespace HandheldCompanion.Managers
             UpdateTimer = new MultimediaTimer(10);
             UpdateTimer.Tick += UpdateReport;
 
-            ResetTimer = new MultimediaTimer(10);
-            ResetTimer.Tick += (sender, e) => { ReleaseBuffer(); };
+            ResetTimer = new Timer(10) { AutoReset = false };
+            ResetTimer.Elapsed += (sender, e) => { ReleaseBuffer(); };
 
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();
@@ -95,8 +95,6 @@ namespace HandheldCompanion.Managers
 
         private void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
         {
-            ResetTimer.Stop();
-
             if (TriggerLock)
                 return;
 
@@ -121,8 +119,6 @@ namespace HandheldCompanion.Managers
 
                 if (Enumerable.SequenceEqual(chord_keys, buffer_keys))
                 {
-                    TriggerBuffer.Clear();
-
                     long time_last = TIME_BURST;
                     long time_duration = time_last;
 
@@ -139,19 +135,17 @@ namespace HandheldCompanion.Managers
                     
                     // skip call if too close
                     if (time_last < TIME_BURST)
-                        return;
+                        break;
                     
                     // only send trigger on release
                     if (!args.IsKeyUp)
-                        return;
+                        break;
 
                     time_duration = args.Timestamp - prevKeyDown[listener];
                     if (time_duration > TIME_LONG)
                         listener += " (HOLD)";
 
-#if DEBUG
-                    LogManager.LogDebug("Triggered: {0} at {1}", listener, args.Timestamp);
-#endif
+                    LogManager.LogDebug("Success: {0} at {1}", listener, args.Timestamp);
                     
                     if (string.IsNullOrEmpty(TriggerListener))
                     {
@@ -160,18 +154,22 @@ namespace HandheldCompanion.Managers
                         if (string.IsNullOrEmpty(trigger))
                             break;
 
+                        TriggerBuffer.Clear();
                         TriggerRaised?.Invoke(trigger, Triggers[trigger]);
+
+                        return;
                     }
                     else
                     {
                         TriggerInputs inputs = new TriggerInputs(TriggerInputsType.Keyboard, string.Join(",", chord.Keys), listener);
                         Triggers[TriggerListener] = inputs;
 
+                        TriggerBuffer.Clear();
                         TriggerUpdated?.Invoke(TriggerListener, inputs);
                         TriggerListener = string.Empty;
-                    }
 
-                    return;
+                        return;
+                    }
                 }
             }
 
