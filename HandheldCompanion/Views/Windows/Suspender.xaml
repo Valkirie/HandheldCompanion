@@ -10,9 +10,10 @@
         Width="800" Height="600"
         Closing="Window_Closing"
         Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+        ui:ThemeManager.ActualThemeChanged="Window_ActualThemeChanged"
         Title="Suspender" Topmost="True" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize" WindowStyle="ToolWindow">
 
-    <Border Background="White" CornerRadius="{DynamicResource ControlCornerRadius}">
+    <Border CornerRadius="{DynamicResource ControlCornerRadius}">
         <!-- Processe(s) -->
         <ScrollViewer>
             <ui:SimpleStackPanel Name="CurrentProcesses" Spacing="6"/>

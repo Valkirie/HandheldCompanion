@@ -141,9 +141,9 @@ namespace HandheldCompanion.Managers
             processBorder = new Border()
             {
                 Padding = new Thickness(20, 12, 12, 12),
-                Background = (Brush)Application.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"],
                 Tag = Name
             };
+            processBorder.SetResourceReference(Control.BackgroundProperty, "SystemControlBackgroundChromeMediumLowBrush");
 
             // Create Grid
             processGrid = new();
@@ -195,16 +195,19 @@ namespace HandheldCompanion.Managers
                 Text = Process.ProcessName,
                 VerticalAlignment = VerticalAlignment.Center
             };
+
+            processName.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
             StackPanel.Children.Add(processName);
 
             var processExecutable = new TextBlock()
             {
                 FontSize = 12,
-                Foreground = (Brush)Application.Current.Resources["SystemControlForegroundBaseMediumBrush"],
                 Text = Executable,
                 TextWrapping = TextWrapping.Wrap,
                 VerticalAlignment = VerticalAlignment.Center
             };
+
+            processExecutable.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
             StackPanel.Children.Add(processExecutable);
 
             Grid.SetColumn(StackPanel, 1);

@@ -1,5 +1,7 @@
 ﻿using HandheldCompanion.Managers;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace HandheldCompanion.Views.Windows
 {
@@ -72,6 +74,10 @@ namespace HandheldCompanion.Views.Windows
         {
             isClosing = v;
             this.Close();
+        }
+
+        private void Window_ActualThemeChanged(object sender, RoutedEventArgs e)
+        {
         }
     }
 }
