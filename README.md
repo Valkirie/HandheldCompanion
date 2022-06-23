@@ -3,7 +3,7 @@
 A combination of a Windows service and a touch interface to take advantage of your device's inertial measurement unit (IMU) and enhance your gaming experience with the controller.
 
 ## About
-The **Controller Service** provides gyroscope and accelerometer support to devices with an embedded IMU through a virtual controller. **Handheld Companion** front-end provides a touch-enabled interface to manage all service settings and manage your game-specific profiles.
+The **Controller Service** provides gyroscope and accelerometer support to devices with an embedded IMU through a virtual controller. **Handheld Companion** front-end provides a touch-enabled interface to manage all service settings, your game-specific profiles and the overlay.
 - When turned-on, embedded controller will be cloaked to applications outside the whitelist and virtual controller enabled.
 - When turned-off, embedded controller will be uncloaked and virtual controller disabled.
 
@@ -16,7 +16,7 @@ Controller Service supports emulation of the following USB Gamepads:
 A few examples of the most common use cases for `Controller Service` are:
 - You want to add high-precision motion controls to your Windows game library through [Steam](https://store.steampowered.com/controller/update/dec15).
 - You want to play your Sony Playstation 4 library through [PlayStation Now](https://www.playstation.com/en-us/ps-now/) or [PS4 Remote Play](<https://remoteplay.dl.playstation.net/remoteplay/>).
-- You want to enjoy all your [Wii](https://dolphin-emu.org/), [WiiU](https://cemu.info/) and [Switch](https://yuzu-emu.org/) games with full motion controls through UDP motion control protocol. 
+- You want to enjoy all your [Wii](https://dolphin-emu.org/), [WiiU](https://cemu.info/) and [Switch](https://yuzu-emu.org/) games with full motion controls through UDP motion control protocol.
 
 ## Supported Systems
 The software is built for Windows 10/Windows 11 (x86 and amd64).
@@ -24,7 +24,7 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 ## Supported Devices
 - AYA Neo and its different versions
 - AYA Next and its different versions
-- ONEXPLAYER MINI (Work in progress...)
+- ONEXPLAYER MINI and its different versions (Intel, AMD, Gundam)
 
 ## Supported Sensors
 - Bosch BMI160
@@ -36,14 +36,23 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - Chinese (Simplified)
 - Chinese (Traditional)
 
-## Visuals
+## Overlay
+The software has a built-in overlay. The overlay can be used to display a virtual controller and a virtual touchpad on top of your gaming sessions.
+The virtual touchpad is used to mimic the DualShock 4 physical touchpad and grants maximum compatibility with PS Now and PS Remote software suites.
 
-![image](https://user-images.githubusercontent.com/934757/158461053-180c23d3-844a-4187-bf4b-968eb504d89e.png)
-![image](https://user-images.githubusercontent.com/934757/158461074-b387f10a-de24-40df-a52e-61711850b24a.png)
-![image](https://user-images.githubusercontent.com/934757/158461093-62402463-4e46-45e5-b1db-9045ab8f38e5.png)
-![image](https://user-images.githubusercontent.com/934757/158461113-70890600-a7c4-46fb-a8ec-f39eb2341ee3.png)
-![image](https://user-images.githubusercontent.com/934757/158461938-e5c96ad7-b6eb-4bd2-9260-9f4c1ca4d199.png)
-![image](https://user-images.githubusercontent.com/934757/158461955-6cffd0ac-0399-4afa-9d32-cfb3ab6aab5b.png)
+### Supported Models
+- OEM controller
+- Emulated controller (DualShock 4, Xbox 360)
+- ZDO+ controller
+- Fisher-Price controller
+
+## Visuals
+![image](https://user-images.githubusercontent.com/934757/175270847-0638207d-f2c2-4bf7-becd-da6860638b0b.png)
+![image](https://user-images.githubusercontent.com/934757/175270868-b2bffc77-878b-4a58-b2db-7387324c2390.png)
+![image](https://user-images.githubusercontent.com/934757/175270899-edd658b5-1103-4bda-aaa6-1685e2b3d3f5.png)
+![image](https://user-images.githubusercontent.com/934757/175270908-54eddc08-2620-4831-bc91-bfeb4340462a.png)
+![image](https://user-images.githubusercontent.com/934757/175271013-6c130e24-ec81-4d9a-9d85-cb74c5e7e327.png)
+![image](https://user-images.githubusercontent.com/934757/175271036-52fde73c-f9d4-4f67-aede-4a5618e0fe28.png)
 
 ## Contribute
 ### Bugs & Features
