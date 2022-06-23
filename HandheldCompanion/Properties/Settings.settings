@@ -113,5 +113,11 @@
     <Setting Name="OverlayFaceCamera" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="QuickToolsTriggerType" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="QuickToolsTriggerValue" Type="System.String" Scope="User">
+      <Value Profile="(Default)">36</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

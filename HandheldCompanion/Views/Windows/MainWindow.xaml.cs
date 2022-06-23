@@ -52,6 +52,7 @@ namespace HandheldCompanion.Views
         public static InputsManager inputsManager;
         public static Overlay overlay;
         public static Suspender suspender;
+        public static QuickTools quickTools;
 
         // touchscroll vars
         Point scrollPoint = new Point();
@@ -186,6 +187,7 @@ namespace HandheldCompanion.Views
 
             overlay = new Overlay(pipeClient, inputsManager);
             suspender = new Suspender(processManager);
+            quickTools = new QuickTools();
 
             // initialize service manager
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
@@ -295,6 +297,9 @@ namespace HandheldCompanion.Views
                 {
                     case "suspender":
                         suspender.UpdateVisibility();
+                        break;
+                    case "quickTools":
+                        quickTools.UpdateVisibility();
                         break;
                     case "overlayGamepad":
                         overlay.UpdateControllerVisibility();
@@ -696,6 +701,7 @@ namespace HandheldCompanion.Views
 
             overlay.Close();
             suspender.Close(true);
+            quickTools.Close(true);
 
             if (pipeClient.connected)
                 pipeClient.Close();
