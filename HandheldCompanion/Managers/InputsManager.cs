@@ -63,7 +63,7 @@ namespace HandheldCompanion.Managers
             UpdateTimer = new MultimediaTimer(10);
             UpdateTimer.Tick += UpdateReport;
 
-            ResetTimer = new MultimediaTimer(20) { AutoReset = false };
+            ResetTimer = new MultimediaTimer(10) { AutoReset = false };
             ResetTimer.Tick += (sender, e) => { ReleaseBuffer(); };
 
             m_GlobalHook = Hook.GlobalEvents();
@@ -87,6 +87,8 @@ namespace HandheldCompanion.Managers
 
         private void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
         {
+            ResetTimer.Stop();
+
             if (TriggerLock)
                 return;
 
