@@ -14,7 +14,7 @@
         MinHeight="720"
         Closing="Window_Closing"
         Loaded="Window_Loaded"
-        ui:WindowHelper.UseModernWindowStyle="True"
+        ui:WindowHelper.UseModernWindowStyle="True" ResizeMode="NoResize" 
         Title="QuickTools" ShowInTaskbar="False" Topmost="True">
 
     <ui:NavigationView
