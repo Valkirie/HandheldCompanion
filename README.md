@@ -40,6 +40,8 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 The software has a built-in overlay. The overlay can be used to display a virtual controller and a virtual touchpad on top of your gaming sessions.
 The virtual touchpad is used to mimic the DualShock 4 physical touchpad and grants maximum compatibility with PS Now and PS Remote software suites.
 
+![image](https://user-images.githubusercontent.com/934757/175498734-29c9dc25-e7ed-44f3-a6f6-9600122c35cd.png)
+
 ### Supported Models
 - OEM controller
 - Emulated controller (DualShock 4, Xbox 360)
