@@ -13,7 +13,7 @@
       Loaded="Page_Loaded"
       Title="{x:Static resx:Resources.ProfilesPage_Profiles}">
 
-    <Grid Name="MainGrid" Margin="20" >
+    <Grid Name="MainGrid" Margin="56,20,12,36" >
         <Border>
             <ui:SimpleStackPanel Name="StackPanel_Profiles" Spacing="24">
                 <ui:SimpleStackPanel Spacing="6">
@@ -85,7 +85,7 @@
 
                     <!-- Profile details -->
                     <Border
-                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">

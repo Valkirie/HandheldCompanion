@@ -12,7 +12,7 @@
       KeepAlive="True"
       Title="{x:Static resx:Resources.AboutPage_About}">
 
-    <Grid Name="MainGrid" Margin="20">
+    <Grid Name="MainGrid" Margin="56,20,12,36">
         <ui:SimpleStackPanel Spacing="6">
 
             <!-- Warning -->
@@ -52,15 +52,11 @@
 
                 <Grid>
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
-                        <Image Name="ImageDevice" Height="50" Width="120">
-                            <Image.Source>
-                                <BitmapImage UriSource="/Resources/device_generic.png"/>
-                            </Image.Source>
-                        </Image>
+                        <Image Name="ImageDevice" Stretch="UniformToFill" Source="/Resources/device_generic.png" Height="50" Width="120"/>
                         <ui:SimpleStackPanel Orientation="Vertical" VerticalAlignment="Center">
                             <Label Name="LabelManufacturer" Content="Manufacturer" FontWeight="SemiBold" FontSize="20"></Label>
                             <Label Name="LabelProductName" Content="Product name" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" ></Label>
-                            </ui:SimpleStackPanel>
+                        </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </Grid>
             </Border>

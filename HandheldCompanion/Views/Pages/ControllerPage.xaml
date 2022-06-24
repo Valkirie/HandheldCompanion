@@ -18,7 +18,7 @@
         <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
     </Page.Resources>
 
-    <Grid Name="MainGrid" Margin="20" IsEnabled="False">
+    <Grid Name="MainGrid" Margin="56,20,12,36" IsEnabled="False">
         <Border>
             <ui:SimpleStackPanel Spacing="24">
 

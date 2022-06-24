@@ -13,7 +13,7 @@
       Loaded="Page_Loaded"
       Title="{x:Static resx:Resources.SettingsPage_Settings}">
 
-    <Grid Name="MainGrid" Margin="20">
+    <Grid Name="MainGrid" Margin="56,20,12,36">
         <ui:SimpleStackPanel Spacing="24">
 
             <!-- Update manager -->

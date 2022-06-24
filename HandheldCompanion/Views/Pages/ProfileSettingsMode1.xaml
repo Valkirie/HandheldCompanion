@@ -12,7 +12,7 @@
       Title="{x:Static resx:Resources.ProfileSettingsMode1_AdditionalSettings}"
       Loaded="Page_Loaded">
 
-    <Grid Name="MainGrid" Margin="20">
+    <Grid Name="MainGrid" Margin="56,20,12,36">
         <ui:SimpleStackPanel Spacing="12">
 
             <!-- Joystick steering preview -->
