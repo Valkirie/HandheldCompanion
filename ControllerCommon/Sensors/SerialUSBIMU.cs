@@ -5,6 +5,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
+using System.Threading.Tasks;
 using static ControllerCommon.OneEuroFilter;
 using static ControllerCommon.Utils.CommonUtils;
 using static ControllerCommon.Utils.DeviceUtils;
@@ -114,7 +115,7 @@ namespace ControllerCommon.Sensors
 
         private int tentative;
         private int maxTentative = 8;
-        public bool Open()
+        public async void Open()
         {
             tentative = 0; // reset tentative
 
@@ -128,18 +129,15 @@ namespace ControllerCommon.Sensors
                     serial.port.DataReceived += new SerialDataReceivedEventHandler(serial.DataReceivedHandler);
 
                     logger?.LogInformation("{0} connected", serial.ToString());
-                    return true;
                 }
                 catch (Exception)
                 {
                     // port is not ready yet
                     tentative++;
                     logger?.LogError("{0} could not connect. Attempt: {1} out of {2}", serial.ToString(), tentative, maxTentative);
-                    Thread.Sleep(500);
+                    await Task.Delay(500);
                 }
             }
-
-            return false;
         }
 
         public bool Close()
@@ -159,7 +157,7 @@ namespace ControllerCommon.Sensors
         }
 
         // When data is received over the serial port, parse.	
-        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+        private async void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             int index = 0;
             ushort usLength;
@@ -227,7 +225,7 @@ namespace ControllerCommon.Sensors
                         return;
                     }
 
-                    Thread.Sleep(1); // give device a bit of time...
+                    await Task.Delay(100);
 
                     // Address write function code register = 0xA4, 0x03
                     // Register to read/write save settings 0x05

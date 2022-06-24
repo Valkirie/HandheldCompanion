@@ -567,7 +567,7 @@ namespace ControllerService
             pipeServer.Open();
 
             // listen to system events
-            SystemEvents.PowerModeChanged += OnPowerChange;
+            SystemEvents.PowerModeChanged += OnPowerChangeAsync;
 
             // OnPowerChange(null, new PowerModeChangedEventArgs(PowerModes.Suspend));
             // OnPowerChange(null, new PowerModeChangedEventArgs(PowerModes.Resume));
@@ -587,7 +587,7 @@ namespace ControllerService
             SetControllerMode(HIDmode.NoController);
 
             // stop listening to system events
-            SystemEvents.PowerModeChanged -= OnPowerChange;
+            SystemEvents.PowerModeChanged -= OnPowerChangeAsync;
 
             // stop DSUClient
             DSUServer?.Stop();
@@ -601,7 +601,7 @@ namespace ControllerService
             return Task.CompletedTask;
         }
 
-        private void OnPowerChange(object s, PowerModeChangedEventArgs e)
+        private async void OnPowerChangeAsync(object s, PowerModeChangedEventArgs e)
         {
             LogManager.LogInformation("Device power mode set to {0}", e.Mode);
 
@@ -613,7 +613,7 @@ namespace ControllerService
                 case PowerModes.Resume:
                     {
                         // resume delay (arbitrary)
-                        Thread.Sleep(5000);
+                        await Task.Delay(5000);
 
                         // (re)initialize sensors
                         XInputController?.UpdateSensors();
