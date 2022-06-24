@@ -11,8 +11,10 @@
       d:DesignHeight="720" d:DesignWidth="400"
       Title="Performance">
 
-    <Grid>
-        <ui:SimpleStackPanel Spacing="2" Margin="0,0,0,0">
+    <ui:SimpleStackPanel Spacing="6">
+        
+        <!-- Thermal Power (TDP) Limit -->
+        <ui:SimpleStackPanel Spacing="2">
             <!-- Header -->
             <Border                      
                         Padding="15,12,12,12"
@@ -21,8 +23,8 @@
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="300"></ColumnDefinition>
-                        <ColumnDefinition Width="150"></ColumnDefinition>
+                        <ColumnDefinition Width="280"></ColumnDefinition>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
                     <DockPanel>
@@ -34,7 +36,7 @@
                         </ui:SimpleStackPanel>
                     </DockPanel>
 
-                    <ui:ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" OffContent="" OnContent="" Margin="-50,0,15,0" />
+                    <ui:ToggleSwitch Grid.Column="1" OffContent="" OnContent="" />
                 </Grid>
             </Border>
 
@@ -44,14 +46,112 @@
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
-                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=tb_ProfileGyroValue, Mode=OneWay}" />
-                    <Slider Margin="6,0,0,0" Name="tb_ProfileGyroValue" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="5" Value="20" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                                                    MouseEnter="Scrolllock_MouseEnter"
-                                                    MouseLeave="Scrolllock_MouseLeave"/>
+                <DockPanel Grid.Column="1" Margin="8,0,0,0">
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSlider, Mode=OneWay}" />
+                    <Slider Name="TDPSlider" Width="280" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="5" Value="20" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                            MouseEnter="Scrolllock_MouseEnter"
+                            MouseLeave="Scrolllock_MouseLeave"/>
                 </DockPanel>
 
             </Border>
         </ui:SimpleStackPanel>
-    </Grid>
+
+        <!-- Manual GPU Clock Control -->
+        <ui:SimpleStackPanel Spacing="2">
+            <!-- Header -->
+            <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="280"></ColumnDefinition>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEC4A;" Height="40" HorizontalAlignment="Center"/>
+
+                        <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                            <TextBlock Text="Manual GPU Clock Control" FontSize="14"/>
+                            <TextBlock Text="Sets the GPU to a fixed clock" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                        </ui:SimpleStackPanel>
+                    </DockPanel>
+
+                    <ui:ToggleSwitch Grid.Column="1" OffContent="" OnContent="" />
+                </Grid>
+            </Border>
+
+            <!-- Content -->
+            <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <DockPanel Grid.Column="1" Margin="0,0,0,0">
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}" />
+                    <Slider Name="GPUSlider" Width="280" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="100" Value="1200" Minimum="500" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                            MouseEnter="Scrolllock_MouseEnter"
+                            MouseLeave="Scrolllock_MouseLeave"/>
+                </DockPanel>
+
+            </Border>
+        </ui:SimpleStackPanel>
+
+        <!-- Brightness -->
+        <ui:SimpleStackPanel Spacing="2">
+            <!-- Header -->
+            <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300"></ColumnDefinition>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE706;" Height="40" HorizontalAlignment="Center"/>
+
+                        <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                            <Slider Width="260" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Value="50" Minimum="10" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                            MouseEnter="Scrolllock_MouseEnter"
+                            MouseLeave="Scrolllock_MouseLeave"/>
+                        </ui:SimpleStackPanel>
+                    </DockPanel>
+                </Grid>
+            </Border>
+        </ui:SimpleStackPanel>
+
+        <!-- Sounds -->
+        <ui:SimpleStackPanel Spacing="2">
+            <!-- Header -->
+            <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300"></ColumnDefinition>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE767;" Height="40" HorizontalAlignment="Center"/>
+
+                        <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                            <Slider Width="260" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Value="70" Minimum="10" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                            MouseEnter="Scrolllock_MouseEnter"
+                            MouseLeave="Scrolllock_MouseLeave"/>
+                        </ui:SimpleStackPanel>
+                    </DockPanel>
+                </Grid>
+            </Border>
+        </ui:SimpleStackPanel>
+
+    </ui:SimpleStackPanel>
 </Page>

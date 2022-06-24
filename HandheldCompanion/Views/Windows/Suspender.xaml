@@ -9,8 +9,8 @@
         Width="800" Height="600"
         Closing="Window_Closing"
         Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-        ui:WindowHelper.UseModernWindowStyle="True" ResizeMode="NoResize"
-        Title="Suspender" ShowInTaskbar="False" Topmost="True">
+        ui:WindowHelper.UseModernWindowStyle="True"
+        Title="Suspender" Topmost="True">
 
     <Border CornerRadius="{DynamicResource ControlCornerRadius}">
         <!-- Processe(s) -->

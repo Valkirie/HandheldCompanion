@@ -8,14 +8,14 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
         Height="720"
+        MinHeight="500"
         Width="400"
         MinWidth="400"
         MaxWidth="400"
-        MinHeight="720"
         Closing="Window_Closing"
         Loaded="Window_Loaded"
-        ui:WindowHelper.UseModernWindowStyle="True" ResizeMode="NoResize" 
-        Title="QuickTools" ShowInTaskbar="False" Topmost="True">
+        ui:WindowHelper.UseModernWindowStyle="True" 
+        Title="QuickTools" Topmost="True">
 
     <ui:NavigationView
         Name="navView" PaneDisplayMode="LeftCompact"
