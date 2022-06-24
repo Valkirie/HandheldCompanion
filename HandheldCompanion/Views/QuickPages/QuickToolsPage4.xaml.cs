@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HandheldCompanion.Views.Windows;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,16 @@ namespace HandheldCompanion.Views.QuickPages
         public QuickToolsPage4()
         {
             InitializeComponent();
+        }
+
+        private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            QuickTools.scrollLock = true;
+        }
+
+        private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            QuickTools.scrollLock = false;
         }
     }
 }

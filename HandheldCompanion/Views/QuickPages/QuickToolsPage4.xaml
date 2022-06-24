@@ -9,11 +9,11 @@
       KeepAlive="True"
       mc:Ignorable="d" 
       d:DesignHeight="720" d:DesignWidth="400"
-      Title="QuickToolsPage4">
+      Title="Performance">
 
     <Grid>
-        <ui:SimpleStackPanel Spacing="12" Margin="0,0,0,0">
-            <!-- Toast notification -->
+        <ui:SimpleStackPanel Spacing="2" Margin="0,0,0,0">
+            <!-- Header -->
             <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
@@ -21,21 +21,36 @@
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        <ColumnDefinition Width="300"></ColumnDefinition>
+                        <ColumnDefinition Width="150"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
                     <DockPanel>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartupType}" FontSize="14"/>
-                            <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartupTypeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock Text="Thermal Power (TDP) Limit" FontSize="14"/>
+                            <TextBlock Text="Limits processor power for less total power" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
 
-                    <ui:RadioButtons Name="cB_StartupType" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1" />
+                    <ui:ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" OffContent="" OnContent="" Margin="-50,0,15,0" />
                 </Grid>
+            </Border>
+
+            <!-- Content -->
+            <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=tb_ProfileGyroValue, Mode=OneWay}" />
+                    <Slider Margin="6,0,0,0" Name="tb_ProfileGyroValue" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="5" Value="20" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                                                    MouseEnter="Scrolllock_MouseEnter"
+                                                    MouseLeave="Scrolllock_MouseLeave"/>
+                </DockPanel>
+
             </Border>
         </ui:SimpleStackPanel>
     </Grid>

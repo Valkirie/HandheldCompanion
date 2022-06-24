@@ -490,5 +490,41 @@ namespace HandheldCompanion.Properties {
                 this["QuickToolsTriggerValue"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("720")]
+        public double QuickToolsHeight {
+            get {
+                return ((double)(this["QuickToolsHeight"]));
+            }
+            set {
+                this["QuickToolsHeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double QuickToolsLeft {
+            get {
+                return ((double)(this["QuickToolsLeft"]));
+            }
+            set {
+                this["QuickToolsLeft"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double QuickToolsTop {
+            get {
+                return ((double)(this["QuickToolsTop"]));
+            }
+            set {
+                this["QuickToolsTop"] = value;
+            }
+        }
     }
 }

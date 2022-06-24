@@ -17,6 +17,7 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
@@ -430,8 +431,8 @@ namespace HandheldCompanion.Views
             this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.MainWindowHeight);
             this.Width = (int)Math.Max(this.MinWidth, Properties.Settings.Default.MainWindowWidth);
 
-            this.Left = Math.Max(0, Properties.Settings.Default.MainWindowLeft);
-            this.Top = Math.Max(0, Properties.Settings.Default.MainWindowTop);
+            this.Left = Math.Min(SystemParameters.PrimaryScreenWidth - this.MinWidth, Properties.Settings.Default.MainWindowLeft);
+            this.Top = Math.Min(SystemParameters.PrimaryScreenHeight - this.MinHeight, Properties.Settings.Default.MainWindowTop);
 
             // pull settings
             WindowState = settingsPage.StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
@@ -813,14 +814,9 @@ namespace HandheldCompanion.Views
                     .Where(n => n.Tag.Equals(preNavPageName)).FirstOrDefault();
 
                 if (!(NavViewItem is null))
-                {
                     navView.SelectedItem = NavViewItem;
-                    navView.Header = (string)NavViewItem.Content;
-                }
-                else
-                {
-                    navView.Header = ((Page)e.Content).Title;
-                }
+
+                navView.Header = new TextBlock() { Text = (string)((Page)e.Content).Title };
             }
         }
 

@@ -22,13 +22,6 @@ namespace HandheldCompanion.Views.Windows
     /// </summary>
     public partial class QuickTools : Window
     {
-        private const int GWL_STYLE = -16;
-        private const int WS_SYSMENU = 0x80000;
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-        [DllImport("user32.dll")]
-        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-
         // page vars
         private Dictionary<string, Page> _pages = new();
         private string preNavItemTag;
@@ -45,17 +38,16 @@ namespace HandheldCompanion.Views.Windows
 
             // create pages
             quickPage4 = new QuickToolsPage4();
-            _pages.Add("QuickToolsPage4", quickPage4);
+            _pages.Add("Performance", quickPage4);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            double TaskBarHeight = SystemParameters.PrimaryScreenHeight - SystemParameters.WorkArea.Height;
-            Height = SystemParameters.PrimaryScreenHeight - TaskBarHeight;
-            Left = SystemParameters.PrimaryScreenWidth - Width;
+            // update Position and Size
+            this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.QuickToolsHeight);
 
-            var hwnd = new WindowInteropHelper(this).Handle;
-            SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
+            this.Left = Math.Min(SystemParameters.PrimaryScreenWidth - this.MinWidth, Properties.Settings.Default.QuickToolsLeft);
+            this.Top = Math.Min(SystemParameters.PrimaryScreenHeight - this.MinHeight, Properties.Settings.Default.QuickToolsTop);
         }
 
         public void UpdateVisibility()
@@ -128,7 +120,7 @@ namespace HandheldCompanion.Views.Windows
             // If navigation occurs on SelectionChanged, this isn't needed.
             // Because we use ItemInvoked to navigate, we need to call Navigate
             // here to load the home page.
-            NavView_Navigate("QuickToolsPage4");
+            NavView_Navigate("Performance");
         }
 
         private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
@@ -165,14 +157,9 @@ namespace HandheldCompanion.Views.Windows
                     .Where(n => n.Tag.Equals(preNavPageName)).FirstOrDefault();
 
                 if (!(NavViewItem is null))
-                {
                     navView.SelectedItem = NavViewItem;
-                    navView.Header = (string)NavViewItem.Content;
-                }
-                else
-                {
-                    navView.Header = ((Page)e.Content).Title;
-                }
+
+                navView.Header = new TextBlock() { Text = (string)((Page)e.Content).Title, FontSize = 14 };
             }
         }
         #endregion
@@ -237,6 +224,19 @@ namespace HandheldCompanion.Views.Windows
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            // position and size settings
+            switch (WindowState)
+            {
+                case WindowState.Normal:
+                    Properties.Settings.Default.QuickToolsLeft = this.Left;
+                    Properties.Settings.Default.QuickToolsTop = this.Top;
+
+                    Properties.Settings.Default.QuickToolsHeight = this.Height;
+                    break;
+            }
+
+            Properties.Settings.Default.Save();
+
             e.Cancel = !isClosing;
             this.Visibility = Visibility.Collapsed;
         }

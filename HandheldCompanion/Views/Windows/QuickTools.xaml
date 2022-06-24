@@ -9,11 +9,13 @@
         mc:Ignorable="d"
         Height="720"
         Width="400"
+        MinWidth="400"
+        MaxWidth="400"
+        MinHeight="720"
         Closing="Window_Closing"
         Loaded="Window_Loaded"
         ui:WindowHelper.UseModernWindowStyle="True"
-        Title="QuickTools" WindowStyle="None" AllowsTransparency="False" ShowInTaskbar="False"
-        Topmost="True" Focusable="False" ResizeMode="NoResize" Top="0" Left="0" BorderThickness="0">
+        Title="QuickTools" ShowInTaskbar="False" Topmost="True">
 
     <ui:NavigationView
         Name="navView" PaneDisplayMode="LeftCompact"
@@ -69,10 +71,11 @@
             PreviewMouseMove="ScrollViewer_PreviewMouseMove"
             PreviewMouseLeftButtonUp="ScrollViewer_PreviewMouseLeftButtonUp"
             PreviewMouseWheel="ScrollViewer_PreviewMouseWheel"
-            MouseLeave="scrollViewer_MouseLeave">
+            MouseLeave="scrollViewer_MouseLeave"
+            ui:ScrollViewerHelper.IsEnabled="True">
             <ui:Frame
                     Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-                    Name="ContentFrame" MaxWidth="1100"
+                    Name="ContentFrame" MaxWidth="400"
                     HorizontalAlignment="Left"/>
         </ui:ScrollViewerEx>
     </ui:NavigationView>
