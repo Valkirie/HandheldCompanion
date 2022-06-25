@@ -686,6 +686,11 @@ namespace HandheldCompanion.Views.Windows
                     DeviceRotateTransformFaceCameraX = new RotateTransform3D(Ax3DFaceCameraX);
                     Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraX);
                 }
+                else
+                {
+                    // Upward visibility needs constant value, not slowly rotate into view when face camera is off
+                    FaceCameraObjectAlignment.X = 0.0f;
+                }
 
                 // Transform mode with group
                 ModelVisual3D.Content.Transform = Transform3DGroupModel;
