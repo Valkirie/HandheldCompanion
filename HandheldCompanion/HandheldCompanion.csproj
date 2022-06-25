@@ -537,6 +537,9 @@
     <None Update="models\OneXPlayerMini\BLetterInside2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="models\OneXPlayerMini\BodyInternal.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="models\OneXPlayerMini\Screen.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
