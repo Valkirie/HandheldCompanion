@@ -80,7 +80,18 @@ namespace ControllerCommon.Devices
                                 break;
                         }
                     }
-                    break;
+                break;
+
+                case "GPD":
+                    {
+                        switch (ProductName)
+                        {
+                            case "G1619-03":
+                                device = new GPDWinMax2();
+                                break;
+                        }
+                    }
+                break;
 
                 case "ONE-NETBOOK TECHNOLOGY CO., LTD.":
                     {
@@ -100,10 +111,9 @@ namespace ControllerCommon.Devices
                                     }
                                     break;
                                 }
-                                break;
                         }
                     }
-                    break;
+                break;
             }
 
             if (device is null)
