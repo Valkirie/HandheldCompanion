@@ -14,7 +14,7 @@ namespace ControllerCommon.Devices
             this.WidthHeightRatio = 2.4f;
             this.ProductIllustration = "device_gpd_winmax2";
 
-            this.AngularVelocityAxis = new Vector3(1.0f, 1.0f, -1.0f);
+            this.AngularVelocityAxis = new Vector3(1.0f, -1.0f, 1.0f);
             this.AngularVelocityAxisSwap = new()
             {
                 { 'X', 'X' },
