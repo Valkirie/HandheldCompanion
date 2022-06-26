@@ -22,7 +22,7 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            this.AccelerationAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+            this.AccelerationAxis = new Vector3(-1.0f, 1.0f, 1.0f);
             this.AccelerationAxisSwap = new()
             {
                 { 'X', 'X' },
