@@ -247,7 +247,7 @@
 
                             <!--  Separator  -->
                             <Separator
-                                Margin="-60,0,-60,0"
+                                Margin="0"
                                 BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                 BorderThickness="0,1,0,0" />
 
@@ -324,7 +324,7 @@
 
                                 <!--  Separator  -->
                                 <Separator
-                                    Margin="-60,0,-60,0"
+                                    Margin="0"
                                     BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                     BorderThickness="0,1,0,0" />
 
@@ -368,7 +368,7 @@
 
                                 <!--  Separator  -->
                                 <Separator
-                                    Margin="-60,0,-60,0"
+                                    Margin="0"
                                     BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                     BorderThickness="0,1,0,0" />
 
@@ -407,7 +407,7 @@
 
                                 <!--  Separator  -->
                                 <Separator
-                                    Margin="-60,0,-60,0"
+                                    Margin="0"
                                     BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                     BorderThickness="0,1,0,0" />
 
@@ -415,7 +415,7 @@
 
                                 <!--  Separator  -->
                                 <Separator
-                                    Margin="-60,0,-60,0"
+                                    Margin="0"
                                     BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                     BorderThickness="0,1,0,0" />
 
@@ -479,7 +479,7 @@
 
                             <!--  Separator  -->
                             <Separator
-                                Margin="-60,0,-60,0"
+                                Margin="0"
                                 BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                 BorderThickness="0,1,0,0" />
 
@@ -514,7 +514,7 @@
 
                             <!--  Separator  -->
                             <Separator
-                                Margin="-60,0,-60,0"
+                                Margin="0"
                                 BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                 BorderThickness="0,1,0,0" />
 
@@ -548,7 +548,7 @@
 
                             <!--  Separator  -->
                             <Separator
-                                Margin="-60,0,-60,0"
+                                Margin="0"
                                 BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                 BorderThickness="0,1,0,0" />
 
@@ -590,7 +590,7 @@
 
                             <!--  Separator  -->
                             <Separator
-                                Margin="-60,0,-60,0"
+                                Margin="0"
                                 BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                 BorderThickness="0,1,0,0" />
 
@@ -618,7 +618,7 @@
 
                             <!--  Separator  -->
                             <Separator
-                                Margin="-60,0,-60,0"
+                                Margin="0"
                                 BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                 BorderThickness="0,1,0,0" />
 
