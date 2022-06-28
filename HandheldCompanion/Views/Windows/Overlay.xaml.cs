@@ -664,7 +664,7 @@ namespace HandheldCompanion.Views.Windows
                 DiffAngle.Y = ((float)PoseRad.Y < 0.0) ? DiffAngle.Y += 180.0f : DiffAngle.Y -= 180.0f;
 
                 // Correction amount for camera, increase slowly
-                FaceCameraObjectAlignment += DiffAngle * 0.0006; // 0.0015 = ~90 degrees in 30 seconds
+                FaceCameraObjectAlignment += DiffAngle * 0.0015; // 0.0015 = ~90 degrees in 30 seconds
 
                 // Devices rotates (slowly) towards a default position facing the camara 
                 // Calculation above is done to:
@@ -686,18 +686,25 @@ namespace HandheldCompanion.Views.Windows
                     DeviceRotateTransformFaceCameraX = new RotateTransform3D(Ax3DFaceCameraX);
                     Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraX);
                 }
-                else
-                {
-                    // Upward visibility needs constant value, not slowly rotate into view when face camera is off
-                    FaceCameraObjectAlignment.X = 0.0f;
-                }
 
                 // Transform mode with group
                 ModelVisual3D.Content.Transform = Transform3DGroupModel;
 
                 // Upward visibility rotation for shoulder buttons
                 // Model angle to compensate for
-                float ModelPoseXDeg = InputUtils.rad2deg((float)PoseRad.X) - (float)FaceCameraObjectAlignment.X;
+
+                float ModelPoseXDeg = 0.0f;
+
+                if (FaceCamera)
+                {
+                    ModelPoseXDeg = InputUtils.rad2deg((float)PoseRad.X) - (float)FaceCameraObjectAlignment.X;
+                }
+                else
+                {
+                    // Not slowly rotate into view when face camera is off
+                    ModelPoseXDeg = InputUtils.rad2deg((float)PoseRad.X);
+                }
+
                 float ShoulderButtonsAngleDeg = 0.0f;
 
                 // Rotate shoulder 90 degrees upward while controller faces user
