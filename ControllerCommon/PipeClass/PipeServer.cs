@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using ControllerCommon.Managers;
 using NamedPipeWrapper;
 using System;
 using System.Collections.Concurrent;
@@ -62,7 +62,6 @@ namespace ControllerCommon
     public class PipeServer
     {
         private NamedPipeServer<PipeMessage> server;
-        private readonly ILogger logger;
 
         public event ConnectedEventHandler Connected;
         public delegate void ConnectedEventHandler(Object sender);
@@ -103,27 +102,22 @@ namespace ControllerCommon
             return this.GetType().Name;
         }
 
-        public PipeServer(string pipeName, ILogger logger) : this(pipeName)
-        {
-            this.logger = logger;
-        }
-
         public void Open()
         {
             server?.Start();
-            logger?.LogInformation("{0} has started", this.ToString());
+            LogManager.LogInformation("{0} has started", this.ToString());
         }
 
         public void Close()
         {
             server?.Stop();
-            logger?.LogInformation("{0} has stopped", this.ToString());
+            LogManager.LogInformation("{0} has stopped", this.ToString());
             server = null;
         }
 
         private void OnClientConnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
         {
-            logger?.LogInformation("Client {0} is now connected!", connection.Id);
+            LogManager.LogInformation("Client {0} is now connected!", connection.Id);
             Connected?.Invoke(this);
 
             connected = true;
@@ -134,7 +128,7 @@ namespace ControllerCommon
 
         private void OnClientDisconnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
         {
-            logger?.LogInformation("Client {0} disconnected", connection.Id);
+            LogManager.LogInformation("Client {0} disconnected", connection.Id);
             Disconnected?.Invoke(this);
 
             connected = false;
@@ -142,13 +136,13 @@ namespace ControllerCommon
 
         private void OnClientMessage(NamedPipeConnection<PipeMessage, PipeMessage> connection, PipeMessage message)
         {
-            logger?.LogDebug("Client {0} opcode: {1} says: {2}", connection.Id, message.code, string.Join(" ", message.ToString()));
+            LogManager.LogDebug("Client {0} opcode: {1} says: {2}", connection.Id, message.code, string.Join(" ", message.ToString()));
             ClientMessage?.Invoke(this, message);
         }
 
         private void OnError(Exception exception)
         {
-            logger?.LogError("{0} failed. {1}", this.ToString(), exception.Message);
+            LogManager.LogError("{0} failed. {1}", this.ToString(), exception.Message);
         }
 
         public void SendMessage(PipeMessage message)
