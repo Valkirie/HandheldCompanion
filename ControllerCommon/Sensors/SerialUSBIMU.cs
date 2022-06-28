@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using ControllerCommon.Managers;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
+using System.Threading.Tasks;
 using static ControllerCommon.OneEuroFilter;
 using static ControllerCommon.Utils.CommonUtils;
 using static ControllerCommon.Utils.DeviceUtils;
@@ -46,17 +47,13 @@ namespace ControllerCommon.Sensors
         private bool isUpsideDown = false;
         private bool openAutoCalib = false;     // todo: only once! Or based on reading if it's needed?
 
-        private ILogger logger;
-
         public event ReadingChangedEventHandler ReadingChanged;
         public delegate void ReadingChangedEventHandler(Vector3 AccelerationG, Vector3 AngularVelocityDeg);
 
-        public static SerialUSBIMU GetDefault(ILogger logger = null)
+        public static SerialUSBIMU GetDefault()
         {
             if (serial.port.IsOpen)
                 return serial;
-
-            serial.logger = logger;
 
             USBDeviceInfo deviceInfo = null;
             List<USBDeviceInfo> devices = GetSerialDevices();
@@ -114,11 +111,11 @@ namespace ControllerCommon.Sensors
 
         private int tentative;
         private int maxTentative = 8;
-        public bool Open()
+        public async void Open()
         {
             tentative = 0; // reset tentative
 
-            logger?.LogInformation("{0} connecting to {1}", serial.ToString(), serial.device.Name);
+            LogManager.LogInformation("{0} connecting to {1}", serial.ToString(), serial.device.Name);
 
             while (!serial.port.IsOpen && tentative < maxTentative)
             {
@@ -127,19 +124,16 @@ namespace ControllerCommon.Sensors
                     serial.port.Open();
                     serial.port.DataReceived += new SerialDataReceivedEventHandler(serial.DataReceivedHandler);
 
-                    logger?.LogInformation("{0} connected", serial.ToString());
-                    return true;
+                    LogManager.LogInformation("{0} connected", serial.ToString());
                 }
                 catch (Exception)
                 {
                     // port is not ready yet
                     tentative++;
-                    logger?.LogError("{0} could not connect. Attempt: {1} out of {2}", serial.ToString(), tentative, maxTentative);
-                    Thread.Sleep(500);
+                    LogManager.LogError("{0} could not connect. Attempt: {1} out of {2}", serial.ToString(), tentative, maxTentative);
+                    await Task.Delay(500);
                 }
             }
-
-            return false;
         }
 
         public bool Close()
@@ -149,7 +143,7 @@ namespace ControllerCommon.Sensors
                 serial.port.Close();
                 serial.port.DataReceived -= new SerialDataReceivedEventHandler(serial.DataReceivedHandler);
 
-                logger?.LogInformation("{0} disconnected", serial.ToString());
+                LogManager.LogInformation("{0} disconnected", serial.ToString());
                 return true;
             }
             catch (Exception)
@@ -159,7 +153,7 @@ namespace ControllerCommon.Sensors
         }
 
         // When data is received over the serial port, parse.	
-        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+        private async void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             int index = 0;
             ushort usLength;
@@ -193,7 +187,7 @@ namespace ControllerCommon.Sensors
                     // Checksum 0xC1
                     byte[] buffer = new byte[] { 0xA4, 0x03, 0x08, 0x12, 0xC1 };
 
-                    logger.LogInformation("Serial USB Received unexpected datalength and start register, setting register...");
+                    LogManager.LogError("Serial USB Received unexpected datalength and start register, setting register...");
 
                     try
                     {
@@ -216,7 +210,7 @@ namespace ControllerCommon.Sensors
                     // Data checksum lower 8 bits  0x10
                     byte[] buffer = new byte[] { 0xA4, 0x06, 0x07, 0x5F, 0x10 };
 
-                    logger?.LogInformation("Serial USB Calibrating Sensor");
+                    LogManager.LogInformation("Serial USB Calibrating Sensor");
 
                     try
                     {
@@ -227,14 +221,14 @@ namespace ControllerCommon.Sensors
                         return;
                     }
 
-                    Thread.Sleep(1); // give device a bit of time...
+                    await Task.Delay(100);
 
                     // Address write function code register = 0xA4, 0x03
                     // Register to read/write save settings 0x05
                     // 0x55 save current configuration
                     buffer = new byte[] { 0xA4, 0x06, 0x05, 0x55, 0x04 };
 
-                    logger?.LogInformation("Serial USB save settings on device");
+                    LogManager.LogInformation("Serial USB save settings on device");
 
                     port.Write(buffer, 0, buffer.Length);
                     openAutoCalib = false;
