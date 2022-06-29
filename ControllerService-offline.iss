@@ -235,11 +235,8 @@ end;
 #define UseVC2013
 #define UseVC2015To2019
 
-; requires dxwebsetup.exe (see download link below)
 #define UseDirectX
-; requires HidHideMSI.msi
 #define UseHideHide
-; requires ViGEmBusSetup_x64
 #define UseViGem
 
 #define MyAppSetupName 'Handheld Companion'
@@ -293,8 +290,8 @@ Source: "netcorecheck_x64.exe"; Flags: dontcopy noencryption
 #endif
 
 #ifdef UseOfflineInstaller
-Source: "HidHideMSI.msi"; Flags: dontcopy noencryption
-Source: "ViGEmBusSetup_x64.msi"; Flags: dontcopy noencryption
+Source: "HidHide_1.2.93_x64.exe"; Flags: dontcopy noencryption
+Source: "ViGEmBus_1.18.367_x64_x86.exe"; Flags: dontcopy noencryption
 
 Source: "dxwebsetup.exe"; Flags: dontcopy noencryption
 Source: "vcredist2005_x64.exe"; Flags: dontcopy noencryption
@@ -320,8 +317,8 @@ Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Ta
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
 [Run]
-Filename: msiexec.exe; StatusMsg: "Installing ViGEmBus Runtime"; Parameters: "/i {tmp}\ViGEmBusSetup_x64.msi /q"; Flags: waituntilterminated
-Filename: msiexec.exe; StatusMsg: "Installing HidHide Runtime"; Parameters: "/i {tmp}\HidHideMSI.msi /q"; Flags: waituntilterminated
+Filename: "{tmp}\ViGEmBus_1.18.367_x64_x86.exe"; StatusMsg: "Installing ViGEmBus Runtime"; Parameters: "/quiet /qn /norestart"; Flags: waituntilterminated
+Filename: "{tmp}\HidHide_1.2.93_x64.exe"; StatusMsg: "Installing HidHide Runtime"; Parameters: "/quiet /qn /norestart"; Flags: waituntilterminated
 
 Filename: "{tmp}\dxwebsetup.exe"; StatusMsg: "Installing DirectX Runtime"; Parameters: "/q"; Flags: waituntilterminated
 Filename: "{tmp}\vcredist2019_x64.exe"; StatusMsg: "Installing Visual C++ 2015-2019 Redistributable"; Parameters: "/passive /norestart"; Flags: waituntilterminated
