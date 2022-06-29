@@ -13,7 +13,11 @@ namespace ControllerCommon.Processor
         private static ManagementClass managClass = new ManagementClass("win32_processor");
 
         private static Processor processor;
-        protected bool IsRunning;
+        private static string Manufacturer;
+
+        protected string Name, ProcessorID;
+
+        protected bool CanChangeTDP, CanChangeGPU;
 
         protected Timer updateTimer = new Timer() { Interval = 4000, AutoReset = true };
 
@@ -31,7 +35,7 @@ namespace ControllerCommon.Processor
         public delegate void ValueChangedHandler(string type, float value);
 
         public event StatusChangedHandler StatusChanged;
-        public delegate void StatusChangedHandler(bool success);
+        public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
         #endregion
 
         public static Processor GetCurrent()
@@ -39,8 +43,7 @@ namespace ControllerCommon.Processor
             if (processor != null)
                 return processor;
 
-            var Name = GetProcessorDetails("Name");
-            var Manufacturer = GetProcessorDetails("Manufacturer");
+            Manufacturer = GetProcessorDetails("Manufacturer");
 
             switch (Manufacturer)
             {
@@ -48,7 +51,7 @@ namespace ControllerCommon.Processor
                     processor = new IntelProcessor();
                     break;
                 case "AuthenticAMD":
-                    processor = new AMDProcessor();
+                    processor = new AMDProcessor();                    
                     break;
             }
 
@@ -64,17 +67,23 @@ namespace ControllerCommon.Processor
             return "";
         }
 
+        public Processor()
+        {
+            Name = GetProcessorDetails("Name");
+            ProcessorID = GetProcessorDetails("processorID");
+        }
+
         public virtual void Initialize()
         {
-            StatusChanged?.Invoke(IsRunning);
+            StatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
 
-            if (IsRunning)
+            if (CanChangeTDP)
                 updateTimer.Start();
         }
 
         public virtual void Stop()
         {
-            if (IsRunning)
+            if (CanChangeTDP)
                 updateTimer.Stop();
         }
 
@@ -110,9 +119,44 @@ namespace ControllerCommon.Processor
 
     public class IntelProcessor : Processor
     {
+        public string family;
+
         public IntelProcessor() : base()
         {
+            family = ProcessorID.Substring(ProcessorID.Length - 5);
+
+            switch (family)
+            {
+                case "206A7": // SandyBridge
+                case "306A9": // IvyBridge
+                case "40651": // Haswell
+                case "306D4": // Broadwell
+                case "406E3": // Skylake
+                case "906ED": // CoffeeLake
+                case "806E9": // AmberLake
+                case "706E5": // IceLake
+                case "806C1": // TigerLake U
+                case "806C2": // TigerLake U Refresh
+                case "806D1": // TigerLake H
+                case "906A2": // AlderLake-P
+                case "906A3": // AlderLake-P
+                case "906A4": // AlderLake-P
+                case "90672": // AlderLake-S
+                case "90675": // AlderLake-S
+                    break;
+            }
+        }
+
+        public override void Initialize()
+        {
             updateTimer.Elapsed += UpdateTimer_Elapsed;
+            base.Initialize();
+        }
+
+        public override void Stop()
+        {
+            updateTimer.Elapsed -= UpdateTimer_Elapsed;
+            base.Stop();
         }
 
         protected override void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -124,12 +168,28 @@ namespace ControllerCommon.Processor
     public class AMDProcessor : Processor
     {
         public IntPtr ry;
+        public RyzenFamily family;
 
         public AMDProcessor() : base()
         {
             ry = RyzenAdj.init_ryzenadj();
+
             if (ry != IntPtr.Zero)
-                IsRunning = true;
+            {
+                family = RyzenAdj.get_cpu_family(ry);
+
+                switch(family)
+                {
+                    default:
+                        CanChangeGPU = false;
+                        break;
+                    case RyzenFamily.FAM_RENOIR:
+                        CanChangeGPU = true;
+                        break;
+                }
+
+                CanChangeTDP = true;
+            }
 
             // write default limit(s)
             m_Limits["fast"] = m_Limits["slow"] = m_Limits["stapm"] = 0;

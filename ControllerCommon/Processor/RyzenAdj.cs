@@ -7,6 +7,20 @@ using System.Threading.Tasks;
 
 namespace ControllerCommon.Processor
 {
+    public enum RyzenFamily
+    {
+        FAM_UNKNOWN = -1,
+        FAM_RAVEN = 0,
+        FAM_PICASSO,
+        FAM_RENOIR,
+        FAM_CEZANNE,
+        FAM_DALI,
+        FAM_LUCIENNE,
+        FAM_VANGOGH,
+        FAM_REMBRANDT,
+        FAM_END
+    };
+
     public class RyzenAdj
     {
         [DllImport("libryzenadj.dll")] public static extern IntPtr init_ryzenadj();
@@ -91,5 +105,7 @@ namespace ControllerCommon.Processor
         [DllImport("libryzenadj.dll")] public static extern float get_soc_volt(IntPtr ry);
 
         [DllImport("libryzenadj.dll")] public static extern float get_socket_power(IntPtr ry);
+
+        [DllImport("libryzenadj.dll")] public static extern RyzenFamily get_cpu_family(IntPtr ry);
     }
 }

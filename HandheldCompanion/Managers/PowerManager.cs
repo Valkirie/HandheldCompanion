@@ -23,7 +23,7 @@ namespace HandheldCompanion.Managers
         public delegate void ValueChangedHandler(string type, float value);
 
         public event StatusChangedHandler StatusChanged;
-        public delegate void StatusChangedHandler(bool success);
+        public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
 
         // user requested limits
         private double RequestedStapm = 0;
@@ -48,9 +48,9 @@ namespace HandheldCompanion.Managers
         }
 
         #region events
-        private void Processor_StatusChanged(bool success)
+        private void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
         {
-            StatusChanged?.Invoke(success);
+            StatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
         }
 
         private void Processor_ValueChanged(string type, float value)

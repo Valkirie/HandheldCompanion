@@ -39,7 +39,6 @@ namespace HandheldCompanion.Views.QuickPages
             QuickTools.powerManager.ValueChanged += PowerManager_ValueChanged;
 
             // pull GPU settings
-            GPUToggle.IsOn = Properties.Settings.Default.QuickToolsPerformanceGPUEnabled;
             GPUSlider.Value = Properties.Settings.Default.QuickToolsPerformanceGPUValue;
 
             // pull TDP settings
@@ -63,12 +62,15 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
-        private void PowerManager_StatusChanged(bool success)
+        private void PowerManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
         {
             this.Dispatcher.Invoke(() =>
             {
-                TDPToggle.IsEnabled = success;
+                TDPToggle.IsEnabled = CanChangeTDP;
                 TDPToggle.IsOn = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled;
+
+                GPUToggle.IsEnabled = CanChangeGPU;
+                GPUToggle.IsOn = Properties.Settings.Default.QuickToolsPerformanceGPUEnabled;
             });
         }
 
