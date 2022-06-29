@@ -36,21 +36,23 @@
                         </ui:SimpleStackPanel>
                     </DockPanel>
 
-                    <ui:ToggleSwitch Grid.Column="1" OffContent="" OnContent="" />
+                    <ui:ToggleSwitch Name="TDPToggle" Grid.Column="1" IsEnabled="False" Toggled="TDPToggle_Toggled" />
                 </Grid>
             </Border>
 
             <!-- Content -->
-            <Border                      
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <Border
+                Padding="15,12,12,12"
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                 <DockPanel Grid.Column="1" Margin="8,0,0,0">
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSlider, Mode=OneWay}" />
-                    <Slider Name="TDPSlider" Width="280" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="5" Value="20" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                    <Slider Name="TDPSlider" Width="280" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                            ValueChanged="TDPSlider_ValueChanged"
                             MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
+                            MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5"/>
                 </DockPanel>
 
             </Border>
@@ -79,19 +81,20 @@
                         </ui:SimpleStackPanel>
                     </DockPanel>
 
-                    <ui:ToggleSwitch Grid.Column="1" OffContent="" OnContent="" />
+                    <ui:ToggleSwitch Name="GPUToggle" Grid.Column="1" IsEnabled="False" Toggled="GPUToggle_Toggled"/>
                 </Grid>
             </Border>
 
             <!-- Content -->
-            <Border                      
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <Border
+                Padding="15,12,12,12"
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                 <DockPanel Grid.Column="1" Margin="0,0,0,0">
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}" />
-                    <Slider Name="GPUSlider" Width="280" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="100" Value="1200" Minimum="500" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                    <Slider Name="GPUSlider" Width="280" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="100" Minimum="500" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave"/>
                 </DockPanel>
@@ -117,7 +120,7 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE706;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <Slider Width="260" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Value="50" Minimum="10" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                            <Slider Width="260" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="10" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave"/>
                         </ui:SimpleStackPanel>
@@ -144,7 +147,7 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE767;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <Slider Width="260" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Value="70" Minimum="10" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                            <Slider Width="260" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="10" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave"/>
                         </ui:SimpleStackPanel>

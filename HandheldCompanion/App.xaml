@@ -38,6 +38,7 @@
 
             <!-- Other app resources here -->
             <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         </ResourceDictionary>
     </Application.Resources>

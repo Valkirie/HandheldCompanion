@@ -526,5 +526,53 @@ namespace HandheldCompanion.Properties {
                 this["QuickToolsTop"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double QuickToolsPerformanceTDPValue {
+            get {
+                return ((double)(this["QuickToolsPerformanceTDPValue"]));
+            }
+            set {
+                this["QuickToolsPerformanceTDPValue"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int QuickToolsPerformanceGPUValue {
+            get {
+                return ((int)(this["QuickToolsPerformanceGPUValue"]));
+            }
+            set {
+                this["QuickToolsPerformanceGPUValue"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool QuickToolsPerformanceTDPEnabled {
+            get {
+                return ((bool)(this["QuickToolsPerformanceTDPEnabled"]));
+            }
+            set {
+                this["QuickToolsPerformanceTDPEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool QuickToolsPerformanceGPUEnabled {
+            get {
+                return ((bool)(this["QuickToolsPerformanceGPUEnabled"]));
+            }
+            set {
+                this["QuickToolsPerformanceGPUEnabled"] = value;
+            }
+        }
     }
 }

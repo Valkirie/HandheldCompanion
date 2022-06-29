@@ -32,13 +32,28 @@ namespace HandheldCompanion.Views.Windows
         double scrollOffset = 1;
         public static bool scrollLock = false;
 
+        // manager vers
+        public static PowerManager powerManager;
+
         public QuickTools()
         {
             InitializeComponent();
 
+            // create manager(s)
+            powerManager = new();
+
             // create pages
             quickPage4 = new QuickToolsPage4();
             _pages.Add("Performance", quickPage4);
+
+            // start manager(s)
+            powerManager.Start();
+
+            this.SourceInitialized += Overlay_SourceInitialized;
+        }
+
+        private void Overlay_SourceInitialized(object? sender, EventArgs e)
+        {
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -236,6 +251,9 @@ namespace HandheldCompanion.Views.Windows
             }
 
             Properties.Settings.Default.Save();
+
+            // stop manager(s)
+            powerManager.Stop();
 
             e.Cancel = !isClosing;
             this.Visibility = Visibility.Collapsed;
