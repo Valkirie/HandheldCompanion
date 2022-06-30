@@ -119,31 +119,50 @@ namespace ControllerCommon.Processor
 
     public class IntelProcessor : Processor
     {
+        public Rw rw = new Rw();
+        private string mchbar;
+
         public string family;
 
         public IntelProcessor() : base()
         {
-            family = ProcessorID.Substring(ProcessorID.Length - 5);
+            mchbar = rw.init_rw();
 
-            switch (family)
+            if (mchbar != null)
             {
-                case "206A7": // SandyBridge
-                case "306A9": // IvyBridge
-                case "40651": // Haswell
-                case "306D4": // Broadwell
-                case "406E3": // Skylake
-                case "906ED": // CoffeeLake
-                case "806E9": // AmberLake
-                case "706E5": // IceLake
-                case "806C1": // TigerLake U
-                case "806C2": // TigerLake U Refresh
-                case "806D1": // TigerLake H
-                case "906A2": // AlderLake-P
-                case "906A3": // AlderLake-P
-                case "906A4": // AlderLake-P
-                case "90672": // AlderLake-S
-                case "90675": // AlderLake-S
-                    break;
+                family = ProcessorID.Substring(ProcessorID.Length - 5);
+
+                switch (family)
+                {
+                    default:
+                    case "206A7": // SandyBridge
+                    case "306A9": // IvyBridge
+                    case "40651": // Haswell
+                    case "306D4": // Broadwell
+                    case "406E3": // Skylake
+                    case "906ED": // CoffeeLake
+                    case "806E9": // AmberLake
+                    case "706E5": // IceLake
+                    case "806C1": // TigerLake U
+                    case "806C2": // TigerLake U Refresh
+                    case "806D1": // TigerLake H
+                    case "906A2": // AlderLake-P
+                    case "906A3": // AlderLake-P
+                    case "906A4": // AlderLake-P
+                    case "90672": // AlderLake-S
+                    case "90675": // AlderLake-S
+                        CanChangeTDP = true;
+                        CanChangeGPU = true;
+                        break;
+                }
+
+                // write default limit(s)
+                m_Limits["short"] = m_Limits["long"] = 0;
+                m_PrevLimits["short"] = m_PrevLimits["long"] = 0;
+
+                // write default value(s)
+                m_Values["short"] = m_Values["long"] = 0;
+                m_PrevValues["short"] = m_PrevValues["long"] = 0;
             }
         }
 
@@ -161,7 +180,28 @@ namespace ControllerCommon.Processor
 
         protected override void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            // read limit(s)
+            m_Limits["short"] = (int)rw.get_short_limit();
+            m_Limits["long"] = (int)rw.get_long_limit();
+
+            // read value(s)
+            m_Values["short"] = (int)rw.get_short_value();
+            m_Values["long"] = (int)rw.get_long_value();
+
             base.UpdateTimer_Elapsed(sender, e);
+        }
+
+        public override void SetLimit(string type, double limit)
+        {
+            switch (type)
+            {
+                case "short":
+                    rw.set_short_limit((int)limit);
+                    break;
+                case "long":
+                    rw.set_long_limit((int)limit);
+                    break;
+            }
         }
     }
 
