@@ -19,7 +19,7 @@ namespace ControllerCommon
 
         private readonly string key = (string)Registry.GetValue(keyName,
             "Path",
-            null);
+            "");
 
         public HidHide()
         {
