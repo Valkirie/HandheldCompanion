@@ -21,6 +21,7 @@
 !*CommonReferences/*.dll
 !/src/*.exe
 !/redist/*.exe
+!/Dependencies/*.exe
 ####################
 # VS Upgrade stuff #
 ####################

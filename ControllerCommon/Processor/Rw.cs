@@ -14,13 +14,17 @@ namespace ControllerCommon.Processor
     {
         private ProcessStartInfo startInfo;
         private string path;
+        private string mchbar;
 
         public Rw()
         {
             path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Dependencies", "Rw.exe");
 
             if (!File.Exists(path))
+            {
                 LogManager.LogError("Rw.exe is missing. Power Manager won't work.");
+                return;
+            }
 
             startInfo = new ProcessStartInfo(path)
             {
@@ -31,9 +35,12 @@ namespace ControllerCommon.Processor
             };
         }
 
-        internal string init_rw()
+        internal bool init_rw()
         {
-            startInfo.Arguments = "/Min /Nologo /Stdout /command=\"Delay 1000;rpci32 0 0 0 0x48;Delay 1000;rwexit\"";
+            if (startInfo == null)
+                return false;
+
+            startInfo.Arguments = "/Min /Nologo /Stdout /command=\"rpci32 0 0 0 0x48;rwexit\"";
             using (var ProcessOutput = Process.Start(startInfo))
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
@@ -43,21 +50,44 @@ namespace ControllerCommon.Processor
                     if (!line.Contains("0x"))
                         continue;
 
-                    var MCHBAR = line.Substring(line.Length - 10);
-                    return MCHBAR.Substring(0, 6) + "59";
+                    line = line.Substring(line.Length - 10);
+                    mchbar = line.Substring(0, 6) + "59";
+                    return true;
                 }
             }
 
-            return null;
+            return false;
         }
 
         internal int get_short_limit()
         {
-            return 0;
+            return get_limit("a4");
         }
 
         internal int get_long_limit()
         {
+            return get_limit("a0");
+        }
+
+        internal int get_limit(string pointer)
+        {
+            startInfo.Arguments = $"/Min /Nologo /Stdout /command=\"r16 {mchbar}{pointer};rwexit\"";
+            using (var ProcessOutput = Process.Start(startInfo))
+            {
+                while (!ProcessOutput.StandardOutput.EndOfStream)
+                {
+                    string line = ProcessOutput.StandardOutput.ReadLine();
+
+                    if (!line.Contains("0x"))
+                        continue;
+
+                    line = line.Substring(line.Length - 6);
+                    var value = Convert.ToInt32(line, 16);
+                    var output = ((double)value - 32768.0d) / 8.0d;
+                    return (int)output;
+                }
+            }
+
             return 0;
         }
 
@@ -73,12 +103,36 @@ namespace ControllerCommon.Processor
 
         internal void set_short_limit(int limit)
         {
-            // do something
+            set_limit("a4", "0x00438", limit);
         }
 
         internal void set_long_limit(int limit)
         {
-            // do something
+            set_limit("a0", "0x00dd8", limit);
+        }
+
+        internal void set_limit(string pointer1, string pointer2, int limit)
+        {
+            string command = "/Min /Nologo /Stdout /command=\"Delay 1000;";
+            string hex = TDPToHex(limit);
+
+            command += $"w16 {mchbar}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
+            command += $"wrmsr 0x610 0x0 {pointer2}{hex};";
+
+            startInfo.Arguments = $"{command}rwexit\"";
+            using (var ProcessOutput = Process.Start(startInfo))
+            {
+                while (!ProcessOutput.StandardOutput.EndOfStream)
+                {
+                    string line = ProcessOutput.StandardOutput.ReadLine();
+                }
+            }
+        }
+
+        private string TDPToHex(int decValue)
+        {
+            decValue *= 8;
+            return "0" + decValue.ToString("X");
         }
     }
 }

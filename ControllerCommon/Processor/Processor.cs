@@ -120,15 +120,12 @@ namespace ControllerCommon.Processor
     public class IntelProcessor : Processor
     {
         public Rw rw = new Rw();
-        private string mchbar;
 
         public string family;
 
         public IntelProcessor() : base()
         {
-            mchbar = rw.init_rw();
-
-            if (mchbar != null)
+            if (rw.init_rw())
             {
                 family = ProcessorID.Substring(ProcessorID.Length - 5);
 
@@ -195,10 +192,10 @@ namespace ControllerCommon.Processor
         {
             switch (type)
             {
-                case "short":
+                case "fast":
                     rw.set_short_limit((int)limit);
                     break;
-                case "long":
+                case "stapm":
                     rw.set_long_limit((int)limit);
                     break;
             }
