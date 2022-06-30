@@ -14,7 +14,11 @@ namespace ControllerCommon.Processor
     {
         private ProcessStartInfo startInfo;
         private string path;
+
         private string mchbar;
+
+        // Package Power Limit (PACKAGE_RAPL_LIMIT_0_0_0_MCHBAR_PCU) — Offset 59A0h
+        private string limitpointer = "59";
 
         public Rw()
         {
@@ -51,7 +55,7 @@ namespace ControllerCommon.Processor
                         continue;
 
                     line = line.Substring(line.Length - 10);
-                    mchbar = line.Substring(0, 6) + "59";
+                    mchbar = line.Substring(0, 6);
                     return true;
                 }
             }
@@ -71,7 +75,7 @@ namespace ControllerCommon.Processor
 
         internal int get_limit(string pointer)
         {
-            startInfo.Arguments = $"/Min /Nologo /Stdout /command=\"r16 {mchbar}{pointer};rwexit\"";
+            startInfo.Arguments = $"/Min /Nologo /Stdout /command=\"r16 {mchbar}{limitpointer}{pointer};rwexit\"";
             using (var ProcessOutput = Process.Start(startInfo))
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
@@ -116,7 +120,7 @@ namespace ControllerCommon.Processor
             string command = "/Min /Nologo /Stdout /command=\"Delay 1000;";
             string hex = TDPToHex(limit);
 
-            command += $"w16 {mchbar}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
+            command += $"w16 {mchbar}{limitpointer}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
             command += $"wrmsr 0x610 0x0 {pointer2}{hex};";
 
             startInfo.Arguments = $"{command}rwexit\"";

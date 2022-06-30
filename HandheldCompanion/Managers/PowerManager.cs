@@ -55,6 +55,7 @@ namespace HandheldCompanion.Managers
         #endregion
 
         private Processor processor;
+        private Timer updateTimer = new Timer() { Interval = 4000, AutoReset = true };
 
         public event LimitChangedHandler LimitChanged;
         public delegate void LimitChangedHandler(string type, int limit);
@@ -76,6 +77,16 @@ namespace HandheldCompanion.Managers
             processor.ValueChanged += Processor_ValueChanged;
             processor.StatusChanged += Processor_StatusChanged;
             processor.LimitChanged += Processor_LimitChanged;
+
+            updateTimer.Elapsed += UpdateTimer_Elapsed;
+        }
+
+        private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            // Checking if active power shceme has changed
+            if (PowerGetEffectiveOverlayScheme(out Guid activeScheme) == 0)
+                if (activeScheme != RequestedPowerMode)
+                    PowerSetActiveOverlayScheme(RequestedPowerMode);
         }
 
         public void RequestTDP(double value)
@@ -104,11 +115,6 @@ namespace HandheldCompanion.Managers
 
         private void Processor_ValueChanged(string type, float value)
         {
-            // Checking active power shceme each time CPU value changed
-            if (PowerGetEffectiveOverlayScheme(out Guid activeScheme) == 0)
-                if (activeScheme != RequestedPowerMode)
-                    PowerSetActiveOverlayScheme(RequestedPowerMode);
-
             ValueChanged?.Invoke(type, value);
         }
 
@@ -133,11 +139,13 @@ namespace HandheldCompanion.Managers
         internal void Start()
         {
             processor.Initialize();
+            updateTimer.Start();
         }
 
         internal void Stop()
         {
             processor.Stop();
+            updateTimer.Stop();
         }
     }
 }
