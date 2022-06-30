@@ -31,7 +31,7 @@ namespace HandheldCompanion.Views.QuickPages
             InitializeComponent();
             Initialized = true;
 
-            updateTimer = new Timer() { Interval = 1000, AutoReset = false, Enabled = false };
+            updateTimer = new Timer() { Interval = 3000, AutoReset = false, Enabled = false };
             updateTimer.Elapsed += UpdateTimer_Elapsed;
 
             QuickTools.powerManager.StatusChanged += PowerManager_StatusChanged;
@@ -49,6 +49,9 @@ namespace HandheldCompanion.Views.QuickPages
                 Properties.Settings.Default.Save();
             }
             TDPSlider.Value = Properties.Settings.Default.QuickToolsPerformanceTDPValue;
+
+            // pull PowerMode settings
+            PowerModeSlider.Value = Properties.Settings.Default.QuickToolsPowerModeValue;
         }
 
         private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -129,6 +132,25 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             // do something
+        }
+
+        private void PowerModeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            // update settings
+            int value = (int)PowerModeSlider.Value;
+            Properties.Settings.Default.QuickToolsPowerModeValue = value;
+            Properties.Settings.Default.Save();
+
+            this.Dispatcher.Invoke(() =>
+            {
+                foreach (TextBlock tb in PowerModeGrid.Children)
+                    tb.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+
+                TextBlock TextBlock = (TextBlock)PowerModeGrid.Children[value];
+                TextBlock.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
+            });
+
+            QuickTools.powerManager.RequestPowerMode((int)PowerModeSlider.Value);
         }
     }
 }

@@ -73,7 +73,7 @@
                     </Grid.ColumnDefinitions>
 
                     <DockPanel>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEC4A;" Height="40" HorizontalAlignment="Center"/>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
                             <TextBlock Text="Manual GPU Clock Control" FontSize="14"/>
@@ -102,13 +102,68 @@
             </Border>
         </ui:SimpleStackPanel>
 
+        <!-- Power Mode -->
+        <ui:SimpleStackPanel Spacing="2">
+            <!-- Header -->
+            <Border
+                Padding="15,12,12,12"
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="280"></ColumnDefinition>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel>
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEC48;" Height="40" HorizontalAlignment="Center"/>
+
+                        <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                            <TextBlock Text="Power mode" FontSize="14"/>
+                            <TextBlock Text="Optimize your device based on power use and performance" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                        </ui:SimpleStackPanel>
+                    </DockPanel>
+                </Grid>
+            </Border>
+
+            <!-- Content -->
+            <Border
+                Padding="15,12,12,12"
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <DockPanel Grid.Column="1">
+                    <ui:SimpleStackPanel VerticalAlignment="Center" Margin="0,0,0,0">
+                        <Slider Name="PowerModeSlider" VerticalAlignment="Center" Maximum="2" TickFrequency="1" AutoToolTipPlacement="None" TickPlacement="BottomRight" Minimum="0" IsSnapToTickEnabled="True"
+                                ValueChanged="PowerModeSlider_ValueChanged"
+                                MouseEnter="Scrolllock_MouseEnter"
+                                MouseLeave="Scrolllock_MouseLeave"/>
+                        <Grid Name="PowerModeGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                                <ColumnDefinition Width="3*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" HorizontalAlignment="Left" Text="Power efficiency"/>
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Center" Text="Balanced"/>
+                            <TextBlock Grid.Column="2" HorizontalAlignment="Right" Text="Best Performance"/>
+                        </Grid>
+                    </ui:SimpleStackPanel>
+                </DockPanel>
+
+            </Border>
+        </ui:SimpleStackPanel>
+
         <!-- Brightness -->
         <ui:SimpleStackPanel Spacing="2">
             <!-- Header -->
-            <Border                      
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <Border
+                Padding="15,12,12,12"
+                CornerRadius="{DynamicResource ControlCornerRadius}"                
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                Visibility="Collapsed">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -132,10 +187,11 @@
         <!-- Sounds -->
         <ui:SimpleStackPanel Spacing="2">
             <!-- Header -->
-            <Border                      
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <Border
+                Padding="15,12,12,12"
+                CornerRadius="{DynamicResource ControlCornerRadius}"                
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                Visibility="Collapsed">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
