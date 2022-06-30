@@ -52,6 +52,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             // pull PowerMode settings
             PowerModeSlider.Value = Properties.Settings.Default.QuickToolsPowerModeValue;
+            PowerModeSlider_ValueChanged(null, null); // force call
         }
 
         private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
