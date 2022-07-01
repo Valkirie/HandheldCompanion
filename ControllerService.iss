@@ -332,20 +332,20 @@ end;
 procedure Dependency_AddHideHide;
 begin
   // https://www.microsoft.com/en-US/download/details.aspx?id=35
-  Dependency_Add('HidHideMSI.msi',
+  Dependency_Add('HidHide_1.2.93_x64.exe',
     '/quiet /qn /norestart',
     'HidHide Runtime',
-    'https://github.com/ViGEm/HidHide/releases/download/v1.1.50.0/HidHideMSI.msi',
+    'https://github.com/ViGEm/HidHide/releases/download/v1.2.93.0/HidHide_1.2.93_x64.exe',
     '', True, False);
 end;
 
 procedure Dependency_AddViGem;
 begin
   // https://www.microsoft.com/en-US/download/details.aspx?id=35
-  Dependency_Add('ViGEmBusSetup_x64.msi',
+  Dependency_Add('ViGEmBus_1.18.367_x64_x86.exe',
     '/quiet /qn /norestart',
     'ViGEmBus Runtime',
-    'https://github.com/ViGEm/ViGEmBus/releases/download/setup-v1.17.333/ViGEmBusSetup_x64.msi',
+    'https://github.com/ViGEm/ViGEmBus/releases/download/v1.18.367.0/ViGEmBus_1.18.367_x64_x86.exe',
     '', True, False);
 end;
 
@@ -370,16 +370,14 @@ end;
 #define UseVC2013
 #define UseVC2015To2019
 
-; requires dxwebsetup.exe (see download link below)
 #define UseDirectX
-; requires HidHideMSI.msi
-#define UseHideHide
-; requires ViGEmBusSetup_x64
+; install ViGem first
 #define UseViGem
+#define UseHideHide
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
-#define MyAppVersion '0.10.0.0'
+#define MyAppVersion '0.10.1.0'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/ControllerService'

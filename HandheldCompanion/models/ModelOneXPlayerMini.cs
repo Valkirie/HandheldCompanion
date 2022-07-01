@@ -7,12 +7,10 @@ namespace HandheldCompanion.Models
     {
         // Specific groups (move me)
         Model3DGroup ALetter;
-        Model3DGroup ALetterInside;
         Model3DGroup BackGrillShadow;
         Model3DGroup BackIcon;
         Model3DGroup BLetter;
-        Model3DGroup BLetterInside1;
-        Model3DGroup BLetterInside2;
+        Model3DGroup BodyInternal;
         Model3DGroup Screen;
         Model3DGroup Home;
         Model3DGroup LED;
@@ -56,12 +54,10 @@ namespace HandheldCompanion.Models
 
             // load model(s)
             ALetter = modelImporter.Load($"models/{ModelName}/ALetter.obj");
-            ALetterInside = modelImporter.Load($"models/{ModelName}/ALetterInside.obj");
             BackGrillShadow = modelImporter.Load($"models/{ModelName}/BackGrillShadow.obj");
             BackIcon = modelImporter.Load($"models/{ModelName}/BackIcon.obj");
             BLetter = modelImporter.Load($"models/{ModelName}/BLetter.obj");
-            BLetterInside1 = modelImporter.Load($"models/{ModelName}/BLetterInside1.obj");
-            BLetterInside2 = modelImporter.Load($"models/{ModelName}/BLetterInside2.obj");
+            BodyInternal = modelImporter.Load($"models/{ModelName}/BodyInternal.obj");
             Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
             Home = modelImporter.Load($"models/{ModelName}/Home.obj");
             LED = modelImporter.Load($"models/{ModelName}/LED.obj");
@@ -80,12 +76,10 @@ namespace HandheldCompanion.Models
             // pull model(s)
 
             model3DGroup.Children.Add(ALetter);
-            model3DGroup.Children.Add(ALetterInside);
             model3DGroup.Children.Add(BackGrillShadow);
             model3DGroup.Children.Add(BackIcon);
             model3DGroup.Children.Add(BLetter);
-            model3DGroup.Children.Add(BLetterInside1);
-            model3DGroup.Children.Add(BLetterInside2);
+            model3DGroup.Children.Add(BodyInternal);
             model3DGroup.Children.Add(Screen);
             model3DGroup.Children.Add(Home);
             model3DGroup.Children.Add(LED);
@@ -112,7 +106,9 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == LeftMotor || model3D == RightMotor)
+                if (model3D == MainBody 
+                    || model3D == LeftMotor || model3D == RightMotor
+                    || model3D == TurboIcon || model3D == MKBIcon)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
                     DefaultMaterials[model3D] = MaterialPlasticWhite;

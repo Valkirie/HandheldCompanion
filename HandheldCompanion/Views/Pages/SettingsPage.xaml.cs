@@ -385,15 +385,15 @@ namespace HandheldCompanion.Views.Pages
             if (cB_SensorSelection.SelectedIndex == -1)
                 return;
 
-            // skip if setting is identical to current
-            if (cB_SensorSelection.SelectedIndex == Properties.Settings.Default.SensorSelection)
-                return;
-
             Toggle_SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == 1 ? true : false;
 
             foreach (SimpleStackPanel panel in SensorPlacementVisualisation.Children)
                 foreach (Button button in panel.Children)
                     button.IsEnabled = cB_SensorSelection.SelectedIndex == 1 ? true : false;
+
+            // skip if setting is identical to current, but do perform enabling of buttons above
+            if (cB_SensorSelection.SelectedIndex == Properties.Settings.Default.SensorSelection)
+                return;
 
             // save settings
             Properties.Settings.Default.SensorSelection = cB_SensorSelection.SelectedIndex;

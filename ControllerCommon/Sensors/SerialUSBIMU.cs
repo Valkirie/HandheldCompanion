@@ -1,5 +1,4 @@
-﻿using ControllerCommon.Managers;
-using Microsoft.Extensions.Logging;
+using ControllerCommon.Managers;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
