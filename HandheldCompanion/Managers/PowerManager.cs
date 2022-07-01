@@ -94,9 +94,10 @@ namespace HandheldCompanion.Managers
             RequestedTDP = value;
             LogManager.LogInformation("User requested stapm: {0}", RequestedTDP);
 
-            processor.SetLimit("stapm", RequestedTDP);
-            processor.SetLimit("slow", RequestedTDP + 2);
-            processor.SetLimit("fast", RequestedTDP + 5);
+            processor.SetLimit("all", RequestedTDP);
+            // processor.SetLimit("stapm", RequestedTDP);
+            // processor.SetLimit("slow", RequestedTDP + 2);
+            // processor.SetLimit("fast", RequestedTDP + 5);
         }
 
         public void RequestPowerMode(int idx)

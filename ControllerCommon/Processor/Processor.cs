@@ -154,12 +154,12 @@ namespace ControllerCommon.Processor
                 }
 
                 // write default limit(s)
-                m_Limits["short"] = m_Limits["long"] = 0;
-                m_PrevLimits["short"] = m_PrevLimits["long"] = 0;
+                m_Limits["short"] = m_Limits["long"] = m_Limits["stapm"] = 0;
+                m_PrevLimits["short"] = m_PrevLimits["long"] = m_PrevLimits["stapm"] = 0;
 
                 // write default value(s)
-                m_Values["short"] = m_Values["long"] = 0;
-                m_PrevValues["short"] = m_PrevValues["long"] = 0;
+                m_Values["short"] = m_Values["long"] = m_Values["stapm"] = 0;
+                m_PrevValues["short"] = m_PrevValues["long"] = m_PrevValues["stapm"] = 0;
             }
         }
 
@@ -180,10 +180,12 @@ namespace ControllerCommon.Processor
             // read limit(s)
             m_Limits["short"] = (int)rw.get_short_limit();
             m_Limits["long"] = (int)rw.get_long_limit();
+            m_Limits["stapm"] = m_Limits["long"];
 
             // read value(s)
             m_Values["short"] = (int)rw.get_short_value();
             m_Values["long"] = (int)rw.get_long_value();
+            m_Values["stapm"] = m_Values["long"];
 
             base.UpdateTimer_Elapsed(sender, e);
         }
@@ -195,8 +197,14 @@ namespace ControllerCommon.Processor
                 case "fast":
                     rw.set_short_limit((int)limit);
                     break;
+                case "slow":
+                    rw.set_long_limit((int)limit);
+                    break;
                 case "stapm":
                     rw.set_long_limit((int)limit);
+                    break;
+                case "all":
+                    rw.set_all_limit((int)limit);
                     break;
             }
         }
@@ -282,6 +290,11 @@ namespace ControllerCommon.Processor
                     break;
                 case "stapm":
                     RyzenAdj.set_stapm_limit(ry, (uint)limit);
+                    break;
+                case "all":
+                    RyzenAdj.set_stapm_limit(ry, (uint)limit);
+                    RyzenAdj.set_slow_limit(ry, (uint)limit);
+                    RyzenAdj.set_fast_limit(ry, (uint)limit);
                     break;
             }
         }

@@ -133,6 +133,29 @@ namespace ControllerCommon.Processor
             }
         }
 
+        internal void set_all_limit(int limit)
+        {
+            string command = "/Min /Nologo /Stdout /command=\"Delay 1000;";
+            string hex = TDPToHex(limit);
+
+            // long
+            command += $"w16 {mchbar}{limitpointer}a4 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
+            command += $"wrmsr 0x610 0x0 0x00438{hex.Substring(hex.Length - 3)};";
+
+            // short
+            command += $"w16 {mchbar}{limitpointer}a0 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
+            command += $"wrmsr 0x610 0x0 0x00dd8{hex.Substring(hex.Length - 3)};";
+
+            startInfo.Arguments = $"{command}rwexit\"";
+            using (var ProcessOutput = Process.Start(startInfo))
+            {
+                while (!ProcessOutput.StandardOutput.EndOfStream)
+                {
+                    string line = ProcessOutput.StandardOutput.ReadLine();
+                }
+            }
+        }
+
         private string TDPToHex(int decValue)
         {
             decValue *= 8;
