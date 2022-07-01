@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ControllerCommon.Managers
 {
@@ -200,13 +201,13 @@ namespace ControllerCommon.Managers
             catch (Exception) { }
         }
 
-        private void XinputListener_DeviceArrived(DeviceEventArgs obj)
+        private async void XinputListener_DeviceArrived(DeviceEventArgs obj)
         {
             // XInput device arrived
             try
             {
                 var device = PnPDevice.GetDeviceByInterfaceId(obj.SymLink);
-                Thread.Sleep(500); // breathing space
+                await Task.Delay(1000);
                 var deviceEx = GetDeviceEx(device);
                 XInputArrived?.Invoke(deviceEx);
             }

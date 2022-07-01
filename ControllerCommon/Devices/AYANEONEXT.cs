@@ -13,6 +13,8 @@ namespace ControllerCommon.Devices
             this.ProductIllustration = "device_aya_next";
             this.ProductModel = "AYANEONext";
 
+            this.DefaultTDP = 20;
+
             this.AngularVelocityAxisSwap = new()
             {
                 { 'X', 'X' },

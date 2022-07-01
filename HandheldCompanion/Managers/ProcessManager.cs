@@ -10,6 +10,7 @@ using System.IO;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -245,7 +246,7 @@ namespace HandheldCompanion.Managers
             processBorder.Child = processGrid;
         }
 
-        private void ProcessResume_Click(object sender, RoutedEventArgs e)
+        private async void ProcessResume_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -253,11 +254,11 @@ namespace HandheldCompanion.Managers
             }));
 
             NtResumeProcess(Process.Handle);
-            Thread.Sleep(500); // breathing
+            await Task.Delay(500);
             ShowWindow(Process.MainWindowHandle, 9);
         }
 
-        private void ProcessSuspend_Click(object sender, RoutedEventArgs e)
+        private async void ProcessSuspend_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -265,7 +266,7 @@ namespace HandheldCompanion.Managers
             }));
 
             ShowWindow(Process.MainWindowHandle, 2);
-            Thread.Sleep(500); // breathing
+            await Task.Delay(500);
             NtSuspendProcess(Process.Handle);
         }
     }
@@ -399,7 +400,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        void ProcessCreated(object sender, EventArrivedEventArgs e)
+        private void ProcessCreated(object sender, EventArrivedEventArgs e)
         {
             try
             {
@@ -410,45 +411,40 @@ namespace HandheldCompanion.Managers
             catch (Exception) { }
         }
 
-        void ProcessCreated(Process proc)
+        private async void ProcessCreated(Process proc)
         {
-            new Thread(() =>
+            // breating
+            await Task.Delay(1000);
+
+            // no main window
+            if (proc.MainWindowHandle == IntPtr.Zero)
+                return;
+
+            string path = ProcessUtils.GetPathToApp(proc);
+
+            // todo : implement proper filtering
+            if (string.IsNullOrEmpty(path))
+                return;
+
+            if (path.ToLower().Contains(Environment.GetEnvironmentVariable("windir").ToLower()))
+                return;
+
+            string exec = Path.GetFileName(path);
+
+            ProcessEx processEx = new ProcessEx(proc)
             {
-                Thread.CurrentThread.IsBackground = true;
+                Name = exec,
+                Executable = exec,
+                Path = path
+            };
+            processEx.Start();
 
-                // breating
-                Thread.Sleep(1000);
+            if (!CurrentProcesses.ContainsKey(processEx.Id))
+                CurrentProcesses.TryAdd(processEx.Id, processEx);
 
-                // no main window
-                if (proc.MainWindowHandle == IntPtr.Zero)
-                    return;
+            ProcessStarted?.Invoke(processEx);
 
-                string path = ProcessUtils.GetPathToApp(proc);
-
-                // todo : implement proper filtering
-                if (string.IsNullOrEmpty(path))
-                    return;
-
-                if (path.ToLower().Contains(Environment.GetEnvironmentVariable("windir").ToLower()))
-                    return;
-
-                string exec = Path.GetFileName(path);
-
-                ProcessEx processEx = new ProcessEx(proc)
-                {
-                    Name = exec,
-                    Executable = exec,
-                    Path = path
-                };
-                processEx.Start();
-
-                if (!CurrentProcesses.ContainsKey(processEx.Id))
-                    CurrentProcesses.TryAdd(processEx.Id, processEx);
-
-                ProcessStarted?.Invoke(processEx);
-
-                LogManager.LogDebug("Process created: {0}", proc.ProcessName);
-            }).Start();
+            LogManager.LogDebug("Process created: {0}", proc.ProcessName);
         }
     }
 }

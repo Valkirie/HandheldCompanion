@@ -212,6 +212,38 @@
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
     <value>Change controller vibration strength</value>
   </data>
+  <data name="HotkeysPage_OverlayModel" xml:space="preserve">
+    <value>3D controller hotkey</value>
+    <comment>added on 01/07/2022</comment>
+  </data>
+  <data name="HotkeysPage_OverlayModelDesc" xml:space="preserve">
+    <value>Change the 3D controller hotkey by pressing a button or a special key</value>
+    <comment>added on 01/07/2022</comment>
+  </data>
+  <data name="HotkeysPage_OverlayTrackpads" xml:space="preserve">
+    <value>Trackpads hotkey</value>
+    <comment>added on 01/07/2022</comment>
+  </data>
+  <data name="HotkeysPage_OverlayTrackpadsDesc" xml:space="preserve">
+    <value>Change the trackpads hotkey by pressing a button or a special key</value>
+    <comment>added on 01/07/2022</comment>
+  </data>
+  <data name="HotkeysPage_QuickTools" xml:space="preserve">
+    <value>Quicktools hotkey</value>
+    <comment>added on 01/07/2022</comment>
+  </data>
+  <data name="HotkeysPage_QuickToolsDesc" xml:space="preserve">
+    <value>Change the quicktools hotkey by pressing a button or a special key</value>
+    <comment>added on 01/07/2022</comment>
+  </data>
+  <data name="HotkeysPage_Suspender" xml:space="preserve">
+    <value>Suspender hotkey</value>
+    <comment>added on 01/07/2022</comment>
+  </data>
+  <data name="HotkeysPage_SuspenderDesc" xml:space="preserve">
+    <value>Change the suspender hotkey by pressing a button or a special key</value>
+    <comment>added on 01/07/2022</comment>
+  </data>
   <data name="MainWindow_HandheldCompanion" xml:space="preserve">
     <value>Handheld Companion</value>
   </data>
@@ -343,15 +375,6 @@
   <data name="OverlayPage_RenderSettingsFramerateDesc" xml:space="preserve">
     <value>Change the render update rate, in update per second</value>
     <comment>added on 03/06/2022</comment>
-  </data>
-  <data name="OverlayPage_SecondaryTrigger" xml:space="preserve">
-    <value>Trigger button(s)</value>
-  </data>
-  <data name="OverlayPage_SecondaryTriggerDesc" xml:space="preserve">
-    <value>Change the 3D overlay controller trigger</value>
-  </data>
-  <data name="OverlayPage_SecondaryTriggerOverlayDesc" xml:space="preserve">
-    <value>Change the overlay trackpads trigger</value>
   </data>
   <data name="OverlayPage_Size" xml:space="preserve">
     <value>Size</value>

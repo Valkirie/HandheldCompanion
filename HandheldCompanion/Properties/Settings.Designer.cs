@@ -12,7 +12,7 @@ namespace HandheldCompanion.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.2.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -464,6 +464,126 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["OverlayFaceCamera"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int QuickToolsTriggerType {
+            get {
+                return ((int)(this["QuickToolsTriggerType"]));
+            }
+            set {
+                this["QuickToolsTriggerType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("36")]
+        public string QuickToolsTriggerValue {
+            get {
+                return ((string)(this["QuickToolsTriggerValue"]));
+            }
+            set {
+                this["QuickToolsTriggerValue"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("720")]
+        public double QuickToolsHeight {
+            get {
+                return ((double)(this["QuickToolsHeight"]));
+            }
+            set {
+                this["QuickToolsHeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double QuickToolsLeft {
+            get {
+                return ((double)(this["QuickToolsLeft"]));
+            }
+            set {
+                this["QuickToolsLeft"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double QuickToolsTop {
+            get {
+                return ((double)(this["QuickToolsTop"]));
+            }
+            set {
+                this["QuickToolsTop"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double QuickToolsPerformanceTDPValue {
+            get {
+                return ((double)(this["QuickToolsPerformanceTDPValue"]));
+            }
+            set {
+                this["QuickToolsPerformanceTDPValue"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double QuickToolsPerformanceGPUValue {
+            get {
+                return ((double)(this["QuickToolsPerformanceGPUValue"]));
+            }
+            set {
+                this["QuickToolsPerformanceGPUValue"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool QuickToolsPerformanceTDPEnabled {
+            get {
+                return ((bool)(this["QuickToolsPerformanceTDPEnabled"]));
+            }
+            set {
+                this["QuickToolsPerformanceTDPEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool QuickToolsPerformanceGPUEnabled {
+            get {
+                return ((bool)(this["QuickToolsPerformanceGPUEnabled"]));
+            }
+            set {
+                this["QuickToolsPerformanceGPUEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int QuickToolsPowerModeValue {
+            get {
+                return ((int)(this["QuickToolsPowerModeValue"]));
+            }
+            set {
+                this["QuickToolsPowerModeValue"] = value;
             }
         }
     }

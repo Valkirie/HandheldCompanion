@@ -1,5 +1,6 @@
 ﻿using ControllerCommon.Managers;
 using ControllerCommon.Utils;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,11 +12,20 @@ namespace ControllerCommon
     {
         private Process process;
 
-        private readonly string path = @"C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe";
+        // The name of the key must include a valid root.
+        const string userRoot = @"HKEY_LOCAL_MACHINE";
+        const string subkey = @"SOFTWARE\Nefarius Software Solutions e.U.\HidHide";
+        const string keyName = userRoot + "\\" + subkey;
+
+        private readonly string key = (string)Registry.GetValue(keyName,
+            "Path",
+            "");
 
         public HidHide()
         {
             // verifying HidHide is installed
+            string path = Path.Combine(key, "x64", "HidHideCLI.exe");
+
             if (!File.Exists(path))
             {
                 LogManager.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");

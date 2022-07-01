@@ -28,6 +28,7 @@ namespace ControllerCommon.Devices
 
         // device specific settings
         public float WidthHeightRatio = 1.0f;
+        public double DefaultTDP = 15;
 
         public Vector3 AngularVelocityAxis = new Vector3(1.0f, 1.0f, 1.0f);
         public Dictionary<char, char> AngularVelocityAxisSwap = new()

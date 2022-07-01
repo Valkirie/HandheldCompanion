@@ -75,9 +75,5 @@ namespace HandheldCompanion.Views.Windows
             isClosing = v;
             this.Close();
         }
-
-        private void Window_ActualThemeChanged(object sender, RoutedEventArgs e)
-        {
-        }
     }
 }

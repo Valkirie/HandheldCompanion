@@ -14,6 +14,8 @@ namespace ControllerCommon.Devices
             this.ProductIllustration = "device_onexplayer_mini";
             this.ProductModel = "ONEXPLAYERMini";
 
+            this.DefaultTDP = 25;
+
             this.AngularVelocityAxisSwap = new()
             {
                 { 'X', 'X' },

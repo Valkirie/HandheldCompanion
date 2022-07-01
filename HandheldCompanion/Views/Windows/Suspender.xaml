@@ -6,12 +6,11 @@
         xmlns:local="clr-namespace:HandheldCompanion.Views.Windows"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
-        ui:WindowHelper.UseModernWindowStyle="True"
         Width="800" Height="600"
         Closing="Window_Closing"
         Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-        ui:ThemeManager.ActualThemeChanged="Window_ActualThemeChanged"
-        Title="Suspender" Topmost="True" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize" WindowStyle="ToolWindow">
+        ui:WindowHelper.UseModernWindowStyle="True"
+        Title="Suspender" Topmost="True">
 
     <Border CornerRadius="{DynamicResource ControlCornerRadius}">
         <!-- Processe(s) -->
