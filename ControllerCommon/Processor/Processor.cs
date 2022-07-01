@@ -311,6 +311,10 @@ namespace ControllerCommon.Processor
 
         public override void SetGPUClock(double clock)
         {
+            // reset default var
+            if (clock == 12750)
+                return;
+
             RyzenAdj.set_gfx_clk(ry, (uint)clock);
         }
     }
