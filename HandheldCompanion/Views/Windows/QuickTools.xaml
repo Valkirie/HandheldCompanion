@@ -29,14 +29,14 @@
 
         <ui:NavigationView.MenuItems>
             <!-- Page1 -->
-            <ui:NavigationViewItem Name="navQuickToolsPage1" Tag="QuickToolsPage1">
+            <ui:NavigationViewItem Name="navQuickToolsPage1" Tag="QuickToolsPage1" Visibility="Collapsed">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEA8F;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
             
             <!-- Page2 -->
-            <ui:NavigationViewItem Name="navQuickToolsPage2" Tag="QuickToolsPage2">
+            <ui:NavigationViewItem Name="navQuickToolsPage2" Tag="QuickToolsPage2" Visibility="Collapsed">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE716;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
@@ -57,7 +57,7 @@
             </ui:NavigationViewItem>
 
             <!-- Page5 -->
-            <ui:NavigationViewItem Name="navQuickToolsPage5" Tag="QuickToolsPage5">
+            <ui:NavigationViewItem Name="navQuickToolsPage5" Tag="QuickToolsPage5" Visibility="Collapsed">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE897;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
