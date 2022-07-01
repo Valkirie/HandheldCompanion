@@ -25,8 +25,6 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Tag = Tag;
 
-            MainWindow.inputsManager.TriggerUpdated += TriggerUpdated;
-
             // controller enabler
             ToyControllerRadio.IsEnabled = Properties.Settings.Default.OverlayControllerFisherPrice;
             OEMControllerRadio.IsEnabled = MainWindow.handheldDevice.ProductSupported;
@@ -53,10 +51,6 @@ namespace HandheldCompanion.Views.Pages
             // trackpads size
             SliderTrackpadsSize.Value = Properties.Settings.Default.OverlayTrackpadsSize;
             SliderTrackpadsSize_ValueChanged(this, null);
-
-            // controller trigger
-            TriggerUpdated("overlayGamepad", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayControllerTriggerType, Properties.Settings.Default.OverlayControllerTriggerValue));
-            TriggerUpdated("overlayTrackpads", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayTrackpadsTriggerType, Properties.Settings.Default.OverlayTrackpadsTriggerValue));
 
             // controller face camera and resting angle
             Toggle_FaceCamera.IsOn = Properties.Settings.Default.OverlayFaceCamera;
@@ -249,59 +243,6 @@ namespace HandheldCompanion.Views.Pages
 
             // save settings
             Properties.Settings.Default.OverlayTrackpadsOpacity = SliderTrackpadsOpacity.Value;
-            Properties.Settings.Default.Save();
-        }
-
-        private void ControllerTriggerButton_Click(object sender, RoutedEventArgs e)
-        {
-            MainWindow.inputsManager.StartListening("overlayGamepad");
-            ControllerTriggerText.Text = Properties.Resources.OverlayPage_Listening;
-        }
-
-        private void TrackpadsTriggerButton_Click(object sender, RoutedEventArgs e)
-        {
-            MainWindow.inputsManager.StartListening("overlayTrackpads");
-            TrackpadsTriggerText.Text = Properties.Resources.OverlayPage_Listening;
-        }
-
-        private void TriggerUpdated(string listener, TriggerInputs input)
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                string text = string.Empty;
-                string glyph = InputUtils.TriggerTypeToGlyph(input.type);
-
-                switch (input.type)
-                {
-                    default:
-                    case TriggerInputsType.Gamepad:
-                        text = EnumUtils.GetDescriptionFromEnumValue(input.buttons);
-                        break;
-                    case TriggerInputsType.Keyboard:
-                        // todo, display custom button name instead
-                        text = string.Join(", ", input.name);
-                        break;
-                }
-
-                switch (listener)
-                {
-                    case "overlayGamepad":
-                        ControllerTriggerText.Text = text;
-                        ControllerTriggerIcon.Glyph = glyph;
-
-                        Properties.Settings.Default.OverlayControllerTriggerValue = input.GetValue();
-                        Properties.Settings.Default.OverlayControllerTriggerType = (int)input.type;
-                        break;
-                    case "overlayTrackpads":
-                        TrackpadsTriggerText.Text = text;
-                        TrackpadsTriggerIcon.Glyph = glyph;
-
-                        Properties.Settings.Default.OverlayTrackpadsTriggerValue = input.GetValue();
-                        Properties.Settings.Default.OverlayTrackpadsTriggerType = (int)input.type;
-                        break;
-                }
-            });
-
             Properties.Settings.Default.Save();
         }
 

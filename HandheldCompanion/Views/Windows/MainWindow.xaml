@@ -46,6 +46,13 @@
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
+            <!-- Hotkeys icon -->
+            <ui:NavigationViewItem Name="navHotkeys" Content="Hotkeys" Tag="HotkeysPage">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF26B;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
             <!-- About icon -->
             <ui:NavigationViewItem Name="navAbout" Content="{x:Static resx:Resources.MainWindow_navAbout}" Tag="AboutPage">
                 <ui:NavigationViewItem.Icon>

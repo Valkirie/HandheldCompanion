@@ -48,6 +48,7 @@ namespace HandheldCompanion.Views
         public SettingsPage settingsPage;
         public AboutPage aboutPage;
         public OverlayPage overlayPage;
+        public HotkeysPage hotkeysPage;
 
         // overlay(s) vars
         public static InputsManager inputsManager;
@@ -239,6 +240,7 @@ namespace HandheldCompanion.Views
             settingsPage = new SettingsPage("settings");
             aboutPage = new AboutPage("about");
             overlayPage = new OverlayPage("overlay");
+            hotkeysPage = new HotkeysPage("hotkeys");
 
             // initialize command parser
             cmdParser = new CmdParser();
@@ -274,6 +276,7 @@ namespace HandheldCompanion.Views
             _pages.Add("AboutPage", aboutPage);
             _pages.Add("OverlayPage", overlayPage);
             _pages.Add("SettingsPage", settingsPage);
+            _pages.Add("HotkeysPage", hotkeysPage);
 
             if (!IsElevated)
             {
@@ -718,6 +721,7 @@ namespace HandheldCompanion.Views
             profilesPage.Page_Closed();
             settingsPage.Page_Closed();
             overlayPage.Page_Closed();
+            hotkeysPage.Page_Closed();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)

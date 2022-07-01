@@ -340,6 +340,78 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 3D controller hotkey.
+        /// </summary>
+        public static string HotkeysPage_OverlayModel {
+            get {
+                return ResourceManager.GetString("HotkeysPage_OverlayModel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the 3D controller hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string HotkeysPage_OverlayModelDesc {
+            get {
+                return ResourceManager.GetString("HotkeysPage_OverlayModelDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trackpads hotkey.
+        /// </summary>
+        public static string HotkeysPage_OverlayTrackpads {
+            get {
+                return ResourceManager.GetString("HotkeysPage_OverlayTrackpads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the trackpads hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string HotkeysPage_OverlayTrackpadsDesc {
+            get {
+                return ResourceManager.GetString("HotkeysPage_OverlayTrackpadsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quicktools hotkey.
+        /// </summary>
+        public static string HotkeysPage_QuickTools {
+            get {
+                return ResourceManager.GetString("HotkeysPage_QuickTools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the quicktools hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string HotkeysPage_QuickToolsDesc {
+            get {
+                return ResourceManager.GetString("HotkeysPage_QuickToolsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suspender hotkey.
+        /// </summary>
+        public static string HotkeysPage_Suspender {
+            get {
+                return ResourceManager.GetString("HotkeysPage_Suspender", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the suspender hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string HotkeysPage_SuspenderDesc {
+            get {
+                return ResourceManager.GetString("HotkeysPage_SuspenderDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Handheld Companion.
         /// </summary>
         public static string MainWindow_HandheldCompanion {
@@ -723,33 +795,6 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_RenderSettingsFramerateDesc {
             get {
                 return ResourceManager.GetString("OverlayPage_RenderSettingsFramerateDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Trigger button(s).
-        /// </summary>
-        public static string OverlayPage_SecondaryTrigger {
-            get {
-                return ResourceManager.GetString("OverlayPage_SecondaryTrigger", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the 3D overlay controller trigger.
-        /// </summary>
-        public static string OverlayPage_SecondaryTriggerDesc {
-            get {
-                return ResourceManager.GetString("OverlayPage_SecondaryTriggerDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the overlay trackpads trigger.
-        /// </summary>
-        public static string OverlayPage_SecondaryTriggerOverlayDesc {
-            get {
-                return ResourceManager.GetString("OverlayPage_SecondaryTriggerOverlayDesc", resourceCulture);
             }
         }
         

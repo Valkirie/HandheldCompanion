@@ -1,0 +1,156 @@
+﻿<Page x:Class="HandheldCompanion.Views.Pages.HotkeysPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      xmlns:local="clr-namespace:HandheldCompanion" 
+      xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
+      xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+      mc:Ignorable="d" 
+      d:DesignHeight="1500" d:DesignWidth="1000"
+      KeepAlive="True"
+      Loaded="Page_Loaded"
+      Title="Hotkeys">
+
+    <Grid Name="MainGrid" Margin="20">
+        <ui:SimpleStackPanel Spacing="24">
+            
+            <!-- Overlay -->
+            <ui:SimpleStackPanel Spacing="6">
+                <Label Content="Overlay hotkeys" FontWeight="SemiBold"></Label>
+
+                <!-- 3D model trigger -->
+                <Border                      
+                            Padding="15,12,12,12"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="{x:Static resx:Resources.HotkeysPage_OverlayModel}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.HotkeysPage_OverlayModelDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <Button Name="ControllerTriggerButton" Grid.Column="1" Width="200" HorizontalAlignment="Right" VerticalAlignment="Center" Click="ControllerTriggerButton_Click">
+                            <ui:SimpleStackPanel Name="ControllerTriggerStack" Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                                <ui:FontIcon Name="ControllerTriggerIcon"/>
+                                <TextBlock Name="ControllerTriggerText"/>
+                            </ui:SimpleStackPanel>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- Trackpads trigger -->
+                <Border                      
+                            Padding="15,12,12,12"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEDA4;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="{x:Static resx:Resources.HotkeysPage_OverlayTrackpads}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.HotkeysPage_OverlayTrackpadsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <Button Name="TrackpadsTriggerButton" Grid.Column="1" Width="200" HorizontalAlignment="Right" VerticalAlignment="Center" Click="TrackpadsTriggerButton_Click">
+                            <ui:SimpleStackPanel Name="TrackpadsTriggerStack" Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                                <ui:FontIcon Name="TrackpadsTriggerIcon"/>
+                                <TextBlock Name="TrackpadsTriggerText"/>
+                            </ui:SimpleStackPanel>
+                        </Button>
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
+
+            <!-- Suspender -->
+            <ui:SimpleStackPanel Spacing="6">
+                <Label Content="Suspender hotkeys" FontWeight="SemiBold"></Label>
+
+                <!-- Main trigger -->
+                <Border                      
+                            Padding="15,12,12,12"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE9F5;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="{x:Static resx:Resources.HotkeysPage_Suspender}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.HotkeysPage_SuspenderDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <Button Name="SuspenderTriggerButton" Grid.Column="1" Width="200" HorizontalAlignment="Right" VerticalAlignment="Center" Click="SuspenderTriggerButton_Click">
+                            <ui:SimpleStackPanel Name="SuspenderTriggerStack" Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                                <ui:FontIcon Name="SuspenderTriggerIcon"/>
+                                <TextBlock Name="SuspenderTriggerText"/>
+                            </ui:SimpleStackPanel>
+                        </Button>
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
+
+            <!-- QuickTools -->
+            <ui:SimpleStackPanel Spacing="6">
+                <Label Content="Quicktools hotkeys" FontWeight="SemiBold"></Label>
+
+                <!-- Main trigger -->
+                <Border                      
+                            Padding="15,12,12,12"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEC7A;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="{x:Static resx:Resources.HotkeysPage_QuickTools}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.HotkeysPage_QuickToolsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <Button Name="QuicktoolsTriggerButton" Grid.Column="1" Width="200" HorizontalAlignment="Right" VerticalAlignment="Center" Click="QuickToolsTriggerButton_Click">
+                            <ui:SimpleStackPanel Name="QuickToolsTriggerStack" Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
+                                <ui:FontIcon Name="QuickToolsTriggerIcon"/>
+                                <TextBlock Name="QuickToolsTriggerText"/>
+                            </ui:SimpleStackPanel>
+                        </Button>
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
+
+        </ui:SimpleStackPanel>
+    </Grid>
+</Page>

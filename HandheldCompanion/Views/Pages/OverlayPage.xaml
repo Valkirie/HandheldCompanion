@@ -165,36 +165,6 @@
                     </Grid>
                 </Border>
 
-                <!-- Trigger -->
-                <Border                      
-                            Padding="15,12,12,12"
-                            CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
-
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_SecondaryTrigger}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_SecondaryTriggerDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <Button Name="ControllerTriggerButton" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Click="ControllerTriggerButton_Click">
-                            <ui:SimpleStackPanel Name="ControllerTriggerStack" Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
-                                <ui:FontIcon Name="ControllerTriggerIcon"/>
-                                <TextBlock Name="ControllerTriggerText"/>
-                            </ui:SimpleStackPanel>
-                        </Button>
-                    </Grid>
-                </Border>
-
                 <!-- Model settings -->
                 <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
                     <Expander.Header>
@@ -410,36 +380,6 @@
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave"/>
                         </DockPanel>
-                    </Grid>
-                </Border>
-
-                <!-- Trigger -->
-                <Border                      
-                            Padding="15,12,12,12"
-                            CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
-
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_SecondaryTrigger}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_SecondaryTriggerOverlayDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <Button Name="TrackpadsTriggerButton" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Click="TrackpadsTriggerButton_Click">
-                            <ui:SimpleStackPanel Name="TrackpadsTriggerStack" Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
-                                <ui:FontIcon Name="TrackpadsTriggerIcon"/>
-                                <TextBlock Name="TrackpadsTriggerText"/>
-                            </ui:SimpleStackPanel>
-                        </Button>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
