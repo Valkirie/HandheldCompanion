@@ -31,9 +31,10 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE706;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <Slider Width="260" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="10" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
+                            <Slider Name="SliderBrightness" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="0" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                                    ValueChanged="SliderBrightness_ValueChanged"
+                                    MouseEnter="Scrolllock_MouseEnter"
+                                    MouseLeave="Scrolllock_MouseLeave"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
@@ -58,9 +59,10 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE767;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <Slider Width="260" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="10" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
+                            <Slider Name="SliderVolume" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="0" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                                    ValueChanged="SliderVolume_ValueChanged"
+                                    MouseEnter="Scrolllock_MouseEnter"
+                                    MouseLeave="Scrolllock_MouseLeave"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>

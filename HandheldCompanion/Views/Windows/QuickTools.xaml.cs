@@ -36,6 +36,7 @@ namespace HandheldCompanion.Views.Windows
 
         // manager vers
         public static PowerManager powerManager;
+        public static BrightnessControl brightnessControl;
 
         public QuickTools()
         {
@@ -43,6 +44,7 @@ namespace HandheldCompanion.Views.Windows
 
             // create manager(s)
             powerManager = new();
+            brightnessControl = new();
 
             // create pages
             performancePage = new PerformancePage();
@@ -179,7 +181,7 @@ namespace HandheldCompanion.Views.Windows
                 if (!(NavViewItem is null))
                     navView.SelectedItem = NavViewItem;
 
-                navView.Header = new TextBlock() { Text = (string)((Page)e.Content).Title, Margin = new Thickness(0,-24,0,0) };//, FontSize = 14 };
+                // navView.Header = new TextBlock() { Text = (string)((Page)e.Content).Title, Margin = new Thickness(0,-24,0,0) };//, FontSize = 14 };
             }
         }
         #endregion
@@ -259,6 +261,7 @@ namespace HandheldCompanion.Views.Windows
 
             // stop manager(s)
             powerManager.Stop();
+            brightnessControl.Dispose();
 
             e.Cancel = !isClosing;
             this.Visibility = Visibility.Collapsed;
