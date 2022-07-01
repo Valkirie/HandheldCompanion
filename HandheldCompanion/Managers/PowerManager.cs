@@ -130,14 +130,20 @@ namespace HandheldCompanion.Managers
 
         private void Processor_LimitChanged(string type, int limit)
         {
-            switch(type)
+            var TDP = RequestedTDP;
+
+            if (processor.GetType() == typeof(AMDProcessor))
+                if (RequestedPowerMode == PowerMode.BetterBattery)
+                    TDP = (int)Math.Truncate(RequestedTDP * 0.9);
+
+            switch (type)
             {
                 default:
                 case "slow":
                 case "fast":
                     break;
                 case "stapm":
-                    if (limit != RequestedTDP)
+                    if (limit != TDP)
                         RequestTDP(RequestedTDP);
                     break;
             }
