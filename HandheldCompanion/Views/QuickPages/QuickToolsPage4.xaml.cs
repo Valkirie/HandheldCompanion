@@ -23,7 +23,9 @@ namespace HandheldCompanion.Views.QuickPages
     /// </summary>
     public partial class QuickToolsPage4 : Page
     {
-        private Timer updateTimer;
+        private Timer cpuTimer;
+        private Timer gpuTimer;
+
         private bool Initialized;
 
         public QuickToolsPage4()
@@ -31,31 +33,36 @@ namespace HandheldCompanion.Views.QuickPages
             InitializeComponent();
             Initialized = true;
 
-            updateTimer = new Timer() { Interval = 3000, AutoReset = false, Enabled = false };
-            updateTimer.Elapsed += UpdateTimer_Elapsed;
+            cpuTimer = new Timer() { Interval = 3000, AutoReset = false, Enabled = false };
+            cpuTimer.Elapsed += cpuTimer_Elapsed;
+
+            gpuTimer = new Timer() { Interval = 3000, AutoReset = false, Enabled = false };
+            gpuTimer.Elapsed += gpuTimer_Elapsed;
 
             QuickTools.powerManager.StatusChanged += PowerManager_StatusChanged;
             QuickTools.powerManager.LimitChanged += PowerManager_LimitChanged;
             QuickTools.powerManager.ValueChanged += PowerManager_ValueChanged;
 
             // pull GPU settings
-            GPUSlider.Value = Properties.Settings.Default.QuickToolsPerformanceGPUValue;
+            var GPU = Properties.Settings.Default.QuickToolsPerformanceGPUValue;
+            if (GPU >= GPUSlider.Minimum && GPU <= GPUSlider.Maximum)
+                GPUSlider.Value = GPU;
 
             // pull TDP settings
             var TDP = Properties.Settings.Default.QuickToolsPerformanceTDPValue;
-            if (TDP == 0)
-            {
-                Properties.Settings.Default.QuickToolsPerformanceTDPValue = MainWindow.handheldDevice.DefaultTDP;
-                Properties.Settings.Default.Save();
-            }
-            TDPSlider.Value = Properties.Settings.Default.QuickToolsPerformanceTDPValue;
+            if (TDP >= TDPSlider.Minimum && TDP <= TDPSlider.Maximum)
+                TDPSlider.Value = TDP;
 
             // pull PowerMode settings
-            PowerModeSlider.Value = Properties.Settings.Default.QuickToolsPowerModeValue;
-            PowerModeSlider_ValueChanged(null, null); // force call
+            var PowerMode = Properties.Settings.Default.QuickToolsPowerModeValue;
+            if (PowerMode >= PowerModeSlider.Minimum && PowerMode <= PowerModeSlider.Maximum)
+            {
+                PowerModeSlider.Value = PowerMode;
+                PowerModeSlider_ValueChanged(null, null); // force call, dirty
+            }
         }
 
-        private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        private void cpuTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -63,6 +70,17 @@ namespace HandheldCompanion.Views.QuickPages
                     return;
 
                 QuickTools.powerManager.RequestTDP(TDPSlider.Value);
+            });
+        }
+
+        private void gpuTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                if (!GPUToggle.IsOn)
+                    return;
+
+                QuickTools.powerManager.RequestGPUClock(GPUSlider.Value);
             });
         }
 
@@ -108,8 +126,8 @@ namespace HandheldCompanion.Views.QuickPages
             Properties.Settings.Default.Save();
 
             // we use a timer to prevent too many calls from happening
-            updateTimer.Stop();
-            updateTimer.Start();
+            cpuTimer.Stop();
+            cpuTimer.Start();
         }
 
         private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
@@ -118,9 +136,16 @@ namespace HandheldCompanion.Views.QuickPages
             Properties.Settings.Default.QuickToolsPerformanceTDPEnabled = TDPToggle.IsOn;
             Properties.Settings.Default.Save();
 
+            if (!TDPToggle.IsOn)
+            {
+                // restore default GPU clock
+                QuickTools.powerManager.RequestTDP(MainWindow.handheldDevice.DefaultTDP);
+                return;
+            }
+
             // we use a timer to prevent too many calls from happening
-            updateTimer.Stop();
-            updateTimer.Start();
+            cpuTimer.Stop();
+            cpuTimer.Start();
         }
 
         private void GPUToggle_Toggled(object sender, RoutedEventArgs e)
@@ -130,9 +155,15 @@ namespace HandheldCompanion.Views.QuickPages
             Properties.Settings.Default.Save();
 
             if (!GPUToggle.IsOn)
+            {
+                // restore default GPU clock
+                QuickTools.powerManager.RequestGPUClock(255 * 50);
                 return;
+            }
 
-            // do something
+            // we use a timer to prevent too many calls from happening
+            gpuTimer.Stop();
+            gpuTimer.Start();
         }
 
         private void PowerModeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -152,6 +183,20 @@ namespace HandheldCompanion.Views.QuickPages
             });
 
             QuickTools.powerManager.RequestPowerMode((int)PowerModeSlider.Value);
+        }
+
+        private void GPUSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (!Initialized)
+                return;
+
+            // update settings
+            Properties.Settings.Default.QuickToolsPerformanceGPUValue = GPUSlider.Value;
+            Properties.Settings.Default.Save();
+
+            // we use a timer to prevent too many calls from happening
+            gpuTimer.Stop();
+            gpuTimer.Start();
         }
     }
 }

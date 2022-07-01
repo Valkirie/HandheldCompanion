@@ -87,7 +87,11 @@ namespace ControllerCommon.Processor
                 updateTimer.Stop();
         }
 
-        public virtual void SetLimit(string type, double limit)
+        public virtual void SetTDPLimit(string type, double limit)
+        {
+        }
+
+        public virtual void SetGPUClock(double clock)
         {
         }
 
@@ -190,7 +194,7 @@ namespace ControllerCommon.Processor
             base.UpdateTimer_Elapsed(sender, e);
         }
 
-        public override void SetLimit(string type, double limit)
+        public override void SetTDPLimit(string type, double limit)
         {
             switch (type)
             {
@@ -207,6 +211,11 @@ namespace ControllerCommon.Processor
                     rw.set_all_limit((int)limit);
                     break;
             }
+        }
+
+        public override void SetGPUClock(double clock)
+        {
+            rw.set_gfx_clk((int)clock);
         }
     }
 
@@ -229,6 +238,7 @@ namespace ControllerCommon.Processor
                         CanChangeGPU = false;
                         break;
                     case RyzenFamily.FAM_RENOIR:
+                    case RyzenFamily.FAM_LUCIENNE:
                         CanChangeGPU = true;
                         break;
                 }
@@ -275,7 +285,7 @@ namespace ControllerCommon.Processor
             base.UpdateTimer_Elapsed(sender, e);
         }
 
-        public override void SetLimit(string type, double limit)
+        public override void SetTDPLimit(string type, double limit)
         {
             // 15W : 15000
             limit *= 1000;
@@ -297,6 +307,11 @@ namespace ControllerCommon.Processor
                     RyzenAdj.set_fast_limit(ry, (uint)limit);
                     break;
             }
+        }
+
+        public override void SetGPUClock(double clock)
+        {
+            RyzenAdj.set_gfx_clk(ry, (uint)clock);
         }
     }
 }

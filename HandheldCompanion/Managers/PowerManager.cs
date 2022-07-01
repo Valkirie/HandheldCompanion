@@ -68,6 +68,7 @@ namespace HandheldCompanion.Managers
 
         // user requested limits
         private double RequestedTDP = MainWindow.handheldDevice.DefaultTDP;
+        private double RequestedGPUClock;
         private Guid RequestedPowerMode;
 
         public PowerManager()
@@ -94,10 +95,18 @@ namespace HandheldCompanion.Managers
             RequestedTDP = value;
             LogManager.LogInformation("User requested stapm: {0}", RequestedTDP);
 
-            processor.SetLimit("all", RequestedTDP);
+            processor.SetTDPLimit("all", RequestedTDP);
             // processor.SetLimit("stapm", RequestedTDP);
             // processor.SetLimit("slow", RequestedTDP + 2);
             // processor.SetLimit("fast", RequestedTDP + 5);
+        }
+
+        public void RequestGPUClock(double value)
+        {
+            RequestedGPUClock = value;
+            LogManager.LogInformation("User requested GPU clock: {0}", RequestedGPUClock);
+
+            processor.SetGPUClock(value);
         }
 
         public void RequestPowerMode(int idx)

@@ -542,9 +542,9 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int QuickToolsPerformanceGPUValue {
+        public double QuickToolsPerformanceGPUValue {
             get {
-                return ((int)(this["QuickToolsPerformanceGPUValue"]));
+                return ((double)(this["QuickToolsPerformanceGPUValue"]));
             }
             set {
                 this["QuickToolsPerformanceGPUValue"] = value;

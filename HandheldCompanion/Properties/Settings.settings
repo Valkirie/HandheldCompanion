@@ -131,7 +131,7 @@
     <Setting Name="QuickToolsPerformanceTDPValue" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="QuickToolsPerformanceGPUValue" Type="System.Int32" Scope="User">
+    <Setting Name="QuickToolsPerformanceGPUValue" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="QuickToolsPerformanceTDPEnabled" Type="System.Boolean" Scope="User">

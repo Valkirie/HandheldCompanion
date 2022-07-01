@@ -18,7 +18,8 @@ namespace ControllerCommon.Processor
         private string mchbar;
 
         // Package Power Limit (PACKAGE_RAPL_LIMIT_0_0_0_MCHBAR_PCU) — Offset 59A0h
-        private string limitpointer = "59";
+        private const string pnt_limit = "59";
+        private const string pnt_clock = "94";
 
         public Rw()
         {
@@ -75,7 +76,7 @@ namespace ControllerCommon.Processor
 
         internal int get_limit(string pointer)
         {
-            startInfo.Arguments = $"/Min /Nologo /Stdout /command=\"r16 {mchbar}{limitpointer}{pointer};rwexit\"";
+            startInfo.Arguments = $"/Min /Nologo /Stdout /command=\"r16 {mchbar}{pnt_limit}{pointer};rwexit\"";
             using (var ProcessOutput = Process.Start(startInfo))
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
@@ -117,10 +118,10 @@ namespace ControllerCommon.Processor
 
         internal void set_limit(string pointer1, string pointer2, int limit)
         {
-            string command = "/Min /Nologo /Stdout /command=\"Delay 1000;";
+            string command = "/Min /Nologo /Stdout /command=\"";
             string hex = TDPToHex(limit);
 
-            command += $"w16 {mchbar}{limitpointer}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
+            command += $"w16 {mchbar}{pnt_limit}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
             command += $"wrmsr 0x610 0x0 {pointer2}{hex};";
 
             startInfo.Arguments = $"{command}rwexit\"";
@@ -135,15 +136,15 @@ namespace ControllerCommon.Processor
 
         internal void set_all_limit(int limit)
         {
-            string command = "/Min /Nologo /Stdout /command=\"Delay 1000;";
+            string command = "/Min /Nologo /Stdout /command=\"";
             string hex = TDPToHex(limit);
 
             // long
-            command += $"w16 {mchbar}{limitpointer}a4 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
+            command += $"w16 {mchbar}{pnt_limit}a4 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
             command += $"wrmsr 0x610 0x0 0x00438{hex.Substring(hex.Length - 3)};";
 
             // short
-            command += $"w16 {mchbar}{limitpointer}a0 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
+            command += $"w16 {mchbar}{pnt_limit}a0 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
             command += $"wrmsr 0x610 0x0 0x00dd8{hex.Substring(hex.Length - 3)};";
 
             startInfo.Arguments = $"{command}rwexit\"";
@@ -159,7 +160,32 @@ namespace ControllerCommon.Processor
         private string TDPToHex(int decValue)
         {
             decValue *= 8;
-            return "0" + decValue.ToString("X");
+            string output = decValue.ToString("X3");
+            return output;
+        }
+
+        private string ClockToHex(int decValue)
+        {
+            decValue /= 50;
+            string output = "0x" + decValue.ToString("X2");
+            return output;
+        }
+
+        internal void set_gfx_clk(int clock)
+        {
+            string command = "/Min /Nologo /Stdout /command=\"";
+            string hex = ClockToHex(clock);
+
+            command += $"w {mchbar}{pnt_clock} {hex};";
+
+            startInfo.Arguments = $"{command}rwexit\"";
+            using (var ProcessOutput = Process.Start(startInfo))
+            {
+                while (!ProcessOutput.StandardOutput.EndOfStream)
+                {
+                    string line = ProcessOutput.StandardOutput.ReadLine();
+                }
+            }
         }
     }
 }

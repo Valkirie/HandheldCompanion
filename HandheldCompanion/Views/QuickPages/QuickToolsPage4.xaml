@@ -94,7 +94,8 @@
 
                 <DockPanel Grid.Column="1" Margin="0,0,0,0">
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}" />
-                    <Slider Name="GPUSlider" Width="280" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="100" Minimum="500" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                    <Slider Name="GPUSlider" Width="280" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="50" Minimum="100" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                            ValueChanged="GPUSlider_ValueChanged"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave"/>
                 </DockPanel>
