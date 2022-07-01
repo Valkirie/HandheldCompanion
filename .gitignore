@@ -15,13 +15,14 @@
 # Include dlls if they’re in the NuGet packages directory
 !/packages/*/lib/*.dll
 !/*/Resources/*.dll
-!/dependencies/*.dll
 !/*/Resources/*/*.dll
 # Include dlls if they're in the CommonReferences directory
 !*CommonReferences/*.dll
 !/src/*.exe
 !/redist/*.exe
 !/Dependencies/*.exe
+!/Dependencies/*.dll
+!/Dependencies/*.sys
 ####################
 # VS Upgrade stuff #
 ####################
