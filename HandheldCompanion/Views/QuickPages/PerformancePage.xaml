@@ -1,4 +1,4 @@
-﻿<Page x:Class="HandheldCompanion.Views.QuickPages.QuickToolsPage4"
+﻿<Page x:Class="HandheldCompanion.Views.QuickPages.PerformancePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -154,62 +154,6 @@
                     </ui:SimpleStackPanel>
                 </DockPanel>
 
-            </Border>
-        </ui:SimpleStackPanel>
-
-        <!-- Brightness -->
-        <ui:SimpleStackPanel Spacing="2">
-            <!-- Header -->
-            <Border
-                Padding="15,12,12,12"
-                CornerRadius="{DynamicResource ControlCornerRadius}"                
-                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                Visibility="Collapsed">
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="300"></ColumnDefinition>
-                        <ColumnDefinition Width="100"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-
-                    <DockPanel>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE706;" Height="40" HorizontalAlignment="Center"/>
-
-                        <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <Slider Width="260" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="10" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
-                        </ui:SimpleStackPanel>
-                    </DockPanel>
-                </Grid>
-            </Border>
-        </ui:SimpleStackPanel>
-
-        <!-- Sounds -->
-        <ui:SimpleStackPanel Spacing="2">
-            <!-- Header -->
-            <Border
-                Padding="15,12,12,12"
-                CornerRadius="{DynamicResource ControlCornerRadius}"                
-                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                Visibility="Collapsed">
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="300"></ColumnDefinition>
-                        <ColumnDefinition Width="100"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-
-                    <DockPanel>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE767;" Height="40" HorizontalAlignment="Center"/>
-
-                        <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <Slider Width="260" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="10" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
-                        </ui:SimpleStackPanel>
-                    </DockPanel>
-                </Grid>
             </Border>
         </ui:SimpleStackPanel>
 

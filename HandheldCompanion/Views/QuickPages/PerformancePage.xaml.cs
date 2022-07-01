@@ -19,16 +19,16 @@ using System.Windows.Shapes;
 namespace HandheldCompanion.Views.QuickPages
 {
     /// <summary>
-    /// Interaction logic for QuickToolsPage4.xaml
+    /// Interaction logic for PerformancePage.xaml
     /// </summary>
-    public partial class QuickToolsPage4 : Page
+    public partial class PerformancePage : Page
     {
         private Timer cpuTimer;
         private Timer gpuTimer;
 
         private bool Initialized;
 
-        public QuickToolsPage4()
+        public PerformancePage()
         {
             InitializeComponent();
             Initialized = true;
