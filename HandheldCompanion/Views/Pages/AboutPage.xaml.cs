@@ -44,8 +44,8 @@ namespace HandheldCompanion.Views.Pages
 
                 if (!MainWindow.handheldDevice.ProductSupported)
                 {
-                    WarningBorder.Visibility = Visibility.Visible;
-                    WarningContent.Text = "Oups, it appears your device is not supported yet. The software might not run as expected.";
+                    WarningBorder.IsOpen = true;
+                    WarningBorder.Message = "Oups, it appears your device is not supported yet. The software might not run as expected.";
                 }
 
                 ImageDevice.Source = new BitmapImage(ImageSource);

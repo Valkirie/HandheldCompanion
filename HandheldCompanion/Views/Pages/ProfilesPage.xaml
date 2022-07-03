@@ -56,46 +56,10 @@
                 </controls:Setting>
 
                 <!--  Warning  -->
-                <Border
+                <ui:InfoBar
                     Name="WarningBorder"
-                    Padding="12,12,12,12"
-                    ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-                    Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="Collapsed">
-
-                    <Grid>
-                        <ui:SimpleStackPanel
-                            Grid.Column="0"
-                            HorizontalAlignment="Stretch"
-                            Spacing="12">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="0.5*" MinWidth="80" />
-                                    <ColumnDefinition Width="9.5*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Grid>
-                                    <ui:FontIcon
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Foreground="White"
-                                        Glyph="&#xF136;" />
-                                    <ui:FontIcon
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Foreground="Black"
-                                        Glyph="&#xF13C;" />
-                                </Grid>
-                                <TextBlock
-                                    Name="WarningContent"
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    FontSize="14"
-                                    TextWrapping="Wrap" />
-                            </Grid>
-                        </ui:SimpleStackPanel>
-                    </Grid>
-                </Border>
+                    IsClosable="False"
+                    Severity="Warning" />
 
             </controls:SettingsGroup>
 

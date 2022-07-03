@@ -359,7 +359,7 @@ namespace HandheldCompanion.Views.Pages
                 {
                     default:
                     case ProfileErrorCode.None:
-                        WarningBorder.Visibility = Visibility.Collapsed;
+                        WarningBorder.IsOpen = false;
                         cB_Whitelist.IsEnabled = true;
                         cB_Wrapper.IsEnabled = true;
                         break;
@@ -368,15 +368,15 @@ namespace HandheldCompanion.Views.Pages
                     case ProfileErrorCode.MissingPath:
                     case ProfileErrorCode.MissingPermission:
                     case ProfileErrorCode.IsDefault:
-                        WarningBorder.Visibility = Visibility.Visible;
-                        WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentError);
+                        WarningBorder.IsOpen = true;
+                        WarningBorder.Message = EnumUtils.GetDescriptionFromEnumValue(currentError);
                         cB_Whitelist.IsEnabled = false;     // you can't whitelist an application without path
                         cB_Wrapper.IsEnabled = false;       // you can't deploy wrapper on an application without path
                         break;
 
                     case ProfileErrorCode.IsRunning:
-                        WarningBorder.Visibility = Visibility.Visible;
-                        WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentError);
+                        WarningBorder.IsOpen = true;
+                        WarningBorder.Message = EnumUtils.GetDescriptionFromEnumValue(currentError);
                         cB_Whitelist.IsEnabled = true; // you can't whitelist an application without path
                         cB_Wrapper.IsEnabled = false;   // you can't deploy wrapper on a running application
                         break;
