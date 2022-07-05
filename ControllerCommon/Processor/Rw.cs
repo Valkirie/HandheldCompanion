@@ -20,6 +20,7 @@ namespace ControllerCommon.Processor
         // Package Power Limit (PACKAGE_RAPL_LIMIT_0_0_0_MCHBAR_PCU) — Offset 59A0h
         private const string pnt_limit = "59";
         private const string pnt_clock = "94";
+        private const int delay_value = 1000;
 
         public Rw()
         {
@@ -88,7 +89,7 @@ namespace ControllerCommon.Processor
 
                     line = line.Substring(line.Length - 6);
                     var value = Convert.ToInt32(line, 16);
-                    var output = ((double)value - 32768.0d) / 8.0d;
+                    var output = ((double)value - Int16.MinValue) / 8.0d;
                     return (int)output;
                 }
             }
@@ -118,7 +119,7 @@ namespace ControllerCommon.Processor
 
         internal void set_limit(string pointer1, string pointer2, int limit)
         {
-            string command = "/Min /Nologo /Stdout /command=\"";
+            string command = $"/Min /Nologo /Stdout /command=\"Delay {delay_value};";
             string hex = TDPToHex(limit);
 
             command += $"w16 {mchbar}{pnt_limit}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
@@ -136,7 +137,7 @@ namespace ControllerCommon.Processor
 
         internal void set_all_limit(int limit)
         {
-            string command = "/Min /Nologo /Stdout /command=\"";
+            string command = $"/Min /Nologo /Stdout /command=\"Delay {delay_value};";
             string hex = TDPToHex(limit);
 
             // long
@@ -147,7 +148,9 @@ namespace ControllerCommon.Processor
             command += $"w16 {mchbar}{pnt_limit}a0 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
             command += $"wrmsr 0x610 0x0 0x00dd8{hex.Substring(hex.Length - 3)};";
 
-            startInfo.Arguments = $"{command}rwexit\"";
+            command += $"Delay {delay_value};rwexit\"";
+
+            startInfo.Arguments = command;
             using (var ProcessOutput = Process.Start(startInfo))
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
@@ -173,12 +176,13 @@ namespace ControllerCommon.Processor
 
         internal void set_gfx_clk(int clock)
         {
-            string command = "/Min /Nologo /Stdout /command=\"";
+            string command = $"/Min /Nologo /Stdout /command=\"Delay {delay_value};";
             string hex = ClockToHex(clock);
 
             command += $"w {mchbar}{pnt_clock} {hex};";
+            command += $"Delay {delay_value};rwexit\"";
 
-            startInfo.Arguments = $"{command}rwexit\"";
+            startInfo.Arguments = command;
             using (var ProcessOutput = Process.Start(startInfo))
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
