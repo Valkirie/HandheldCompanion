@@ -52,6 +52,8 @@ namespace HandheldCompanion.Views.QuickPages
             var TDP = Properties.Settings.Default.QuickToolsPerformanceTDPValue;
             if (TDP >= TDPSlider.Minimum && TDP <= TDPSlider.Maximum)
                 TDPSlider.Value = TDP;
+            else
+                TDPSlider.Value = MainWindow.handheldDevice.DefaultTDP;
 
             // pull PowerMode settings
             var PowerMode = Properties.Settings.Default.QuickToolsPowerModeValue;
