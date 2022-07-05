@@ -55,7 +55,7 @@ namespace ControllerCommon
         public bool inverthorizontal { get; set; } = false;         // if true, invert horizontal axis
         public bool invertvertical { get; set; } = false;           // if false, invert vertical axis
 
-        public bool umc_enabled { get; set; } = false;
+        public bool umc_enabled { get; set; } = true;
 
         public Input umc_input { get; set; } = Input.JoystickCamera;
         public Output umc_output { get; set; } = Output.RightStick;
@@ -75,7 +75,7 @@ namespace ControllerCommon
         public float flick_duration { get; set; } = 0.1f;
         public float stick_sensivity { get; set; } = 3.0f;
 
-        public GamepadButtonFlagsExt umc_trigger { get; set; } = 0;
+        public GamepadButtonFlagsExt umc_trigger { get; set; } = (GamepadButtonFlagsExt)65536;
 
         // hidden settings
         [JsonIgnore] public ProfileErrorCode error;
