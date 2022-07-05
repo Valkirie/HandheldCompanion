@@ -505,8 +505,22 @@ namespace HandheldCompanion.Views.Pages
             if (cB_Input.SelectedIndex == -1)
                 return;
 
-            Input button = (Input)cB_Input.SelectedIndex;
-            Text_InputHint.Text = Profile.InputDescription[button];
+            Input input = (Input)cB_Input.SelectedIndex;
+
+            // Check which input type is selected and automatically
+            // set the most used output joystick accordingly.
+            switch (input)
+            {
+                case Input.PlayerSpace:
+                case Input.JoystickCamera:
+                    cB_Output.SelectedIndex = (int)Output.RightStick;
+                    break;
+                case Input.JoystickSteering:
+                    cB_Output.SelectedIndex = (int)Output.LeftStick;
+                    break;
+            }
+
+            Text_InputHint.Text = Profile.InputDescription[input];
         }
     }
 }
