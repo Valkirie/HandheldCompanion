@@ -125,7 +125,9 @@ namespace ControllerCommon.Processor
             command += $"w16 {mchbar}{pnt_limit}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
             command += $"wrmsr 0x610 0x0 {pointer2}{hex};";
 
-            startInfo.Arguments = $"{command}rwexit\"";
+            command += $"Delay {delay_value};rwexit\"";
+
+            startInfo.Arguments = command;
             using (var ProcessOutput = Process.Start(startInfo))
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
