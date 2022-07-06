@@ -133,9 +133,6 @@ namespace ControllerService.Sensors
 
             reading *= ControllerService.profile.gyrometer;
 
-            if (ratio)
-                reading.Y *= ControllerService.handheldDevice.WidthHeightRatio;
-
             var readingZ = ControllerService.profile.steering == 0 ? reading.Z : reading.Y;
             var readingY = ControllerService.profile.steering == 0 ? reading.Y : reading.Z;
             var readingX = ControllerService.profile.steering == 0 ? reading.X : reading.X;

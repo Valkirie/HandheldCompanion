@@ -145,7 +145,7 @@ namespace ControllerService.Targets
                                 Angular.Y *= InputUtils.ApplyCustomSensitivity(Angular.Y, XInputGirometer.sensorSpec.maxIn, ControllerService.profile.aiming_array);
 
                                 // apply device width ratio
-                                Angular.Y *= ControllerService.handheldDevice.WidthHeightRatio;
+                                Angular.X *= ControllerService.handheldDevice.WidthHeightRatio;
 
                                 // apply sensivity
                                 Vector2 GamepadThumb = new Vector2(
