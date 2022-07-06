@@ -8,12 +8,13 @@ namespace HandheldCompanion.Managers
     {
         // TaskManager vars
         private Task task;
+        private TaskDefinition taskDefinition;
         private string ServiceName, ServiceExecutable;
 
-        public TaskManager(string ServiceName, string ServiceExecutable)
+        public TaskManager(string ServiceName, string Executable)
         {
             this.ServiceName = ServiceName;
-            this.ServiceExecutable = ServiceExecutable;
+            this.ServiceExecutable = Executable;
 
             if (!MainWindow.IsElevated)
                 return;
@@ -22,18 +23,22 @@ namespace HandheldCompanion.Managers
             task = TaskServ.FindTask(ServiceName);
 
             if (task != null)
+            {
+                taskDefinition = task.Definition;
+                taskDefinition.Actions[0] = new ExecAction(Executable);
                 return;
+            }
 
-            TaskDefinition td = TaskService.Instance.NewTask();
-            td.Principal.RunLevel = TaskRunLevel.Highest;
-            td.Principal.LogonType = TaskLogonType.InteractiveToken;
-            td.Settings.DisallowStartIfOnBatteries = false;
-            td.Settings.StopIfGoingOnBatteries = false;
-            td.Settings.ExecutionTimeLimit = TimeSpan.Zero;
-            td.Settings.Enabled = false;
-            td.Triggers.Add(new LogonTrigger());
-            td.Actions.Add(new ExecAction(ServiceExecutable));
-            task = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, td);
+            taskDefinition = TaskService.Instance.NewTask();
+            taskDefinition.Principal.RunLevel = TaskRunLevel.Highest;
+            taskDefinition.Principal.LogonType = TaskLogonType.InteractiveToken;
+            taskDefinition.Settings.DisallowStartIfOnBatteries = false;
+            taskDefinition.Settings.StopIfGoingOnBatteries = false;
+            taskDefinition.Settings.ExecutionTimeLimit = TimeSpan.Zero;
+            taskDefinition.Settings.Enabled = false;
+            taskDefinition.Triggers.Add(new LogonTrigger());
+            taskDefinition.Actions.Add(new ExecAction(Executable));
+            task = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, taskDefinition);
         }
 
         public void UpdateTask(bool value)
