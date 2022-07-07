@@ -26,8 +26,9 @@ namespace HandheldCompanion.Views.Windows
         private Dictionary<string, Page> _pages = new();
         private string preNavItemTag;
 
-        public PerformancePage performancePage;
+        public QuickPerformancePage performancePage;
         public QuickSettingsPage settingsPage;
+        public QuickProfilesPage profilesPage;
 
         // touchscroll vars
         Point scrollPoint = new Point();
@@ -47,11 +48,13 @@ namespace HandheldCompanion.Views.Windows
             brightnessControl = new();
 
             // create pages
-            performancePage = new PerformancePage();
+            performancePage = new QuickPerformancePage();
             settingsPage = new QuickSettingsPage();
+            profilesPage = new QuickProfilesPage();
 
-            _pages.Add("PerformancePage", performancePage);
+            _pages.Add("QuickPerformancePage", performancePage);
             _pages.Add("QuickSettingsPage", settingsPage);
+            _pages.Add("QuickProfilesPage", profilesPage);
 
             // start manager(s)
             powerManager.Start();
@@ -142,7 +145,7 @@ namespace HandheldCompanion.Views.Windows
             // If navigation occurs on SelectionChanged, this isn't needed.
             // Because we use ItemInvoked to navigate, we need to call Navigate
             // here to load the home page.
-            NavView_Navigate("PerformancePage");
+            NavView_Navigate("QuickPerformancePage");
         }
 
         private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)

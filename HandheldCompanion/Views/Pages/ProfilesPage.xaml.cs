@@ -442,7 +442,6 @@ namespace HandheldCompanion.Views.Pages
                 if ((bool)activators[button].IsChecked)
                     profileCurrent.umc_trigger |= button;
 
-            MainWindow.profileManager.profiles[profileCurrent.name] = profileCurrent;
             MainWindow.profileManager.UpdateOrCreateProfile(profileCurrent, false);
             MainWindow.profileManager.SerializeProfile(profileCurrent);
         }

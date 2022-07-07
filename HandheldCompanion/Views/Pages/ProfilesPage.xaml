@@ -299,7 +299,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <DockPanel Margin="0,12,12,12">
-                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe759;" Height="40" HorizontalAlignment="Center"/>
+                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE759;" Height="40" HorizontalAlignment="Center"/>
 
                                     <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                         <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCSettings}" FontSize="14"/>

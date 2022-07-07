@@ -28,38 +28,21 @@
         Width="400">
 
         <ui:NavigationView.MenuItems>
-            <!-- Page1 -->
-            <ui:NavigationViewItem Name="navQuickToolsPage1" Tag="QuickToolsPage1" Visibility="Collapsed">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEA8F;"></ui:FontIcon>
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
-            
-            <!-- Page2 -->
-            <ui:NavigationViewItem Name="navQuickToolsPage2" Tag="QuickToolsPage2" Visibility="Collapsed">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE716;"></ui:FontIcon>
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
-
-            <!-- Page3 -->
-            <ui:NavigationViewItem Name="navQuickSettingsPage" Tag="QuickSettingsPage">
+            <ui:NavigationViewItem Name="navSettingsPage" Tag="QuickSettingsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF8B0;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <!-- Page4 -->
-            <ui:NavigationViewItem Name="navPerformancePage" Tag="PerformancePage">
+            <ui:NavigationViewItem Name="navPerformancePage" Tag="QuickPerformancePage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE83F;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <!-- Page5 -->
-            <ui:NavigationViewItem Name="navQuickToolsPage5" Tag="QuickToolsPage5" Visibility="Collapsed">
+            <ui:NavigationViewItem Name="navProfilesPage" Tag="QuickProfilesPage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE897;"></ui:FontIcon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE748;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
