@@ -350,21 +350,17 @@ namespace HandheldCompanion.Managers
                 string name = string.Empty;
 
                 ProcessDiagnosticInfo process = new ProcessUtils.FindHostedProcess().Process;
-                if (process == null)
-                    return;
-
-                name = ProcessUtils.GetActiveWindowTitle();
-                if (name == "Overlay")
+                if (process == null || process.ExecutableFileName == "HandheldCompanion.exe")
                     return;
 
                 processId = process.ProcessId;
-
                 if (processId != CurrentProcess)
                 {
                     if (CurrentProcesses.ContainsKey(processId))
                     {
                         ProcessEx processEx = CurrentProcesses[processId];
                         path = ProcessUtils.GetPathToApp(processEx.Process);
+                        name = ProcessUtils.GetActiveWindowTitle();
 
                         LogManager.LogDebug("ActiveWindow Title: {0}, Path: {1}", name, path);
 
