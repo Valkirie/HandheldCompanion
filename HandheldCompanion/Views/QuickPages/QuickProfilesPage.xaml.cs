@@ -19,6 +19,7 @@ namespace HandheldCompanion.Views.QuickPages
     {
         private bool Initialized;
         private bool IgnoreMe;
+        private Profile currentProfile;
 
         public QuickProfilesPage()
         {
@@ -26,6 +27,7 @@ namespace HandheldCompanion.Views.QuickPages
             Initialized = true;
 
             MainWindow.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            MainWindow.profileManager.Updated += ProfileUpdated;
 
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
             {
@@ -91,29 +93,39 @@ namespace HandheldCompanion.Views.QuickPages
             }
         }
 
-        Profile profile;
-        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
+        private void ProfileUpdated(Profile profile, bool backgroundtask)
         {
-            profile = MainWindow.profileManager.GetProfileFromExec(processEx.Name);
+            if (backgroundtask)
+                return;
 
-            if (profile == null)
-                profile = new Profile(processEx.Path);
+            if (profile.executable != currentProfile.executable)
+                return;
 
             this.Dispatcher.Invoke(() =>
             {
                 IgnoreMe = true;
 
-                ProfileName.Text = profile.name;
-                ProfilePath.Text = profile.path;
+                ProfileName.Text = currentProfile.name;
+                ProfilePath.Text = currentProfile.path;
 
                 ProfileToggle.IsEnabled = true;
-                ProfileToggle.IsOn = profile.isEnabled;
-                UMCToggle.IsOn = profile.umc_enabled;
-                cB_Input.SelectedIndex = (int)profile.umc_input;
-                cB_Output.SelectedIndex = (int)profile.umc_output;
+                ProfileToggle.IsOn = currentProfile.isEnabled;
+                UMCToggle.IsOn = currentProfile.umc_enabled;
+                cB_Input.SelectedIndex = (int)currentProfile.umc_input;
+                cB_Output.SelectedIndex = (int)currentProfile.umc_output;
 
                 IgnoreMe = false;
             });
+        }
+
+        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
+        {
+            currentProfile = MainWindow.profileManager.GetProfileFromExec(processEx.Name);
+
+            if (currentProfile == null)
+                currentProfile = new Profile(processEx.Path);
+
+            ProfileUpdated(currentProfile, false);
         }
 
         private void Scrolllock_MouseEnter(object sender, MouseEventArgs e)
@@ -128,31 +140,31 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void SaveProfile()
         {
-            if (profile is null || IgnoreMe)
+            if (currentProfile is null || IgnoreMe)
                 return;
 
-            MainWindow.profileManager.UpdateOrCreateProfile(profile, false);
-            MainWindow.profileManager.SerializeProfile(profile);
+            MainWindow.profileManager.UpdateOrCreateProfile(currentProfile, false);
+            MainWindow.profileManager.SerializeProfile(currentProfile);
 
             // inform service
-            MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = profile });
+            MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
         }
 
         private void ProfileToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            if (profile is null || IgnoreMe)
+            if (currentProfile is null || IgnoreMe)
                 return;
 
-            profile.isEnabled = ProfileToggle.IsOn;
+            currentProfile.isEnabled = ProfileToggle.IsOn;
             SaveProfile();
         }
 
         private void UMCToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            if (profile is null || IgnoreMe)
+            if (currentProfile is null || IgnoreMe)
                 return;
 
-            profile.umc_enabled = UMCToggle.IsOn;
+            currentProfile.umc_enabled = UMCToggle.IsOn;
             SaveProfile();
         }
 
@@ -178,19 +190,19 @@ namespace HandheldCompanion.Views.QuickPages
 
             Text_InputHint.Text = Profile.InputDescription[input];
 
-            if (profile is null || IgnoreMe)
+            if (currentProfile is null || IgnoreMe)
                 return;
 
-            profile.umc_input = (Input)cB_Input.SelectedIndex;
+            currentProfile.umc_input = (Input)cB_Input.SelectedIndex;
             SaveProfile();
         }
 
         private void cB_Output_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (profile is null || IgnoreMe)
+            if (currentProfile is null || IgnoreMe)
                 return;
 
-            profile.umc_output = (Output)cB_Output.SelectedIndex;
+            currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
             SaveProfile();
         }
     }
