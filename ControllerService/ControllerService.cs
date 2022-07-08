@@ -428,6 +428,10 @@ namespace ControllerService
 
         internal void ProfileUpdated(Profile profile, bool backgroundtask)
         {
+            // skip if not enabled
+            if (!profile.isEnabled)
+                return;
+
             // skip if current profile
             if (profile == ControllerService.profile)
                 return;

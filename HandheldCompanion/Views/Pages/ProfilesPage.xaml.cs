@@ -144,10 +144,6 @@ namespace HandheldCompanion.Views.Pages
         #region UI
         public void ProfileUpdated(Profile profile, bool backgroundtask)
         {
-            // inform Service we have a new default profile
-            if (profile.isDefault)
-                MainWindow.pipeClient?.SendMessage(new PipeClientProfile() { profile = profile });
-
             this.Dispatcher.Invoke(async () =>
             {
                 int idx = -1;
@@ -444,6 +440,9 @@ namespace HandheldCompanion.Views.Pages
 
             MainWindow.profileManager.UpdateOrCreateProfile(profileCurrent, false);
             MainWindow.profileManager.SerializeProfile(profileCurrent);
+
+            // inform service
+            MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = profileCurrent });
         }
 
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)

@@ -18,6 +18,7 @@ namespace HandheldCompanion.Views.QuickPages
     public partial class QuickProfilesPage : Page
     {
         private bool Initialized;
+        private bool IgnoreMe;
 
         public QuickProfilesPage()
         {
@@ -90,18 +91,29 @@ namespace HandheldCompanion.Views.QuickPages
             }
         }
 
+        Profile profile;
         private void ProcessManager_ForegroundChanged(ProcessEx processEx)
         {
-            this.Dispatcher.Invoke(() =>
-            {
-                ProfileName.Text = processEx.Name;
-                ProfilePath.Text = processEx.Path;
-            });
-
-            var profile = MainWindow.profileManager.GetProfileFromExec(processEx.Name);
+            profile = MainWindow.profileManager.GetProfileFromExec(processEx.Name);
 
             if (profile == null)
-                return;
+                profile = new Profile(processEx.Path);
+
+            this.Dispatcher.Invoke(() =>
+            {
+                IgnoreMe = true;
+
+                ProfileName.Text = profile.name;
+                ProfilePath.Text = profile.path;
+
+                ProfileToggle.IsEnabled = true;
+                ProfileToggle.IsOn = profile.isEnabled;
+                UMCToggle.IsOn = profile.umc_enabled;
+                cB_Input.SelectedIndex = (int)profile.umc_input;
+                cB_Output.SelectedIndex = (int)profile.umc_output;
+
+                IgnoreMe = false;
+            });
         }
 
         private void Scrolllock_MouseEnter(object sender, MouseEventArgs e)
@@ -114,14 +126,34 @@ namespace HandheldCompanion.Views.QuickPages
             QuickTools.scrollLock = false;
         }
 
+        private void SaveProfile()
+        {
+            if (profile is null || IgnoreMe)
+                return;
+
+            MainWindow.profileManager.UpdateOrCreateProfile(profile, false);
+            MainWindow.profileManager.SerializeProfile(profile);
+
+            // inform service
+            MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = profile });
+        }
+
         private void ProfileToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            if (profile is null || IgnoreMe)
+                return;
 
+            profile.isEnabled = ProfileToggle.IsOn;
+            SaveProfile();
         }
 
         private void UMCToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            if (profile is null || IgnoreMe)
+                return;
 
+            profile.umc_enabled = UMCToggle.IsOn;
+            SaveProfile();
         }
 
         private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -145,6 +177,21 @@ namespace HandheldCompanion.Views.QuickPages
             }
 
             Text_InputHint.Text = Profile.InputDescription[input];
+
+            if (profile is null || IgnoreMe)
+                return;
+
+            profile.umc_input = (Input)cB_Input.SelectedIndex;
+            SaveProfile();
+        }
+
+        private void cB_Output_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (profile is null || IgnoreMe)
+                return;
+
+            profile.umc_output = (Output)cB_Output.SelectedIndex;
+            SaveProfile();
         }
     }
 }

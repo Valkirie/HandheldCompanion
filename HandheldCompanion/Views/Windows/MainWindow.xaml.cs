@@ -396,9 +396,6 @@ namespace HandheldCompanion.Views
 
                 profile.isApplied = true;
 
-                // inform service
-                pipeClient.SendMessage(new PipeClientProfile { profile = profile });
-
                 // update current profile
                 profileManager.CurrentProfile = profile;
 

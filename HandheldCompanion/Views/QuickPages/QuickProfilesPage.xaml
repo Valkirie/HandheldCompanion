@@ -30,8 +30,8 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE748;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <TextBlock Name="ProfileName" Text="Profile name" FontSize="14"/>
-                            <TextBlock Name="ProfilePath" Text="Profile path" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock Name="ProfileName" FontSize="14"/>
+                            <TextBlock Name="ProfilePath" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
@@ -60,7 +60,7 @@
                         </StackPanel>
                     </DockPanel>
 
-                    <ui:ToggleSwitch Name="ProfileToggle" Grid.Column="1" Toggled="ProfileToggle_Toggled" />
+                    <ui:ToggleSwitch Name="ProfileToggle" IsEnabled="False" Grid.Column="1" Toggled="ProfileToggle_Toggled" />
                 </Grid>
             </Border>
         </ui:SimpleStackPanel>
@@ -125,7 +125,7 @@
 
                     </Grid>
                     
-                    <ui:RadioButtons Margin="6,0,0,0" Name="cB_Output" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="1" VerticalAlignment="Center" SelectedIndex="0"/>
+                    <ui:RadioButtons Margin="6,0,0,0" Name="cB_Output" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="1" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Output_SelectionChanged"/>
                 </ui:SimpleStackPanel>
             </Border>
         </ui:SimpleStackPanel>
