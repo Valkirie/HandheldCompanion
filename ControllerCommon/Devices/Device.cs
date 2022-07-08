@@ -65,10 +65,12 @@ namespace ControllerCommon.Devices
 
             switch (ManufacturerName)
             {
+                case "AYADEVICE":
                 case "AYANEO":
                     {
                         switch (ProductName)
                         {
+                            case "AYA NEO FOUNDER":
                             case "AYANEO 2021":
                             case "AYANEO 2021 Pro":
                             case "AYANEO 2021 Pro Retro Power":
