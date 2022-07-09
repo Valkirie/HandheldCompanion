@@ -98,6 +98,9 @@ namespace HandheldCompanion.Managers
                     else
                         processName.Text = Process.MainWindowTitle;
 
+                    if (Process.MainWindowHandle != IntPtr.Zero)
+                        processBorder.Visibility = Visibility.Visible;
+
                     switch (processThread.ThreadState)
                     {
                         case ThreadState.Wait:
@@ -142,6 +145,7 @@ namespace HandheldCompanion.Managers
             processBorder = new Border()
             {
                 Padding = new Thickness(20, 12, 12, 12),
+                Visibility = Visibility.Collapsed,
                 Tag = Name
             };
             processBorder.SetResourceReference(Control.BackgroundProperty, "SystemControlBackgroundChromeMediumLowBrush");
@@ -409,20 +413,25 @@ namespace HandheldCompanion.Managers
 
         private async void ProcessCreated(Process proc)
         {
-            // breating
-            await Task.Delay(1000);
-
-            // no main window
-            if (proc.MainWindowHandle == IntPtr.Zero)
+            try
+            {
+                // process has exited on arrival
+                if (proc.HasExited)
+                    return;
+            }
+            catch(Exception)
+            {
+                // process has too high elevation
                 return;
-
+            }
+            
             string path = ProcessUtils.GetPathToApp(proc);
 
             // todo : implement proper filtering
             if (string.IsNullOrEmpty(path))
                 return;
 
-            if (path.ToLower().Contains(Environment.GetEnvironmentVariable("windir").ToLower()))
+            if (path.Contains(Environment.GetEnvironmentVariable("windir"), StringComparison.InvariantCultureIgnoreCase))
                 return;
 
             string exec = Path.GetFileName(path);
@@ -433,6 +442,7 @@ namespace HandheldCompanion.Managers
                 Executable = exec,
                 Path = path
             };
+
             processEx.Start();
 
             if (!CurrentProcesses.ContainsKey(processEx.Id))
