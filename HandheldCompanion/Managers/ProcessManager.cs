@@ -51,7 +51,6 @@ namespace HandheldCompanion.Managers
         public string Executable;
         public string Path;
 
-        private Timer Timer;
         private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
 
         // UI vars
@@ -65,25 +64,10 @@ namespace HandheldCompanion.Managers
         public ProcessEx(Process process)
         {
             this.Process = process;
-
             this.Id = (uint)process.Id;
-
-            Timer = new Timer(1000);
         }
 
-        public void Start()
-        {
-            Timer.Elapsed += Timer_Tick;
-            Timer.Start();
-        }
-
-        public void Stop()
-        {
-            Timer.Elapsed -= Timer_Tick;
-            Timer.Stop();
-        }
-
-        private void Timer_Tick(object? sender, EventArgs e)
+        public void Timer_Tick(object? sender, EventArgs e)
         {
             try
             {
@@ -93,13 +77,14 @@ namespace HandheldCompanion.Managers
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
-                    if (string.IsNullOrEmpty(Process.MainWindowTitle))
-                        processName.Text = Process.ProcessName;
-                    else
-                        processName.Text = Process.MainWindowTitle;
-
                     if (Process.MainWindowHandle != IntPtr.Zero)
+                    {
                         processBorder.Visibility = Visibility.Visible;
+                        if (string.IsNullOrEmpty(Process.MainWindowTitle))
+                            processName.Text = Process.MainWindowTitle;
+                    }
+                    else
+                        processBorder.Visibility = Visibility.Collapsed;
 
                     switch (processThread.ThreadState)
                     {
@@ -326,9 +311,6 @@ namespace HandheldCompanion.Managers
             if (!isRunning)
                 return;
 
-            foreach (ProcessEx processEx in CurrentProcesses.Values)
-                processEx.Stop();
-
             // stop processes monitor
             MonitorTimer.Elapsed -= MonitorHelper;
             MonitorTimer.Stop();
@@ -373,6 +355,9 @@ namespace HandheldCompanion.Managers
                     }
                 }
             }
+
+            foreach (ProcessEx proc in CurrentProcesses.Values)
+                proc.Timer_Tick(sender, e);
         }
 
         void ProcessHalted(object sender, EventArrivedEventArgs e)
@@ -390,7 +375,6 @@ namespace HandheldCompanion.Managers
             if (CurrentProcesses.ContainsKey(processId))
             {
                 ProcessEx processEx = CurrentProcesses[processId];
-                processEx.Stop();
 
                 CurrentProcesses.TryRemove(new KeyValuePair<uint, ProcessEx>(processId, processEx));
 
@@ -442,8 +426,6 @@ namespace HandheldCompanion.Managers
                 Executable = exec,
                 Path = path
             };
-
-            processEx.Start();
 
             if (!CurrentProcesses.ContainsKey(processEx.Id))
                 CurrentProcesses.TryAdd(processEx.Id, processEx);
