@@ -9,6 +9,8 @@ using System.Management;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -65,21 +67,23 @@ namespace ControllerCommon.Utils
         public class FindHostedProcess
         {
             public ProcessDiagnosticInfo Process { get; private set; }
+            int attempt = 0;
 
-            public FindHostedProcess()
+            public FindHostedProcess(IntPtr foregroundProcessID)
             {
                 try
                 {
-                    var foregroundProcessID = WinAPIFunctions.GetforegroundWindow();
-
                     if (foregroundProcessID == IntPtr.Zero)
                         return;
 
                     Process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPIFunctions.GetWindowProcessId(foregroundProcessID));
 
                     // Get real process
-                    if (Process.ExecutableFileName == "ApplicationFrameHost.exe")
+                    while (Process.ExecutableFileName == "ApplicationFrameHost.exe" && attempt < 10)
+                    {
                         EnumChildWindows(foregroundProcessID, ChildWindowCallback, IntPtr.Zero);
+                        Thread.Sleep(500);
+                    }
                 }
                 catch (Exception)
                 {
@@ -94,6 +98,7 @@ namespace ControllerCommon.Utils
                 if (process.ExecutableFileName != "ApplicationFrameHost.exe")
                     Process = process;
 
+                attempt++;
                 return true;
             }
         }
@@ -103,6 +108,18 @@ namespace ControllerCommon.Utils
             const int nChars = 256;
             StringBuilder Buff = new StringBuilder(nChars);
             IntPtr handle = GetForegroundWindow();
+
+            if (GetWindowText(handle, Buff, nChars) > 0)
+            {
+                return Buff.ToString();
+            }
+            return null;
+        }
+
+        public static string GetWindowTitle(IntPtr handle)
+        {
+            const int nChars = 256;
+            StringBuilder Buff = new StringBuilder(nChars);
 
             if (GetWindowText(handle, Buff, nChars) > 0)
             {

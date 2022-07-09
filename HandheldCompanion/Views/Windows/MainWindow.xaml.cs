@@ -352,7 +352,7 @@ namespace HandheldCompanion.Views
                 if (currentProfile == null)
                     return;
 
-                currentProfile.fullpath = processEx.Executable;
+                currentProfile.fullpath = processEx.Path;
                 currentProfile.isApplied = false;
 
                 // update profile and inform settings page
@@ -370,7 +370,7 @@ namespace HandheldCompanion.Views
                 if (currentProfile == null)
                     return;
 
-                currentProfile.fullpath = processEx.Executable;
+                currentProfile.fullpath = processEx.Path;
                 currentProfile.isApplied = true;
 
                 // update profile and inform settings page
@@ -405,7 +405,7 @@ namespace HandheldCompanion.Views
                 if (profile.isDefault)
                     return;
 
-                profile.fullpath = processEx.Executable;
+                profile.fullpath = processEx.Path;
                 profileManager.UpdateOrCreateProfile(profile);
             }
             catch (Exception) { }
