@@ -80,7 +80,7 @@ namespace HandheldCompanion.Managers
                     if (Process.MainWindowHandle != IntPtr.Zero)
                     {
                         processBorder.Visibility = Visibility.Visible;
-                        if (string.IsNullOrEmpty(Process.MainWindowTitle))
+                        if (!string.IsNullOrEmpty(Process.MainWindowTitle))
                             processName.Text = Process.MainWindowTitle;
                     }
                     else
