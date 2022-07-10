@@ -64,8 +64,8 @@ namespace HandheldCompanion.Managers
             UpdateTimer = new MultimediaTimer(10);
             UpdateTimer.Tick += UpdateReport;
 
-            ResetTimer = new MultimediaTimer(10) { AutoReset = false };
-            ResetTimer.Tick += (sender, e) => { ReleaseBuffer(); };
+            ResetTimer = new MultimediaTimer(20) { AutoReset = false };
+            ResetTimer.Tick += ReleaseBuffer;
 
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();
@@ -167,7 +167,6 @@ namespace HandheldCompanion.Managers
                             TriggerListener = string.Empty;
                         }
                     }
-
                     return;
                 }
             }
@@ -189,7 +188,7 @@ namespace HandheldCompanion.Managers
             return "";
         }
 
-        private void ReleaseBuffer()
+        private void ReleaseBuffer(object? sender, EventArgs e)
         {
             if (TriggerBuffer.Count == 0)
                 return;
