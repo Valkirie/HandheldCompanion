@@ -35,12 +35,11 @@ namespace HandheldCompanion.Views.Pages
 
             MainWindow.pipeClient.ServerMessage += OnServerMessage;
 
-            // initialize Profile Manager
             MainWindow.profileManager.Deleted += ProfileDeleted;
             MainWindow.profileManager.Updated += ProfileUpdated;
             MainWindow.profileManager.Loaded += ProfileLoaded;
 
-            // draw buttons
+            // draw gamepad activators
             foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
             {
                 // create panel
@@ -64,6 +63,7 @@ namespace HandheldCompanion.Views.Pages
                 activators.Add(button, checkbox);
             }
 
+            // draw input modes
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
             {
                 // create panel
@@ -97,6 +97,7 @@ namespace HandheldCompanion.Views.Pages
                 cB_Input.Items.Add(panel);
             }
 
+            // draw output modes
             foreach (Output mode in (Output[])Enum.GetValues(typeof(Output)))
             {
                 // create panel
@@ -303,30 +304,30 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             profileCurrent = (Profile)cB_Profiles.SelectedItem;
-            UpdateSelectedProfile();
+            DrawProfile();
         }
 
-        private void UpdateSelectedProfile()
+        private void DrawProfile()
         {
             if (profileCurrent == null)
                 return;
 
             Dispatcher.BeginInvoke(() =>
             {
+                // enable all expanders
+                ProfileDetails.IsEnabled = true;
+                GlobalSettings.IsEnabled = true;
+                MotionSettings.IsEnabled = true;
+                UniversalSettings.IsEnabled = true;
+
                 // disable button if is default profile
                 b_DeleteProfile.IsEnabled = !profileCurrent.isDefault;
+                // prevent user from renaming default profile
                 tB_ProfileName.IsEnabled = !profileCurrent.isDefault;
-
-                GlobalSettings.IsEnabled = GlobalDetails.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
-                b_ApplyProfile.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
-                b_ApplyProfile.ToolTip = b_ApplyProfile.IsEnabled == false ? Properties.Resources.WarningElevated : null;
 
                 // Profile info
                 tB_ProfileName.Text = profileCurrent.name;
                 tB_ProfilePath.Text = profileCurrent.fullpath;
-
-                // If this is not default, we enable it always?! @Benjamin
-                Toggle_EnableProfile.IsEnabled = !profileCurrent.isDefault;
                 Toggle_EnableProfile.IsOn = profileCurrent.isEnabled;
 
                 // Global settings
@@ -457,7 +458,8 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)
         {
-            Expander_UMC.IsEnabled = (bool)!cB_Whitelist.IsChecked;
+            // todo : move me to WPF
+            UniversalSettings.IsEnabled = (bool)!cB_Whitelist.IsChecked;
         }
 
         private void cB_Overlay_Checked(object sender, RoutedEventArgs e)

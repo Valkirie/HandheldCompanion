@@ -80,7 +80,7 @@
                     </Border>
                 </ui:SimpleStackPanel>
 
-                <ui:SimpleStackPanel Spacing="6" Name="GlobalDetails" IsEnabled="False" >
+                <ui:SimpleStackPanel Name="ProfileDetails" Spacing="6" IsEnabled="False" >
                     <Label Content="{x:Static resx:Resources.ProfilesPage_ProfileDetails}" FontWeight="SemiBold"></Label>
 
                     <!-- Profile details -->
@@ -161,11 +161,11 @@
                 </ui:SimpleStackPanel>
 
                 <!-- Profile settings -->
-                <ui:SimpleStackPanel Spacing="6" Name="GlobalSettings" IsEnabled="False">
+                <ui:SimpleStackPanel Spacing="6">
                     <Label Content="{x:Static resx:Resources.ProfilesPage_ProfileSettings}" FontWeight="SemiBold"></Label>
 
                     <!-- Global settings -->
-                    <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
+                    <Expander Name="GlobalSettings" Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsEnabled="false">
                         <Expander.Header>
                             <DockPanel Margin="0,12,12,12">
                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
@@ -190,7 +190,7 @@
                     </Expander>
 
                     <!-- Motion control settings -->
-                    <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
+                    <Expander Name="MotionSettings" Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsEnabled="false">
                         <Expander.Header>
                             <DockPanel Margin="0,12,12,12">
                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE8B4;" Height="40" HorizontalAlignment="Center"/>
@@ -290,7 +290,7 @@
                     </Expander>
 
                     <!-- Universal motion control settings -->
-                    <Expander Name="Expander_UMC" Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
+                    <Expander Name="UniversalSettings" Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsEnabled="false">
                         <Expander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
