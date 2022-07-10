@@ -325,26 +325,45 @@ namespace HandheldCompanion.Views.Pages
                 tB_ProfileName.Text = profileCurrent.name;
                 tB_ProfilePath.Text = profileCurrent.fullpath;
 
+                // If this is not default, we enable it always?! @Benjamin
                 Toggle_EnableProfile.IsEnabled = !profileCurrent.isDefault;
                 Toggle_EnableProfile.IsOn = profileCurrent.isEnabled;
 
-                Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
-                tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
-                tb_ProfileAcceleroValue.Value = profileCurrent.accelerometer;
-                tb_ProfileAntiDeadzone.Value = profileCurrent.antideadzone;
-                cB_GyroSteering.SelectedIndex = profileCurrent.steering;
-                cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
-                cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
-                cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
-                cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
+                // Global settings
                 cB_Whitelist.IsChecked = profileCurrent.whitelisted;
                 cB_Wrapper.IsChecked = profileCurrent.use_wrapper;
+
+                // Motion control settings
+                tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
+                tb_ProfileAcceleroValue.Value = profileCurrent.accelerometer;
+
+                cB_GyroSteering.SelectedIndex = profileCurrent.steering;
+                cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
+                cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
+
+                // UMC settings
+                Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
+                cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
+                cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
+                tb_ProfileAntiDeadzone.Value = profileCurrent.antideadzone;
 
                 foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
                     if (profileCurrent.umc_trigger.HasFlag(button))
                         activators[button].IsChecked = true;
                     else
                         activators[button].IsChecked = false;
+
+                // UMC additional settings camera
+                // motion sensitivity
+                // flickstick enable
+                // flickstick duration
+                // flickstick sensitivyt
+                // custom curve
+
+                // UMC additional settings steering
+                // max steering angle
+                // linearity
+                // deadzone
 
                 // display warnings
                 ProfileErrorCode currentError = profileCurrent.error;
