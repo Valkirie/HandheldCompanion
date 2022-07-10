@@ -93,10 +93,14 @@ namespace HandheldCompanion.Managers
             if (TriggerLock)
                 return;
 
+            // todo:    implement a key index and only catch the key if it's part of a chord at the specific index
+            // key0:    suppress if is first key of any chords
+            // key0+n:  always suppress. if is not n key of any chords, release buffer
+
             KeyEventArgsExt args = (KeyEventArgsExt)e;
             args.SuppressKeyPress = true;
 
-            // search for modifiers (improve me)
+            // search for modifiers
             TriggerBuffer.Add(args);
 
             if (args.IsKeyUp && args.IsExtendedKey)
