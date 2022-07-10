@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Collections.Generic;
+using System.Numerics;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
@@ -31,8 +32,8 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add("Keyboard key", new ChordClick(KeyCode.LWin, KeyCode.RControlKey, KeyCode.O));
-            listeners.Add("Function key", new ChordClick(KeyCode.LWin, KeyCode.D));
+            listeners.Add("Keyboard key", new List<KeyCode>() { KeyCode.LWin, KeyCode.RControlKey, KeyCode.O });
+            listeners.Add("Function key", new List<KeyCode>() { KeyCode.LWin, KeyCode.D });
         }
     }
 }

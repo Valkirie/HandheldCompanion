@@ -86,34 +86,59 @@ namespace HandheldCompanion.Managers
             }
         }
 
+        private int KeyIndex;
+        private bool KeyUsed;
+
         private void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
         {
             ResetTimer.Stop();
+            KeyUsed = false;
 
             if (TriggerLock)
                 return;
 
+            KeyEventArgsExt args = (KeyEventArgsExt)e;
+
             // todo:    implement a key index and only catch the key if it's part of a chord at the specific index
             // key0:    suppress if is first key of any chords
             // key0+n:  always suppress. if is not n key of any chords, release buffer
+            foreach (List<KeyCode> chord in MainWindow.handheldDevice.listeners.Values)
+            {
+                if (KeyIndex >= chord.Count)
+                    continue;
 
-            KeyEventArgsExt args = (KeyEventArgsExt)e;
-            args.SuppressKeyPress = true;
+                KeyCode chordKey = chord[KeyIndex];
+                KeyCode hookKey = (KeyCode)args.KeyValue;
+                if (chordKey == hookKey)
+                {
+                    KeyUsed = true;
+                    KeyIndex++;
+                    break; // leave loop
+                }
+            }
 
-            // search for modifiers
-            TriggerBuffer.Add(args);
+            // if key is used or previous key was, we need to maintain key(s) order
+            if (KeyUsed || KeyIndex > 0)
+            {
+                args.SuppressKeyPress = true;
 
-            if (args.IsKeyUp && args.IsExtendedKey)
-                InjectModifiers(args);
+                // add key to buffer
+                TriggerBuffer.Add(args);
+
+                if (args.IsKeyUp && args.IsExtendedKey)
+                    InjectModifiers(args);
+            }
+            else
+                return;
 
             // search for matching triggers
             foreach (var pair in MainWindow.handheldDevice.listeners)
             {
                 string listener = pair.Key;
-                ChordClick chord = pair.Value;
+                List<KeyCode> chord = pair.Value;
 
                 // compare ordered enumerable
-                var chord_keys = chord.Keys.OrderBy(key => key);
+                var chord_keys = chord.OrderBy(key => key);
                 var buffer_keys = GetBufferKeys().OrderBy(key => key);
 
                 if (Enumerable.SequenceEqual(chord_keys, buffer_keys))
@@ -162,7 +187,7 @@ namespace HandheldCompanion.Managers
                     }
                     else
                     {
-                        TriggerInputs inputs = new TriggerInputs(TriggerInputsType.Keyboard, string.Join(",", chord.Keys), listener);
+                        TriggerInputs inputs = new TriggerInputs(TriggerInputsType.Keyboard, string.Join(",", chord), listener);
                         Triggers[TriggerListener] = inputs;
 
                         if (args.IsKeyUp)
@@ -196,6 +221,9 @@ namespace HandheldCompanion.Managers
         {
             if (TriggerBuffer.Count == 0)
                 return;
+
+            // reset index
+            KeyIndex = 0;
 
             try
             {
@@ -266,7 +294,7 @@ namespace HandheldCompanion.Managers
             foreach (var pair in MainWindow.handheldDevice.listeners)
             {
                 string listener = pair.Key;
-                ChordClick chord = pair.Value;
+                List<KeyCode> chord = pair.Value;
 
                 prevKeyUp[listener] = TIME_BURST;
                 prevKeyDown[listener] = TIME_BURST;
