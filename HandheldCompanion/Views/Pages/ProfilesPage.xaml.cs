@@ -321,7 +321,7 @@ namespace HandheldCompanion.Views.Pages
                 b_ApplyProfile.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
                 b_ApplyProfile.ToolTip = b_ApplyProfile.IsEnabled == false ? Properties.Resources.WarningElevated : null;
 
-                // populate controls
+                // Profile info
                 tB_ProfileName.Text = profileCurrent.name;
                 tB_ProfilePath.Text = profileCurrent.fullpath;
 
@@ -352,18 +352,6 @@ namespace HandheldCompanion.Views.Pages
                         activators[button].IsChecked = true;
                     else
                         activators[button].IsChecked = false;
-
-                // UMC additional settings camera
-                // motion sensitivity
-                // flickstick enable
-                // flickstick duration
-                // flickstick sensitivyt
-                // custom curve
-
-                // UMC additional settings steering
-                // max steering angle
-                // linearity
-                // deadzone
 
                 // display warnings
                 ProfileErrorCode currentError = profileCurrent.error;
@@ -431,25 +419,28 @@ namespace HandheldCompanion.Views.Pages
                              $"{profileCurrent.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
                              ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
 
+            // Profile
             profileCurrent.name = tB_ProfileName.Text;
             profileCurrent.fullpath = tB_ProfilePath.Text;
             profileCurrent.isEnabled = (bool)Toggle_EnableProfile.IsOn;
 
-            profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
-            profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
-            profileCurrent.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
+            // Global settings
             profileCurrent.whitelisted = (bool)cB_Whitelist.IsChecked;
             profileCurrent.use_wrapper = (bool)cB_Wrapper.IsChecked;
 
-            profileCurrent.steering = cB_GyroSteering.SelectedIndex;
+            // Motion control settings
+            profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
+            profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
 
+            profileCurrent.steering = cB_GyroSteering.SelectedIndex;
             profileCurrent.invertvertical = (bool)cB_InvertVertical.IsChecked;
             profileCurrent.inverthorizontal = (bool)cB_InvertHorizontal.IsChecked;
 
+            // UMC settings
             profileCurrent.umc_enabled = (bool)Toggle_UniversalMotion.IsOn;
-
             profileCurrent.umc_input = (Input)cB_Input.SelectedIndex;
             profileCurrent.umc_output = (Output)cB_Output.SelectedIndex;
+            profileCurrent.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
 
             profileCurrent.umc_trigger = 0;
 
