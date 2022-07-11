@@ -287,6 +287,9 @@ namespace ControllerCommon.Processor
 
         public override void SetTDPLimit(string type, double limit)
         {
+            if (ry == IntPtr.Zero)
+                return;
+
             // 15W : 15000
             limit *= 1000;
 

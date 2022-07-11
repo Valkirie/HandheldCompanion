@@ -35,12 +35,11 @@ namespace HandheldCompanion.Views.Pages
 
             MainWindow.pipeClient.ServerMessage += OnServerMessage;
 
-            // initialize Profile Manager
             MainWindow.profileManager.Deleted += ProfileDeleted;
             MainWindow.profileManager.Updated += ProfileUpdated;
             MainWindow.profileManager.Loaded += ProfileLoaded;
 
-            // draw buttons
+            // draw gamepad activators
             foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
             {
                 // create panel
@@ -64,6 +63,7 @@ namespace HandheldCompanion.Views.Pages
                 activators.Add(button, checkbox);
             }
 
+            // draw input modes
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
             {
                 // create panel
@@ -97,6 +97,7 @@ namespace HandheldCompanion.Views.Pages
                 cB_Input.Items.Add(panel);
             }
 
+            // draw output modes
             foreach (Output mode in (Output[])Enum.GetValues(typeof(Output)))
             {
                 // create panel
@@ -144,10 +145,6 @@ namespace HandheldCompanion.Views.Pages
         #region UI
         public void ProfileUpdated(Profile profile, bool backgroundtask)
         {
-            // inform Service we have a new default profile
-            if (profile.isDefault)
-                MainWindow.pipeClient?.SendMessage(new PipeClientProfile() { profile = profile });
-
             this.Dispatcher.Invoke(async () =>
             {
                 int idx = -1;
@@ -307,42 +304,49 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             profileCurrent = (Profile)cB_Profiles.SelectedItem;
-            UpdateSelectedProfile();
+            DrawProfile();
         }
 
-        private void UpdateSelectedProfile()
+        private void DrawProfile()
         {
             if (profileCurrent == null)
                 return;
 
             Dispatcher.BeginInvoke(() =>
             {
+                // enable all expanders
+                ProfileDetails.IsEnabled = true;
+                GlobalSettings.IsEnabled = true;
+                MotionSettings.IsEnabled = true;
+                UniversalSettings.IsEnabled = true;
+
                 // disable button if is default profile
                 b_DeleteProfile.IsEnabled = !profileCurrent.isDefault;
+                // prevent user from renaming default profile
                 tB_ProfileName.IsEnabled = !profileCurrent.isDefault;
 
-                GlobalSettings.IsEnabled = GlobalDetails.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
-                b_ApplyProfile.IsEnabled = profileCurrent.error != ProfileErrorCode.MissingPermission;
-                b_ApplyProfile.ToolTip = b_ApplyProfile.IsEnabled == false ? Properties.Resources.WarningElevated : null;
-
-                // populate controls
+                // Profile info
                 tB_ProfileName.Text = profileCurrent.name;
                 tB_ProfilePath.Text = profileCurrent.fullpath;
-
-                Toggle_EnableProfile.IsEnabled = !profileCurrent.isDefault;
                 Toggle_EnableProfile.IsOn = profileCurrent.isEnabled;
 
-                Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
-                tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
-                tb_ProfileAcceleroValue.Value = profileCurrent.accelerometer;
-                tb_ProfileAntiDeadzone.Value = profileCurrent.antideadzone;
-                cB_GyroSteering.SelectedIndex = profileCurrent.steering;
-                cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
-                cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
-                cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
-                cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
+                // Global settings
                 cB_Whitelist.IsChecked = profileCurrent.whitelisted;
                 cB_Wrapper.IsChecked = profileCurrent.use_wrapper;
+
+                // Motion control settings
+                tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
+                tb_ProfileAcceleroValue.Value = profileCurrent.accelerometer;
+
+                cB_GyroSteering.SelectedIndex = profileCurrent.steering;
+                cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
+                cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
+
+                // UMC settings
+                Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
+                cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
+                cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
+                tb_ProfileAntiDeadzone.Value = profileCurrent.antideadzone;
 
                 foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
                     if (profileCurrent.umc_trigger.HasFlag(button))
@@ -416,25 +420,28 @@ namespace HandheldCompanion.Views.Pages
                              $"{profileCurrent.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
                              ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
 
+            // Profile
             profileCurrent.name = tB_ProfileName.Text;
             profileCurrent.fullpath = tB_ProfilePath.Text;
             profileCurrent.isEnabled = (bool)Toggle_EnableProfile.IsOn;
 
-            profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
-            profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
-            profileCurrent.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
+            // Global settings
             profileCurrent.whitelisted = (bool)cB_Whitelist.IsChecked;
             profileCurrent.use_wrapper = (bool)cB_Wrapper.IsChecked;
 
-            profileCurrent.steering = cB_GyroSteering.SelectedIndex;
+            // Motion control settings
+            profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
+            profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
 
+            profileCurrent.steering = cB_GyroSteering.SelectedIndex;
             profileCurrent.invertvertical = (bool)cB_InvertVertical.IsChecked;
             profileCurrent.inverthorizontal = (bool)cB_InvertHorizontal.IsChecked;
 
+            // UMC settings
             profileCurrent.umc_enabled = (bool)Toggle_UniversalMotion.IsOn;
-
             profileCurrent.umc_input = (Input)cB_Input.SelectedIndex;
             profileCurrent.umc_output = (Output)cB_Output.SelectedIndex;
+            profileCurrent.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
 
             profileCurrent.umc_trigger = 0;
 
@@ -442,14 +449,17 @@ namespace HandheldCompanion.Views.Pages
                 if ((bool)activators[button].IsChecked)
                     profileCurrent.umc_trigger |= button;
 
-            MainWindow.profileManager.profiles[profileCurrent.name] = profileCurrent;
             MainWindow.profileManager.UpdateOrCreateProfile(profileCurrent, false);
             MainWindow.profileManager.SerializeProfile(profileCurrent);
+
+            // inform service
+            MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = profileCurrent });
         }
 
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)
         {
-            Expander_UMC.IsEnabled = (bool)!cB_Whitelist.IsChecked;
+            // todo : move me to WPF
+            UniversalSettings.IsEnabled = (bool)!cB_Whitelist.IsChecked;
         }
 
         private void cB_Overlay_Checked(object sender, RoutedEventArgs e)

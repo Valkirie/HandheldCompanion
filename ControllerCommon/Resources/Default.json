@@ -2,5 +2,7 @@
   "name": "Default",
   "path": "",
   "executable": "Default.exe",
-  "whitelisted": false
+  "isDefault": true,
+  "whitelisted": false,
+  "umc_enabled": false
 }

@@ -50,7 +50,7 @@ namespace ControllerCommon.Devices
         public OneEuroSettings oneEuroSettings = new OneEuroSettings(0.002d, 0.008d);
 
         // trigger specific settings
-        public Dictionary<string, ChordClick> listeners = new();
+        public Dictionary<string, List<KeyCode>> listeners = new();
 
         private static Device device;
         public static Device GetDefault()

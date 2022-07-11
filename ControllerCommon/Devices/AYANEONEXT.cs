@@ -1,4 +1,5 @@
-﻿using WindowsInput.Events;
+﻿using System.Collections.Generic;
+using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
@@ -29,8 +30,8 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add("Custom key BIG", new ChordClick(KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12));
-            listeners.Add("Custom key Small", new ChordClick(KeyCode.LWin, KeyCode.D));
+            listeners.Add("Custom key BIG", new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 });
+            listeners.Add("Custom key Small", new List<KeyCode>() { KeyCode.LWin, KeyCode.D });
         }
     }
 }

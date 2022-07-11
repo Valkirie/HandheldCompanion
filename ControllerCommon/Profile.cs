@@ -110,6 +110,7 @@ namespace ControllerCommon
             this.executable = AppProperties["FileName"];
             this.name = ProductName;
             this.path = this.fullpath = path;
+            this.isEnabled = false;
         }
 
         public float GetSensiviy()

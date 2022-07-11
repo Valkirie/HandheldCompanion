@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using Windows.System.Diagnostics;
@@ -46,12 +47,13 @@ namespace HandheldCompanion.Managers
         #endregion
 
         public Process Process;
+        public IntPtr MainWindowHandle;
+
         public uint Id;
         public string Name;
         public string Executable;
         public string Path;
 
-        private Timer Timer;
         private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
 
         // UI vars
@@ -65,25 +67,10 @@ namespace HandheldCompanion.Managers
         public ProcessEx(Process process)
         {
             this.Process = process;
-
             this.Id = (uint)process.Id;
-
-            Timer = new Timer(1000);
         }
 
-        public void Start()
-        {
-            Timer.Elapsed += Timer_Tick;
-            Timer.Start();
-        }
-
-        public void Stop()
-        {
-            Timer.Elapsed -= Timer_Tick;
-            Timer.Stop();
-        }
-
-        private void Timer_Tick(object? sender, EventArgs e)
+        public void Timer_Tick(object? sender, EventArgs e)
         {
             try
             {
@@ -93,10 +80,15 @@ namespace HandheldCompanion.Managers
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
-                    if (string.IsNullOrEmpty(Process.MainWindowTitle))
-                        processName.Text = Process.ProcessName;
+                    if (MainWindowHandle != IntPtr.Zero)
+                    {
+                        processBorder.Visibility = Visibility.Visible;
+                        string MainWindowTitle = ProcessUtils.GetWindowTitle(MainWindowHandle);
+                        if (!string.IsNullOrEmpty(MainWindowTitle))
+                            processName.Text = MainWindowTitle;
+                    }
                     else
-                        processName.Text = Process.MainWindowTitle;
+                        processBorder.Visibility = Visibility.Collapsed;
 
                     switch (processThread.ThreadState)
                     {
@@ -142,6 +134,7 @@ namespace HandheldCompanion.Managers
             processBorder = new Border()
             {
                 Padding = new Thickness(20, 12, 12, 12),
+                Visibility = Visibility.Collapsed,
                 Tag = Name
             };
             processBorder.SetResourceReference(Control.BackgroundProperty, "SystemControlBackgroundChromeMediumLowBrush");
@@ -246,40 +239,59 @@ namespace HandheldCompanion.Managers
             processBorder.Child = processGrid;
         }
 
-        private async void ProcessResume_Click(object sender, RoutedEventArgs e)
+        private void ProcessResume_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 processResume.IsEnabled = false;
+                NtResumeProcess(Process.Handle);
+                Task.Delay(500);
+                ShowWindow(MainWindowHandle, 9);
             }));
-
-            NtResumeProcess(Process.Handle);
-            await Task.Delay(500);
-            ShowWindow(Process.MainWindowHandle, 9);
         }
 
-        private async void ProcessSuspend_Click(object sender, RoutedEventArgs e)
+        private void ProcessSuspend_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 processSuspend.IsEnabled = false;
+                
+                ShowWindow(MainWindowHandle, 2);
+                Task.Delay(500);
+                NtSuspendProcess(Process.Handle);
             }));
-
-            ShowWindow(Process.MainWindowHandle, 2);
-            await Task.Delay(500);
-            NtSuspendProcess(Process.Handle);
         }
     }
 
     public class ProcessManager
     {
+        #region imports
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventProc lpfnWinEventProc, int idProcess, int idThread, uint dwflags);
+        [DllImport("user32.dll")]
+        internal static extern int UnhookWinEvent(IntPtr hWinEventHook);
+        internal delegate void WinEventProc(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime);
+
+        const uint WINEVENT_OUTOFCONTEXT = 0;
+        const uint EVENT_SYSTEM_FOREGROUND = 3;
+        private IntPtr winHook;
+        private WinEventProc listener;
+
+        public delegate bool WindowEnumCallback(IntPtr hwnd, int lparam);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool EnumWindows(WindowEnumCallback lpEnumFunc, int lParam);
+
+        [DllImport("user32.dll")]
+        public static extern bool IsWindowVisible(int h);
+        #endregion
+
         // process vars
         private Timer MonitorTimer;
-        private ManagementEventWatcher startWatch;
         private ManagementEventWatcher stopWatch;
         private ConcurrentDictionary<uint, ProcessEx> CurrentProcesses = new();
 
-        private uint CurrentProcess;
         private object updateLock = new();
         private bool isRunning;
 
@@ -294,25 +306,34 @@ namespace HandheldCompanion.Managers
 
         public ProcessManager()
         {
-            startWatch = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStartTrace"));
-            startWatch.EventArrived += new EventArrivedEventHandler(ProcessCreated);
+            Automation.AddAutomationEventHandler(
+                eventId: WindowPattern.WindowOpenedEvent,
+                element: AutomationElement.RootElement,
+                scope: TreeScope.Children,
+                eventHandler: OnWindowOpened);
 
             stopWatch = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
             stopWatch.EventArrived += new EventArrivedEventHandler(ProcessHalted);
+
+            listener = new WinEventProc(EventCallback);
         }
 
         public void Start()
         {
             // list all current processes
-            ListProcess();
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+                EnumWindows(new WindowEnumCallback(AddWnd), 0);
+            }).Start();
 
             // start processes monitor
             MonitorTimer = new Timer(1000);
             MonitorTimer.Elapsed += MonitorHelper;
             MonitorTimer.Start();
 
-            startWatch.Start();
             stopWatch.Start();
+            winHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, listener, 0, 0, WINEVENT_OUTOFCONTEXT);
 
             isRunning = true;
         }
@@ -322,56 +343,78 @@ namespace HandheldCompanion.Managers
             if (!isRunning)
                 return;
 
-            foreach (ProcessEx processEx in CurrentProcesses.Values)
-                processEx.Stop();
-
             // stop processes monitor
             MonitorTimer.Elapsed -= MonitorHelper;
             MonitorTimer.Stop();
 
-            startWatch.Stop();
             stopWatch.Stop();
+            Automation.RemoveAllEventHandlers();
+
+            UnhookWinEvent(winHook);
         }
 
-        private void ListProcess()
+        private void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
         {
-            Process[] processCollection = Process.GetProcesses();
-            foreach (Process proc in processCollection)
-                ProcessCreated(proc);
+            try
+            {
+                var element = sender as AutomationElement;
+                if (element != null)
+                {
+                    IntPtr hWnd = (IntPtr)element.Current.NativeWindowHandle;
+                    ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd).Process;
+
+                    if (processInfo == null || processInfo.ExecutableFileName == "HandheldCompanion.exe")
+                        return;
+
+                    Process proc = Process.GetProcessById((int)processInfo.ProcessId);
+                    ProcessCreated(proc, element.Current.NativeWindowHandle);
+                }
+            }
+            catch (ElementNotAvailableException)
+            {
+            }
+        }
+
+        private bool AddWnd(IntPtr hWnd, int lparam)
+        {
+            if (IsWindowVisible((int)hWnd))
+            {
+                ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd).Process;
+
+                Process proc = Process.GetProcessById((int)processInfo.ProcessId);
+                ProcessCreated(proc, (int)hWnd);
+            }
+            return true;
+        }
+
+        private void EventCallback(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
+        {
+            ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd).Process;
+
+            if (processInfo == null || processInfo.ExecutableFileName == "HandheldCompanion.exe")
+                return;
+
+            Process proc = Process.GetProcessById((int)processInfo.ProcessId);
+            string path = ProcessUtils.GetPathToApp(proc);
+            string exec = Path.GetFileName(path);
+
+            ProcessEx processEx = new ProcessEx(proc)
+            {
+                Name = exec,
+                Executable = exec,
+                Path = path,
+                MainWindowHandle = hWnd
+            };
+
+            ForegroundChanged?.Invoke(processEx);
         }
 
         private void MonitorHelper(object? sender, EventArgs e)
         {
             lock (updateLock)
             {
-                uint processId;
-                string exec = string.Empty;
-                string path = string.Empty;
-                string name = string.Empty;
-
-                ProcessDiagnosticInfo process = new ProcessUtils.FindHostedProcess().Process;
-                if (process == null)
-                    return;
-
-                name = ProcessUtils.GetActiveWindowTitle();
-                if (name == "Overlay")
-                    return;
-
-                processId = process.ProcessId;
-
-                if (processId != CurrentProcess)
-                {
-                    if (CurrentProcesses.ContainsKey(processId))
-                    {
-                        ProcessEx processEx = CurrentProcesses[processId];
-                        path = ProcessUtils.GetPathToApp(processEx.Process);
-
-                        LogManager.LogDebug("ActiveWindow Title: {0}, Path: {1}", name, path);
-
-                        ForegroundChanged?.Invoke(processEx);
-                        CurrentProcess = processId;
-                    }
-                }
+                foreach (ProcessEx proc in CurrentProcesses.Values)
+                    proc.Timer_Tick(sender, e);
             }
         }
 
@@ -390,7 +433,6 @@ namespace HandheldCompanion.Managers
             if (CurrentProcesses.ContainsKey(processId))
             {
                 ProcessEx processEx = CurrentProcesses[processId];
-                processEx.Stop();
 
                 CurrentProcesses.TryRemove(new KeyValuePair<uint, ProcessEx>(processId, processEx));
 
@@ -400,51 +442,47 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private void ProcessCreated(object sender, EventArrivedEventArgs e)
+        private void ProcessCreated(Process proc, int NativeWindowHandle = 0)
         {
             try
             {
-                uint processId = (uint)e.NewEvent.Properties["ProcessID"].Value;
-                Process proc = Process.GetProcessById((int)processId);
-                ProcessCreated(proc);
+                // process has exited on arrival
+                if (proc.HasExited)
+                    return;
             }
-            catch (Exception) { }
-        }
-
-        private async void ProcessCreated(Process proc)
-        {
-            // breating
-            await Task.Delay(1000);
-
-            // no main window
-            if (proc.MainWindowHandle == IntPtr.Zero)
+            catch(Exception)
+            {
+                // process has too high elevation
                 return;
-
+            }
+            
             string path = ProcessUtils.GetPathToApp(proc);
 
             // todo : implement proper filtering
             if (string.IsNullOrEmpty(path))
                 return;
 
-            if (path.ToLower().Contains(Environment.GetEnvironmentVariable("windir").ToLower()))
+            if (path.Contains(Environment.GetEnvironmentVariable("windir"), StringComparison.InvariantCultureIgnoreCase))
                 return;
 
             string exec = Path.GetFileName(path);
 
-            ProcessEx processEx = new ProcessEx(proc)
+            if (!CurrentProcesses.ContainsKey((uint)proc.Id))
             {
-                Name = exec,
-                Executable = exec,
-                Path = path
-            };
-            processEx.Start();
+                ProcessEx processEx = new ProcessEx(proc)
+                {
+                    Name = exec,
+                    Executable = exec,
+                    Path = path,
+                    MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle
+                };
 
-            if (!CurrentProcesses.ContainsKey(processEx.Id))
                 CurrentProcesses.TryAdd(processEx.Id, processEx);
 
-            ProcessStarted?.Invoke(processEx);
+                ProcessStarted?.Invoke(processEx);
 
-            LogManager.LogDebug("Process created: {0}", proc.ProcessName);
+                LogManager.LogDebug("Process created: {0}", proc.ProcessName);
+            }
         }
     }
 }
