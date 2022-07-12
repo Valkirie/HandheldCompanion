@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Windows;
 using System.Windows;
 using System.Windows.Controls;
