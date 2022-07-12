@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Management;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace ControllerCommon.Processor
@@ -51,7 +48,7 @@ namespace ControllerCommon.Processor
                     processor = new IntelProcessor();
                     break;
                 case "AuthenticAMD":
-                    processor = new AMDProcessor();                    
+                    processor = new AMDProcessor();
                     break;
             }
 
@@ -232,7 +229,7 @@ namespace ControllerCommon.Processor
             {
                 family = RyzenAdj.get_cpu_family(ry);
 
-                switch(family)
+                switch (family)
                 {
                     default:
                         CanChangeGPU = false;

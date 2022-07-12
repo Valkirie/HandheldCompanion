@@ -106,7 +106,7 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
 
                 // specific material(s)
-                if (model3D == MainBody 
+                if (model3D == MainBody
                     || model3D == LeftMotor || model3D == RightMotor
                     || model3D == TurboIcon || model3D == MKBIcon)
                 {

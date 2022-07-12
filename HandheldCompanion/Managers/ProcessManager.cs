@@ -16,7 +16,6 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using Windows.System.Diagnostics;
-using Brush = System.Windows.Media.Brush;
 using Image = System.Windows.Controls.Image;
 using ThreadState = System.Diagnostics.ThreadState;
 using Timer = System.Timers.Timer;
@@ -255,7 +254,7 @@ namespace HandheldCompanion.Managers
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 processSuspend.IsEnabled = false;
-                
+
                 ShowWindow(MainWindowHandle, 2);
                 Task.Delay(500);
                 NtSuspendProcess(Process.Handle);
@@ -450,12 +449,12 @@ namespace HandheldCompanion.Managers
                 if (proc.HasExited)
                     return;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 // process has too high elevation
                 return;
             }
-            
+
             string path = ProcessUtils.GetPathToApp(proc);
 
             // todo : implement proper filtering

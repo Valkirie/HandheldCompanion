@@ -1,13 +1,12 @@
+using ControllerCommon;
+using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Windows;
+using ModernWpf.Controls;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using CoreAudio;
-using System;
-using ControllerCommon.Utils;
-using ControllerCommon;
-using ModernWpf.Controls;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages

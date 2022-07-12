@@ -83,7 +83,7 @@ namespace ControllerCommon.Devices
                                 break;
                         }
                     }
-                break;
+                    break;
 
                 case "GPD":
                     {
@@ -94,7 +94,7 @@ namespace ControllerCommon.Devices
                                 break;
                         }
                     }
-                break;
+                    break;
 
                 case "ONE-NETBOOK TECHNOLOGY CO., LTD.":
                     {
@@ -116,7 +116,7 @@ namespace ControllerCommon.Devices
                                 }
                         }
                     }
-                break;
+                    break;
             }
 
             if (device is null)

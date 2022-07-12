@@ -157,7 +157,7 @@ namespace HandheldCompanion.Views.Pages
 
                 if (idx != -1)
                     cB_Profiles.Items.Remove(profile);
-                
+
                 cB_Profiles.Items.Add(profile);
                 cB_Profiles.SelectedItem = profile;
             });

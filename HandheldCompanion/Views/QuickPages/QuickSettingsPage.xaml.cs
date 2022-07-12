@@ -1,10 +1,9 @@
-﻿using HandheldCompanion.Managers;
+﻿using CoreAudio;
 using HandheldCompanion.Views.Windows;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using CoreAudio;
-using System;
 
 namespace HandheldCompanion.Views.QuickPages
 {

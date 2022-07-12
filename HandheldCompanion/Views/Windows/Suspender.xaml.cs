@@ -1,7 +1,5 @@
 ﻿using HandheldCompanion.Managers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace HandheldCompanion.Views.Windows
 {
