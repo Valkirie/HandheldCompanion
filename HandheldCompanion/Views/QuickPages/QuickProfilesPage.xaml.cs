@@ -98,6 +98,9 @@ namespace HandheldCompanion.Views.QuickPages
             if (backgroundtask)
                 return;
 
+            if (currentProfile is null)
+                return;
+
             if (profile.executable != currentProfile.executable)
                 return;
 
