@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using ControllerCommon.Managers;
 using Gma.System.MouseKeyHook;
 using GregsStack.InputSimulatorStandard;
@@ -98,17 +98,14 @@ namespace HandheldCompanion.Managers
                 return;
 
             KeyEventArgsExt args = (KeyEventArgsExt)e;
+            KeyCode hookKey = (KeyCode)args.KeyValue;
 
-            // todo:    implement a key index and only catch the key if it's part of a chord at the specific index
-            // key0:    suppress if is first key of any chords
-            // key0+n:  always suppress. if is not n key of any chords, release buffer
             foreach (List<KeyCode> chord in MainWindow.handheldDevice.listeners.Values)
             {
                 if (KeyIndex >= chord.Count)
                     continue;
 
                 KeyCode chordKey = chord[KeyIndex];
-                KeyCode hookKey = (KeyCode)args.KeyValue;
                 if (chordKey == hookKey)
                 {
                     KeyUsed = true;
@@ -127,76 +124,74 @@ namespace HandheldCompanion.Managers
 
                 if (args.IsKeyUp && args.IsExtendedKey)
                     InjectModifiers(args);
-            }
-            else
-                return;
 
-            // search for matching triggers
-            foreach (var pair in MainWindow.handheldDevice.listeners)
-            {
-                string listener = pair.Key;
-                List<KeyCode> chord = pair.Value;
-
-                // compare ordered enumerable
-                var chord_keys = chord.OrderBy(key => key);
-                var buffer_keys = GetBufferKeys().OrderBy(key => key);
-
-                if (Enumerable.SequenceEqual(chord_keys, buffer_keys))
+                // search for matching triggers
+                foreach (var pair in MainWindow.handheldDevice.listeners)
                 {
-                    Intercepted.Clear();
-                    Intercepted.AddRange(TriggerBuffer);
+                    string listener = pair.Key;
+                    List<KeyCode> chord = pair.Value;
 
-                    TriggerBuffer.Clear();
+                    // compare ordered enumerable
+                    var chord_keys = chord.OrderBy(key => key);
+                    var buffer_keys = GetBufferKeys().OrderBy(key => key);
 
-                    long time_last = TIME_BURST;
-                    long time_duration = time_last;
-
-                    if (args.IsKeyDown)
+                    if (Enumerable.SequenceEqual(chord_keys, buffer_keys))
                     {
-                        time_last = args.Timestamp - prevKeyDown[listener];
-                        prevKeyDown[listener] = args.Timestamp;
-                    }
-                    else if (args.IsKeyUp)
-                    {
-                        time_last = args.Timestamp - prevKeyUp[listener];
-                        prevKeyUp[listener] = args.Timestamp;
-                    }
+                        Intercepted.Clear();
+                        Intercepted.AddRange(TriggerBuffer);
 
-                    // skip call if too close
-                    if (time_last < TIME_BURST)
-                        break;
+                        TriggerBuffer.Clear();
 
-                    time_duration = args.Timestamp - prevKeyDown[listener];
-                    if (time_duration > TIME_LONG)
-                        listener += " (HOLD)";
+                        long time_last = TIME_BURST;
+                        long time_duration = time_last;
 
-                    LogManager.LogDebug("Triggered: {0} at {1}", listener, args.Timestamp);
-
-                    if (string.IsNullOrEmpty(TriggerListener))
-                    {
-                        string trigger = GetTriggerFromName(listener);
-
-                        // trigger isn't used
-                        if (string.IsNullOrEmpty(trigger))
+                        if (args.IsKeyDown)
                         {
-                            TriggerBuffer.AddRange(Intercepted);
-                            break;
+                            time_last = args.Timestamp - prevKeyDown[listener];
+                            prevKeyDown[listener] = args.Timestamp;
                         }
                         else if (args.IsKeyUp)
-                            TriggerRaised?.Invoke(trigger, Triggers[trigger]);
-                    }
-                    else
-                    {
-                        TriggerInputs inputs = new TriggerInputs(TriggerInputsType.Keyboard, string.Join(",", chord), listener);
-                        Triggers[TriggerListener] = inputs;
-
-                        if (args.IsKeyUp)
                         {
-                            TriggerUpdated?.Invoke(TriggerListener, inputs);
-                            TriggerListener = string.Empty;
+                            time_last = args.Timestamp - prevKeyUp[listener];
+                            prevKeyUp[listener] = args.Timestamp;
                         }
+
+                        // skip call if too close
+                        if (time_last < TIME_BURST)
+                            break;
+
+                        time_duration = args.Timestamp - prevKeyDown[listener];
+                        if (time_duration > TIME_LONG)
+                            listener += " (HOLD)";
+
+                        LogManager.LogDebug("Triggered: {0} at {1}", listener, args.Timestamp);
+
+                        if (string.IsNullOrEmpty(TriggerListener))
+                        {
+                            string trigger = GetTriggerFromName(listener);
+
+                            // trigger isn't used
+                            if (string.IsNullOrEmpty(trigger))
+                            {
+                                TriggerBuffer.AddRange(Intercepted);
+                                break;
+                            }
+                            else if (args.IsKeyUp)
+                                TriggerRaised?.Invoke(trigger, Triggers[trigger]);
+                        }
+                        else
+                        {
+                            TriggerInputs inputs = new TriggerInputs(TriggerInputsType.Keyboard, string.Join(",", chord), listener);
+                            Triggers[TriggerListener] = inputs;
+
+                            if (args.IsKeyUp)
+                            {
+                                TriggerUpdated?.Invoke(TriggerListener, inputs);
+                                TriggerListener = string.Empty;
+                            }
+                        }
+                        return;
                     }
-                    return;
                 }
             }
 

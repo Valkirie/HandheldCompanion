@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Windows;
 using System.Windows;
 using System.Windows.Controls;
@@ -96,6 +96,9 @@ namespace HandheldCompanion.Views.QuickPages
         private void ProfileUpdated(Profile profile, bool backgroundtask)
         {
             if (backgroundtask)
+                return;
+
+            if (currentProfile is null)
                 return;
 
             if (profile.executable != currentProfile.executable)
