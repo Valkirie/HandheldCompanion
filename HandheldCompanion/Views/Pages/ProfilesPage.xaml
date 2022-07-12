@@ -128,8 +128,8 @@
                             </Grid>
 
                             <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="2">
-                                <ui:AppBarButton Click="b_DeleteProfile_Click" Name="b_DeleteProfile" Label="{x:Static resx:Resources.ProfilesPage_DeleteProfile}" Icon="Delete" Width="Auto" IsEnabled="False"/>
-                                <ui:AppBarButton Click="b_ApplyProfile_Click" Name="b_ApplyProfile" Label="{x:Static resx:Resources.ProfilesPage_UpdateProfile}" Icon="Save" Width="Auto" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100" IsEnabled="False"/>
+                                <ui:AppBarButton Click="b_DeleteProfile_Click" Name="b_DeleteProfile" Label="{x:Static resx:Resources.ProfilesPage_DeleteProfile}" Icon="Delete" Width="Auto"/>
+                                <ui:AppBarButton Click="b_ApplyProfile_Click" Name="b_ApplyProfile" Label="{x:Static resx:Resources.ProfilesPage_UpdateProfile}" Icon="Save" Width="Auto" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100"/>
                             </ui:SimpleStackPanel>
                         </ui:SimpleStackPanel>
                     </Border>
