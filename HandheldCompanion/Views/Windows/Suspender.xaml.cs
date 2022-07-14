@@ -1,4 +1,6 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Managers;
+using System;
 using System.Windows;
 
 namespace HandheldCompanion.Views.Windows
@@ -14,6 +16,13 @@ namespace HandheldCompanion.Views.Windows
         public Suspender()
         {
             InitializeComponent();
+
+            this.SourceInitialized += Suspender_SourceInitialized;
+        }
+
+        private void Suspender_SourceInitialized(object? sender, EventArgs e)
+        {
+            this.HideMinimizeAndMaximizeButtons();
         }
 
         public Suspender(ProcessManager processManager) : this()
@@ -54,6 +63,7 @@ namespace HandheldCompanion.Views.Windows
                         break;
                     case Visibility.Collapsed:
                     case Visibility.Hidden:
+                        WindowState = WindowState.Normal;
                         visibility = Visibility.Visible;
                         break;
                 }

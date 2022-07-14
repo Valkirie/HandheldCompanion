@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Views.QuickPages;
 using ModernWpf.Controls;
 using System;
@@ -54,11 +55,12 @@ namespace HandheldCompanion.Views.Windows
             // start manager(s)
             powerManager.Start();
 
-            this.SourceInitialized += Overlay_SourceInitialized;
+            this.SourceInitialized += QuickTools_SourceInitialized;
         }
 
-        private void Overlay_SourceInitialized(object? sender, EventArgs e)
+        private void QuickTools_SourceInitialized(object? sender, EventArgs e)
         {
+            this.HideMinimizeAndMaximizeButtons();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -82,6 +84,7 @@ namespace HandheldCompanion.Views.Windows
                         break;
                     case Visibility.Collapsed:
                     case Visibility.Hidden:
+                        WindowState = WindowState.Normal;
                         visibility = Visibility.Visible;
                         break;
                 }

@@ -15,7 +15,7 @@
         Closing="Window_Closing"
         Loaded="Window_Loaded"
         ui:WindowHelper.UseModernWindowStyle="True" 
-        Title="QuickTools" Topmost="True">
+        Title="QuickTools" Topmost="True" WindowStyle="ToolWindow">
 
     <ui:NavigationView
         Name="navView" PaneDisplayMode="LeftCompact"
