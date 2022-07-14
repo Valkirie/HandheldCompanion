@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Extensions.Logging;
+using System.Diagnostics;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace ControllerCommon.Managers
@@ -36,6 +37,7 @@ namespace ControllerCommon.Managers
         }
         public static void LogDebug(string message, params object[] args)
         {
+            Debug.WriteLine(message, args);
             logger.LogDebug(message, args);
         }
         public static void LogError(string message, params object[] args)

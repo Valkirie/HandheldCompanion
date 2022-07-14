@@ -1,7 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
-using HandheldCompanion.Views.Windows;
 using Microsoft.Win32;
 using ModernWpf.Controls;
 using System;
@@ -38,7 +37,7 @@ namespace HandheldCompanion.Views.Pages
 
             MainWindow.profileManager.Deleted += ProfileDeleted;
             MainWindow.profileManager.Updated += ProfileUpdated;
-            MainWindow.profileManager.Loaded += ProfileLoaded;
+            MainWindow.profileManager.Ready += ProfileLoaded;
 
             // draw gamepad activators
             foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))

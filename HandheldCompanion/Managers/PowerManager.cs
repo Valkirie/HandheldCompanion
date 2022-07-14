@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using HandheldCompanion.Views;
 using System;
@@ -75,6 +76,22 @@ namespace HandheldCompanion.Managers
             processor.LimitChanged += Processor_LimitChanged;
 
             updateTimer.Elapsed += UpdateTimer_Elapsed;
+
+            MainWindow.profileManager.Applied += ProfileManager_Applied;
+            MainWindow.profileManager.Discarded += ProfileManager_Discarded;
+        }
+
+        private void ProfileManager_Discarded(Profile profile)
+        {
+            // restore system TDP
+            RequestTDP(RequestedTDP);
+        }
+
+        private void ProfileManager_Applied(Profile profile)
+        {
+            // apply profile TDP
+            if (profile.TDP_override && profile.TDP_value != 0)
+                RequestTDP(profile.TDP_value, false);
         }
 
         private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -85,15 +102,17 @@ namespace HandheldCompanion.Managers
                     PowerSetActiveOverlayScheme(RequestedPowerMode);
         }
 
-        public void RequestTDP(double value)
+        public void RequestTDP(double value, bool store = true)
         {
-            RequestedTDP = value;
-            LogManager.LogInformation("User requested stapm: {0}", RequestedTDP);
+            if (store)
+                RequestedTDP = value;
 
-            processor.SetTDPLimit("all", RequestedTDP);
-            // processor.SetLimit("stapm", RequestedTDP);
-            // processor.SetLimit("slow", RequestedTDP + 2);
-            // processor.SetLimit("fast", RequestedTDP + 5);
+            processor.SetTDPLimit("all", value);
+            // processor.SetLimit("stapm", value);
+            // processor.SetLimit("slow", value + 2);
+            // processor.SetLimit("fast", value + 5);
+
+            LogManager.LogInformation("User requested stapm: {0}", value);
         }
 
         public void RequestGPUClock(double value)
@@ -126,6 +145,10 @@ namespace HandheldCompanion.Managers
         private void Processor_LimitChanged(string type, int limit)
         {
             var TDP = RequestedTDP;
+
+            Profile CurrentProfile = MainWindow.profileManager.CurrentProfile;
+            if (CurrentProfile != null && CurrentProfile.TDP_override && CurrentProfile.TDP_value != 0)
+                TDP = CurrentProfile.TDP_value;
 
             if (processor.GetType() == typeof(AMDProcessor))
                 if (RequestedPowerMode == PowerMode.BetterBattery)
