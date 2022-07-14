@@ -241,9 +241,6 @@
   <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
     <value>Manual</value>
   </data>
-  <data name="HidHideCLI.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HidHideCLI.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="JoystickCameraDesc" xml:space="preserve">
     <value>This input will operate as a simple joystick. This is intended for traditional joystick applications</value>
   </data>
@@ -261,15 +258,6 @@
   </data>
   <data name="PowerControlPanel.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PowerControlPanel.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xinput1_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="xinput1_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xinput1_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="XInputPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Yuzu.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Yuzu.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>

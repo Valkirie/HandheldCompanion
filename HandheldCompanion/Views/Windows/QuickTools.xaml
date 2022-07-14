@@ -30,7 +30,7 @@
         <ui:NavigationView.MenuItems>
             <ui:NavigationViewItem Name="navSettingsPage" Tag="QuickSettingsPage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF8B0;"></ui:FontIcon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 

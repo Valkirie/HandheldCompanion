@@ -1,6 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
+using HandheldCompanion.Views.Windows;
 using Microsoft.Win32;
 using ModernWpf.Controls;
 using System;
@@ -315,7 +316,6 @@ namespace HandheldCompanion.Views.Pages
             {
                 // enable all expanders
                 ProfileDetails.IsEnabled = true;
-                GlobalSettings.IsEnabled = true;
                 MotionSettings.IsEnabled = true;
                 UniversalSettings.IsEnabled = true;
 
@@ -323,6 +323,10 @@ namespace HandheldCompanion.Views.Pages
                 b_DeleteProfile.IsEnabled = !profileCurrent.isDefault;
                 // prevent user from renaming default profile
                 tB_ProfileName.IsEnabled = !profileCurrent.isDefault;
+                // prevent user from setting power settings on default profile
+                PowerSettings.IsEnabled = !profileCurrent.isDefault;
+                // disable global settings on default profile
+                GlobalSettings.IsEnabled = !profileCurrent.isDefault;
 
                 // Profile info
                 tB_ProfileName.Text = profileCurrent.name;
@@ -341,6 +345,10 @@ namespace HandheldCompanion.Views.Pages
                 cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
                 cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
 
+                // Power settings
+                TDPToggle.IsOn = profileCurrent.TDP_override;
+                TDPSlider.Value = profileCurrent.TDP_value;
+
                 // UMC settings
                 Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
                 cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
@@ -355,7 +363,7 @@ namespace HandheldCompanion.Views.Pages
 
                 // display warnings
                 ProfileErrorCode currentError = profileCurrent.error;
-                if (profileCurrent.isApplied)
+                if (profileCurrent.isRunning)
                     currentError = ProfileErrorCode.IsRunning;
 
                 switch (currentError)
@@ -441,6 +449,10 @@ namespace HandheldCompanion.Views.Pages
             profileCurrent.umc_input = (Input)cB_Input.SelectedIndex;
             profileCurrent.umc_output = (Output)cB_Output.SelectedIndex;
             profileCurrent.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
+
+            // Power settings
+            profileCurrent.TDP_override = (bool)TDPToggle.IsOn;
+            profileCurrent.TDP_value = (int)TDPSlider.Value;
 
             profileCurrent.umc_trigger = 0;
 
@@ -530,6 +542,16 @@ namespace HandheldCompanion.Views.Pages
             }
 
             Text_InputHint.Text = Profile.InputDescription[input];
+        }
+
+        private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            // do something
+        }
+
+        private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            // do something
         }
     }
 }

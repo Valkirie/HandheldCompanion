@@ -75,6 +75,10 @@ namespace ControllerCommon
         public float flick_duration { get; set; } = 0.1f;
         public float stick_sensivity { get; set; } = 3.0f;
 
+        // power
+        public bool TDP_override { get; set; }
+        public int TDP_value { get; set; }
+
         public GamepadButtonFlagsExt umc_trigger { get; set; } = GamepadButtonFlagsExt.AlwaysOn;
 
         // hidden settings
@@ -82,7 +86,7 @@ namespace ControllerCommon
         [JsonIgnore] public string fullpath { get; set; }
         [JsonIgnore] public string json { get; set; }
         [JsonIgnore] public bool isDefault { get; set; } = false;
-        [JsonIgnore] public bool isApplied { get; set; } = false;
+        [JsonIgnore] public bool isRunning { get; set; } = false;
         [JsonIgnore] public static int array_size = 49;             // x + 1 (hidden)
 
         public Profile()

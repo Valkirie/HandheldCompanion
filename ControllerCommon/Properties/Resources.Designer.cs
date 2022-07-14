@@ -107,7 +107,9 @@ namespace ControllerCommon.Properties {
         ///  &quot;name&quot;: &quot;Default&quot;,
         ///  &quot;path&quot;: &quot;&quot;,
         ///  &quot;executable&quot;: &quot;Default.exe&quot;,
-        ///  &quot;whitelisted&quot;: false
+        ///  &quot;isDefault&quot;: true,
+        ///  &quot;whitelisted&quot;: false,
+        ///  &quot;umc_enabled&quot;: false
         ///}.
         /// </summary>
         public static string Default_json {
@@ -455,20 +457,6 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {
-        ///  &quot;name&quot;: &quot;HidHideCLI&quot;,
-        ///  &quot;path&quot;: &quot;C:\\Program Files\\Nefarius Software Solutions e.U\\HidHideCLI\\HidHideCLI.exe&quot;,
-        ///  &quot;executable&quot;: &quot;HidHideCLI.exe&quot;,
-        ///  &quot;whitelisted&quot;: true
-        ///}.
-        /// </summary>
-        public static string HidHideCLI_json {
-            get {
-                return ResourceManager.GetString("HidHideCLI.json", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This input will operate as a simple joystick. This is intended for traditional joystick applications.
         /// </summary>
         public static string JoystickCameraDesc {
@@ -535,74 +523,6 @@ namespace ControllerCommon.Properties {
         public static string PowerControlPanel_json {
             get {
                 return ResourceManager.GetString("PowerControlPanel.json", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] xinput1_x64 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_x64", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] xinput1_x86 {
-            get {
-                object obj = ResourceManager.GetObject("xinput1_x86", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to [General]
-        ///iniFileVersion=4150
-        ///[KeyAssign]
-        ///LS=LS
-        ///RS=RS
-        ///LT=LT
-        ///RT=RT
-        ///DPAD_UP=DPAD_UP
-        ///DPAD_DOWN=DPAD_DOWN
-        ///DPAD_LEFT=DPAD_LEFT
-        ///DPAD_RIGHT=DPAD_RIGHT
-        ///A=A
-        ///B=B
-        ///X=X
-        ///Y=Y
-        ///LB=LB
-        ///RB=RB
-        ///LSB=LSB
-        ///RSB=RSB
-        ///BACK=BACK
-        ///START=START
-        ///GUIDE=GUIDE
-        ///ThresholdA2D=40
-        ///DPAD4Direction=False
-        ///[LeftStick]
-        ///DeadZone=0
-        ///Saturation=32767
-        ///Linearity=1
-        ///Response=32767
-        ///RectCorrection=0
-        ///Scale=1
-        ///CenterOffsetX=0
-        ///CenterOffsetY=0
-        ///InvertX=False
-        ///InvertY=False
-        ///DisableX=False
-        ///DisableY=False
-        ///[RightStick]
-        ///DeadZone=0
-        ///Saturati [rest of string was truncated]&quot;;.
-        /// </summary>
-        public static string XInputPlus {
-            get {
-                return ResourceManager.GetString("XInputPlus", resourceCulture);
             }
         }
         

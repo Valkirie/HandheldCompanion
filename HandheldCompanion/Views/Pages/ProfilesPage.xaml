@@ -188,6 +188,63 @@
                             </ui:SimpleStackPanel>
                         </Expander.Content>
                     </Expander>
+                    
+                    <!-- Power settings -->
+                    <Expander Name="PowerSettings" Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsEnabled="false">
+                        <Expander.Header>
+                            <DockPanel Margin="0,12,12,12">
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE83F;" Height="40" HorizontalAlignment="Center"/>
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="Power settings" FontSize="14"/>
+                                    <TextBlock Text="Change the power settings" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                        </Expander.Header>
+
+                        <Expander.Content>
+                            <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="Thermal Power (TDP) Override" FontSize="14"/>
+                                        <TextBlock Text="Override the processor thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="TDPToggle" Toggled="TDPToggle_Toggled"/>
+                                </Grid>
+
+                                <!-- Separator -->
+                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+
+                                <Grid IsEnabled="{Binding ElementName=TDPToggle, Path=IsOn}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="Thermal Power (TDP) Limit" FontSize="14"/>
+                                        <TextBlock Text="Change the processor thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSlider, Mode=OneWay}" />
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
+                                        <Slider Name="TDPSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                                                ValueChanged="TDPSlider_ValueChanged"
+                                                MouseEnter="Scrolllock_MouseEnter"
+                                                MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5"/>
+                                    </DockPanel>
+                                </Grid>
+                            </ui:SimpleStackPanel>
+                        </Expander.Content>
+                    </Expander>
 
                     <!-- Motion control settings -->
                     <Expander Name="MotionSettings" Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsEnabled="false">
@@ -325,7 +382,7 @@
                                 <!-- Separator -->
                                 <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
-                                <Grid>
+                                <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                         <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
@@ -342,7 +399,7 @@
                                 <!-- Separator -->
                                 <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
-                                <Grid>
+                                <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                         <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
@@ -359,7 +416,7 @@
                                 <!-- Separator -->
                                 <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
-                                <Grid>
+                                <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                         <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
@@ -381,7 +438,7 @@
                                 <!-- Separator -->
                                 <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
-                                <Grid>
+                                <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                         <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
@@ -393,16 +450,18 @@
                                     </StackPanel>
                                 </Grid>
 
-                                <ui:LayoutPanel Name="cB_Buttons" HorizontalAlignment="Center">
-                                    <ui:LayoutPanel.Layout>
-                                        <ui:UniformGridLayout/>
-                                    </ui:LayoutPanel.Layout>
-                                </ui:LayoutPanel>
+                                <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
+                                    <ui:LayoutPanel Name="cB_Buttons" HorizontalAlignment="Center">
+                                        <ui:LayoutPanel.Layout>
+                                            <ui:UniformGridLayout/>
+                                        </ui:LayoutPanel.Layout>
+                                    </ui:LayoutPanel>
+                                </Grid>
 
                                 <!-- Separator -->
                                 <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
-                                <Grid>
+                                <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
                                         <ColumnDefinition Width="0.5*" ></ColumnDefinition>

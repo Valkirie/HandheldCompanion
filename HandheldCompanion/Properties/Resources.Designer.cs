@@ -2057,5 +2057,73 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("WarningElevated", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] xinput1_x64 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_x64", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] xinput1_x86 {
+            get {
+                object obj = ResourceManager.GetObject("xinput1_x86", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [General]
+        ///iniFileVersion=4150
+        ///[KeyAssign]
+        ///LS=LS
+        ///RS=RS
+        ///LT=LT
+        ///RT=RT
+        ///DPAD_UP=DPAD_UP
+        ///DPAD_DOWN=DPAD_DOWN
+        ///DPAD_LEFT=DPAD_LEFT
+        ///DPAD_RIGHT=DPAD_RIGHT
+        ///A=A
+        ///B=B
+        ///X=X
+        ///Y=Y
+        ///LB=LB
+        ///RB=RB
+        ///LSB=LSB
+        ///RSB=RSB
+        ///BACK=BACK
+        ///START=START
+        ///GUIDE=GUIDE
+        ///ThresholdA2D=40
+        ///DPAD4Direction=False
+        ///[LeftStick]
+        ///DeadZone=0
+        ///Saturation=32767
+        ///Linearity=1
+        ///Response=32767
+        ///RectCorrection=0
+        ///Scale=1
+        ///CenterOffsetX=0
+        ///CenterOffsetY=0
+        ///InvertX=False
+        ///InvertY=False
+        ///DisableX=False
+        ///DisableY=False
+        ///[RightStick]
+        ///DeadZone=0
+        ///Saturati [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string XInputPlus {
+            get {
+                return ResourceManager.GetString("XInputPlus", resourceCulture);
+            }
+        }
     }
 }

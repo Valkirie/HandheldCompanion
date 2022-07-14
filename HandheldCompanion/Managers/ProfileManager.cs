@@ -1,5 +1,9 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using Force.Crc32;
+using HandheldCompanion.Views;
+using HandheldCompanion.Views.Windows;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +14,7 @@ using System.Resources;
 using System.Text.Json;
 using static ControllerCommon.Utils.ProcessUtils;
 
-namespace ControllerCommon.Managers
+namespace HandheldCompanion.Managers
 {
     public class ProfileManager
     {
@@ -30,14 +34,15 @@ namespace ControllerCommon.Managers
         public event LoadedEventHandler Loaded;
         public delegate void LoadedEventHandler();
 
-        public PipeClient PipeClient;
         public Profile CurrentProfile;
 
         private string path;
 
-        public ProfileManager(PipeClient PipeClient = null)
-        {
-            this.PipeClient = PipeClient;
+        public ProfileManager()
+        {            
+            MainWindow.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            MainWindow.processManager.ProcessStarted += ProcessManager_ProcessStarted;
+            MainWindow.processManager.ProcessStopped += ProcessManager_ProcessStopped;
         }
 
         public void Start(string filter = "*.json")
@@ -110,6 +115,82 @@ namespace ControllerCommon.Managers
             }
 
             return idx;
+        }
+
+        private void ProcessManager_ProcessStopped(ProcessEx processEx)
+        {
+            try
+            {
+                Profile profile = GetProfileFromExec(processEx.Name);
+
+                if (profile == null)
+                    return;
+
+                if (profile.isRunning)
+                {
+                    profile.isRunning = false;
+
+                    // todo: raise event !
+
+                    // update profile
+                    UpdateOrCreateProfile(profile);
+                }
+            }
+            catch (Exception) { }
+        }
+
+        private void ProcessManager_ProcessStarted(ProcessEx processEx)
+        {
+            try
+            {
+                Profile profile = GetProfileFromExec(processEx.Name);
+
+                if (profile == null)
+                    return;
+
+                profile.fullpath = processEx.Path;
+                profile.isRunning = true;
+
+                // todo: raise event !
+
+                // update profile
+                UpdateOrCreateProfile(profile);
+            }
+            catch (Exception) { }
+        }
+
+        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
+        {
+            try
+            {
+                var profile = GetProfileFromExec(processEx.Name);
+
+                if (profile == null)
+                    profile = GetDefault();
+
+                if (!profile.isEnabled)
+                    return;
+
+                if (CurrentProfile == profile)
+                    return;
+
+                // update current profile
+                CurrentProfile = profile;
+
+                // todo: raise event !
+                // todo: plug power manager !
+
+                LogManager.LogDebug("Profile {0} applied", profile.name);
+
+                // do not update default profile path
+                if (profile.isDefault)
+                    return;
+
+                profile.isRunning = true;
+                profile.fullpath = processEx.Path;
+                UpdateOrCreateProfile(profile);
+            }
+            catch (Exception) { }
         }
 
         private void ProfileDeleted(object sender, FileSystemEventArgs e)
@@ -342,7 +423,7 @@ namespace ControllerCommon.Managers
 
         public void UnregisterApplication(Profile profile)
         {
-            PipeClient?.SendMessage(new PipeClientHidder
+            MainWindow.pipeClient?.SendMessage(new PipeClientHidder
             {
                 action = HidderAction.Unregister,
                 path = profile.fullpath
@@ -351,7 +432,7 @@ namespace ControllerCommon.Managers
 
         public void RegisterApplication(Profile profile)
         {
-            PipeClient?.SendMessage(new PipeClientHidder
+            MainWindow.pipeClient?.SendMessage(new PipeClientHidder
             {
                 action = HidderAction.Register,
                 path = profile.fullpath
