@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Views.Windows;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 

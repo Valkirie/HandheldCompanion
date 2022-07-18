@@ -82,7 +82,7 @@ namespace HandheldCompanion.Managers
             processor.ValueChanged += Processor_ValueChanged;
             processor.StatusChanged += Processor_StatusChanged;
             processor.LimitChanged += Processor_LimitChanged;
-            
+
             updateTimer = new Timer() { Interval = 4000, AutoReset = true, Enabled = false };
             updateTimer.Elapsed += UpdateTimer_Elapsed;
 
