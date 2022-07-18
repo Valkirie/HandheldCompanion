@@ -429,7 +429,7 @@
 
                                     <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzone, Mode=OneWay}" />
-                                        <Slider Margin="6,0,0,0" Name="tb_ProfileAntiDeadzone" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="5" TickFrequency="5" IsSnapToTickEnabled="true"
+                                        <Slider Margin="6,0,0,0" Name="tb_ProfileAntiDeadzone" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="true"
                                                 MouseEnter="Scrolllock_MouseEnter"
                                                 MouseLeave="Scrolllock_MouseLeave"/>
                                     </DockPanel>
