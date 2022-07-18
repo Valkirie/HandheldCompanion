@@ -42,20 +42,20 @@ namespace ControllerCommon
         public string name { get; set; }
         public string path { get; set; }
         public string executable { get; set; }
-        public bool isEnabled { get; set; } = true;
+        public bool isEnabled { get; set; }
 
-        public bool whitelisted { get; set; } = false;              // if true, can see through the HidHide cloak
-        public bool use_wrapper { get; set; } = false;              // if true, deploy xinput1_3.dll
-        public float gyrometer { get; set; } = 1.0f;                // gyroscope multiplicator (remove me)
-        public float accelerometer { get; set; } = 1.0f;            // accelerometer multiplicator (remove me)
+        public bool whitelisted { get; set; }                   // if true, can see through the HidHide cloak
+        public bool use_wrapper { get; set; }                   // if true, deploy xinput1_3.dll
+        public float gyrometer { get; set; } = 1.0f;            // gyroscope multiplicator (remove me)
+        public float accelerometer { get; set; } = 1.0f;        // accelerometer multiplicator (remove me)
 
-        public int steering { get; set; } = 0;                      // 0 = Roll, 1 = Yaw
-        public float antideadzone { get; set; } = 0.0f;             // todo: typeme
+        public int steering { get; set; } = 0;                  // 0 = Roll, 1 = Yaw
+        public float antideadzone { get; set; } = 0.0f;         // todo: typeme
 
-        public bool inverthorizontal { get; set; } = false;         // if true, invert horizontal axis
-        public bool invertvertical { get; set; } = false;           // if false, invert vertical axis
+        public bool inverthorizontal { get; set; }              // if true, invert horizontal axis
+        public bool invertvertical { get; set; }                // if false, invert vertical axis
 
-        public bool umc_enabled { get; set; } = true;
+        public bool umc_enabled { get; set; }
 
         public Input umc_input { get; set; } = Input.JoystickCamera;
         public Output umc_output { get; set; } = Output.RightStick;
@@ -71,9 +71,13 @@ namespace ControllerCommon
         public float steering_deadzone { get; set; } = 0.0f;
 
         // flickstick
-        public bool flickstick_enabled { get; set; } = false;
+        public bool flickstick_enabled { get; set; }
         public float flick_duration { get; set; } = 0.1f;
         public float stick_sensivity { get; set; } = 3.0f;
+
+        // power
+        public bool TDP_override { get; set; }
+        public int TDP_value { get; set; }
 
         public GamepadButtonFlagsExt umc_trigger { get; set; } = GamepadButtonFlagsExt.AlwaysOn;
 
@@ -81,8 +85,8 @@ namespace ControllerCommon
         [JsonIgnore] public ProfileErrorCode error;
         [JsonIgnore] public string fullpath { get; set; }
         [JsonIgnore] public string json { get; set; }
-        [JsonIgnore] public bool isDefault { get; set; } = false;
-        [JsonIgnore] public bool isApplied { get; set; } = false;
+        [JsonIgnore] public bool isDefault { get; set; }
+        [JsonIgnore] public bool isRunning { get; set; }
         [JsonIgnore] public static int array_size = 49;             // x + 1 (hidden)
 
         public Profile()
@@ -110,7 +114,9 @@ namespace ControllerCommon
             this.executable = AppProperties["FileName"];
             this.name = ProductName;
             this.path = this.fullpath = path;
-            this.isEnabled = false;
+
+            // enable the below variables when profile is created
+            this.umc_enabled = true;
         }
 
         public float GetSensiviy()

@@ -171,17 +171,14 @@ namespace HandheldCompanion.Views
             pipeServer = new PipeServer("HandheldCompanion");
             pipeServer.ClientMessage += OnClientMessage;
 
-            // initialize Profile Manager
-            profileManager = new ProfileManager(pipeClient);
-
             // initialize toast manager
             toastManager = new ToastManager("HandheldCompanion");
 
             // initialize process manager
             processManager = new ProcessManager();
-            processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-            processManager.ProcessStarted += ProcessManager_ProcessStarted;
-            processManager.ProcessStopped += ProcessManager_ProcessStopped;
+
+            // initialize Profile Manager
+            profileManager = new ProfileManager();
 
             // initialize overlay(s)
             inputsManager = new InputsManager();
@@ -341,74 +338,6 @@ namespace HandheldCompanion.Views
         internal static MainWindow GetDefault()
         {
             return window;
-        }
-
-        private void ProcessManager_ProcessStopped(ProcessEx processEx)
-        {
-            try
-            {
-                Profile currentProfile = profileManager.GetProfileFromExec(processEx.Name);
-
-                if (currentProfile == null)
-                    return;
-
-                currentProfile.fullpath = processEx.Path;
-                currentProfile.isApplied = false;
-
-                // update profile and inform settings page
-                profileManager.UpdateOrCreateProfile(currentProfile);
-            }
-            catch (Exception) { }
-        }
-
-        private void ProcessManager_ProcessStarted(ProcessEx processEx)
-        {
-            try
-            {
-                Profile currentProfile = profileManager.GetProfileFromExec(processEx.Name);
-
-                if (currentProfile == null)
-                    return;
-
-                currentProfile.fullpath = processEx.Path;
-                currentProfile.isApplied = true;
-
-                // update profile and inform settings page
-                profileManager.UpdateOrCreateProfile(currentProfile);
-            }
-            catch (Exception) { }
-        }
-
-        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
-        {
-            try
-            {
-                var profile = profileManager.GetProfileFromExec(processEx.Name);
-
-                if (profile == null)
-                    profile = profileManager.GetDefault();
-
-                if (!profile.isEnabled)
-                    return;
-
-                if (profileManager.CurrentProfile == profile)
-                    return;
-
-                profile.isApplied = true;
-
-                // update current profile
-                profileManager.CurrentProfile = profile;
-
-                LogManager.LogDebug("Profile {0} applied", profile.name);
-
-                // do not update default profile path
-                if (profile.isDefault)
-                    return;
-
-                profile.fullpath = processEx.Path;
-                profileManager.UpdateOrCreateProfile(profile);
-            }
-            catch (Exception) { }
         }
 
         private void OnClientConnected(object sender)

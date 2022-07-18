@@ -1,5 +1,8 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using Force.Crc32;
+using HandheldCompanion.Views;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +13,7 @@ using System.Resources;
 using System.Text.Json;
 using static ControllerCommon.Utils.ProcessUtils;
 
-namespace ControllerCommon.Managers
+namespace HandheldCompanion.Managers
 {
     public class ProfileManager
     {
@@ -23,21 +26,30 @@ namespace ControllerCommon.Managers
         public Dictionary<string, Profile> profiles = new Dictionary<string, Profile>(StringComparer.InvariantCultureIgnoreCase);
         public FileSystemWatcher profileWatcher { get; set; }
 
+        #region events
         public event DeletedEventHandler Deleted;
         public delegate void DeletedEventHandler(Profile profile);
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(Profile profile, bool backgroundtask);
-        public event LoadedEventHandler Loaded;
+        public event LoadedEventHandler Ready;
         public delegate void LoadedEventHandler();
 
-        public PipeClient PipeClient;
+        public event AppliedEventHandler Applied;
+        public delegate void AppliedEventHandler(Profile profile);
+
+        public event DiscardedEventHandler Discarded;
+        public delegate void DiscardedEventHandler(Profile profile);
+        #endregion
+
         public Profile CurrentProfile;
 
         private string path;
 
-        public ProfileManager(PipeClient PipeClient = null)
+        public ProfileManager()
         {
-            this.PipeClient = PipeClient;
+            MainWindow.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            MainWindow.processManager.ProcessStarted += ProcessManager_ProcessStarted;
+            MainWindow.processManager.ProcessStopped += ProcessManager_ProcessStopped;
         }
 
         public void Start(string filter = "*.json")
@@ -80,7 +92,7 @@ namespace ControllerCommon.Managers
                 ProcessProfile(fileName);
 
             // warn owner
-            Loaded?.Invoke();
+            Ready?.Invoke();
         }
 
         public void Stop()
@@ -110,6 +122,81 @@ namespace ControllerCommon.Managers
             }
 
             return idx;
+        }
+
+        private void ProcessManager_ProcessStopped(ProcessEx processEx)
+        {
+            try
+            {
+                Profile profile = GetProfileFromExec(processEx.Name);
+
+                if (profile == null)
+                    return;
+
+                if (profile.isRunning)
+                {
+                    profile.isRunning = false;
+
+                    // raise event
+                    Discarded?.Invoke(profile);
+
+                    // update profile
+                    UpdateOrCreateProfile(profile);
+                }
+            }
+            catch (Exception) { }
+        }
+
+        private void ProcessManager_ProcessStarted(ProcessEx processEx)
+        {
+            try
+            {
+                Profile profile = GetProfileFromExec(processEx.Name);
+
+                if (profile == null)
+                    return;
+
+                profile.fullpath = processEx.Path;
+                profile.isRunning = true;
+
+                // update profile
+                UpdateOrCreateProfile(profile);
+            }
+            catch (Exception) { }
+        }
+
+        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
+        {
+            try
+            {
+                var profile = GetProfileFromExec(processEx.Name);
+
+                if (profile == null)
+                    profile = GetDefault();
+
+                if (!profile.isEnabled)
+                    return;
+
+                if (CurrentProfile == profile)
+                    return;
+
+                // update current profile
+                CurrentProfile = profile;
+
+                // raise event
+                Applied?.Invoke(profile);
+
+                LogManager.LogDebug("Profile {0} applied", profile.name);
+
+                // do not update default profile path
+                if (profile.isDefault)
+                    return;
+
+                profile.isRunning = true;
+                profile.fullpath = processEx.Path;
+                UpdateOrCreateProfile(profile);
+            }
+            catch (Exception) { }
         }
 
         private void ProfileDeleted(object sender, FileSystemEventArgs e)
@@ -342,7 +429,7 @@ namespace ControllerCommon.Managers
 
         public void UnregisterApplication(Profile profile)
         {
-            PipeClient?.SendMessage(new PipeClientHidder
+            MainWindow.pipeClient?.SendMessage(new PipeClientHidder
             {
                 action = HidderAction.Unregister,
                 path = profile.fullpath
@@ -351,7 +438,7 @@ namespace ControllerCommon.Managers
 
         public void RegisterApplication(Profile profile)
         {
-            PipeClient?.SendMessage(new PipeClientHidder
+            MainWindow.pipeClient?.SendMessage(new PipeClientHidder
             {
                 action = HidderAction.Register,
                 path = profile.fullpath
