@@ -65,6 +65,7 @@ namespace ControllerCommon.Properties {
         ///  &quot;name&quot;: &quot;AYASpace&quot;,
         ///  &quot;path&quot;: &quot;AYASpace.exe&quot;,
         ///  &quot;executable&quot;: &quot;AYASpace.exe&quot;,
+        ///  &quot;isEnabled&quot;: true,
         ///  &quot;whitelisted&quot;: false
         ///}.
         /// </summary>
@@ -76,23 +77,10 @@ namespace ControllerCommon.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to {
-        ///  &quot;name&quot;: &quot;Cemu&quot;,
-        ///  &quot;path&quot;: &quot;Cemu.exe&quot;,
-        ///  &quot;executable&quot;: &quot;Cemu.exe&quot;,
-        ///  &quot;whitelisted&quot;: false
-        ///}.
-        /// </summary>
-        public static string Cemu_json {
-            get {
-                return ResourceManager.GetString("Cemu.json", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
         ///  &quot;name&quot;: &quot;ControllerCompanion&quot;,
         ///  &quot;path&quot;: &quot;ControllerCompanion.exe&quot;,
         ///  &quot;executable&quot;: &quot;ControllerCompanion.exe&quot;,
+        ///  &quot;isEnabled&quot;: true,
         ///  &quot;whitelisted&quot;: true
         ///}.
         /// </summary>
@@ -108,6 +96,7 @@ namespace ControllerCommon.Properties {
         ///  &quot;path&quot;: &quot;&quot;,
         ///  &quot;executable&quot;: &quot;Default.exe&quot;,
         ///  &quot;isDefault&quot;: true,
+        ///  &quot;isEnabled&quot;: true,
         ///  &quot;whitelisted&quot;: false,
         ///  &quot;umc_enabled&quot;: false
         ///}.
@@ -115,20 +104,6 @@ namespace ControllerCommon.Properties {
         public static string Default_json {
             get {
                 return ResourceManager.GetString("Default.json", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///  &quot;name&quot;: &quot;Dolphin&quot;,
-        ///  &quot;path&quot;: &quot;Dolphin.exe&quot;,
-        ///  &quot;executable&quot;: &quot;Dolphin.exe&quot;,
-        ///  &quot;whitelisted&quot;: true
-        ///}.
-        /// </summary>
-        public static string Dolphin_json {
-            get {
-                return ResourceManager.GetString("Dolphin.json", resourceCulture);
             }
         }
         
@@ -479,6 +454,7 @@ namespace ControllerCommon.Properties {
         ///  &quot;name&quot;: &quot;Joyxoff&quot;,
         ///  &quot;path&quot;: &quot;Joyxoff.exe&quot;,
         ///  &quot;executable&quot;: &quot;Joyxoff.exe&quot;,
+        ///  &quot;isEnabled&quot;: true,
         ///  &quot;whitelisted&quot;: true
         ///}.
         /// </summary>
@@ -502,6 +478,7 @@ namespace ControllerCommon.Properties {
         ///  &quot;name&quot;: &quot;Playnite.FullscreenApp&quot;,
         ///  &quot;path&quot;: &quot;Playnite.FullscreenApp.exe&quot;,
         ///  &quot;executable&quot;: &quot;Playnite.FullscreenApp.exe&quot;,
+        ///  &quot;isEnabled&quot;: true,
         ///  &quot;whitelisted&quot;: true
         ///}.
         /// </summary>
@@ -516,6 +493,7 @@ namespace ControllerCommon.Properties {
         ///  &quot;name&quot;: &quot;Power Control Panel&quot;,
         ///  &quot;path&quot;: &quot;Power Control Panel.exe&quot;,
         ///  &quot;executable&quot;: &quot;Power Control Panel.exe&quot;,
+        ///  &quot;isEnabled&quot;: true,
         ///  &quot;whitelisted&quot;: true
         ///}
         ///.
@@ -523,20 +501,6 @@ namespace ControllerCommon.Properties {
         public static string PowerControlPanel_json {
             get {
                 return ResourceManager.GetString("PowerControlPanel.json", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///  &quot;name&quot;: &quot;Yuzu&quot;,
-        ///  &quot;path&quot;: &quot;yuzu.exe&quot;,
-        ///  &quot;executable&quot;: &quot;yuzu.exe&quot;,
-        ///  &quot;whitelisted&quot;: false
-        ///}.
-        /// </summary>
-        public static string Yuzu_json {
-            get {
-                return ResourceManager.GetString("Yuzu.json", resourceCulture);
             }
         }
     }
