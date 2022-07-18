@@ -51,7 +51,11 @@ namespace HandheldCompanion.Managers
         #endregion
 
         private Processor processor;
-        private Timer updateTimer = new Timer() { Interval = 4000, AutoReset = true };
+
+        // timers
+        private Timer updateTimer;
+        private Timer cpuTimer;
+        private Timer gpuTimer;
 
         public event LimitChangedHandler LimitChanged;
         public delegate void LimitChangedHandler(string type, int limit);
@@ -64,8 +68,12 @@ namespace HandheldCompanion.Managers
 
         // user requested limits
         private double UserRequestedTDP = MainWindow.handheldDevice.DefaultTDP;
-        private double RequestedGPUClock;
-        private Guid RequestedPowerMode;
+        private double UserRequestedGPUClock;
+        private Guid UserRequestedPowerMode;
+
+        // values
+        private double TDPvalue;
+        private double GPUvalue;
 
         public PowerManager()
         {
@@ -74,8 +82,15 @@ namespace HandheldCompanion.Managers
             processor.ValueChanged += Processor_ValueChanged;
             processor.StatusChanged += Processor_StatusChanged;
             processor.LimitChanged += Processor_LimitChanged;
-
+            
+            updateTimer = new Timer() { Interval = 4000, AutoReset = true, Enabled = false };
             updateTimer.Elapsed += UpdateTimer_Elapsed;
+
+            cpuTimer = new Timer() { Interval = 3000, AutoReset = false, Enabled = false };
+            cpuTimer.Elapsed += cpuTimer_Elapsed;
+
+            gpuTimer = new Timer() { Interval = 3000, AutoReset = false, Enabled = false };
+            gpuTimer.Elapsed += gpuTimer_Elapsed;
 
             MainWindow.profileManager.Applied += ProfileManager_Applied;
             MainWindow.profileManager.Discarded += ProfileManager_Discarded;
@@ -83,13 +98,13 @@ namespace HandheldCompanion.Managers
 
         private void ProfileManager_Discarded(Profile profile)
         {
-            // restore system TDP
+            // restore user defined TDP
             RequestTDP(UserRequestedTDP);
         }
 
         private void ProfileManager_Applied(Profile profile)
         {
-            // apply profile TDP
+            // apply profile defined TDP
             if (profile.TDP_override && profile.TDP_value != 0)
                 RequestTDP(profile.TDP_value, false);
         }
@@ -98,8 +113,25 @@ namespace HandheldCompanion.Managers
         {
             // Checking if active power shceme has changed
             if (PowerGetEffectiveOverlayScheme(out Guid activeScheme) == 0)
-                if (activeScheme != RequestedPowerMode)
-                    PowerSetActiveOverlayScheme(RequestedPowerMode);
+                if (activeScheme != UserRequestedPowerMode)
+                    PowerSetActiveOverlayScheme(UserRequestedPowerMode);
+        }
+
+        private void cpuTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            processor.SetTDPLimit("all", TDPvalue);
+            // processor.SetLimit("stapm", value);
+            // processor.SetLimit("slow", value + 2);
+            // processor.SetLimit("fast", value + 5);
+
+            LogManager.LogInformation("User requested stapm: {0}", TDPvalue);
+        }
+
+        private void gpuTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            processor.SetGPUClock(GPUvalue);
+
+            LogManager.LogInformation("User requested GPU clock: {0}", GPUvalue);
         }
 
         public void RequestTDP(double value, bool UserRequested = true)
@@ -107,28 +139,33 @@ namespace HandheldCompanion.Managers
             if (UserRequested)
                 UserRequestedTDP = value;
 
-            processor.SetTDPLimit("all", value);
-            // processor.SetLimit("stapm", value);
-            // processor.SetLimit("slow", value + 2);
-            // processor.SetLimit("fast", value + 5);
+            // update value read by timer
+            TDPvalue = value;
 
-            LogManager.LogInformation("User requested stapm: {0}", value);
+            // we use a timer to prevent too many calls from happening
+            cpuTimer.Stop();
+            cpuTimer.Start();
         }
 
-        public void RequestGPUClock(double value)
+        public void RequestGPUClock(double value, bool UserRequested = true)
         {
-            RequestedGPUClock = value;
-            LogManager.LogInformation("User requested GPU clock: {0}", RequestedGPUClock);
+            if (UserRequested)
+                UserRequestedGPUClock = value;
 
-            processor.SetGPUClock(value);
+            // update value read by timer
+            GPUvalue = value;
+
+            // we use a timer to prevent too many calls from happening
+            gpuTimer.Stop();
+            gpuTimer.Start();
         }
 
         public void RequestPowerMode(int idx)
         {
-            RequestedPowerMode = PowerMode.PowerModes[idx];
-            LogManager.LogInformation("User requested power scheme: {0}", RequestedPowerMode);
+            UserRequestedPowerMode = PowerMode.PowerModes[idx];
+            LogManager.LogInformation("User requested power scheme: {0}", UserRequestedPowerMode);
 
-            PowerSetActiveOverlayScheme(RequestedPowerMode);
+            PowerSetActiveOverlayScheme(UserRequestedPowerMode);
         }
 
         #region events
@@ -151,7 +188,7 @@ namespace HandheldCompanion.Managers
                 TDP = CurrentProfile.TDP_value;
 
             if (processor.GetType() == typeof(AMDProcessor))
-                if (RequestedPowerMode == PowerMode.BetterBattery)
+                if (UserRequestedPowerMode == PowerMode.BetterBattery)
                     TDP = (int)Math.Truncate(UserRequestedTDP * 0.9);
 
             switch (type)
