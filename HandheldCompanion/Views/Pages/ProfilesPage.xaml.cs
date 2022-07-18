@@ -149,16 +149,19 @@ namespace HandheldCompanion.Views.Pages
             {
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
+                {
                     if (pr.executable == profile.executable)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
                         break;
                     }
+                }
 
                 if (idx != -1)
-                    cB_Profiles.Items.Remove(profile);
+                    cB_Profiles.Items[idx] = profile;
+                else
+                    cB_Profiles.Items.Add(profile);
 
-                cB_Profiles.Items.Add(profile);
                 cB_Profiles.SelectedItem = profile;
             });
         }
