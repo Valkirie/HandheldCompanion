@@ -25,23 +25,31 @@ namespace ControllerCommon.Managers
 
         public static void LogInformation(string message, params object[] args)
         {
+            Trace.TraceInformation(message, args);
             logger.LogInformation(message, args);
         }
+
         public static void LogWarning(string message, params object[] args)
         {
+            Trace.TraceWarning(message, args);
             logger.LogWarning(message, args);
         }
+
         public static void LogCritical(string message, params object[] args)
         {
+            Trace.TraceError(message, args);
             logger.LogCritical(message, args);
         }
+
         public static void LogDebug(string message, params object[] args)
         {
-            Debug.WriteLine(message, args);
+            Trace.TraceInformation(message, args);
             logger.LogDebug(message, args);
         }
+
         public static void LogError(string message, params object[] args)
         {
+            Trace.TraceError(message, args);
             logger.LogError(message, args);
         }
     }
