@@ -63,7 +63,7 @@ namespace HandheldCompanion.Managers
         public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
 
         // user requested limits
-        private double RequestedTDP = MainWindow.handheldDevice.DefaultTDP;
+        private double UserRequestedTDP = MainWindow.handheldDevice.DefaultTDP;
         private double RequestedGPUClock;
         private Guid RequestedPowerMode;
 
@@ -84,7 +84,7 @@ namespace HandheldCompanion.Managers
         private void ProfileManager_Discarded(Profile profile)
         {
             // restore system TDP
-            RequestTDP(RequestedTDP);
+            RequestTDP(UserRequestedTDP);
         }
 
         private void ProfileManager_Applied(Profile profile)
@@ -102,10 +102,10 @@ namespace HandheldCompanion.Managers
                     PowerSetActiveOverlayScheme(RequestedPowerMode);
         }
 
-        public void RequestTDP(double value, bool store = true)
+        public void RequestTDP(double value, bool UserRequested = true)
         {
-            if (store)
-                RequestedTDP = value;
+            if (UserRequested)
+                UserRequestedTDP = value;
 
             processor.SetTDPLimit("all", value);
             // processor.SetLimit("stapm", value);
@@ -144,7 +144,7 @@ namespace HandheldCompanion.Managers
 
         private void Processor_LimitChanged(string type, int limit)
         {
-            var TDP = RequestedTDP;
+            double TDP = UserRequestedTDP;
 
             Profile CurrentProfile = MainWindow.profileManager.CurrentProfile;
             if (CurrentProfile != null && CurrentProfile.TDP_override && CurrentProfile.TDP_value != 0)
@@ -152,7 +152,7 @@ namespace HandheldCompanion.Managers
 
             if (processor.GetType() == typeof(AMDProcessor))
                 if (RequestedPowerMode == PowerMode.BetterBattery)
-                    TDP = (int)Math.Truncate(RequestedTDP * 0.9);
+                    TDP = (int)Math.Truncate(UserRequestedTDP * 0.9);
 
             switch (type)
             {
@@ -162,7 +162,7 @@ namespace HandheldCompanion.Managers
                     break;
                 case "stapm":
                     if (limit != TDP)
-                        RequestTDP(RequestedTDP);
+                        RequestTDP(UserRequestedTDP);
                     break;
             }
 
