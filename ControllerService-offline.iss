@@ -278,7 +278,7 @@ ArchitecturesInstallIn64BitMode=x64
 Name: en; MessagesFile: "compiler:Default.isl"
 
 [Setup]
-AlwaysRestart = no
+AlwaysRestart = yes
 CloseApplications = yes
 
 [Files]
@@ -290,9 +290,6 @@ Source: "netcorecheck_x64.exe"; Flags: dontcopy noencryption
 #endif
 
 #ifdef UseOfflineInstaller
-Source: "HidHide_1.2.93_x64.exe"; Flags: dontcopy noencryption
-Source: "ViGEmBus_1.18.367_x64_x86.exe"; Flags: dontcopy noencryption
-
 Source: "dxwebsetup.exe"; Flags: dontcopy noencryption
 Source: "vcredist2005_x64.exe"; Flags: dontcopy noencryption
 Source: "vcredist2008_x64.exe"; Flags: dontcopy noencryption
@@ -308,6 +305,9 @@ Source: "windowsdesktop-runtime-6.0.6-win-x64.exe"; Flags: dontcopy noencryption
 Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#SourcePath}\bin\{#MyConfiguration}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
+Source: "{#SourcePath}\redist\ViGEmBus_1.18.367_x64_x86.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourcePath}\redist\HidHide_1.2.98_x64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
+
 [Icons]
 Name: "{group}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppSetupName}}"; Filename: "{uninstallexe}"
@@ -317,9 +317,6 @@ Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Ta
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
 [Run]
-Filename: "{tmp}\ViGEmBus_1.18.367_x64_x86.exe"; StatusMsg: "Installing ViGEmBus Runtime"; Parameters: "/quiet /qn /norestart"; Flags: waituntilterminated
-Filename: "{tmp}\HidHide_1.2.93_x64.exe"; StatusMsg: "Installing HidHide Runtime"; Parameters: "/quiet /qn /norestart"; Flags: waituntilterminated
-
 Filename: "{tmp}\dxwebsetup.exe"; StatusMsg: "Installing DirectX Runtime"; Parameters: "/q"; Flags: waituntilterminated
 Filename: "{tmp}\vcredist2019_x64.exe"; StatusMsg: "Installing Visual C++ 2015-2019 Redistributable"; Parameters: "/passive /norestart"; Flags: waituntilterminated
 Filename: "{tmp}\vcredist2013_x64.exe"; StatusMsg: "Installing Visual C++ 2013 Redistributable"; Parameters: "/passive /norestart"; Flags: waituntilterminated
@@ -331,7 +328,8 @@ Filename: "{tmp}\vcredist2005_x64.exe"; StatusMsg: "Installing Visual C++ 2005 R
 Filename: "{tmp}\windowsdesktop-runtime-6.0.6-win-x64.exe"; StatusMsg: ".NET Desktop Runtime 6.0.6"; Parameters: "/passive /norestart"; Flags: waituntilterminated
 Filename: "{tmp}\dotnet-runtime-6.0.6-win-x64.exe"; StatusMsg: "Installing .NET Runtime 6.0.6"; Parameters: "/passive /norestart"; Flags: waituntilterminated
 
-Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""install"""; Description: "{cm:LaunchProgram,{#MyAppSetupName}}"; Flags: nowait postinstall runascurrentuser
+Filename: "{app}\redist\ViGEmBus_1.18.367_x64_x86.exe"; Flags: runascurrentuser
+Filename: "{app}\redist\HidHide_1.2.98_x64.exe"; Flags: runascurrentuser
 
 [UninstallRun]
 Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""uninstall"""; RunOnceId: "UninstallService"; Flags: runascurrentuser runhidden

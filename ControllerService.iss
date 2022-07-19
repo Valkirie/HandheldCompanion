@@ -332,10 +332,10 @@ end;
 procedure Dependency_AddHideHide;
 begin
   // https://www.microsoft.com/en-US/download/details.aspx?id=35
-  Dependency_Add('HidHide_1.2.93_x64.exe',
+  Dependency_Add('HidHide_1.2.98_x64.exe',
     '/quiet /qn /norestart',
     'HidHide Runtime',
-    'https://github.com/ViGEm/HidHide/releases/download/v1.2.93.0/HidHide_1.2.93_x64.exe',
+    'https://github.com/ViGEm/HidHide/releases/download/v1.2.93.0/HidHide_1.2.98_x64.exe',
     '', True, False);
 end;
 
@@ -372,8 +372,8 @@ end;
 
 #define UseDirectX
 ; install ViGem first
-#define UseViGem
-#define UseHideHide
+; #define UseViGem
+; #define UseHideHide
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
@@ -414,7 +414,7 @@ ArchitecturesInstallIn64BitMode=x64
 Name: en; MessagesFile: "compiler:Default.isl"
 
 [Setup]
-AlwaysRestart = no
+AlwaysRestart = yes
 CloseApplications = yes
 
 [Files]
@@ -428,6 +428,9 @@ Source: "netcorecheck_x64.exe"; Flags: dontcopy noencryption
 Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#SourcePath}\bin\{#MyConfiguration}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
+Source: "{#SourcePath}\redist\ViGEmBus_1.18.367_x64_x86.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourcePath}\redist\HidHide_1.2.98_x64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
+
 [Icons]
 Name: "{group}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppSetupName}}"; Filename: "{uninstallexe}"
@@ -437,7 +440,8 @@ Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Ta
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""install"""; Description: "{cm:LaunchProgram,{#MyAppSetupName}}"; Flags: nowait postinstall runascurrentuser
+Filename: "{app}\redist\ViGEmBus_1.18.367_x64_x86.exe"; Flags: runascurrentuser
+Filename: "{app}\redist\HidHide_1.2.98_x64.exe"; Flags: runascurrentuser
 
 [UninstallRun]
 Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""uninstall"""; RunOnceId: "UninstallService"; Flags: runascurrentuser runhidden
@@ -450,8 +454,8 @@ Type: filesandordirs; Name: "{app}"
 
 [Registry]
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps"; Flags: uninsdeletekeyifempty
-Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{app}"; Flags: uninsdeletekey
-Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{app}"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{userdocs}\HandheldCompanion\dumps"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{userdocs}\HandheldCompanion\dumps"; Flags: uninsdeletekey
 
 [Code]
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
