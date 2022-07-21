@@ -30,15 +30,28 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE748;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <TextBlock Name="ProfileName" FontSize="14"/>
-                            <TextBlock Name="ProfilePath" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock Name="ProcessName" FontSize="14"/>
+                            <TextBlock Name="ProcessPath" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
             </Border>
         </ui:SimpleStackPanel>
 
-        <ui:SimpleStackPanel Spacing="2">
+        <ui:SimpleStackPanel Spacing="2" Name="Stack_CreateProfile" Visibility="Collapsed">
+            <!-- Create profile -->
+            <Border
+                Padding="15,12,12,12"
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <Grid>
+                    <Button Name="b_CreateProfile" Click="b_CreateProfile_Click" Grid.Column="2" HorizontalAlignment="Stretch" Content="Create profile" Style="{DynamicResource AccentButtonStyle}" />
+                </Grid>
+            </Border>
+        </ui:SimpleStackPanel>
+
+        <ui:SimpleStackPanel Spacing="2" Name="StackProfileToggle" Visibility="Collapsed">
             <!-- Header -->
             <Border                      
                         Padding="15,12,12,12"
@@ -65,7 +78,7 @@
             </Border>
         </ui:SimpleStackPanel>
 
-        <ui:SimpleStackPanel Spacing="2">
+        <ui:SimpleStackPanel Spacing="2" Name="StackProfileSettings" Visibility="Collapsed">
             <!-- Header -->
             <Border
                 Padding="15,12,12,12"
@@ -127,6 +140,19 @@
                     
                     <ui:RadioButtons Margin="6,0,0,0" Name="cB_Output" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="1" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Output_SelectionChanged"/>
                 </ui:SimpleStackPanel>
+            </Border>
+        </ui:SimpleStackPanel>
+
+        <ui:SimpleStackPanel Spacing="2" Name="Stack_UpdateProfile" Visibility="Collapsed">
+            <!-- Update profile -->
+            <Border
+                Padding="15,12,12,12"
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                <Grid>
+                    <Button Name="b_UpdateProfile" Click="b_UpdateProfile_Click" Grid.Column="2" HorizontalAlignment="Stretch" Content="Update profile" Style="{DynamicResource AccentButtonStyle}" />
+                </Grid>
             </Border>
         </ui:SimpleStackPanel>
 
