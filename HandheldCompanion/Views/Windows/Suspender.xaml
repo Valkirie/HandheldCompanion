@@ -10,7 +10,7 @@
         Closing="Window_Closing"
         Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
         ui:WindowHelper.UseModernWindowStyle="True"
-        Title="Suspender" Topmost="True" WindowStyle="ToolWindow">
+        Title="Suspender" Topmost="True" WindowStyle="ToolWindow" ShowInTaskbar="False">
 
     <Border CornerRadius="{DynamicResource ControlCornerRadius}">
         <!-- Processe(s) -->
