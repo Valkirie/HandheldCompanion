@@ -416,11 +416,11 @@ begin
 #endif
 
 #ifdef UseHideHide
-  ExtractTemporaryFile('HidHideMSI.msi');
+  ExtractTemporaryFile('HidHide_1.2.98_x64.exe');
 #endif
 
 #ifdef UseViGem
-  ExtractTemporaryFile('ViGEmBusSetup_x64.msi');
+  ExtractTemporaryFile('ViGEmBus_1.18.367_x64_x86.exe');
 #endif
 
   Result := True;

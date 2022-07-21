@@ -1,4 +1,4 @@
-﻿; -- CodeDependencies.iss --
+; -- CodeDependencies.iss --
 ;
 ; This script shows how to download and install any dependency such as .NET,
 ; Visual C++ or SQL Server during your application's installation process.
@@ -333,9 +333,9 @@ procedure Dependency_AddHideHide;
 begin
   // https://www.microsoft.com/en-US/download/details.aspx?id=35
   Dependency_Add('HidHide_1.2.98_x64.exe',
-    '/quiet /qn /norestart',
+    '/quiet /norestart',
     'HidHide Runtime',
-    'https://github.com/ViGEm/HidHide/releases/download/v1.2.93.0/HidHide_1.2.98_x64.exe',
+    'https://github.com/ViGEm/HidHide/releases/download/v1.2.98.0/HidHide_1.2.98_x64.exe',
     '', True, False);
 end;
 
@@ -343,7 +343,7 @@ procedure Dependency_AddViGem;
 begin
   // https://www.microsoft.com/en-US/download/details.aspx?id=35
   Dependency_Add('ViGEmBus_1.18.367_x64_x86.exe',
-    '/quiet /qn /norestart',
+    '/quiet /norestart',
     'ViGEmBus Runtime',
     'https://github.com/ViGEm/ViGEmBus/releases/download/v1.18.367.0/ViGEmBus_1.18.367_x64_x86.exe',
     '', True, False);
@@ -372,8 +372,8 @@ end;
 
 #define UseDirectX
 ; install ViGem first
-; #define UseViGem
-; #define UseHideHide
+#define UseViGem
+#define UseHideHide
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
@@ -440,8 +440,6 @@ Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Ta
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
 [Run]
-Filename: "{app}\redist\ViGEmBus_1.18.367_x64_x86.exe"; Flags: runascurrentuser
-Filename: "{app}\redist\HidHide_1.2.98_x64.exe"; Flags: runascurrentuser
 
 [UninstallRun]
 Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""uninstall"""; RunOnceId: "UninstallService"; Flags: runascurrentuser runhidden
