@@ -47,6 +47,14 @@
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
 
+        <ui:NavigationView.FooterMenuItems>
+            <ui:NavigationViewItem Name="shortcutKeyboard" Tag="shortcutKeyboard" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE765;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+        </ui:NavigationView.FooterMenuItems>
+
         <ui:ScrollViewerEx
             PanningMode="VerticalOnly"
             Name="scrollViewer"
