@@ -328,8 +328,8 @@ Filename: "{tmp}\vcredist2005_x64.exe"; StatusMsg: "Installing Visual C++ 2005 R
 Filename: "{tmp}\windowsdesktop-runtime-6.0.6-win-x64.exe"; StatusMsg: ".NET Desktop Runtime 6.0.6"; Parameters: "/passive /norestart"; Flags: waituntilterminated
 Filename: "{tmp}\dotnet-runtime-6.0.6-win-x64.exe"; StatusMsg: "Installing .NET Runtime 6.0.6"; Parameters: "/passive /norestart"; Flags: waituntilterminated
 
-Filename: "{app}\redist\ViGEmBus_1.18.367_x64_x86.exe"; Flags: runascurrentuser
-Filename: "{app}\redist\HidHide_1.2.98_x64.exe"; Flags: runascurrentuser
+Filename: "{app}\redist\ViGEmBus_1.18.367_x64_x86.exe"; StatusMsg: "Installing ViGEmBus"; Parameters: "/quiet /norestart"; Flags: runascurrentuser
+Filename: "{app}\redist\HidHide_1.2.98_x64.exe"; StatusMsg: "Installing HidHide"; Parameters: "/quiet /norestart"; Flags: runascurrentuser
 
 [UninstallRun]
 Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""uninstall"""; RunOnceId: "UninstallService"; Flags: runascurrentuser runhidden
@@ -416,11 +416,11 @@ begin
 #endif
 
 #ifdef UseHideHide
-  ExtractTemporaryFile('HidHideMSI.msi');
+  ExtractTemporaryFile('HidHide_1.2.98_x64.exe');
 #endif
 
 #ifdef UseViGem
-  ExtractTemporaryFile('ViGEmBusSetup_x64.msi');
+  ExtractTemporaryFile('ViGEmBus_1.18.367_x64_x86.exe');
 #endif
 
   Result := True;
