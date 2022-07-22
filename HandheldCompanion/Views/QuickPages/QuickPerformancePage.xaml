@@ -8,7 +8,8 @@
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       KeepAlive="True"
       mc:Ignorable="d" 
-      d:DesignHeight="720" d:DesignWidth="400"
+      d:DesignHeight="720" d:DesignWidth="500"
+      Margin="0,0,0,12"
       Title="Performance">
 
     <ui:SimpleStackPanel Spacing="6">
@@ -17,13 +18,13 @@
         <ui:SimpleStackPanel Spacing="2">
             <!-- Header -->
             <Border                      
-                        Padding="15,12,12,12"
+                        Padding="15,12,15,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="280"></ColumnDefinition>
+                        <ColumnDefinition Width="380"></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
@@ -42,7 +43,7 @@
 
             <!-- Content -->
             <Border
-                Padding="15,12,12,12"
+                Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
                 Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -50,26 +51,51 @@
                 <DockPanel Grid.Column="1" Margin="8,0,0,0">
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSlider, Mode=OneWay}" />
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
-                    <Slider Name="TDPSlider" Width="255" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                    <Slider Name="TDPSlider" Width="350" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                             ValueChanged="TDPSlider_ValueChanged"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5"/>
                 </DockPanel>
 
             </Border>
+            
+            <!-- Warning -->
+            <Border
+                Name="TDPWarning"
+                Visibility="Collapsed"
+                Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
+                Padding="15,2,15,2"
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
+                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="380"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel>
+                        <Grid>
+                            <ui:FontIcon Foreground="White" FontFamily="{DynamicResource SymbolThemeFontFamily}" Height="40" Glyph="&#xF136;" />
+                            <ui:FontIcon Foreground="Black" FontFamily="{DynamicResource SymbolThemeFontFamily}" Height="40" Glyph="&#xF13C;" />
+                        </Grid>
+                        <TextBlock Name="WarningContent" Margin="12,0,0,0" TextWrapping="Wrap" Grid.Column="1" Text="Thermal Power Limit is overwritten by a profile" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                    </DockPanel>
+                </Grid>
+            </Border>
         </ui:SimpleStackPanel>
 
         <!-- Manual GPU Clock Control -->
-        <ui:SimpleStackPanel Spacing="2">
+        <Grid>
             <!-- Header -->
             <Border                      
-                        Padding="15,12,12,12"
+                        Padding="15,12,15,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="280"></ColumnDefinition>
+                        <ColumnDefinition Width="380"></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
@@ -88,7 +114,7 @@
 
             <!-- Content -->
             <Border
-                Padding="15,12,12,12"
+                Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
                 Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -96,26 +122,26 @@
                 <DockPanel Grid.Column="1" Margin="0,0,0,0">
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}" />
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" MHz" />
-                    <Slider Name="GPUSlider" Width="255" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="50" Minimum="100" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                    <Slider Name="GPUSlider" Width="350" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="50" Minimum="100" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                             ValueChanged="GPUSlider_ValueChanged"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave"/>
                 </DockPanel>
 
             </Border>
-        </ui:SimpleStackPanel>
+        </Grid>
 
         <!-- Power Mode -->
-        <ui:SimpleStackPanel Spacing="2">
+        <ui:SimpleStackPanel Spacing="6">
             <!-- Header -->
             <Border
-                Padding="15,12,12,12"
+                Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="320"></ColumnDefinition>
+                        <ColumnDefinition Width="380"></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
@@ -132,7 +158,7 @@
 
             <!-- Content -->
             <Border
-                Padding="15,12,12,12"
+                Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 

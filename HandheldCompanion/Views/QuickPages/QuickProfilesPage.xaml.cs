@@ -17,7 +17,8 @@ namespace HandheldCompanion.Views.QuickPages
     public partial class QuickProfilesPage : Page
     {
         private bool Initialized;
-        private bool IgnoreMe;
+
+        private ProcessEx currentProcess;
         private Profile currentProfile;
 
         public QuickProfilesPage()
@@ -27,6 +28,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             MainWindow.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
             MainWindow.profileManager.Updated += ProfileUpdated;
+            MainWindow.profileManager.Deleted += ProfileDeleted;
 
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
             {
@@ -92,40 +94,58 @@ namespace HandheldCompanion.Views.QuickPages
             }
         }
 
+        private void ProfileDeleted(Profile profile)
+        {
+            if (profile.executable == currentProfile.executable)
+            {
+                currentProcess = null;
+                currentProfile = null;
+                ProfileUpdated(profile, false);
+            }
+        }
+
         private void ProfileUpdated(Profile profile, bool backgroundtask)
         {
             if (backgroundtask)
                 return;
 
-            if (currentProfile is null)
-                return;
-
-            if (profile.executable != currentProfile.executable)
-                return;
-
             this.Dispatcher.Invoke(() =>
             {
-                IgnoreMe = true;
+                if (currentProfile == null)
+                {
+                    b_CreateProfile.Visibility = Visibility.Visible;
+                    GridProfile.Visibility = Visibility.Collapsed;
+                }
+                else if (profile.executable == currentProfile.executable)
+                {
+                    b_CreateProfile.Visibility = Visibility.Collapsed;
+                    GridProfile.Visibility = Visibility.Visible;
 
-                ProfileName.Text = currentProfile.name;
-                ProfilePath.Text = currentProfile.path;
+                    ProfileToggle.IsEnabled = true;
+                    ProfileToggle.IsOn = currentProfile.isEnabled;
+                    UMCToggle.IsOn = currentProfile.umc_enabled;
+                    cB_Input.SelectedIndex = (int)currentProfile.umc_input;
+                    cB_Output.SelectedIndex = (int)currentProfile.umc_output;
 
-                ProfileToggle.IsEnabled = true;
-                ProfileToggle.IsOn = currentProfile.isEnabled;
-                UMCToggle.IsOn = currentProfile.umc_enabled;
-                cB_Input.SelectedIndex = (int)currentProfile.umc_input;
-                cB_Output.SelectedIndex = (int)currentProfile.umc_output;
+                    // Power settings
+                    TDPToggle.IsOn = currentProfile.TDP_override;
 
-                IgnoreMe = false;
+                    double TDP = currentProfile.TDP_value != 0 ? currentProfile.TDP_value : MainWindow.handheldDevice.DefaultTDP;
+                    TDPSlider.Value = TDP;
+                }
             });
         }
 
         private void ProcessManager_ForegroundChanged(ProcessEx processEx)
         {
-            currentProfile = MainWindow.profileManager.GetProfileFromExec(processEx.Name);
+            currentProcess = processEx;
+            currentProfile = MainWindow.profileManager.GetProfileFromExec(currentProcess.Name);
 
-            if (currentProfile == null)
-                currentProfile = new Profile(processEx.Path);
+            this.Dispatcher.Invoke(() =>
+            {
+                ProcessName.Text = currentProcess.Name;
+                ProcessPath.Text = currentProcess.Path;
+            });
 
             ProfileUpdated(currentProfile, false);
         }
@@ -142,7 +162,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void SaveProfile()
         {
-            if (currentProfile is null || IgnoreMe)
+            if (currentProfile is null)
                 return;
 
             MainWindow.profileManager.UpdateOrCreateProfile(currentProfile, false);
@@ -154,20 +174,18 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ProfileToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            if (currentProfile is null || IgnoreMe)
+            if (currentProfile is null)
                 return;
 
             currentProfile.isEnabled = ProfileToggle.IsOn;
-            SaveProfile();
         }
 
         private void UMCToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            if (currentProfile is null || IgnoreMe)
+            if (currentProfile is null)
                 return;
 
             currentProfile.umc_enabled = UMCToggle.IsOn;
-            SaveProfile();
         }
 
         private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -192,20 +210,54 @@ namespace HandheldCompanion.Views.QuickPages
 
             Text_InputHint.Text = Profile.InputDescription[input];
 
-            if (currentProfile is null || IgnoreMe)
+            if (currentProfile is null)
                 return;
 
             currentProfile.umc_input = (Input)cB_Input.SelectedIndex;
-            SaveProfile();
         }
 
         private void cB_Output_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (currentProfile is null || IgnoreMe)
+            if (currentProfile is null)
                 return;
 
             currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
+        }
+
+        private void b_CreateProfile_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentProcess is null)
+                return;
+
+            currentProfile = new Profile(currentProcess.Path);
+            ProfileUpdated(currentProfile, false);
             SaveProfile();
+        }
+
+        private void b_UpdateProfile_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentProcess is null)
+                return;
+
+            SaveProfile();
+        }
+
+        private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (currentProfile is null)
+                return;
+
+            // Power settings
+            currentProfile.TDP_override = (bool)TDPToggle.IsOn;
+        }
+
+        private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (currentProfile is null)
+                return;
+
+            // Power settings
+            currentProfile.TDP_value = (int)TDPSlider.Value;
         }
     }
 }

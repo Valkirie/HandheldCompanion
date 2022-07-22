@@ -711,7 +711,8 @@ namespace HandheldCompanion.Views
             // If navigation occurs on SelectionChanged, this isn't needed.
             // Because we use ItemInvoked to navigate, we need to call Navigate
             // here to load the home page.
-            NavView_Navigate("ControllerPage");
+            preNavItemTag = "ControllerPage";
+            NavView_Navigate(preNavItemTag);
         }
 
         private bool TryGoBack()

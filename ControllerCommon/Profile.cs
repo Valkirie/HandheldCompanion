@@ -116,6 +116,7 @@ namespace ControllerCommon
             this.path = this.fullpath = path;
 
             // enable the below variables when profile is created
+            this.isEnabled = true;
             this.umc_enabled = true;
         }
 

@@ -41,7 +41,7 @@ namespace HandheldCompanion.Managers
         public delegate void DiscardedEventHandler(Profile profile);
         #endregion
 
-        public Profile CurrentProfile;
+        public Profile CurrentProfile = new();
 
         private string path;
 
@@ -177,9 +177,6 @@ namespace HandheldCompanion.Managers
                 if (!profile.isEnabled)
                     return;
 
-                if (CurrentProfile == profile)
-                    return;
-
                 // update current profile
                 CurrentProfile = profile;
 
@@ -261,7 +258,11 @@ namespace HandheldCompanion.Managers
             {
                 UnregisterApplication(profile);
                 profiles.Remove(profile.name);
+
+                // raise event(s)
                 Deleted?.Invoke(profile);
+                Discarded?.Invoke(profile);
+
                 LogManager.LogInformation("Deleted profile {0}", settingsPath);
             }
 
@@ -310,6 +311,10 @@ namespace HandheldCompanion.Managers
 
             // warn owner
             Updated?.Invoke(profile, backgroundtask);
+
+            // warn other windows
+            if (profile.executable == CurrentProfile.executable)
+                Applied?.Invoke(profile);
 
             if (profile.error != ProfileErrorCode.None && !profile.isDefault)
             {

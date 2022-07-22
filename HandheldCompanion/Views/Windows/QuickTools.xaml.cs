@@ -5,6 +5,7 @@ using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Navigation;
@@ -18,6 +19,23 @@ namespace HandheldCompanion.Views.Windows
     /// </summary>
     public partial class QuickTools : Window
     {
+        #region imports
+        [ComImport, Guid("4ce576fa-83dc-4F88-951c-9d0782b4e376")]
+        class UIHostNoLaunch
+        {
+        }
+
+        [ComImport, Guid("37c994e7-432b-4834-a2f7-dce1f13b834b")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        interface ITipInvocation
+        {
+            void Toggle(IntPtr hwnd);
+        }
+
+        [DllImport("user32.dll", SetLastError = false)]
+        static extern IntPtr GetDesktopWindow();
+        #endregion
+
         // page vars
         private Dictionary<string, Page> _pages = new();
         private string preNavItemTag;
@@ -102,6 +120,10 @@ namespace HandheldCompanion.Views.Windows
 
                 switch (navItemTag)
                 {
+                    // summon touch keyboard
+                    case "shortcutKeyboard":
+                        StartTabTip();
+                        break;
                     default:
                         preNavItemTag = navItemTag;
                         break;
@@ -143,7 +165,8 @@ namespace HandheldCompanion.Views.Windows
             // If navigation occurs on SelectionChanged, this isn't needed.
             // Because we use ItemInvoked to navigate, we need to call Navigate
             // here to load the home page.
-            NavView_Navigate("QuickPerformancePage");
+            preNavItemTag = "QuickPerformancePage";
+            NavView_Navigate(preNavItemTag);
         }
 
         private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
@@ -244,6 +267,14 @@ namespace HandheldCompanion.Views.Windows
         {
         }
         #endregion
+
+        private void StartTabTip()
+        {
+            var uiHostNoLaunch = new UIHostNoLaunch();
+            var tipInvocation = (ITipInvocation)uiHostNoLaunch;
+            tipInvocation.Toggle(GetDesktopWindow());
+            Marshal.ReleaseComObject(uiHostNoLaunch);
+        }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
