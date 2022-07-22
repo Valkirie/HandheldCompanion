@@ -18,7 +18,7 @@ namespace HandheldCompanion.Views.QuickPages
     {
         private bool Initialized;
 
-        private ProcessEx CurrentProcess;
+        private ProcessEx currentProcess;
         private Profile currentProfile;
 
         public QuickProfilesPage()
@@ -28,6 +28,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             MainWindow.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
             MainWindow.profileManager.Updated += ProfileUpdated;
+            MainWindow.profileManager.Deleted += ProfileDeleted;
 
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
             {
@@ -93,6 +94,16 @@ namespace HandheldCompanion.Views.QuickPages
             }
         }
 
+        private void ProfileDeleted(Profile profile)
+        {
+            if (profile.executable == currentProfile.executable)
+            {
+                currentProcess = null;
+                currentProfile = null;
+                ProfileUpdated(profile, false);
+            }
+        }
+
         private void ProfileUpdated(Profile profile, bool backgroundtask)
         {
             if (backgroundtask)
@@ -102,38 +113,38 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 if (currentProfile == null)
                 {
-                    Stack_CreateProfile.Visibility = Visibility.Visible;
-                    StackProfileToggle.Visibility = Visibility.Collapsed;
-                    StackProfileSettings.Visibility = Visibility.Collapsed;
-                    StackProfileToggle.Visibility = Visibility.Collapsed;
-                    Stack_UpdateProfile.Visibility = Visibility.Collapsed;
+                    b_CreateProfile.Visibility = Visibility.Visible;
+                    GridProfile.Visibility = Visibility.Collapsed;
                 }
                 else if (profile.executable == currentProfile.executable)
                 {
-                    Stack_CreateProfile.Visibility = Visibility.Collapsed;
-                    StackProfileToggle.Visibility = Visibility.Visible;
-                    StackProfileSettings.Visibility = Visibility.Visible;
-                    StackProfileToggle.Visibility = Visibility.Visible;
-                    Stack_UpdateProfile.Visibility = Visibility.Visible;
+                    b_CreateProfile.Visibility = Visibility.Collapsed;
+                    GridProfile.Visibility = Visibility.Visible;
 
                     ProfileToggle.IsEnabled = true;
                     ProfileToggle.IsOn = currentProfile.isEnabled;
                     UMCToggle.IsOn = currentProfile.umc_enabled;
                     cB_Input.SelectedIndex = (int)currentProfile.umc_input;
                     cB_Output.SelectedIndex = (int)currentProfile.umc_output;
+
+                    // Power settings
+                    TDPToggle.IsOn = currentProfile.TDP_override;
+
+                    double TDP = currentProfile.TDP_value != 0 ? currentProfile.TDP_value : MainWindow.handheldDevice.DefaultTDP;
+                    TDPSlider.Value = TDP;
                 }
             });
         }
 
         private void ProcessManager_ForegroundChanged(ProcessEx processEx)
         {
-            CurrentProcess = processEx;
-            currentProfile = MainWindow.profileManager.GetProfileFromExec(CurrentProcess.Name);
+            currentProcess = processEx;
+            currentProfile = MainWindow.profileManager.GetProfileFromExec(currentProcess.Name);
 
             this.Dispatcher.Invoke(() =>
             {
-                ProcessName.Text = CurrentProcess.Name;
-                ProcessPath.Text = CurrentProcess.Path;
+                ProcessName.Text = currentProcess.Name;
+                ProcessPath.Text = currentProcess.Path;
             });
 
             ProfileUpdated(currentProfile, false);
@@ -215,20 +226,38 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void b_CreateProfile_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentProcess is null)
+            if (currentProcess is null)
                 return;
 
-            currentProfile = new Profile(CurrentProcess.Path);
+            currentProfile = new Profile(currentProcess.Path);
             ProfileUpdated(currentProfile, false);
             SaveProfile();
         }
 
         private void b_UpdateProfile_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentProcess is null)
+            if (currentProcess is null)
                 return;
 
             SaveProfile();
+        }
+
+        private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (currentProfile is null)
+                return;
+
+            // Power settings
+            currentProfile.TDP_override = (bool)TDPToggle.IsOn;
+        }
+
+        private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (currentProfile is null)
+                return;
+
+            // Power settings
+            currentProfile.TDP_value = (int)TDPSlider.Value;
         }
     }
 }

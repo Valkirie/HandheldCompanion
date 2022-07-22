@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Views.Windows;
+﻿using ControllerCommon;
+using HandheldCompanion.Views.Windows;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -44,7 +45,7 @@ namespace HandheldCompanion.Views.QuickPages
             }
         }
 
-        private void ProfileManager_Discarded(ControllerCommon.Profile profile)
+        private void ProfileManager_Discarded(Profile profile)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -54,7 +55,7 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
-        private void ProfileManager_Applied(ControllerCommon.Profile profile)
+        private void ProfileManager_Applied(Profile profile)
         {
             this.Dispatcher.Invoke(() =>
             {
