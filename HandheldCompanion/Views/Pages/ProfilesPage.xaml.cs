@@ -349,7 +349,9 @@ namespace HandheldCompanion.Views.Pages
 
                 // Power settings
                 TDPToggle.IsOn = profileCurrent.TDP_override;
-                TDPSlider.Value = profileCurrent.TDP_value;
+
+                double TDP = profileCurrent.TDP_value != 0 ? profileCurrent.TDP_value : MainWindow.handheldDevice.DefaultTDP;
+                TDPSlider.Value = TDP;
 
                 // UMC settings
                 Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
