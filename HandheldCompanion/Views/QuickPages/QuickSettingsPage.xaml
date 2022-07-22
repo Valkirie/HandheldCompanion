@@ -8,25 +8,20 @@
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       KeepAlive="True"
       mc:Ignorable="d" 
-      d:DesignHeight="720" d:DesignWidth="400"
+      d:DesignHeight="720" d:DesignWidth="500"
       Title="Quick Settings">
 
     <ui:SimpleStackPanel Spacing="6">
         
         <!-- Brightness -->
-        <ui:SimpleStackPanel Spacing="2">
+        <Grid>
             <!-- Header -->
             <Border
-                Padding="15,12,12,12"
+                Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"                
                 Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="320"></ColumnDefinition>
-                        <ColumnDefinition Width="100"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-
                     <DockPanel>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE706;" Height="40" HorizontalAlignment="Center"/>
 
@@ -39,22 +34,17 @@
                     </DockPanel>
                 </Grid>
             </Border>
-        </ui:SimpleStackPanel>
+        </Grid>
 
         <!-- Sounds -->
-        <ui:SimpleStackPanel Spacing="2">
+        <Grid>
             <!-- Header -->
             <Border
-                Padding="15,12,12,12"
+                Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"                
                 Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="320"></ColumnDefinition>
-                        <ColumnDefinition Width="100"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-
                     <DockPanel>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE767;" Height="40" HorizontalAlignment="Center"/>
 
@@ -67,7 +57,7 @@
                     </DockPanel>
                 </Grid>
             </Border>
-        </ui:SimpleStackPanel>
+        </Grid>
 
     </ui:SimpleStackPanel>
 </Page>

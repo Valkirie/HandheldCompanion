@@ -9,9 +9,9 @@
         mc:Ignorable="d"
         Height="720"
         MinHeight="500"
-        Width="400"
-        MinWidth="400"
-        MaxWidth="400"
+        Width="500"
+        MinWidth="500"
+        MaxWidth="500"
         Closing="Window_Closing"
         Loaded="Window_Loaded"
         ui:WindowHelper.UseModernWindowStyle="True" 
@@ -25,7 +25,7 @@
         Loaded="navView_Loaded"
         BackRequested="navView_BackRequested" IsSettingsVisible="False"
         IsPaneToggleButtonVisible="False" HorizontalAlignment="Right"
-        Width="400">
+        Width="500">
 
         <ui:NavigationView.MenuItems>
             <ui:NavigationViewItem Name="navSettingsPage" Tag="QuickSettingsPage">
@@ -53,6 +53,16 @@
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE765;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
+            <ui:NavigationViewItem Name="shortcutDesktop" Tag="shortcutDesktop" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="HoloLens MDL2 Assets" Glyph="&#xE782;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+            <ui:NavigationViewItem Name="shortcutESC" Tag="shortcutESC" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="SegoeUI" Glyph="ESC"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
         </ui:NavigationView.FooterMenuItems>
 
         <ui:ScrollViewerEx
@@ -64,10 +74,7 @@
             PreviewMouseWheel="ScrollViewer_PreviewMouseWheel"
             MouseLeave="scrollViewer_MouseLeave"
             ui:ScrollViewerHelper.IsEnabled="True">
-            <ui:Frame
-                    Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-                    Name="ContentFrame" MaxWidth="400"
-                    HorizontalAlignment="Left"/>
+            <ui:Frame Name="ContentFrame"/>
         </ui:ScrollViewerEx>
     </ui:NavigationView>
 </Window>

@@ -8,21 +8,21 @@
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       KeepAlive="True"
       mc:Ignorable="d" 
-      d:DesignHeight="720" d:DesignWidth="400"
+      d:DesignHeight="720" d:DesignWidth="500"
       Title="Quick Settings">
 
     <ui:SimpleStackPanel Spacing="6">
 
-        <ui:SimpleStackPanel Spacing="2">
+        <Grid>
             <!-- Header -->
             <Border
-                Padding="15,12,12,12"
+                Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="320"></ColumnDefinition>
+                        <ColumnDefinition Width="380"></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
@@ -36,12 +36,12 @@
                     </DockPanel>
                 </Grid>
             </Border>
-        </ui:SimpleStackPanel>
+        </Grid>
 
         <ui:SimpleStackPanel Spacing="2" Name="Stack_CreateProfile" Visibility="Collapsed">
             <!-- Create profile -->
             <Border
-                Padding="15,12,12,12"
+                Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
@@ -51,16 +51,16 @@
             </Border>
         </ui:SimpleStackPanel>
 
-        <ui:SimpleStackPanel Spacing="2" Name="StackProfileToggle" Visibility="Collapsed">
+        <Grid Name="StackProfileToggle" Visibility="Collapsed">
             <!-- Header -->
             <Border                      
-                        Padding="15,12,12,12"
+                        Padding="15,12,15,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="280"></ColumnDefinition>
+                        <ColumnDefinition Width="380"></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
@@ -76,12 +76,12 @@
                     <ui:ToggleSwitch Name="ProfileToggle" IsEnabled="False" Grid.Column="1" Toggled="ProfileToggle_Toggled" />
                 </Grid>
             </Border>
-        </ui:SimpleStackPanel>
+        </Grid>
 
-        <ui:SimpleStackPanel Spacing="2" Name="StackProfileSettings" Visibility="Collapsed">
+        <Grid Name="StackProfileSettings" Visibility="Collapsed">
             <!-- Header -->
             <Border
-                Padding="15,12,12,12"
+                Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
                 IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
@@ -89,7 +89,7 @@
                 <ui:SimpleStackPanel Spacing="10">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="280"></ColumnDefinition>
+                            <ColumnDefinition Width="380"></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
@@ -110,7 +110,7 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition MinWidth="320"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="380"></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
@@ -127,7 +127,7 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition MinWidth="320"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="380"></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
@@ -141,12 +141,12 @@
                     <ui:RadioButtons Margin="6,0,0,0" Name="cB_Output" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="1" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Output_SelectionChanged"/>
                 </ui:SimpleStackPanel>
             </Border>
-        </ui:SimpleStackPanel>
+        </Grid>
 
-        <ui:SimpleStackPanel Spacing="2" Name="Stack_UpdateProfile" Visibility="Collapsed">
+        <Grid Name="Stack_UpdateProfile" Visibility="Collapsed">
             <!-- Update profile -->
             <Border
-                Padding="15,12,12,12"
+                Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
@@ -154,7 +154,7 @@
                     <Button Name="b_UpdateProfile" Click="b_UpdateProfile_Click" Grid.Column="2" HorizontalAlignment="Stretch" Content="Update profile" Style="{DynamicResource AccentButtonStyle}" />
                 </Grid>
             </Border>
-        </ui:SimpleStackPanel>
+        </Grid>
 
     </ui:SimpleStackPanel>
 </Page>
