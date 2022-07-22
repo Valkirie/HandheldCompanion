@@ -57,6 +57,31 @@
                 </DockPanel>
 
             </Border>
+            
+            <!-- Warning -->
+            <Border
+                Name="TDPWarning"
+                Visibility="Collapsed"
+                Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
+                Padding="15,2,15,2"
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
+                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="380"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel>
+                        <Grid>
+                            <ui:FontIcon Foreground="White" FontFamily="{DynamicResource SymbolThemeFontFamily}" Height="40" Glyph="&#xF136;" />
+                            <ui:FontIcon Foreground="Black" FontFamily="{DynamicResource SymbolThemeFontFamily}" Height="40" Glyph="&#xF13C;" />
+                        </Grid>
+                        <TextBlock Name="WarningContent" Margin="12,0,0,0" TextWrapping="Wrap" Grid.Column="1" Text="Thermal Power Limit is overwritten by a profile" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                    </DockPanel>
+                </Grid>
+            </Border>
         </ui:SimpleStackPanel>
 
         <!-- Manual GPU Clock Control -->

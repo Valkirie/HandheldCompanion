@@ -20,6 +20,9 @@ namespace HandheldCompanion.Views.QuickPages
             QuickTools.powerManager.LimitChanged += PowerManager_LimitChanged;
             QuickTools.powerManager.ValueChanged += PowerManager_ValueChanged;
 
+            MainWindow.profileManager.Applied += ProfileManager_Applied;
+            MainWindow.profileManager.Discarded += ProfileManager_Discarded;
+
             // pull GPU settings
             var GPU = Properties.Settings.Default.QuickToolsPerformanceGPUValue;
             if (GPU >= GPUSlider.Minimum && GPU <= GPUSlider.Maximum)
@@ -39,6 +42,26 @@ namespace HandheldCompanion.Views.QuickPages
                 PowerModeSlider.Value = PowerMode;
                 PowerModeSlider_ValueChanged(null, null); // force call, dirty
             }
+        }
+
+        private void ProfileManager_Discarded(ControllerCommon.Profile profile)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                TDPToggle.IsEnabled = true;
+                TDPSlider.IsEnabled = true;
+                TDPWarning.Visibility = Visibility.Collapsed;
+            });
+        }
+
+        private void ProfileManager_Applied(ControllerCommon.Profile profile)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                TDPToggle.IsEnabled = !profile.TDP_override;
+                TDPSlider.IsEnabled = !profile.TDP_override;
+                TDPWarning.Visibility = profile.TDP_override ? Visibility.Visible : Visibility.Collapsed;
+            });
         }
 
         private void PowerManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
