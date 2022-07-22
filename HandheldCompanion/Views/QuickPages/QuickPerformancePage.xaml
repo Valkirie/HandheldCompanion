@@ -9,6 +9,7 @@
       KeepAlive="True"
       mc:Ignorable="d" 
       d:DesignHeight="720" d:DesignWidth="500"
+      Margin="0,0,0,12"
       Title="Performance">
 
     <ui:SimpleStackPanel Spacing="6">
