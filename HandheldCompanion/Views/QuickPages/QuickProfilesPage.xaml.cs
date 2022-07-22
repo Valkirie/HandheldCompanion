@@ -96,6 +96,9 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ProfileDeleted(Profile profile)
         {
+            if (currentProfile is null)
+                return;
+
             if (profile.executable == currentProfile.executable)
             {
                 currentProcess = null;
@@ -114,11 +117,15 @@ namespace HandheldCompanion.Views.QuickPages
                 if (currentProfile == null)
                 {
                     b_CreateProfile.Visibility = Visibility.Visible;
+
+                    b_UpdateProfile.Visibility = Visibility.Collapsed;
                     GridProfile.Visibility = Visibility.Collapsed;
                 }
                 else if (profile.executable == currentProfile.executable)
                 {
                     b_CreateProfile.Visibility = Visibility.Collapsed;
+
+                    b_UpdateProfile.Visibility = Visibility.Visible;
                     GridProfile.Visibility = Visibility.Visible;
 
                     ProfileToggle.IsEnabled = true;
@@ -129,9 +136,11 @@ namespace HandheldCompanion.Views.QuickPages
 
                     // Power settings
                     TDPToggle.IsOn = currentProfile.TDP_override;
-
                     double TDP = currentProfile.TDP_value != 0 ? currentProfile.TDP_value : MainWindow.handheldDevice.DefaultTDP;
                     TDPSlider.Value = TDP;
+
+                    // Sensivity settings
+                    SliderSensivity.Value = currentProfile.aiming_sensivity;
                 }
             });
         }
@@ -202,9 +211,11 @@ namespace HandheldCompanion.Views.QuickPages
                 case Input.PlayerSpace:
                 case Input.JoystickCamera:
                     cB_Output.SelectedIndex = (int)Output.RightStick;
+                    GridSensivity.Visibility = Visibility.Visible;
                     break;
                 case Input.JoystickSteering:
                     cB_Output.SelectedIndex = (int)Output.LeftStick;
+                    GridSensivity.Visibility = Visibility.Collapsed;
                     break;
             }
 
@@ -258,6 +269,15 @@ namespace HandheldCompanion.Views.QuickPages
 
             // Power settings
             currentProfile.TDP_value = (int)TDPSlider.Value;
+        }
+
+        private void SliderSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (currentProfile is null)
+                return;
+
+            // Sensivity settings
+            currentProfile.aiming_sensivity = (float)SliderSensivity.Value;
         }
     }
 }

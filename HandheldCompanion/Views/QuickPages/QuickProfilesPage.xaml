@@ -31,7 +31,7 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE748;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <TextBlock Name="ProcessName" FontSize="14"/>
+                            <TextBlock Name="ProcessName" Text="Waiting for foreground process..." FontSize="14"/>
                             <TextBlock Name="ProcessPath" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
@@ -39,8 +39,10 @@
             </Border>
         </Grid>
 
+        <!-- Buttons -->
         <Button Name="b_CreateProfile" Margin="12,2,15,2" Click="b_CreateProfile_Click" HorizontalAlignment="Stretch" Content="Create profile" Style="{DynamicResource AccentButtonStyle}" Visibility="Collapsed" />
-
+        <Button Name="b_UpdateProfile" Margin="15,2,15,2" Click="b_UpdateProfile_Click" HorizontalAlignment="Stretch" Content="Update profile" Style="{DynamicResource AccentButtonStyle}" Visibility="Collapsed" />
+        
         <ui:SimpleStackPanel Spacing="6" Name="GridProfile" Visibility="Collapsed">
             <Grid Name="StackProfileToggle">
                 <!-- Header -->
@@ -95,13 +97,28 @@
 
                             <ui:ToggleSwitch Name="UMCToggle" Grid.Column="1" Toggled="UMCToggle_Toggled" />
                         </Grid>
+                    </ui:SimpleStackPanel>
+                </Border>
+            </Grid>
 
-                        <!-- Separator -->
-                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" />
+            <Grid Name="StackProfileUMCSettings">
+                <!-- Header -->
+                <Border
+                    Padding="15,12,15,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
+                    <Border.IsEnabled>
+                        <MultiBinding Converter="{StaticResource IsEnabledConverter}">
+                            <Binding ElementName="ProfileToggle" Path="IsOn"/>
+                            <Binding ElementName="UMCToggle" Path="IsOn"/>
+                        </MultiBinding>
+                    </Border.IsEnabled>
+
+                    <ui:SimpleStackPanel Spacing="10">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="380"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="420"></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
@@ -110,15 +127,16 @@
                                 <TextBlock Name="Text_InputHint" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </StackPanel>
                         </Grid>
-                    
-                        <ui:RadioButtons Margin="6,0,0,0" Name="cB_Input" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="1" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Input_SelectionChanged"/>
+
+                        <!-- Content -->
+                        <ui:RadioButtons Margin="6,0,0,0" Name="cB_Input" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="3" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Input_SelectionChanged"/>
                     
                         <!-- Separator -->
                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" />
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="380"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="420"></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
@@ -128,8 +146,35 @@
                             </StackPanel>
 
                         </Grid>
-                    
-                        <ui:RadioButtons Margin="6,0,0,0" Name="cB_Output" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="1" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Output_SelectionChanged"/>
+
+                        <!-- Content -->
+                        <ui:RadioButtons Margin="6,0,0,0" Name="cB_Output" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="3" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Output_SelectionChanged"/>
+
+                        <ui:SimpleStackPanel Spacing="10" Name="GridSensivity">
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="420"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_Sensivity}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensivityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Content -->
+                            <DockPanel Grid.Column="1" Margin="0,0,0,0">
+                                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderSensivity, Mode=OneWay}" />
+                                <Slider Name="SliderSensivity" Width="350" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                                MouseEnter="Scrolllock_MouseEnter"
+                                MouseLeave="Scrolllock_MouseLeave"/>
+                            </DockPanel>
+                        </ui:SimpleStackPanel>
+
                     </ui:SimpleStackPanel>
                 </Border>
             </Grid>
@@ -137,10 +182,11 @@
             <!-- Thermal Power (TDP) Limit -->
             <ui:SimpleStackPanel Name="StackProfilePower" Spacing="2">
                 <!-- Header -->
-                <Border                      
-                            Padding="15,12,15,12"
-                            CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                <Border
+                    Padding="15,12,15,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -179,8 +225,6 @@
 
                 </Border>
             </ui:SimpleStackPanel>
-
-            <Button Name="b_UpdateProfile" Margin="15,2,15,2" Click="b_UpdateProfile_Click" HorizontalAlignment="Stretch" Content="Update profile" Style="{DynamicResource AccentButtonStyle}" />
         </ui:SimpleStackPanel>
 
     </ui:SimpleStackPanel>

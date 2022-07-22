@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Extensions;
+﻿using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.QuickPages;
 using ModernWpf.Controls;
@@ -120,9 +121,14 @@ namespace HandheldCompanion.Views.Windows
 
                 switch (navItemTag)
                 {
-                    // summon touch keyboard
                     case "shortcutKeyboard":
                         StartTabTip();
+                        break;
+                    case "shortcutDesktop":
+                        MainWindow.inputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
+                        break;
+                    case "shortcutESC":
+                        MainWindow.inputsManager.KeyPress(VirtualKeyCode.ESCAPE);
                         break;
                     default:
                         preNavItemTag = navItemTag;

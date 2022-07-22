@@ -212,6 +212,28 @@ namespace HandheldCompanion.Managers
             return "";
         }
 
+        public void KeyPress(VirtualKeyCode key)
+        {
+            TriggerLock = true;
+
+            m_InputSimulator.Keyboard.KeyPress(key);
+
+            TriggerLock = false;
+        }
+
+        public void KeyPress(VirtualKeyCode[] keys)
+        {
+            TriggerLock = true;
+
+            foreach (VirtualKeyCode key in keys)
+                m_InputSimulator.Keyboard.KeyDown(key);
+
+            foreach (VirtualKeyCode key in keys)
+                m_InputSimulator.Keyboard.KeyUp(key);
+
+            TriggerLock = false;
+        }
+
         private void ReleaseBuffer(object? sender, EventArgs e)
         {
             if (TriggerBuffer.Count == 0)

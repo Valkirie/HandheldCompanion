@@ -48,17 +48,17 @@
         </ui:NavigationView.MenuItems>
 
         <ui:NavigationView.FooterMenuItems>
-            <ui:NavigationViewItem Name="shortcutKeyboard" Tag="shortcutKeyboard" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False">
+            <ui:NavigationViewItem Name="shortcutKeyboard" Tag="shortcutKeyboard" Foreground="{DynamicResource AccentAAFillColorDefaultBrush}" SelectsOnInvoked="False">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE765;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
-            <ui:NavigationViewItem Name="shortcutDesktop" Tag="shortcutDesktop" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False">
+            <ui:NavigationViewItem Name="shortcutDesktop" Tag="shortcutDesktop" Foreground="{DynamicResource AccentAAFillColorDefaultBrush}" SelectsOnInvoked="False">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="HoloLens MDL2 Assets" Glyph="&#xE782;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
-            <ui:NavigationViewItem Name="shortcutESC" Tag="shortcutESC" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False">
+            <ui:NavigationViewItem Name="shortcutESC" Tag="shortcutESC" Foreground="{DynamicResource AccentAAFillColorDefaultBrush}" SelectsOnInvoked="False">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="SegoeUI" Glyph="ESC"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>

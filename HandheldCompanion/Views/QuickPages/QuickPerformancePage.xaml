@@ -181,7 +181,6 @@
                         </Grid>
                     </ui:SimpleStackPanel>
                 </DockPanel>
-
             </Border>
         </ui:SimpleStackPanel>
 
