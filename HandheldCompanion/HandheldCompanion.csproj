@@ -183,6 +183,12 @@
     <None Update="models\8BitDoLite2\Joystick-Right-Ring.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="models\8BitDoLite2\JoystickLeftCover.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="models\8BitDoLite2\JoystickRightCover.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="models\8BitDoLite2\LED1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
