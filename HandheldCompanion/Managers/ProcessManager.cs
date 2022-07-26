@@ -185,7 +185,8 @@ namespace HandheldCompanion.Managers
             processName = new TextBlock()
             {
                 FontSize = 14,
-                Text = Process.ProcessName,
+                Text = Name,
+                TextWrapping = TextWrapping.Wrap,
                 VerticalAlignment = VerticalAlignment.Center
             };
 
@@ -448,12 +449,6 @@ namespace HandheldCompanion.Managers
                 // process has exited on arrival
                 if (proc.HasExited)
                     return;
-            }
-            catch (Exception)
-            {
-                // process has too high elevation
-                return;
-            }
 
             string path = ProcessUtils.GetPathToApp(proc);
 
@@ -481,6 +476,12 @@ namespace HandheldCompanion.Managers
                 ProcessStarted?.Invoke(processEx);
 
                 LogManager.LogDebug("Process created: {0}", proc.ProcessName);
+                }
+            }
+            catch (Exception)
+            {
+                // process has too high elevation
+                return;
             }
         }
     }
