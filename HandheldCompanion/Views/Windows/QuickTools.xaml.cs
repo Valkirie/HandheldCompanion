@@ -51,7 +51,6 @@ namespace HandheldCompanion.Views.Windows
         public static bool scrollLock = false;
 
         // manager vers
-        public static PowerManager powerManager;
         public static BrightnessControl brightnessControl;
 
         public QuickTools()
@@ -59,7 +58,6 @@ namespace HandheldCompanion.Views.Windows
             InitializeComponent();
 
             // create manager(s)
-            powerManager = new();
             brightnessControl = new();
 
             // create pages
@@ -70,9 +68,6 @@ namespace HandheldCompanion.Views.Windows
             _pages.Add("QuickPerformancePage", performancePage);
             _pages.Add("QuickSettingsPage", settingsPage);
             _pages.Add("QuickProfilesPage", profilesPage);
-
-            // start manager(s)
-            powerManager.Start();
 
             this.SourceInitialized += QuickTools_SourceInitialized;
         }
@@ -298,7 +293,6 @@ namespace HandheldCompanion.Views.Windows
             Properties.Settings.Default.Save();
 
             // stop manager(s)
-            powerManager.Stop();
             brightnessControl.Dispose();
 
             e.Cancel = !isClosing;

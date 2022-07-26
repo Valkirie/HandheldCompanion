@@ -34,21 +34,37 @@ namespace HandheldCompanion.Views.Windows
 
         private void ProcessStopped(ProcessEx processEx)
         {
-            this.Dispatcher.Invoke(() =>
+            try
             {
-                var element = processEx.GetBorder();
-                CurrentProcesses.Children.Remove(element);
-            });
+                this.Dispatcher.Invoke(() =>
+                {
+                    var element = processEx.GetBorder();
+                    if (CurrentProcesses.Children.Contains(element))
+                        CurrentProcesses.Children.Remove(element);
+                });
+            }
+            catch(Exception)
+            { 
+            }
         }
 
         private void ProcessStarted(ProcessEx processEx)
         {
-            this.Dispatcher.Invoke(() =>
+            try
             {
-                processEx.Draw();
-                var element = processEx.GetBorder();
-                CurrentProcesses.Children.Add(element);
-            });
+                this.Dispatcher.Invoke(() =>
+                {
+                    processEx.Draw();
+                    var element = processEx.GetBorder();
+
+                    if (!CurrentProcesses.Children.Contains(element))
+                        CurrentProcesses.Children.Add(element);
+                });
+            }
+            catch(Exception)
+            {
+                // process might have exited already
+            }
         }
 
         public void UpdateVisibility()

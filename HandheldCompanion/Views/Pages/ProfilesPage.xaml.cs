@@ -143,7 +143,7 @@ namespace HandheldCompanion.Views.Pages
         }
 
         #region UI
-        public void ProfileUpdated(Profile profile, bool backgroundtask)
+        public void ProfileUpdated(Profile profile, bool backgroundtask, bool isCurrent)
         {
             this.Dispatcher.Invoke(async () =>
             {

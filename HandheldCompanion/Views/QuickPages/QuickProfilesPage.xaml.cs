@@ -103,11 +103,11 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 currentProcess = null;
                 currentProfile = null;
-                ProfileUpdated(profile, false);
+                ProfileUpdated(profile, false, true);
             }
         }
 
-        private void ProfileUpdated(Profile profile, bool backgroundtask)
+        private void ProfileUpdated(Profile profile, bool backgroundtask, bool isCurrent)
         {
             if (backgroundtask)
                 return;
@@ -121,7 +121,7 @@ namespace HandheldCompanion.Views.QuickPages
                     b_UpdateProfile.Visibility = Visibility.Collapsed;
                     GridProfile.Visibility = Visibility.Collapsed;
                 }
-                else if (profile.executable == currentProfile.executable)
+                else if (isCurrent)
                 {
                     b_CreateProfile.Visibility = Visibility.Collapsed;
 
@@ -156,7 +156,7 @@ namespace HandheldCompanion.Views.QuickPages
                 ProcessPath.Text = currentProcess.Path;
             });
 
-            ProfileUpdated(currentProfile, false);
+            ProfileUpdated(currentProfile, false, true);
         }
 
         private void Scrolllock_MouseEnter(object sender, MouseEventArgs e)
@@ -241,7 +241,7 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             currentProfile = new Profile(currentProcess.Path);
-            ProfileUpdated(currentProfile, false);
+            ProfileUpdated(currentProfile, false, true);
             SaveProfile();
         }
 

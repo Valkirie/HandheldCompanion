@@ -30,7 +30,7 @@ namespace HandheldCompanion.Managers
         public event DeletedEventHandler Deleted;
         public delegate void DeletedEventHandler(Profile profile);
         public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(Profile profile, bool backgroundtask);
+        public delegate void UpdatedEventHandler(Profile profile, bool backgroundtask, bool isCurrent);
         public event LoadedEventHandler Ready;
         public delegate void LoadedEventHandler();
 
@@ -136,6 +136,9 @@ namespace HandheldCompanion.Managers
                 if (profile.isRunning)
                 {
                     profile.isRunning = false;
+
+                    // clear current profile
+                    CurrentProfile = null;
 
                     // raise event
                     Discarded?.Invoke(profile);
@@ -310,11 +313,8 @@ namespace HandheldCompanion.Managers
             UpdateProfileCloaking(profile);
 
             // warn owner
-            Updated?.Invoke(profile, backgroundtask);
-
-            // warn other windows
-            if (profile.executable == CurrentProfile.executable)
-                Applied?.Invoke(profile);
+            bool isCurrent = profile.executable == CurrentProfile.executable;
+            Updated?.Invoke(profile, backgroundtask, isCurrent);
 
             if (profile.error != ProfileErrorCode.None && !profile.isDefault)
             {

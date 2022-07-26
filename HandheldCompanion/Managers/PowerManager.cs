@@ -107,7 +107,7 @@ namespace HandheldCompanion.Managers
             // apply profile defined TDP
             if (profile.TDP_override && profile.TDP_value != 0)
                 RequestTDP(profile.TDP_value, false);
-            else
+            else if (TDPvalue != UserRequestedTDP)
                 RequestTDP(UserRequestedTDP);
         }
 
@@ -126,7 +126,7 @@ namespace HandheldCompanion.Managers
             // processor.SetLimit("slow", value + 2);
             // processor.SetLimit("fast", value + 5);
 
-            LogManager.LogInformation("User requested stapm: {0}", TDPvalue);
+            LogManager.LogInformation("User requested TDP: {0}", TDPvalue);
         }
 
         private void gpuTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -136,17 +136,34 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("User requested GPU clock: {0}", GPUvalue);
         }
 
+        public void RestoreTDP()
+        {
+            // we use a timer to prevent too many calls from happening
+            cpuTimer.Stop();
+            cpuTimer.Start();
+        }
+
         public void RequestTDP(double value, bool UserRequested = true)
         {
             if (UserRequested)
                 UserRequestedTDP = value;
 
             // update value read by timer
-            TDPvalue = value;
+            if (TDPvalue != value)
+            {
+                TDPvalue = value;
 
+                // we use a timer to prevent too many calls from happening
+                cpuTimer.Stop();
+                cpuTimer.Start();
+            }
+        }
+
+        public void RestoreGPUClock()
+        {
             // we use a timer to prevent too many calls from happening
-            cpuTimer.Stop();
-            cpuTimer.Start();
+            gpuTimer.Stop();
+            gpuTimer.Start();
         }
 
         public void RequestGPUClock(double value, bool UserRequested = true)
@@ -155,11 +172,14 @@ namespace HandheldCompanion.Managers
                 UserRequestedGPUClock = value;
 
             // update value read by timer
-            GPUvalue = value;
+            if (GPUvalue != value)
+            {
+                GPUvalue = value;
 
-            // we use a timer to prevent too many calls from happening
-            gpuTimer.Stop();
-            gpuTimer.Start();
+                // we use a timer to prevent too many calls from happening
+                gpuTimer.Stop();
+                gpuTimer.Start();
+            }
         }
 
         public void RequestPowerMode(int idx)
