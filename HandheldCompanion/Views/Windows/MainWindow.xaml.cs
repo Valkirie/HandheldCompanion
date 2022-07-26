@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -81,6 +82,7 @@ namespace HandheldCompanion.Views
         public static TaskManager taskManager;
         public static CheatManager cheatManager;
         public static SystemManager systemManager;
+        public static PowerManager powerManager;
 
         private WindowState prevWindowState;
         private NotifyIcon notifyIcon;
@@ -178,16 +180,12 @@ namespace HandheldCompanion.Views
             // initialize process manager
             processManager = new ProcessManager();
 
-            // initialize Profile Manager
+            // initialize profile Manager
             profileManager = new ProfileManager();
 
-            // initialize overlay(s)
+            // initialize inputs manager
             inputsManager = new InputsManager();
             inputsManager.TriggerRaised += InputsManager_TriggerRaised;
-
-            overlay = new Overlay(pipeClient, inputsManager);
-            suspender = new Suspender(processManager);
-            quickTools = new QuickTools();
 
             // initialize service manager
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
@@ -231,6 +229,14 @@ namespace HandheldCompanion.Views
             systemManager = new SystemManager();
             systemManager.SerialArrived += SystemManager_Updated;
             systemManager.SerialRemoved += SystemManager_Updated;
+
+            // initialize power manager
+            powerManager = new();
+
+            // initialize windows
+            overlay = new Overlay(pipeClient, inputsManager);
+            suspender = new Suspender(processManager);
+            quickTools = new QuickTools();
 
             // initialize pages
             controllerPage = new ControllerPage("controller");
@@ -387,6 +393,7 @@ namespace HandheldCompanion.Views
             cheatManager.Start();
             inputsManager.Start();
             systemManager.Start();
+            powerManager.Start();
         }
 
         public void UpdateSettings(Dictionary<string, string> args)
@@ -629,6 +636,7 @@ namespace HandheldCompanion.Views
             serviceManager.Stop();
             profileManager.Stop();
             systemManager.Stop();
+            powerManager.Stop();
 
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
