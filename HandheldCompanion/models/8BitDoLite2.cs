@@ -1,5 +1,6 @@
 ﻿using SharpDX.XInput;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -33,10 +34,12 @@ namespace HandheldCompanion.Models
             var ColorPlasticTurquoise = (Color)ColorConverter.ConvertFromString("#29C5CA");
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#E2E2E2");
             var ColorLED = (Color)ColorConverter.ConvertFromString("#487B40");
-
+            var ColorHighlight = (Color)ColorConverter.ConvertFromString("#9f9f9f");
+            
             var MaterialPlasticTurquoise = new DiffuseMaterial(new SolidColorBrush(ColorPlasticTurquoise));
             var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
             var MaterialPlasticTransparentLED = new SpecularMaterial(new SolidColorBrush(ColorLED), 0.3);
+            var MaterialHighlight = new DiffuseMaterial(new SolidColorBrush(ColorHighlight));
 
             // Rotation Points
             JoystickRotationPointCenterLeftMillimeter = new Vector3D(-38.0f, -2.4f, 1.15f);
@@ -71,6 +74,30 @@ namespace HandheldCompanion.Models
             ShoulderRightMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Middle.obj");
             ShoulderLeftMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Middle.obj");
 
+            // map model(s)
+            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            {
+                switch (button)
+                {
+                    case GamepadButtonFlags.A:
+                    case GamepadButtonFlags.B:
+                    case GamepadButtonFlags.X:
+                    case GamepadButtonFlags.Y:
+
+                        string filename = $"models/{ModelName}/{button}-Symbol.obj";
+                        if (File.Exists(filename))
+                        {
+                            Model3DGroup model = modelImporter.Load(filename);
+                            ButtonMap[button].Add(model);
+
+                            // pull model
+                            model3DGroup.Children.Add(model);
+                        }
+
+                        break;
+                }
+            }
+
             // pull model(s)
             model3DGroup.Children.Add(BodyBack);
             model3DGroup.Children.Add(ChargerConnector);
@@ -94,6 +121,7 @@ namespace HandheldCompanion.Models
             // Colors buttons
             foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
             {
+                int i = 0;
                 Material buttonMaterial = null;
 
                 if (ButtonMap.ContainsKey(button))
@@ -101,6 +129,18 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
+                            case GamepadButtonFlags.X:
+                                buttonMaterial = i == 0 ? MaterialPlasticWhite : MaterialHighlight;
+                                break;
+                            case GamepadButtonFlags.Y:
+                                buttonMaterial = i == 0 ? MaterialPlasticWhite: MaterialHighlight;
+                                break;
+                            case GamepadButtonFlags.A:
+                                buttonMaterial = i == 0 ? MaterialPlasticWhite : MaterialHighlight;
+                                break;
+                            case GamepadButtonFlags.B:
+                                buttonMaterial = i == 0 ? MaterialPlasticWhite : MaterialHighlight;
+                                break;
                             case GamepadButtonFlags.Start:
                             case GamepadButtonFlags.Back:
                                 buttonMaterial = MaterialPlasticTurquoise;
@@ -112,6 +152,8 @@ namespace HandheldCompanion.Models
 
                         DefaultMaterials[model3D] = buttonMaterial;
                         ((GeometryModel3D)model3D.Children[0]).Material = buttonMaterial;
+
+                        i++;
                     }
             }
 
