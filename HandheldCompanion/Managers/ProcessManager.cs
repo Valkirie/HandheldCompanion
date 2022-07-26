@@ -391,8 +391,15 @@ namespace HandheldCompanion.Managers
         {
             ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd).Process;
 
-            if (processInfo == null || processInfo.ExecutableFileName == "HandheldCompanion.exe")
+            if (processInfo == null)
                 return;
+
+            switch (processInfo.ExecutableFileName)
+            {
+                case "HandheldCompanion.exe":
+                case "Rw.exe":
+                    return;
+            }
 
             Process proc = Process.GetProcessById((int)processInfo.ProcessId);
             string path = ProcessUtils.GetPathToApp(proc);
