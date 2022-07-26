@@ -5,6 +5,7 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
+using Microsoft.Win32;
 using ModernWpf.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -267,6 +268,9 @@ namespace HandheldCompanion.Views
                 cheatManager.UpdateController(Controller); // update me
                 inputsManager.UpdateController(Controller);
             };
+
+            // listen to system events
+            SystemEvents.PowerModeChanged += OnPowerChangeAsync;
 
             _pages.Add("ControllerPage", controllerPage);
             _pages.Add("ProfilesPage", profilesPage);
@@ -642,6 +646,9 @@ namespace HandheldCompanion.Views
             cheatManager.Stop();
             inputsManager.Stop();
 
+            // stop listening to system events
+            SystemEvents.PowerModeChanged += OnPowerChangeAsync;
+
             // closing page(s)
             controllerPage.Page_Closed();
             profilesPage.Page_Closed();
@@ -789,5 +796,24 @@ namespace HandheldCompanion.Views
         {
         }
         #endregion
+
+        private async void OnPowerChangeAsync(object s, PowerModeChangedEventArgs e)
+        {
+            LogManager.LogInformation("Device power mode set to {0}", e.Mode);
+
+            switch (e.Mode)
+            {
+                default:
+                case PowerModes.StatusChange:
+                    break;
+                case PowerModes.Resume:
+                    {
+                        // restore power manager values
+                        powerManager.RestoreTDP();
+                        powerManager.RestoreGPUClock();
+                    }
+                    break;
+            }
+        }
     }
 }
