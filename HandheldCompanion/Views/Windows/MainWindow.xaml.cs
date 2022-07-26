@@ -661,9 +661,19 @@ namespace HandheldCompanion.Views
 
                     Properties.Settings.Default.MainWindowWidth = this.Width;
                     Properties.Settings.Default.MainWindowHeight = this.Height;
+
+                    Properties.Settings.Default.MainWindowState = (int)WindowState;
+                    break;
+                case WindowState.Maximized:
+                    Properties.Settings.Default.MainWindowLeft = 0;
+                    Properties.Settings.Default.MainWindowTop = 0;
+
+                    Properties.Settings.Default.MainWindowWidth = SystemParameters.MaximizedPrimaryScreenWidth;
+                    Properties.Settings.Default.MainWindowHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+
+                    Properties.Settings.Default.MainWindowState = (int)WindowState;
                     break;
             }
-            Properties.Settings.Default.MainWindowState = (int)WindowState;
 
             if (settingsPage.CloseMinimises && !appClosing)
             {
@@ -695,6 +705,8 @@ namespace HandheldCompanion.Views
                 case WindowState.Maximized:
                     notifyIcon.Visible = false;
                     ShowInTaskbar = true;
+                    this.Activate();
+
                     prevWindowState = WindowState;
                     break;
             }
