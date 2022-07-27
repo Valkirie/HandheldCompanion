@@ -179,6 +179,10 @@
   <data name="Administrator" xml:space="preserve">
     <value>Administrator</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ControllerCompanion.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ControllerCompanion.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="ControllerPage_CloakDevice" xml:space="preserve">
     <value>Cloak device</value>
   </data>
@@ -212,6 +216,9 @@
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
     <value>Change controller vibration strength</value>
   </data>
+  <data name="Default.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Default.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="HotkeysPage_OverlayModel" xml:space="preserve">
     <value>3D controller hotkey</value>
     <comment>added on 01/07/2022</comment>
@@ -243,6 +250,9 @@
   <data name="HotkeysPage_SuspenderDesc" xml:space="preserve">
     <value>Change the suspender hotkey by pressing a button or a special key</value>
     <comment>added on 01/07/2022</comment>
+  </data>
+  <data name="JoyXOff.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\JoyXOff.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="MainWindow_HandheldCompanion" xml:space="preserve">
     <value>Handheld Companion</value>
@@ -400,6 +410,12 @@
   </data>
   <data name="Overlay_Overlay" xml:space="preserve">
     <value>Overlay</value>
+  </data>
+  <data name="Playnite.FullscreenApp.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Playnite.FullscreenApp.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="PowerControlPanel.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PowerControlPanel.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="ProfileSettingsMode0_AdditionalSettings" xml:space="preserve">
     <value>Additional settings</value>
@@ -807,7 +823,6 @@
   <data name="WarningElevated" xml:space="preserve">
     <value>Run this tool as Administrator to unlock these settings.</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\xinput1_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
