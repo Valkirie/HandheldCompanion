@@ -192,6 +192,9 @@ namespace HandheldCompanion.Managers
                 if (profile.isDefault)
                     return;
 
+                // send toast
+                MainWindow.toastManager.SendToast($"Profile {profile.name} applied");
+
                 profile.isRunning = true;
                 profile.fullpath = processEx.Path;
                 UpdateOrCreateProfile(profile);
