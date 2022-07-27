@@ -60,7 +60,7 @@ namespace HandheldCompanion
 
             profile.flickstick_enabled = option.flickstick;
 
-            MainWindow.profileManager.UpdateOrCreateProfile(profile);
+            MainWindow.profileManager.UpdateOrCreateProfile(profile, true, true);
             MainWindow.profileManager.SerializeProfile(profile);
 
             return true;

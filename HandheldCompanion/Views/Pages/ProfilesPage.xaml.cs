@@ -269,7 +269,7 @@ namespace HandheldCompanion.Views.Pages
 
                     if (!exists)
                     {
-                        MainWindow.profileManager.UpdateOrCreateProfile(profile, false);
+                        MainWindow.profileManager.UpdateOrCreateProfile(profile, false, true);
                         MainWindow.profileManager.SerializeProfile(profile);
                     }
                 }
@@ -464,7 +464,7 @@ namespace HandheldCompanion.Views.Pages
                 if ((bool)activators[button].IsChecked)
                     profileCurrent.umc_trigger |= button;
 
-            MainWindow.profileManager.UpdateOrCreateProfile(profileCurrent, false);
+            MainWindow.profileManager.UpdateOrCreateProfile(profileCurrent, false, true);
             MainWindow.profileManager.SerializeProfile(profileCurrent);
 
             // inform service

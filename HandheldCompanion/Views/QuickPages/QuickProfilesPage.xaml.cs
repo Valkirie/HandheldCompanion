@@ -174,7 +174,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            MainWindow.profileManager.UpdateOrCreateProfile(currentProfile, false);
+            MainWindow.profileManager.UpdateOrCreateProfile(currentProfile, false, true);
             MainWindow.profileManager.SerializeProfile(currentProfile);
 
             // inform service

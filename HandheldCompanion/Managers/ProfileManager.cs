@@ -144,7 +144,7 @@ namespace HandheldCompanion.Managers
                     Discarded?.Invoke(profile);
 
                     // update profile
-                    UpdateOrCreateProfile(profile);
+                    UpdateOrCreateProfile(profile, true, false);
                 }
             }
             catch (Exception) { }
@@ -163,7 +163,7 @@ namespace HandheldCompanion.Managers
                 profile.isRunning = true;
 
                 // update profile
-                UpdateOrCreateProfile(profile);
+                UpdateOrCreateProfile(profile, true, false);
             }
             catch (Exception) { }
         }
@@ -197,7 +197,7 @@ namespace HandheldCompanion.Managers
 
                 profile.isRunning = true;
                 profile.fullpath = processEx.Path;
-                UpdateOrCreateProfile(profile);
+                UpdateOrCreateProfile(profile, true, false);
             }
             catch (Exception) { }
         }
@@ -253,7 +253,7 @@ namespace HandheldCompanion.Managers
             if (profile.name == "Default")
                 profile.isDefault = true;
 
-            UpdateOrCreateProfile(profile);
+            UpdateOrCreateProfile(profile, true, true);
         }
 
         public void DeleteProfile(Profile profile)
@@ -303,7 +303,7 @@ namespace HandheldCompanion.Managers
             return ProfileErrorCode.None;
         }
 
-        public void UpdateOrCreateProfile(Profile profile, bool backgroundtask = true)
+        public void UpdateOrCreateProfile(Profile profile, bool backgroundtask = true, bool full = true)
         {
             // refresh error code
             profile.error = SanitizeProfile(profile);
@@ -311,9 +311,6 @@ namespace HandheldCompanion.Managers
 
             // update database
             profiles[profile.name] = profile;
-
-            // update cloaking
-            UpdateProfileCloaking(profile);
 
             // warn owner
             bool isCurrent = profile.executable == CurrentProfile.executable;
@@ -325,8 +322,15 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
-            // update wrapper
-            UpdateProfileWrapper(profile);
+            // only bother updating wrapper and cloaking on profile creation or process start
+            if (full)
+            {
+                // update wrapper
+                UpdateProfileWrapper(profile);
+
+                // update cloaking
+                UpdateProfileCloaking(profile);
+            }
         }
 
         public void UpdateProfileCloaking(Profile profile)
