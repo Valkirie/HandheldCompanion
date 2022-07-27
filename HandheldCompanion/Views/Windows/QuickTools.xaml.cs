@@ -3,6 +3,7 @@ using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.QuickPages;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,15 +117,6 @@ namespace HandheldCompanion.Views.Windows
 
                 switch (navItemTag)
                 {
-                    case "shortcutKeyboard":
-                        StartTabTip();
-                        break;
-                    case "shortcutDesktop":
-                        MainWindow.inputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
-                        break;
-                    case "shortcutESC":
-                        MainWindow.inputsManager.KeyPress(VirtualKeyCode.ESCAPE);
-                        break;
                     default:
                         preNavItemTag = navItemTag;
                         break;
@@ -304,6 +296,23 @@ namespace HandheldCompanion.Views.Windows
         {
             isClosing = v;
             this.Close();
+        }
+
+        private void navView_ShortcutInvoked(object sender, RoutedEventArgs e)
+        {
+            TitleBarButton button = (TitleBarButton)sender;
+            switch (button.Tag)
+            {
+                case "shortcutKeyboard":
+                    StartTabTip();
+                    break;
+                case "shortcutDesktop":
+                    MainWindow.inputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
+                    break;
+                case "shortcutESC":
+                    MainWindow.inputsManager.KeyPress(VirtualKeyCode.ESCAPE);
+                    break;
+            }
         }
     }
 }

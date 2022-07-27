@@ -47,23 +47,13 @@
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
 
-        <ui:NavigationView.FooterMenuItems>
-            <ui:NavigationViewItem Name="shortcutKeyboard" Tag="shortcutKeyboard" Foreground="{DynamicResource AccentAAFillColorDefaultBrush}" SelectsOnInvoked="False">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE765;"></ui:FontIcon>
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
-            <ui:NavigationViewItem Name="shortcutDesktop" Tag="shortcutDesktop" Foreground="{DynamicResource AccentAAFillColorDefaultBrush}" SelectsOnInvoked="False">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="HoloLens MDL2 Assets" Glyph="&#xE782;"></ui:FontIcon>
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
-            <ui:NavigationViewItem Name="shortcutESC" Tag="shortcutESC" Foreground="{DynamicResource AccentAAFillColorDefaultBrush}" SelectsOnInvoked="False">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="SegoeUI" Glyph="ESC"></ui:FontIcon>
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
-        </ui:NavigationView.FooterMenuItems>
+        <ui:NavigationView.PaneFooter>
+            <ui:SimpleStackPanel Spacing="4">
+                <ui:TitleBarButton Tag="shortcutKeyboard" Click="navView_ShortcutInvoked" Width="42" Height="34" FontSize="18" FontFamily="HoloLens MDL2 Assets" Content="&#xE765;" Style="{DynamicResource AccentButtonStyle}"/>
+                <ui:TitleBarButton Tag="shortcutDesktop" Click="navView_ShortcutInvoked" Width="42" Height="34" FontSize="18" FontFamily="HoloLens MDL2 Assets" Content="&#xE782;" Style="{DynamicResource AccentButtonStyle}"/>
+                <ui:TitleBarButton Tag="shortcutESC" Click="navView_ShortcutInvoked" Width="42" Height="34" FontSize="12" FontFamily="Segoe UI" Content="ESC" Style="{DynamicResource AccentButtonStyle}"/>
+            </ui:SimpleStackPanel>
+        </ui:NavigationView.PaneFooter>
 
         <ui:ScrollViewerEx
             PanningMode="VerticalOnly"
