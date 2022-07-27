@@ -394,10 +394,12 @@ namespace HandheldCompanion.Managers
             if (processInfo == null)
                 return;
 
-            switch (processInfo.ExecutableFileName)
+            // todo: improve me
+            switch (processInfo.ExecutableFileName.ToLower())
             {
-                case "HandheldCompanion.exe":
-                case "Rw.exe":
+                case "handheldcompanion.exe":
+                case "rw.exe":
+                case "explorer.exe":
                     return;
             }
 
