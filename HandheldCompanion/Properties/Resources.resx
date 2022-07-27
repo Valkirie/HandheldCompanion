@@ -296,6 +296,9 @@
   <data name="MainWindow_Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="OverlayPage_8BitDoLite2Controller" xml:space="preserve">
+    <value>8BitDo Lite 2</value>
+  </data>
   <data name="OverlayPage_Alignment" xml:space="preserve">
     <value>Alignment</value>
   </data>

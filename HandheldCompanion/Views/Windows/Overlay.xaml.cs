@@ -178,6 +178,11 @@ namespace HandheldCompanion.Views.Windows
                         newModel = new ModelZDOPlus();
                     }
                     break;
+                case OverlayModelMode.EightBitDoLite2:
+                    {
+                        newModel = new Model8BitDoLite2();
+                    }
+                    break;
                 case OverlayModelMode.Toy:
                     {
                         newModel = new ModelToyController();

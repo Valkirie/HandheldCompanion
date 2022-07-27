@@ -85,6 +85,9 @@
                             <RadioButton Name="ZDOPlusRadio">
                                 <Label Content="{x:Static resx:Resources.OverlayPage_ZDOPlusController}"></Label>
                             </RadioButton>
+                            <RadioButton Name="EightBitDoLite2Radio">
+                                <Label Content="{x:Static resx:Resources.OverlayPage_8BitDoLite2Controller}"></Label>
+                            </RadioButton>
                             <RadioButton Name="ToyControllerRadio" IsEnabled="False">
                                 <Label Content="{x:Static resx:Resources.OverlayPage_ToyController}"></Label>
                             </RadioButton>
