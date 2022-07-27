@@ -269,7 +269,7 @@ namespace HandheldCompanion.Views.Pages
 
                     if (!exists)
                     {
-                        MainWindow.profileManager.UpdateOrCreateProfile(profile, false, true);
+                        MainWindow.profileManager.UpdateOrCreateProfile(profile, false);
                         MainWindow.profileManager.SerializeProfile(profile);
                     }
                 }
@@ -464,11 +464,8 @@ namespace HandheldCompanion.Views.Pages
                 if ((bool)activators[button].IsChecked)
                     profileCurrent.umc_trigger |= button;
 
-            MainWindow.profileManager.UpdateOrCreateProfile(profileCurrent, false, true);
+            MainWindow.profileManager.UpdateOrCreateProfile(profileCurrent, false);
             MainWindow.profileManager.SerializeProfile(profileCurrent);
-
-            // inform service
-            MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = profileCurrent });
         }
 
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)

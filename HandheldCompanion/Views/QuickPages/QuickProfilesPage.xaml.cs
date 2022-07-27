@@ -174,11 +174,8 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            MainWindow.profileManager.UpdateOrCreateProfile(currentProfile, false, true);
+            MainWindow.profileManager.UpdateOrCreateProfile(currentProfile, false);
             MainWindow.profileManager.SerializeProfile(currentProfile);
-
-            // inform service
-            MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
         }
 
         private void ProfileToggle_Toggled(object sender, RoutedEventArgs e)

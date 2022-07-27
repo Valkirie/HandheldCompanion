@@ -137,8 +137,8 @@ namespace HandheldCompanion.Managers
                 {
                     profile.isRunning = false;
 
-                    // clear current profile
-                    CurrentProfile = new();
+                    // (re)set current profile
+                    CurrentProfile = GetDefault();
 
                     // raise event
                     Discarded?.Invoke(profile);
@@ -188,9 +188,14 @@ namespace HandheldCompanion.Managers
 
                 LogManager.LogDebug("Profile {0} applied", profile.name);
 
-                // do not update default profile path
                 if (profile.isDefault)
+                {
+                    // inform service
+                    MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = profile });
+
+                    // do not update default profile path
                     return;
+                }
 
                 // send toast
                 MainWindow.toastManager.SendToast($"Profile {profile.name} applied");
@@ -226,7 +231,7 @@ namespace HandheldCompanion.Managers
         {
             if (profiles.ContainsKey("Default"))
                 return profiles["Default"];
-            return null;
+            return new();
         }
 
         private void ProcessProfile(string fileName)
@@ -251,9 +256,14 @@ namespace HandheldCompanion.Managers
             }
 
             if (profile.name == "Default")
+            {
                 profile.isDefault = true;
 
-            UpdateOrCreateProfile(profile, true, true);
+                // set current profile
+                CurrentProfile = profile;
+            }
+
+            UpdateOrCreateProfile(profile);
         }
 
         public void DeleteProfile(Profile profile)
@@ -303,7 +313,7 @@ namespace HandheldCompanion.Managers
             return ProfileErrorCode.None;
         }
 
-        public void UpdateOrCreateProfile(Profile profile, bool backgroundtask = true, bool full = true)
+        public void UpdateOrCreateProfile(Profile profile, bool backgroundtask = true, bool fullUpdate = true)
         {
             // refresh error code
             profile.error = SanitizeProfile(profile);
@@ -316,6 +326,10 @@ namespace HandheldCompanion.Managers
             bool isCurrent = profile.executable == CurrentProfile.executable;
             Updated?.Invoke(profile, backgroundtask, isCurrent);
 
+            // inform service
+            if (isCurrent)
+                MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = CurrentProfile });
+
             if (profile.error != ProfileErrorCode.None && !profile.isDefault)
             {
                 LogManager.LogError("Profile {0} returned error code {1}", profile.name, profile.error);
@@ -323,7 +337,7 @@ namespace HandheldCompanion.Managers
             }
 
             // only bother updating wrapper and cloaking on profile creation or process start
-            if (full)
+            if (fullUpdate)
             {
                 // update wrapper
                 UpdateProfileWrapper(profile);
