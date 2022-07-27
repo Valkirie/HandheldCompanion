@@ -198,6 +198,7 @@ namespace HandheldCompanion.Managers
                 }
 
                 // send toast
+                // todo: localize me
                 MainWindow.toastManager.SendToast($"Profile {profile.name} applied");
 
                 profile.isRunning = true;
@@ -279,6 +280,10 @@ namespace HandheldCompanion.Managers
                 Deleted?.Invoke(profile);
                 Discarded?.Invoke(profile);
 
+                // send toast
+                // todo: localize me
+                MainWindow.toastManager.SendToast($"Profile {profile.name} deleted");
+
                 LogManager.LogInformation("Deleted profile {0}", settingsPath);
             }
 
@@ -324,6 +329,8 @@ namespace HandheldCompanion.Managers
 
             // warn owner
             bool isCurrent = profile.executable == CurrentProfile.executable;
+
+            // raise event(s)
             Updated?.Invoke(profile, backgroundtask, isCurrent);
 
             // inform service
