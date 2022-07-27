@@ -27,7 +27,9 @@ namespace ControllerCommon.Managers
 
             DateTimeOffset DeliveryTime = new DateTimeOffset(DateTime.Now.AddMilliseconds(100));
 
-            new ToastContentBuilder()
+            new Thread(() =>
+            {
+                new ToastContentBuilder()
                 .AddText(title)
                 .AddText(content)
                 .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
@@ -37,6 +39,7 @@ namespace ControllerCommon.Managers
                     toast.Tag = title;
                     toast.Group = m_Group;
                 });
+            }).Start();
 
             m_Timer += m_Interval; // remove toast after 5 seconds (incremental)
 
