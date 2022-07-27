@@ -594,6 +594,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 8BitDo Lite 2.
+        /// </summary>
+        public static string OverlayPage_8BitDoLite2Controller {
+            get {
+                return ResourceManager.GetString("OverlayPage_8BitDoLite2Controller", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alignment.
         /// </summary>
         public static string OverlayPage_Alignment {
