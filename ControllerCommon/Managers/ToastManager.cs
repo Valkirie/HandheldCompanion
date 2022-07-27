@@ -17,7 +17,7 @@ namespace ControllerCommon.Managers
             m_Group = group;
         }
 
-        public void SendToast(string title, string content, string img = "Toast")
+        public void SendToast(string title, string content = "", string img = "Toast")
         {
             if (!Enabled)
                 return;
