@@ -170,8 +170,9 @@
                             <DockPanel Grid.Column="1" Margin="0,0,0,0">
                                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderSensivity, Mode=OneWay}" />
                                 <Slider Name="SliderSensivity" Width="350" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                                MouseEnter="Scrolllock_MouseEnter"
-                                MouseLeave="Scrolllock_MouseLeave"/>
+                                        ValueChanged="SliderSensivity_ValueChanged"
+                                        MouseEnter="Scrolllock_MouseEnter"
+                                        MouseLeave="Scrolllock_MouseLeave"/>
                             </DockPanel>
                         </ui:SimpleStackPanel>
 
