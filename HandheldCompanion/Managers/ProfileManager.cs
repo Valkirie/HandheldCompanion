@@ -138,7 +138,7 @@ namespace HandheldCompanion.Managers
                     profile.isRunning = false;
 
                     // clear current profile
-                    CurrentProfile = null;
+                    CurrentProfile = new();
 
                     // raise event
                     Discarded?.Invoke(profile);
