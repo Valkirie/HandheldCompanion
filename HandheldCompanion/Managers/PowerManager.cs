@@ -221,7 +221,7 @@ namespace HandheldCompanion.Managers
                     break;
                 case "stapm":
                     if (limit != TDP)
-                        RequestTDP(UserRequestedTDP);
+                        RequestTDP(TDP);
                     break;
             }
 
