@@ -7,11 +7,13 @@ namespace HandheldCompanion.Models
     internal class ModelMachenikeHG510 : Model
     {
 
-        Model3DGroup BackBody;
+        Model3DGroup BodyBack;
         Model3DGroup FrontAccent;
         Model3DGroup FN;
-        Model3DGroup Turbo;
-        Model3DGroup HomeMachenike;
+        Model3DGroup Home;
+        Model3DGroup JoystickBaseRingLeft;
+        Model3DGroup JoystickBaseRingRight;
+        Model3DGroup Machenike;
         Model3DGroup LED1;
         Model3DGroup LED2;
         Model3DGroup LED3;
@@ -20,13 +22,20 @@ namespace HandheldCompanion.Models
         Model3DGroup LED6;
         Model3DGroup LED7;
         Model3DGroup LED8;
+        Model3DGroup LogoInner;
+        Model3DGroup LogoMid;
+        Model3DGroup LogoOuter;
+        Model3DGroup Switch;
+        Model3DGroup Turbo;
+        Model3DGroup W1;
+        Model3DGroup W2;
 
         public ModelMachenikeHG510() : base("MachenikeHG510")
         {
             // colors
-            var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#151515");
+            var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#242526");//151515
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#C1C5C6");
-            var ColorAccent = (Color)ColorConverter.ConvertFromString("#53544E");
+            var ColorAccent = (Color)ColorConverter.ConvertFromString("#63645F"); //53544E
             var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
 
             var MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
@@ -49,11 +58,14 @@ namespace HandheldCompanion.Models
             UpwardVisibilityRotationPointRight = new Vector3D(36.226f, -14.26f, 47.332f);
 
             // load model(s)
-            BackBody = modelImporter.Load($"models/{ModelName}/BackBody.obj");
+            BodyBack = modelImporter.Load($"models/{ModelName}/BodyBack.obj");
             FrontAccent = modelImporter.Load($"models/{ModelName}/FrontAccent.obj");
             FN = modelImporter.Load($"models/{ModelName}/FN.obj");
             Turbo = modelImporter.Load($"models/{ModelName}/Turbo.obj");
-            HomeMachenike = modelImporter.Load($"models/{ModelName}/Home-Machenike.obj");
+            Machenike = modelImporter.Load($"models/{ModelName}/Machenike.obj");
+            Home = modelImporter.Load($"models/{ModelName}/Home.obj");
+            JoystickBaseRingLeft = modelImporter.Load($"models/{ModelName}/JoystickBaseRingLeft.obj");
+            JoystickBaseRingRight = modelImporter.Load($"models/{ModelName}/JoystickBaseRingRight.obj");
             LED1 = modelImporter.Load($"models/{ModelName}/LED1.obj");
             LED2 = modelImporter.Load($"models/{ModelName}/LED2.obj");
             LED3 = modelImporter.Load($"models/{ModelName}/LED3.obj");
@@ -62,13 +74,22 @@ namespace HandheldCompanion.Models
             LED6 = modelImporter.Load($"models/{ModelName}/LED6.obj");
             LED7 = modelImporter.Load($"models/{ModelName}/LED7.obj");
             LED8 = modelImporter.Load($"models/{ModelName}/LED8.obj");
+            LogoInner = modelImporter.Load($"models/{ModelName}/LogoInner.obj");
+            LogoMid = modelImporter.Load($"models/{ModelName}/LogoMid.obj");
+            LogoOuter = modelImporter.Load($"models/{ModelName}/LogoOuter.obj");
+            Switch = modelImporter.Load($"models/{ModelName}/Switch.obj");
+            W1 = modelImporter.Load($"models/{ModelName}/W1.obj");
+            W2 = modelImporter.Load($"models/{ModelName}/W2.obj");
 
             // pull model(s)
-            model3DGroup.Children.Add(BackBody);
+            model3DGroup.Children.Add(BodyBack);
             model3DGroup.Children.Add(FrontAccent);
             model3DGroup.Children.Add(FN);
             model3DGroup.Children.Add(Turbo);
-            model3DGroup.Children.Add(HomeMachenike);
+            model3DGroup.Children.Add(Home);
+            model3DGroup.Children.Add(Machenike); 
+            model3DGroup.Children.Add(JoystickBaseRingLeft);
+            model3DGroup.Children.Add(JoystickBaseRingRight);
             model3DGroup.Children.Add(LED1);
             model3DGroup.Children.Add(LED2);
             model3DGroup.Children.Add(LED3);
@@ -77,6 +98,12 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(LED6);
             model3DGroup.Children.Add(LED7);
             model3DGroup.Children.Add(LED8);
+            model3DGroup.Children.Add(LogoInner);
+            model3DGroup.Children.Add(LogoMid);
+            model3DGroup.Children.Add(LogoOuter);
+            model3DGroup.Children.Add(Switch);
+            model3DGroup.Children.Add(W1);
+            model3DGroup.Children.Add(W2);
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
             {
@@ -89,14 +116,16 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == BackBody || model3D == LeftMotor || model3D == RightMotor)
+                if (model3D == MainBody || model3D == BodyBack
+                    || model3D == LeftMotor || model3D == RightMotor
+                    || model3D == LogoInner)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
                     DefaultMaterials[model3D] = MaterialPlasticWhite;
                     continue;
                 }
 
-                if (model3D == FrontAccent)
+                if (model3D == FrontAccent || model3D == Machenike || model3D == LogoOuter || model3D == LogoMid)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialAccent;
                     DefaultMaterials[model3D] = MaterialAccent;
