@@ -1,7 +1,6 @@
 ﻿using SharpDX.XInput;
 using System;
 using System.IO;
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -35,7 +34,7 @@ namespace HandheldCompanion.Models
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#E2E2E2");
             var ColorLED = (Color)ColorConverter.ConvertFromString("#487B40");
             var ColorHighlight = (Color)ColorConverter.ConvertFromString("#9f9f9f");
-            
+
             var MaterialPlasticTurquoise = new DiffuseMaterial(new SolidColorBrush(ColorPlasticTurquoise));
             var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
             var MaterialPlasticTransparentLED = new SpecularMaterial(new SolidColorBrush(ColorLED), 0.3);
@@ -56,7 +55,7 @@ namespace HandheldCompanion.Models
             UpwardVisibilityRotationPointRight = new Vector3D(34.90f, -5.0f, 28.0f);
 
             // load model(s)
-            BodyBack= modelImporter.Load($"models/{ModelName}/BodyBack.obj");
+            BodyBack = modelImporter.Load($"models/{ModelName}/BodyBack.obj");
             ChargerConnector = modelImporter.Load($"models/{ModelName}/ChargerConnector.obj"); ;
             ChargerPort = modelImporter.Load($"models/{ModelName}/ChargerPort.obj");
             Logo = modelImporter.Load($"models/{ModelName}/Logo.obj");
@@ -104,8 +103,8 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(ChargerPort);
             model3DGroup.Children.Add(Logo);
             model3DGroup.Children.Add(Home);
-            model3DGroup.Children.Add(JoystickLeftCover); 
-            model3DGroup.Children.Add(JoystickRightCover); 
+            model3DGroup.Children.Add(JoystickLeftCover);
+            model3DGroup.Children.Add(JoystickRightCover);
             model3DGroup.Children.Add(LED1);
             model3DGroup.Children.Add(LED2);
             model3DGroup.Children.Add(LED3);
@@ -133,7 +132,7 @@ namespace HandheldCompanion.Models
                                 buttonMaterial = i == 0 ? MaterialPlasticWhite : MaterialHighlight;
                                 break;
                             case GamepadButtonFlags.Y:
-                                buttonMaterial = i == 0 ? MaterialPlasticWhite: MaterialHighlight;
+                                buttonMaterial = i == 0 ? MaterialPlasticWhite : MaterialHighlight;
                                 break;
                             case GamepadButtonFlags.A:
                                 buttonMaterial = i == 0 ? MaterialPlasticWhite : MaterialHighlight;

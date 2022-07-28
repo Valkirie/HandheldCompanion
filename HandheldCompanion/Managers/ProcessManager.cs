@@ -489,8 +489,8 @@ namespace HandheldCompanion.Managers
                 return false;
 
             if (path.Contains(Environment.GetEnvironmentVariable("windir"), StringComparison.InvariantCultureIgnoreCase))
-                return false; 
-            
+                return false;
+
             // manual filtering
             switch (exec.ToLower())
             {

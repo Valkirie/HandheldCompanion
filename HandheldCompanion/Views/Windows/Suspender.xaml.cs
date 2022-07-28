@@ -43,8 +43,8 @@ namespace HandheldCompanion.Views.Windows
                         CurrentProcesses.Children.Remove(element);
                 });
             }
-            catch(Exception)
-            { 
+            catch (Exception)
+            {
             }
         }
 
@@ -61,7 +61,7 @@ namespace HandheldCompanion.Views.Windows
                         CurrentProcesses.Children.Add(element);
                 });
             }
-            catch(Exception)
+            catch (Exception)
             {
                 // process might have exited already
             }

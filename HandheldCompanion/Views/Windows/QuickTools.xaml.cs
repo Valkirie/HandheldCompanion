@@ -1,6 +1,5 @@
 ﻿using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Extensions;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Views.QuickPages;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
