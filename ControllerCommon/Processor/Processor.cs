@@ -179,14 +179,14 @@ namespace ControllerCommon.Processor
         protected override void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // read limit(s)
-            m_Limits["short"] = (int)rw.get_short_limit();
-            m_Limits["long"] = (int)rw.get_long_limit();
-            m_Limits["stapm"] = m_Limits["long"];
+            base.m_Limits["short"] = (int)rw.get_short_limit();
+            base.m_Limits["long"] = (int)rw.get_long_limit();
+            base.m_Limits["stapm"] = base.m_Limits["long"];
 
             // read value(s)
-            m_Values["short"] = (int)rw.get_short_value();
-            m_Values["long"] = (int)rw.get_long_value();
-            m_Values["stapm"] = m_Values["long"];
+            base.m_Values["short"] = (int)rw.get_short_value();
+            base.m_Values["long"] = (int)rw.get_long_value();
+            base.m_Values["stapm"] = base.m_Values["long"];
 
             base.UpdateTimer_Elapsed(sender, e);
         }
