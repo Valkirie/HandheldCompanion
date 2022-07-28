@@ -30,8 +30,8 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add("Custom key BIG", new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 });
-            listeners.Add("Custom key Small", new List<KeyCode>() { KeyCode.LWin, KeyCode.D });
+            listeners.Add(new DeviceChord("Custom key BIG", new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 }));
+            listeners.Add(new DeviceChord("Custom key Small", new List<KeyCode>() { KeyCode.LWin, KeyCode.D }));
         }
     }
 }

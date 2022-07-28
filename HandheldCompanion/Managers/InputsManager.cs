@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using Gma.System.MouseKeyHook;
 using GregsStack.InputSimulatorStandard;
@@ -7,6 +8,7 @@ using HandheldCompanion.Views;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using WindowsInput.Events;
@@ -58,13 +60,16 @@ namespace HandheldCompanion.Managers
         public event TriggerUpdatedEventHandler TriggerUpdated;
         public delegate void TriggerUpdatedEventHandler(string listener, TriggerInputs inputs);
 
+        private const int m_fastInterval = 20;
+        private const int m_slowInterval = 100;
+
         public InputsManager()
         {
             // initialize timers
             UpdateTimer = new MultimediaTimer(10);
             UpdateTimer.Tick += UpdateReport;
 
-            ResetTimer = new MultimediaTimer(20) { AutoReset = false };
+            ResetTimer = new MultimediaTimer(m_fastInterval) { AutoReset = false };
             ResetTimer.Tick += ReleaseBuffer;
 
             m_GlobalHook = Hook.GlobalEvents();
@@ -100,8 +105,9 @@ namespace HandheldCompanion.Managers
             KeyEventArgsExt args = (KeyEventArgsExt)e;
             KeyCode hookKey = (KeyCode)args.KeyValue;
 
-            foreach (List<KeyCode> chord in MainWindow.handheldDevice.listeners.Values)
+            foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
             {
+                List<KeyCode> chord = pair.chord;
                 if (KeyIndex >= chord.Count)
                     continue;
 
@@ -110,7 +116,16 @@ namespace HandheldCompanion.Managers
                 {
                     KeyUsed = true;
                     KeyIndex++;
+
+                    // increase interval
+                    ResetTimer.Interval = m_slowInterval;
+
                     break; // leave loop
+                }
+                else
+                {
+                    // restore default interval
+                    ResetTimer.Interval = m_fastInterval;
                 }
             }
 
@@ -126,10 +141,10 @@ namespace HandheldCompanion.Managers
                     InjectModifiers(args);
 
                 // search for matching triggers
-                foreach (var pair in MainWindow.handheldDevice.listeners)
+                foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
                 {
-                    string listener = pair.Key;
-                    List<KeyCode> chord = pair.Value;
+                    string listener = pair.name;
+                    List<KeyCode> chord = pair.chord;
 
                     // compare ordered enumerable
                     var chord_keys = chord.OrderBy(key => key);
@@ -308,10 +323,10 @@ namespace HandheldCompanion.Managers
             foreach (var pair in Triggers)
                 Triggered[pair.Key] = false;
 
-            foreach (var pair in MainWindow.handheldDevice.listeners)
+            foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
             {
-                string listener = pair.Key;
-                List<KeyCode> chord = pair.Value;
+                string listener = pair.name;
+                List<KeyCode> chord = pair.chord;
 
                 prevKeyUp[listener] = TIME_BURST;
                 prevKeyDown[listener] = TIME_BURST;

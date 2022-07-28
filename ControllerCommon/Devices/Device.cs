@@ -10,6 +10,18 @@ using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerCommon.Devices
 {
+    public class DeviceChord
+    {
+        public string name;
+        public List<KeyCode> chord;
+
+        public DeviceChord(string name, List<KeyCode> chord)
+        {
+            this.name = name;
+            this.chord = chord;
+        }
+    }
+
     public abstract class Device
     {
         protected USBDeviceInfo sensor = new USBDeviceInfo();
@@ -50,7 +62,7 @@ namespace ControllerCommon.Devices
         public OneEuroSettings oneEuroSettings = new OneEuroSettings(0.002d, 0.008d);
 
         // trigger specific settings
-        public Dictionary<string, List<KeyCode>> listeners = new();
+        public List<DeviceChord> listeners = new();
 
         private static Device device;
         public static Device GetDefault()
