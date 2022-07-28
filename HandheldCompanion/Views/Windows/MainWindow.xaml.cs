@@ -637,6 +637,7 @@ namespace HandheldCompanion.Views
             profileManager.Stop();
             systemManager.Stop();
             powerManager.Stop();
+            toastManager.Stop();
 
             notifyIcon.Visible = false;
             notifyIcon.Dispose();

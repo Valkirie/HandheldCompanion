@@ -1,13 +1,17 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
 using System;
+using System.Collections.Generic;
 using System.Threading;
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace ControllerCommon.Managers
 {
     public class ToastManager
     {
         private const int m_Interval = 5000;
-        private int m_Timer;
+
+        private Dictionary<string, Timer> m_Threads = new();
 
         private string m_Group;
         public bool Enabled;
@@ -39,23 +43,25 @@ namespace ControllerCommon.Managers
                     toast.Tag = title;
                     toast.Group = m_Group;
                 });
+
+                Timer timer = new Timer(m_Interval)
+                {
+                    Enabled = true,
+                    AutoReset = false
+                };
+
+                timer.Elapsed += (s, e) => { ToastNotificationManagerCompat.History.Remove(title, m_Group); };
+
             }).Start();
-
-            m_Timer += m_Interval; // remove toast after 5 seconds (incremental)
-
-            var thread = new Thread(ClearHistory);
-            thread.Start(new string[] { title, m_Group });
         }
 
-        private void ClearHistory(object obj)
+        public void Stop()
         {
-            Thread.Sleep(m_Timer);
-            string[] array = (string[])obj;
-            string tag = array[0];
-            string group = array[1];
-            ToastNotificationManagerCompat.History.Remove(tag, group);
-
-            m_Timer -= m_Interval;
+            foreach (KeyValuePair<string, Timer> pair in m_Threads)
+            {
+                m_Threads[pair.Key].Stop();
+                m_Threads[pair.Key] = null;
+            }
         }
     }
 }
