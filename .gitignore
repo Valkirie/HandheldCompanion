@@ -23,6 +23,10 @@
 !/Dependencies/*.exe
 !/Dependencies/*.dll
 !/Dependencies/*.sys
+!/HandheldCompanion/WinRing0x64.dll
+!/HandheldCompanion/WinRing0x64.sys
+!/HandheldCompanion/inpoutx64.dll
+!/HandheldCompanion/libryzenadj.dll
 ####################
 # VS Upgrade stuff #
 ####################
