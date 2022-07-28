@@ -24,8 +24,9 @@ namespace HandheldCompanion.Managers
 
             if (task != null)
             {
-                taskDefinition = task.Definition;
-                taskDefinition.Actions[0] = new ExecAction(Executable);
+                task.Definition.Actions.Clear();
+                task.Definition.Actions.Add(new ExecAction(Executable));
+                task = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, task.Definition);
             }
             else
             {
