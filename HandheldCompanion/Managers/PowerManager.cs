@@ -149,14 +149,11 @@ namespace HandheldCompanion.Managers
                 UserRequestedTDP = value;
 
             // update value read by timer
-            if (TDPvalue != value)
-            {
-                TDPvalue = value;
+            TDPvalue = value;
 
-                // we use a timer to prevent too many calls from happening
-                cpuTimer.Stop();
-                cpuTimer.Start();
-            }
+            // we use a timer to prevent too many calls from happening
+            cpuTimer.Stop();
+            cpuTimer.Start();
         }
 
         public void RestoreGPUClock()
@@ -172,14 +169,11 @@ namespace HandheldCompanion.Managers
                 UserRequestedGPUClock = value;
 
             // update value read by timer
-            if (GPUvalue != value)
-            {
-                GPUvalue = value;
+            GPUvalue = value;
 
-                // we use a timer to prevent too many calls from happening
-                gpuTimer.Stop();
-                gpuTimer.Start();
-            }
+            // we use a timer to prevent too many calls from happening
+            gpuTimer.Stop();
+            gpuTimer.Start();
         }
 
         public void RequestPowerMode(int idx)
@@ -221,7 +215,7 @@ namespace HandheldCompanion.Managers
                     break;
                 case "stapm":
                     if (limit != TDP)
-                        RequestTDP(TDP);
+                        RequestTDP(TDP, false);
                     break;
             }
 
