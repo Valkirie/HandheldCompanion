@@ -394,18 +394,12 @@ namespace HandheldCompanion.Managers
             if (processInfo == null)
                 return;
 
-            // todo: improve me
-            switch (processInfo.ExecutableFileName.ToLower())
-            {
-                case "handheldcompanion.exe":
-                case "rw.exe":
-                case "explorer.exe":
-                    return;
-            }
-
             Process proc = Process.GetProcessById((int)processInfo.ProcessId);
             string path = ProcessUtils.GetPathToApp(proc);
             string exec = Path.GetFileName(path);
+
+            if (!IsValid(exec, path))
+                return;
 
             ProcessEx processEx = new ProcessEx(proc)
             {
@@ -459,38 +453,52 @@ namespace HandheldCompanion.Managers
                 if (proc.HasExited)
                     return;
 
-            string path = ProcessUtils.GetPathToApp(proc);
+                string path = ProcessUtils.GetPathToApp(proc);
+                string exec = Path.GetFileName(path);
 
-            // todo : implement proper filtering
-            if (string.IsNullOrEmpty(path))
-                return;
+                if (!IsValid(exec, path))
+                    return;
 
-            if (path.Contains(Environment.GetEnvironmentVariable("windir"), StringComparison.InvariantCultureIgnoreCase))
-                return;
-
-            string exec = Path.GetFileName(path);
-
-            if (!CurrentProcesses.ContainsKey((uint)proc.Id))
-            {
-                ProcessEx processEx = new ProcessEx(proc)
+                if (!CurrentProcesses.ContainsKey((uint)proc.Id))
                 {
-                    Name = exec,
-                    Executable = exec,
-                    Path = path,
-                    MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle
-                };
+                    ProcessEx processEx = new ProcessEx(proc)
+                    {
+                        Name = exec,
+                        Executable = exec,
+                        Path = path,
+                        MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle
+                    };
 
-                CurrentProcesses.TryAdd(processEx.Id, processEx);
+                    CurrentProcesses.TryAdd(processEx.Id, processEx);
 
-                ProcessStarted?.Invoke(processEx);
+                    ProcessStarted?.Invoke(processEx);
 
-                LogManager.LogDebug("Process created: {0}", proc.ProcessName);
+                    LogManager.LogDebug("Process created: {0}", proc.ProcessName);
                 }
             }
             catch (Exception)
             {
                 // process has too high elevation
                 return;
+            }
+        }
+
+        private bool IsValid(string exec, string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return false;
+
+            if (path.Contains(Environment.GetEnvironmentVariable("windir"), StringComparison.InvariantCultureIgnoreCase))
+                return false; 
+            
+            // manual filtering
+            switch (exec.ToLower())
+            {
+                case "handheldcompanion.exe":
+                case "rw.exe":
+                    return false;
+                default:
+                    return true;
             }
         }
     }
