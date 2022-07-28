@@ -106,7 +106,8 @@
                 <Border
                     Padding="15,12,15,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    Visibility="{Binding ElementName=UMCToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <Border.IsEnabled>
                         <MultiBinding Converter="{StaticResource IsEnabledConverter}">
