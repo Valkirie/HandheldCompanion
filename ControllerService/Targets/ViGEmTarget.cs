@@ -125,6 +125,7 @@ namespace ControllerService.Targets
                     {
                         case Input.PlayerSpace:
                         case Input.JoystickCamera:
+                        case Input.AutoRollYawSwap:
                             {
                                 Vector2 Angular;
 
