@@ -1,6 +1,7 @@
 ﻿using SharpDX.XInput;
 using System;
 using System.IO;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -30,15 +31,15 @@ namespace HandheldCompanion.Models
         public Model8BitDoLite2() : base("8BitDoLite2")
         {
             // colors
-            var ColorPlasticTurquoise = (Color)ColorConverter.ConvertFromString("#29C5CA");
-            var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#E2E2E2");
+            var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#E1E0E6");
+            var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#43424B");
             var ColorLED = (Color)ColorConverter.ConvertFromString("#487B40");
-            var ColorHighlight = (Color)ColorConverter.ConvertFromString("#9f9f9f");
+            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
 
-            var MaterialPlasticTurquoise = new DiffuseMaterial(new SolidColorBrush(ColorPlasticTurquoise));
             var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
+            var MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
             var MaterialPlasticTransparentLED = new SpecularMaterial(new SolidColorBrush(ColorLED), 0.3);
-            var MaterialHighlight = new DiffuseMaterial(new SolidColorBrush(ColorHighlight));
+            var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
             // Rotation Points
             JoystickRotationPointCenterLeftMillimeter = new Vector3D(-38.0f, -2.4f, 1.15f);
@@ -129,23 +130,23 @@ namespace HandheldCompanion.Models
                         switch (button)
                         {
                             case GamepadButtonFlags.X:
-                                buttonMaterial = i == 0 ? MaterialPlasticWhite : MaterialHighlight;
+                                buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticWhite;
                                 break;
                             case GamepadButtonFlags.Y:
-                                buttonMaterial = i == 0 ? MaterialPlasticWhite : MaterialHighlight;
+                                buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticWhite;
                                 break;
                             case GamepadButtonFlags.A:
-                                buttonMaterial = i == 0 ? MaterialPlasticWhite : MaterialHighlight;
+                                buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticWhite;
                                 break;
                             case GamepadButtonFlags.B:
-                                buttonMaterial = i == 0 ? MaterialPlasticWhite : MaterialHighlight;
+                                buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticWhite;
                                 break;
                             case GamepadButtonFlags.Start:
                             case GamepadButtonFlags.Back:
-                                buttonMaterial = MaterialPlasticTurquoise;
+                                buttonMaterial = MaterialPlasticWhite;
                                 break;
                             default:
-                                buttonMaterial = MaterialPlasticWhite;
+                                buttonMaterial = MaterialPlasticBlack;
                                 break;
                         }
 
@@ -163,9 +164,9 @@ namespace HandheldCompanion.Models
                     continue;
 
                 // generic material(s)
-                ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
-                ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticWhite;
-                DefaultMaterials[model3D] = MaterialPlasticWhite;
+                ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
+                ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticBlack;
+                DefaultMaterials[model3D] = MaterialPlasticBlack;
 
                 // specific material(s)
                 if (model3D == MainBody || model3D == BodyBack
@@ -173,8 +174,8 @@ namespace HandheldCompanion.Models
                     || model3D == Power
                     || model3D == ShoulderLeftMiddle || model3D == ShoulderRightMiddle)
                 {
-                    ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticTurquoise;
-                    DefaultMaterials[model3D] = MaterialPlasticTurquoise;
+                    ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
+                    DefaultMaterials[model3D] = MaterialPlasticWhite;
                     continue;
                 }
 
@@ -189,18 +190,6 @@ namespace HandheldCompanion.Models
             }
 
             DrawHighligths();
-        }
-
-        private new void DrawHighligths()
-        {
-            var ColorHighlight = (Color)ColorConverter.ConvertFromString("#9f9f9f");
-            var MaterialHighlight = new DiffuseMaterial(new SolidColorBrush(ColorHighlight));
-
-            foreach (Model3DGroup model3D in model3DGroup.Children)
-            {
-                // generic material(s)
-                HighlightMaterials[model3D] = MaterialHighlight;
-            }
         }
     }
 }
