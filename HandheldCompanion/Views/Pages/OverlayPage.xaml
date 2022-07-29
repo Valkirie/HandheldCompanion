@@ -62,8 +62,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -75,7 +75,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:RadioButtons Name="OverlayModel" Grid.Column="1" MaxColumns="2" HorizontalAlignment="Right" SelectionChanged="OverlayModel_SelectionChanged">
+                        <ui:RadioButtons Name="OverlayModel" Grid.Column="1" MaxColumns="3" HorizontalAlignment="Right" SelectionChanged="OverlayModel_SelectionChanged">
                             <RadioButton Name="OEMControllerRadio" IsEnabled="False">
                                 <Label Content="{x:Static resx:Resources.OverlayPage_OEMController}"></Label>
                             </RadioButton>
