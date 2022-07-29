@@ -44,8 +44,8 @@ namespace HandheldCompanion.Models
             var MaterialPlasticTransparentHighlight = new SpecularMaterial(ColorHighlight, 0.3);
 
             // Rotation Points
-            JoystickRotationPointCenterLeftMillimeter = new Vector3D(-39.0f, -1.2f, 16.5f);
-            JoystickRotationPointCenterRightMillimeter = new Vector3D(20f, -1.2f, -7f);
+            JoystickRotationPointCenterLeftMillimeter = new Vector3D(-42.0f, -6.5f, 22.5f);
+            JoystickRotationPointCenterRightMillimeter = new Vector3D(22.5f, -6.5f, 0f);
             JoystickMaxAngleDeg = 14.0f;
 
             ShoulderTriggerRotationPointCenterLeftMillimeter = new Vector3D(-31.87f, 2.67f, 41.38);
