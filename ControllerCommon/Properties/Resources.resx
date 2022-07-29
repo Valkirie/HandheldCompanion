@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+    <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
+  </data>
   <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
     <value>Button A</value>
   </data>
@@ -182,6 +185,9 @@
   </data>
   <data name="Enum.HIDstatus.Disconnected" xml:space="preserve">
     <value>Disconnected</value>
+  </data>
+  <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
+    <value>Auto Roll Yaw Swap</value>
   </data>
   <data name="Enum.Input.JoystickCamera" xml:space="preserve">
     <value>Joystick camera</value>

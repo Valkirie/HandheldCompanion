@@ -133,7 +133,9 @@ namespace ControllerService.Targets
                                     case Input.PlayerSpace:
                                         Angular = new Vector2((float)xinputController.sensorFusion.CameraYawDelta, (float)xinputController.sensorFusion.CameraPitchDelta);
                                         break;
-
+                                    case Input.AutoRollYawSwap:
+                                        Angular = InputUtils.AutoRollYawSwap(xinputController.sensorFusion.GravityVectorSimple, xinputController.AngularVelocities[XInputSensorFlags.Centered]);
+                                        break;
                                     default:
                                     case Input.JoystickCamera:
                                         Angular = new Vector2(-xinputController.AngularVelocities[XInputSensorFlags.Centered].Z, xinputController.AngularVelocities[XInputSensorFlags.Centered].X);

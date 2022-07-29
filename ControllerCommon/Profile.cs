@@ -36,7 +36,8 @@ namespace ControllerCommon
         {
             { Input.JoystickCamera, Properties.Resources.JoystickCameraDesc },
             { Input.JoystickSteering, Properties.Resources.JoystickSteeringDesc },
-            { Input.PlayerSpace, Properties.Resources.PlayerSpaceDesc }
+            { Input.PlayerSpace, Properties.Resources.PlayerSpaceDesc },
+            { Input.AutoRollYawSwap, Properties.Resources.AutoRollYawSwapDesc }
         };
 
         public string name { get; set; }
