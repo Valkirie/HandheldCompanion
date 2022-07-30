@@ -338,6 +338,9 @@
   <data name="OverlayPage_Listening" xml:space="preserve">
     <value>Listening...</value>
   </data>
+  <data name="OverlayPage_MachenikeHG510Controller" xml:space="preserve">
+    <value>MACHENIKE HG510</value>
+  </data>
   <data name="OverlayPage_MainTrigger" xml:space="preserve">
     <value>Main trigger</value>
   </data>

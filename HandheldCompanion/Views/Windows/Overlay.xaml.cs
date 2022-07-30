@@ -183,6 +183,11 @@ namespace HandheldCompanion.Views.Windows
                         newModel = new Model8BitDoLite2();
                     }
                     break;
+                case OverlayModelMode.MachenikeHG510:
+                    {
+                        newModel = new ModelMachenikeHG510();
+                    }
+                    break;
                 case OverlayModelMode.Toy:
                     {
                         newModel = new ModelToyController();

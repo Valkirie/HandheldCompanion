@@ -720,6 +720,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MACHENIKE HG510.
+        /// </summary>
+        public static string OverlayPage_MachenikeHG510Controller {
+            get {
+                return ResourceManager.GetString("OverlayPage_MachenikeHG510Controller", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Main trigger.
         /// </summary>
         public static string OverlayPage_MainTrigger {
