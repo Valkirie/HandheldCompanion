@@ -494,10 +494,10 @@ namespace HandheldCompanion.Managers
             // manual filtering
             switch (exec.ToLower())
             {
-                case "handheldcompanion.exe":
-                case "rw.exe":
-                case "kx.exe":
-                case "msr-cmd.exe":
+                case "handheldcompanion.exe":   // Self
+                case "rw.exe":                  // Used to change TDP
+                case "kx.exe":                  // Used to change TDP
+                case "devenv.exe":              // Visual Studio
                     return false;
                 default:
                     return true;

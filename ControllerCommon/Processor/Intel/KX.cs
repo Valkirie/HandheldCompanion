@@ -58,8 +58,11 @@ namespace ControllerCommon.Processor.Intel
                     string output = "0x" + returned.ToString("X2").Substring(0, 4);
 
                     mchbar = output;
+
+                    ProcessOutput.Close();
                     return true;
                 }
+                ProcessOutput.Close();
             }
 
             return false;
@@ -91,8 +94,11 @@ namespace ControllerCommon.Processor.Intel
                     line = CommonUtils.Between(line, "Return ");
                     long returned = long.Parse(line);
                     var output = ((double)returned + short.MinValue) / 8.0d;
+
+                    ProcessOutput.Close();
                     return (int)output;
                 }
+                ProcessOutput.Close();
             }
 
             return 0;
@@ -132,6 +138,7 @@ namespace ControllerCommon.Processor.Intel
                     string line = ProcessOutput.StandardOutput.ReadLine();
                     break;
                 }
+                ProcessOutput.Close();
             }
         }
 
@@ -169,6 +176,7 @@ namespace ControllerCommon.Processor.Intel
                     string line = ProcessOutput.StandardOutput.ReadLine();
                     break;
                 }
+                ProcessOutput.Close();
             }
         }
     }
