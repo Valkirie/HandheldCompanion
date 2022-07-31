@@ -496,6 +496,8 @@ namespace HandheldCompanion.Managers
             {
                 case "handheldcompanion.exe":
                 case "rw.exe":
+                case "kx.exe":
+                case "msr-cmd.exe":
                     return false;
                 default:
                     return true;

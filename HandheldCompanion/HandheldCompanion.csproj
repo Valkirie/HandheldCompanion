@@ -126,12 +126,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Dependencies\Rw.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Dependencies\Rw.ini">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="inpoutx64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1333,6 +1327,48 @@
     <None Update="libryzenadj.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\inpoutx64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Intel\KX\KX.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Intel\MSR\msr-cmd.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Intel\MSR\winio-drv.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Intel\MSR\WinIo32.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Intel\MSR\WinIo32.sys">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Intel\MSR\WinIo64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Intel\MSR\WinIo64.sys">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Intel\MSR\WinRing0x64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Intel\MSR\WinRing0x64.sys">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Intel\RW\Rw.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\libryzenadj.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\WinRing0x64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\WinRing0x64.sys">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="WinRing0x64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -1346,28 +1382,28 @@
 
   <ItemGroup>
     <Reference Include="Gma.System.MouseKeyHook">
-      <HintPath>..\dependencies\Gma.System.MouseKeyHook.dll</HintPath>
+      <HintPath>..\Resources\Gma.System.MouseKeyHook.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Win32.TaskScheduler">
-      <HintPath>..\dependencies\Microsoft.Win32.TaskScheduler.dll</HintPath>
+      <HintPath>..\Resources\Microsoft.Win32.TaskScheduler.dll</HintPath>
     </Reference>
     <Reference Include="ModernWpf">
-      <HintPath>..\dependencies\ModernWpf.dll</HintPath>
+      <HintPath>..\Resources\ModernWpf.dll</HintPath>
     </Reference>
     <Reference Include="ModernWpf.Controls">
-      <HintPath>..\dependencies\ModernWpf.Controls.dll</HintPath>
+      <HintPath>..\Resources\ModernWpf.Controls.dll</HintPath>
     </Reference>
     <Reference Include="ModernWpf.MahApps">
-      <HintPath>..\dependencies\ModernWpf.MahApps.dll</HintPath>
+      <HintPath>..\Resources\ModernWpf.MahApps.dll</HintPath>
     </Reference>
     <Reference Include="MouseKeyHook.Rx">
-      <HintPath>..\dependencies\MouseKeyHook.Rx.dll</HintPath>
+      <HintPath>..\Resources\MouseKeyHook.Rx.dll</HintPath>
     </Reference>
     <Reference Include="Nefarius.Utilities.DeviceManagement">
-      <HintPath>..\dependencies\Nefarius.Utilities.DeviceManagement.dll</HintPath>
+      <HintPath>..\Resources\Nefarius.Utilities.DeviceManagement.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive">
-      <HintPath>..\dependencies\System.Reactive.dll</HintPath>
+      <HintPath>..\Resources\System.Reactive.dll</HintPath>
     </Reference>
   </ItemGroup>
 
