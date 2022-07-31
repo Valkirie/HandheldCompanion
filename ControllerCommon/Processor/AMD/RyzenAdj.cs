@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace ControllerCommon.Processor
+namespace ControllerCommon.Processor.AMD
 {
     public enum RyzenFamily
     {

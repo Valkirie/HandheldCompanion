@@ -23,12 +23,6 @@
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="dependencies\**" />
-    <Content Remove="dependencies\**" />
-    <EmbeddedResource Remove="dependencies\**" />
-    <None Remove="dependencies\**" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>

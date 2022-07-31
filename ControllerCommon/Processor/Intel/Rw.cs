@@ -3,9 +3,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace ControllerCommon.Processor
+namespace ControllerCommon.Processor.Intel
 {
-    public class Rw
+    public class RW
     {
         private ProcessStartInfo startInfo;
         private string path;
@@ -17,9 +17,9 @@ namespace ControllerCommon.Processor
         private const string pnt_clock = "94";
         private const int delay_value = 1000;
 
-        public Rw()
+        public RW()
         {
-            path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Dependencies", "Rw.exe");
+            path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Intel", "RW", "Rw.exe");
 
             if (!File.Exists(path))
             {
@@ -36,7 +36,7 @@ namespace ControllerCommon.Processor
             };
         }
 
-        internal bool init_rw()
+        internal bool init()
         {
             if (startInfo == null)
                 return false;
@@ -84,7 +84,7 @@ namespace ControllerCommon.Processor
 
                     line = line.Substring(line.Length - 6);
                     var value = Convert.ToInt32(line, 16);
-                    var output = ((double)value + Int16.MinValue) / 8.0d;
+                    var output = ((double)value + short.MinValue) / 8.0d;
                     return (int)output;
                 }
             }

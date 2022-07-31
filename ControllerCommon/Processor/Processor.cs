@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ControllerCommon.Processor.AMD;
+using ControllerCommon.Processor.Intel;
+using System;
 using System.Collections.Generic;
 using System.Management;
 using System.Timers;
@@ -120,13 +122,13 @@ namespace ControllerCommon.Processor
 
     public class IntelProcessor : Processor
     {
-        public Rw rw = new Rw();
+        public KX platform = new KX();
 
         public string family;
 
         public IntelProcessor() : base()
         {
-            if (rw.init_rw())
+            if (platform.init())
             {
                 family = ProcessorID.Substring(ProcessorID.Length - 5);
 
@@ -179,13 +181,13 @@ namespace ControllerCommon.Processor
         protected override void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // read limit(s)
-            base.m_Limits["short"] = (int)rw.get_short_limit();
-            base.m_Limits["long"] = (int)rw.get_long_limit();
+            base.m_Limits["short"] = (int)platform.get_short_limit();
+            base.m_Limits["long"] = (int)platform.get_long_limit();
             base.m_Limits["stapm"] = base.m_Limits["long"];
 
             // read value(s)
-            base.m_Values["short"] = (int)rw.get_short_value();
-            base.m_Values["long"] = (int)rw.get_long_value();
+            base.m_Values["short"] = (int)platform.get_short_value();
+            base.m_Values["long"] = (int)platform.get_long_value();
             base.m_Values["stapm"] = base.m_Values["long"];
 
             base.UpdateTimer_Elapsed(sender, e);
@@ -196,23 +198,23 @@ namespace ControllerCommon.Processor
             switch (type)
             {
                 case "fast":
-                    rw.set_short_limit((int)limit);
+                    platform.set_short_limit((int)limit);
                     break;
                 case "slow":
-                    rw.set_long_limit((int)limit);
+                    platform.set_long_limit((int)limit);
                     break;
                 case "stapm":
-                    rw.set_long_limit((int)limit);
+                    platform.set_long_limit((int)limit);
                     break;
                 case "all":
-                    rw.set_all_limit((int)limit);
+                    platform.set_all_limit((int)limit);
                     break;
             }
         }
 
         public override void SetGPUClock(double clock)
         {
-            rw.set_gfx_clk((int)clock);
+            platform.set_gfx_clk((int)clock);
         }
     }
 
