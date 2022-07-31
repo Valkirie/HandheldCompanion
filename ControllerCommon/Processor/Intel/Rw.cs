@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace ControllerCommon.Processor
+namespace ControllerCommon.Processor.Intel
 {
     public class Rw
     {
@@ -19,7 +19,7 @@ namespace ControllerCommon.Processor
 
         public Rw()
         {
-            path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Dependencies", "Rw.exe");
+            path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Intel", "RW", "Rw.exe");
 
             if (!File.Exists(path))
             {
@@ -84,7 +84,7 @@ namespace ControllerCommon.Processor
 
                     line = line.Substring(line.Length - 6);
                     var value = Convert.ToInt32(line, 16);
-                    var output = ((double)value + Int16.MinValue) / 8.0d;
+                    var output = ((double)value + short.MinValue) / 8.0d;
                     return (int)output;
                 }
             }
