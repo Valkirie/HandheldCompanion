@@ -13,7 +13,7 @@ namespace ControllerCommon.Devices
             this.WidthHeightRatio = 2.4f;
             this.ProductIllustration = "device_aya_air";
 
-            this.DefaultTDP = 15;
+            this.DefaultTDP = 8;
 
             this.AngularVelocityAxisSwap = new()
             {
@@ -33,8 +33,8 @@ namespace ControllerCommon.Devices
             listeners.Add(new DeviceChord("Top Left Short", new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin }));
             listeners.Add(new DeviceChord("Top Right Long", new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.LWin, KeyCode.Tab }));
             listeners.Add(new DeviceChord("Top Right Short", new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.Escape }));
-            listeners.Add(new DeviceChord("Custom Key Big", new List<KeyCode>() { KeyCode.LWin, KeyCode.LWin, KeyCode.D }));
-            //listeners.Add(new DeviceChord("Custom Key Small", new List<KeyCode>() { KeyCode.LWin, KeyCode.LWin, KeyCode.D })); // Unknown
+            listeners.Add(new DeviceChord("Custom Key Small", new List<KeyCode>() { KeyCode.LWin, KeyCode.LWin, KeyCode.D }));
+            listeners.Add(new DeviceChord("Custom Key Big", new List<KeyCode>() { KeyCode.LControlKey, KeyCode.LWin }));
         }
     }
 }

@@ -84,6 +84,7 @@ namespace ControllerCommon.Devices
                         {
                             case "AIR":
                             case "AIR Pro":
+                            case "AIR Lite":
                                 device = new AYANEOAIR();
                                 break;
                             case "AYA NEO FOUNDER":
