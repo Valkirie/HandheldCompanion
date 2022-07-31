@@ -81,6 +81,9 @@ namespace HandheldCompanion.Views.Pages
                     case Input.JoystickCamera:
                         icon.Glyph = "\uE714";
                         break;
+                    case Input.AutoRollYawSwap:
+                        icon.Glyph = "\uE7F8";
+                        break;
                     case Input.JoystickSteering:
                         icon.Glyph = "\uEC47";
                         break;
@@ -535,6 +538,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 case Input.PlayerSpace:
                 case Input.JoystickCamera:
+                case Input.AutoRollYawSwap:
                     cB_Output.SelectedIndex = (int)Output.RightStick;
                     break;
                 case Input.JoystickSteering:

@@ -8,7 +8,7 @@ namespace ControllerCommon
     public class SensorFusion
     {
         // Gravity Simple
-        private Vector3 GravityVectorSimple;
+        public Vector3 GravityVectorSimple;
 
         // Gravity Fancy
         private float Shakiness;

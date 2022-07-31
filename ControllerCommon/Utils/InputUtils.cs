@@ -17,7 +17,8 @@ namespace ControllerCommon.Utils
     {
         PlayerSpace = 0,
         JoystickCamera = 1,
-        JoystickSteering = 2
+        AutoRollYawSwap = 2,
+        JoystickSteering = 3,
     }
 
     public enum Output
@@ -247,6 +248,31 @@ namespace ControllerCommon.Utils
 
             // Apply direction
             return JoystickPosAdjusted;
+        }
+
+        public static Vector2 AutoRollYawSwap(Vector3 Gravity, Vector3 AngularVelocityDeg)
+        {
+            // Auto roll yaw swap function allows for clampshell, laptop and controller type devices to
+            // automatically change the roll and yaw axis depending on how the device is being held. No need for changing settings.
+
+            // Depending on how a device is being held, one of the gravity vector values will be near 1 and the others near 0
+            // multiplying this with the respective desired rotational angle speed vector (roll or yaw) will result in a motion input
+            // for the horizontal plane. 
+
+            // Normalize gravity to:
+            // - Prevent multiplying with values > 1 ie additional user shaking
+            // - When rolling device and maintaining the roll angle, accelY and accelZare less than horizon angle.
+            Vector3 GravityNormalized = Vector3.Normalize(new Vector3(Gravity.X, Gravity.Y, Gravity.Z));
+
+            // Handle NaN, check for empty inputs, prevent NaN computes          
+            Vector3 EmptyVector = new(0f, 0f, 0f);
+
+            if (Gravity.Equals(EmptyVector))
+                return new Vector2(EmptyVector.X, EmptyVector.Y);
+
+            // -acc[1] * gyro[1] + -acc[2] * gyro[2]
+            return new Vector2(-GravityNormalized.Z * -AngularVelocityDeg.Z + -GravityNormalized.Y * -AngularVelocityDeg.Y,
+                               AngularVelocityDeg.X);
         }
     }
 }

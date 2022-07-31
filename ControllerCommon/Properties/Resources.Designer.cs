@@ -61,6 +61,15 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open)..
+        /// </summary>
+        public static string AutoRollYawSwapDesc {
+            get {
+                return ResourceManager.GetString("AutoRollYawSwapDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Button A.
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_A {
@@ -255,6 +264,15 @@ namespace ControllerCommon.Properties {
         public static string Enum_HIDstatus_Disconnected {
             get {
                 return ResourceManager.GetString("Enum.HIDstatus.Disconnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Roll Yaw Swap.
+        /// </summary>
+        public static string Enum_Input_AutoRollYawSwap {
+            get {
+                return ResourceManager.GetString("Enum.Input.AutoRollYawSwap", resourceCulture);
             }
         }
         
