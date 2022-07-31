@@ -1,11 +1,13 @@
 ﻿using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 namespace ControllerCommon.Processor.Intel
 {
-    public class RW
+    public class KX
     {
         private ProcessStartInfo startInfo;
         private string path;
@@ -15,11 +17,10 @@ namespace ControllerCommon.Processor.Intel
         // Package Power Limit (PACKAGE_RAPL_LIMIT_0_0_0_MCHBAR_PCU) — Offset 59A0h
         private const string pnt_limit = "59";
         private const string pnt_clock = "94";
-        private const int delay_value = 1000;
 
-        public RW()
+        public KX()
         {
-            path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Intel", "RW", "Rw.exe");
+            path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Intel", "KX", "KX.exe");
 
             if (!File.Exists(path))
             {
@@ -41,18 +42,22 @@ namespace ControllerCommon.Processor.Intel
             if (startInfo == null)
                 return false;
 
-            startInfo.Arguments = "/Min /Nologo /Stdout /command=\"rpci32 0 0 0 0x48;rwexit\"";
+            startInfo.Arguments = "/RdPci32 0 0 0 0x48";
             using (var ProcessOutput = Process.Start(startInfo))
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
                 {
                     string line = ProcessOutput.StandardOutput.ReadLine();
 
-                    if (!line.Contains("0x"))
+                    if (!line.Contains("Return"))
                         continue;
 
-                    line = line.Substring(line.Length - 10);
-                    mchbar = line.Substring(0, 6);
+                    // parse result
+                    line = CommonUtils.Between(line, "Return ");
+                    long returned = long.Parse(line);
+                    string output = "0x" + returned.ToString("X2").Substring(0, 4);
+
+                    mchbar = output;
                     return true;
                 }
             }
@@ -72,19 +77,20 @@ namespace ControllerCommon.Processor.Intel
 
         internal int get_limit(string pointer)
         {
-            startInfo.Arguments = $"/Min /Nologo /Stdout /command=\"r16 {mchbar}{pnt_limit}{pointer};rwexit\"";
+            startInfo.Arguments = $"/rdmem16 {mchbar}{pnt_limit}{pointer}";
             using (var ProcessOutput = Process.Start(startInfo))
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
                 {
                     string line = ProcessOutput.StandardOutput.ReadLine();
 
-                    if (!line.Contains("0x"))
+                    if (!line.Contains("Return"))
                         continue;
 
-                    line = line.Substring(line.Length - 6);
-                    var value = Convert.ToInt32(line, 16);
-                    var output = ((double)value + short.MinValue) / 8.0d;
+                    // parse result
+                    line = CommonUtils.Between(line, "Return ");
+                    long returned = long.Parse(line);
+                    var output = ((double)returned + short.MinValue) / 8.0d;
                     return (int)output;
                 }
             }
@@ -114,13 +120,9 @@ namespace ControllerCommon.Processor.Intel
 
         internal void set_limit(string pointer1, string pointer2, int limit)
         {
-            string command = $"/Min /Nologo /Stdout /command=\"Delay {delay_value};";
             string hex = TDPToHex(limit);
 
-            command += $"w16 {mchbar}{pnt_limit}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
-            command += $"wrmsr 0x610 0x0 {pointer2}{hex};";
-
-            command += $"Delay {delay_value};rwexit\"";
+            string command = $"/wrmem16 {mchbar}{pnt_limit}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)}";
 
             startInfo.Arguments = command;
             using (var ProcessOutput = Process.Start(startInfo))
@@ -128,33 +130,15 @@ namespace ControllerCommon.Processor.Intel
                 while (!ProcessOutput.StandardOutput.EndOfStream)
                 {
                     string line = ProcessOutput.StandardOutput.ReadLine();
+                    break;
                 }
             }
         }
 
         internal void set_all_limit(int limit)
         {
-            string command = $"/Min /Nologo /Stdout /command=\"Delay {delay_value};";
-            string hex = TDPToHex(limit);
-
-            // long
-            command += $"w16 {mchbar}{pnt_limit}a4 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
-            command += $"wrmsr 0x610 0x0 0x00438{hex.Substring(hex.Length - 3)};";
-
-            // short
-            command += $"w16 {mchbar}{pnt_limit}a0 0x8{hex.Substring(0, 1)}{hex.Substring(1)};";
-            command += $"wrmsr 0x610 0x0 0x00dd8{hex.Substring(hex.Length - 3)};";
-
-            command += $"Delay {delay_value};rwexit\"";
-
-            startInfo.Arguments = command;
-            using (var ProcessOutput = Process.Start(startInfo))
-            {
-                while (!ProcessOutput.StandardOutput.EndOfStream)
-                {
-                    string line = ProcessOutput.StandardOutput.ReadLine();
-                }
-            }
+            set_short_limit(limit);
+            set_long_limit(limit);
         }
 
         private string TDPToHex(int decValue)
@@ -173,11 +157,9 @@ namespace ControllerCommon.Processor.Intel
 
         internal void set_gfx_clk(int clock)
         {
-            string command = $"/Min /Nologo /Stdout /command=\"Delay {delay_value};";
             string hex = ClockToHex(clock);
 
-            command += $"w {mchbar}{pnt_clock} {hex};";
-            command += $"Delay {delay_value};rwexit\"";
+            string command = $"/wrmem8 {mchbar}{pnt_clock} {hex}";
 
             startInfo.Arguments = command;
             using (var ProcessOutput = Process.Start(startInfo))
@@ -185,6 +167,7 @@ namespace ControllerCommon.Processor.Intel
                 while (!ProcessOutput.StandardOutput.EndOfStream)
                 {
                     string line = ProcessOutput.StandardOutput.ReadLine();
+                    break;
                 }
             }
         }
