@@ -111,7 +111,7 @@ namespace ControllerService.Targets
             buttons |= (Gamepad.RightTrigger > 0 ? GamepadButtonFlagsExt.RightTrigger : 0);
 
             // get custom buttons values
-            buttons |= ControllerService.profile.umc_trigger.HasFlag(GamepadButtonFlagsExt.AlwaysOn) ? GamepadButtonFlagsExt.AlwaysOn : 0;
+            //buttons |= ControllerService.profile.umc_trigger.HasFlag(GamepadButtonFlagsExt.AlwaysOn) ? GamepadButtonFlagsExt.AlwaysOn : 0;
 
             // get sticks values
             LeftThumb = new Vector2(Gamepad.LeftThumbX, Gamepad.LeftThumbY);
@@ -119,7 +119,11 @@ namespace ControllerService.Targets
 
             if (ControllerService.profile.umc_enabled)
             {
-                if ((ControllerService.profile.umc_trigger & buttons) != 0)
+                if ( 
+                    ((ControllerService.profile.inverthorizontal == false) && (ControllerService.profile.umc_trigger & buttons) != 0) 
+                    ||
+                    ((ControllerService.profile.inverthorizontal == true) && (ControllerService.profile.umc_trigger & buttons) == 0)
+                   )
                 {
                     switch (ControllerService.profile.umc_input)
                     {
