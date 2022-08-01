@@ -451,6 +451,21 @@
                                 </Grid>
 
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCAlwaysOn}" FontSize="14" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCAlwaysOnDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="cB_UMC_AlwaysOn" Toggled="Toggle_UMC_AlwaysOn_Toggled"/>
+                                
+                                </Grid>
+                                
+                                <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <ui:LayoutPanel Name="cB_Buttons" HorizontalAlignment="Center">
                                         <ui:LayoutPanel.Layout>
                                             <ui:UniformGridLayout/>

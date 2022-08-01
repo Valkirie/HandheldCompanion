@@ -45,8 +45,7 @@ namespace ControllerCommon.Utils
         A = 4096,
         B = 8192,
         X = 16384,
-        Y = 32768,
-        AlwaysOn = 65536
+        Y = 32768
     }
 
     public enum OverlayModelMode
@@ -94,8 +93,6 @@ namespace ControllerCommon.Utils
                     return "\uEDE3";
                 case GamepadButtonFlagsExt.Back:
                     return "\uEECA";
-                case GamepadButtonFlagsExt.AlwaysOn:
-                    return "\uE7E8";
                 default:
                     return "\uE783";
             }

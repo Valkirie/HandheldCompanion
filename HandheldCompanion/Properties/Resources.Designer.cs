@@ -1597,6 +1597,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Motion Always On or Off.
+        /// </summary>
+        public static string ProfilesPage_UMCAlwaysOn {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCAlwaysOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Always on, use selected button to disable, always off, use selected button to enable..
+        /// </summary>
+        public static string ProfilesPage_UMCAlwaysOnDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCAlwaysOnDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable universal motion controler.
         /// </summary>
         public static string ProfilesPage_UMCEnable {

@@ -346,6 +346,7 @@ namespace HandheldCompanion.Views.Pages
                 cB_GyroSteering.SelectedIndex = profileCurrent.steering;
                 cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
                 cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
+                cB_UMC_AlwaysOn.IsOn = profileCurrent.umc_always_on; 
 
                 // Power settings
                 TDPToggle.IsOn = profileCurrent.TDP_override;
@@ -453,16 +454,16 @@ namespace HandheldCompanion.Views.Pages
             profileCurrent.umc_input = (Input)cB_Input.SelectedIndex;
             profileCurrent.umc_output = (Output)cB_Output.SelectedIndex;
             profileCurrent.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
-
-            // Power settings
-            profileCurrent.TDP_override = (bool)TDPToggle.IsOn;
-            profileCurrent.TDP_value = (int)TDPSlider.Value;
-
+            profileCurrent.umc_always_on = false;
             profileCurrent.umc_trigger = 0;
 
             foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
                 if ((bool)activators[button].IsChecked)
                     profileCurrent.umc_trigger |= button;
+
+            // Power settings
+            profileCurrent.TDP_override = (bool)TDPToggle.IsOn;
+            profileCurrent.TDP_value = (int)TDPSlider.Value;
 
             MainWindow.profileManager.UpdateOrCreateProfile(profileCurrent, false);
             MainWindow.profileManager.SerializeProfile(profileCurrent);
@@ -543,6 +544,11 @@ namespace HandheldCompanion.Views.Pages
             }
 
             Text_InputHint.Text = Profile.InputDescription[input];
+        }
+
+        private void Toggle_UMC_AlwaysOn_Toggled(object sender, RoutedEventArgs e)
+        {
+            // do something
         }
 
         private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
