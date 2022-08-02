@@ -463,12 +463,6 @@
   <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
     <value>删除配置</value>
   </data>
-  <data name="ProfilesPage_EnableButton" xml:space="preserve">
-    <value>开启键</value>
-  </data>
-  <data name="ProfilesPage_EnableButtonDesc" xml:space="preserve">
-    <value>只有在按下指定按钮可开启体感</value>
-  </data>
   <data name="ProfilesPage_EnableProfile" xml:space="preserve">
     <value>启动配置</value>
   </data>

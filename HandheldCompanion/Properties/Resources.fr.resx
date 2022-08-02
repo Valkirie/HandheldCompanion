@@ -462,12 +462,6 @@
   <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
     <value>Supprimer le profil</value>
   </data>
-  <data name="ProfilesPage_EnableButton" xml:space="preserve">
-    <value>Bouton d'activation</value>
-  </data>
-  <data name="ProfilesPage_EnableButtonDesc" xml:space="preserve">
-    <value>L'entrée de mouvement peut être activée uniquement lorsque le bouton sélectionné est enfoncé</value>
-  </data>
   <data name="ProfilesPage_EnableProfile" xml:space="preserve">
     <value>Activer le profil</value>
   </data>

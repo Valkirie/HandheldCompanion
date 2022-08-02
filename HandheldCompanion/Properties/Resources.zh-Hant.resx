@@ -462,12 +462,6 @@
   <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
     <value>刪除配置</value>
   </data>
-  <data name="ProfilesPage_EnableButton" xml:space="preserve">
-    <value>開啟鍵</value>
-  </data>
-  <data name="ProfilesPage_EnableButtonDesc" xml:space="preserve">
-    <value>只有在按下指定按鈕可開啟體感</value>
-  </data>
   <data name="ProfilesPage_EnableProfile" xml:space="preserve">
     <value>啟動配置</value>
   </data>
