@@ -3,9 +3,9 @@ using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
-    public class AYANEO2021 : Device
+    public class AYANEO2021Pro : Device
     {
-        public AYANEO2021() : base()
+        public AYANEO2021Pro() : base()
         {
             this.ProductSupported = true;
 
@@ -14,7 +14,7 @@ namespace ControllerCommon.Devices
             this.ProductIllustration = "device_aya_2021";
             this.ProductModel = "AYANEO2021";
 
-            // https://www.amd.com/fr/products/apu/amd-ryzen-5-4500u
+            // https://www.amd.com/fr/products/apu/amd-ryzen-7-4800u
             this.nTDP = new double[] { 15, 20 };
             this.cTDP = new double[] { 10, 25 };
 

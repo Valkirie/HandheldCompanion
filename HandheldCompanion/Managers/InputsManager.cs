@@ -344,7 +344,6 @@ namespace HandheldCompanion.Managers
             //It is recommened to dispose it
             m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
-            m_GlobalHook.Dispose();
         }
 
         private void UpdateReport(object? sender, EventArgs e)

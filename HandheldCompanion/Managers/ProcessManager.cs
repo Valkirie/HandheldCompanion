@@ -79,6 +79,10 @@ namespace HandheldCompanion.Managers
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
+                    // check if process was drawn already
+                    if (processBorder != null)
+                        return;
+
                     if (MainWindowHandle != IntPtr.Zero)
                     {
                         processBorder.Visibility = Visibility.Visible;

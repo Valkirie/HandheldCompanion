@@ -78,7 +78,7 @@ namespace ControllerCommon
 
         // power
         public bool TDP_override { get; set; }
-        public int TDP_value { get; set; }
+        public double[] TDP_value { get; set; }
 
         public GamepadButtonFlagsExt umc_trigger { get; set; } = GamepadButtonFlagsExt.AlwaysOn;
 
