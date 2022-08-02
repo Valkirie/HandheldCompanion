@@ -116,11 +116,8 @@ namespace ControllerService.Targets
 
             if (ControllerService.profile.umc_enabled)
             {
-                if ( 
-                    ((ControllerService.profile.inverthorizontal == false) && (ControllerService.profile.umc_trigger & buttons) != 0) 
-                    ||
-                    ((ControllerService.profile.inverthorizontal == true) && (ControllerService.profile.umc_trigger & buttons) == 0)
-                   )
+                if (((ControllerService.profile.umc_always_on == false) && (ControllerService.profile.umc_trigger & buttons) != 0) ||
+                    ((ControllerService.profile.umc_always_on == true) && (ControllerService.profile.umc_trigger & buttons) == 0))
                 {
                     switch (ControllerService.profile.umc_input)
                     {

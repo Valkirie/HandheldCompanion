@@ -637,7 +637,7 @@
     <value>Select the device that will receive the motion commands</value>
   </data>
   <data name="ProfilesPage_UMCAlwaysOn" xml:space="preserve">
-    <value>Motion Default On or Off</value>
+    <value>Motion default off with enable button or on with disable button</value>
   </data>
   <data name="ProfilesPage_UMCAlwaysOnDesc" xml:space="preserve">
     <value>Default off, use selected button(s) to enable motion, default on, use selected button(s) to disable motion.</value>

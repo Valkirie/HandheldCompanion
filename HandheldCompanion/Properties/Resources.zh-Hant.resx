@@ -549,6 +549,12 @@
   <data name="ProfilesPage_StyleofOutputTooltip" xml:space="preserve">
     <value>當向遊戲發送模擬搖桿命令時，這些命令應該是左搖桿還是右搖桿</value>
   </data>
+  <data name="ProfilesPage_UMCAlwaysOn" xml:space="preserve">
+    <value>Motion default off with enable button or on with disable button</value>
+  </data>
+  <data name="ProfilesPage_UMCAlwaysOnDesc" xml:space="preserve">
+    <value>Default off, use selected button(s) to enable motion, default on, use selected button(s) to disable motion.</value>
+  </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
     <value>啟動全局體感手柄</value>
   </data>
