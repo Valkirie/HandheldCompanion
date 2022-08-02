@@ -637,10 +637,10 @@
     <value>Select the device that will receive the motion commands</value>
   </data>
   <data name="ProfilesPage_UMCAlwaysOn" xml:space="preserve">
-    <value>Motion Always On or Off</value>
+    <value>Motion Default On or Off</value>
   </data>
   <data name="ProfilesPage_UMCAlwaysOnDesc" xml:space="preserve">
-    <value>Always on, use selected button to disable, always off, use selected button to enable.</value>
+    <value>Default off, use selected button(s) to enable motion, default on, use selected button(s) to disable motion.</value>
   </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
     <value>Enable universal motion controler</value>

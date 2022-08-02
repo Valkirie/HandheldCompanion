@@ -443,18 +443,6 @@
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                         <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_EnableButton}" FontSize="14"/>
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_EnableButtonDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                </Grid>
-
-                                <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
                                     
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCAlwaysOn}" FontSize="14" VerticalAlignment="Center"/>

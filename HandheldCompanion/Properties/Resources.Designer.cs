@@ -1597,7 +1597,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Motion Always On or Off.
+        ///   Looks up a localized string similar to Motion Default On or Off.
         /// </summary>
         public static string ProfilesPage_UMCAlwaysOn {
             get {
@@ -1606,7 +1606,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Always on, use selected button to disable, always off, use selected button to enable..
+        ///   Looks up a localized string similar to Default off, use selected button(s) to enable motion, default on, use selected button(s) to disable motion..
         /// </summary>
         public static string ProfilesPage_UMCAlwaysOnDesc {
             get {
