@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HandheldCompanion.Views"
+      xmlns:ext="clr-namespace:HandheldCompanion.Extensions"
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       KeepAlive="True"
@@ -172,6 +173,7 @@
                                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderSensivity, Mode=OneWay}" />
                                 <Slider Name="SliderSensivity" Width="350" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                                         ValueChanged="SliderSensivity_ValueChanged"
+                                        IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
                                         MouseEnter="Scrolllock_MouseEnter"
                                         MouseLeave="Scrolllock_MouseLeave"/>
                             </DockPanel>
@@ -221,7 +223,9 @@
                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
                         <Slider Name="TDPSlider" Width="350" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                                 MouseEnter="Scrolllock_MouseEnter"
-                                MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5"
+                                MouseLeave="Scrolllock_MouseLeave"
+                                IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
+                                SmallChange="1" LargeChange="5"
                                 ValueChanged="TDPSlider_ValueChanged"/>
                     </DockPanel>
 

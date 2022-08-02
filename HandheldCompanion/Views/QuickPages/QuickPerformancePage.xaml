@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HandheldCompanion.Views"
+      xmlns:ext="clr-namespace:HandheldCompanion.Extensions"
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       KeepAlive="True"
@@ -53,6 +54,7 @@
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
                     <Slider Name="TDPLongSlider" Width="350" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                             ValueChanged="TDPLongSlider_ValueChanged"
+                            IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5" IsManipulationEnabled="True"/>
                 </DockPanel>
@@ -70,6 +72,7 @@
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
                     <Slider Name="TDPShortSlider" Width="350" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                             ValueChanged="TDPShortSlider_ValueChanged"
+                            IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5"/>
                 </DockPanel>
@@ -137,9 +140,10 @@
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}" />
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" MHz" />
                 <Slider Name="GPUSlider" Width="350" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="50" Minimum="100" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                            ValueChanged="GPUSlider_ValueChanged"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
+                        ValueChanged="GPUSlider_ValueChanged"
+                        IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
+                        MouseEnter="Scrolllock_MouseEnter"
+                        MouseLeave="Scrolllock_MouseLeave"/>
             </DockPanel>
 
         </Border>
@@ -179,6 +183,7 @@
                     <ui:SimpleStackPanel VerticalAlignment="Center" Margin="0,0,0,0">
                         <Slider Name="PowerModeSlider" VerticalAlignment="Center" Maximum="2" TickFrequency="1" AutoToolTipPlacement="None" TickPlacement="BottomRight" Minimum="0" IsSnapToTickEnabled="True"
                                 ValueChanged="PowerModeSlider_ValueChanged"
+                                IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
                                 MouseEnter="Scrolllock_MouseEnter"
                                 MouseLeave="Scrolllock_MouseLeave"/>
                         <Grid Name="PowerModeGrid">
