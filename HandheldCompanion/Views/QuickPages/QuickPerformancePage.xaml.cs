@@ -26,6 +26,10 @@ namespace HandheldCompanion.Views.QuickPages
             MainWindow.profileManager.Applied += ProfileManager_Applied;
             MainWindow.profileManager.Discarded += ProfileManager_Discarded;
 
+            // define slider(s) min and max values based on device specifications
+            TDPShortSlider.Minimum = TDPLongSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
+            TDPShortSlider.Maximum = TDPLongSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
+
             // pull PowerMode settings
             var PowerMode = Properties.Settings.Default.QuickToolsPowerModeValue;
             if (PowerMode >= PowerModeSlider.Minimum && PowerMode <= PowerModeSlider.Maximum)
@@ -34,13 +38,16 @@ namespace HandheldCompanion.Views.QuickPages
                 PowerModeSlider_ValueChanged(null, null); // force call, dirty
             }
 
+            // pull GPU settings
             var GPU = Properties.Settings.Default.QuickToolsPerformanceGPUValue;
             if (GPUSlider.Minimum <= GPU && GPUSlider.Maximum >= GPU)
                 GPUSlider.Value = GPU;
 
+            // pull TDP and GPU toggle settings
             TDPToggle.IsOn = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled;
             GPUToggle.IsOn = Properties.Settings.Default.QuickToolsPerformanceGPUEnabled;
 
+            // we're all set !
             Initialized = true;
         }
 
@@ -82,7 +89,11 @@ namespace HandheldCompanion.Views.QuickPages
             this.Dispatcher.Invoke(() =>
             {
                 TDPToggle.IsEnabled = CanChangeTDP;
+                TDPLongSlider.IsEnabled = CanChangeTDP;
+                TDPShortSlider.IsEnabled = CanChangeTDP;
+
                 GPUToggle.IsEnabled = CanChangeGPU;
+                GPUSlider.IsEnabled = CanChangeGPU;
             });
         }
 
@@ -154,15 +165,16 @@ namespace HandheldCompanion.Views.QuickPages
             Properties.Settings.Default.QuickToolsPerformanceTDPEnabled = TDPToggle.IsOn;
             Properties.Settings.Default.Save();
 
-            if (!TDPToggle.IsOn)
+            if (TDPToggle.IsOn)
+            {
+                MainWindow.powerManager.RequestTDP(PowerType.Long, TDPLongSlider.Value);
+                MainWindow.powerManager.RequestTDP(PowerType.Short, TDPShortSlider.Value);
+            }
+            else
             {
                 // restore default GPU clock
                 MainWindow.powerManager.RequestTDP(MainWindow.handheldDevice.nTDP);
-                return;
             }
-
-            MainWindow.powerManager.RequestTDP(PowerType.Long, TDPLongSlider.Value);
-            MainWindow.powerManager.RequestTDP(PowerType.Short, TDPShortSlider.Value);
         }
 
         private void GPUToggle_Toggled(object sender, RoutedEventArgs e)
