@@ -32,7 +32,7 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add(new DeviceChord("Keyboard key", new List<KeyCode>() { KeyCode.LWin, KeyCode.RControlKey, KeyCode.O }));
+            listeners.Add(new DeviceChord("Keyboard key", new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O, KeyCode.LWin, KeyCode.O }));
             listeners.Add(new DeviceChord("Function key", new List<KeyCode>() { KeyCode.LWin, KeyCode.D }));
             listeners.Add(new DeviceChord("Function + Volume Up", new List<KeyCode>() { KeyCode.F1 }));
 
