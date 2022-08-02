@@ -817,11 +817,20 @@ namespace HandheldCompanion.Views
                 default:
                 case PowerModes.StatusChange:
                     break;
+                case PowerModes.Suspend:
+                    {
+                        //pause inputs manager
+                        inputsManager.Stop();
+                    }
+                    break;
                 case PowerModes.Resume:
                     {
                         // restore power manager values
                         powerManager.RestoreTDP();
                         powerManager.RestoreGPUClock();
+
+                        // restore inputs manager
+                        inputsManager.Start();
                     }
                     break;
             }
