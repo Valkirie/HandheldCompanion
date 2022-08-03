@@ -248,6 +248,11 @@ namespace HandheldCompanion.Managers
             TriggerLock = false;
         }
 
+        public void KeyStroke(VirtualKeyCode mod, VirtualKeyCode key)
+        {
+            m_InputSimulator.Keyboard.ModifiedKeyStroke(mod, key);
+        }
+
         private void ReleaseBuffer(object? sender, EventArgs e)
         {
             if (TriggerBuffer.Count == 0)
