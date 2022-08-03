@@ -13,6 +13,9 @@ namespace ControllerCommon.Utils
     {
         public static string Between(string STR, string FirstString, string LastString = null, bool KeepBorders = false)
         {
+            if (string.IsNullOrEmpty(STR))
+                return string.Empty;
+
             string FinalString;
             int Pos1 = STR.IndexOf(FirstString) + FirstString.Length;
             int Pos2 = STR.Length;
