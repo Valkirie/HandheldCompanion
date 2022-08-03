@@ -425,6 +425,17 @@ namespace HandheldCompanion.Managers
                     // pull data from dll
                     data = x64 ? Properties.Resources.xinput1_x64 : Properties.Resources.xinput1_x86;
 
+                    // do not try to write/erase files when profile is used
+                    if (profile.isRunning)
+                        return;
+
+                    switch (profile.error)
+                    {
+                        // do not try to write/erase files when access is denied
+                        case ProfileErrorCode.MissingPermission:
+                            return;
+                    }
+
                     if (profile.use_wrapper)
                     {
                         if (dllexist && is_x360ce)
