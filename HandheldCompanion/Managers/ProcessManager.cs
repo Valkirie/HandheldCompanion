@@ -75,6 +75,9 @@ namespace HandheldCompanion.Managers
             {
                 Process.Refresh();
 
+                if (Process.HasExited)
+                    return;
+
                 var processThread = Process.Threads[0];
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
