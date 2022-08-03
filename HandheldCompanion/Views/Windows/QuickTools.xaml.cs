@@ -119,6 +119,15 @@ namespace HandheldCompanion.Views.Windows
                     default:
                         preNavItemTag = navItemTag;
                         break;
+                    case "shortcutKeyboard":
+                        StartTabTip();
+                        break;
+                    case "shortcutDesktop":
+                        MainWindow.inputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
+                        break;
+                    case "shortcutESC":
+                        MainWindow.inputsManager.KeyPress(VirtualKeyCode.ESCAPE);
+                        break;
                 }
 
                 NavView_Navigate(preNavItemTag);
@@ -295,23 +304,6 @@ namespace HandheldCompanion.Views.Windows
         {
             isClosing = v;
             this.Close();
-        }
-
-        private void navView_ShortcutInvoked(object sender, RoutedEventArgs e)
-        {
-            TitleBarButton button = (TitleBarButton)sender;
-            switch (button.Tag)
-            {
-                case "shortcutKeyboard":
-                    StartTabTip();
-                    break;
-                case "shortcutDesktop":
-                    MainWindow.inputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
-                    break;
-                case "shortcutESC":
-                    MainWindow.inputsManager.KeyPress(VirtualKeyCode.ESCAPE);
-                    break;
-            }
         }
     }
 }
