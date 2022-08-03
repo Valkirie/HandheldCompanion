@@ -142,7 +142,8 @@ namespace HandheldCompanion.Views.QuickPages
 
                     // Sustained TDP settings (slow, stapm, long)
                     double[] TDP = currentProfile.TDP_value != null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
-                    TDPSlider.Value = TDP[0];
+                    TDPLongSlider.Value = TDP[0];
+                    TDPShortSlider.Value = TDP[1];
 
                     // Sensivity settings
                     SliderSensivity.Value = currentProfile.aiming_sensivity;
@@ -150,8 +151,11 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
-        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
+        private void ProcessManager_ForegroundChanged(ProcessEx processEx, bool display)
         {
+            if (!display)
+                return;
+
             currentProcess = processEx;
             currentProfile = MainWindow.profileManager.GetProfileFromExec(currentProcess.Name);
 
@@ -264,13 +268,22 @@ namespace HandheldCompanion.Views.QuickPages
             currentProfile.TDP_override = (bool)TDPToggle.IsOn;
         }
 
-        private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void TDPLongSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (currentProfile is null)
                 return;
 
             // Power settings
-            currentProfile.TDP_value[0] = (int)TDPSlider.Value;
+            currentProfile.TDP_value[0] = (int)TDPLongSlider.Value;
+        }
+
+        private void TDPShortSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (currentProfile is null)
+                return;
+
+            // Power settings
+            currentProfile.TDP_value[1] = (int)TDPShortSlider.Value;
         }
 
         private void SliderSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

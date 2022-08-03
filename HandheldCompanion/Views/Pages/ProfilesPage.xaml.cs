@@ -355,7 +355,8 @@ namespace HandheldCompanion.Views.Pages
 
                 // Sustained TDP settings (slow, stapm, long)
                 double[] TDP = currentProfile.TDP_value != null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
-                TDPSlider.Value = TDP[0];
+                TDPLongSlider.Value = TDP[0];
+                TDPShortSlider.Value = TDP[1];
 
                 // UMC settings
                 Toggle_UniversalMotion.IsOn = currentProfile.umc_enabled;
@@ -460,7 +461,7 @@ namespace HandheldCompanion.Views.Pages
 
             // Power settings
             currentProfile.TDP_override = (bool)TDPToggle.IsOn;
-            currentProfile.TDP_value[0] = (int)TDPSlider.Value;
+            currentProfile.TDP_value[0] = (int)TDPLongSlider.Value;
 
             currentProfile.umc_trigger = 0;
 
@@ -550,7 +551,12 @@ namespace HandheldCompanion.Views.Pages
             Text_InputHint.Text = Profile.InputDescription[input];
         }
 
-        private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void TDPLongSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            // do something
+        }
+
+        private void TDPShortSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // do something
         }

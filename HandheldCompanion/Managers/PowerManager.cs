@@ -121,8 +121,6 @@ namespace HandheldCompanion.Managers
             // apply profile defined TDP
             if (profile.TDP_override && profile.TDP_value != null)
                 RequestTDP(profile.TDP_value, false);
-            else if (TDPvalue != UserRequestedTDP)
-                RequestTDP(UserRequestedTDP);
         }
 
         private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -241,7 +239,7 @@ namespace HandheldCompanion.Managers
             int idx = (int)type;
             double TDP = UserRequestedTDP[idx];
 
-            Profile CurrentProfile = MainWindow.profileManager.CurrentProfile;
+            Profile CurrentProfile = MainWindow.profileManager.currentProfile;
             if (CurrentProfile != null && CurrentProfile.TDP_override && CurrentProfile.TDP_value != null)
                 TDP = CurrentProfile.TDP_value[idx];
 
