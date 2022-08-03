@@ -95,6 +95,10 @@ namespace HandheldCompanion.Views.QuickPages
 
                 cB_Output.Items.Add(panel);
             }
+
+            // define slider(s) min and max values based on device specifications
+            TDPShortSlider.Minimum = TDPLongSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
+            TDPShortSlider.Maximum = TDPLongSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
         }
 
         private void ProfileDeleted(Profile profile)

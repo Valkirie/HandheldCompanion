@@ -358,6 +358,10 @@ namespace HandheldCompanion.Views.Pages
                 TDPLongSlider.Value = TDP[0];
                 TDPShortSlider.Value = TDP[1];
 
+                // define slider(s) min and max values based on device specifications
+                TDPShortSlider.Minimum = TDPLongSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
+                TDPShortSlider.Maximum = TDPLongSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
+
                 // UMC settings
                 Toggle_UniversalMotion.IsOn = currentProfile.umc_enabled;
                 cB_Input.SelectedIndex = (int)currentProfile.umc_input;
