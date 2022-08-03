@@ -18,15 +18,16 @@ namespace ControllerCommon.Managers
         Running = 4,
         ContinuePending = 5,
         PausePending = 6,
-        Paused = 7
+        Paused = 7,
+        Uninstalled = 8
     }
 
     public class ServiceManager
     {
-        private string name;
-        private string display;
-        private string description;
-        private bool initialized;
+        private string ServiceName;
+        private string DisplayName;
+        private string Description;
+        private bool Initialized;
 
         private ServiceController controller;
         public ServiceControllerStatus status = ServiceControllerStatus.None;
@@ -53,9 +54,9 @@ namespace ControllerCommon.Managers
 
         public ServiceManager(string name, string display, string description)
         {
-            this.name = name;
-            this.display = display;
-            this.description = description;
+            this.ServiceName = name;
+            this.DisplayName = display;
+            this.Description = description;
 
             controller = new ServiceController(name);
 
@@ -91,7 +92,7 @@ namespace ControllerCommon.Managers
         {
             try
             {
-                process.StartInfo.Arguments = $"interrogate {name}";
+                process.StartInfo.Arguments = $"interrogate {ServiceName}";
                 process.Start();
                 process.WaitForExit();
                 string output = process.StandardOutput.ReadToEnd();
@@ -117,15 +118,24 @@ namespace ControllerCommon.Managers
         {
             lock (updateLock)
             {
-                // refresh service status
                 try
                 {
+                    // refresh service status
                     controller.Refresh();
 
-                    if (!string.IsNullOrEmpty(controller.ServiceName))
+                    // check if service is installed
+                    if (CheckServiceInstalled(ServiceName))
                     {
-                        status = (ServiceControllerStatus)controller.Status;
-                        type = controller.StartType;
+                        if (!string.IsNullOrEmpty(controller.ServiceName))
+                        {
+                            status = (ServiceControllerStatus)controller.Status;
+                            type = controller.StartType;
+                        }
+                    }
+                    else
+                    {
+                        status = ServiceControllerStatus.Uninstalled;
+                        type = ServiceStartMode.Disabled;
                     }
                 }
                 catch (Exception ex)
@@ -143,13 +153,24 @@ namespace ControllerCommon.Managers
 
                 prevStatus = (int)status;
                 prevType = (int)type;
-            }
 
-            if (!initialized)
-            {
-                Ready?.Invoke();
-                initialized = true;
+                if (!Initialized)
+                {
+                    Ready?.Invoke();
+                    Initialized = true;
+                }
             }
+        }
+
+        public bool CheckServiceInstalled(string serviceToFind)
+        {
+            ServiceController[] servicelist = ServiceController.GetServices();
+            foreach (ServiceController service in servicelist)
+            {
+                if (service.ServiceName == serviceToFind)
+                    return true;
+            }
+            return false;
         }
 
         public void CreateService(string path)
@@ -159,11 +180,11 @@ namespace ControllerCommon.Managers
 
             try
             {
-                process.StartInfo.Arguments = $"create {name} binpath= \"{path}\" start= \"demand\" DisplayName= \"{display}\"";
+                process.StartInfo.Arguments = $"create {ServiceName} binpath= \"{path}\" start= \"demand\" DisplayName= \"{DisplayName}\"";
                 process.Start();
                 process.WaitForExit();
 
-                process.StartInfo.Arguments = $"description {name} \"{description}\"";
+                process.StartInfo.Arguments = $"description {ServiceName} \"{Description}\"";
                 process.Start();
                 process.WaitForExit();
             }
@@ -178,7 +199,7 @@ namespace ControllerCommon.Managers
             Updated?.Invoke(ServiceControllerStatus.StopPending, -1);
             nextStatus = ServiceControllerStatus.StopPending;
 
-            process.StartInfo.Arguments = $"delete {name}";
+            process.StartInfo.Arguments = $"delete {ServiceName}";
             process.Start();
             process.WaitForExit();
         }
@@ -189,13 +210,25 @@ namespace ControllerCommon.Managers
             if (type == ServiceStartMode.Disabled)
                 return;
 
-            while (status != ServiceControllerStatus.Running)
+            while (!Initialized)
+                await Task.Delay(1000);
+
+            while (status != ServiceControllerStatus.Running && status != ServiceControllerStatus.StartPending)
             {
                 Updated?.Invoke(ServiceControllerStatus.StartPending, -1);
 
                 try
                 {
-                    controller.Start();
+                    controller.Refresh();
+                    switch(controller.Status)
+                    {
+                        case System.ServiceProcess.ServiceControllerStatus.Running:
+                        case System.ServiceProcess.ServiceControllerStatus.StartPending:
+                            break;
+                        default:
+                            controller.Start();
+                            break;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -229,9 +262,16 @@ namespace ControllerCommon.Managers
 
                 try
                 {
-                    controller.Stop();
-                    StopTentative = 0;
-                    return;
+                    controller.Refresh();
+                    switch (controller.Status)
+                    {
+                        case System.ServiceProcess.ServiceControllerStatus.Stopped:
+                        case System.ServiceProcess.ServiceControllerStatus.StopPending:
+                            break;
+                        default:
+                            controller.Stop();
+                            break;
+                    }
                 }
                 catch (Exception ex)
                 {
