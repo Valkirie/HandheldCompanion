@@ -346,7 +346,6 @@ namespace HandheldCompanion.Views.Pages
                 cB_GyroSteering.SelectedIndex = profileCurrent.steering;
                 cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
                 cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
-                cB_UMC_AlwaysOn.IsOn = profileCurrent.umc_always_on; 
 
                 // Power settings
                 TDPToggle.IsOn = profileCurrent.TDP_override;
@@ -359,6 +358,7 @@ namespace HandheldCompanion.Views.Pages
                 cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
                 cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
                 tb_ProfileAntiDeadzone.Value = profileCurrent.antideadzone;
+                cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)profileCurrent.umc_motion_defaultoffon;
 
                 foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
                     if (profileCurrent.umc_trigger.HasFlag(button))
@@ -454,7 +454,7 @@ namespace HandheldCompanion.Views.Pages
             profileCurrent.umc_input = (Input)cB_Input.SelectedIndex;
             profileCurrent.umc_output = (Output)cB_Output.SelectedIndex;
             profileCurrent.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
-            profileCurrent.umc_always_on = false;
+            profileCurrent.umc_motion_defaultoffon = (UMC_Motion_Default)cB_UMC_MotionDefaultOffOn.SelectedIndex;
             profileCurrent.umc_trigger = 0;
 
             foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
@@ -546,9 +546,10 @@ namespace HandheldCompanion.Views.Pages
             Text_InputHint.Text = Profile.InputDescription[input];
         }
 
-        private void Toggle_UMC_AlwaysOn_Toggled(object sender, RoutedEventArgs e)
+        private void cB_UMC_MotionDefaultOffOn_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            // do something
+            if (cB_Input.SelectedIndex == -1)
+                return;
         }
 
         private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

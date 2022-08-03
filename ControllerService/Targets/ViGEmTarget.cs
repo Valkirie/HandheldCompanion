@@ -116,8 +116,8 @@ namespace ControllerService.Targets
 
             if (ControllerService.profile.umc_enabled)
             {
-                if (((ControllerService.profile.umc_always_on == false) && (ControllerService.profile.umc_trigger & buttons) != 0) ||
-                    ((ControllerService.profile.umc_always_on == true) && (ControllerService.profile.umc_trigger & buttons) == 0))
+                if (((ControllerService.profile.umc_motion_defaultoffon == UMC_Motion_Default.Off) && (ControllerService.profile.umc_trigger & buttons) != 0) ||
+                    ((ControllerService.profile.umc_motion_defaultoffon == UMC_Motion_Default.On) && (ControllerService.profile.umc_trigger & buttons) == 0))
                 {
                     switch (ControllerService.profile.umc_input)
                     {

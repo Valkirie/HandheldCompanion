@@ -1597,29 +1597,47 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Motion default off with enable button or on with disable button.
+        ///   Looks up a localized string similar to Enable universal motion controler.
         /// </summary>
-        public static string ProfilesPage_UMCAlwaysOn {
+        public static string ProfilesPage_UMCEnable {
             get {
-                return ResourceManager.GetString("ProfilesPage_UMCAlwaysOn", resourceCulture);
+                return ResourceManager.GetString("ProfilesPage_UMCEnable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default off, button(s) turn on.
+        /// </summary>
+        public static string ProfilesPage_UMCMotionOff {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCMotionOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default on, button(s) turn off.
+        /// </summary>
+        public static string ProfilesPage_UMCMotionOn {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCMotionOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motion on or off, disable or enable button.
+        /// </summary>
+        public static string ProfilesPage_UMCMotionOnOff {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCMotionOnOff", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Default off, use selected button(s) to enable motion, default on, use selected button(s) to disable motion..
         /// </summary>
-        public static string ProfilesPage_UMCAlwaysOnDesc {
+        public static string ProfilesPage_UMCMotionOnOffDesc {
             get {
-                return ResourceManager.GetString("ProfilesPage_UMCAlwaysOnDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enable universal motion controler.
-        /// </summary>
-        public static string ProfilesPage_UMCEnable {
-            get {
-                return ResourceManager.GetString("ProfilesPage_UMCEnable", resourceCulture);
+                return ResourceManager.GetString("ProfilesPage_UMCMotionOnOffDesc", resourceCulture);
             }
         }
         

@@ -60,7 +60,7 @@ namespace ControllerCommon
         public Input umc_input { get; set; } = Input.JoystickCamera;
         public Output umc_output { get; set; } = Output.RightStick;
 
-        public bool umc_always_on { get; set; } = true;
+        public UMC_Motion_Default umc_motion_defaultoffon { get; set; } = UMC_Motion_Default.On;
 
         // aiming
         public float aiming_sensivity { get; set; } = 2.0f;

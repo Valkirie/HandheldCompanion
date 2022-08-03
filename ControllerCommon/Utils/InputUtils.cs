@@ -19,6 +19,11 @@ namespace ControllerCommon.Utils
         JoystickCamera = 1,
         JoystickSteering = 2
     }
+    public enum UMC_Motion_Default
+    {
+        Off = 0,
+        On = 1
+    }
 
     public enum Output
     {

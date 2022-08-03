@@ -636,14 +636,20 @@
   <data name="ProfilesPage_StyleofOutputTooltip" xml:space="preserve">
     <value>Select the device that will receive the motion commands</value>
   </data>
-  <data name="ProfilesPage_UMCAlwaysOn" xml:space="preserve">
-    <value>Motion default off with enable button or on with disable button</value>
-  </data>
-  <data name="ProfilesPage_UMCAlwaysOnDesc" xml:space="preserve">
-    <value>Default off, use selected button(s) to enable motion, default on, use selected button(s) to disable motion.</value>
-  </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
     <value>Enable universal motion controler</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOff" xml:space="preserve">
+    <value>Default off, button(s) turn on</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOn" xml:space="preserve">
+    <value>Default on, button(s) turn off</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOnOff" xml:space="preserve">
+    <value>Motion on or off, disable or enable button</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOnOffDesc" xml:space="preserve">
+    <value>Default off, use selected button(s) to enable motion, default on, use selected button(s) to disable motion.</value>
   </data>
   <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
     <value>Select the device that will receive the motion commands</value>
