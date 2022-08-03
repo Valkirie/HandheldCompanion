@@ -35,6 +35,15 @@ namespace HandheldCompanion.Views.Windows
 
         [DllImport("user32.dll", SetLastError = false)]
         static extern IntPtr GetDesktopWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        // Pinvoke declaration for ShowWindow
+        private const int SW_SHOWMAXIMIZED = 3;
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
         #endregion
 
         // page vars
@@ -127,6 +136,15 @@ namespace HandheldCompanion.Views.Windows
                         break;
                     case "shortcutESC":
                         MainWindow.inputsManager.KeyPress(VirtualKeyCode.ESCAPE);
+                        break;
+                    case "shortcutExpand":
+                        var foregroundProcess = MainWindow.processManager.GetForegroundProcess();
+                        if (foregroundProcess != null)
+                        {
+                            SetForegroundWindow(foregroundProcess.MainWindowHandle);
+                            ShowWindow(foregroundProcess.MainWindowHandle, SW_SHOWMAXIMIZED);
+                            MainWindow.inputsManager.KeyStroke(VirtualKeyCode.LMENU, VirtualKeyCode.RETURN);
+                        }
                         break;
                 }
 

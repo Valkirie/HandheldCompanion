@@ -60,6 +60,12 @@
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
+            <ui:NavigationViewItem Name="shortcutExpand" Tag="shortcutExpand" Content="Expand">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEE49;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
             <ui:NavigationViewItem Name="shortcutESC" Tag="shortcutESC" Content="Escape">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="SegoeUI" Glyph="ESC"></ui:FontIcon>
