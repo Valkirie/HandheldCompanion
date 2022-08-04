@@ -1329,7 +1329,7 @@
     <None Update="libryzenadj.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\inpoutx64.dll">
+    <None Update="inpoutx64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Intel\KX\KX.exe">
@@ -1362,13 +1362,13 @@
     <None Update="Resources\Intel\RW\Rw.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\libryzenadj.dll">
+    <None Update="libryzenadj.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\WinRing0x64.dll">
+    <None Update="WinRing0x64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\WinRing0x64.sys">
+    <None Update="WinRing0x64.sys">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="WinRing0x64.dll">
