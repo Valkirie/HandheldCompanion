@@ -254,6 +254,7 @@ namespace ControllerCommon.Processor
                     default:
                         CanChangeGPU = false;
                         break;
+
                     case RyzenFamily.FAM_RENOIR:
                     case RyzenFamily.FAM_LUCIENNE:
                     case RyzenFamily.FAM_CEZANNE:
@@ -263,7 +264,23 @@ namespace ControllerCommon.Processor
                         break;
                 }
 
-                CanChangeTDP = true;
+                switch (family)
+                {
+                    default:
+                        CanChangeTDP = false;
+                        break;
+
+                    case RyzenFamily.FAM_RAVEN:
+                    case RyzenFamily.FAM_PICASSO:
+                    case RyzenFamily.FAM_DALI:
+                    case RyzenFamily.FAM_RENOIR:
+                    case RyzenFamily.FAM_LUCIENNE:
+                    case RyzenFamily.FAM_CEZANNE:
+                    case RyzenFamily.FAM_VANGOGH:
+                    case RyzenFamily.FAM_REMBRANDT:
+                        CanChangeTDP = true;
+                        break;
+                }
             }
 
             // write default limit(s)
