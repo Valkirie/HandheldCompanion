@@ -85,6 +85,11 @@ namespace ControllerCommon.Devices
                     {
                         switch (ProductName)
                         {
+                            case "AIR":
+                            case "AIR Pro":
+                            case "AIR Lite":
+                                device = new AYANEOAIR();
+                                break;
                             case "AYA NEO FOUNDER":
                             case "AYANEO 2021":
                                 device = new AYANEO2021();
