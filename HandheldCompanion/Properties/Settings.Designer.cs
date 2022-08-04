@@ -506,12 +506,12 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double QuickToolsPerformanceTDPLongValue {
+        public double QuickToolsPerformanceTDPSustainedValue {
             get {
-                return ((double)(this["QuickToolsPerformanceTDPLongValue"]));
+                return ((double)(this["QuickToolsPerformanceTDPSustainedValue"]));
             }
             set {
-                this["QuickToolsPerformanceTDPLongValue"] = value;
+                this["QuickToolsPerformanceTDPSustainedValue"] = value;
             }
         }
         
@@ -566,12 +566,12 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double QuickToolsPerformanceTDPShortValue {
+        public double QuickToolsPerformanceTDPBoostValue {
             get {
-                return ((double)(this["QuickToolsPerformanceTDPShortValue"]));
+                return ((double)(this["QuickToolsPerformanceTDPBoostValue"]));
             }
             set {
-                this["QuickToolsPerformanceTDPShortValue"] = value;
+                this["QuickToolsPerformanceTDPBoostValue"] = value;
             }
         }
     }

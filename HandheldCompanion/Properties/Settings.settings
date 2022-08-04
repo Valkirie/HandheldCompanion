@@ -122,7 +122,7 @@
     <Setting Name="QuickToolsTop" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="QuickToolsPerformanceTDPLongValue" Type="System.Double" Scope="User">
+    <Setting Name="QuickToolsPerformanceTDPSustainedValue" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="QuickToolsPerformanceGPUValue" Type="System.Double" Scope="User">
@@ -137,7 +137,7 @@
     <Setting Name="QuickToolsPowerModeValue" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="QuickToolsPerformanceTDPShortValue" Type="System.Double" Scope="User">
+    <Setting Name="QuickToolsPerformanceTDPBoostValue" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>

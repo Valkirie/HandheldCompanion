@@ -222,6 +222,7 @@
                                 <!-- Separator -->
                                 <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
 
+                                <!-- TDP Sustained -->
                                 <Grid IsEnabled="{Binding ElementName=TDPToggle, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
@@ -229,15 +230,15 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="Thermal Power (TDP) Limit" FontSize="14"/>
-                                        <TextBlock Text="Change the processor thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="Sustained power limit" FontSize="14"/>
+                                        <TextBlock Text="Change sustained thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
                                     
                                     <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPLongSlider, Mode=OneWay}" />
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" />
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
-                                        <Slider Name="TDPLongSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                                                ValueChanged="TDPLongSlider_ValueChanged"
+                                        <Slider Name="TDPSustainedSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                                                ValueChanged="TDPSustainedSlider_ValueChanged"
                                                 MouseEnter="Scrolllock_MouseEnter"
                                                 MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5"/>
                                     </DockPanel>
@@ -245,7 +246,8 @@
 
                                 <!-- Separator -->
                                 <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
-
+                                
+                                <!-- TDP Boost -->
                                 <Grid IsEnabled="{Binding ElementName=TDPToggle, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
@@ -253,15 +255,15 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="Thermal Power (TDP) Limit" FontSize="14"/>
-                                        <TextBlock Text="Change the processor thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="Boost power limit" FontSize="14"/>
+                                        <TextBlock Text="Change boost thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
                                     <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPShortSlider, Mode=OneWay}" />
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
-                                        <Slider Name="TDPShortSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                                                ValueChanged="TDPShortSlider_ValueChanged"
+                                        <Slider Name="TDPBoostSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                                                ValueChanged="TDPBoostSlider_ValueChanged"
                                                 MouseEnter="Scrolllock_MouseEnter"
                                                 MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5"/>
                                     </DockPanel>

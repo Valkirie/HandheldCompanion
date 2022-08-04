@@ -97,8 +97,8 @@ namespace HandheldCompanion.Views.QuickPages
             }
 
             // define slider(s) min and max values based on device specifications
-            TDPShortSlider.Minimum = TDPLongSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
-            TDPShortSlider.Maximum = TDPLongSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
+            TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
+            TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
         }
 
         private void ProfileDeleted(Profile profile)
@@ -146,8 +146,8 @@ namespace HandheldCompanion.Views.QuickPages
 
                     // Sustained TDP settings (slow, stapm, long)
                     double[] TDP = currentProfile.TDP_value != null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
-                    TDPLongSlider.Value = TDP[0];
-                    TDPShortSlider.Value = TDP[1];
+                    TDPSustainedSlider.Value = TDP[0];
+                    TDPBoostSlider.Value = TDP[1];
 
                     // Sensivity settings
                     SliderSensivity.Value = currentProfile.aiming_sensivity;
@@ -272,22 +272,22 @@ namespace HandheldCompanion.Views.QuickPages
             currentProfile.TDP_override = (bool)TDPToggle.IsOn;
         }
 
-        private void TDPLongSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (currentProfile is null)
                 return;
 
             // Power settings
-            currentProfile.TDP_value[0] = (int)TDPLongSlider.Value;
+            currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
         }
 
-        private void TDPShortSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (currentProfile is null)
                 return;
 
             // Power settings
-            currentProfile.TDP_value[1] = (int)TDPShortSlider.Value;
+            currentProfile.TDP_value[1] = (int)TDPBoostSlider.Value;
         }
 
         private void SliderSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

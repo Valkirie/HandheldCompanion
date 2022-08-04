@@ -355,12 +355,12 @@ namespace HandheldCompanion.Views.Pages
 
                 // Sustained TDP settings (slow, stapm, long)
                 double[] TDP = currentProfile.TDP_value != null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
-                TDPLongSlider.Value = TDP[0];
-                TDPShortSlider.Value = TDP[1];
+                TDPSustainedSlider.Value = TDP[0];
+                TDPBoostSlider.Value = TDP[1];
 
                 // define slider(s) min and max values based on device specifications
-                TDPShortSlider.Minimum = TDPLongSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
-                TDPShortSlider.Maximum = TDPLongSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
+                TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
+                TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
 
                 // UMC settings
                 Toggle_UniversalMotion.IsOn = currentProfile.umc_enabled;
@@ -465,7 +465,7 @@ namespace HandheldCompanion.Views.Pages
 
             // Power settings
             currentProfile.TDP_override = (bool)TDPToggle.IsOn;
-            currentProfile.TDP_value[0] = (int)TDPLongSlider.Value;
+            currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
 
             currentProfile.umc_trigger = 0;
 
@@ -555,12 +555,12 @@ namespace HandheldCompanion.Views.Pages
             Text_InputHint.Text = Profile.InputDescription[input];
         }
 
-        private void TDPLongSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // do something
         }
 
-        private void TDPShortSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // do something
         }

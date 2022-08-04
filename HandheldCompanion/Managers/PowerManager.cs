@@ -97,11 +97,11 @@ namespace HandheldCompanion.Managers
             MainWindow.profileManager.Discarded += ProfileManager_Discarded;
 
             // initialize settings
-            var TDPdown = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPLongValue : 0;
+            var TDPdown = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPSustainedValue : 0;
             TDPdown = TDPdown != 0 ? TDPdown : MainWindow.handheldDevice.nTDP[0];
             UserRequestedTDP[0] = TDPdown;
 
-            var TDPup = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPShortValue : 0;
+            var TDPup = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPBoostValue : 0;
             TDPup = TDPup != 0 ? TDPup : MainWindow.handheldDevice.nTDP[1];
             UserRequestedTDP[1] = TDPup;
 
@@ -166,9 +166,6 @@ namespace HandheldCompanion.Managers
                 UserRequestedTDP[idx] = value;
 
             // update value read by timer
-            if (TDPvalue[idx] == value)
-                return;
-
             TDPvalue[idx] = value;
 
             // we use a timer to prevent too many calls from happening
@@ -182,9 +179,6 @@ namespace HandheldCompanion.Managers
                 UserRequestedTDP = values;
 
             // update value read by timer
-            if (TDPvalue == values)
-                return;
-
             TDPvalue = values;
 
             // we use a timer to prevent too many calls from happening
