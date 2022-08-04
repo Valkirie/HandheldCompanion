@@ -75,6 +75,9 @@ namespace HandheldCompanion.Managers
             {
                 Process.Refresh();
 
+                if (Process.HasExited)
+                    return;
+
                 var processThread = Process.Threads[0];
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -130,6 +133,9 @@ namespace HandheldCompanion.Managers
 
         public void Draw()
         {
+            if (processBorder != null)
+                return;
+
             processBorder = new Border()
             {
                 Padding = new Thickness(20, 12, 12, 12),
@@ -290,13 +296,15 @@ namespace HandheldCompanion.Managers
         // process vars
         private Timer MonitorTimer;
         private ManagementEventWatcher stopWatch;
-        private ConcurrentDictionary<uint, ProcessEx> CurrentProcesses = new();
+
+        private ConcurrentDictionary<uint, ProcessEx> Processes = new();
+        private ProcessEx foregroundProcess;
 
         private object updateLock = new();
         private bool isRunning;
 
         public event ForegroundChangedEventHandler ForegroundChanged;
-        public delegate void ForegroundChangedEventHandler(ProcessEx processEx);
+        public delegate void ForegroundChangedEventHandler(ProcessEx processEx, bool display);
 
         public event ProcessStartedEventHandler ProcessStarted;
         public delegate void ProcessStartedEventHandler(ProcessEx processEx);
@@ -353,6 +361,11 @@ namespace HandheldCompanion.Managers
             UnhookWinEvent(winHook);
         }
 
+        public ProcessEx GetForegroundProcess()
+        {
+            return foregroundProcess;
+        }
+
         private void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
         {
             try
@@ -398,10 +411,9 @@ namespace HandheldCompanion.Managers
             string path = ProcessUtils.GetPathToApp(proc);
             string exec = Path.GetFileName(path);
 
-            if (!IsValid(exec, path))
-                return;
+            bool display = IsValid(exec, path);
 
-            ProcessEx processEx = new ProcessEx(proc)
+            foregroundProcess = new ProcessEx(proc)
             {
                 Name = exec,
                 Executable = exec,
@@ -409,14 +421,14 @@ namespace HandheldCompanion.Managers
                 MainWindowHandle = hWnd
             };
 
-            ForegroundChanged?.Invoke(processEx);
+            ForegroundChanged?.Invoke(foregroundProcess, display);
         }
 
         private void MonitorHelper(object? sender, EventArgs e)
         {
             lock (updateLock)
             {
-                foreach (ProcessEx proc in CurrentProcesses.Values)
+                foreach (ProcessEx proc in Processes.Values)
                     proc.Timer_Tick(sender, e);
             }
         }
@@ -433,16 +445,19 @@ namespace HandheldCompanion.Managers
 
         void ProcessHalted(uint processId)
         {
-            if (CurrentProcesses.ContainsKey(processId))
+            if (Processes.ContainsKey(processId))
             {
-                ProcessEx processEx = CurrentProcesses[processId];
+                ProcessEx processEx = Processes[processId];
 
-                CurrentProcesses.TryRemove(new KeyValuePair<uint, ProcessEx>(processId, processEx));
+                Processes.TryRemove(new KeyValuePair<uint, ProcessEx>(processId, processEx));
 
                 ProcessStopped?.Invoke(processEx);
 
-                LogManager.LogDebug("Process halted: {0}", processEx.Process.ProcessName);
+                LogManager.LogDebug("Process halted: {0}", processEx.Name);
             }
+
+            if (foregroundProcess != null && processId == foregroundProcess.Id)
+                foregroundProcess = null;
         }
 
         private void ProcessCreated(Process proc, int NativeWindowHandle = 0)
@@ -459,7 +474,7 @@ namespace HandheldCompanion.Managers
                 if (!IsValid(exec, path))
                     return;
 
-                if (!CurrentProcesses.ContainsKey((uint)proc.Id))
+                if (!Processes.ContainsKey((uint)proc.Id))
                 {
                     ProcessEx processEx = new ProcessEx(proc)
                     {
@@ -469,7 +484,7 @@ namespace HandheldCompanion.Managers
                         MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle
                     };
 
-                    CurrentProcesses.TryAdd(processEx.Id, processEx);
+                    Processes.TryAdd(processEx.Id, processEx);
 
                     ProcessStarted?.Invoke(processEx);
 

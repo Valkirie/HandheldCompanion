@@ -29,7 +29,6 @@ namespace HandheldCompanion.Views.Pages
             // trigger(s)
             TriggerUpdated("overlayGamepad", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayControllerTriggerType, Properties.Settings.Default.OverlayControllerTriggerValue));
             TriggerUpdated("overlayTrackpads", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayTrackpadsTriggerType, Properties.Settings.Default.OverlayTrackpadsTriggerValue));
-            TriggerUpdated("suspender", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.SuspenderTriggerType, Properties.Settings.Default.SuspenderTriggerValue));
             TriggerUpdated("quickTools", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.QuickToolsTriggerType, Properties.Settings.Default.QuickToolsTriggerValue));
         }
 
@@ -49,11 +48,6 @@ namespace HandheldCompanion.Views.Pages
         private void TrackpadsTriggerButton_Click(object sender, RoutedEventArgs e)
         {
             TriggerButton_Click("overlayTrackpads", sender);
-        }
-
-        private void SuspenderTriggerButton_Click(object sender, RoutedEventArgs e)
-        {
-            TriggerButton_Click("suspender", sender);
         }
 
         private void QuickToolsTriggerButton_Click(object sender, RoutedEventArgs e)
@@ -109,14 +103,6 @@ namespace HandheldCompanion.Views.Pages
 
                         Properties.Settings.Default.OverlayTrackpadsTriggerValue = input.GetValue();
                         Properties.Settings.Default.OverlayTrackpadsTriggerType = (int)input.type;
-                        break;
-                    case "suspender":
-                        SuspenderTriggerText.Text = text;
-                        SuspenderTriggerIcon.Glyph = glyph;
-                        SuspenderTriggerButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
-
-                        Properties.Settings.Default.SuspenderTriggerValue = input.GetValue();
-                        Properties.Settings.Default.SuspenderTriggerType = (int)input.type;
                         break;
                     case "quickTools":
                         QuickToolsTriggerText.Text = text;

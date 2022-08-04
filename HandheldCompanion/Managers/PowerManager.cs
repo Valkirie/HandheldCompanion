@@ -57,33 +57,28 @@ namespace HandheldCompanion.Managers
         private Timer cpuTimer;
         private Timer gpuTimer;
 
-        public event LimitChangedHandler LimitChanged;
-        public delegate void LimitChangedHandler(string type, int limit);
+        public event LimitChangedHandler PowerLimitChanged;
+        public delegate void LimitChangedHandler(PowerType type, int limit);
 
-        public event ValueChangedHandler ValueChanged;
-        public delegate void ValueChangedHandler(string type, float value);
+        public event ValueChangedHandler PowerValueChanged;
+        public delegate void ValueChangedHandler(PowerType type, float value);
 
-        public event StatusChangedHandler StatusChanged;
+        public event StatusChangedHandler ProcessorStatusChanged;
         public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
 
         // user requested limits
-        private double UserRequestedTDP = MainWindow.handheldDevice.DefaultTDP;
+        private double[] UserRequestedTDP = new double[2];
         private double UserRequestedGPUClock;
         private Guid UserRequestedPowerMode;
 
         // values
-        private double TDPvalue;
+        private double[] TDPvalue = new double[2];
         private double GPUvalue;
 
         public PowerManager()
         {
-            // initialize processor
-            processor = Processor.GetCurrent();
-            processor.ValueChanged += Processor_ValueChanged;
-            processor.StatusChanged += Processor_StatusChanged;
-            processor.LimitChanged += Processor_LimitChanged;
-
-            updateTimer = new Timer() { Interval = 4000, AutoReset = true, Enabled = false };
+            // initialize timer(s)
+            updateTimer = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
             updateTimer.Elapsed += UpdateTimer_Elapsed;
 
             cpuTimer = new Timer() { Interval = 3000, AutoReset = false, Enabled = false };
@@ -92,8 +87,27 @@ namespace HandheldCompanion.Managers
             gpuTimer = new Timer() { Interval = 3000, AutoReset = false, Enabled = false };
             gpuTimer.Elapsed += gpuTimer_Elapsed;
 
+            // initialize processor
+            processor = Processor.GetCurrent();
+            processor.ValueChanged += Processor_ValueChanged;
+            processor.StatusChanged += Processor_StatusChanged;
+            processor.LimitChanged += Processor_LimitChanged;
+
             MainWindow.profileManager.Applied += ProfileManager_Applied;
             MainWindow.profileManager.Discarded += ProfileManager_Discarded;
+
+            // initialize settings
+            var TDPdown = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPSustainedValue : 0;
+            TDPdown = TDPdown != 0 ? TDPdown : MainWindow.handheldDevice.nTDP[0];
+            UserRequestedTDP[0] = TDPdown;
+
+            var TDPup = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPBoostValue : 0;
+            TDPup = TDPup != 0 ? TDPup : MainWindow.handheldDevice.nTDP[1];
+            UserRequestedTDP[1] = TDPup;
+
+            var GPU = Properties.Settings.Default.QuickToolsPerformanceGPUEnabled ? Properties.Settings.Default.QuickToolsPerformanceGPUValue : 0;
+            if (GPU != 0)
+                RequestGPUClock(GPU, true);
         }
 
         private void ProfileManager_Discarded(Profile profile)
@@ -105,10 +119,8 @@ namespace HandheldCompanion.Managers
         private void ProfileManager_Applied(Profile profile)
         {
             // apply profile defined TDP
-            if (profile.TDP_override && profile.TDP_value != 0)
+            if (profile.TDP_override && profile.TDP_value != null)
                 RequestTDP(profile.TDP_value, false);
-            else if (TDPvalue != UserRequestedTDP)
-                RequestTDP(UserRequestedTDP);
         }
 
         private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -121,19 +133,22 @@ namespace HandheldCompanion.Managers
 
         private void cpuTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            processor.SetTDPLimit("all", TDPvalue);
-            // processor.SetLimit("stapm", value);
-            // processor.SetLimit("slow", value + 2);
-            // processor.SetLimit("fast", value + 5);
+            if (TDPvalue[0] != 0)
+            {
+                processor.SetTDPLimit("stapm", TDPvalue[0]);
+                processor.SetTDPLimit("slow", TDPvalue[0]);
+                // processor.SetTDPLimit("all", TDPvalue[0]);
+            }
 
-            LogManager.LogInformation("User requested TDP: {0}", TDPvalue);
+            if (TDPvalue[1] != 0)
+            {
+                processor.SetTDPLimit("fast", TDPvalue[1]);
+            }
         }
 
         private void gpuTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
             processor.SetGPUClock(GPUvalue);
-
-            LogManager.LogInformation("User requested GPU clock: {0}", GPUvalue);
         }
 
         public void RestoreTDP()
@@ -143,13 +158,28 @@ namespace HandheldCompanion.Managers
             cpuTimer.Start();
         }
 
-        public void RequestTDP(double value, bool UserRequested = true)
+        public void RequestTDP(PowerType type, double value, bool UserRequested = true)
         {
+            int idx = (int)type;
+
             if (UserRequested)
-                UserRequestedTDP = value;
+                UserRequestedTDP[idx] = value;
 
             // update value read by timer
-            TDPvalue = value;
+            TDPvalue[idx] = value;
+
+            // we use a timer to prevent too many calls from happening
+            cpuTimer.Stop();
+            cpuTimer.Start();
+        }
+
+        public void RequestTDP(double[] values, bool UserRequested = true)
+        {
+            if (UserRequested)
+                UserRequestedTDP = values;
+
+            // update value read by timer
+            TDPvalue = values;
 
             // we use a timer to prevent too many calls from happening
             cpuTimer.Stop();
@@ -169,6 +199,9 @@ namespace HandheldCompanion.Managers
                 UserRequestedGPUClock = value;
 
             // update value read by timer
+            if (GPUvalue == value)
+                return;
+
             GPUvalue = value;
 
             // we use a timer to prevent too many calls from happening
@@ -187,39 +220,31 @@ namespace HandheldCompanion.Managers
         #region events
         private void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
         {
-            StatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
+            ProcessorStatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
         }
 
-        private void Processor_ValueChanged(string type, float value)
+        private void Processor_ValueChanged(PowerType type, float value)
         {
-            ValueChanged?.Invoke(type, value);
+            PowerValueChanged?.Invoke(type, value);
         }
 
-        private void Processor_LimitChanged(string type, int limit)
+        private void Processor_LimitChanged(PowerType type, int limit)
         {
-            double TDP = UserRequestedTDP;
+            int idx = (int)type;
+            double TDP = UserRequestedTDP[idx];
 
-            Profile CurrentProfile = MainWindow.profileManager.CurrentProfile;
-            if (CurrentProfile != null && CurrentProfile.TDP_override && CurrentProfile.TDP_value != 0)
-                TDP = CurrentProfile.TDP_value;
+            Profile CurrentProfile = MainWindow.profileManager.currentProfile;
+            if (CurrentProfile != null && CurrentProfile.TDP_override && CurrentProfile.TDP_value != null)
+                TDP = CurrentProfile.TDP_value[idx];
 
             if (processor.GetType() == typeof(AMDProcessor))
                 if (UserRequestedPowerMode == PowerMode.BetterBattery)
-                    TDP = (int)Math.Truncate(UserRequestedTDP * 0.9);
+                    TDP = (int)Math.Truncate(UserRequestedTDP[idx] * 0.9);
 
-            switch (type)
-            {
-                default:
-                case "slow":
-                case "fast":
-                    break;
-                case "stapm":
-                    if (limit != TDP)
-                        RequestTDP(TDP, false);
-                    break;
-            }
+            if (limit != TDP)
+                RequestTDP(type, TDP, false);
 
-            LimitChanged?.Invoke(type, limit);
+            PowerLimitChanged?.Invoke(type, limit);
         }
         #endregion
 

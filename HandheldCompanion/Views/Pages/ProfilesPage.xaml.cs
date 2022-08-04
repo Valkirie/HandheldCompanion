@@ -20,7 +20,7 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class ProfilesPage : Page
     {
-        private Profile profileCurrent;
+        private Profile currentProfile;
 
         private Dictionary<GamepadButtonFlagsExt, CheckBox> activators = new();
 
@@ -285,7 +285,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void b_AdditionalSettings_Click(object sender, RoutedEventArgs e)
         {
-            if (profileCurrent == null)
+            if (currentProfile == null)
                 return;
 
             Page page;
@@ -294,10 +294,10 @@ namespace HandheldCompanion.Views.Pages
                 default:
                 case Input.JoystickCamera:
                 case Input.PlayerSpace:
-                    page = new ProfileSettingsMode0("ProfileSettingsMode0", profileCurrent);
+                    page = new ProfileSettingsMode0("ProfileSettingsMode0", currentProfile);
                     break;
                 case Input.JoystickSteering:
-                    page = new ProfileSettingsMode1("ProfileSettingsMode1", profileCurrent);
+                    page = new ProfileSettingsMode1("ProfileSettingsMode1", currentProfile);
                     break;
             }
             MainWindow.GetDefault().NavView_Navigate(page);
@@ -308,13 +308,13 @@ namespace HandheldCompanion.Views.Pages
             if (cB_Profiles.SelectedItem == null)
                 return;
 
-            profileCurrent = (Profile)cB_Profiles.SelectedItem;
+            currentProfile = (Profile)cB_Profiles.SelectedItem;
             DrawProfile();
         }
 
         private void DrawProfile()
         {
-            if (profileCurrent == null)
+            if (currentProfile == null)
                 return;
 
             Dispatcher.BeginInvoke(() =>
@@ -325,52 +325,58 @@ namespace HandheldCompanion.Views.Pages
                 UniversalSettings.IsEnabled = true;
 
                 // disable button if is default profile
-                b_DeleteProfile.IsEnabled = !profileCurrent.isDefault;
+                b_DeleteProfile.IsEnabled = !currentProfile.isDefault;
                 // prevent user from renaming default profile
-                tB_ProfileName.IsEnabled = !profileCurrent.isDefault;
+                tB_ProfileName.IsEnabled = !currentProfile.isDefault;
                 // prevent user from setting power settings on default profile
-                PowerSettings.IsEnabled = !profileCurrent.isDefault;
+                PowerSettings.IsEnabled = !currentProfile.isDefault;
                 // disable global settings on default profile
-                GlobalSettings.IsEnabled = !profileCurrent.isDefault;
+                GlobalSettings.IsEnabled = !currentProfile.isDefault;
 
                 // Profile info
-                tB_ProfileName.Text = profileCurrent.name;
-                tB_ProfilePath.Text = profileCurrent.fullpath;
-                Toggle_EnableProfile.IsOn = profileCurrent.isEnabled;
+                tB_ProfileName.Text = currentProfile.name;
+                tB_ProfilePath.Text = currentProfile.fullpath;
+                Toggle_EnableProfile.IsOn = currentProfile.isEnabled;
 
                 // Global settings
-                cB_Whitelist.IsChecked = profileCurrent.whitelisted;
-                cB_Wrapper.IsChecked = profileCurrent.use_wrapper;
+                cB_Whitelist.IsChecked = currentProfile.whitelisted;
+                cB_Wrapper.IsChecked = currentProfile.use_wrapper;
 
                 // Motion control settings
-                tb_ProfileGyroValue.Value = profileCurrent.gyrometer;
-                tb_ProfileAcceleroValue.Value = profileCurrent.accelerometer;
+                tb_ProfileGyroValue.Value = currentProfile.gyrometer;
+                tb_ProfileAcceleroValue.Value = currentProfile.accelerometer;
 
-                cB_GyroSteering.SelectedIndex = profileCurrent.steering;
-                cB_InvertHorizontal.IsChecked = profileCurrent.inverthorizontal;
-                cB_InvertVertical.IsChecked = profileCurrent.invertvertical;
+                cB_GyroSteering.SelectedIndex = currentProfile.steering;
+                cB_InvertHorizontal.IsChecked = currentProfile.inverthorizontal;
+                cB_InvertVertical.IsChecked = currentProfile.invertvertical;
 
                 // Power settings
-                TDPToggle.IsOn = profileCurrent.TDP_override;
+                TDPToggle.IsOn = currentProfile.TDP_override;
 
-                double TDP = profileCurrent.TDP_value != 0 ? profileCurrent.TDP_value : MainWindow.handheldDevice.DefaultTDP;
-                TDPSlider.Value = TDP;
+                // Sustained TDP settings (slow, stapm, long)
+                double[] TDP = currentProfile.TDP_value != null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
+                TDPSustainedSlider.Value = TDP[0];
+                TDPBoostSlider.Value = TDP[1];
+
+                // define slider(s) min and max values based on device specifications
+                TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
+                TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
 
                 // UMC settings
-                Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
-                cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
-                cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
-                tb_ProfileAntiDeadzone.Value = profileCurrent.antideadzone;
+                Toggle_UniversalMotion.IsOn = currentProfile.umc_enabled;
+                cB_Input.SelectedIndex = (int)currentProfile.umc_input;
+                cB_Output.SelectedIndex = (int)currentProfile.umc_output;
+                tb_ProfileAntiDeadzone.Value = currentProfile.antideadzone;
 
                 foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
-                    if (profileCurrent.umc_trigger.HasFlag(button))
+                    if (currentProfile.umc_trigger.HasFlag(button))
                         activators[button].IsChecked = true;
                     else
                         activators[button].IsChecked = false;
 
                 // display warnings
-                ProfileErrorCode currentError = profileCurrent.error;
-                if (profileCurrent.isRunning)
+                ProfileErrorCode currentError = currentProfile.error;
+                if (currentProfile.isRunning)
                     currentError = ProfileErrorCode.IsRunning;
 
                 switch (currentError)
@@ -404,10 +410,10 @@ namespace HandheldCompanion.Views.Pages
 
         private async void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
         {
-            if (profileCurrent == null)
+            if (currentProfile == null)
                 return;
 
-            Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{profileCurrent.name}\"?",
+            Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{currentProfile.name}\"?",
                                                                 $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
                                                                 ContentDialogButton.Primary,
                                                                 $"{Properties.Resources.ProfilesPage_Cancel}",
@@ -417,7 +423,7 @@ namespace HandheldCompanion.Views.Pages
             switch (result.Result)
             {
                 case ContentDialogResult.Primary:
-                    MainWindow.profileManager.DeleteProfile(profileCurrent);
+                    MainWindow.profileManager.DeleteProfile(currentProfile);
                     cB_Profiles.SelectedIndex = 0;
                     break;
                 default:
@@ -427,48 +433,48 @@ namespace HandheldCompanion.Views.Pages
 
         private void b_ApplyProfile_Click(object sender, RoutedEventArgs e)
         {
-            if (profileCurrent == null)
+            if (currentProfile == null)
                 return;
 
             Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
-                             $"{profileCurrent.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
+                             $"{currentProfile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
                              ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
 
             // Profile
-            profileCurrent.name = tB_ProfileName.Text;
-            profileCurrent.fullpath = tB_ProfilePath.Text;
-            profileCurrent.isEnabled = (bool)Toggle_EnableProfile.IsOn;
+            currentProfile.name = tB_ProfileName.Text;
+            currentProfile.fullpath = tB_ProfilePath.Text;
+            currentProfile.isEnabled = (bool)Toggle_EnableProfile.IsOn;
 
             // Global settings
-            profileCurrent.whitelisted = (bool)cB_Whitelist.IsChecked;
-            profileCurrent.use_wrapper = (bool)cB_Wrapper.IsChecked;
+            currentProfile.whitelisted = (bool)cB_Whitelist.IsChecked;
+            currentProfile.use_wrapper = (bool)cB_Wrapper.IsChecked;
 
             // Motion control settings
-            profileCurrent.gyrometer = (float)tb_ProfileGyroValue.Value;
-            profileCurrent.accelerometer = (float)tb_ProfileAcceleroValue.Value;
+            currentProfile.gyrometer = (float)tb_ProfileGyroValue.Value;
+            currentProfile.accelerometer = (float)tb_ProfileAcceleroValue.Value;
 
-            profileCurrent.steering = cB_GyroSteering.SelectedIndex;
-            profileCurrent.invertvertical = (bool)cB_InvertVertical.IsChecked;
-            profileCurrent.inverthorizontal = (bool)cB_InvertHorizontal.IsChecked;
+            currentProfile.steering = cB_GyroSteering.SelectedIndex;
+            currentProfile.invertvertical = (bool)cB_InvertVertical.IsChecked;
+            currentProfile.inverthorizontal = (bool)cB_InvertHorizontal.IsChecked;
 
             // UMC settings
-            profileCurrent.umc_enabled = (bool)Toggle_UniversalMotion.IsOn;
-            profileCurrent.umc_input = (Input)cB_Input.SelectedIndex;
-            profileCurrent.umc_output = (Output)cB_Output.SelectedIndex;
-            profileCurrent.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
+            currentProfile.umc_enabled = (bool)Toggle_UniversalMotion.IsOn;
+            currentProfile.umc_input = (Input)cB_Input.SelectedIndex;
+            currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
+            currentProfile.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
 
             // Power settings
-            profileCurrent.TDP_override = (bool)TDPToggle.IsOn;
-            profileCurrent.TDP_value = (int)TDPSlider.Value;
+            currentProfile.TDP_override = (bool)TDPToggle.IsOn;
+            currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
 
-            profileCurrent.umc_trigger = 0;
+            currentProfile.umc_trigger = 0;
 
             foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
                 if ((bool)activators[button].IsChecked)
-                    profileCurrent.umc_trigger |= button;
+                    currentProfile.umc_trigger |= button;
 
-            MainWindow.profileManager.UpdateOrCreateProfile(profileCurrent, false);
-            MainWindow.profileManager.SerializeProfile(profileCurrent);
+            MainWindow.profileManager.UpdateOrCreateProfile(currentProfile, false);
+            MainWindow.profileManager.SerializeProfile(currentProfile);
         }
 
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)
@@ -499,10 +505,10 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_UniversalMotion_Toggled(object sender, RoutedEventArgs e)
         {
-            if (profileCurrent == null)
+            if (currentProfile == null)
                 return;
 
-            cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !profileCurrent.isDefault;
+            cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !currentProfile.isDefault;
         }
 
         private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -549,7 +555,12 @@ namespace HandheldCompanion.Views.Pages
             Text_InputHint.Text = Profile.InputDescription[input];
         }
 
-        private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            // do something
+        }
+
+        private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // do something
         }

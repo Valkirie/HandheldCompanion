@@ -4,13 +4,14 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HandheldCompanion.Views"
+      xmlns:ext="clr-namespace:HandheldCompanion.Extensions"
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       KeepAlive="True"
       mc:Ignorable="d" 
       d:DesignHeight="720" d:DesignWidth="500"
       Margin="0,0,0,12"
-      Title="Quick Settings">
+      Title="Settings">
 
     <ui:SimpleStackPanel Spacing="6">
         
@@ -29,8 +30,10 @@
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
                             <Slider Name="SliderBrightness" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="0" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                                     ValueChanged="SliderBrightness_ValueChanged"
+                                    IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
                                     MouseEnter="Scrolllock_MouseEnter"
-                                    MouseLeave="Scrolllock_MouseLeave" LargeChange="10" SmallChange="1"/>
+                                    MouseLeave="Scrolllock_MouseLeave"
+                                    SmallChange="1" LargeChange="10"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
@@ -52,6 +55,7 @@
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
                             <Slider Name="SliderVolume" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="0" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                                     ValueChanged="SliderVolume_ValueChanged"
+                                    IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
                                     MouseEnter="Scrolllock_MouseEnter"
                                     MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="10"/>
                         </ui:SimpleStackPanel>

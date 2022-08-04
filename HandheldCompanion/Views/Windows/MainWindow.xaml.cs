@@ -54,7 +54,6 @@ namespace HandheldCompanion.Views
         // overlay(s) vars
         public static InputsManager inputsManager;
         public static Overlay overlay;
-        public static Suspender suspender;
         public static QuickTools quickTools;
 
         // touchscroll vars
@@ -234,7 +233,6 @@ namespace HandheldCompanion.Views
 
             // initialize windows
             overlay = new Overlay(pipeClient, inputsManager);
-            suspender = new Suspender(processManager);
             quickTools = new QuickTools();
 
             // initialize pages
@@ -250,17 +248,20 @@ namespace HandheldCompanion.Views
             cmdParser.ParseArgs(arguments.Args, true);
 
             // handle settingsPage events
-            settingsPage.ToastChanged += (value) =>
+            settingsPage.SettingValueChanged += (name, value) =>
             {
-                toastManager.Enabled = value;
-            };
-            settingsPage.AutoStartChanged += (value) =>
-            {
-                taskManager.UpdateTask(value);
-            };
-            settingsPage.ServiceChanged += (value) =>
-            {
-                serviceManager.SetStartType(value);
+                switch(name)
+                {
+                    case "toast_notification":
+                        toastManager.Enabled = (bool)value;
+                        break;
+                    case "autostart":
+                        taskManager.UpdateTask((bool)value);
+                        break;
+                    case "service_startup_type":
+                        serviceManager.SetStartType((ServiceStartMode)value);
+                        break;
+                }
             };
 
             // handle controllerPage events
@@ -305,9 +306,6 @@ namespace HandheldCompanion.Views
             {
                 switch (listener)
                 {
-                    case "suspender":
-                        suspender.UpdateVisibility();
-                        break;
                     case "quickTools":
                         quickTools.UpdateVisibility();
                         break;
@@ -642,7 +640,6 @@ namespace HandheldCompanion.Views
             notifyIcon.Dispose();
 
             overlay.Close();
-            suspender.Close(true);
             quickTools.Close(true);
 
             if (pipeClient.connected)
@@ -817,11 +814,20 @@ namespace HandheldCompanion.Views
                 default:
                 case PowerModes.StatusChange:
                     break;
+                case PowerModes.Suspend:
+                    {
+                        //pause inputs manager
+                        inputsManager.Stop();
+                    }
+                    break;
                 case PowerModes.Resume:
                     {
                         // restore power manager values
                         powerManager.RestoreTDP();
                         powerManager.RestoreGPUClock();
+
+                        // restore inputs manager
+                        inputsManager.Start();
                     }
                     break;
             }

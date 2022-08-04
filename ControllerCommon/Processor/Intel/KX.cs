@@ -142,12 +142,6 @@ namespace ControllerCommon.Processor.Intel
             }
         }
 
-        internal void set_all_limit(int limit)
-        {
-            set_short_limit(limit);
-            set_long_limit(limit);
-        }
-
         private string TDPToHex(int decValue)
         {
             decValue *= 8;
