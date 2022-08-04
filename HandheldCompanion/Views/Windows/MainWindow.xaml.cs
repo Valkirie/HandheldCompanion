@@ -248,17 +248,20 @@ namespace HandheldCompanion.Views
             cmdParser.ParseArgs(arguments.Args, true);
 
             // handle settingsPage events
-            settingsPage.ToastChanged += (value) =>
+            settingsPage.SettingValueChanged += (name, value) =>
             {
-                toastManager.Enabled = value;
-            };
-            settingsPage.AutoStartChanged += (value) =>
-            {
-                taskManager.UpdateTask(value);
-            };
-            settingsPage.ServiceChanged += (value) =>
-            {
-                serviceManager.SetStartType(value);
+                switch(name)
+                {
+                    case "toast_notification":
+                        toastManager.Enabled = (bool)value;
+                        break;
+                    case "autostart":
+                        taskManager.UpdateTask((bool)value);
+                        break;
+                    case "service_startup_type":
+                        serviceManager.SetStartType((ServiceStartMode)value);
+                        break;
+                }
             };
 
             // handle controllerPage events

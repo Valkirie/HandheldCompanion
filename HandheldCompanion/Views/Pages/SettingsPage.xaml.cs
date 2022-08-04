@@ -31,14 +31,8 @@ namespace HandheldCompanion.Views.Pages
 
         private UpdateManager updateManager;
 
-        public event ToastChangedEventHandler ToastChanged;
-        public delegate void ToastChangedEventHandler(bool value);
-
-        public event AutoStartChangedEventHandler AutoStartChanged;
-        public delegate void AutoStartChangedEventHandler(bool value);
-
-        public event ServiceChangedEventHandler ServiceChanged;
-        public delegate void ServiceChangedEventHandler(ServiceStartMode value);
+        public event SettingValueChangedEventHandler SettingValueChanged;
+        public delegate void SettingValueChangedEventHandler(string name, object value);
 
         public SettingsPage()
         {
@@ -134,7 +128,9 @@ namespace HandheldCompanion.Views.Pages
             Properties.Settings.Default.Save();
 
             RunAtStartup = Toggle_AutoStart.IsOn;
-            AutoStartChanged?.Invoke(RunAtStartup);
+
+            // warn setting has changed
+            SettingValueChanged?.Invoke("autostart", Properties.Settings.Default.RunAtStartup);
         }
 
         private void Toggle_Background_Toggled(object sender, System.Windows.RoutedEventArgs e)
@@ -146,6 +142,9 @@ namespace HandheldCompanion.Views.Pages
             Properties.Settings.Default.Save();
 
             StartMinimized = Toggle_Background.IsOn;
+
+            // warn setting has changed
+            SettingValueChanged?.Invoke("start_minimized", Properties.Settings.Default.StartMinimized);
         }
 
         private void cB_StartupType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -172,7 +171,8 @@ namespace HandheldCompanion.Views.Pages
             Toggle_ServiceStartup.IsEnabled = (mode == ServiceStartMode.Manual);
             Toggle_ServiceShutdown.IsEnabled = (mode == ServiceStartMode.Manual);
 
-            ServiceChanged?.Invoke(mode);
+            // warn setting has changed
+            SettingValueChanged?.Invoke("service_startup_type", mode);
         }
 
         private void Toggle_CloseMinimizes_Toggled(object sender, System.Windows.RoutedEventArgs e)
@@ -184,6 +184,9 @@ namespace HandheldCompanion.Views.Pages
             Properties.Settings.Default.Save();
 
             CloseMinimises = Toggle_CloseMinimizes.IsOn;
+
+            // warn setting has changed
+            SettingValueChanged?.Invoke("close_minimizes", Properties.Settings.Default.CloseMinimises);
         }
 
         private void UpdateManager_Updated(UpdateStatus status, UpdateFile updateFile, object value)
@@ -298,6 +301,9 @@ namespace HandheldCompanion.Views.Pages
             Properties.Settings.Default.Save();
 
             HaltServiceWithCompanion = Toggle_ServiceShutdown.IsOn;
+
+            // warn setting has changed
+            SettingValueChanged?.Invoke("haltservice_onclose", Properties.Settings.Default.HaltServiceWithCompanion);
         }
 
         private void Toggle_ServiceStartup_Toggled(object sender, System.Windows.RoutedEventArgs e)
@@ -309,6 +315,9 @@ namespace HandheldCompanion.Views.Pages
             Properties.Settings.Default.Save();
 
             StartServiceWithCompanion = Toggle_ServiceStartup.IsOn;
+
+            // warn setting has changed
+            SettingValueChanged?.Invoke("startservice_onstart", Properties.Settings.Default.StartServiceWithCompanion);
         }
 
         private void cB_Language_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -330,6 +339,9 @@ namespace HandheldCompanion.Views.Pages
             Dialog.ShowAsync($"{Properties.Resources.SettingsPage_AppLanguageWarning}",
                 Properties.Resources.SettingsPage_AppLanguageWarningDesc,
                 ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+
+            // warn setting has changed
+            SettingValueChanged?.Invoke("language", Properties.Settings.Default.CurrentCulture);
         }
 
         private void Toggle_Notification_Toggled(object sender, System.Windows.RoutedEventArgs e)
@@ -341,7 +353,9 @@ namespace HandheldCompanion.Views.Pages
             Properties.Settings.Default.Save();
 
             ToastEnable = Toggle_Notification.IsOn;
-            ToastChanged?.Invoke(ToastEnable);
+
+            // warn setting has changed
+            SettingValueChanged?.Invoke("toast_notification", Properties.Settings.Default.ToastEnable);
         }
 
         private void cB_Theme_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -360,6 +374,9 @@ namespace HandheldCompanion.Views.Pages
             Properties.Settings.Default.Save();
 
             ApplyTheme((ApplicationTheme)cB_Theme.SelectedIndex);
+
+            // warn setting has changed
+            SettingValueChanged?.Invoke("theme", Properties.Settings.Default.MainWindowTheme);
         }
 
         public void ApplyTheme(ApplicationTheme Theme)
@@ -407,6 +424,9 @@ namespace HandheldCompanion.Views.Pages
                 Properties.Resources.SettingsPage_AppLanguageWarningDesc,
                 ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
 
+            // warn setting has changed
+            SettingValueChanged?.Invoke("sensor_selection", Properties.Settings.Default.SensorSelection);
+
         }
         private void SensorPlacement_Click(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -421,6 +441,9 @@ namespace HandheldCompanion.Views.Pages
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorPlacement", Tag);
             MainWindow.pipeClient?.SendMessage(settings);
+
+            // warn setting has changed
+            SettingValueChanged?.Invoke("sensor_placement", Properties.Settings.Default.SensorPlacement);
         }
 
         private void UpdateUI_SensorPlacement(int SensorPlacement)
@@ -448,6 +471,9 @@ namespace HandheldCompanion.Views.Pages
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorPlacementUpsideDown", SensorPlacementUpsideDown);
             MainWindow.pipeClient?.SendMessage(settings);
+
+            // warn setting has changed
+            SettingValueChanged?.Invoke("sensor_upsidedown", Properties.Settings.Default.SensorPlacementUpsideDown);
         }
 
         #region serviceManager
