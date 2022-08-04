@@ -476,7 +476,7 @@
                                     </StackPanel>
 
                                     <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                        <ui:RadioButtons Name="cB_UMC_MotionDefaultOffOn" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1">
+                                        <ui:RadioButtons Name="cB_UMC_MotionDefaultOffOn" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1"  SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
                                             <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                                 <Label Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}"></Label>
                                             </ui:SimpleStackPanel>
