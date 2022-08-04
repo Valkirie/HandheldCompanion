@@ -87,7 +87,7 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(FN);
             model3DGroup.Children.Add(Turbo);
             model3DGroup.Children.Add(Home);
-            model3DGroup.Children.Add(Machenike); 
+            model3DGroup.Children.Add(Machenike);
             model3DGroup.Children.Add(JoystickBaseRingLeft);
             model3DGroup.Children.Add(JoystickBaseRingRight);
             model3DGroup.Children.Add(LED1);

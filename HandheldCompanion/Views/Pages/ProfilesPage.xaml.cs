@@ -472,7 +472,7 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.TDP_value[1] = (int)TDPBoostSlider.Value;
 
             currentProfile.umc_trigger = 0;
-            
+
             foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
                 if ((bool)activators[button].IsChecked)
                     currentProfile.umc_trigger |= button;
@@ -558,13 +558,13 @@ namespace HandheldCompanion.Views.Pages
 
             Text_InputHint.Text = Profile.InputDescription[input];
         }
-        
+
         private void cB_UMC_MotionDefaultOffOn_SelectionChanged(object sender, RoutedEventArgs e)
         {
             if (cB_Input.SelectedIndex == -1)
                 return;
         }
-        
+
         private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // do something

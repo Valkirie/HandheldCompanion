@@ -220,7 +220,7 @@ namespace ControllerCommon.Managers
                 try
                 {
                     controller.Refresh();
-                    switch(controller.Status)
+                    switch (controller.Status)
                     {
                         case System.ServiceProcess.ServiceControllerStatus.Running:
                         case System.ServiceProcess.ServiceControllerStatus.StartPending:

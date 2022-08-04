@@ -250,7 +250,7 @@ namespace HandheldCompanion.Views
             // handle settingsPage events
             settingsPage.SettingValueChanged += (name, value) =>
             {
-                switch(name)
+                switch (name)
                 {
                     case "toast_notification":
                         toastManager.Enabled = (bool)value;

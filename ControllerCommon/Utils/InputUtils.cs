@@ -20,7 +20,7 @@ namespace ControllerCommon.Utils
         AutoRollYawSwap = 2,
         JoystickSteering = 3,
     }
-    
+
     public enum UMC_Motion_Default
     {
         Off = 0,
