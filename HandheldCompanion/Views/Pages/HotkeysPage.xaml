@@ -81,41 +81,6 @@
                 </Border>
             </ui:SimpleStackPanel>
 
-            <!-- Suspender -->
-            <ui:SimpleStackPanel Spacing="6">
-                <Label Content="Suspender hotkeys" FontWeight="SemiBold"></Label>
-
-                <!-- Main trigger -->
-                <Border                      
-                            Padding="15,12,12,12"
-                            CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE9F5;" Height="40" HorizontalAlignment="Center"/>
-
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.HotkeysPage_Suspender}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.HotkeysPage_SuspenderDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <Button Name="SuspenderTriggerButton" Grid.Column="1" Width="200" HorizontalAlignment="Right" VerticalAlignment="Center" Click="SuspenderTriggerButton_Click">
-                            <ui:SimpleStackPanel Name="SuspenderTriggerStack" Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
-                                <ui:FontIcon Name="SuspenderTriggerIcon"/>
-                                <TextBlock Name="SuspenderTriggerText"/>
-                            </ui:SimpleStackPanel>
-                        </Button>
-                    </Grid>
-                </Border>
-            </ui:SimpleStackPanel>
-
             <!-- QuickTools -->
             <ui:SimpleStackPanel Spacing="6">
                 <Label Content="Quicktools hotkeys" FontWeight="SemiBold"></Label>

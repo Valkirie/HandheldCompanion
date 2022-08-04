@@ -54,7 +54,6 @@ namespace HandheldCompanion.Views
         // overlay(s) vars
         public static InputsManager inputsManager;
         public static Overlay overlay;
-        public static Suspender suspender;
         public static QuickTools quickTools;
 
         // touchscroll vars
@@ -234,7 +233,6 @@ namespace HandheldCompanion.Views
 
             // initialize windows
             overlay = new Overlay(pipeClient, inputsManager);
-            suspender = new Suspender(processManager);
             quickTools = new QuickTools();
 
             // initialize pages
@@ -305,9 +303,6 @@ namespace HandheldCompanion.Views
             {
                 switch (listener)
                 {
-                    case "suspender":
-                        suspender.UpdateVisibility();
-                        break;
                     case "quickTools":
                         quickTools.UpdateVisibility();
                         break;
@@ -642,7 +637,6 @@ namespace HandheldCompanion.Views
             notifyIcon.Dispose();
 
             overlay.Close();
-            suspender.Close(true);
             quickTools.Close(true);
 
             if (pipeClient.connected)

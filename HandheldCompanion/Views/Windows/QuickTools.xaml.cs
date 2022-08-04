@@ -53,6 +53,7 @@ namespace HandheldCompanion.Views.Windows
         public QuickPerformancePage performancePage;
         public QuickSettingsPage settingsPage;
         public QuickProfilesPage profilesPage;
+        public QuickSuspenderPage suspenderPage;
 
         // touchscroll vars
         Point scrollPoint = new Point();
@@ -73,10 +74,12 @@ namespace HandheldCompanion.Views.Windows
             performancePage = new QuickPerformancePage();
             settingsPage = new QuickSettingsPage();
             profilesPage = new QuickProfilesPage();
+            suspenderPage = new QuickSuspenderPage();
 
             _pages.Add("QuickPerformancePage", performancePage);
             _pages.Add("QuickSettingsPage", settingsPage);
             _pages.Add("QuickProfilesPage", profilesPage);
+            _pages.Add("QuickSuspenderPage", suspenderPage);
 
             this.SourceInitialized += QuickTools_SourceInitialized;
         }

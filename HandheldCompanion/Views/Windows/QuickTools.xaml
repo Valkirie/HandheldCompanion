@@ -9,9 +9,9 @@
         mc:Ignorable="d"
         Height="720"
         MinHeight="500"
-        Width="500"
-        MinWidth="500"
-        MaxWidth="500"
+        Width="540"
+        MinWidth="540"
+        MaxWidth="540"
         Closing="Window_Closing"
         Loaded="Window_Loaded"
         ui:WindowHelper.UseModernWindowStyle="True" 
@@ -43,6 +43,12 @@
             <ui:NavigationViewItem Name="navProfilesPage" Tag="QuickProfilesPage" Content="Profile">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE748;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Name="navSuspenderPage" Tag="QuickSuspenderPage" Content="Suspender">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7C4;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>

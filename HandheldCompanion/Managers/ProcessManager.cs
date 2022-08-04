@@ -82,10 +82,6 @@ namespace HandheldCompanion.Managers
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
-                    // check if process was drawn already
-                    if (processBorder != null)
-                        return;
-
                     if (MainWindowHandle != IntPtr.Zero)
                     {
                         processBorder.Visibility = Visibility.Visible;
@@ -137,6 +133,9 @@ namespace HandheldCompanion.Managers
 
         public void Draw()
         {
+            if (processBorder != null)
+                return;
+
             processBorder = new Border()
             {
                 Padding = new Thickness(20, 12, 12, 12),

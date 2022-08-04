@@ -409,18 +409,6 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("40")]
-        public string SuspenderTriggerValue {
-            get {
-                return ((string)(this["SuspenderTriggerValue"]));
-            }
-            set {
-                this["SuspenderTriggerValue"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int OverlayControllerTriggerType {
             get {
@@ -440,18 +428,6 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["OverlayTrackpadsTriggerType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int SuspenderTriggerType {
-            get {
-                return ((int)(this["SuspenderTriggerType"]));
-            }
-            set {
-                this["SuspenderTriggerType"] = value;
             }
         }
         

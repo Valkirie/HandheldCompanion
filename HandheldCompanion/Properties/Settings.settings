@@ -98,16 +98,10 @@
     <Setting Name="HIDmode" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="SuspenderTriggerValue" Type="System.String" Scope="User">
-      <Value Profile="(Default)">40</Value>
-    </Setting>
     <Setting Name="OverlayControllerTriggerType" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="OverlayTrackpadsTriggerType" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="SuspenderTriggerType" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="OverlayFaceCamera" Type="System.Boolean" Scope="User">
