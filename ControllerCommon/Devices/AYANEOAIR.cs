@@ -13,7 +13,9 @@ namespace ControllerCommon.Devices
             this.WidthHeightRatio = 2.4f;
             this.ProductIllustration = "device_aya_air";
 
-            this.DefaultTDP = 8;
+            // https://www.amd.com/fr/products/apu/amd-ryzen-5-5560u
+            this.nTDP = new double[] { 8, 15 };
+            this.cTDP = new double[] { 10, 25 };
 
             this.AngularVelocityAxisSwap = new()
             {
