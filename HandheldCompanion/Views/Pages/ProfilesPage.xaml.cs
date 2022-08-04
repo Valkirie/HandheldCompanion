@@ -466,16 +466,14 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.umc_motion_defaultoffon = (UMC_Motion_Default)cB_UMC_MotionDefaultOffOn.SelectedIndex;
             currentProfile.umc_trigger = 0;
 
+            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+                if ((bool)activators[button].IsChecked)
+                    currentProfile.umc_trigger |= button;
+
             // Power settings
             currentProfile.TDP_override = (bool)TDPToggle.IsOn;
             currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
             currentProfile.TDP_value[1] = (int)TDPBoostSlider.Value;
-
-            currentProfile.umc_trigger = 0;
-
-            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
-                if ((bool)activators[button].IsChecked)
-                    currentProfile.umc_trigger |= button;
 
             MainWindow.profileManager.UpdateOrCreateProfile(currentProfile, false);
             MainWindow.profileManager.SerializeProfile(currentProfile);
@@ -561,7 +559,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_UMC_MotionDefaultOffOn_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            if (cB_Input.SelectedIndex == -1)
+            if (cB_UMC_MotionDefaultOffOn.SelectedIndex == -1)
                 return;
         }
 
