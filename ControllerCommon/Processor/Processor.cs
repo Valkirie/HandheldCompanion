@@ -1,10 +1,25 @@
-﻿using System;
+﻿using ControllerCommon.Managers;
+using ControllerCommon.Processor.AMD;
+using ControllerCommon.Processor.Intel;
+using System;
 using System.Collections.Generic;
 using System.Management;
 using System.Timers;
 
 namespace ControllerCommon.Processor
 {
+    public enum PowerType
+    {
+        // long
+        Slow = 0,
+        Long = 0,
+        Stapm = 0,
+
+        // short
+        Fast = 1,
+        Short = 1
+    }
+
     public class Processor
     {
         private static ManagementClass managClass = new ManagementClass("win32_processor");
@@ -16,20 +31,20 @@ namespace ControllerCommon.Processor
 
         protected bool CanChangeTDP, CanChangeGPU;
 
-        protected Timer updateTimer = new Timer() { Interval = 4000, AutoReset = true };
+        protected Timer updateTimer = new Timer() { Interval = 2000, AutoReset = true };
 
-        protected Dictionary<string, int> m_Limits = new();
-        protected Dictionary<string, int> m_PrevLimits = new();
+        protected Dictionary<PowerType, int> m_Limits = new();
+        protected Dictionary<PowerType, int> m_PrevLimits = new();
 
-        protected Dictionary<string, float> m_Values = new();
-        protected Dictionary<string, float> m_PrevValues = new();
+        protected Dictionary<PowerType, float> m_Values = new();
+        protected Dictionary<PowerType, float> m_PrevValues = new();
 
         #region events
         public event LimitChangedHandler LimitChanged;
-        public delegate void LimitChangedHandler(string type, int limit);
+        public delegate void LimitChangedHandler(PowerType type, int limit);
 
         public event ValueChangedHandler ValueChanged;
-        public delegate void ValueChangedHandler(string type, float value);
+        public delegate void ValueChangedHandler(PowerType type, float value);
 
         public event StatusChangedHandler StatusChanged;
         public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
@@ -86,16 +101,18 @@ namespace ControllerCommon.Processor
 
         public virtual void SetTDPLimit(string type, double limit)
         {
+            LogManager.LogInformation("User requested {0} TDP limit: {1}", type, limit);
         }
 
         public virtual void SetGPUClock(double clock)
         {
+            LogManager.LogInformation("User requested GPU clock: {0}", clock);
         }
 
         protected virtual void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // search for limit changes
-            foreach (KeyValuePair<string, int> pair in m_Limits)
+            foreach (KeyValuePair<PowerType, int> pair in m_Limits)
             {
                 if (m_PrevLimits[pair.Key] == pair.Value)
                     continue;
@@ -106,7 +123,7 @@ namespace ControllerCommon.Processor
             }
 
             // search for value changes
-            foreach (KeyValuePair<string, float> pair in m_Values)
+            foreach (KeyValuePair<PowerType, float> pair in m_Values)
             {
                 if (m_PrevValues[pair.Key] == pair.Value)
                     continue;
@@ -120,13 +137,13 @@ namespace ControllerCommon.Processor
 
     public class IntelProcessor : Processor
     {
-        public Rw rw = new Rw();
+        public KX platform = new KX();
 
         public string family;
 
         public IntelProcessor() : base()
         {
-            if (rw.init_rw())
+            if (platform.init())
             {
                 family = ProcessorID.Substring(ProcessorID.Length - 5);
 
@@ -155,12 +172,12 @@ namespace ControllerCommon.Processor
                 }
 
                 // write default limit(s)
-                m_Limits["short"] = m_Limits["long"] = m_Limits["stapm"] = 0;
-                m_PrevLimits["short"] = m_PrevLimits["long"] = m_PrevLimits["stapm"] = 0;
+                m_Limits[PowerType.Short] = m_Limits[PowerType.Long] = m_Limits[PowerType.Stapm] = 0;
+                m_PrevLimits[PowerType.Short] = m_PrevLimits[PowerType.Long] = m_PrevLimits[PowerType.Stapm] = 0;
 
                 // write default value(s)
-                m_Values["short"] = m_Values["long"] = m_Values["stapm"] = 0;
-                m_PrevValues["short"] = m_PrevValues["long"] = m_PrevValues["stapm"] = 0;
+                m_Values[PowerType.Short] = m_Values[PowerType.Long] = m_Values[PowerType.Stapm] = 0;
+                m_PrevValues[PowerType.Short] = m_PrevValues[PowerType.Long] = m_PrevValues[PowerType.Stapm] = 0;
             }
         }
 
@@ -179,14 +196,14 @@ namespace ControllerCommon.Processor
         protected override void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // read limit(s)
-            base.m_Limits["short"] = (int)rw.get_short_limit();
-            base.m_Limits["long"] = (int)rw.get_long_limit();
-            base.m_Limits["stapm"] = base.m_Limits["long"];
+            base.m_Limits[PowerType.Short] = (int)platform.get_short_limit();
+            base.m_Limits[PowerType.Long] = (int)platform.get_long_limit();
+            base.m_Limits[PowerType.Stapm] = base.m_Limits[PowerType.Long];
 
             // read value(s)
-            base.m_Values["short"] = (int)rw.get_short_value();
-            base.m_Values["long"] = (int)rw.get_long_value();
-            base.m_Values["stapm"] = base.m_Values["long"];
+            base.m_Values[PowerType.Short] = (int)platform.get_short_value();
+            base.m_Values[PowerType.Long] = (int)platform.get_long_value();
+            base.m_Values[PowerType.Stapm] = base.m_Values[PowerType.Long];
 
             base.UpdateTimer_Elapsed(sender, e);
         }
@@ -196,23 +213,26 @@ namespace ControllerCommon.Processor
             switch (type)
             {
                 case "fast":
-                    rw.set_short_limit((int)limit);
+                    platform.set_short_limit((int)limit);
                     break;
                 case "slow":
-                    rw.set_long_limit((int)limit);
+                    platform.set_long_limit((int)limit);
                     break;
                 case "stapm":
-                    rw.set_long_limit((int)limit);
+                    platform.set_long_limit((int)limit);
                     break;
                 case "all":
-                    rw.set_all_limit((int)limit);
+                    platform.set_long_limit((int)limit);
+                    platform.set_short_limit((int)limit);
                     break;
             }
+            base.SetTDPLimit(type, limit);
         }
 
         public override void SetGPUClock(double clock)
         {
-            rw.set_gfx_clk((int)clock);
+            platform.set_gfx_clk((int)clock);
+            base.SetGPUClock(clock);
         }
     }
 
@@ -234,22 +254,42 @@ namespace ControllerCommon.Processor
                     default:
                         CanChangeGPU = false;
                         break;
+
                     case RyzenFamily.FAM_RENOIR:
                     case RyzenFamily.FAM_LUCIENNE:
+                    case RyzenFamily.FAM_CEZANNE:
+                    case RyzenFamily.FAM_VANGOGH:
+                    case RyzenFamily.FAM_REMBRANDT:
                         CanChangeGPU = true;
                         break;
                 }
 
-                CanChangeTDP = true;
+                switch (family)
+                {
+                    default:
+                        CanChangeTDP = false;
+                        break;
+
+                    case RyzenFamily.FAM_RAVEN:
+                    case RyzenFamily.FAM_PICASSO:
+                    case RyzenFamily.FAM_DALI:
+                    case RyzenFamily.FAM_RENOIR:
+                    case RyzenFamily.FAM_LUCIENNE:
+                    case RyzenFamily.FAM_CEZANNE:
+                    case RyzenFamily.FAM_VANGOGH:
+                    case RyzenFamily.FAM_REMBRANDT:
+                        CanChangeTDP = true;
+                        break;
+                }
             }
 
             // write default limit(s)
-            m_Limits["fast"] = m_Limits["slow"] = m_Limits["stapm"] = 0;
-            m_PrevLimits["fast"] = m_PrevLimits["slow"] = m_PrevLimits["stapm"] = 0;
+            m_Limits[PowerType.Fast] = m_Limits[PowerType.Slow] = m_Limits[PowerType.Stapm] = 0;
+            m_PrevLimits[PowerType.Fast] = m_PrevLimits[PowerType.Slow] = m_PrevLimits[PowerType.Stapm] = 0;
 
             // write default value(s)
-            m_Values["fast"] = m_Values["slow"] = m_Values["stapm"] = 0;
-            m_PrevValues["fast"] = m_PrevValues["slow"] = m_PrevValues["stapm"] = 0;
+            m_Values[PowerType.Fast] = m_Values[PowerType.Slow] = m_Values[PowerType.Stapm] = 0;
+            m_PrevValues[PowerType.Fast] = m_PrevValues[PowerType.Slow] = m_PrevValues[PowerType.Stapm] = 0;
         }
 
         public override void Initialize()
@@ -270,14 +310,14 @@ namespace ControllerCommon.Processor
             RyzenAdj.refresh_table(ry);
 
             // read limit(s)
-            m_Limits["fast"] = (int)RyzenAdj.get_fast_limit(ry);
-            m_Limits["slow"] = (int)RyzenAdj.get_slow_limit(ry);
-            m_Limits["stapm"] = (int)RyzenAdj.get_stapm_limit(ry);
+            m_Limits[PowerType.Fast] = (int)RyzenAdj.get_fast_limit(ry);
+            m_Limits[PowerType.Slow] = (int)RyzenAdj.get_slow_limit(ry);
+            m_Limits[PowerType.Stapm] = (int)RyzenAdj.get_stapm_limit(ry);
 
             // read value(s)
-            m_Values["fast"] = RyzenAdj.get_fast_value(ry);
-            m_Values["slow"] = RyzenAdj.get_slow_value(ry);
-            m_Values["stapm"] = RyzenAdj.get_stapm_value(ry);
+            m_Values[PowerType.Fast] = RyzenAdj.get_fast_value(ry);
+            m_Values[PowerType.Slow] = RyzenAdj.get_slow_value(ry);
+            m_Values[PowerType.Stapm] = RyzenAdj.get_stapm_value(ry);
 
             base.UpdateTimer_Elapsed(sender, e);
         }
@@ -307,6 +347,7 @@ namespace ControllerCommon.Processor
                     RyzenAdj.set_fast_limit(ry, (uint)limit);
                     break;
             }
+            base.SetTDPLimit(type, limit);
         }
 
         public override void SetGPUClock(double clock)
@@ -316,6 +357,7 @@ namespace ControllerCommon.Processor
                 return;
 
             RyzenAdj.set_gfx_clk(ry, (uint)clock);
+            base.SetGPUClock(clock);
         }
     }
 }

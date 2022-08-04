@@ -77,6 +77,9 @@ namespace ControllerCommon.Utils
 
                     Process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPIFunctions.GetWindowProcessId(foregroundProcessID));
 
+                    if (Process == null)
+                        return;
+
                     // Get real process
                     while (Process.ExecutableFileName == "ApplicationFrameHost.exe" && attempt < 10)
                     {

@@ -35,6 +35,15 @@ namespace HandheldCompanion.Views.Windows
 
         [DllImport("user32.dll", SetLastError = false)]
         static extern IntPtr GetDesktopWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        // Pinvoke declaration for ShowWindow
+        private const int SW_SHOWMAXIMIZED = 3;
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
         #endregion
 
         // page vars
@@ -44,6 +53,7 @@ namespace HandheldCompanion.Views.Windows
         public QuickPerformancePage performancePage;
         public QuickSettingsPage settingsPage;
         public QuickProfilesPage profilesPage;
+        public QuickSuspenderPage suspenderPage;
 
         // touchscroll vars
         Point scrollPoint = new Point();
@@ -64,10 +74,12 @@ namespace HandheldCompanion.Views.Windows
             performancePage = new QuickPerformancePage();
             settingsPage = new QuickSettingsPage();
             profilesPage = new QuickProfilesPage();
+            suspenderPage = new QuickSuspenderPage();
 
             _pages.Add("QuickPerformancePage", performancePage);
             _pages.Add("QuickSettingsPage", settingsPage);
             _pages.Add("QuickProfilesPage", profilesPage);
+            _pages.Add("QuickSuspenderPage", suspenderPage);
 
             this.SourceInitialized += QuickTools_SourceInitialized;
         }
@@ -118,6 +130,24 @@ namespace HandheldCompanion.Views.Windows
                 {
                     default:
                         preNavItemTag = navItemTag;
+                        break;
+                    case "shortcutKeyboard":
+                        StartTabTip();
+                        break;
+                    case "shortcutDesktop":
+                        MainWindow.inputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
+                        break;
+                    case "shortcutESC":
+                        MainWindow.inputsManager.KeyPress(VirtualKeyCode.ESCAPE);
+                        break;
+                    case "shortcutExpand":
+                        var foregroundProcess = MainWindow.processManager.GetForegroundProcess();
+                        if (foregroundProcess != null)
+                        {
+                            SetForegroundWindow(foregroundProcess.MainWindowHandle);
+                            ShowWindow(foregroundProcess.MainWindowHandle, SW_SHOWMAXIMIZED);
+                            MainWindow.inputsManager.KeyStroke(VirtualKeyCode.LMENU, VirtualKeyCode.RETURN);
+                        }
                         break;
                 }
 
@@ -295,23 +325,6 @@ namespace HandheldCompanion.Views.Windows
         {
             isClosing = v;
             this.Close();
-        }
-
-        private void navView_ShortcutInvoked(object sender, RoutedEventArgs e)
-        {
-            TitleBarButton button = (TitleBarButton)sender;
-            switch (button.Tag)
-            {
-                case "shortcutKeyboard":
-                    StartTabTip();
-                    break;
-                case "shortcutDesktop":
-                    MainWindow.inputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
-                    break;
-                case "shortcutESC":
-                    MainWindow.inputsManager.KeyPress(VirtualKeyCode.ESCAPE);
-                    break;
-            }
         }
     }
 }

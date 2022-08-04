@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Processor;
 using HandheldCompanion.Views.Windows;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,27 +17,18 @@ namespace HandheldCompanion.Views.QuickPages
         public QuickPerformancePage()
         {
             InitializeComponent();
-            Initialized = true;
 
-            MainWindow.powerManager.StatusChanged += PowerManager_StatusChanged;
-            MainWindow.powerManager.LimitChanged += PowerManager_LimitChanged;
-            MainWindow.powerManager.ValueChanged += PowerManager_ValueChanged;
+            MainWindow.powerManager.ProcessorStatusChanged += PowerManager_StatusChanged;
+            MainWindow.powerManager.PowerLimitChanged += PowerManager_LimitChanged;
+            MainWindow.powerManager.PowerValueChanged += PowerManager_ValueChanged;
 
             MainWindow.profileManager.Updated += ProfileManager_Updated;
             MainWindow.profileManager.Applied += ProfileManager_Applied;
             MainWindow.profileManager.Discarded += ProfileManager_Discarded;
 
-            // pull GPU settings
-            var GPU = Properties.Settings.Default.QuickToolsPerformanceGPUValue;
-            if (GPU >= GPUSlider.Minimum && GPU <= GPUSlider.Maximum)
-                GPUSlider.Value = GPU;
-
-            // pull TDP settings
-            var TDP = Properties.Settings.Default.QuickToolsPerformanceTDPValue;
-            if (TDP >= TDPSlider.Minimum && TDP <= TDPSlider.Maximum)
-                TDPSlider.Value = TDP;
-            else
-                TDPSlider.Value = MainWindow.handheldDevice.DefaultTDP;
+            // define slider(s) min and max values based on device specifications
+            TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
+            TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
 
             // pull PowerMode settings
             var PowerMode = Properties.Settings.Default.QuickToolsPowerModeValue;
@@ -45,6 +37,18 @@ namespace HandheldCompanion.Views.QuickPages
                 PowerModeSlider.Value = PowerMode;
                 PowerModeSlider_ValueChanged(null, null); // force call, dirty
             }
+
+            // pull GPU settings
+            var GPU = Properties.Settings.Default.QuickToolsPerformanceGPUValue;
+            if (GPUSlider.Minimum <= GPU && GPUSlider.Maximum >= GPU)
+                GPUSlider.Value = GPU;
+
+            // pull TDP and GPU toggle settings
+            TDPToggle.IsOn = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled;
+            GPUToggle.IsOn = Properties.Settings.Default.QuickToolsPerformanceGPUEnabled;
+
+            // we're all set !
+            Initialized = true;
         }
 
         private void ProfileManager_Updated(Profile profile, bool backgroundtask, bool isCurrent)
@@ -55,7 +59,8 @@ namespace HandheldCompanion.Views.QuickPages
             this.Dispatcher.Invoke(() =>
             {
                 TDPToggle.IsEnabled = !profile.TDP_override;
-                TDPSlider.IsEnabled = !profile.TDP_override;
+                TDPSustainedSlider.IsEnabled = !profile.TDP_override;
+                TDPBoostSlider.IsEnabled = !profile.TDP_override;
                 TDPWarning.Visibility = profile.TDP_override ? Visibility.Visible : Visibility.Collapsed;
             });
         }
@@ -65,7 +70,8 @@ namespace HandheldCompanion.Views.QuickPages
             this.Dispatcher.Invoke(() =>
             {
                 TDPToggle.IsEnabled = CanChangeTDP;
-                TDPSlider.IsEnabled = CanChangeTDP;
+                TDPSustainedSlider.IsEnabled = CanChangeTDP;
+                TDPBoostSlider.IsEnabled = CanChangeTDP;
                 TDPWarning.Visibility = Visibility.Collapsed;
             });
         }
@@ -83,19 +89,35 @@ namespace HandheldCompanion.Views.QuickPages
             this.Dispatcher.Invoke(() =>
             {
                 TDPToggle.IsEnabled = CanChangeTDP;
-                TDPToggle.IsOn = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled;
+                TDPSustainedSlider.IsEnabled = CanChangeTDP;
+                TDPBoostSlider.IsEnabled = CanChangeTDP;
 
                 GPUToggle.IsEnabled = CanChangeGPU;
-                GPUToggle.IsOn = Properties.Settings.Default.QuickToolsPerformanceGPUEnabled;
+                GPUSlider.IsEnabled = CanChangeGPU;
             });
         }
 
-        private void PowerManager_LimitChanged(string type, int limit)
+        private void PowerManager_LimitChanged(PowerType type, int limit)
         {
-            // do something
+            this.Dispatcher.Invoke(() =>
+            {
+                // do something
+                switch (type)
+                {
+                    default:
+                    case PowerType.Long:
+                        if (TDPSustainedSlider.Minimum <= limit && TDPSustainedSlider.Maximum >= limit)
+                            TDPSustainedSlider.Value = limit;
+                        break;
+                    case PowerType.Short:
+                        if (TDPBoostSlider.Minimum <= limit && TDPBoostSlider.Maximum >= limit)
+                            TDPBoostSlider.Value = limit;
+                        break;
+                }
+            });
         }
 
-        private void PowerManager_ValueChanged(string type, float value)
+        private void PowerManager_ValueChanged(PowerType type, float value)
         {
             // do something
         }
@@ -110,36 +132,56 @@ namespace HandheldCompanion.Views.QuickPages
             QuickTools.scrollLock = false;
         }
 
-        private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (!Initialized)
                 return;
 
             // update settings
-            Properties.Settings.Default.QuickToolsPerformanceTDPValue = TDPSlider.Value;
+            Properties.Settings.Default.QuickToolsPerformanceTDPSustainedValue = TDPSustainedSlider.Value;
             Properties.Settings.Default.Save();
 
-            MainWindow.powerManager.RequestTDP(TDPSlider.Value);
+            MainWindow.powerManager.RequestTDP(PowerType.Long, TDPSustainedSlider.Value);
+        }
+
+        private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (!Initialized)
+                return;
+
+            // update settings
+            Properties.Settings.Default.QuickToolsPerformanceTDPBoostValue = TDPBoostSlider.Value;
+            Properties.Settings.Default.Save();
+
+            MainWindow.powerManager.RequestTDP(PowerType.Short, TDPBoostSlider.Value);
         }
 
         private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             // update settings
             Properties.Settings.Default.QuickToolsPerformanceTDPEnabled = TDPToggle.IsOn;
             Properties.Settings.Default.Save();
 
-            if (!TDPToggle.IsOn)
+            if (TDPToggle.IsOn)
+            {
+                MainWindow.powerManager.RequestTDP(PowerType.Long, TDPSustainedSlider.Value);
+                MainWindow.powerManager.RequestTDP(PowerType.Short, TDPBoostSlider.Value);
+            }
+            else
             {
                 // restore default GPU clock
-                MainWindow.powerManager.RequestTDP(MainWindow.handheldDevice.DefaultTDP);
-                return;
+                MainWindow.powerManager.RequestTDP(MainWindow.handheldDevice.nTDP);
             }
-
-            MainWindow.powerManager.RequestTDP(TDPSlider.Value);
         }
 
         private void GPUToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            if (!Initialized)
+                return;
+
             // update settings
             Properties.Settings.Default.QuickToolsPerformanceGPUEnabled = GPUToggle.IsOn;
             Properties.Settings.Default.Save();

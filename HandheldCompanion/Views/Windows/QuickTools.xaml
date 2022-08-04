@@ -9,51 +9,75 @@
         mc:Ignorable="d"
         Height="720"
         MinHeight="500"
-        Width="500"
-        MinWidth="500"
-        MaxWidth="500"
+        Width="540"
+        MinWidth="540"
+        MaxWidth="540"
         Closing="Window_Closing"
         Loaded="Window_Loaded"
         ui:WindowHelper.UseModernWindowStyle="True" 
         Title="QuickTools" Topmost="True" WindowStyle="ToolWindow" ShowInTaskbar="False">
 
     <ui:NavigationView
-        Name="navView" PaneDisplayMode="LeftCompact"
+        Name="navView" PaneDisplayMode="Left"
+        IsPaneOpen="False"
         ItemInvoked="navView_ItemInvoked"
+        OpenPaneLength="160" IsBackEnabled="True"
         SelectionFollowsFocus="Enabled"
         ShoulderNavigationEnabled="WhenSelectionFollowsFocus"
         Loaded="navView_Loaded"
-        BackRequested="navView_BackRequested" IsSettingsVisible="False"
-        IsPaneToggleButtonVisible="False" HorizontalAlignment="Right"
-        Width="500">
+        BackRequested="navView_BackRequested" IsSettingsVisible="False">
 
         <ui:NavigationView.MenuItems>
-            <ui:NavigationViewItem Name="navSettingsPage" Tag="QuickSettingsPage">
+            <ui:NavigationViewItem Name="navSettingsPage" Tag="QuickSettingsPage" Content="Settings">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navPerformancePage" Tag="QuickPerformancePage">
+            <ui:NavigationViewItem Name="navPerformancePage" Tag="QuickPerformancePage" Content="Performance">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE83F;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navProfilesPage" Tag="QuickProfilesPage">
+            <ui:NavigationViewItem Name="navProfilesPage" Tag="QuickProfilesPage" Content="Profile">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE748;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Name="navSuspenderPage" Tag="QuickSuspenderPage" Content="Suspender">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7C4;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
 
-        <ui:NavigationView.PaneFooter>
-            <ui:SimpleStackPanel Spacing="4">
-                <ui:TitleBarButton Tag="shortcutKeyboard" Click="navView_ShortcutInvoked" Width="42" Height="34" FontSize="18" FontFamily="HoloLens MDL2 Assets" Content="&#xE765;" Style="{DynamicResource AccentButtonStyle}"/>
-                <ui:TitleBarButton Tag="shortcutDesktop" Click="navView_ShortcutInvoked" Width="42" Height="34" FontSize="18" FontFamily="HoloLens MDL2 Assets" Content="&#xE782;" Style="{DynamicResource AccentButtonStyle}"/>
-                <ui:TitleBarButton Tag="shortcutESC" Click="navView_ShortcutInvoked" Width="42" Height="34" FontSize="12" FontFamily="Segoe UI" Content="ESC" Style="{DynamicResource AccentButtonStyle}"/>
-            </ui:SimpleStackPanel>
-        </ui:NavigationView.PaneFooter>
+        <ui:NavigationView.FooterMenuItems>
+            <ui:NavigationViewItem Name="shortcutKeyboard" Tag="shortcutKeyboard" Content="Touch keyboard">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE765;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Name="shortcutDesktop" Tag="shortcutDesktop" Content="Start">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="HoloLens MDL2 Assets" Glyph="&#xE782;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Name="shortcutExpand" Tag="shortcutExpand" Content="Expand">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEE49;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Name="shortcutESC" Tag="shortcutESC" Content="Escape">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="SegoeUI" Glyph="ESC"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+        </ui:NavigationView.FooterMenuItems>
 
         <ui:ScrollViewerEx
             PanningMode="VerticalOnly"

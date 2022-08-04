@@ -41,7 +41,7 @@ namespace HandheldCompanion.Managers
         public delegate void DiscardedEventHandler(Profile profile);
         #endregion
 
-        public Profile CurrentProfile = new();
+        public Profile currentProfile = new();
 
         private string path;
 
@@ -138,7 +138,7 @@ namespace HandheldCompanion.Managers
                     profile.isRunning = false;
 
                     // (re)set current profile
-                    CurrentProfile = GetDefault();
+                    currentProfile = GetDefault();
 
                     // raise event
                     Discarded?.Invoke(profile);
@@ -168,10 +168,13 @@ namespace HandheldCompanion.Managers
             catch (Exception) { }
         }
 
-        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
+        private void ProcessManager_ForegroundChanged(ProcessEx processEx, bool display)
         {
             try
             {
+                if (currentProfile != null)
+                    Discarded?.Invoke(currentProfile);
+
                 var profile = GetProfileFromExec(processEx.Name);
 
                 if (profile == null)
@@ -181,7 +184,7 @@ namespace HandheldCompanion.Managers
                     return;
 
                 // update current profile
-                CurrentProfile = profile;
+                currentProfile = profile;
 
                 // raise event
                 Applied?.Invoke(profile);
@@ -261,7 +264,7 @@ namespace HandheldCompanion.Managers
                 profile.isDefault = true;
 
                 // set current profile
-                CurrentProfile = profile;
+                currentProfile = profile;
             }
 
             UpdateOrCreateProfile(profile);
@@ -328,14 +331,14 @@ namespace HandheldCompanion.Managers
             profiles[profile.name] = profile;
 
             // warn owner
-            bool isCurrent = profile.executable == CurrentProfile.executable;
+            bool isCurrent = profile.executable == currentProfile.executable;
 
             // raise event(s)
             Updated?.Invoke(profile, backgroundtask, isCurrent);
 
             // inform service
             if (isCurrent)
-                MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = CurrentProfile });
+                MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
 
             if (profile.error != ProfileErrorCode.None && !profile.isDefault)
             {
@@ -421,6 +424,17 @@ namespace HandheldCompanion.Managers
 
                     // pull data from dll
                     data = x64 ? Properties.Resources.xinput1_x64 : Properties.Resources.xinput1_x86;
+
+                    // do not try to write/erase files when profile is used
+                    if (profile.isRunning)
+                        return;
+
+                    switch (profile.error)
+                    {
+                        // do not try to write/erase files when access is denied
+                        case ProfileErrorCode.MissingPermission:
+                            return;
+                    }
 
                     if (profile.use_wrapper)
                     {

@@ -14,7 +14,10 @@ namespace ControllerCommon.Devices
             this.ProductIllustration = "device_aya_next";
             this.ProductModel = "AYANEONext";
 
-            this.DefaultTDP = 20;
+            // https://www.amd.com/fr/products/apu/amd-ryzen-7-5800u
+            // https://www.amd.com/fr/products/apu/amd-ryzen-7-5825u
+            this.nTDP = new double[] { 15, 20 };
+            this.cTDP = new double[] { 10, 25 };
 
             this.AngularVelocityAxisSwap = new()
             {

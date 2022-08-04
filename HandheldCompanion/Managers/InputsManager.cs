@@ -42,7 +42,6 @@ namespace HandheldCompanion.Managers
         {
             { "overlayGamepad", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayControllerTriggerType, Properties.Settings.Default.OverlayControllerTriggerValue) },
             { "overlayTrackpads", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayTrackpadsTriggerType, Properties.Settings.Default.OverlayTrackpadsTriggerValue) },
-            { "suspender", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.SuspenderTriggerType, Properties.Settings.Default.SuspenderTriggerValue) },
             { "quickTools", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.QuickToolsTriggerType, Properties.Settings.Default.QuickToolsTriggerValue) },
         };
 
@@ -248,6 +247,11 @@ namespace HandheldCompanion.Managers
             TriggerLock = false;
         }
 
+        public void KeyStroke(VirtualKeyCode mod, VirtualKeyCode key)
+        {
+            m_InputSimulator.Keyboard.ModifiedKeyStroke(mod, key);
+        }
+
         private void ReleaseBuffer(object? sender, EventArgs e)
         {
             if (TriggerBuffer.Count == 0)
@@ -344,7 +348,6 @@ namespace HandheldCompanion.Managers
             //It is recommened to dispose it
             m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
-            m_GlobalHook.Dispose();
         }
 
         private void UpdateReport(object? sender, EventArgs e)

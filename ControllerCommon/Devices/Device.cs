@@ -38,9 +38,12 @@ namespace ControllerCommon.Devices
         public bool hasInternal;
         public bool hasExternal;
 
-        // device specific settings
+        // device width ratio
         public float WidthHeightRatio = 1.0f;
-        public double DefaultTDP = 15;
+        // device nominal TDP (slow, fast)
+        public double[] nTDP = { 15, 20 };
+        // device configurable TDP (down, up)
+        public double[] cTDP = { 10, 25 };
 
         public Vector3 AngularVelocityAxis = new Vector3(1.0f, 1.0f, 1.0f);
         public Dictionary<char, char> AngularVelocityAxisSwap = new()
@@ -82,11 +85,18 @@ namespace ControllerCommon.Devices
                     {
                         switch (ProductName)
                         {
+                            case "AIR":
+                            case "AIR Pro":
+                            case "AIR Lite":
+                                device = new AYANEOAIR();
+                                break;
                             case "AYA NEO FOUNDER":
                             case "AYANEO 2021":
+                                device = new AYANEO2021();
+                                break;
                             case "AYANEO 2021 Pro":
                             case "AYANEO 2021 Pro Retro Power":
-                                device = new AYANEO2021();
+                                device = new AYANEO2021Pro();
                                 break;
                             case "NEXT Pro":
                             case "NEXT Advance":

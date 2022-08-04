@@ -36,7 +36,8 @@ namespace ControllerCommon
         {
             { Input.JoystickCamera, Properties.Resources.JoystickCameraDesc },
             { Input.JoystickSteering, Properties.Resources.JoystickSteeringDesc },
-            { Input.PlayerSpace, Properties.Resources.PlayerSpaceDesc }
+            { Input.PlayerSpace, Properties.Resources.PlayerSpaceDesc },
+            { Input.AutoRollYawSwap, Properties.Resources.AutoRollYawSwapDesc }
         };
 
         public string name { get; set; }
@@ -79,7 +80,7 @@ namespace ControllerCommon
 
         // power
         public bool TDP_override { get; set; }
-        public int TDP_value { get; set; }
+        public double[] TDP_value { get; set; } = new double[2];
 
         public GamepadButtonFlagsExt umc_trigger { get; set; }
 

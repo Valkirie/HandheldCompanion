@@ -11,11 +11,18 @@ namespace ControllerCommon.Utils
 {
     public static class CommonUtils
     {
-        public static string Between(string STR, string FirstString, string LastString, bool KeepBorders = false)
+        public static string Between(string STR, string FirstString, string LastString = null, bool KeepBorders = false)
         {
+            if (string.IsNullOrEmpty(STR))
+                return string.Empty;
+
             string FinalString;
             int Pos1 = STR.IndexOf(FirstString) + FirstString.Length;
-            int Pos2 = STR.IndexOf(LastString, Pos1);
+            int Pos2 = STR.Length;
+            
+            if (LastString != null)
+                Pos2 = STR.IndexOf(LastString, Pos1);
+
             FinalString = STR.Substring(Pos1, Pos2 - Pos1);
             return KeepBorders ? FirstString + FinalString + LastString : FinalString;
         }

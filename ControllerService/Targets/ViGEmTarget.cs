@@ -123,6 +123,7 @@ namespace ControllerService.Targets
                     {
                         case Input.PlayerSpace:
                         case Input.JoystickCamera:
+                        case Input.AutoRollYawSwap:
                             {
                                 Vector2 Angular;
 
@@ -131,10 +132,12 @@ namespace ControllerService.Targets
                                     case Input.PlayerSpace:
                                         Angular = new Vector2((float)xinputController.sensorFusion.CameraYawDelta, (float)xinputController.sensorFusion.CameraPitchDelta);
                                         break;
-
+                                    case Input.AutoRollYawSwap:
+                                        Angular = InputUtils.AutoRollYawSwap(xinputController.sensorFusion.GravityVectorSimple, xinputController.AngularVelocities[XInputSensorFlags.Centered]);
+                                        break;
                                     default:
                                     case Input.JoystickCamera:
-                                        Angular = new Vector2(-xinputController.AngularVelocities[XInputSensorFlags.CenteredRatio].Z, xinputController.AngularVelocities[XInputSensorFlags.CenteredRatio].X);
+                                        Angular = new Vector2(-xinputController.AngularVelocities[XInputSensorFlags.Centered].Z, xinputController.AngularVelocities[XInputSensorFlags.Centered].X);
                                         break;
                                 }
 

@@ -409,18 +409,6 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("40")]
-        public string SuspenderTriggerValue {
-            get {
-                return ((string)(this["SuspenderTriggerValue"]));
-            }
-            set {
-                this["SuspenderTriggerValue"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int OverlayControllerTriggerType {
             get {
@@ -440,18 +428,6 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["OverlayTrackpadsTriggerType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int SuspenderTriggerType {
-            get {
-                return ((int)(this["SuspenderTriggerType"]));
-            }
-            set {
-                this["SuspenderTriggerType"] = value;
             }
         }
         
@@ -530,12 +506,12 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double QuickToolsPerformanceTDPValue {
+        public double QuickToolsPerformanceTDPSustainedValue {
             get {
-                return ((double)(this["QuickToolsPerformanceTDPValue"]));
+                return ((double)(this["QuickToolsPerformanceTDPSustainedValue"]));
             }
             set {
-                this["QuickToolsPerformanceTDPValue"] = value;
+                this["QuickToolsPerformanceTDPSustainedValue"] = value;
             }
         }
         
@@ -584,6 +560,18 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["QuickToolsPowerModeValue"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double QuickToolsPerformanceTDPBoostValue {
+            get {
+                return ((double)(this["QuickToolsPerformanceTDPBoostValue"]));
+            }
+            set {
+                this["QuickToolsPerformanceTDPBoostValue"] = value;
             }
         }
     }
