@@ -544,14 +544,21 @@
   <data name="ProfilesPage_StyleofOutputTooltip" xml:space="preserve">
     <value>当向游戏发送模拟摇杆命令时，这些命令应该是左摇杆还是右摇杆</value>
   </data>
-  <data name="ProfilesPage_UMCAlwaysOn" xml:space="preserve">
-    <value>Motion default off with enable button or on with disable button</value>
-  </data>
-  <data name="ProfilesPage_UMCAlwaysOnDesc" xml:space="preserve">
-    <value>Default off, use selected button(s) to enable motion, default on, use selected button(s) to disable motion.</value>
-  </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
     <value>启动全局体感手柄</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOff" xml:space="preserve">
+    <value>Disabled, turn on with button(s)</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOn" xml:space="preserve">
+    <value>Enabled, turn off with button(s)</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOnOff" xml:space="preserve">
+    <value>Motion activation</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOnOffDesc" xml:space="preserve">
+    <value>With motion input disabled, use selected button(s) to enable motion, 
+with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
     <value>当向游戏发送模拟摇杆命令时，这些命令应该是左摇杆还是右摇杆</value>

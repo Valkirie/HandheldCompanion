@@ -549,12 +549,6 @@
   <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
     <value>Delete profile</value>
   </data>
-  <data name="ProfilesPage_EnableButton" xml:space="preserve">
-    <value>Enable button</value>
-  </data>
-  <data name="ProfilesPage_EnableButtonDesc" xml:space="preserve">
-    <value>The motion input can be turned on only when the selected button is pressed</value>
-  </data>
   <data name="ProfilesPage_EnableProfile" xml:space="preserve">
     <value>Enable profile</value>
   </data>
@@ -640,16 +634,17 @@
     <value>Enable universal motion controler</value>
   </data>
   <data name="ProfilesPage_UMCMotionOff" xml:space="preserve">
-    <value>Default off, button(s) turn on</value>
+    <value>Disabled, turn on with button(s)</value>
   </data>
   <data name="ProfilesPage_UMCMotionOn" xml:space="preserve">
-    <value>Default on, button(s) turn off</value>
+    <value>Enabled, turn off with button(s)</value>
   </data>
   <data name="ProfilesPage_UMCMotionOnOff" xml:space="preserve">
-    <value>Motion on or off, disable or enable button</value>
+    <value>Motion activation</value>
   </data>
   <data name="ProfilesPage_UMCMotionOnOffDesc" xml:space="preserve">
-    <value>Default off, use selected button(s) to enable motion, default on, use selected button(s) to disable motion.</value>
+    <value>With motion input disabled, use selected button(s) to enable motion, 
+with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
     <value>Select the device that will receive the motion commands</value>

@@ -1336,24 +1336,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable button.
-        /// </summary>
-        public static string ProfilesPage_EnableButton {
-            get {
-                return ResourceManager.GetString("ProfilesPage_EnableButton", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The motion input can be turned on only when the selected button is pressed.
-        /// </summary>
-        public static string ProfilesPage_EnableButtonDesc {
-            get {
-                return ResourceManager.GetString("ProfilesPage_EnableButtonDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Enable profile.
         /// </summary>
         public static string ProfilesPage_EnableProfile {
@@ -1606,7 +1588,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Default off, button(s) turn on.
+        ///   Looks up a localized string similar to Disabled, turn on with button(s).
         /// </summary>
         public static string ProfilesPage_UMCMotionOff {
             get {
@@ -1615,7 +1597,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Default on, button(s) turn off.
+        ///   Looks up a localized string similar to Enabled, turn off with button(s).
         /// </summary>
         public static string ProfilesPage_UMCMotionOn {
             get {
@@ -1624,7 +1606,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Motion on or off, disable or enable button.
+        ///   Looks up a localized string similar to Motion activation.
         /// </summary>
         public static string ProfilesPage_UMCMotionOnOff {
             get {
@@ -1633,7 +1615,8 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Default off, use selected button(s) to enable motion, default on, use selected button(s) to disable motion..
+        ///   Looks up a localized string similar to With motion input disabled, use selected button(s) to enable motion, 
+        ///with motion input enabled, use selected button(s) to disable motion..
         /// </summary>
         public static string ProfilesPage_UMCMotionOnOffDesc {
             get {
