@@ -17,7 +17,8 @@ namespace ControllerCommon.Utils
     {
         PlayerSpace = 0,
         JoystickCamera = 1,
-        JoystickSteering = 2
+        AutoRollYawSwap = 2,
+        JoystickSteering = 3,
     }
     
     public enum UMC_Motion_Default
