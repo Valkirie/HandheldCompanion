@@ -1336,24 +1336,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable button.
-        /// </summary>
-        public static string ProfilesPage_EnableButton {
-            get {
-                return ResourceManager.GetString("ProfilesPage_EnableButton", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The motion input can be turned on only when the selected button is pressed.
-        /// </summary>
-        public static string ProfilesPage_EnableButtonDesc {
-            get {
-                return ResourceManager.GetString("ProfilesPage_EnableButtonDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Enable profile.
         /// </summary>
         public static string ProfilesPage_EnableProfile {
@@ -1602,6 +1584,43 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_UMCEnable {
             get {
                 return ResourceManager.GetString("ProfilesPage_UMCEnable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabled, turn on with button(s).
+        /// </summary>
+        public static string ProfilesPage_UMCMotionOff {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCMotionOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabled, turn off with button(s).
+        /// </summary>
+        public static string ProfilesPage_UMCMotionOn {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCMotionOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motion activation.
+        /// </summary>
+        public static string ProfilesPage_UMCMotionOnOff {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCMotionOnOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to With motion input disabled, use selected button(s) to enable motion, 
+        ///with motion input enabled, use selected button(s) to disable motion..
+        /// </summary>
+        public static string ProfilesPage_UMCMotionOnOffDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCMotionOnOffDesc", resourceCulture);
             }
         }
         

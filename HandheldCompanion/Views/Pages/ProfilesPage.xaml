@@ -469,13 +469,25 @@
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                         <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
-
+                                    
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_EnableButton}" FontSize="14"/>
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_EnableButtonDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOff}" FontSize="14" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOffDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
-                                </Grid>
 
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                        <ui:RadioButtons Name="cB_UMC_MotionDefaultOffOn" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1">
+                                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                <Label Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}"></Label>
+                                            </ui:SimpleStackPanel>
+                                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                <Label Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}"></Label>
+                                            </ui:SimpleStackPanel>
+                                        </ui:RadioButtons>
+                                    </DockPanel>
+
+                                </Grid>
+                                
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <ui:LayoutPanel Name="cB_Buttons" HorizontalAlignment="Center">
                                         <ui:LayoutPanel.Layout>

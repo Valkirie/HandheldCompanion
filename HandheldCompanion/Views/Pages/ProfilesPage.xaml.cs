@@ -363,10 +363,11 @@ namespace HandheldCompanion.Views.Pages
                 TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
 
                 // UMC settings
-                Toggle_UniversalMotion.IsOn = currentProfile.umc_enabled;
-                cB_Input.SelectedIndex = (int)currentProfile.umc_input;
-                cB_Output.SelectedIndex = (int)currentProfile.umc_output;
-                tb_ProfileAntiDeadzone.Value = currentProfile.antideadzone;
+                Toggle_UniversalMotion.IsOn = profileCurrent.umc_enabled;
+                cB_Input.SelectedIndex = (int)profileCurrent.umc_input;
+                cB_Output.SelectedIndex = (int)profileCurrent.umc_output;
+                tb_ProfileAntiDeadzone.Value = profileCurrent.antideadzone;
+                cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)profileCurrent.umc_motion_defaultoffon;
 
                 foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
                     if (currentProfile.umc_trigger.HasFlag(button))
@@ -458,17 +459,20 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.inverthorizontal = (bool)cB_InvertHorizontal.IsChecked;
 
             // UMC settings
-            currentProfile.umc_enabled = (bool)Toggle_UniversalMotion.IsOn;
-            currentProfile.umc_input = (Input)cB_Input.SelectedIndex;
-            currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
-            currentProfile.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
+            profileCurrent.umc_enabled = (bool)Toggle_UniversalMotion.IsOn;
+            profileCurrent.umc_input = (Input)cB_Input.SelectedIndex;
+            profileCurrent.umc_output = (Output)cB_Output.SelectedIndex;
+            profileCurrent.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
+            profileCurrent.umc_motion_defaultoffon = (UMC_Motion_Default)cB_UMC_MotionDefaultOffOn.SelectedIndex;
+            profileCurrent.umc_trigger = 0;
 
             // Power settings
             currentProfile.TDP_override = (bool)TDPToggle.IsOn;
             currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
+            currentProfile.TDP_value[1] = (int)TDPBoostSlider.Value;
 
             currentProfile.umc_trigger = 0;
-
+            
             foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
                 if ((bool)activators[button].IsChecked)
                     currentProfile.umc_trigger |= button;
@@ -554,7 +558,13 @@ namespace HandheldCompanion.Views.Pages
 
             Text_InputHint.Text = Profile.InputDescription[input];
         }
-
+        
+        private void cB_UMC_MotionDefaultOffOn_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if (cB_Input.SelectedIndex == -1)
+                return;
+        }
+        
         private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // do something

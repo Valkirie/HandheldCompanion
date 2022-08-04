@@ -17,8 +17,13 @@ namespace ControllerCommon.Utils
     {
         PlayerSpace = 0,
         JoystickCamera = 1,
-        AutoRollYawSwap = 2,
-        JoystickSteering = 3,
+        JoystickSteering = 2
+    }
+    
+    public enum UMC_Motion_Default
+    {
+        Off = 0,
+        On = 1
     }
 
     public enum Output
@@ -46,8 +51,7 @@ namespace ControllerCommon.Utils
         A = 4096,
         B = 8192,
         X = 16384,
-        Y = 32768,
-        AlwaysOn = 65536
+        Y = 32768
     }
 
     public enum OverlayModelMode
@@ -95,8 +99,6 @@ namespace ControllerCommon.Utils
                     return "\uEDE3";
                 case GamepadButtonFlagsExt.Back:
                     return "\uEECA";
-                case GamepadButtonFlagsExt.AlwaysOn:
-                    return "\uE7E8";
                 default:
                     return "\uE783";
             }

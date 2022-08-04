@@ -61,6 +61,8 @@ namespace ControllerCommon
         public Input umc_input { get; set; } = Input.JoystickCamera;
         public Output umc_output { get; set; } = Output.RightStick;
 
+        public UMC_Motion_Default umc_motion_defaultoffon { get; set; } = UMC_Motion_Default.On;
+
         // aiming
         public float aiming_sensivity { get; set; } = 2.0f;
 
@@ -80,7 +82,7 @@ namespace ControllerCommon
         public bool TDP_override { get; set; }
         public double[] TDP_value { get; set; } = new double[2];
 
-        public GamepadButtonFlagsExt umc_trigger { get; set; } = GamepadButtonFlagsExt.AlwaysOn;
+        public GamepadButtonFlagsExt umc_trigger { get; set; }
 
         // hidden settings
         [JsonIgnore] public ProfileErrorCode error;
