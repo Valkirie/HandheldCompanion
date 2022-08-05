@@ -28,30 +28,33 @@ namespace ControllerCommon.Managers
             string url = $"file:///{AppDomain.CurrentDomain.BaseDirectory}Resources\\{img}.png";
             var uri = new Uri(url);
 
-            DateTimeOffset DeliveryTime = new DateTimeOffset(DateTime.Now.AddMilliseconds(100));
-
-            new Thread(() =>
+            // capricious ToastContentBuilder...
+            try
             {
-                new ToastContentBuilder()
-                .AddText(title)
-                .AddText(content)
-                .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
-                .SetToastScenario(ToastScenario.Default)
-                .Show(toast =>
+                new Thread(() =>
                 {
-                    toast.Tag = title;
-                    toast.Group = m_Group;
-                });
+                    new ToastContentBuilder()
+                    .AddText(title)
+                    .AddText(content)
+                    .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
+                    .SetToastScenario(ToastScenario.Default)
+                    .Show(toast =>
+                    {
+                        toast.Tag = title;
+                        toast.Group = m_Group;
+                    });
 
-                Timer timer = new Timer(m_Interval)
-                {
-                    Enabled = true,
-                    AutoReset = false
-                };
+                    Timer timer = new Timer(m_Interval)
+                    {
+                        Enabled = true,
+                        AutoReset = false
+                    };
 
-                timer.Elapsed += (s, e) => { ToastNotificationManagerCompat.History.Remove(title, m_Group); };
+                    timer.Elapsed += (s, e) => { ToastNotificationManagerCompat.History.Remove(title, m_Group); };
 
-            }).Start();
+                }).Start();
+            }
+            catch(Exception) { }
         }
 
         public void Stop()
