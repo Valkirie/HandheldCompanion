@@ -196,14 +196,34 @@ namespace ControllerCommon.Processor
         protected override void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // read limit(s)
-            base.m_Limits[PowerType.Short] = (int)platform.get_short_limit();
-            base.m_Limits[PowerType.Long] = (int)platform.get_long_limit();
-            base.m_Limits[PowerType.Stapm] = base.m_Limits[PowerType.Long];
+            int limit_short = (int)platform.get_short_limit();
+            int limit_long = (int)platform.get_long_limit();
+
+            if (limit_short != 0)
+            {
+                base.m_Limits[PowerType.Short] = limit_short;
+            }
+
+            if (limit_long != 0)
+            {
+                base.m_Limits[PowerType.Long] = limit_long;
+                base.m_Limits[PowerType.Stapm] = limit_long;
+            }
 
             // read value(s)
-            base.m_Values[PowerType.Short] = (int)platform.get_short_value();
-            base.m_Values[PowerType.Long] = (int)platform.get_long_value();
-            base.m_Values[PowerType.Stapm] = base.m_Values[PowerType.Long];
+            int value_short = (int)platform.get_short_value();
+            int value_long = (int)platform.get_long_value();
+
+            if (value_short != 0)
+            {
+                base.m_Values[PowerType.Short] = value_short;
+            }
+
+            if (value_long != 0)
+            {
+                base.m_Values[PowerType.Long] = value_long;
+                base.m_Values[PowerType.Stapm] = value_long;
+            }
 
             base.UpdateTimer_Elapsed(sender, e);
         }
@@ -309,15 +329,34 @@ namespace ControllerCommon.Processor
             RyzenAdj.get_table_values(ry);
             RyzenAdj.refresh_table(ry);
 
+
             // read limit(s)
-            m_Limits[PowerType.Fast] = (int)RyzenAdj.get_fast_limit(ry);
-            m_Limits[PowerType.Slow] = (int)RyzenAdj.get_slow_limit(ry);
-            m_Limits[PowerType.Stapm] = (int)RyzenAdj.get_stapm_limit(ry);
+            int limit_fast = (int)RyzenAdj.get_fast_limit(ry);
+            int limit_slow = (int)RyzenAdj.get_slow_limit(ry);
+            int limit_stapm = (int)RyzenAdj.get_stapm_limit(ry);
+
+            if (limit_fast != 0)
+                base.m_Limits[PowerType.Fast] = limit_fast;
+
+            if (limit_slow != 0)
+                base.m_Limits[PowerType.Slow] = limit_slow;
+
+            if (limit_stapm != 0)
+                base.m_Limits[PowerType.Stapm] = limit_stapm;
 
             // read value(s)
-            m_Values[PowerType.Fast] = RyzenAdj.get_fast_value(ry);
-            m_Values[PowerType.Slow] = RyzenAdj.get_slow_value(ry);
-            m_Values[PowerType.Stapm] = RyzenAdj.get_stapm_value(ry);
+            int value_fast = (int)RyzenAdj.get_fast_value(ry);
+            int value_slow = (int)RyzenAdj.get_slow_value(ry);
+            int value_stapm = (int)RyzenAdj.get_stapm_value(ry);
+
+            if (value_fast != 0)
+                base.m_Values[PowerType.Fast] = value_fast;
+
+            if (value_slow != 0)
+                base.m_Values[PowerType.Slow] = value_slow;
+
+            if (value_stapm != 0)
+                base.m_Values[PowerType.Stapm] = value_stapm;
 
             base.UpdateTimer_Elapsed(sender, e);
         }
