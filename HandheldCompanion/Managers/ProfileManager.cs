@@ -38,7 +38,7 @@ namespace HandheldCompanion.Managers
         public delegate void AppliedEventHandler(Profile profile);
 
         public event DiscardedEventHandler Discarded;
-        public delegate void DiscardedEventHandler(Profile profile);
+        public delegate void DiscardedEventHandler(Profile profile, bool isCurrent);
         #endregion
 
         public Profile currentProfile = new();
@@ -137,11 +137,15 @@ namespace HandheldCompanion.Managers
                 {
                     profile.isRunning = false;
 
+                    // warn owner
+                    bool isCurrent = profile.executable == currentProfile.executable;
+
                     // (re)set current profile
-                    currentProfile = GetDefault();
+                    if (isCurrent)
+                        currentProfile = GetDefault();
 
                     // raise event
-                    Discarded?.Invoke(profile);
+                    Discarded?.Invoke(profile, isCurrent);
 
                     // update profile
                     UpdateOrCreateProfile(profile, true, false);
@@ -173,7 +177,7 @@ namespace HandheldCompanion.Managers
             try
             {
                 if (currentProfile != null)
-                    Discarded?.Invoke(currentProfile);
+                    Discarded?.Invoke(currentProfile, true);
 
                 var profile = GetProfileFromExec(processEx.Name);
 
@@ -279,9 +283,16 @@ namespace HandheldCompanion.Managers
                 UnregisterApplication(profile);
                 profiles.Remove(profile.name);
 
+                // warn owner
+                bool isCurrent = profile.executable == currentProfile.executable;
+
+                // (re)set current profile
+                if (isCurrent)
+                    currentProfile = GetDefault();
+
                 // raise event(s)
                 Deleted?.Invoke(profile);
-                Discarded?.Invoke(profile);
+                Discarded?.Invoke(profile, isCurrent);
 
                 // send toast
                 // todo: localize me

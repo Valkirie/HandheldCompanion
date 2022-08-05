@@ -110,7 +110,7 @@ namespace HandheldCompanion.Managers
                 RequestGPUClock(GPU, true);
         }
 
-        private void ProfileManager_Discarded(Profile profile)
+        private void ProfileManager_Discarded(Profile profile, bool isCurrent)
         {
             // restore user defined TDP
             RequestTDP(UserRequestedTDP);

@@ -56,6 +56,24 @@ namespace HandheldCompanion.Views.QuickPages
             if (!isCurrent)
                 return;
 
+            LockTDP(profile);
+        }
+
+        private void ProfileManager_Discarded(Profile profile, bool isCurrent)
+        {
+            if (!isCurrent)
+                return;
+
+            UnlockTDP(profile);
+        }
+
+        private void ProfileManager_Applied(Profile profile)
+        {
+            LockTDP(profile);
+        }
+
+        private void LockTDP(Profile profile)
+        {
             this.Dispatcher.Invoke(() =>
             {
                 TDPToggle.IsEnabled = !profile.TDP_override;
@@ -65,7 +83,7 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
-        private void ProfileManager_Discarded(Profile profile)
+        private void UnlockTDP(Profile profile)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -74,11 +92,6 @@ namespace HandheldCompanion.Views.QuickPages
                 TDPBoostSlider.IsEnabled = CanChangeTDP;
                 TDPWarning.Visibility = Visibility.Collapsed;
             });
-        }
-
-        private void ProfileManager_Applied(Profile profile)
-        {
-            // do something
         }
 
         private void PowerManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
@@ -106,12 +119,22 @@ namespace HandheldCompanion.Views.QuickPages
                 {
                     default:
                     case PowerType.Long:
-                        if (TDPSustainedSlider.Minimum <= limit && TDPSustainedSlider.Maximum >= limit)
-                            TDPSustainedSlider.Value = limit;
+                        {
+                            if (!TDPSustainedSlider.IsEnabled)
+                                return;
+
+                            if (TDPSustainedSlider.Minimum <= limit && TDPSustainedSlider.Maximum >= limit)
+                                TDPSustainedSlider.Value = limit;
+                        }
                         break;
                     case PowerType.Short:
-                        if (TDPBoostSlider.Minimum <= limit && TDPBoostSlider.Maximum >= limit)
-                            TDPBoostSlider.Value = limit;
+                        {
+                            if (!TDPBoostSlider.IsEnabled)
+                                return;
+
+                            if (TDPBoostSlider.Minimum <= limit && TDPBoostSlider.Maximum >= limit)
+                                TDPBoostSlider.Value = limit;
+                        }
                         break;
                 }
             });
