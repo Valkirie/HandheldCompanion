@@ -41,7 +41,7 @@ namespace ControllerCommon.Devices
         // device width ratio
         public float WidthHeightRatio = 1.0f;
         // device nominal TDP (slow, fast)
-        public double[] nTDP = { 15, 20 };
+        public double[] nTDP = { 15, 15, 20 };
         // device configurable TDP (down, up)
         public double[] cTDP = { 10, 25 };
 

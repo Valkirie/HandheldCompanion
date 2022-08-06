@@ -80,7 +80,7 @@ namespace ControllerCommon
 
         // power
         public bool TDP_override { get; set; }
-        public double[] TDP_value { get; set; } = new double[2];
+        public double[] TDP_value { get; set; } = new double[3];
 
         public GamepadButtonFlagsExt umc_trigger { get; set; }
 

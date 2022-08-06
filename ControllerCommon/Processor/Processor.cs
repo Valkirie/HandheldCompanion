@@ -12,12 +12,8 @@ namespace ControllerCommon.Processor
     {
         // long
         Slow = 0,
-        Long = 0,
-        Stapm = 0,
-
-        // short
-        Fast = 1,
-        Short = 1
+        Stapm = 1,
+        Fast = 2,
     }
 
     public class Processor
@@ -172,12 +168,12 @@ namespace ControllerCommon.Processor
                 }
 
                 // write default limit(s)
-                m_Limits[PowerType.Short] = m_Limits[PowerType.Long] = m_Limits[PowerType.Stapm] = 0;
-                m_PrevLimits[PowerType.Short] = m_PrevLimits[PowerType.Long] = m_PrevLimits[PowerType.Stapm] = 0;
+                m_Limits[PowerType.Fast] = m_Limits[PowerType.Slow] = m_Limits[PowerType.Stapm] = 0;
+                m_PrevLimits[PowerType.Fast] = m_PrevLimits[PowerType.Slow] = m_PrevLimits[PowerType.Stapm] = 0;
 
                 // write default value(s)
-                m_Values[PowerType.Short] = m_Values[PowerType.Long] = m_Values[PowerType.Stapm] = 0;
-                m_PrevValues[PowerType.Short] = m_PrevValues[PowerType.Long] = m_PrevValues[PowerType.Stapm] = 0;
+                m_Values[PowerType.Fast] = m_Values[PowerType.Slow] = m_Values[PowerType.Stapm] = -1; // not supported
+                m_PrevValues[PowerType.Fast] = m_PrevValues[PowerType.Slow] = m_PrevValues[PowerType.Stapm] = -1; // not supported
             }
         }
 
@@ -196,34 +192,32 @@ namespace ControllerCommon.Processor
         protected override void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // read limit(s)
-            int limit_short = (int)platform.get_short_limit();
-            int limit_long = (int)platform.get_long_limit();
+            int limit_short = 0;
+            int limit_long = 0;
+            
+            while(limit_short == 0)
+                limit_short= (int)platform.get_short_limit();
 
-            if (limit_short != 0)
-            {
-                base.m_Limits[PowerType.Short] = limit_short;
-            }
+            while (limit_long == 0)
+                limit_long = (int)platform.get_long_limit();
 
-            if (limit_long != 0)
-            {
-                base.m_Limits[PowerType.Long] = limit_long;
-                base.m_Limits[PowerType.Stapm] = limit_long;
-            }
+            base.m_Limits[PowerType.Fast] = limit_short;
+            base.m_Limits[PowerType.Slow] = limit_long;
+            base.m_Limits[PowerType.Stapm] = limit_long;
 
             // read value(s)
-            int value_short = (int)platform.get_short_value();
-            int value_long = (int)platform.get_long_value();
+            int value_short = 0;
+            int value_long = 0;
 
-            if (value_short != 0)
-            {
-                base.m_Values[PowerType.Short] = value_short;
-            }
+            while (value_short == 0)
+                value_short = (int)platform.get_short_value();
 
-            if (value_long != 0)
-            {
-                base.m_Values[PowerType.Long] = value_long;
-                base.m_Values[PowerType.Stapm] = value_long;
-            }
+            while (value_long == 0)
+                value_long = (int)platform.get_long_value();
+
+            base.m_Values[PowerType.Fast] = value_short;
+            base.m_Values[PowerType.Slow] = value_long;
+            base.m_Values[PowerType.Stapm] = value_long;
 
             base.UpdateTimer_Elapsed(sender, e);
         }
@@ -232,14 +226,11 @@ namespace ControllerCommon.Processor
         {
             switch (type)
             {
-                case "fast":
-                    platform.set_short_limit((int)limit);
-                    break;
                 case "slow":
                     platform.set_long_limit((int)limit);
                     break;
-                case "stapm":
-                    platform.set_long_limit((int)limit);
+                case "fast":
+                    platform.set_short_limit((int)limit);
                     break;
                 case "all":
                     platform.set_long_limit((int)limit);
@@ -329,34 +320,41 @@ namespace ControllerCommon.Processor
             RyzenAdj.get_table_values(ry);
             RyzenAdj.refresh_table(ry);
 
-
             // read limit(s)
             int limit_fast = (int)RyzenAdj.get_fast_limit(ry);
             int limit_slow = (int)RyzenAdj.get_slow_limit(ry);
             int limit_stapm = (int)RyzenAdj.get_stapm_limit(ry);
 
-            if (limit_fast != 0)
-                base.m_Limits[PowerType.Fast] = limit_fast;
+            while (limit_fast == 0)
+                limit_fast = (int)RyzenAdj.get_fast_limit(ry);
 
-            if (limit_slow != 0)
-                base.m_Limits[PowerType.Slow] = limit_slow;
+            while (limit_slow == 0)
+                limit_slow = (int)RyzenAdj.get_slow_limit(ry);
 
-            if (limit_stapm != 0)
-                base.m_Limits[PowerType.Stapm] = limit_stapm;
+            while (limit_stapm == 0)
+                limit_stapm = (int)RyzenAdj.get_stapm_limit(ry);
+
+            base.m_Limits[PowerType.Fast] = limit_fast;
+            base.m_Limits[PowerType.Slow] = limit_slow;
+            base.m_Limits[PowerType.Stapm] = limit_stapm;
 
             // read value(s)
             int value_fast = (int)RyzenAdj.get_fast_value(ry);
             int value_slow = (int)RyzenAdj.get_slow_value(ry);
             int value_stapm = (int)RyzenAdj.get_stapm_value(ry);
 
-            if (value_fast != 0)
-                base.m_Values[PowerType.Fast] = value_fast;
+            while (value_fast == 0)
+                value_fast = (int)RyzenAdj.get_fast_value(ry);
 
-            if (value_slow != 0)
-                base.m_Values[PowerType.Slow] = value_slow;
+            while (value_slow == 0)
+                value_slow = (int)RyzenAdj.get_slow_value(ry);
 
-            if (value_stapm != 0)
-                base.m_Values[PowerType.Stapm] = value_stapm;
+            while (value_stapm == 0)
+                value_stapm = (int)RyzenAdj.get_stapm_value(ry);
+
+            base.m_Values[PowerType.Fast] = value_fast;
+            base.m_Values[PowerType.Slow] = value_slow;
+            base.m_Values[PowerType.Stapm] = value_stapm;
 
             base.UpdateTimer_Elapsed(sender, e);
         }

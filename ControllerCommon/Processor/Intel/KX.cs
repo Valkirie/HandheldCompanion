@@ -105,12 +105,12 @@ namespace ControllerCommon.Processor.Intel
 
         internal int get_short_value()
         {
-            return 0;
+            return -1; // not supported
         }
 
         internal int get_long_value()
         {
-            return 0;
+            return -1; // not supported
         }
 
         internal void set_short_limit(int limit)
@@ -133,10 +133,8 @@ namespace ControllerCommon.Processor.Intel
             using (var ProcessOutput = Process.Start(startInfo))
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
-                {
-                    string line = ProcessOutput.StandardOutput.ReadLine();
-                    break;
-                }
+                    ProcessOutput.StandardOutput.ReadLine();
+
                 ProcessOutput.Close();
             }
         }
@@ -165,10 +163,8 @@ namespace ControllerCommon.Processor.Intel
             using (var ProcessOutput = Process.Start(startInfo))
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
-                {
-                    string line = ProcessOutput.StandardOutput.ReadLine();
-                    break;
-                }
+                    ProcessOutput.StandardOutput.ReadLine();
+
                 ProcessOutput.Close();
             }
         }

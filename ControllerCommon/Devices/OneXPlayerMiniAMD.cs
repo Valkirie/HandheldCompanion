@@ -16,7 +16,7 @@ namespace ControllerCommon.Devices
             this.ProductModel = "ONEXPLAYERMini";
 
             // https://www.amd.com/fr/products/apu/amd-ryzen-7-5800u
-            this.nTDP = new double[] { 15, 20 };
+            this.nTDP = new double[] { 15, 15, 20 };
             this.cTDP = new double[] { 10, 25 };
 
             this.AngularVelocityAxisSwap = new()

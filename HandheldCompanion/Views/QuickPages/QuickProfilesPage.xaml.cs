@@ -147,7 +147,7 @@ namespace HandheldCompanion.Views.QuickPages
                     // Sustained TDP settings (slow, stapm, long)
                     double[] TDP = currentProfile.TDP_value != null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
                     TDPSustainedSlider.Value = TDP[0];
-                    TDPBoostSlider.Value = TDP[1];
+                    TDPBoostSlider.Value = TDP[2];
 
                     // Sensivity settings
                     SliderSensivity.Value = currentProfile.aiming_sensivity;
@@ -271,7 +271,8 @@ namespace HandheldCompanion.Views.QuickPages
             // Power settings
             currentProfile.TDP_override = (bool)TDPToggle.IsOn;
             currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
-            currentProfile.TDP_value[1] = (int)TDPBoostSlider.Value;
+            currentProfile.TDP_value[1] = (int)TDPSustainedSlider.Value;
+            currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
         }
 
         private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -281,6 +282,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             // Power settings
             currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
+            currentProfile.TDP_value[1] = (int)TDPSustainedSlider.Value;
         }
 
         private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -289,7 +291,7 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             // Power settings
-            currentProfile.TDP_value[1] = (int)TDPBoostSlider.Value;
+            currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
         }
 
         private void SliderSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

@@ -14,7 +14,7 @@ namespace ControllerCommon.Devices
             this.ProductIllustration = "device_aya_air";
 
             // https://www.amd.com/fr/products/apu/amd-ryzen-5-5560u
-            this.nTDP = new double[] { 8, 15 };
+            this.nTDP = new double[] { 8, 8, 15 };
             this.cTDP = new double[] { 10, 25 };
 
             this.AngularVelocityAxisSwap = new()

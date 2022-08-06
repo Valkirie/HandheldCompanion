@@ -118,7 +118,7 @@ namespace HandheldCompanion.Views.QuickPages
                 switch (type)
                 {
                     default:
-                    case PowerType.Long:
+                    case PowerType.Slow:
                         {
                             if (!TDPSustainedSlider.IsEnabled)
                                 return;
@@ -127,7 +127,7 @@ namespace HandheldCompanion.Views.QuickPages
                                 TDPSustainedSlider.Value = limit;
                         }
                         break;
-                    case PowerType.Short:
+                    case PowerType.Fast:
                         {
                             if (!TDPBoostSlider.IsEnabled)
                                 return;
@@ -164,7 +164,7 @@ namespace HandheldCompanion.Views.QuickPages
             Properties.Settings.Default.QuickToolsPerformanceTDPSustainedValue = TDPSustainedSlider.Value;
             Properties.Settings.Default.Save();
 
-            MainWindow.powerManager.RequestTDP(PowerType.Long, TDPSustainedSlider.Value);
+            MainWindow.powerManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
         }
 
         private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -176,7 +176,7 @@ namespace HandheldCompanion.Views.QuickPages
             Properties.Settings.Default.QuickToolsPerformanceTDPBoostValue = TDPBoostSlider.Value;
             Properties.Settings.Default.Save();
 
-            MainWindow.powerManager.RequestTDP(PowerType.Short, TDPBoostSlider.Value);
+            MainWindow.powerManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
         }
 
         private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
@@ -190,8 +190,8 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (TDPToggle.IsOn)
             {
-                MainWindow.powerManager.RequestTDP(PowerType.Long, TDPSustainedSlider.Value);
-                MainWindow.powerManager.RequestTDP(PowerType.Short, TDPBoostSlider.Value);
+                MainWindow.powerManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
+                MainWindow.powerManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
             }
             else
             {

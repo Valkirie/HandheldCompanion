@@ -67,12 +67,12 @@ namespace HandheldCompanion.Managers
         public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
 
         // user requested limits
-        private double[] UserRequestedTDP = new double[2];
+        private double[] UserRequestedTDP = new double[3];
         private double UserRequestedGPUClock;
         private Guid UserRequestedPowerMode;
 
         // values
-        private double[] TDPvalue = new double[2];
+        private double[] TDPvalue = new double[3];
         private double GPUvalue;
 
         public PowerManager()
@@ -98,12 +98,14 @@ namespace HandheldCompanion.Managers
 
             // initialize settings
             var TDPdown = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPSustainedValue : 0;
-            TDPdown = TDPdown != 0 ? TDPdown : MainWindow.handheldDevice.nTDP[0];
-            UserRequestedTDP[0] = TDPdown;
-
             var TDPup = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPBoostValue : 0;
+            
+            TDPdown = TDPdown != 0 ? TDPdown : MainWindow.handheldDevice.nTDP[0];
             TDPup = TDPup != 0 ? TDPup : MainWindow.handheldDevice.nTDP[1];
-            UserRequestedTDP[1] = TDPup;
+
+            UserRequestedTDP[0] = TDPdown;  // slow
+            UserRequestedTDP[1] = TDPdown;  // stapm
+            UserRequestedTDP[2] = TDPup;    // fast
 
             var GPU = Properties.Settings.Default.QuickToolsPerformanceGPUEnabled ? Properties.Settings.Default.QuickToolsPerformanceGPUValue : 0;
             if (GPU != 0)
@@ -134,16 +136,11 @@ namespace HandheldCompanion.Managers
         private void cpuTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
             if (TDPvalue[0] != 0)
-            {
-                processor.SetTDPLimit("stapm", TDPvalue[0]);
                 processor.SetTDPLimit("slow", TDPvalue[0]);
-                // processor.SetTDPLimit("all", TDPvalue[0]);
-            }
-
             if (TDPvalue[1] != 0)
-            {
-                processor.SetTDPLimit("fast", TDPvalue[1]);
-            }
+                processor.SetTDPLimit("stapm", TDPvalue[1]);
+            if (TDPvalue[2] != 0)
+                processor.SetTDPLimit("fast", TDPvalue[2]);
         }
 
         private void gpuTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -199,9 +196,6 @@ namespace HandheldCompanion.Managers
                 UserRequestedGPUClock = value;
 
             // update value read by timer
-            if (GPUvalue == value)
-                return;
-
             GPUvalue = value;
 
             // we use a timer to prevent too many calls from happening
