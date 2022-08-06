@@ -135,12 +135,12 @@ namespace HandheldCompanion.Managers
 
         private void cpuTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (TDPvalue[0] != 0)
-                processor.SetTDPLimit("slow", TDPvalue[0]);
-            if (TDPvalue[1] != 0)
-                processor.SetTDPLimit("stapm", TDPvalue[1]);
-            if (TDPvalue[2] != 0)
-                processor.SetTDPLimit("fast", TDPvalue[2]);
+            foreach (PowerType type in (PowerType[])Enum.GetValues(typeof(PowerType)))
+            {
+                int idx = (int)type;
+                if (TDPvalue[idx] != 0)
+                    processor.SetTDPLimit(type, TDPvalue[idx]);
+            }
         }
 
         private void gpuTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -235,9 +235,11 @@ namespace HandheldCompanion.Managers
                 if (UserRequestedPowerMode == PowerMode.BetterBattery)
                     TDP = (int)Math.Truncate(UserRequestedTDP[idx] * 0.9);
 
+            // only request an update if reported limit is different to expected value
             if (limit != TDP)
                 RequestTDP(type, TDP, false);
 
+            // raise event
             PowerLimitChanged?.Invoke(type, limit);
         }
         #endregion

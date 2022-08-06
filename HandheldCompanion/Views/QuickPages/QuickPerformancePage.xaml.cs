@@ -165,6 +165,7 @@ namespace HandheldCompanion.Views.QuickPages
             Properties.Settings.Default.Save();
 
             MainWindow.powerManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
+            MainWindow.powerManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
         }
 
         private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -191,6 +192,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (TDPToggle.IsOn)
             {
                 MainWindow.powerManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
+                MainWindow.powerManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
                 MainWindow.powerManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
             }
             else

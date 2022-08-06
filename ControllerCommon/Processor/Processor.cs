@@ -95,7 +95,7 @@ namespace ControllerCommon.Processor
                 updateTimer.Stop();
         }
 
-        public virtual void SetTDPLimit(string type, double limit)
+        public virtual void SetTDPLimit(PowerType type, double limit)
         {
             LogManager.LogInformation("User requested {0} TDP limit: {1}", type, limit);
         }
@@ -222,18 +222,15 @@ namespace ControllerCommon.Processor
             base.UpdateTimer_Elapsed(sender, e);
         }
 
-        public override void SetTDPLimit(string type, double limit)
+        public override void SetTDPLimit(PowerType type, double limit)
         {
             switch (type)
             {
-                case "slow":
+                case PowerType.Stapm:
+                case PowerType.Slow:
                     platform.set_long_limit((int)limit);
                     break;
-                case "fast":
-                    platform.set_short_limit((int)limit);
-                    break;
-                case "all":
-                    platform.set_long_limit((int)limit);
+                case PowerType.Fast:
                     platform.set_short_limit((int)limit);
                     break;
             }
@@ -359,7 +356,7 @@ namespace ControllerCommon.Processor
             base.UpdateTimer_Elapsed(sender, e);
         }
 
-        public override void SetTDPLimit(string type, double limit)
+        public override void SetTDPLimit(PowerType type, double limit)
         {
             if (ry == IntPtr.Zero)
                 return;
@@ -369,19 +366,14 @@ namespace ControllerCommon.Processor
 
             switch (type)
             {
-                case "fast":
+                case PowerType.Fast:
                     RyzenAdj.set_fast_limit(ry, (uint)limit);
                     break;
-                case "slow":
+                case PowerType.Slow:
                     RyzenAdj.set_slow_limit(ry, (uint)limit);
                     break;
-                case "stapm":
+                case PowerType.Stapm:
                     RyzenAdj.set_stapm_limit(ry, (uint)limit);
-                    break;
-                case "all":
-                    RyzenAdj.set_stapm_limit(ry, (uint)limit);
-                    RyzenAdj.set_slow_limit(ry, (uint)limit);
-                    RyzenAdj.set_fast_limit(ry, (uint)limit);
                     break;
             }
             base.SetTDPLimit(type, limit);
