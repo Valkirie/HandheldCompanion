@@ -94,6 +94,7 @@ namespace HandheldCompanion.Managers
             processor.LimitChanged += Processor_LimitChanged;
 
             MainWindow.profileManager.Applied += ProfileManager_Applied;
+            MainWindow.profileManager.Updated += ProfileManager_Updated;
             MainWindow.profileManager.Discarded += ProfileManager_Discarded;
 
             // initialize settings
@@ -112,8 +113,19 @@ namespace HandheldCompanion.Managers
                 RequestGPUClock(GPU, true);
         }
 
+        private void ProfileManager_Updated(Profile profile, bool backgroundtask, bool isCurrent)
+        {
+            if (!isCurrent)
+                return;
+
+            ProfileManager_Applied(profile);
+        }
+
         private void ProfileManager_Discarded(Profile profile, bool isCurrent)
         {
+            if (!isCurrent)
+                return;
+
             // restore user defined TDP
             RequestTDP(UserRequestedTDP);
         }
