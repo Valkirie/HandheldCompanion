@@ -412,6 +412,10 @@ namespace HandheldCompanion.Managers
             string exec = Path.GetFileName(path);
 
             bool display = IsValid(exec, path);
+            bool self = IsSelf(exec, path);
+
+            if (self)
+                return;
 
             foregroundProcess = new ProcessEx(proc)
             {
@@ -509,7 +513,6 @@ namespace HandheldCompanion.Managers
             // manual filtering
             switch (exec.ToLower())
             {
-                case "handheldcompanion.exe":   // Self
                 case "rw.exe":                  // Used to change TDP
                 case "kx.exe":                  // Used to change TDP
                 case "devenv.exe":              // Visual Studio
@@ -517,6 +520,11 @@ namespace HandheldCompanion.Managers
                 default:
                     return true;
             }
+        }
+
+        private bool IsSelf(string exec, string path)
+        {
+            return exec.ToLower().Equals("handheldcompanion.exe");
         }
     }
 }
