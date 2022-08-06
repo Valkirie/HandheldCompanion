@@ -33,25 +33,28 @@ namespace ControllerCommon.Managers
             {
                 new Thread(() =>
                 {
-                    new ToastContentBuilder()
+                    var toast = new ToastContentBuilder()
                     .AddText(title)
                     .AddText(content)
                     .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
-                    .SetToastScenario(ToastScenario.Default)
-                    .Show(toast =>
+                    .SetToastScenario(ToastScenario.Default);
+
+                    if (toast != null)
                     {
-                        toast.Tag = title;
-                        toast.Group = m_Group;
-                    });
+                        toast.Show(toast =>
+                        {
+                            toast.Tag = title;
+                            toast.Group = m_Group;
+                        });
 
-                    Timer timer = new Timer(m_Interval)
-                    {
-                        Enabled = true,
-                        AutoReset = false
-                    };
+                        Timer timer = new Timer(m_Interval)
+                        {
+                            Enabled = true,
+                            AutoReset = false
+                        };
 
-                    timer.Elapsed += (s, e) => { ToastNotificationManagerCompat.History.Remove(title, m_Group); };
-
+                        timer.Elapsed += (s, e) => { ToastNotificationManagerCompat.History.Remove(title, m_Group); };
+                    }
                 }).Start();
             }
             catch(Exception) { }
