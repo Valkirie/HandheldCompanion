@@ -259,6 +259,10 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProcess is null)
                 return;
 
+            Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
+                             $"{currentProfile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
+                             ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+
             SaveProfile();
         }
 
