@@ -350,13 +350,11 @@ namespace HandheldCompanion.Views.Pages
                 cB_InvertHorizontal.IsChecked = currentProfile.inverthorizontal;
                 cB_InvertVertical.IsChecked = currentProfile.invertvertical;
 
-                // Power settings
-                TDPToggle.IsOn = currentProfile.TDP_override;
-
                 // Sustained TDP settings (slow, stapm, long)
                 double[] TDP = currentProfile.TDP_value != null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
                 TDPSustainedSlider.Value = TDP[0];
                 TDPBoostSlider.Value = TDP[2];
+                TDPToggle.IsOn = currentProfile.TDP_override;
 
                 // define slider(s) min and max values based on device specifications
                 TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
@@ -471,10 +469,10 @@ namespace HandheldCompanion.Views.Pages
                     currentProfile.umc_trigger |= button;
 
             // Power settings
-            currentProfile.TDP_override = (bool)TDPToggle.IsOn;
             currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
             currentProfile.TDP_value[1] = (int)TDPSustainedSlider.Value;
             currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
+            currentProfile.TDP_override = (bool)TDPToggle.IsOn;
 
             MainWindow.profileManager.UpdateOrCreateProfile(currentProfile, false);
             MainWindow.profileManager.SerializeProfile(currentProfile);
