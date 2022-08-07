@@ -273,9 +273,6 @@ namespace HandheldCompanion.Views.QuickPages
 
             // Power settings
             currentProfile.TDP_override = (bool)TDPToggle.IsOn;
-            currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
-            currentProfile.TDP_value[1] = (int)TDPSustainedSlider.Value;
-            currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
         }
 
         private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
