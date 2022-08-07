@@ -446,6 +446,7 @@ namespace HandheldCompanion.Managers
                     {
                         // do not try to write/erase files when access is denied
                         case ProfileErrorCode.MissingPermission:
+                        case ProfileErrorCode.MissingPath:
                             return;
                     }
 
