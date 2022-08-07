@@ -141,13 +141,12 @@ namespace HandheldCompanion.Views.QuickPages
                     cB_Input.SelectedIndex = (int)currentProfile.umc_input;
                     cB_Output.SelectedIndex = (int)currentProfile.umc_output;
 
-                    // Power settings
-                    TDPToggle.IsOn = currentProfile.TDP_override;
-
                     // Sustained TDP settings (slow, stapm, long)
                     double[] TDP = currentProfile.TDP_value != null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
                     TDPSustainedSlider.Value = TDP[0];
                     TDPBoostSlider.Value = TDP[2];
+
+                    TDPToggle.IsOn = currentProfile.TDP_override;
 
                     // Sensivity settings
                     SliderSensivity.Value = currentProfile.aiming_sensivity;
