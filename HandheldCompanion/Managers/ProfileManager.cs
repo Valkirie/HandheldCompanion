@@ -176,9 +176,6 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                if (currentProfile != null)
-                    Discarded?.Invoke(currentProfile, true);
-
                 var profile = GetProfileFromExec(processEx.Name);
 
                 if (profile == null)
@@ -187,11 +184,16 @@ namespace HandheldCompanion.Managers
                 if (!profile.isEnabled)
                     return;
 
-                // update current profile
-                currentProfile = profile;
+                // skip if is current profile
+                if (currentProfile == profile)
+                    return;
 
                 // raise event
+                Discarded?.Invoke(currentProfile, true);
                 Applied?.Invoke(profile);
+
+                // update current profile
+                currentProfile = profile;
 
                 LogManager.LogDebug("Profile {0} applied", profile.name);
 
