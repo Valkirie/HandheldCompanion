@@ -135,6 +135,8 @@ namespace HandheldCompanion.Managers
             // apply profile defined TDP
             if (profile.TDP_override && profile.TDP_value != null)
                 RequestTDP(profile.TDP_value, false);
+            else
+                RequestTDP(UserRequestedTDP);
         }
 
         private void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
