@@ -765,6 +765,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change the overlay controller opacity.
+        /// </summary>
+        public static string OverlayPage_OpacityControllerDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_OpacityControllerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change the overlay trackpads opacity.
         /// </summary>
         public static string OverlayPage_OpacityTrackpadDesc {

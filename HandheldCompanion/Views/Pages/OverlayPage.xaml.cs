@@ -62,6 +62,10 @@ namespace HandheldCompanion.Views.Pages
             // trackpads opacity
             SliderTrackpadsOpacity.Value = Properties.Settings.Default.OverlayTrackpadsOpacity;
             SliderTrackpadsOpacity_ValueChanged(this, null);
+
+            // controller opacity
+            MainWindow.overlay.ModelViewPort.Opacity = Properties.Settings.Default.OverlayControllerOpacity;
+            SliderControllerOpacity_ValueChanged(this, null);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -295,6 +299,18 @@ namespace HandheldCompanion.Views.Pages
 
             // save settings
             Properties.Settings.Default.OverlayRenderInterval = Slider_Framerate.Value;
+            Properties.Settings.Default.Save();
+        }
+
+        private void SliderControllerOpacity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (!Initialized)
+                return;
+
+            MainWindow.overlay.ModelViewPort.Opacity = SliderControllerOpacity.Value;
+
+            // save settings
+            Properties.Settings.Default.OverlayControllerOpacity = SliderControllerOpacity.Value;
             Properties.Settings.Default.Save();
         }
     }

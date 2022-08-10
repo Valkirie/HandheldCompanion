@@ -610,5 +610,17 @@ namespace HandheldCompanion.Properties {
                 this["ConfigurableTDPOverrideDown"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public double OverlayControllerOpacity {
+            get {
+                return ((double)(this["OverlayControllerOpacity"]));
+            }
+            set {
+                this["OverlayControllerOpacity"] = value;
+            }
+        }
     }
 }

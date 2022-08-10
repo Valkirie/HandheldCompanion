@@ -353,6 +353,9 @@
   <data name="OverlayPage_Opacity" xml:space="preserve">
     <value>Opacity</value>
   </data>
+  <data name="OverlayPage_OpacityControllerDesc" xml:space="preserve">
+    <value>Change the overlay controller opacity</value>
+  </data>
   <data name="OverlayPage_OpacityTrackpadDesc" xml:space="preserve">
     <value>Change the overlay trackpads opacity</value>
   </data>
