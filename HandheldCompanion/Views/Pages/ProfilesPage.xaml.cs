@@ -181,6 +181,13 @@ namespace HandheldCompanion.Views.Pages
                 cB_Profiles.SelectedItem = profile;
                 cB_Profiles.Items.Refresh();
             });
+
+            if (backgroundtask)
+                return;
+
+            _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
+                             $"{currentProfile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
+                             ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
         }
 
         public void ProfileDeleted(Profile profile)
@@ -450,10 +457,6 @@ namespace HandheldCompanion.Views.Pages
         {
             if (currentProfile == null)
                 return;
-
-            Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
-                             $"{currentProfile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
-                             ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
 
             // Profile
             currentProfile.name = tB_ProfileName.Text;

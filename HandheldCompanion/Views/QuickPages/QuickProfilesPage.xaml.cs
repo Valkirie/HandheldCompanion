@@ -165,6 +165,10 @@ namespace HandheldCompanion.Views.QuickPages
 
                     // Sensivity settings
                     SliderSensivity.Value = currentProfile.aiming_sensivity;
+
+                    _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
+                                     $"{currentProfile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
+                                     ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
                 }
             });
         }
@@ -175,7 +179,6 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             currentProcess = processEx;
-            currentProfile = MainWindow.profileManager.GetProfileFromExec(currentProcess.Name);
 
             this.Dispatcher.Invoke(() =>
             {
@@ -196,7 +199,7 @@ namespace HandheldCompanion.Views.QuickPages
             QuickTools.scrollLock = false;
         }
 
-        private void SaveProfile()
+        private void UpdateProfile()
         {
             if (currentProfile is null)
                 return;
@@ -266,7 +269,8 @@ namespace HandheldCompanion.Views.QuickPages
 
             currentProfile = new Profile(currentProcess.Path);
             ProfileUpdated(currentProfile, false, true);
-            SaveProfile();
+
+            UpdateProfile();
         }
 
         private void b_UpdateProfile_Click(object sender, RoutedEventArgs e)
@@ -274,11 +278,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProcess is null)
                 return;
 
-            Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
-                             $"{currentProfile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
-                             ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
-
-            SaveProfile();
+            UpdateProfile();
         }
 
         private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
