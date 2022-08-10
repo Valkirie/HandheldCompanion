@@ -179,6 +179,7 @@ namespace HandheldCompanion.Views.Pages
                     cB_Profiles.Items.Add(profile);
 
                 cB_Profiles.SelectedItem = profile;
+                cB_Profiles.Items.Refresh();
             });
         }
 
