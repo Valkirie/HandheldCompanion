@@ -142,7 +142,7 @@ namespace HandheldCompanion.Managers
                 Visibility = Visibility.Collapsed,
                 Tag = Name
             };
-            processBorder.SetResourceReference(Control.BackgroundProperty, "SystemControlBackgroundChromeMediumLowBrush");
+            processBorder.SetResourceReference(Control.BackgroundProperty, "LayerOnMicaBaseAltFillColorDefaultBrush");
 
             // Create Grid
             processGrid = new();

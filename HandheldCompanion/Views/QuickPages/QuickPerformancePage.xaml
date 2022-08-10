@@ -21,7 +21,7 @@
             <Border                      
                         Padding="15,12,15,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -46,7 +46,7 @@
             <Border
                 Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
-                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                 Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                 <DockPanel Grid.Column="1" Margin="8,0,0,0">
@@ -64,7 +64,7 @@
             <Border
                 Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
-                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                 Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                 <DockPanel Grid.Column="1" Margin="8,0,0,0">
@@ -82,10 +82,9 @@
             <Border
                 Name="TDPWarning"
                 Visibility="Collapsed"
-                Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
+                Background="{DynamicResource AccentAcrylicBackgroundFillColorBaseBrush}"
                 Padding="15,2,15,2"
-                CornerRadius="{DynamicResource ControlCornerRadius}"
-                ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
+                CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -108,7 +107,7 @@
         <Border
             Padding="15,12,15,12"
             CornerRadius="{DynamicResource ControlCornerRadius}"
-            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -133,7 +132,7 @@
         <Border
                 Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
-                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                 Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
             <DockPanel Grid.Column="1" Margin="0,0,0,0">
@@ -154,7 +153,7 @@
             <Border
                 Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
-                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -177,7 +176,7 @@
             <Border
                 Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
-                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
                 <DockPanel Grid.Column="1">
                     <ui:SimpleStackPanel VerticalAlignment="Center" Margin="0,0,0,0">
