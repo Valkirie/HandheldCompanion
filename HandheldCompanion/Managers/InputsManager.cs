@@ -73,6 +73,9 @@ namespace HandheldCompanion.Managers
 
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();
+
+            // make sure we don't hang the keyboard
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
         }
 
         private void InjectModifiers(KeyEventArgsExt args)
@@ -95,9 +98,6 @@ namespace HandheldCompanion.Managers
 
         private void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
         {
-            // make sure we don't hang the keyboard
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
-
             ResetTimer.Stop();
             KeyUsed = false;
 
