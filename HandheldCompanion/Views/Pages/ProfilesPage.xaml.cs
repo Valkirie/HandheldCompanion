@@ -269,6 +269,9 @@ namespace HandheldCompanion.Views.Pages
 
                     Profile profile = new Profile(path);
 
+                    // set default value(s)
+                    profile.TDP_value = MainWindow.handheldDevice.nTDP;
+
                     bool exists = false;
 
                     if (MainWindow.profileManager.Contains(profile))

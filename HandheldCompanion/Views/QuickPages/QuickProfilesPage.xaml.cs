@@ -270,6 +270,9 @@ namespace HandheldCompanion.Views.QuickPages
             currentProfile = new Profile(currentProcess.Path);
             ProfileUpdated(currentProfile, false, true);
 
+            // set default value(s)
+            currentProfile.TDP_value = MainWindow.handheldDevice.nTDP;
+
             UpdateProfile();
         }
 
