@@ -100,7 +100,7 @@ namespace HandheldCompanion.Managers
             // initialize settings
             var TDPdown = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPSustainedValue : 0;
             var TDPup = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPBoostValue : 0;
-            
+
             TDPdown = TDPdown != 0 ? TDPdown : MainWindow.handheldDevice.nTDP[0];
             TDPup = TDPup != 0 ? TDPup : MainWindow.handheldDevice.nTDP[1];
 

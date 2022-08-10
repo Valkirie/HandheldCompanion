@@ -134,7 +134,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void SettingsPage_SettingValueChanged(string name, object value)
         {
-            switch(name)
+            switch (name)
             {
                 case "configurabletdp_down":
                     TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = (double)value;

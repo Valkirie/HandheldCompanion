@@ -194,9 +194,9 @@ namespace ControllerCommon.Processor
             // read limit(s)
             int limit_short = 0;
             int limit_long = 0;
-            
-            while(limit_short == 0)
-                limit_short= (int)platform.get_short_limit();
+
+            while (limit_short == 0)
+                limit_short = (int)platform.get_short_limit();
 
             while (limit_long == 0)
                 limit_long = (int)platform.get_long_limit();

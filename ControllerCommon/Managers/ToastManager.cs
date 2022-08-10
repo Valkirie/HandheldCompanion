@@ -57,7 +57,7 @@ namespace ControllerCommon.Managers
                     }
                 }).Start();
             }
-            catch(Exception) { }
+            catch (Exception) { }
         }
 
         public void Stop()

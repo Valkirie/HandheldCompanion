@@ -462,7 +462,7 @@ namespace HandheldCompanion.Views.Pages
         private void SensorPlacement_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             int Tag = int.Parse((string)((Button)sender).Tag);
-            
+
             // raise event
             SettingValueChanged?.Invoke("sensor_placement", Tag);
 
