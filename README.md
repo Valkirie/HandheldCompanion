@@ -75,6 +75,7 @@ Run the `install.exe` as administrator and you'll be set!
 - ViGEmBus: [Nefarius](https://github.com/ViGEm/ViGEmBus)
 - ViGEmClient : [Nefarius](https://github.com/ViGEm/ViGEmClient)
 - SharpDX : [https://github.com/sharpdx/SharpDX](https://github.com/sharpdx/SharpDX)
+- Godot Engine Illustration : [Juan Linietsky, Fernando Miguel Calabró](https://github.com/godotengine/tps-demo)
 
 ## Licensing
 

@@ -41,7 +41,7 @@
     <None Remove="Resources\icon.png" />
     <None Remove="Resources\MainBody.mtl" />
     <None Remove="Resources\MainBody.obj" />
-    <None Remove="Resources\overlay_back.jpg" />
+    <None Remove="Resources\overlay_back.png" />
     <None Remove="Resources\Screen.mtl" />
     <None Remove="Resources\Screen.obj" />
     <None Remove="Resources\ShoulderButtonLeft.mtl" />
@@ -76,7 +76,7 @@
     <Resource Include="Resources\device_gpd_winmax2.png" />
     <Resource Include="Resources\device_onexplayer_mini.png" />
     <Resource Include="Resources\icon.png" />
-    <Resource Include="Resources\overlay_back.jpg" />
+    <Resource Include="Resources\overlay_back.png" />
   </ItemGroup>
 
   <ItemGroup>

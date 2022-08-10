@@ -136,9 +136,9 @@
                 Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
             <DockPanel Grid.Column="1" Margin="0,0,0,0">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}" />
+                <TextBlock Width="30" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}" />
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" MHz" />
-                <Slider Name="GPUSlider" Width="350" HorizontalAlignment="Right" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="50" Minimum="100" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
+                <Slider Name="GPUSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="50" Minimum="100" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                         ValueChanged="GPUSlider_ValueChanged"
                         IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
                         MouseEnter="Scrolllock_MouseEnter"
