@@ -574,5 +574,41 @@ namespace HandheldCompanion.Properties {
                 this["QuickToolsPerformanceTDPBoostValue"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ConfigurableTDPOverride {
+            get {
+                return ((bool)(this["ConfigurableTDPOverride"]));
+            }
+            set {
+                this["ConfigurableTDPOverride"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double ConfigurableTDPOverrideUp {
+            get {
+                return ((double)(this["ConfigurableTDPOverrideUp"]));
+            }
+            set {
+                this["ConfigurableTDPOverrideUp"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double ConfigurableTDPOverrideDown {
+            get {
+                return ((double)(this["ConfigurableTDPOverrideDown"]));
+            }
+            set {
+                this["ConfigurableTDPOverrideDown"] = value;
+            }
+        }
     }
 }

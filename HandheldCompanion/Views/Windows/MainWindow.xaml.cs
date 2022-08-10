@@ -44,12 +44,12 @@ namespace HandheldCompanion.Views
         private Dictionary<string, Page> _pages = new();
         private string preNavItemTag;
 
-        public ControllerPage controllerPage;
-        public ProfilesPage profilesPage;
-        public SettingsPage settingsPage;
-        public AboutPage aboutPage;
-        public OverlayPage overlayPage;
-        public HotkeysPage hotkeysPage;
+        public static ControllerPage controllerPage;
+        public static ProfilesPage profilesPage;
+        public static SettingsPage settingsPage;
+        public static AboutPage aboutPage;
+        public static OverlayPage overlayPage;
+        public static HotkeysPage hotkeysPage;
 
         // overlay(s) vars
         public static InputsManager inputsManager;
@@ -81,6 +81,7 @@ namespace HandheldCompanion.Views
         public static CheatManager cheatManager;
         public static SystemManager systemManager;
         public static PowerManager powerManager;
+        public static UpdateManager updateManager;
 
         private WindowState prevWindowState;
         private NotifyIcon notifyIcon;
@@ -190,7 +191,7 @@ namespace HandheldCompanion.Views
             serviceManager.Updated += OnServiceUpdate;
             serviceManager.Ready += () =>
             {
-                if (settingsPage.StartServiceWithCompanion)
+                if (Properties.Settings.Default.StartServiceWithCompanion)
                 {
                     if (!serviceManager.Exists())
                         serviceManager.CreateService(CurrentPathService);
@@ -231,6 +232,9 @@ namespace HandheldCompanion.Views
             // initialize power manager
             powerManager = new();
 
+            // initialize update manager
+            updateManager = new UpdateManager();
+
             // initialize windows
             overlay = new Overlay(pipeClient, inputsManager);
             quickTools = new QuickTools();
@@ -250,6 +254,11 @@ namespace HandheldCompanion.Views
             // handle settingsPage events
             settingsPage.SettingValueChanged += (name, value) =>
             {
+                // todo : create a settings manager
+                profilesPage.SettingsPage_SettingValueChanged(name, value);
+                quickTools.performancePage.SettingsPage_SettingValueChanged(name, value);
+                quickTools.profilesPage.SettingsPage_SettingValueChanged(name, value);
+
                 switch (name)
                 {
                     case "toast_notification":
@@ -371,8 +380,8 @@ namespace HandheldCompanion.Views
             this.Top = Math.Min(SystemParameters.PrimaryScreenHeight - this.MinHeight, Properties.Settings.Default.MainWindowTop);
 
             // pull settings
-            WindowState = settingsPage.StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
-            toastManager.Enabled = settingsPage.ToastEnable;
+            WindowState = Properties.Settings.Default.StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
+            toastManager.Enabled = Properties.Settings.Default.ToastEnable;
 
             if (IsElevated)
             {
@@ -690,7 +699,7 @@ namespace HandheldCompanion.Views
                     break;
             }
 
-            if (settingsPage.CloseMinimises && !appClosing)
+            if (Properties.Settings.Default.CloseMinimises && !appClosing)
             {
                 e.Cancel = true;
                 WindowState = WindowState.Minimized;
@@ -700,7 +709,7 @@ namespace HandheldCompanion.Views
             if (IsElevated)
             {
                 // stop service with companion
-                if (settingsPage.HaltServiceWithCompanion)
+                if (Properties.Settings.Default.HaltServiceWithCompanion)
                     serviceManager.StopServiceAsync();
             }
 

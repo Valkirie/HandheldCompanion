@@ -97,8 +97,23 @@ namespace HandheldCompanion.Views.QuickPages
             }
 
             // define slider(s) min and max values based on device specifications
-            TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
-            TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
+            var TDPdown = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideDown : MainWindow.handheldDevice.cTDP[0];
+            var TDPup = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideUp : MainWindow.handheldDevice.cTDP[1];
+            TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = TDPdown;
+            TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = TDPup;
+        }
+
+        public void SettingsPage_SettingValueChanged(string name, object value)
+        {
+            switch (name)
+            {
+                case "configurabletdp_down":
+                    TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = (double)value;
+                    break;
+                case "configurabletdp_up":
+                    TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = (double)value;
+                    break;
+            }
         }
 
         private void ProfileDeleted(Profile profile)
