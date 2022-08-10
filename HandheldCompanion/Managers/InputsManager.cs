@@ -9,6 +9,7 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using WindowsInput.Events;
 
@@ -94,6 +95,9 @@ namespace HandheldCompanion.Managers
 
         private void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
         {
+            // make sure we don't hang the keyboard
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
+
             ResetTimer.Stop();
             KeyUsed = false;
 
