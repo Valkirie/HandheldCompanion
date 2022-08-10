@@ -159,6 +159,10 @@ namespace HandheldCompanion.Views.Pages
             Toggle_ServiceStartup.IsEnabled = (mode == ServiceStartMode.Manual);
             Toggle_ServiceShutdown.IsEnabled = (mode == ServiceStartMode.Manual);
 
+            // service was not found
+            if (!cB_StartupType.IsEnabled)
+                return;
+
             // raise event
             SettingValueChanged?.Invoke("service_startup_type", mode);
         }
