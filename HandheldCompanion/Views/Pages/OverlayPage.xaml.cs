@@ -64,7 +64,7 @@ namespace HandheldCompanion.Views.Pages
             SliderTrackpadsOpacity_ValueChanged(this, null);
 
             // controller opacity
-            MainWindow.overlay.ModelViewPort.Opacity = Properties.Settings.Default.OverlayControllerOpacity;
+            SliderControllerOpacity.Value = Properties.Settings.Default.OverlayControllerOpacity;
             SliderControllerOpacity_ValueChanged(this, null);
         }
 
