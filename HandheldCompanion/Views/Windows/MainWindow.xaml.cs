@@ -299,6 +299,16 @@ namespace HandheldCompanion.Views
                 foreach (NavigationViewItem item in navView.FooterMenuItems)
                     item.ToolTip = Properties.Resources.WarningElevated;
             }
+
+            // update Position and Size
+            this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.MainWindowHeight);
+            this.Width = (int)Math.Max(this.MinWidth, Properties.Settings.Default.MainWindowWidth);
+
+            this.Left = Math.Min(SystemParameters.PrimaryScreenWidth - this.MinWidth, Properties.Settings.Default.MainWindowLeft);
+            this.Top = Math.Min(SystemParameters.PrimaryScreenHeight - this.MinHeight, Properties.Settings.Default.MainWindowTop);
+
+            // pull settings
+            WindowState = Properties.Settings.Default.StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
         }
 
         private void SystemManager_Updated(PnPDevice device)
@@ -372,15 +382,6 @@ namespace HandheldCompanion.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // update Position and Size
-            this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.MainWindowHeight);
-            this.Width = (int)Math.Max(this.MinWidth, Properties.Settings.Default.MainWindowWidth);
-
-            this.Left = Math.Min(SystemParameters.PrimaryScreenWidth - this.MinWidth, Properties.Settings.Default.MainWindowLeft);
-            this.Top = Math.Min(SystemParameters.PrimaryScreenHeight - this.MinHeight, Properties.Settings.Default.MainWindowTop);
-
-            // pull settings
-            WindowState = Properties.Settings.Default.StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
             toastManager.Enabled = Properties.Settings.Default.ToastEnable;
 
             if (IsElevated)
