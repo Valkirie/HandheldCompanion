@@ -156,8 +156,8 @@ namespace HandheldCompanion.Views.Pages
             }
 
             // only allow users to set those options when service mode is set to Manual
-            Toggle_ServiceStartup.IsEnabled = (mode == ServiceStartMode.Manual);
-            Toggle_ServiceShutdown.IsEnabled = (mode == ServiceStartMode.Manual);
+            Toggle_ServiceStartup.IsEnabled = (mode != ServiceStartMode.Automatic);
+            Toggle_ServiceShutdown.IsEnabled = (mode != ServiceStartMode.Automatic);
 
             // service was not found
             if (!cB_StartupType.IsEnabled)
