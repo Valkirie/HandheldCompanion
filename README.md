@@ -45,8 +45,20 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 
 ## Overlay
 The software has multiple built-in overlay options. 
-- Virtual touchpad on top of your gaming sessions. The virtual touchpad is used to mimic the DualShock 4 physical touchpad and grants maximum compatibility with PS Now, PS Remote software suites and games that make specific use of the Steampad touchpads.
-- Display a 3D virtual controller, showcasing the motion of the device and all button interaction, individual button presses, joystick and trigger positions. The following 3D models are availible.
+
+### Virtual touchpad
+
+Virtual touchpad on top of your gaming sessions. The virtual touchpad is used to mimic the DualShock 4 physical touchpad and grants maximum compatibility with PS Now, PS Remote software suites and games that make specific use of the Steampad touchpads.
+
+![Touchpad](https://user-images.githubusercontent.com/14330834/184550796-24f86f7a-af58-461d-b7c2-eb0d7735f5d5.gif)
+Virtual Touchpad input demonstration with [VSCView](https://github.com/Nielk1/VSCView)
+
+![Example02](https://user-images.githubusercontent.com/14330834/184550793-d81e2ec9-0271-4aae-bc44-7aeb393631ea.png)
+PS Remote Play, The Last of Us Part 2
+
+### 3D Controller
+
+Display a 3D virtual controller, showcasing the motion of the device and all button interaction, individual button presses, joystick and trigger positions. The following 3D models are availible.
   - OEM controller (Ayaneo Pro, Ayaneo Next, OneXPlayer Mini)
   - Emulated controller (DualShock 4, Xbox 360)
   - ZDO+ controller
