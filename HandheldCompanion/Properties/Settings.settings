@@ -48,7 +48,7 @@
       <Value Profile="(Default)">7</Value>
     </Setting>
     <Setting Name="OverlayControllerSize" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">400</Value>
+      <Value Profile="(Default)">300</Value>
     </Setting>
     <Setting Name="OverlayControllerTriggerValue" Type="System.String" Scope="User">
       <Value Profile="(Default)">33</Value>
