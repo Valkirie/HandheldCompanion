@@ -14,6 +14,8 @@ namespace ControllerCommon.Processor
         Slow = 0,
         Stapm = 1,
         Fast = 2,
+        MsrSlow = 3,
+        MsrFast = 4,
     }
 
     public class Processor
@@ -167,13 +169,16 @@ namespace ControllerCommon.Processor
                         break;
                 }
 
-                // write default limit(s)
-                m_Limits[PowerType.Fast] = m_Limits[PowerType.Slow] = m_Limits[PowerType.Stapm] = 0;
-                m_PrevLimits[PowerType.Fast] = m_PrevLimits[PowerType.Slow] = m_PrevLimits[PowerType.Stapm] = 0;
+                foreach (PowerType type in (PowerType[])Enum.GetValues(typeof(PowerType)))
+                {
+                    // write default limits
+                    m_Limits[type] = 0;
+                    m_PrevLimits[type] = 0;
 
-                // write default value(s)
-                m_Values[PowerType.Fast] = m_Values[PowerType.Slow] = m_Values[PowerType.Stapm] = -1; // not supported
-                m_PrevValues[PowerType.Fast] = m_PrevValues[PowerType.Slow] = m_PrevValues[PowerType.Stapm] = -1; // not supported
+                    // write default values : not supported
+                    m_Values[type] = -1;
+                    m_PrevValues[type] = -1;
+                }
             }
         }
 
@@ -192,18 +197,28 @@ namespace ControllerCommon.Processor
         protected override void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // read limit(s)
-            int limit_short = 0;
-            int limit_long = 0;
+            int limit_short = -1;
+            int limit_long = -1;
 
-            while (limit_short == 0)
-                limit_short = (int)platform.get_short_limit();
-
-            while (limit_long == 0)
-                limit_long = (int)platform.get_long_limit();
+            while (limit_short == -1)
+                limit_short = (int)platform.get_short_limit(false);
+            while (limit_long == -1)
+                limit_long = (int)platform.get_long_limit(false);
 
             base.m_Limits[PowerType.Fast] = limit_short;
             base.m_Limits[PowerType.Slow] = limit_long;
-            base.m_Limits[PowerType.Stapm] = limit_long;
+
+            // read msr limit(s)
+            int msr_short = -1;
+            int msr_long = -1;
+
+            while (msr_short == -1)
+                msr_short = (int)platform.get_short_limit(true);
+            while (msr_long == -1)
+                msr_long = (int)platform.get_long_limit(true);
+
+            base.m_Limits[PowerType.MsrFast] = msr_short;
+            base.m_Limits[PowerType.MsrSlow] = msr_long;
 
             // read value(s)
             int value_short = 0;
@@ -217,7 +232,6 @@ namespace ControllerCommon.Processor
 
             base.m_Values[PowerType.Fast] = value_short;
             base.m_Values[PowerType.Slow] = value_long;
-            base.m_Values[PowerType.Stapm] = value_long;
 
             base.UpdateTimer_Elapsed(sender, e);
         }
@@ -226,7 +240,6 @@ namespace ControllerCommon.Processor
         {
             switch (type)
             {
-                case PowerType.Stapm:
                 case PowerType.Slow:
                     platform.set_long_limit((int)limit);
                     break;
@@ -235,6 +248,11 @@ namespace ControllerCommon.Processor
                     break;
             }
             base.SetTDPLimit(type, limit);
+        }
+
+        public void SetMSRLimit(double PL1, double PL2)
+        {
+            platform.set_msr_limits((int)PL1, (int)PL2);
         }
 
         public override void SetGPUClock(double clock)
@@ -291,13 +309,16 @@ namespace ControllerCommon.Processor
                 }
             }
 
-            // write default limit(s)
-            m_Limits[PowerType.Fast] = m_Limits[PowerType.Slow] = m_Limits[PowerType.Stapm] = 0;
-            m_PrevLimits[PowerType.Fast] = m_PrevLimits[PowerType.Slow] = m_PrevLimits[PowerType.Stapm] = 0;
+            foreach (PowerType type in (PowerType[])Enum.GetValues(typeof(PowerType)))
+            {
+                // write default limits
+                m_Limits[type] = 0;
+                m_PrevLimits[type] = 0;
 
-            // write default value(s)
-            m_Values[PowerType.Fast] = m_Values[PowerType.Slow] = m_Values[PowerType.Stapm] = 0;
-            m_PrevValues[PowerType.Fast] = m_PrevValues[PowerType.Slow] = m_PrevValues[PowerType.Stapm] = 0;
+                // write default values
+                m_Values[type] = 0;
+                m_PrevValues[type] = 0;
+            }
         }
 
         public override void Initialize()
@@ -324,10 +345,8 @@ namespace ControllerCommon.Processor
 
             while (limit_fast == 0)
                 limit_fast = (int)RyzenAdj.get_fast_limit(ry);
-
             while (limit_slow == 0)
                 limit_slow = (int)RyzenAdj.get_slow_limit(ry);
-
             while (limit_stapm == 0)
                 limit_stapm = (int)RyzenAdj.get_stapm_limit(ry);
 
@@ -342,10 +361,8 @@ namespace ControllerCommon.Processor
 
             while (value_fast == 0)
                 value_fast = (int)RyzenAdj.get_fast_value(ry);
-
             while (value_slow == 0)
                 value_slow = (int)RyzenAdj.get_slow_value(ry);
-
             while (value_stapm == 0)
                 value_stapm = (int)RyzenAdj.get_stapm_value(ry);
 

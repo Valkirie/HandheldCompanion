@@ -152,9 +152,18 @@ namespace HandheldCompanion.Managers
             foreach (PowerType type in (PowerType[])Enum.GetValues(typeof(PowerType)))
             {
                 int idx = (int)type;
+
+                // skip msr
+                if (idx >= TDPvalue.Length)
+                    break;
+
                 if (TDPvalue[idx] != 0)
                     processor.SetTDPLimit(type, TDPvalue[idx]);
             }
+
+            // processor specific
+            if (processor.GetType() == typeof(IntelProcessor))
+                ((IntelProcessor)processor).SetMSRLimit(TDPvalue[0], TDPvalue[2]);
         }
 
         private void gpuTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -171,6 +180,17 @@ namespace HandheldCompanion.Managers
 
         public void RequestTDP(PowerType type, double value, bool UserRequested = true)
         {
+            // handle msr (dirty)
+            switch (type)
+            {
+                case PowerType.MsrSlow:
+                    type = PowerType.Slow;
+                    break;
+                case PowerType.MsrFast:
+                    type = PowerType.Fast;
+                    break;
+            }
+
             int idx = (int)type;
 
             if (UserRequested)
@@ -238,7 +258,19 @@ namespace HandheldCompanion.Managers
 
         private void Processor_LimitChanged(PowerType type, int limit)
         {
+            // handle msr (dirty)
+            switch (type)
+            {
+                case PowerType.MsrSlow:
+                    type = PowerType.Slow;
+                    break;
+                case PowerType.MsrFast:
+                    type = PowerType.Fast;
+                    break;
+            }
+
             int idx = (int)type;
+
             double TDP = UserRequestedTDP[idx];
 
             Profile CurrentProfile = MainWindow.profileManager.currentProfile;
