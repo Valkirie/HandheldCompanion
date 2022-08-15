@@ -46,6 +46,16 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 ## Overlay
 The software has multiple built-in overlay options. 
 
+### QuickTools
+
+On the fly adjustment of TDP (global and profile), brightness, hotkeys and motion control profile settings. Summonable with a user defined button combination (including certaind supported devices mapped special keys). Window can be aligned how the user sees fit (left, right, floating).
+
+![Quicktools-01](https://user-images.githubusercontent.com/14330834/184693435-7df5ad40-ddb1-4359-9335-1a5804441dc3.png)
+Quicktools profile TDP control with Axiom Verge.
+
+![Quicktools-02](https://user-images.githubusercontent.com/14330834/184693443-117d8594-f4e5-4400-8341-2fb95b986d01.png)
+Quicktools profile TDP motion settings with Borderlands Pre-Sequel.
+
 ### Virtual touchpad
 
 Virtual touchpad on top of your gaming sessions. The virtual touchpad is used to mimic the DualShock 4 physical touchpad and grants maximum compatibility with PS Now, PS Remote software suites and games that make specific use of the Steampad touchpads.
