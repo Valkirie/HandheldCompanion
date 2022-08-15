@@ -453,7 +453,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:NumberBox Name="NumberBox_TDPMin" Grid.Column="1" VerticalAlignment="Center" Minimum="10" Maximum="64" SpinButtonPlacementMode="Inline" Value="0" ValueChanged="NumberBox_TDPMin_ValueChanged"></ui:NumberBox>
+                        <ui:NumberBox Name="NumberBox_TDPMin" Grid.Column="1" VerticalAlignment="Center" Minimum="5" Maximum="{Binding ElementName=NumberBox_TDPMax, Path=Value}" SpinButtonPlacementMode="Inline" Value="0" ValueChanged="NumberBox_TDPMin_ValueChanged"></ui:NumberBox>
                     </Grid>
                 </Border>
 
@@ -479,7 +479,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:NumberBox Name="NumberBox_TDPMax" Grid.Column="1" VerticalAlignment="Center" Minimum="10" Maximum="64" SpinButtonPlacementMode="Inline" Value="0" ValueChanged="NumberBox_TDPMax_ValueChanged"></ui:NumberBox>
+                        <ui:NumberBox Name="NumberBox_TDPMax" Grid.Column="1" VerticalAlignment="Center" Minimum="{Binding ElementName=NumberBox_TDPMin, Path=Value}" Maximum="64" SpinButtonPlacementMode="Inline" Value="0" ValueChanged="NumberBox_TDPMax_ValueChanged"></ui:NumberBox>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
