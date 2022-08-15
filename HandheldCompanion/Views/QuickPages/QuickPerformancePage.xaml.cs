@@ -132,7 +132,6 @@ namespace HandheldCompanion.Views.QuickPages
                 // do something
                 switch (type)
                 {
-                    default:
                     case PowerType.Slow:
                         {
                             if (!TDPSustainedSlider.IsEnabled)
@@ -150,6 +149,11 @@ namespace HandheldCompanion.Views.QuickPages
                             if (TDPBoostSlider.Minimum <= limit && TDPBoostSlider.Maximum >= limit)
                                 TDPBoostSlider.Value = limit;
                         }
+                        break;
+                    case PowerType.Stapm:
+                    case PowerType.MsrSlow:
+                    case PowerType.MsrFast:
+                        // do nothing
                         break;
                 }
             });
