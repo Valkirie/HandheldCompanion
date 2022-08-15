@@ -179,6 +179,9 @@ namespace HandheldCompanion.Views.QuickPages
             Properties.Settings.Default.QuickToolsPerformanceTDPSustainedValue = TDPSustainedSlider.Value;
             Properties.Settings.Default.Save();
 
+            if (!Properties.Settings.Default.QuickToolsPerformanceTDPEnabled)
+                return;
+
             MainWindow.powerManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
             MainWindow.powerManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
         }
@@ -191,6 +194,9 @@ namespace HandheldCompanion.Views.QuickPages
             // update settings
             Properties.Settings.Default.QuickToolsPerformanceTDPBoostValue = TDPBoostSlider.Value;
             Properties.Settings.Default.Save();
+
+            if (!Properties.Settings.Default.QuickToolsPerformanceTDPEnabled)
+                return;
 
             MainWindow.powerManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
         }
@@ -212,7 +218,7 @@ namespace HandheldCompanion.Views.QuickPages
             }
             else
             {
-                // restore default GPU clock
+                // restore default TDP
                 MainWindow.powerManager.RequestTDP(MainWindow.handheldDevice.nTDP);
             }
         }
@@ -263,6 +269,9 @@ namespace HandheldCompanion.Views.QuickPages
             // update settings
             Properties.Settings.Default.QuickToolsPerformanceGPUValue = GPUSlider.Value;
             Properties.Settings.Default.Save();
+
+            if (!Properties.Settings.Default.QuickToolsPerformanceTDPEnabled)
+                return;
 
             MainWindow.powerManager.RequestGPUClock(GPUSlider.Value);
         }
