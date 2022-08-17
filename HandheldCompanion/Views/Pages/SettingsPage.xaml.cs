@@ -395,25 +395,33 @@ namespace HandheldCompanion.Views.Pages
 
         private void NumberBox_TDPMax_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
         {
+            double value = NumberBox_TDPMax.Value;
+            if (double.IsNaN(value))
+                return;
+
             // raise event
-            SettingValueChanged?.Invoke("configurabletdp_up", NumberBox_TDPMax.Value);
+            SettingValueChanged?.Invoke("configurabletdp_up", value);
 
             if (!Initialized)
                 return;
 
-            Properties.Settings.Default.ConfigurableTDPOverrideUp = NumberBox_TDPMax.Value;
+            Properties.Settings.Default.ConfigurableTDPOverrideUp = value;
             Properties.Settings.Default.Save();
         }
 
         private void NumberBox_TDPMin_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
         {
+            double value = NumberBox_TDPMin.Value;
+            if (double.IsNaN(value))
+                return;
+
             // raise event
-            SettingValueChanged?.Invoke("configurabletdp_down", NumberBox_TDPMin.Value);
+            SettingValueChanged?.Invoke("configurabletdp_down", value);
 
             if (!Initialized)
                 return;
 
-            Properties.Settings.Default.ConfigurableTDPOverrideDown = NumberBox_TDPMin.Value;
+            Properties.Settings.Default.ConfigurableTDPOverrideDown = value;
             Properties.Settings.Default.Save();
         }
 
