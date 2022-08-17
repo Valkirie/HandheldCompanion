@@ -19,18 +19,18 @@ namespace HandheldCompanion.Views.QuickPages
             InitializeComponent();
 
             MainWindow.powerManager.ProcessorStatusChanged += PowerManager_StatusChanged;
-            MainWindow.powerManager.PowerLimitChanged += PowerManager_LimitChanged;
-            MainWindow.powerManager.PowerValueChanged += PowerManager_ValueChanged;
+            // MainWindow.powerManager.PowerLimitChanged += PowerManager_LimitChanged;
+            // MainWindow.powerManager.PowerValueChanged += PowerManager_ValueChanged;
 
             MainWindow.profileManager.Updated += ProfileManager_Updated;
             MainWindow.profileManager.Applied += ProfileManager_Applied;
             MainWindow.profileManager.Discarded += ProfileManager_Discarded;
 
             // define slider(s) min and max values based on device specifications
-            var TDPdown = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideDown : MainWindow.handheldDevice.cTDP[0];
-            var TDPup = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideUp : MainWindow.handheldDevice.cTDP[1];
-            TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = TDPdown;
-            TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = TDPup;
+            var cTDPdown = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideDown : MainWindow.handheldDevice.cTDP[0];
+            var cTDPup = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideUp : MainWindow.handheldDevice.cTDP[1];
+            TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = cTDPdown;
+            TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = cTDPup;
 
             // pull PowerMode settings
             var PowerMode = Properties.Settings.Default.QuickToolsPowerModeValue;
@@ -40,8 +40,21 @@ namespace HandheldCompanion.Views.QuickPages
                 PowerModeSlider_ValueChanged(null, null); // force call, dirty
             }
 
+            // pull CPU settings
+            var TDPdown = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPSustainedValue : 0;
+            var TDPup = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPBoostValue : 0;
+            TDPdown = TDPdown != 0 ? TDPdown : MainWindow.handheldDevice.nTDP[(int)PowerType.Slow];
+            TDPup = TDPup != 0 ? TDPup : MainWindow.handheldDevice.nTDP[(int)PowerType.Fast];
+
+            if (TDPSustainedSlider.Minimum <= TDPdown && TDPSustainedSlider.Maximum >= TDPdown)
+                TDPSustainedSlider.Value = TDPdown;
+
+            if (TDPBoostSlider.Minimum <= TDPup && TDPBoostSlider.Maximum >= TDPup)
+                TDPBoostSlider.Value = TDPup;
+
             // pull GPU settings
             var GPU = Properties.Settings.Default.QuickToolsPerformanceGPUValue;
+
             if (GPUSlider.Minimum <= GPU && GPUSlider.Maximum >= GPU)
                 GPUSlider.Value = GPU;
 
