@@ -287,7 +287,7 @@ namespace HandheldCompanion.Views.QuickPages
             Properties.Settings.Default.QuickToolsPerformanceGPUValue = GPUSlider.Value;
             Properties.Settings.Default.Save();
 
-            if (!Properties.Settings.Default.QuickToolsPerformanceTDPEnabled)
+            if (!Properties.Settings.Default.QuickToolsPerformanceGPUEnabled)
                 return;
 
             MainWindow.powerManager.RequestGPUClock(GPUSlider.Value);

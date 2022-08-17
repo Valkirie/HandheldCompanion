@@ -4,6 +4,7 @@ using ControllerCommon.Processor.Intel;
 using System;
 using System.Collections.Generic;
 using System.Management;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace ControllerCommon.Processor
@@ -40,12 +41,18 @@ namespace ControllerCommon.Processor
          * protected Dictionary<PowerType, float> m_PrevValues = new();
          */
 
+        protected Dictionary<string, float> m_Misc = new();
+        protected Dictionary<string, float> m_PrevMisc = new();
+
         #region events
         public event LimitChangedHandler LimitChanged;
         public delegate void LimitChangedHandler(PowerType type, int limit);
 
         public event ValueChangedHandler ValueChanged;
         public delegate void ValueChangedHandler(PowerType type, float value);
+
+        public event GfxChangedHandler MiscChanged;
+        public delegate void GfxChangedHandler(string misc, float value);
 
         public event StatusChangedHandler StatusChanged;
         public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
@@ -84,6 +91,9 @@ namespace ControllerCommon.Processor
         {
             Name = GetProcessorDetails("Name");
             ProcessorID = GetProcessorDetails("processorID");
+
+            // write default miscs
+            m_Misc["gfx_clk"] = m_PrevMisc["gfx_clk"] = 0;
         }
 
         public virtual void Initialize()
@@ -100,14 +110,22 @@ namespace ControllerCommon.Processor
                 updateTimer.Stop();
         }
 
-        public virtual void SetTDPLimit(PowerType type, double limit)
+        public virtual void SetTDPLimit(PowerType type, double limit, int result = 0)
         {
-            LogManager.LogInformation("User requested {0} TDP limit: {1}", type, limit);
+            LogManager.LogInformation("User requested {0} TDP limit: {1}, error code: {2}", type, limit, result);
         }
 
-        public virtual void SetGPUClock(double clock)
+        public virtual void SetGPUClock(double clock, int result = 0)
         {
-            LogManager.LogInformation("User requested GPU clock: {0}", clock);
+            /*
+             * #define ADJ_ERR_FAM_UNSUPPORTED      -1
+             * #define ADJ_ERR_SMU_TIMEOUT          -2
+             * #define ADJ_ERR_SMU_UNSUPPORTED      -3
+             * #define ADJ_ERR_SMU_REJECTED         -4
+             * #define ADJ_ERR_MEMORY_ACCESS        -5
+             */
+
+            LogManager.LogInformation("User requested GPU clock: {0}, error code: {1}", clock, result);
         }
 
         protected virtual void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -135,6 +153,17 @@ namespace ControllerCommon.Processor
                 m_PrevValues[pair.Key] = pair.Value;
             }
             */
+
+            // search for misc changes
+            foreach (KeyValuePair<string, float> pair in m_Misc)
+            {
+                if (m_PrevMisc[pair.Key] == pair.Value)
+                    continue;
+
+                MiscChanged?.Invoke(pair.Key, pair.Value);
+
+                m_PrevMisc[pair.Key] = pair.Value;
+            }
         }
     }
 
@@ -210,10 +239,16 @@ namespace ControllerCommon.Processor
                 int limit_long = -1;
 
                 while (limit_short == -1)
+                {
                     limit_short = (int)platform.get_short_limit(false);
+                    Task.Delay(250);
+                }
                 while (limit_long == -1)
+                {
                     limit_long = (int)platform.get_long_limit(false);
-
+                    Task.Delay(250);
+                }
+                
                 base.m_Limits[PowerType.Fast] = limit_short;
                 base.m_Limits[PowerType.Slow] = limit_long;
 
@@ -222,9 +257,15 @@ namespace ControllerCommon.Processor
                 int msr_long = -1;
 
                 while (msr_short == -1)
+                {
                     msr_short = (int)platform.get_short_limit(true);
+                    Task.Delay(250);
+                }
                 while (msr_long == -1)
+                {
                     msr_long = (int)platform.get_long_limit(true);
+                    Task.Delay(250);
+                }
 
                 base.m_Limits[PowerType.MsrFast] = msr_short;
                 base.m_Limits[PowerType.MsrSlow] = msr_long;
@@ -243,26 +284,31 @@ namespace ControllerCommon.Processor
                 base.m_Values[PowerType.Fast] = value_short;
                 base.m_Values[PowerType.Slow] = value_long;
                 */
-            }
 
-            base.UpdateTimer_Elapsed(sender, e);
+                // read gfx_clk
+                base.m_Misc["gfx_clk"] = platform.get_gfx_clk();
+
+                base.UpdateTimer_Elapsed(sender, e);
+            }
         }
 
-        public override void SetTDPLimit(PowerType type, double limit)
+        public override void SetTDPLimit(PowerType type, double limit, int result)
         {
             lock (base.IsBusy)
             {
+                var error = 0;
+
                 switch (type)
                 {
                     case PowerType.Slow:
-                        platform.set_long_limit((int)limit);
+                        error = platform.set_long_limit((int)limit);
                         break;
                     case PowerType.Fast:
-                        platform.set_short_limit((int)limit);
+                        error = platform.set_short_limit((int)limit);
                         break;
                 }
 
-                base.SetTDPLimit(type, limit);
+                base.SetTDPLimit(type, limit, error);
             }
         }
 
@@ -271,10 +317,14 @@ namespace ControllerCommon.Processor
             platform.set_msr_limits((int)PL1, (int)PL2);
         }
 
-        public override void SetGPUClock(double clock)
+        public override void SetGPUClock(double clock, int result)
         {
-            platform.set_gfx_clk((int)clock);
-            base.SetGPUClock(clock);
+            lock (base.IsBusy)
+            {
+                var error = platform.set_gfx_clk((int)clock);
+
+                base.SetGPUClock(clock);
+            }
         }
     }
 
@@ -364,11 +414,20 @@ namespace ControllerCommon.Processor
                 int limit_stapm = (int)RyzenAdj.get_stapm_limit(ry);
 
                 while (limit_fast == 0)
+                {
                     limit_fast = (int)RyzenAdj.get_fast_limit(ry);
+                    Task.Delay(250);
+                }
                 while (limit_slow == 0)
+                {
                     limit_slow = (int)RyzenAdj.get_slow_limit(ry);
+                    Task.Delay(250);
+                }
                 while (limit_stapm == 0)
+                {
                     limit_stapm = (int)RyzenAdj.get_stapm_limit(ry);
+                    Task.Delay(250);
+                }
 
                 base.m_Limits[PowerType.Fast] = limit_fast;
                 base.m_Limits[PowerType.Slow] = limit_slow;
@@ -391,12 +450,15 @@ namespace ControllerCommon.Processor
                 base.m_Values[PowerType.Slow] = value_slow;
                 base.m_Values[PowerType.Stapm] = value_stapm;
                 */
-            }
 
-            base.UpdateTimer_Elapsed(sender, e);
+                // read gfx_clk
+                base.m_Misc["gfx_clk"] = RyzenAdj.get_gfx_clk(ry);
+
+                base.UpdateTimer_Elapsed(sender, e);
+            }
         }
 
-        public override void SetTDPLimit(PowerType type, double limit)
+        public override void SetTDPLimit(PowerType type, double limit, int result)
         {
             if (ry == IntPtr.Zero)
                 return;
@@ -406,31 +468,37 @@ namespace ControllerCommon.Processor
                 // 15W : 15000
                 limit *= 1000;
 
+                var error = 0;
+
                 switch (type)
                 {
                     case PowerType.Fast:
-                        RyzenAdj.set_fast_limit(ry, (uint)limit);
+                        error = RyzenAdj.set_fast_limit(ry, (uint)limit);
                         break;
                     case PowerType.Slow:
-                        RyzenAdj.set_slow_limit(ry, (uint)limit);
+                        error = RyzenAdj.set_slow_limit(ry, (uint)limit);
                         break;
                     case PowerType.Stapm:
-                        RyzenAdj.set_stapm_limit(ry, (uint)limit);
+                        error = RyzenAdj.set_stapm_limit(ry, (uint)limit);
                         break;
                 }
 
-                base.SetTDPLimit(type, limit);
+                base.SetTDPLimit(type, limit, error);
             }
         }
 
-        public override void SetGPUClock(double clock)
+        public override void SetGPUClock(double clock, int result)
         {
-            // reset default var
-            if (clock == 12750)
-                return;
+            lock (base.IsBusy)
+            {
+                // reset default var
+                if (clock == 12750)
+                    return;
 
-            RyzenAdj.set_gfx_clk(ry, (uint)clock);
-            base.SetGPUClock(clock);
+                var error = RyzenAdj.set_gfx_clk(ry, (uint)clock);
+
+                base.SetGPUClock(clock, error);
+            }
         }
     }
 }

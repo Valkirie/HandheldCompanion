@@ -54,9 +54,12 @@ namespace HandheldCompanion.Managers
 
         // timers
         private Timer powerWatchdog;
+
         private Timer cpuWatchdog;
         protected object cpuLock = new();
-        private Timer gpuWatchdog;
+
+        private Timer gfxWatchdog;
+        protected object gfxLock = new();
 
         public event LimitChangedHandler PowerLimitChanged;
         public delegate void LimitChangedHandler(PowerType type, int limit);
@@ -73,8 +76,9 @@ namespace HandheldCompanion.Managers
         private double[] CurrentTDP = new double[5];    // used to store current TDP
 
         // GPU limits
-        private double RequestedGPUClock;
-        private double StoredGPUClock;
+        private double FallbackGfxClock;
+        private double StoredGfxClock;
+        private double CurrentGfxClock;
 
         // Power modes
         private Guid RequestedPowerMode;
@@ -88,14 +92,15 @@ namespace HandheldCompanion.Managers
             cpuWatchdog = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
             cpuWatchdog.Elapsed += cpuWatchdog_Elapsed;
 
-            gpuWatchdog = new Timer() { Interval = 3000, AutoReset = false, Enabled = false };
-            gpuWatchdog.Elapsed += gpuWatchdog_Elapsed;
+            gfxWatchdog = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
+            gfxWatchdog.Elapsed += gfxWatchdog_Elapsed;
 
             // initialize processor
             processor = Processor.GetCurrent();
             processor.ValueChanged += Processor_ValueChanged;
             processor.StatusChanged += Processor_StatusChanged;
             processor.LimitChanged += Processor_LimitChanged;
+            processor.MiscChanged += Processor_MiscChanged;
 
             MainWindow.profileManager.Applied += ProfileManager_Applied;
             MainWindow.profileManager.Updated += ProfileManager_Updated;
@@ -108,15 +113,16 @@ namespace HandheldCompanion.Managers
             TDPdown = TDPdown != 0 ? TDPdown : MainWindow.handheldDevice.nTDP[(int)PowerType.Slow];
             TDPup = TDPup != 0 ? TDPup : MainWindow.handheldDevice.nTDP[(int)PowerType.Fast];
 
-            FallbackTDP[(int)PowerType.Slow] = TDPdown;
-            FallbackTDP[(int)PowerType.Stapm] = TDPdown;
-            FallbackTDP[(int)PowerType.Fast] = TDPup;
+            RequestTDP(PowerType.Slow, TDPdown);
+            RequestTDP(PowerType.Stapm, TDPdown);
+            RequestTDP(PowerType.Fast, TDPup);
 
             var GPU = Properties.Settings.Default.QuickToolsPerformanceGPUEnabled ? Properties.Settings.Default.QuickToolsPerformanceGPUValue : 0;
             if (GPU != 0)
                 RequestGPUClock(GPU, true);
 
             cpuWatchdog.Start();
+            gfxWatchdog.Start();
         }
 
         private void ProfileManager_Updated(Profile profile, bool backgroundtask, bool isCurrent)
@@ -208,24 +214,26 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private void gpuWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
+        private void gfxWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            processor.SetGPUClock(StoredGPUClock);
+            lock (gfxLock)
+            {
+                // not ready yet
+                if (CurrentGfxClock == 0)
+                    return;
+
+                // not ready yet
+                if (StoredGfxClock == 0)
+                    return;
+
+                // only request an update if current gfx clock is different than stored
+                if (CurrentGfxClock != StoredGfxClock)
+                    processor.SetGPUClock(StoredGfxClock);
+            }
         }
 
         public void RequestTDP(PowerType type, double value, bool UserRequested = true)
         {
-            // handle msr (dirty)
-            switch (type)
-            {
-                case PowerType.MsrSlow:
-                    type = PowerType.Slow;
-                    break;
-                case PowerType.MsrFast:
-                    type = PowerType.Fast;
-                    break;
-            }
-
             int idx = (int)type;
 
             if (UserRequested)
@@ -244,24 +252,13 @@ namespace HandheldCompanion.Managers
             StoredTDP = values;
         }
 
-        public void RestoreGPUClock()
-        {
-            // we use a timer to prevent too many calls from happening
-            gpuWatchdog.Stop();
-            gpuWatchdog.Start();
-        }
-
         public void RequestGPUClock(double value, bool UserRequested = true)
         {
             if (UserRequested)
-                RequestedGPUClock = value;
+                FallbackGfxClock = value;
 
             // update value read by timer
-            StoredGPUClock = value;
-
-            // we use a timer to prevent too many calls from happening
-            gpuWatchdog.Stop();
-            gpuWatchdog.Start();
+            StoredGfxClock = value;
         }
 
         public void RequestPowerMode(int idx)
@@ -290,6 +287,18 @@ namespace HandheldCompanion.Managers
 
             // raise event
             PowerLimitChanged?.Invoke(type, limit);
+        }
+
+        private void Processor_MiscChanged(string misc, float value)
+        {
+            switch (misc)
+            {
+                case "gfx_clk":
+                    {
+                        CurrentGfxClock = value;
+                    }
+                    break;
+            }
         }
         #endregion
 

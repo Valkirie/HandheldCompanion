@@ -165,17 +165,17 @@ namespace ControllerCommon.Processor.Intel
             return -1; // not supported
         }
 
-        internal void set_short_limit(int limit)
+        internal int set_short_limit(int limit)
         {
-            set_limit("a4", limit);
+            return set_limit("a4", limit);
         }
 
-        internal void set_long_limit(int limit)
+        internal int set_long_limit(int limit)
         {
-            set_limit("a0", limit);
+            return set_limit("a0", limit);
         }
 
-        internal void set_limit(string pointer1, int limit)
+        internal int set_limit(string pointer1, int limit)
         {
             string hex = TDPToHex(limit);
 
@@ -186,9 +186,11 @@ namespace ControllerCommon.Processor.Intel
                 ProcessOutput.StandardOutput.ReadToEnd();
                 ProcessOutput.Close();
             }
+
+            return 0; // implement error code support
         }
 
-        internal void set_msr_limits(int PL1, int PL2)
+        internal int set_msr_limits(int PL1, int PL2)
         {
             string hexPL1 = TDPToHex(PL1);
             string hexPL2 = TDPToHex(PL2);
@@ -200,6 +202,8 @@ namespace ControllerCommon.Processor.Intel
                 ProcessOutput.StandardOutput.ReadToEnd();
                 ProcessOutput.Close();
             }
+
+            return 0; // implement error code support
         }
 
         private string TDPToHex(int decValue)
@@ -216,7 +220,7 @@ namespace ControllerCommon.Processor.Intel
             return output;
         }
 
-        internal void set_gfx_clk(int clock)
+        internal int set_gfx_clk(int clock)
         {
             string hex = ClockToHex(clock);
 
@@ -228,6 +232,38 @@ namespace ControllerCommon.Processor.Intel
                 ProcessOutput.StandardOutput.ReadToEnd();
                 ProcessOutput.Close();
             }
+
+            return 0; // implement error code support
+        }
+
+        internal int get_gfx_clk()
+        {
+            startInfo.Arguments = $"/rdmem8 {mchbar}{pnt_clock}";
+            using (var ProcessOutput = Process.Start(startInfo))
+            {
+                try
+                {
+                    while (!ProcessOutput.StandardOutput.EndOfStream)
+                    {
+                        string line = ProcessOutput.StandardOutput.ReadLine();
+
+                        if (!line.Contains("Return"))
+                            continue;
+
+                        // parse result
+                        line = CommonUtils.Between(line, "Return ");
+                        
+                        // implement me !
+
+                        ProcessOutput.Close();
+                        return 0;
+                    }
+                }
+                catch (Exception) { }
+                ProcessOutput.Close();
+            }
+
+            return -1; // failed
         }
     }
 }

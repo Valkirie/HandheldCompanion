@@ -830,9 +830,6 @@ namespace HandheldCompanion.Views
                     break;
                 case PowerModes.Resume:
                     {
-                        // restore power manager values
-                        powerManager.RestoreGPUClock();
-
                         // restore inputs manager
                         inputsManager.Start();
                     }
