@@ -86,7 +86,7 @@ namespace HandheldCompanion.Views
         private WindowState prevWindowState;
         private NotifyIcon notifyIcon;
 
-        public static string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
+        public static string CurrentExe, CurrentPath, CurrentPathService;
         private bool FirstStart, appClosing;
 
         private static MainWindow window;
@@ -138,9 +138,7 @@ namespace HandheldCompanion.Views
             // paths
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
-            CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
             CurrentPathService = Path.Combine(CurrentPath, "ControllerService.exe");
-            CurrentPathLogs = Path.Combine(CurrentPath, "Logs");
 
             // verifying HidHide is installed
             if (!File.Exists(CurrentPathService))
