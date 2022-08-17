@@ -238,37 +238,19 @@ namespace ControllerCommon.Processor
                 int limit_short = (int)platform.get_short_limit(false);
                 int limit_long = (int)platform.get_long_limit(false);
 
-                while (limit_short == -1)
-                {
-                    limit_short = (int)platform.get_short_limit(false);
-                    Task.Delay(250);
-                }
-                while (limit_long == -1)
-                {
-                    limit_long = (int)platform.get_long_limit(false);
-                    Task.Delay(250);
-                }
-                
-                base.m_Limits[PowerType.Fast] = limit_short;
-                base.m_Limits[PowerType.Slow] = limit_long;
+                if (limit_short != -1)
+                    base.m_Limits[PowerType.Fast] = limit_short;
+                if (limit_long != -1)
+                    base.m_Limits[PowerType.Slow] = limit_long;
 
                 // read msr limit(s)
                 int msr_short = (int)platform.get_short_limit(true);
                 int msr_long = (int)platform.get_long_limit(true);
 
-                while (msr_short == -1)
-                {
-                    msr_short = (int)platform.get_short_limit(true);
-                    Task.Delay(250);
-                }
-                while (msr_long == -1)
-                {
-                    msr_long = (int)platform.get_long_limit(true);
-                    Task.Delay(250);
-                }
-
-                base.m_Limits[PowerType.MsrFast] = msr_short;
-                base.m_Limits[PowerType.MsrSlow] = msr_long;
+                if (msr_short != -1)
+                    base.m_Limits[PowerType.MsrFast] = msr_short;
+                if (msr_long != -1)
+                    base.m_Limits[PowerType.MsrSlow] = msr_long;
 
                 /*
                 // read value(s)
@@ -288,12 +270,8 @@ namespace ControllerCommon.Processor
                 // read gfx_clk
                 int gfx_clk = (int)platform.get_gfx_clk();
 
-                while (gfx_clk == -1)
-                {
-                    gfx_clk = (int)platform.get_gfx_clk();
-                    Task.Delay(250);
-                }
-                base.m_Misc["gfx_clk"] = gfx_clk;
+                if (gfx_clk != -1)
+                    base.m_Misc["gfx_clk"] = gfx_clk;
 
                 base.UpdateTimer_Elapsed(sender, e);
             }
@@ -420,25 +398,12 @@ namespace ControllerCommon.Processor
                 int limit_slow = (int)RyzenAdj.get_slow_limit(ry);
                 int limit_stapm = (int)RyzenAdj.get_stapm_limit(ry);
 
-                while (limit_fast == 0)
-                {
-                    limit_fast = (int)RyzenAdj.get_fast_limit(ry);
-                    Task.Delay(250);
-                }
-                while (limit_slow == 0)
-                {
-                    limit_slow = (int)RyzenAdj.get_slow_limit(ry);
-                    Task.Delay(250);
-                }
-                while (limit_stapm == 0)
-                {
-                    limit_stapm = (int)RyzenAdj.get_stapm_limit(ry);
-                    Task.Delay(250);
-                }
-
-                base.m_Limits[PowerType.Fast] = limit_fast;
-                base.m_Limits[PowerType.Slow] = limit_slow;
-                base.m_Limits[PowerType.Stapm] = limit_stapm;
+                if (limit_fast != 0)
+                    base.m_Limits[PowerType.Fast] = limit_fast;
+                if (limit_slow != 0)
+                    base.m_Limits[PowerType.Slow] = limit_slow;
+                if (limit_stapm != 0)
+                    base.m_Limits[PowerType.Stapm] = limit_stapm;
 
                 /*
                 // read value(s)
@@ -460,12 +425,8 @@ namespace ControllerCommon.Processor
 
                 // read gfx_clk
                 int gfx_clk = (int)RyzenAdj.get_gfx_clk(ry);
-                while (gfx_clk == 0)
-                {
-                    gfx_clk = (int)RyzenAdj.get_gfx_clk(ry);
-                    Task.Delay(250);
-                }
-                base.m_Misc["gfx_clk"] = gfx_clk;
+                if (gfx_clk != 0)
+                    base.m_Misc["gfx_clk"] = gfx_clk;
 
                 base.UpdateTimer_Elapsed(sender, e);
             }
