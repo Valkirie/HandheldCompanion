@@ -833,7 +833,6 @@ namespace HandheldCompanion.Views
                 case PowerModes.Resume:
                     {
                         // restore power manager values
-                        powerManager.RestoreTDP();
                         powerManager.RestoreGPUClock();
 
                         // restore inputs manager

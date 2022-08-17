@@ -28,14 +28,17 @@ namespace ControllerCommon.Processor
         protected string Name, ProcessorID;
 
         protected bool CanChangeTDP, CanChangeGPU;
+        protected object IsBusy = new();
 
-        protected Timer updateTimer = new Timer() { Interval = 2000, AutoReset = true };
+        protected Timer updateTimer = new Timer() { Interval = 3000, AutoReset = true };
 
         protected Dictionary<PowerType, int> m_Limits = new();
         protected Dictionary<PowerType, int> m_PrevLimits = new();
 
-        protected Dictionary<PowerType, float> m_Values = new();
-        protected Dictionary<PowerType, float> m_PrevValues = new();
+        /* 
+         * protected Dictionary<PowerType, float> m_Values = new();
+         * protected Dictionary<PowerType, float> m_PrevValues = new();
+         */
 
         #region events
         public event LimitChangedHandler LimitChanged;
@@ -120,6 +123,7 @@ namespace ControllerCommon.Processor
                 m_PrevLimits[pair.Key] = pair.Value;
             }
 
+            /*
             // search for value changes
             foreach (KeyValuePair<PowerType, float> pair in m_Values)
             {
@@ -130,6 +134,7 @@ namespace ControllerCommon.Processor
 
                 m_PrevValues[pair.Key] = pair.Value;
             }
+            */
         }
     }
 
@@ -175,9 +180,11 @@ namespace ControllerCommon.Processor
                     m_Limits[type] = 0;
                     m_PrevLimits[type] = 0;
 
+                    /*
                     // write default values : not supported
                     m_Values[type] = -1;
                     m_PrevValues[type] = -1;
+                    */
                 }
             }
         }
@@ -196,58 +203,67 @@ namespace ControllerCommon.Processor
 
         protected override void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            // read limit(s)
-            int limit_short = -1;
-            int limit_long = -1;
+            lock (base.IsBusy)
+            {
+                // read limit(s)
+                int limit_short = -1;
+                int limit_long = -1;
 
-            while (limit_short == -1)
-                limit_short = (int)platform.get_short_limit(false);
-            while (limit_long == -1)
-                limit_long = (int)platform.get_long_limit(false);
+                while (limit_short == -1)
+                    limit_short = (int)platform.get_short_limit(false);
+                while (limit_long == -1)
+                    limit_long = (int)platform.get_long_limit(false);
 
-            base.m_Limits[PowerType.Fast] = limit_short;
-            base.m_Limits[PowerType.Slow] = limit_long;
+                base.m_Limits[PowerType.Fast] = limit_short;
+                base.m_Limits[PowerType.Slow] = limit_long;
 
-            // read msr limit(s)
-            int msr_short = -1;
-            int msr_long = -1;
+                // read msr limit(s)
+                int msr_short = -1;
+                int msr_long = -1;
 
-            while (msr_short == -1)
-                msr_short = (int)platform.get_short_limit(true);
-            while (msr_long == -1)
-                msr_long = (int)platform.get_long_limit(true);
+                while (msr_short == -1)
+                    msr_short = (int)platform.get_short_limit(true);
+                while (msr_long == -1)
+                    msr_long = (int)platform.get_long_limit(true);
 
-            base.m_Limits[PowerType.MsrFast] = msr_short;
-            base.m_Limits[PowerType.MsrSlow] = msr_long;
+                base.m_Limits[PowerType.MsrFast] = msr_short;
+                base.m_Limits[PowerType.MsrSlow] = msr_long;
 
-            // read value(s)
-            int value_short = 0;
-            int value_long = 0;
+                /*
+                // read value(s)
+                int value_short = 0;
+                int value_long = 0;
 
-            while (value_short == 0)
-                value_short = (int)platform.get_short_value();
+                while (value_short == 0)
+                    value_short = (int)platform.get_short_value();
 
-            while (value_long == 0)
-                value_long = (int)platform.get_long_value();
+                while (value_long == 0)
+                    value_long = (int)platform.get_long_value();
 
-            base.m_Values[PowerType.Fast] = value_short;
-            base.m_Values[PowerType.Slow] = value_long;
+                base.m_Values[PowerType.Fast] = value_short;
+                base.m_Values[PowerType.Slow] = value_long;
+                */
+            }
 
             base.UpdateTimer_Elapsed(sender, e);
         }
 
         public override void SetTDPLimit(PowerType type, double limit)
         {
-            switch (type)
+            lock (base.IsBusy)
             {
-                case PowerType.Slow:
-                    platform.set_long_limit((int)limit);
-                    break;
-                case PowerType.Fast:
-                    platform.set_short_limit((int)limit);
-                    break;
+                switch (type)
+                {
+                    case PowerType.Slow:
+                        platform.set_long_limit((int)limit);
+                        break;
+                    case PowerType.Fast:
+                        platform.set_short_limit((int)limit);
+                        break;
+                }
+
+                base.SetTDPLimit(type, limit);
             }
-            base.SetTDPLimit(type, limit);
         }
 
         public void SetMSRLimit(double PL1, double PL2)
@@ -315,9 +331,11 @@ namespace ControllerCommon.Processor
                 m_Limits[type] = 0;
                 m_PrevLimits[type] = 0;
 
+                /*
                 // write default values
                 m_Values[type] = 0;
                 m_PrevValues[type] = 0;
+                */
             }
         }
 
@@ -335,40 +353,45 @@ namespace ControllerCommon.Processor
 
         protected override void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            RyzenAdj.get_table_values(ry);
-            RyzenAdj.refresh_table(ry);
+            lock (base.IsBusy)
+            {
+                RyzenAdj.get_table_values(ry);
+                RyzenAdj.refresh_table(ry);
 
-            // read limit(s)
-            int limit_fast = (int)RyzenAdj.get_fast_limit(ry);
-            int limit_slow = (int)RyzenAdj.get_slow_limit(ry);
-            int limit_stapm = (int)RyzenAdj.get_stapm_limit(ry);
+                // read limit(s)
+                int limit_fast = (int)RyzenAdj.get_fast_limit(ry);
+                int limit_slow = (int)RyzenAdj.get_slow_limit(ry);
+                int limit_stapm = (int)RyzenAdj.get_stapm_limit(ry);
 
-            while (limit_fast == 0)
-                limit_fast = (int)RyzenAdj.get_fast_limit(ry);
-            while (limit_slow == 0)
-                limit_slow = (int)RyzenAdj.get_slow_limit(ry);
-            while (limit_stapm == 0)
-                limit_stapm = (int)RyzenAdj.get_stapm_limit(ry);
+                while (limit_fast == 0)
+                    limit_fast = (int)RyzenAdj.get_fast_limit(ry);
+                while (limit_slow == 0)
+                    limit_slow = (int)RyzenAdj.get_slow_limit(ry);
+                while (limit_stapm == 0)
+                    limit_stapm = (int)RyzenAdj.get_stapm_limit(ry);
 
-            base.m_Limits[PowerType.Fast] = limit_fast;
-            base.m_Limits[PowerType.Slow] = limit_slow;
-            base.m_Limits[PowerType.Stapm] = limit_stapm;
+                base.m_Limits[PowerType.Fast] = limit_fast;
+                base.m_Limits[PowerType.Slow] = limit_slow;
+                base.m_Limits[PowerType.Stapm] = limit_stapm;
 
-            // read value(s)
-            int value_fast = (int)RyzenAdj.get_fast_value(ry);
-            int value_slow = (int)RyzenAdj.get_slow_value(ry);
-            int value_stapm = (int)RyzenAdj.get_stapm_value(ry);
+                /*
+                // read value(s)
+                int value_fast = (int)RyzenAdj.get_fast_value(ry);
+                int value_slow = (int)RyzenAdj.get_slow_value(ry);
+                int value_stapm = (int)RyzenAdj.get_stapm_value(ry);
 
-            while (value_fast == 0)
-                value_fast = (int)RyzenAdj.get_fast_value(ry);
-            while (value_slow == 0)
-                value_slow = (int)RyzenAdj.get_slow_value(ry);
-            while (value_stapm == 0)
-                value_stapm = (int)RyzenAdj.get_stapm_value(ry);
+                while (value_fast == 0)
+                    value_fast = (int)RyzenAdj.get_fast_value(ry);
+                while (value_slow == 0)
+                    value_slow = (int)RyzenAdj.get_slow_value(ry);
+                while (value_stapm == 0)
+                    value_stapm = (int)RyzenAdj.get_stapm_value(ry);
 
-            base.m_Values[PowerType.Fast] = value_fast;
-            base.m_Values[PowerType.Slow] = value_slow;
-            base.m_Values[PowerType.Stapm] = value_stapm;
+                base.m_Values[PowerType.Fast] = value_fast;
+                base.m_Values[PowerType.Slow] = value_slow;
+                base.m_Values[PowerType.Stapm] = value_stapm;
+                */
+            }
 
             base.UpdateTimer_Elapsed(sender, e);
         }
@@ -378,22 +401,26 @@ namespace ControllerCommon.Processor
             if (ry == IntPtr.Zero)
                 return;
 
-            // 15W : 15000
-            limit *= 1000;
-
-            switch (type)
+            lock (base.IsBusy)
             {
-                case PowerType.Fast:
-                    RyzenAdj.set_fast_limit(ry, (uint)limit);
-                    break;
-                case PowerType.Slow:
-                    RyzenAdj.set_slow_limit(ry, (uint)limit);
-                    break;
-                case PowerType.Stapm:
-                    RyzenAdj.set_stapm_limit(ry, (uint)limit);
-                    break;
+                // 15W : 15000
+                limit *= 1000;
+
+                switch (type)
+                {
+                    case PowerType.Fast:
+                        RyzenAdj.set_fast_limit(ry, (uint)limit);
+                        break;
+                    case PowerType.Slow:
+                        RyzenAdj.set_slow_limit(ry, (uint)limit);
+                        break;
+                    case PowerType.Stapm:
+                        RyzenAdj.set_stapm_limit(ry, (uint)limit);
+                        break;
+                }
+
+                base.SetTDPLimit(type, limit);
             }
-            base.SetTDPLimit(type, limit);
         }
 
         public override void SetGPUClock(double clock)
