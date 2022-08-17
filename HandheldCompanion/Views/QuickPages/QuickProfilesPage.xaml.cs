@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Windows;
@@ -149,8 +150,8 @@ namespace HandheldCompanion.Views.QuickPages
 
                 // Sustained TDP settings (slow, stapm, long)
                 double[] TDP = profile.TDP_value != null ? profile.TDP_value : MainWindow.handheldDevice.nTDP;
-                TDPSustainedSlider.Value = TDP[0];
-                TDPBoostSlider.Value = TDP[2];
+                TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
+                TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
 
                 TDPToggle.IsOn = profile.TDP_override;
 

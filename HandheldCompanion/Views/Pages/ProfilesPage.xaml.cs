@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Managers;
+using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using Microsoft.Win32;
 using ModernWpf.Controls;
@@ -376,8 +377,9 @@ namespace HandheldCompanion.Views.Pages
 
                 // Sustained TDP settings (slow, stapm, long)
                 double[] TDP = currentProfile.TDP_value != null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
-                TDPSustainedSlider.Value = TDP[0];
-                TDPBoostSlider.Value = TDP[2];
+                TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
+                TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
+
                 TDPToggle.IsOn = currentProfile.TDP_override;
 
                 // define slider(s) min and max values based on device specifications
