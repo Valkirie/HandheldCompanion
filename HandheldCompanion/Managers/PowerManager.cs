@@ -218,9 +218,18 @@ namespace HandheldCompanion.Managers
         {
             lock (gfxLock)
             {
-                // not ready yet
-                if (CurrentGfxClock == 0)
-                    return;
+                if (processor.GetType() == typeof(AMDProcessor))
+                {
+                    // not ready yet
+                    if (CurrentGfxClock == 0)
+                        return;
+                }
+                else if (processor.GetType() == typeof(IntelProcessor))
+                {
+                    // not ready yet
+                    if (CurrentGfxClock == 12750)
+                        return;
+                }
 
                 // not ready yet
                 if (StoredGfxClock == 0)

@@ -252,11 +252,11 @@ namespace ControllerCommon.Processor.Intel
 
                         // parse result
                         line = CommonUtils.Between(line, "Return ");
-                        
-                        // implement me !
+                        int returned = int.Parse(line);
+                        var clock = returned * 50;
 
                         ProcessOutput.Close();
-                        return 0;
+                        return clock;
                     }
                 }
                 catch (Exception) { }

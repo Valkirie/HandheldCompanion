@@ -235,8 +235,8 @@ namespace ControllerCommon.Processor
             lock (base.IsBusy)
             {
                 // read limit(s)
-                int limit_short = -1;
-                int limit_long = -1;
+                int limit_short = (int)platform.get_short_limit(false);
+                int limit_long = (int)platform.get_long_limit(false);
 
                 while (limit_short == -1)
                 {
@@ -253,8 +253,8 @@ namespace ControllerCommon.Processor
                 base.m_Limits[PowerType.Slow] = limit_long;
 
                 // read msr limit(s)
-                int msr_short = -1;
-                int msr_long = -1;
+                int msr_short = (int)platform.get_short_limit(true);
+                int msr_long = (int)platform.get_long_limit(true);
 
                 while (msr_short == -1)
                 {
@@ -286,7 +286,14 @@ namespace ControllerCommon.Processor
                 */
 
                 // read gfx_clk
-                base.m_Misc["gfx_clk"] = platform.get_gfx_clk();
+                int gfx_clk = (int)platform.get_gfx_clk();
+
+                while (gfx_clk == -1)
+                {
+                    gfx_clk = (int)platform.get_gfx_clk();
+                    Task.Delay(250);
+                }
+                base.m_Misc["gfx_clk"] = gfx_clk;
 
                 base.UpdateTimer_Elapsed(sender, e);
             }
@@ -323,7 +330,7 @@ namespace ControllerCommon.Processor
             {
                 var error = platform.set_gfx_clk((int)clock);
 
-                base.SetGPUClock(clock);
+                base.SetGPUClock(clock, error);
             }
         }
     }
@@ -452,7 +459,13 @@ namespace ControllerCommon.Processor
                 */
 
                 // read gfx_clk
-                base.m_Misc["gfx_clk"] = RyzenAdj.get_gfx_clk(ry);
+                int gfx_clk = (int)RyzenAdj.get_gfx_clk(ry);
+                while (gfx_clk == 0)
+                {
+                    gfx_clk = (int)RyzenAdj.get_gfx_clk(ry);
+                    Task.Delay(250);
+                }
+                base.m_Misc["gfx_clk"] = gfx_clk;
 
                 base.UpdateTimer_Elapsed(sender, e);
             }
