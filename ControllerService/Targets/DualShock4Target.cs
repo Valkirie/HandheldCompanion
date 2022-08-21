@@ -45,6 +45,26 @@ namespace ControllerService.Targets
             DualShock4Slider.RightTrigger
         };
 
+        // DS4 Accelerometer g-force measurement range G SI unit to short
+        // Various sources state either +/- 2 or 4 ranges are in use 
+        private static readonly SensorSpec DS4AccelerometerSensorSpec = new SensorSpec()
+        {
+            minIn = -4.0f,
+            maxIn = 4.0f,
+            minOut = short.MinValue,
+            maxOut = short.MaxValue,
+        };
+
+        // DS4 Gyroscope angular rate measurement range deg/sec SI unit to short
+        // Note, at +/- 2000 the value is still off by a factor 5
+        private static readonly SensorSpec DS4GyroscopeSensorSpec = new SensorSpec()
+        {
+            minIn = -10000.0f,
+            maxIn = 10000.0f,
+            minOut = short.MinValue,
+            maxOut = short.MaxValue,
+        };
+
         private DS4_REPORT_EX outDS4Report;
 
         private new IDualShock4Controller virtualController;
@@ -203,13 +223,14 @@ namespace ControllerService.Targets
                 outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(Touch.TrackPadTouch2.Y >> 4);
             }
 
-            outDS4Report.wGyroX = (short)InputUtils.rangeMap(0.2f * xinputController.AngularVelocities[XInputSensorFlags.Default].X, XInputGirometer.sensorSpec);    // gyroPitchFull
-            outDS4Report.wGyroY = (short)InputUtils.rangeMap(0.2f * -xinputController.AngularVelocities[XInputSensorFlags.Default].Y, XInputGirometer.sensorSpec);   // gyroYawFull
-            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(0.2f * xinputController.AngularVelocities[XInputSensorFlags.Default].Z, XInputGirometer.sensorSpec);    // gyroRollFull
+            // Use IMU sensor data, map to proper range, invert where needed
+            outDS4Report.wGyroX = (short)InputUtils.rangeMap(xinputController.AngularVelocities[XInputSensorFlags.Default].X, DS4GyroscopeSensorSpec);    // gyroPitchFull
+            outDS4Report.wGyroY = (short)InputUtils.rangeMap(-xinputController.AngularVelocities[XInputSensorFlags.Default].Y, DS4GyroscopeSensorSpec);   // gyroYawFull
+            outDS4Report.wGyroZ = (short)InputUtils.rangeMap(xinputController.AngularVelocities[XInputSensorFlags.Default].Z, DS4GyroscopeSensorSpec);    // gyroRollFull
 
-            outDS4Report.wAccelX = (short)InputUtils.rangeMap(0.5f * -xinputController.Accelerations[XInputSensorFlags.Default].X, XInputAccelerometer.sensorSpec); // accelXFull
-            outDS4Report.wAccelY = (short)InputUtils.rangeMap(0.5f * -xinputController.Accelerations[XInputSensorFlags.Default].Y, XInputAccelerometer.sensorSpec); // accelYFull
-            outDS4Report.wAccelZ = (short)InputUtils.rangeMap(0.5f * xinputController.Accelerations[XInputSensorFlags.Default].Z, XInputAccelerometer.sensorSpec);  // accelZFull
+            outDS4Report.wAccelX = (short)InputUtils.rangeMap(-xinputController.Accelerations[XInputSensorFlags.Default].X, DS4AccelerometerSensorSpec); // accelXFull
+            outDS4Report.wAccelY = (short)InputUtils.rangeMap(-xinputController.Accelerations[XInputSensorFlags.Default].Y, DS4AccelerometerSensorSpec); // accelYFull
+            outDS4Report.wAccelZ = (short)InputUtils.rangeMap(xinputController.Accelerations[XInputSensorFlags.Default].Z, DS4AccelerometerSensorSpec);  // accelZFull
 
             outDS4Report.bBatteryLvlSpecial = 11;
 
