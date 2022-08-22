@@ -167,9 +167,9 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
-        private void ProcessManager_ForegroundChanged(ProcessEx processEx, bool display)
+        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
         {
-            if (!display)
+            if (processEx.Bypassed)
                 return;
 
             currentProcess = processEx;

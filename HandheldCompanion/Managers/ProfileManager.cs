@@ -154,7 +154,7 @@ namespace HandheldCompanion.Managers
             catch (Exception) { }
         }
 
-        private void ProcessManager_ProcessStarted(ProcessEx processEx)
+        private void ProcessManager_ProcessStarted(ProcessEx processEx, bool startup)
         {
             try
             {
@@ -172,7 +172,7 @@ namespace HandheldCompanion.Managers
             catch (Exception) { }
         }
 
-        private void ProcessManager_ForegroundChanged(ProcessEx processEx, bool display)
+        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
         {
             try
             {

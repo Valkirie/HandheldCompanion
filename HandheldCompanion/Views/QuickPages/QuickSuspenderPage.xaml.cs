@@ -33,7 +33,7 @@ namespace HandheldCompanion.Views.QuickPages
             }
         }
 
-        private void ProcessStarted(ProcessEx processEx)
+        private void ProcessStarted(ProcessEx processEx, bool startup)
         {
             try
             {

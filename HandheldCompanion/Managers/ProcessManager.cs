@@ -16,6 +16,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using Windows.System.Diagnostics;
+using static ControllerCommon.Utils.ProcessUtils;
 using Image = System.Windows.Controls.Image;
 using ThreadState = System.Diagnostics.ThreadState;
 using Timer = System.Timers.Timer;
@@ -47,11 +48,13 @@ namespace HandheldCompanion.Managers
 
         public Process Process;
         public IntPtr MainWindowHandle;
+        public IntPtr Handle;
 
         public uint Id;
         public string Name;
         public string Executable;
         public string Path;
+        public bool Bypassed;
 
         private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
 
@@ -67,6 +70,10 @@ namespace HandheldCompanion.Managers
         {
             this.Process = process;
             this.Id = (uint)process.Id;
+
+            // EnergyStar
+            this.Handle = OpenProcess((uint)(ProcessAccessFlags.QueryLimitedInformation | ProcessAccessFlags.SetInformation), false, Id);
+            CloseHandle(Handle);
         }
 
         public void Timer_Tick(object? sender, EventArgs e)
@@ -84,6 +91,9 @@ namespace HandheldCompanion.Managers
                 {
                     if (MainWindowHandle != IntPtr.Zero)
                     {
+                        if (processBorder is null)
+                            return;
+
                         processBorder.Visibility = Visibility.Visible;
                         string MainWindowTitle = ProcessUtils.GetWindowTitle(MainWindowHandle);
                         if (!string.IsNullOrEmpty(MainWindowTitle))
@@ -299,15 +309,16 @@ namespace HandheldCompanion.Managers
 
         private ConcurrentDictionary<uint, ProcessEx> Processes = new();
         private ProcessEx foregroundProcess;
+        private ProcessEx backgroundProcess;
 
         private object updateLock = new();
         private bool isRunning;
 
         public event ForegroundChangedEventHandler ForegroundChanged;
-        public delegate void ForegroundChangedEventHandler(ProcessEx processEx, bool display);
+        public delegate void ForegroundChangedEventHandler(ProcessEx processEx);
 
         public event ProcessStartedEventHandler ProcessStarted;
-        public delegate void ProcessStartedEventHandler(ProcessEx processEx);
+        public delegate void ProcessStartedEventHandler(ProcessEx processEx, bool startup);
 
         public event ProcessStoppedEventHandler ProcessStopped;
         public delegate void ProcessStoppedEventHandler(ProcessEx processEx);
@@ -395,7 +406,7 @@ namespace HandheldCompanion.Managers
                 ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd).Process;
 
                 Process proc = Process.GetProcessById((int)processInfo.ProcessId);
-                ProcessCreated(proc, (int)hWnd);
+                ProcessCreated(proc, (int)hWnd, true);
             }
             return true;
         }
@@ -408,24 +419,33 @@ namespace HandheldCompanion.Managers
                 return;
 
             Process proc = Process.GetProcessById((int)processInfo.ProcessId);
+            uint procId = (uint)proc.Id;
+
             string path = ProcessUtils.GetPathToApp(proc);
             string exec = Path.GetFileName(path);
 
-            bool display = IsValid(exec, path);
             bool self = IsSelf(exec, path);
 
             if (self)
                 return;
 
-            foregroundProcess = new ProcessEx(proc)
-            {
-                Name = exec,
-                Executable = exec,
-                Path = path,
-                MainWindowHandle = hWnd
-            };
+            // save previous process (if exists)
+            if (foregroundProcess != null)
+                backgroundProcess = foregroundProcess;
 
-            ForegroundChanged?.Invoke(foregroundProcess, display);
+            if (Processes.ContainsKey(procId))
+                foregroundProcess = Processes[procId];
+            else
+                return;
+
+            // EnergyStar
+            if (backgroundProcess != null && !backgroundProcess.Bypassed)
+                ProcessUtils.ToggleEfficiencyMode(backgroundProcess.Handle, false);
+
+            if (foregroundProcess != null && !foregroundProcess.Bypassed)
+                ProcessUtils.ToggleEfficiencyMode(foregroundProcess.Handle, true);
+
+            ForegroundChanged?.Invoke(foregroundProcess);
         }
 
         private void MonitorHelper(object? sender, EventArgs e)
@@ -464,7 +484,7 @@ namespace HandheldCompanion.Managers
                 foregroundProcess = null;
         }
 
-        private void ProcessCreated(Process proc, int NativeWindowHandle = 0)
+        private void ProcessCreated(Process proc, int NativeWindowHandle = 0, bool startup = false)
         {
             try
             {
@@ -475,9 +495,6 @@ namespace HandheldCompanion.Managers
                 string path = ProcessUtils.GetPathToApp(proc);
                 string exec = Path.GetFileName(path);
 
-                if (!IsValid(exec, path))
-                    return;
-
                 if (!Processes.ContainsKey((uint)proc.Id))
                 {
                     ProcessEx processEx = new ProcessEx(proc)
@@ -485,12 +502,23 @@ namespace HandheldCompanion.Managers
                         Name = exec,
                         Executable = exec,
                         Path = path,
-                        MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle
+                        MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle,
+                        Bypassed = !IsValid(exec, path)
                     };
 
                     Processes.TryAdd(processEx.Id, processEx);
 
-                    ProcessStarted?.Invoke(processEx);
+                    if (processEx.Bypassed)
+                        return;
+
+                    if (startup)
+                    {
+                        // EnergyStar
+                        ProcessUtils.ToggleEfficiencyMode(processEx.Handle, false);
+                    }
+
+                    // raise event
+                    ProcessStarted?.Invoke(processEx, startup);
 
                     LogManager.LogDebug("Process created: {0}", proc.ProcessName);
                 }
@@ -515,8 +543,39 @@ namespace HandheldCompanion.Managers
             {
                 case "rw.exe":                  // Used to change TDP
                 case "kx.exe":                  // Used to change TDP
+
+#if DEBUG
                 case "devenv.exe":              // Visual Studio
+#endif
+
+                case "msedge.exe":              // Edge has energy awareness
+                case "webviewhost.exe":
+                case "taskmgr.exe":
+                case "procmon.exe":
+                case "procmon64.exe":
+                case "widgets.exe":
+                
+                // System shell
+                case "dwm.exe":
+                case "explorer.exe":
+                case "shellexperiencehost.exe":
+                case "startmenuexperiencehost.exe":
+                case "searchhost.exe":
+                case "sihost.exe":
+                case "fontdrvhost.exe":
+                case "chsime.exe":
+                case "ctfmon.exe":
+                case "csrss.exe":
+                case "smss.exe":
+                case "svchost.exe":
+                case "wudfrd.exe":
+
+                // handheld companion
+                case "handheldcompanion.exe":
+                case "controllerservice.exe":
+                case "controllerservice.dll":
                     return false;
+
                 default:
                     return true;
             }
