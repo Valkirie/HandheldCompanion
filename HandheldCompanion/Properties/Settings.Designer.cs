@@ -205,7 +205,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("400")]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
         public int OverlayControllerSize {
             get {
                 return ((int)(this["OverlayControllerSize"]));
@@ -572,6 +572,54 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["QuickToolsPerformanceTDPBoostValue"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ConfigurableTDPOverride {
+            get {
+                return ((bool)(this["ConfigurableTDPOverride"]));
+            }
+            set {
+                this["ConfigurableTDPOverride"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double ConfigurableTDPOverrideUp {
+            get {
+                return ((double)(this["ConfigurableTDPOverrideUp"]));
+            }
+            set {
+                this["ConfigurableTDPOverrideUp"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double ConfigurableTDPOverrideDown {
+            get {
+                return ((double)(this["ConfigurableTDPOverrideDown"]));
+            }
+            set {
+                this["ConfigurableTDPOverrideDown"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.8")]
+        public double OverlayControllerOpacity {
+            get {
+                return ((double)(this["OverlayControllerOpacity"]));
+            }
+            set {
+                this["OverlayControllerOpacity"] = value;
             }
         }
     }

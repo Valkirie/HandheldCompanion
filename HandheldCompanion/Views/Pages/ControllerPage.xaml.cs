@@ -202,7 +202,10 @@ namespace HandheldCompanion.Views.Pages
             this.Dispatcher.Invoke(() =>
             {
                 navLoad.Visibility = isLoading ? Visibility.Visible : Visibility.Hidden;
-                MainGrid.IsEnabled = isConnected && !isLoading;
+
+                ControllerGrid.IsEnabled = isConnected && !isLoading;
+                DeviceCloakingStackPanel.IsEnabled = isConnected && !isLoading;
+
                 UpdateController();
             });
         }
@@ -328,8 +331,11 @@ namespace HandheldCompanion.Views.Pages
             if (!currentController.IsConnected())
                 return;
 
-            // notify user
-            MainWindow.toastManager.SendToast(currentController.ToString(), Properties.Resources.ToastNewControllerEx);
+            // push toast if service is connected
+            if (isConnected)
+                MainWindow.toastManager.SendToast(currentController.ToString(), Properties.Resources.ToastNewControllerEx);
+
+            // rumble current controller
             currentController.Identify();
 
             // raise events

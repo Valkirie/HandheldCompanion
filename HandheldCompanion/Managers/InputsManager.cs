@@ -9,6 +9,7 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using WindowsInput.Events;
 
@@ -72,6 +73,9 @@ namespace HandheldCompanion.Managers
 
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();
+
+            // make sure we don't hang the keyboard
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
         }
 
         private void InjectModifiers(KeyEventArgsExt args)

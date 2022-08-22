@@ -7,6 +7,7 @@
       xmlns:local="clr-namespace:HandheldCompanion" 
       xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+      xmlns:conv="clr-namespace:HandheldCompanion.Converters"
       mc:Ignorable="d" 
       d:DesignHeight="1500" d:DesignWidth="1000"
       KeepAlive="True"
@@ -24,27 +25,29 @@
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
                     <Border.Background>
-                        <ImageBrush Stretch="UniformToFill" ImageSource="/Resources/overlay_back.jpg"/>
+                        <ImageBrush Stretch="UniformToFill" ImageSource="/Resources/overlay_back.png"/>
                     </Border.Background>
 
-                    <Grid Height="250">
+                    <Grid Name="PreviewGrid" Height="{Binding Converter={StaticResource PercentageConverter}, ElementName=MainGrid, Path=ActualWidth, ConverterParameter=0.33}">
                         <Grid Name="TrackpadsPositionUI">
                             <Border
                                 CornerRadius="4"
                                 HorizontalAlignment="Left"
                                 Background="Black"
                                 Opacity="0.5"
-                                Width="80" Height="80"></Border>
+                                Width="{Binding Converter={StaticResource PercentageConverter}, ElementName=PreviewGrid, Path=ActualHeight, ConverterParameter=0.5}"
+                                Height="{Binding Converter={StaticResource PercentageConverter}, ElementName=PreviewGrid, Path=ActualHeight, ConverterParameter=0.5}"></Border>
                             <Border
                                 CornerRadius="4"
                                 HorizontalAlignment="Right"
                                 Background="Black"
                                 Opacity="0.5"
-                                Width="80" Height="80"></Border>
+                                Width="{Binding Converter={StaticResource PercentageConverter}, ElementName=PreviewGrid, Path=ActualHeight, ConverterParameter=0.5}"
+                                Height="{Binding Converter={StaticResource PercentageConverter}, ElementName=PreviewGrid, Path=ActualHeight, ConverterParameter=0.5}"></Border>
                         </Grid>
                         <Grid Name="ControllerPositionUI">
-                            <ui:FontIcon Glyph="&#xF158;" Foreground="Black" Opacity="0.5" FontSize="60" Margin="4,4,0,0"/>
-                            <ui:FontIcon Glyph="&#xF158;" Foreground="{DynamicResource SystemControlBackgroundAccentBrush}" FontSize="60"/>
+                            <ui:FontIcon Glyph="&#xE7FC;" Foreground="Black" Opacity="0.5" FontSize="60" Margin="4,4,0,0"/>
+                            <ui:FontIcon Glyph="&#xE7FC;" FontSize="60"/>
                         </Grid>
                     </Grid>
                 </Border>
@@ -164,7 +167,37 @@
 
                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderControllerSize, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderControllerSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="200" Value="400" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderControllerSize_ValueChanged"  IsSnapToTickEnabled="True"
+                            <Slider Margin="6,0,0,0" Name="SliderControllerSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="200" Value="300" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderControllerSize_ValueChanged"  IsSnapToTickEnabled="True"
+                            MouseEnter="Scrolllock_MouseEnter"
+                            MouseLeave="Scrolllock_MouseLeave"/>
+                        </DockPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Opacity -->
+                <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE75C;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_Opacity}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_OpacityControllerDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderControllerOpacity, Mode=OneWay}" />
+                            <Slider Margin="6,0,0,0" Name="SliderControllerOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="1" Minimum="0.1" Value="0.8" TickPlacement="BottomRight" SmallChange="0.1" TickFrequency="0.1" AutoToolTipPrecision="1" ValueChanged="SliderControllerOpacity_ValueChanged" IsSnapToTickEnabled="True"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave"/>
                         </DockPanel>

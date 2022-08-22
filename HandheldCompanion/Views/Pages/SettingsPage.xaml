@@ -401,6 +401,88 @@
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
+
+            <!-- Power options -->
+            <ui:SimpleStackPanel Spacing="6">
+                <Label Content="Power options" FontWeight="SemiBold"></Label>
+                
+                <!-- Configurable TDP -->
+                <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Configurable Power (cTDP) override" FontSize="14"/>
+                                <TextBlock Text="Allows to modify the minimum and maximum power values (TDP) beyond the CPU specifications" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch Name="Toggle_cTDP" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_cTDP_Toggled"/>
+                    </Grid>
+                </Border>
+
+                <!-- Configurable TDP down-->
+                <Border
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="1.5*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Minimum Power" FontSize="14"/>
+                                <TextBlock Text="The minimum power in watts supplied to the processor" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:NumberBox Name="NumberBox_TDPMin" Grid.Column="1" VerticalAlignment="Center" Minimum="5" Maximum="{Binding ElementName=NumberBox_TDPMax, Path=Value}" SpinButtonPlacementMode="Inline" Value="0" ValueChanged="NumberBox_TDPMin_ValueChanged"></ui:NumberBox>
+                    </Grid>
+                </Border>
+
+                <!-- Configurable TDP up-->
+                <Border
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="1.5*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Maximum Power" FontSize="14"/>
+                                <TextBlock Text="The maximum power in watts supplied to the processor" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:NumberBox Name="NumberBox_TDPMax" Grid.Column="1" VerticalAlignment="Center" Minimum="{Binding ElementName=NumberBox_TDPMin, Path=Value}" Maximum="64" SpinButtonPlacementMode="Inline" Value="0" ValueChanged="NumberBox_TDPMax_ValueChanged"></ui:NumberBox>
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
         </ui:SimpleStackPanel>
     </Grid>
 </Page>

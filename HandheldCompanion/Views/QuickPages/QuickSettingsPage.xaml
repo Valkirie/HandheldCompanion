@@ -21,7 +21,7 @@
             <Border
                 Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"                
-                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
                 <Grid>
                     <DockPanel>
@@ -46,7 +46,7 @@
             <Border
                 Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"                
-                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
                 <Grid>
                     <DockPanel>

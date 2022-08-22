@@ -44,12 +44,12 @@ namespace HandheldCompanion.Views
         private Dictionary<string, Page> _pages = new();
         private string preNavItemTag;
 
-        public ControllerPage controllerPage;
-        public ProfilesPage profilesPage;
-        public SettingsPage settingsPage;
-        public AboutPage aboutPage;
-        public OverlayPage overlayPage;
-        public HotkeysPage hotkeysPage;
+        public static ControllerPage controllerPage;
+        public static ProfilesPage profilesPage;
+        public static SettingsPage settingsPage;
+        public static AboutPage aboutPage;
+        public static OverlayPage overlayPage;
+        public static HotkeysPage hotkeysPage;
 
         // overlay(s) vars
         public static InputsManager inputsManager;
@@ -81,11 +81,12 @@ namespace HandheldCompanion.Views
         public static CheatManager cheatManager;
         public static SystemManager systemManager;
         public static PowerManager powerManager;
+        public static UpdateManager updateManager;
 
         private WindowState prevWindowState;
         private NotifyIcon notifyIcon;
 
-        public static string CurrentExe, CurrentPath, CurrentPathService, CurrentPathProfiles, CurrentPathLogs;
+        public static string CurrentExe, CurrentPath, CurrentPathService;
         private bool FirstStart, appClosing;
 
         private static MainWindow window;
@@ -137,9 +138,7 @@ namespace HandheldCompanion.Views
             // paths
             CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
-            CurrentPathProfiles = Path.Combine(CurrentPath, "profiles");
             CurrentPathService = Path.Combine(CurrentPath, "ControllerService.exe");
-            CurrentPathLogs = Path.Combine(CurrentPath, "Logs");
 
             // verifying HidHide is installed
             if (!File.Exists(CurrentPathService))
@@ -190,7 +189,7 @@ namespace HandheldCompanion.Views
             serviceManager.Updated += OnServiceUpdate;
             serviceManager.Ready += () =>
             {
-                if (settingsPage.StartServiceWithCompanion)
+                if (Properties.Settings.Default.StartServiceWithCompanion)
                 {
                     if (!serviceManager.Exists())
                         serviceManager.CreateService(CurrentPathService);
@@ -231,6 +230,9 @@ namespace HandheldCompanion.Views
             // initialize power manager
             powerManager = new();
 
+            // initialize update manager
+            updateManager = new UpdateManager();
+
             // initialize windows
             overlay = new Overlay(pipeClient, inputsManager);
             quickTools = new QuickTools();
@@ -250,6 +252,11 @@ namespace HandheldCompanion.Views
             // handle settingsPage events
             settingsPage.SettingValueChanged += (name, value) =>
             {
+                // todo : create a settings manager
+                profilesPage.SettingsPage_SettingValueChanged(name, value);
+                quickTools.performancePage.SettingsPage_SettingValueChanged(name, value);
+                quickTools.profilesPage.SettingsPage_SettingValueChanged(name, value);
+
                 switch (name)
                 {
                     case "toast_notification":
@@ -290,6 +297,16 @@ namespace HandheldCompanion.Views
                 foreach (NavigationViewItem item in navView.FooterMenuItems)
                     item.ToolTip = Properties.Resources.WarningElevated;
             }
+
+            // update Position and Size
+            this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.MainWindowHeight);
+            this.Width = (int)Math.Max(this.MinWidth, Properties.Settings.Default.MainWindowWidth);
+
+            this.Left = Math.Min(SystemParameters.PrimaryScreenWidth - this.MinWidth, Properties.Settings.Default.MainWindowLeft);
+            this.Top = Math.Min(SystemParameters.PrimaryScreenHeight - this.MinHeight, Properties.Settings.Default.MainWindowTop);
+
+            // pull settings
+            WindowState = Properties.Settings.Default.StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
         }
 
         private void SystemManager_Updated(PnPDevice device)
@@ -363,16 +380,7 @@ namespace HandheldCompanion.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // update Position and Size
-            this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.MainWindowHeight);
-            this.Width = (int)Math.Max(this.MinWidth, Properties.Settings.Default.MainWindowWidth);
-
-            this.Left = Math.Min(SystemParameters.PrimaryScreenWidth - this.MinWidth, Properties.Settings.Default.MainWindowLeft);
-            this.Top = Math.Min(SystemParameters.PrimaryScreenHeight - this.MinHeight, Properties.Settings.Default.MainWindowTop);
-
-            // pull settings
-            WindowState = settingsPage.StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
-            toastManager.Enabled = settingsPage.ToastEnable;
+            toastManager.Enabled = Properties.Settings.Default.ToastEnable;
 
             if (IsElevated)
             {
@@ -690,7 +698,7 @@ namespace HandheldCompanion.Views
                     break;
             }
 
-            if (settingsPage.CloseMinimises && !appClosing)
+            if (Properties.Settings.Default.CloseMinimises && !appClosing)
             {
                 e.Cancel = true;
                 WindowState = WindowState.Minimized;
@@ -700,7 +708,7 @@ namespace HandheldCompanion.Views
             if (IsElevated)
             {
                 // stop service with companion
-                if (settingsPage.HaltServiceWithCompanion)
+                if (Properties.Settings.Default.HaltServiceWithCompanion)
                     serviceManager.StopServiceAsync();
             }
 
@@ -822,10 +830,6 @@ namespace HandheldCompanion.Views
                     break;
                 case PowerModes.Resume:
                     {
-                        // restore power manager values
-                        powerManager.RestoreTDP();
-                        powerManager.RestoreGPUClock();
-
                         // restore inputs manager
                         inputsManager.Start();
                     }

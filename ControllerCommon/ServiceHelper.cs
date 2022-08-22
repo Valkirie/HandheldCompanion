@@ -52,6 +52,7 @@ namespace ControllerCommon
             }
             catch (Exception)
             {
+                // service was not found
                 return;
             }
 

@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Windows;
@@ -97,8 +98,23 @@ namespace HandheldCompanion.Views.QuickPages
             }
 
             // define slider(s) min and max values based on device specifications
-            TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
-            TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
+            var TDPdown = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideDown : MainWindow.handheldDevice.cTDP[0];
+            var TDPup = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideUp : MainWindow.handheldDevice.cTDP[1];
+            TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = TDPdown;
+            TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = TDPup;
+        }
+
+        public void SettingsPage_SettingValueChanged(string name, object value)
+        {
+            switch (name)
+            {
+                case "configurabletdp_down":
+                    TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = (double)value;
+                    break;
+                case "configurabletdp_up":
+                    TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = (double)value;
+                    break;
+            }
         }
 
         private void ProfileDeleted(Profile profile)
@@ -116,47 +132,44 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ProfileUpdated(Profile profile, bool backgroundtask, bool isCurrent)
         {
-            if (backgroundtask)
+            if (!isCurrent || profile.isDefault)
                 return;
 
             this.Dispatcher.Invoke(() =>
             {
-                if (currentProfile == null)
-                {
-                    b_CreateProfile.Visibility = Visibility.Visible;
+                b_CreateProfile.Visibility = Visibility.Collapsed;
 
-                    b_UpdateProfile.Visibility = Visibility.Collapsed;
-                    GridProfile.Visibility = Visibility.Collapsed;
-                }
-                else if (isCurrent)
-                {
-                    b_CreateProfile.Visibility = Visibility.Collapsed;
+                b_UpdateProfile.Visibility = Visibility.Visible;
+                GridProfile.Visibility = Visibility.Visible;
 
-                    b_UpdateProfile.Visibility = Visibility.Visible;
-                    GridProfile.Visibility = Visibility.Visible;
+                ProfileToggle.IsEnabled = true;
+                ProfileToggle.IsOn = profile.isEnabled;
+                UMCToggle.IsOn = profile.umc_enabled;
+                cB_Input.SelectedIndex = (int)profile.umc_input;
+                cB_Output.SelectedIndex = (int)profile.umc_output;
 
-                    ProfileToggle.IsEnabled = true;
-                    ProfileToggle.IsOn = currentProfile.isEnabled;
-                    UMCToggle.IsOn = currentProfile.umc_enabled;
-                    cB_Input.SelectedIndex = (int)currentProfile.umc_input;
-                    cB_Output.SelectedIndex = (int)currentProfile.umc_output;
+                // Sustained TDP settings (slow, stapm, long)
+                double[] TDP = profile.TDP_value != null ? profile.TDP_value : MainWindow.handheldDevice.nTDP;
+                TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
+                TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
 
-                    // Sustained TDP settings (slow, stapm, long)
-                    double[] TDP = currentProfile.TDP_value != null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
-                    TDPSustainedSlider.Value = TDP[0];
-                    TDPBoostSlider.Value = TDP[2];
+                TDPToggle.IsOn = profile.TDP_override;
 
-                    TDPToggle.IsOn = currentProfile.TDP_override;
+                // Sensivity settings
+                SliderSensivity.Value = profile.aiming_sensivity;
 
-                    // Sensivity settings
-                    SliderSensivity.Value = currentProfile.aiming_sensivity;
-                }
+                if (backgroundtask)
+                    return;
+
+                _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
+                                    $"{profile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
+                                    ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
             });
         }
 
-        private void ProcessManager_ForegroundChanged(ProcessEx processEx, bool display)
+        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
         {
-            if (!display)
+            if (processEx.Bypassed)
                 return;
 
             currentProcess = processEx;
@@ -166,9 +179,15 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 ProcessName.Text = currentProcess.Name;
                 ProcessPath.Text = currentProcess.Path;
-            });
 
-            ProfileUpdated(currentProfile, false, true);
+                if (currentProfile is null)
+                {
+                    b_CreateProfile.Visibility = Visibility.Visible;
+
+                    b_UpdateProfile.Visibility = Visibility.Collapsed;
+                    GridProfile.Visibility = Visibility.Collapsed;
+                }
+            });
         }
 
         private void Scrolllock_MouseEnter(object sender, MouseEventArgs e)
@@ -181,7 +200,7 @@ namespace HandheldCompanion.Views.QuickPages
             QuickTools.scrollLock = false;
         }
 
-        private void SaveProfile()
+        private void UpdateProfile()
         {
             if (currentProfile is null)
                 return;
@@ -249,9 +268,14 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProcess is null)
                 return;
 
+            // create profile
             currentProfile = new Profile(currentProcess.Path);
-            ProfileUpdated(currentProfile, false, true);
-            SaveProfile();
+            currentProfile.TDP_value = MainWindow.handheldDevice.nTDP;
+
+            // update current profile
+            MainWindow.profileManager.currentProfile = currentProfile;
+
+            UpdateProfile();
         }
 
         private void b_UpdateProfile_Click(object sender, RoutedEventArgs e)
@@ -259,11 +283,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProcess is null)
                 return;
 
-            Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
-                             $"{currentProfile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
-                             ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
-
-            SaveProfile();
+            UpdateProfile();
         }
 
         private void TDPToggle_Toggled(object sender, RoutedEventArgs e)

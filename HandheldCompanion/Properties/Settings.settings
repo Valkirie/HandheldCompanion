@@ -48,7 +48,7 @@
       <Value Profile="(Default)">7</Value>
     </Setting>
     <Setting Name="OverlayControllerSize" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">400</Value>
+      <Value Profile="(Default)">300</Value>
     </Setting>
     <Setting Name="OverlayControllerTriggerValue" Type="System.String" Scope="User">
       <Value Profile="(Default)">33</Value>
@@ -139,6 +139,18 @@
     </Setting>
     <Setting Name="QuickToolsPerformanceTDPBoostValue" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ConfigurableTDPOverride" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ConfigurableTDPOverrideUp" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ConfigurableTDPOverrideDown" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="OverlayControllerOpacity" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0.8</Value>
     </Setting>
   </Settings>
 </SettingsFile>

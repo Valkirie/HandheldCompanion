@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Managers;
+using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using Microsoft.Win32;
 using ModernWpf.Controls;
@@ -132,6 +133,19 @@ namespace HandheldCompanion.Views.Pages
             }
         }
 
+        public void SettingsPage_SettingValueChanged(string name, object value)
+        {
+            switch (name)
+            {
+                case "configurabletdp_down":
+                    TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = (double)value;
+                    break;
+                case "configurabletdp_up":
+                    TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = (double)value;
+                    break;
+            }
+        }
+
         private void OnServerMessage(object sender, PipeMessage e)
         {
         }
@@ -166,7 +180,15 @@ namespace HandheldCompanion.Views.Pages
                     cB_Profiles.Items.Add(profile);
 
                 cB_Profiles.SelectedItem = profile;
+                cB_Profiles.Items.Refresh();
             });
+
+            if (backgroundtask)
+                return;
+
+            _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
+                             $"{currentProfile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
+                             ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
         }
 
         public void ProfileDeleted(Profile profile)
@@ -247,6 +269,9 @@ namespace HandheldCompanion.Views.Pages
                     }
 
                     Profile profile = new Profile(path);
+
+                    // set default value(s)
+                    profile.TDP_value = MainWindow.handheldDevice.nTDP;
 
                     bool exists = false;
 
@@ -352,13 +377,16 @@ namespace HandheldCompanion.Views.Pages
 
                 // Sustained TDP settings (slow, stapm, long)
                 double[] TDP = currentProfile.TDP_value != null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
-                TDPSustainedSlider.Value = TDP[0];
-                TDPBoostSlider.Value = TDP[2];
+                TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
+                TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
+
                 TDPToggle.IsOn = currentProfile.TDP_override;
 
                 // define slider(s) min and max values based on device specifications
-                TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
-                TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
+                var TDPdown = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideDown : MainWindow.handheldDevice.cTDP[0];
+                var TDPup = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideUp : MainWindow.handheldDevice.cTDP[1];
+                TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = TDPdown;
+                TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = TDPup;
 
                 // UMC settings
                 Toggle_UniversalMotion.IsOn = currentProfile.umc_enabled;
@@ -434,10 +462,6 @@ namespace HandheldCompanion.Views.Pages
         {
             if (currentProfile == null)
                 return;
-
-            Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
-                             $"{currentProfile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
-                             ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
 
             // Profile
             currentProfile.name = tB_ProfileName.Text;

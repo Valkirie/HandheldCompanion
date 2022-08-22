@@ -19,16 +19,18 @@ namespace HandheldCompanion.Views.QuickPages
             InitializeComponent();
 
             MainWindow.powerManager.ProcessorStatusChanged += PowerManager_StatusChanged;
-            MainWindow.powerManager.PowerLimitChanged += PowerManager_LimitChanged;
-            MainWindow.powerManager.PowerValueChanged += PowerManager_ValueChanged;
+            // MainWindow.powerManager.PowerLimitChanged += PowerManager_LimitChanged;
+            // MainWindow.powerManager.PowerValueChanged += PowerManager_ValueChanged;
 
             MainWindow.profileManager.Updated += ProfileManager_Updated;
             MainWindow.profileManager.Applied += ProfileManager_Applied;
             MainWindow.profileManager.Discarded += ProfileManager_Discarded;
 
             // define slider(s) min and max values based on device specifications
-            TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = MainWindow.handheldDevice.cTDP[0];
-            TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = MainWindow.handheldDevice.cTDP[1];
+            var cTDPdown = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideDown : MainWindow.handheldDevice.cTDP[0];
+            var cTDPup = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideUp : MainWindow.handheldDevice.cTDP[1];
+            TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = cTDPdown;
+            TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = cTDPup;
 
             // pull PowerMode settings
             var PowerMode = Properties.Settings.Default.QuickToolsPowerModeValue;
@@ -38,8 +40,21 @@ namespace HandheldCompanion.Views.QuickPages
                 PowerModeSlider_ValueChanged(null, null); // force call, dirty
             }
 
+            // pull CPU settings
+            var TDPdown = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPSustainedValue : 0;
+            var TDPup = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPBoostValue : 0;
+            TDPdown = TDPdown != 0 ? TDPdown : MainWindow.handheldDevice.nTDP[(int)PowerType.Slow];
+            TDPup = TDPup != 0 ? TDPup : MainWindow.handheldDevice.nTDP[(int)PowerType.Fast];
+
+            if (TDPSustainedSlider.Minimum <= TDPdown && TDPSustainedSlider.Maximum >= TDPdown)
+                TDPSustainedSlider.Value = TDPdown;
+
+            if (TDPBoostSlider.Minimum <= TDPup && TDPBoostSlider.Maximum >= TDPup)
+                TDPBoostSlider.Value = TDPup;
+
             // pull GPU settings
             var GPU = Properties.Settings.Default.QuickToolsPerformanceGPUValue;
+
             if (GPUSlider.Minimum <= GPU && GPUSlider.Maximum >= GPU)
                 GPUSlider.Value = GPU;
 
@@ -49,6 +64,19 @@ namespace HandheldCompanion.Views.QuickPages
 
             // we're all set !
             Initialized = true;
+        }
+
+        public void SettingsPage_SettingValueChanged(string name, object value)
+        {
+            switch (name)
+            {
+                case "configurabletdp_down":
+                    TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = (double)value;
+                    break;
+                case "configurabletdp_up":
+                    TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = (double)value;
+                    break;
+            }
         }
 
         private void ProfileManager_Updated(Profile profile, bool backgroundtask, bool isCurrent)
@@ -117,7 +145,6 @@ namespace HandheldCompanion.Views.QuickPages
                 // do something
                 switch (type)
                 {
-                    default:
                     case PowerType.Slow:
                         {
                             if (!TDPSustainedSlider.IsEnabled)
@@ -135,6 +162,11 @@ namespace HandheldCompanion.Views.QuickPages
                             if (TDPBoostSlider.Minimum <= limit && TDPBoostSlider.Maximum >= limit)
                                 TDPBoostSlider.Value = limit;
                         }
+                        break;
+                    case PowerType.Stapm:
+                    case PowerType.MsrSlow:
+                    case PowerType.MsrFast:
+                        // do nothing
                         break;
                 }
             });
@@ -164,6 +196,9 @@ namespace HandheldCompanion.Views.QuickPages
             Properties.Settings.Default.QuickToolsPerformanceTDPSustainedValue = TDPSustainedSlider.Value;
             Properties.Settings.Default.Save();
 
+            if (!Properties.Settings.Default.QuickToolsPerformanceTDPEnabled)
+                return;
+
             MainWindow.powerManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
             MainWindow.powerManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
         }
@@ -176,6 +211,9 @@ namespace HandheldCompanion.Views.QuickPages
             // update settings
             Properties.Settings.Default.QuickToolsPerformanceTDPBoostValue = TDPBoostSlider.Value;
             Properties.Settings.Default.Save();
+
+            if (!Properties.Settings.Default.QuickToolsPerformanceTDPEnabled)
+                return;
 
             MainWindow.powerManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
         }
@@ -197,7 +235,7 @@ namespace HandheldCompanion.Views.QuickPages
             }
             else
             {
-                // restore default GPU clock
+                // restore default TDP
                 MainWindow.powerManager.RequestTDP(MainWindow.handheldDevice.nTDP);
             }
         }
@@ -248,6 +286,9 @@ namespace HandheldCompanion.Views.QuickPages
             // update settings
             Properties.Settings.Default.QuickToolsPerformanceGPUValue = GPUSlider.Value;
             Properties.Settings.Default.Save();
+
+            if (!Properties.Settings.Default.QuickToolsPerformanceGPUEnabled)
+                return;
 
             MainWindow.powerManager.RequestGPUClock(GPUSlider.Value);
         }

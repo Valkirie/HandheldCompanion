@@ -40,6 +40,7 @@
             <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:IsEnabledConverter x:Key="IsEnabledConverter" />
+            <converters:PercentageConverter x:Key="PercentageConverter" />
 
         </ResourceDictionary>
     </Application.Resources>

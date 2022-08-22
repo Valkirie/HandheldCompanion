@@ -18,7 +18,7 @@
         <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
     </Page.Resources>
 
-    <Grid Name="MainGrid" Margin="20" IsEnabled="False">
+    <Grid Name="MainGrid" Margin="20">
         <Border>
             <ui:SimpleStackPanel Spacing="24">
 
@@ -28,7 +28,7 @@
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                    <Grid Name="ControllerGrid">
+                    <Grid Name="ControllerGrid" IsEnabled="False">
                         <Grid.Background>
                             <ImageBrush ImageSource="/Resources/controller_2_0.png" Stretch="Uniform"/>
                         </Grid.Background>
@@ -78,7 +78,7 @@
                 </ui:SimpleStackPanel>
 
                 <!-- Device cloaking -->
-                <ui:SimpleStackPanel Spacing="6">
+                <ui:SimpleStackPanel Name="DeviceCloakingStackPanel" Spacing="6" IsEnabled="False">
                     <Label Content="{x:Static resx:Resources.ControllerPage_DeviceCloaking}" FontWeight="SemiBold"></Label>
 
                     <!-- Cloak device -->
