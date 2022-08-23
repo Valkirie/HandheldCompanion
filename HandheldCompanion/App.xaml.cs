@@ -18,7 +18,7 @@ namespace HandheldCompanion
         static PipeClient m_PipeClient;
         static StartupEventArgs m_Arguments;
 
-        static Mutex mutex = new Mutex(true, "1DDFB948-19F1-417C-903D-BE05335DB8A4");
+        static Mutex mutex = new Mutex(true, "HandheldCompanion");
         static AutoResetEvent autoEvent = new AutoResetEvent(false);
 
         [STAThread]

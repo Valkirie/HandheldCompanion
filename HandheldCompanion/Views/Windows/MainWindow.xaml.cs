@@ -194,16 +194,16 @@ namespace HandheldCompanion.Views
                     if (!serviceManager.Exists())
                         serviceManager.CreateService(CurrentPathService);
 
-                    serviceManager.StartServiceAsync();
+                    _ = serviceManager.StartServiceAsync();
                 }
             };
             serviceManager.StartFailed += (status) =>
             {
-                Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStartIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
+                _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStartIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
             };
             serviceManager.StopFailed += (status) =>
             {
-                Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStopIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
+                _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStopIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
             };
 
             // initialize task manager
@@ -341,10 +341,10 @@ namespace HandheldCompanion.Views
             switch (((ToolStripMenuItem)sender).Tag)
             {
                 case "ServiceStart":
-                    serviceManager.StartServiceAsync();
+                    _ = serviceManager.StartServiceAsync();
                     break;
                 case "ServiceStop":
-                    serviceManager.StopServiceAsync();
+                    _ = serviceManager.StopServiceAsync();
                     break;
                 case "ServiceInstall":
                     serviceManager.CreateService(CurrentPathService);
@@ -559,10 +559,10 @@ namespace HandheldCompanion.Views
                 switch (navItemTag)
                 {
                     case "ServiceStart":
-                        serviceManager.StartServiceAsync();
+                        _ = serviceManager.StartServiceAsync();
                         break;
                     case "ServiceStop":
-                        serviceManager.StopServiceAsync();
+                        _ = serviceManager.StopServiceAsync();
                         break;
                     case "ServiceInstall":
                         serviceManager.CreateService(CurrentPathService);
@@ -709,7 +709,7 @@ namespace HandheldCompanion.Views
             {
                 // stop service with companion
                 if (Properties.Settings.Default.HaltServiceWithCompanion)
-                    serviceManager.StopServiceAsync();
+                    _ = serviceManager.StopServiceAsync();
             }
 
             Properties.Settings.Default.Save();

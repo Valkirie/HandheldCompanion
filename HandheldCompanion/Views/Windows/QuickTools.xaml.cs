@@ -80,6 +80,12 @@ namespace HandheldCompanion.Views.Windows
             _pages.Add("QuickProfilesPage", profilesPage);
             _pages.Add("QuickSuspenderPage", suspenderPage);
 
+            // update Position and Size
+            this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.QuickToolsHeight);
+
+            this.Left = Math.Min(SystemParameters.PrimaryScreenWidth - this.MinWidth, Properties.Settings.Default.QuickToolsLeft);
+            this.Top = Math.Min(SystemParameters.PrimaryScreenHeight - this.MinHeight, Properties.Settings.Default.QuickToolsTop);
+
             this.SourceInitialized += QuickTools_SourceInitialized;
         }
 
@@ -90,11 +96,7 @@ namespace HandheldCompanion.Views.Windows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // update Position and Size
-            this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.QuickToolsHeight);
-
-            this.Left = Math.Min(SystemParameters.PrimaryScreenWidth - this.MinWidth, Properties.Settings.Default.QuickToolsLeft);
-            this.Top = Math.Min(SystemParameters.PrimaryScreenHeight - this.MinHeight, Properties.Settings.Default.QuickToolsTop);
+            // do something
         }
 
         public void UpdateVisibility()
@@ -303,6 +305,7 @@ namespace HandheldCompanion.Views.Windows
             switch (WindowState)
             {
                 case WindowState.Normal:
+                case WindowState.Maximized:
                     Properties.Settings.Default.QuickToolsLeft = this.Left;
                     Properties.Settings.Default.QuickToolsTop = this.Top;
 
