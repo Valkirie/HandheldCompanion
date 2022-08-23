@@ -439,7 +439,16 @@ namespace HandheldCompanion.Managers
             if (Processes.ContainsKey(procId))
                 foregroundProcess = Processes[procId];
             else
-                return;
+                foregroundProcess = new ProcessEx(proc)
+                {
+                    Name = exec,
+                    Executable = exec,
+                    Path = path,
+                    Bypassed = !IsValid(exec, path)
+                };
+
+            // update main window handle
+            foregroundProcess.MainWindowHandle = hWnd;
 
             // set efficency mode
             if (!foregroundProcess.Bypassed)
