@@ -214,13 +214,13 @@ namespace HandheldCompanion.Managers
                     if (updateFiles.ContainsKey(filename))
                         update = updateFiles[filename];
 
-                    Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
+                    _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
                         Properties.Resources.SettingsPage_UpdateFailedDownload,
                         ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
                 }
                 else
                 {
-                    Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
+                    _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
                         Properties.Resources.SettingsPage_UpdateFailedGithub,
                         ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
                 }
