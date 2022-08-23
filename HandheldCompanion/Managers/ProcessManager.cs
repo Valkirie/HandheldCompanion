@@ -309,7 +309,6 @@ namespace HandheldCompanion.Managers
 
         private ConcurrentDictionary<uint, ProcessEx> Processes = new();
         private ProcessEx foregroundProcess;
-        private ProcessEx backgroundProcess;
 
         private object updateLock = new();
         private bool isRunning;
@@ -387,9 +386,6 @@ namespace HandheldCompanion.Managers
                     IntPtr hWnd = (IntPtr)element.Current.NativeWindowHandle;
                     ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd).Process;
 
-                    if (processInfo == null || processInfo.ExecutableFileName == "HandheldCompanion.exe")
-                        return;
-
                     Process proc = Process.GetProcessById((int)processInfo.ProcessId);
                     ProcessCreated(proc, element.Current.NativeWindowHandle);
                 }
@@ -430,20 +426,27 @@ namespace HandheldCompanion.Managers
                 return;
 
             // save previous process (if exists)
-            if (foregroundProcess != null)
-                backgroundProcess = foregroundProcess;
+            if (foregroundProcess != null && !foregroundProcess.Bypassed)
+            {
+                // set efficiency mode if event pId is different from foreground pId
+                if (procId != foregroundProcess.Id)
+                {
+                    ProcessUtils.ToggleEfficiencyMode(foregroundProcess.Handle, false);
+                    LogManager.LogDebug("Process {0} set to power saving mode", foregroundProcess.Name);
+                }
+            }
 
             if (Processes.ContainsKey(procId))
                 foregroundProcess = Processes[procId];
             else
                 return;
 
-            // EnergyStar
-            if (backgroundProcess != null && !backgroundProcess.Bypassed)
-                ProcessUtils.ToggleEfficiencyMode(backgroundProcess.Handle, false);
-
-            if (foregroundProcess != null && !foregroundProcess.Bypassed)
+            // set efficency mode
+            if (!foregroundProcess.Bypassed)
+            {
                 ProcessUtils.ToggleEfficiencyMode(foregroundProcess.Handle, true);
+                LogManager.LogDebug("Process {0} set to efficient mode", foregroundProcess.Name);
+            }
 
             ForegroundChanged?.Invoke(foregroundProcess);
         }
