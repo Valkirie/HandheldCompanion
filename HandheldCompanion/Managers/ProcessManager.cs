@@ -390,7 +390,7 @@ namespace HandheldCompanion.Managers
                     ProcessCreated(proc, element.Current.NativeWindowHandle);
                 }
             }
-            catch (ElementNotAvailableException)
+            catch (Exception)
             {
             }
         }
