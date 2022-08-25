@@ -127,6 +127,8 @@ namespace HandheldCompanion.Views.Windows
                 NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
                 string navItemTag = (string)navItem.Tag;
 
+                var foregroundProcess = MainWindow.processManager.GetForegroundProcess();
+
                 switch (navItemTag)
                 {
                     default:
@@ -139,14 +141,16 @@ namespace HandheldCompanion.Views.Windows
                         MainWindow.inputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
                         break;
                     case "shortcutESC":
-                        MainWindow.inputsManager.KeyPress(VirtualKeyCode.ESCAPE);
-                        break;
-                    case "shortcutExpand":
-                        var foregroundProcess = MainWindow.processManager.GetForegroundProcess();
                         if (foregroundProcess != null)
                         {
                             SetForegroundWindow(foregroundProcess.MainWindowHandle);
-                            ShowWindow(foregroundProcess.MainWindowHandle, SW_SHOWMAXIMIZED);
+                            MainWindow.inputsManager.KeyPress(VirtualKeyCode.ESCAPE);
+                        }
+                        break;
+                    case "shortcutExpand":
+                        if (foregroundProcess != null)
+                        {
+                            SetForegroundWindow(foregroundProcess.MainWindowHandle);
                             MainWindow.inputsManager.KeyStroke(VirtualKeyCode.LMENU, VirtualKeyCode.RETURN);
                         }
                         break;
