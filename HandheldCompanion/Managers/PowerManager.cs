@@ -178,7 +178,7 @@ namespace HandheldCompanion.Managers
                     {
                         // AMD reduces TDP by 10% when OS power mode is set to Best power efficiency
                         if (RequestedPowerMode == PowerMode.BetterBattery)
-                            TDP = (int)Math.Truncate(FallbackTDP[idx] * 0.9);
+                            TDP = (int)Math.Truncate(TDP * 0.9);
                     }
                     else if (processor.GetType() == typeof(IntelProcessor))
                     {
