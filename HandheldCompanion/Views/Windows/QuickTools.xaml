@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HandheldCompanion.Views.Windows"
         xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+        xmlns:common="clr-namespace:HandheldCompanion.Common"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
         Height="720"
@@ -82,16 +83,8 @@
             </ui:NavigationViewItem>
         </ui:NavigationView.FooterMenuItems>
 
-        <ui:ScrollViewerEx
-            PanningMode="VerticalOnly"
-            Name="scrollViewer"
-            PreviewMouseLeftButtonDown="ScrollViewer_PreviewMouseLeftButtonDown"
-            PreviewMouseMove="ScrollViewer_PreviewMouseMove"
-            PreviewMouseLeftButtonUp="ScrollViewer_PreviewMouseLeftButtonUp"
-            PreviewMouseWheel="ScrollViewer_PreviewMouseWheel"
-            MouseLeave="scrollViewer_MouseLeave"
-            ui:ScrollViewerHelper.IsEnabled="True">
+        <common:TouchScrollViewer x:Name="scrollViewer" PanningMode="VerticalOnly">
             <ui:Frame Name="ContentFrame"/>
-        </ui:ScrollViewerEx>
+        </common:TouchScrollViewer>
     </ui:NavigationView>
 </Window>

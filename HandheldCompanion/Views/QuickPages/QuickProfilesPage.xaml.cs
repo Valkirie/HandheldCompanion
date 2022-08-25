@@ -190,16 +190,6 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
-        private void Scrolllock_MouseEnter(object sender, MouseEventArgs e)
-        {
-            QuickTools.scrollLock = true;
-        }
-
-        private void Scrolllock_MouseLeave(object sender, MouseEventArgs e)
-        {
-            QuickTools.scrollLock = false;
-        }
-
         private void UpdateProfile()
         {
             if (currentProfile is null)

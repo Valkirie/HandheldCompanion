@@ -177,16 +177,6 @@ namespace HandheldCompanion.Views.QuickPages
             // do something
         }
 
-        private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            QuickTools.scrollLock = true;
-        }
-
-        private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            QuickTools.scrollLock = false;
-        }
-
         private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (!Initialized)

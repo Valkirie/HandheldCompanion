@@ -54,11 +54,6 @@ namespace HandheldCompanion.Views.Windows
         public QuickProfilesPage profilesPage;
         public QuickSuspenderPage suspenderPage;
 
-        // touchscroll vars
-        Point scrollPoint = new Point();
-        double scrollOffset = 1;
-        public static bool scrollLock = false;
-
         // manager vers
         public static BrightnessControl brightnessControl;
 
@@ -234,64 +229,6 @@ namespace HandheldCompanion.Views.Windows
 
                 // navView.Header = new TextBlock() { Text = (string)((Page)e.Content).Title, Margin = new Thickness(0,-24,0,0) };//, FontSize = 14 };
             }
-        }
-        #endregion
-
-        #region scrollView
-        private void ScrollViewer_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            scrollPoint = e.GetPosition(scrollViewer);
-            scrollOffset = scrollViewer.VerticalOffset;
-        }
-
-        private bool hasScrolled;
-        private void ScrollViewer_PreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            if (scrollPoint == new Point())
-                return;
-
-            if (scrollLock)
-                return;
-
-            double diff = (scrollPoint.Y - e.GetPosition(scrollViewer).Y);
-
-            if (Math.Abs(diff) >= 3)
-            {
-                scrollViewer.ScrollToVerticalOffset(scrollOffset + diff);
-                hasScrolled = true;
-                e.Handled = true;
-            }
-            else
-            {
-                hasScrolled = false;
-                e.Handled = false;
-            }
-        }
-
-        private void ScrollViewer_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            scrollPoint = new Point();
-
-            if (hasScrolled)
-            {
-                e.Handled = true;
-                hasScrolled = false;
-            }
-        }
-
-        private void scrollViewer_MouseLeave(object sender, MouseEventArgs e)
-        {
-            scrollPoint = new Point();
-
-            if (hasScrolled)
-            {
-                e.Handled = true;
-                hasScrolled = false;
-            }
-        }
-
-        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
         }
         #endregion
 
