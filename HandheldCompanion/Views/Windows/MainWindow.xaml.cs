@@ -33,7 +33,6 @@ namespace HandheldCompanion.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        private StartupEventArgs arguments;
         public static FileVersionInfo fileVersionInfo;
         public static new string Name;
 
@@ -56,21 +55,14 @@ namespace HandheldCompanion.Views
         public static Overlay overlay;
         public static QuickTools quickTools;
 
-        // touchscroll vars
-        Point scrollPoint = new Point();
-        double scrollOffset = 1;
-        public static bool scrollLock = false;
+        // other vars
         public static bool IsElevated = false;
 
         // connectivity vars
         public static PipeClient pipeClient;
-        public static PipeServer pipeServer;
 
         // Hidder vars
         public static HidHide Hidder;
-
-        // Command parser vars
-        public static CmdParser cmdParser;
 
         // manager(s) vars
         public static ToastManager toastManager;
@@ -90,12 +82,21 @@ namespace HandheldCompanion.Views
         private bool FirstStart, appClosing;
 
         private static MainWindow window;
-        public MainWindow(StartupEventArgs arguments)
+        public MainWindow()
         {
             InitializeComponent();
+
+            // fix touch support
+            var tablets = Tablet.TabletDevices;
+
+            // define current directory
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+
+            // initialize log manager
+            LogManager.Initialize("HandheldCompanion");
+
             Name = this.Title;
 
-            this.arguments = arguments;
             window = this;
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
@@ -166,10 +167,6 @@ namespace HandheldCompanion.Views
             pipeClient.ServerMessage += OnServerMessage;
             pipeClient.Connected += OnClientConnected;
             pipeClient.Disconnected += OnClientDisconnected;
-
-            // initialize pipe server
-            pipeServer = new PipeServer("HandheldCompanion");
-            pipeServer.ClientMessage += OnClientMessage;
 
             // initialize toast manager
             toastManager = new ToastManager("HandheldCompanion");
@@ -245,10 +242,6 @@ namespace HandheldCompanion.Views
             overlayPage = new OverlayPage("overlay");
             hotkeysPage = new HotkeysPage("hotkeys");
 
-            // initialize command parser
-            cmdParser = new CmdParser();
-            cmdParser.ParseArgs(arguments.Args, true);
-
             // handle settingsPage events
             settingsPage.SettingValueChanged += (name, value) =>
             {
@@ -297,16 +290,6 @@ namespace HandheldCompanion.Views
                 foreach (NavigationViewItem item in navView.FooterMenuItems)
                     item.ToolTip = Properties.Resources.WarningElevated;
             }
-
-            // update Position and Size
-            this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.MainWindowHeight);
-            this.Width = (int)Math.Max(this.MinWidth, Properties.Settings.Default.MainWindowWidth);
-
-            this.Left = Math.Min(SystemParameters.PrimaryScreenWidth - this.MinWidth, Properties.Settings.Default.MainWindowLeft);
-            this.Top = Math.Min(SystemParameters.PrimaryScreenHeight - this.MinHeight, Properties.Settings.Default.MainWindowTop);
-
-            // pull settings
-            WindowState = Properties.Settings.Default.StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
         }
 
         private void SystemManager_Updated(PnPDevice device)
@@ -391,7 +374,6 @@ namespace HandheldCompanion.Views
 
             // open pipe(s)
             pipeClient.Open();
-            pipeServer.Open();
 
             // start manager(s)
             profileManager.Start();
@@ -399,6 +381,16 @@ namespace HandheldCompanion.Views
             inputsManager.Start();
             systemManager.Start();
             powerManager.Start();
+
+            // update Position and Size
+            this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.MainWindowHeight);
+            this.Width = (int)Math.Max(this.MinWidth, Properties.Settings.Default.MainWindowWidth);
+
+            this.Left = Math.Min(SystemParameters.PrimaryScreenWidth - this.MinWidth, Properties.Settings.Default.MainWindowLeft);
+            this.Top = Math.Min(SystemParameters.PrimaryScreenHeight - this.MinHeight, Properties.Settings.Default.MainWindowTop);
+
+            // pull settings
+            WindowState = Properties.Settings.Default.StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
         }
 
         public void UpdateSettings(Dictionary<string, string> args)
@@ -534,20 +526,6 @@ namespace HandheldCompanion.Views
         }
         #endregion
 
-        #region pipeServer
-        private void OnClientMessage(object sender, PipeMessage e)
-        {
-            PipeConsoleArgs console = (PipeConsoleArgs)e;
-
-            if (console.args.Length == 0)
-                WindowState = prevWindowState;
-            else
-                cmdParser.ParseArgs(console.args);
-
-            pipeServer.SendMessage(new PipeShutdown());
-        }
-        #endregion
-
         #region UI
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
@@ -605,36 +583,6 @@ namespace HandheldCompanion.Views
             TryGoBack();
         }
 
-        private void ScrollViewer_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            scrollPoint = e.GetPosition(scrollViewer);
-            scrollOffset = scrollViewer.VerticalOffset;
-        }
-
-        private bool hasScrolled;
-        private void ScrollViewer_PreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            if (scrollPoint == new Point())
-                return;
-
-            if (scrollLock)
-                return;
-
-            double diff = (scrollPoint.Y - e.GetPosition(scrollViewer).Y);
-
-            if (Math.Abs(diff) >= 3)
-            {
-                scrollViewer.ScrollToVerticalOffset(scrollOffset + diff);
-                hasScrolled = true;
-                e.Handled = true;
-            }
-            else
-            {
-                hasScrolled = false;
-                e.Handled = false;
-            }
-        }
-
         private void Window_Closed(object sender, EventArgs e)
         {
             processManager.Stop();
@@ -652,9 +600,6 @@ namespace HandheldCompanion.Views
 
             if (pipeClient.connected)
                 pipeClient.Close();
-
-            if (pipeServer.connected)
-                pipeServer.Close();
 
             cheatManager.Stop();
             inputsManager.Stop();
@@ -784,32 +729,6 @@ namespace HandheldCompanion.Views
 
                 navView.Header = new TextBlock() { Text = (string)((Page)e.Content).Title };
             }
-        }
-
-        private void ScrollViewer_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            scrollPoint = new Point();
-
-            if (hasScrolled)
-            {
-                e.Handled = true;
-                hasScrolled = false;
-            }
-        }
-
-        private void scrollViewer_MouseLeave(object sender, MouseEventArgs e)
-        {
-            scrollPoint = new Point();
-
-            if (hasScrolled)
-            {
-                e.Handled = true;
-                hasScrolled = false;
-            }
-        }
-
-        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
         }
         #endregion
 

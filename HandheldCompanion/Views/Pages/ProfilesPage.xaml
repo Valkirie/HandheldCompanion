@@ -239,8 +239,8 @@
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
                                         <Slider Name="TDPSustainedSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                                                 ValueChanged="TDPSustainedSlider_ValueChanged"
-                                                MouseEnter="Scrolllock_MouseEnter"
-                                                MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5"/>
+                                                
+                                                 SmallChange="1" LargeChange="5"/>
                                     </DockPanel>
                                 </Grid>
 
@@ -264,8 +264,8 @@
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
                                         <Slider Name="TDPBoostSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                                                 ValueChanged="TDPBoostSlider_ValueChanged"
-                                                MouseEnter="Scrolllock_MouseEnter"
-                                                MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5"/>
+                                                
+                                                 SmallChange="1" LargeChange="5"/>
                                     </DockPanel>
                                 </Grid>
                             </ui:SimpleStackPanel>
@@ -302,9 +302,7 @@
 
                                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileGyroValue, Mode=OneWay}" />
-                                            <Slider Margin="6,0,0,0" Name="tb_ProfileGyroValue" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="3" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" Minimum="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True"
-                                                    MouseEnter="Scrolllock_MouseEnter"
-                                                    MouseLeave="Scrolllock_MouseLeave"/>
+                                            <Slider Margin="6,0,0,0" Name="tb_ProfileGyroValue" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="3" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" Minimum="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" />
                                         </DockPanel>
                                     </Grid>
 
@@ -325,8 +323,8 @@
                                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAcceleroValue, Mode=OneWay}" />
                                             <Slider Margin="6,0,0,0" Name="tb_ProfileAcceleroValue" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="1" Maximum="3" Minimum="0.1" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True"
-                                                    MouseEnter="Scrolllock_MouseEnter"
-                                                    MouseLeave="Scrolllock_MouseLeave"/>
+                                                    
+                                                    />
                                         </DockPanel>
                                     </Grid>
 
@@ -456,8 +454,8 @@
                                     <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzone, Mode=OneWay}" />
                                         <Slider Margin="6,0,0,0" Name="tb_ProfileAntiDeadzone" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="true"
-                                                MouseEnter="Scrolllock_MouseEnter"
-                                                MouseLeave="Scrolllock_MouseLeave"/>
+                                                
+                                                />
                                     </DockPanel>
                                 </Grid>
 

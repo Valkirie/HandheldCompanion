@@ -119,8 +119,6 @@ namespace HandheldCompanion.Views.Pages
 
         private void StackCurve_MouseMove(object sender, MouseEventArgs e)
         {
-            MainWindow.scrollLock = true;
-
             if (profileCurrent is null)
                 return;
 
@@ -197,16 +195,6 @@ namespace HandheldCompanion.Views.Pages
                 Thumb.Height = StackCurve.Height * value;
                 profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
             }
-        }
-
-        private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = true;
-        }
-
-        private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = false;
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)

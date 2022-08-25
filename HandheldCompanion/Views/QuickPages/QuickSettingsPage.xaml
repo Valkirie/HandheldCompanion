@@ -30,9 +30,9 @@
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
                             <Slider Name="SliderBrightness" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="0" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                                     ValueChanged="SliderBrightness_ValueChanged"
-                                    IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
-                                    MouseEnter="Scrolllock_MouseEnter"
-                                    MouseLeave="Scrolllock_MouseLeave"
+                                     
+                                    
+                                    
                                     SmallChange="1" LargeChange="10"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
@@ -55,9 +55,9 @@
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
                             <Slider Name="SliderVolume" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="0" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                                     ValueChanged="SliderVolume_ValueChanged"
-                                    IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
-                                    MouseEnter="Scrolllock_MouseEnter"
-                                    MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="10"/>
+                                     
+                                    
+                                     SmallChange="1" LargeChange="10"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>

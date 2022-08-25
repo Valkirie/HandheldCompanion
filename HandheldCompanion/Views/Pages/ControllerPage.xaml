@@ -56,7 +56,7 @@
 
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderStrength, Mode=OneWay}" />
-                                    <Slider Margin="6,0,0,0" Name="SliderStrength" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" Minimum="0" SmallChange="5" TickFrequency="5" Value="50" TickPlacement="BottomRight" ValueChanged="SliderStrength_ValueChanged" IsSnapToTickEnabled="True" MouseEnter="Scrolllock_MouseEnter" MouseLeave="Scrolllock_MouseLeave"/>
+                                    <Slider Margin="6,0,0,0" Name="SliderStrength" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" Minimum="0" SmallChange="5" TickFrequency="5" Value="50" TickPlacement="BottomRight" ValueChanged="SliderStrength_ValueChanged" IsSnapToTickEnabled="True" />
                                 </DockPanel>
                                 </Grid>
                         </ui:SimpleStackPanel>

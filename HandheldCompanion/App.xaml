@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:HandheldCompanion"
              xmlns:converters="clr-namespace:HandheldCompanion.Converters"
              xmlns:ui="http://schemas.modernwpf.com/2019"
-			 Startup="Main">
+			 StartupUri="Views/Windows/MainWindow.xaml">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -35,7 +35,7 @@
                 <ui:XamlControlsResources />
 
             </ResourceDictionary.MergedDictionaries>
-
+            
             <!-- Other app resources here -->
             <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

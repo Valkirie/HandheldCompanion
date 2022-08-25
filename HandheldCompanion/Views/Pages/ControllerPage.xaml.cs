@@ -307,16 +307,6 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.pipeClient?.SendMessage(settings);
         }
 
-        private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = true;
-        }
-
-        private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = false;
-        }
-
         private ControllerEx currentController;
         private void RadioControllers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

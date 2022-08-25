@@ -83,14 +83,7 @@
                 Icon="Delete" Content="{x:Static resx:Resources.MainWindow_serviceRemove}" Name="b_ServiceDelete" Tag="ServiceDelete" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" />
         </ui:NavigationView.FooterMenuItems>
 
-        <ui:ScrollViewerEx
-            PanningMode="VerticalOnly"
-            Name="scrollViewer"
-            PreviewMouseLeftButtonDown="ScrollViewer_PreviewMouseLeftButtonDown"
-            PreviewMouseMove="ScrollViewer_PreviewMouseMove"
-            PreviewMouseLeftButtonUp="ScrollViewer_PreviewMouseLeftButtonUp"
-            PreviewMouseWheel="ScrollViewer_PreviewMouseWheel"
-            MouseLeave="scrollViewer_MouseLeave">
+        <ui:ScrollViewerEx Name="scrollViewer" PanningMode="VerticalOnly">
             <ui:Frame
                     Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
                     Name="ContentFrame" MaxWidth="1100"

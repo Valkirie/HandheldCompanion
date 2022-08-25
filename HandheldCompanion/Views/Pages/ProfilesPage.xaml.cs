@@ -536,16 +536,6 @@ namespace HandheldCompanion.Views.Pages
             cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !currentProfile.isDefault;
         }
 
-        private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = true;
-        }
-
-        private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = false;
-        }
-
         private void Expander_Expanded(object sender, RoutedEventArgs e)
         {
             ((Expander)sender).BringIntoView();

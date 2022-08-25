@@ -193,16 +193,6 @@ namespace HandheldCompanion.Views.Pages
             Properties.Settings.Default.Save();
         }
 
-        private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = true;
-        }
-
-        private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = false;
-        }
-
         private void OverlayModel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!Initialized)

@@ -168,8 +168,8 @@
                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderControllerSize, Mode=OneWay}" />
                             <Slider Margin="6,0,0,0" Name="SliderControllerSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="200" Value="300" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderControllerSize_ValueChanged"  IsSnapToTickEnabled="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
+                            
+                            />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -198,8 +198,8 @@
                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderControllerOpacity, Mode=OneWay}" />
                             <Slider Margin="6,0,0,0" Name="SliderControllerOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="1" Minimum="0.1" Value="0.8" TickPlacement="BottomRight" SmallChange="0.1" TickFrequency="0.1" AutoToolTipPrecision="1" ValueChanged="SliderControllerOpacity_ValueChanged" IsSnapToTickEnabled="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
+                            
+                            />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -235,8 +235,8 @@
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=Slider_Framerate, Mode=OneWay}" />
                                     <Slider Margin="6,0,0,0" Name="Slider_Framerate" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="60" TickFrequency="5" TickPlacement="BottomRight" Minimum="10" IsSnapToTickEnabled="True"
-									MouseEnter="Scrolllock_MouseEnter"
-									MouseLeave="Scrolllock_MouseLeave" LargeChange="10" SmallChange="5" ValueChanged="Slider_Framerate_ValueChanged"/>
+									
+									 LargeChange="10" SmallChange="5" ValueChanged="Slider_Framerate_ValueChanged"/>
                                 </DockPanel>
                             </Grid>
 
@@ -317,8 +317,8 @@
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=Slider_RestingPitch, Mode=OneWay}" />
                                     <Slider Margin="6,0,0,0" Name="Slider_RestingPitch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="90" TickFrequency="5" TickPlacement="BottomRight" Minimum="0" AutoToolTipPrecision="1" IsSnapToTickEnabled="True"
-									MouseEnter="Scrolllock_MouseEnter"
-									MouseLeave="Scrolllock_MouseLeave" LargeChange="10" SmallChange="5" ValueChanged="Slider_RestingPitch_ValueChanged" IsEnabled="False"/>
+									
+									 LargeChange="10" SmallChange="5" ValueChanged="Slider_RestingPitch_ValueChanged" IsEnabled="False"/>
                                 </DockPanel>
                             </Grid>
      
@@ -386,8 +386,8 @@
                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderTrackpadsSize, Mode=OneWay}" />
                             <Slider Margin="6,0,0,0" Name="SliderTrackpadsSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="100" Value="250" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderTrackpadsSize_ValueChanged"  IsSnapToTickEnabled="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
+                            
+                            />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -416,8 +416,8 @@
                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N2, ElementName=SliderTrackpadsOpacity, Mode=OneWay}" />
                             <Slider Margin="6,0,0,0" Name="SliderTrackpadsOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="0.25" Minimum="0.01" Value="0.2" TickPlacement="BottomRight" SmallChange="0.01" TickFrequency="0.01" AutoToolTipPrecision="1" ValueChanged="SliderTrackpadsOpacity_ValueChanged" IsSnapToTickEnabled="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
+                            
+                            />
                         </DockPanel>
                     </Grid>
                 </Border>

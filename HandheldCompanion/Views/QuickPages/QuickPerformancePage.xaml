@@ -54,9 +54,9 @@
                     <TextBlock VerticalAlignment="Center" Text="W" />
                     <Slider Name="TDPSustainedSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                             ValueChanged="TDPSustainedSlider_ValueChanged"
-                            IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5" IsManipulationEnabled="True"/>
+                             
+                            
+                             SmallChange="1" LargeChange="5" IsManipulationEnabled="True"/>
                 </DockPanel>
             </Border>
 
@@ -72,9 +72,9 @@
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="W" />
                     <Slider Name="TDPBoostSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                             ValueChanged="TDPBoostSlider_ValueChanged"
-                            IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5"/>
+                             
+                            
+                             SmallChange="1" LargeChange="5"/>
                 </DockPanel>
             </Border>
 
@@ -140,9 +140,9 @@
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" MHz" />
                 <Slider Name="GPUSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="50" Minimum="100" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
                         ValueChanged="GPUSlider_ValueChanged"
-                        IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
-                        MouseEnter="Scrolllock_MouseEnter"
-                        MouseLeave="Scrolllock_MouseLeave"/>
+                         
+                        
+                        />
             </DockPanel>
 
         </Border>
@@ -182,9 +182,9 @@
                     <ui:SimpleStackPanel VerticalAlignment="Center" Margin="0,0,0,0">
                         <Slider Name="PowerModeSlider" VerticalAlignment="Center" Maximum="2" TickFrequency="1" AutoToolTipPlacement="None" TickPlacement="BottomRight" Minimum="0" IsSnapToTickEnabled="True"
                                 ValueChanged="PowerModeSlider_ValueChanged"
-                                IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
-                                MouseEnter="Scrolllock_MouseEnter"
-                                MouseLeave="Scrolllock_MouseLeave"/>
+                                 
+                                
+                                />
                         <Grid Name="PowerModeGrid">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3*"></ColumnDefinition>

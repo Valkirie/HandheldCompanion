@@ -83,9 +83,11 @@ namespace HandheldCompanion.Views.Windows
             this.inputsManager = inputsManager;
             this.inputsManager.Updated += UpdateReport;
 
+            /*
             // touch vars
             touchsource = new TouchSourceWinTouch(this);
             touchsource.Touch += Touchsource_Touch;
+            */
 
             // initialize timers
             UpdateTimer = new MultimediaTimer();
