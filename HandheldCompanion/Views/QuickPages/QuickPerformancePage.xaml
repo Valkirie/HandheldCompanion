@@ -52,11 +52,9 @@
                 <DockPanel Grid.Column="1" Margin="8,0,0,0">
                     <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" IsManipulationEnabled="True" />
                     <TextBlock VerticalAlignment="Center" Text="W" />
-                    <Slider Name="TDPSustainedSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                            ValueChanged="TDPSustainedSlider_ValueChanged"
-                             
-                            
-                             SmallChange="1" LargeChange="5" IsManipulationEnabled="True"/>
+                    <Slider Name="TDPSustainedSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ScrollViewer.PanningMode="HorizontalOnly"
+					ValueChanged="TDPSustainedSlider_ValueChanged"
+					SmallChange="1" LargeChange="5"/>
                 </DockPanel>
             </Border>
 
@@ -70,11 +68,9 @@
                 <DockPanel Grid.Column="1" Margin="8,0,0,0">
                     <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="W" />
-                    <Slider Name="TDPBoostSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                            ValueChanged="TDPBoostSlider_ValueChanged"
-                             
-                            
-                             SmallChange="1" LargeChange="5"/>
+                    <Slider Name="TDPBoostSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ScrollViewer.PanningMode="HorizontalOnly"
+					ValueChanged="TDPBoostSlider_ValueChanged"
+					SmallChange="1" LargeChange="5"/>
                 </DockPanel>
             </Border>
 
@@ -138,11 +134,8 @@
             <DockPanel Grid.Column="1" Margin="0,0,0,0">
                 <TextBlock Width="30" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}" />
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" MHz" />
-                <Slider Name="GPUSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="50" Minimum="100" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                        ValueChanged="GPUSlider_ValueChanged"
-                         
-                        
-                        />
+                <Slider Name="GPUSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="50" Minimum="100" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ScrollViewer.PanningMode="HorizontalOnly"
+				ValueChanged="GPUSlider_ValueChanged" />
             </DockPanel>
 
         </Border>
@@ -180,11 +173,8 @@
 
                 <DockPanel Grid.Column="1">
                     <ui:SimpleStackPanel VerticalAlignment="Center" Margin="0,0,0,0">
-                        <Slider Name="PowerModeSlider" VerticalAlignment="Center" Maximum="2" TickFrequency="1" AutoToolTipPlacement="None" TickPlacement="BottomRight" Minimum="0" IsSnapToTickEnabled="True"
-                                ValueChanged="PowerModeSlider_ValueChanged"
-                                 
-                                
-                                />
+                        <Slider Name="PowerModeSlider" VerticalAlignment="Center" Maximum="2" TickFrequency="1" AutoToolTipPlacement="None" TickPlacement="BottomRight" Minimum="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ScrollViewer.PanningMode="HorizontalOnly"
+                                ValueChanged="PowerModeSlider_ValueChanged" />
                         <Grid Name="PowerModeGrid">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3*"></ColumnDefinition>
