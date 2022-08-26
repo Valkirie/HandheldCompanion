@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
@@ -7,12 +8,12 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using TouchEventSample;
-using static TouchEventSample.TouchSourceWinTouch;
 using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
 
 namespace HandheldCompanion.Views.Windows
@@ -44,16 +45,15 @@ namespace HandheldCompanion.Views.Windows
         private GeometryModel3D model;
         private Point OverlayPosition;
 
-        private enum TouchTarget
+        private class TouchInput
         {
-            TrackpadLeft = 0,
-            TrackpadRight = 1
+            public int Timestamp;
+            public short Flags;
         }
 
-        private TouchSourceWinTouch touchsource;
-        private long prevLeftTrackPadTime;
-        private long prevRightTrackPadTime;
-        private TouchTarget target;
+        private TouchInput leftInput;
+        private TouchInput rightInput;
+        private double dpiInput;
 
         private Vector3D FaceCameraObjectAlignment = new Vector3D(0.0d, 0.0d, 0.0d);
 
@@ -83,11 +83,9 @@ namespace HandheldCompanion.Views.Windows
             this.inputsManager = inputsManager;
             this.inputsManager.Updated += UpdateReport;
 
-            /*
             // touch vars
-            touchsource = new TouchSourceWinTouch(this);
-            touchsource.Touch += Touchsource_Touch;
-            */
+            leftInput = new TouchInput();
+            rightInput = new TouchInput();
 
             // initialize timers
             UpdateTimer = new MultimediaTimer();
@@ -102,6 +100,8 @@ namespace HandheldCompanion.Views.Windows
             WindowInteropHelper helper = new WindowInteropHelper(this);
             SetWindowLong(helper.Handle, GWL_EXSTYLE,
                 GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
+
+            dpiInput = GetWindowsScaling();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -211,82 +211,128 @@ namespace HandheldCompanion.Views.Windows
             return Screen.PrimaryScreen.Bounds.Width / SystemParameters.PrimaryScreenWidth;
         }
 
-        private void Touchsource_Touch(TouchArgs args, long time)
+        private void Trackpad_TouchInput(TouchEventArgs e, CursorAction action, CursorButton button)
         {
-            double X = args.LocationX - this.OverlayPosition.X;
-            // double Y = args.LocationY - this.OverlayPosition.Y;
+            TouchDevice args = e.TouchDevice;
+            TouchPoint point;
+            int flags;
 
-            double CenterX = Screen.PrimaryScreen.Bounds.Width / 2;
-            target = X < CenterX ? TouchTarget.TrackpadLeft : TouchTarget.TrackpadRight;
-
-            CursorButton Button = CursorButton.None;
-            Point CurrentPoint;
-
-            switch (target)
+            switch (button)
             {
                 default:
-                case TouchTarget.TrackpadLeft:
-                    Button = CursorButton.TouchLeft;
-                    CurrentPoint = LeftTrackpad.PointToScreen(new Point(0, 0));
-                    break;
-                case TouchTarget.TrackpadRight:
-                    Button = CursorButton.TouchRight;
-                    CurrentPoint = RightTrackpad.PointToScreen(new Point(0, 0));
-                    break;
-            }
-
-            var dpi = GetWindowsScaling();
-
-            var relativeX = Math.Max(args.LocationX - CurrentPoint.X, 0);
-            var relativeY = Math.Max(args.LocationY - CurrentPoint.Y, 0);
-
-            var normalizedX = (relativeX / (LeftTrackpad.ActualWidth * dpi)) / 2.0d;
-            var normalizedY = relativeY / (LeftTrackpad.ActualHeight * dpi);
-
-            switch (target)
-            {
-                default:
-                case TouchTarget.TrackpadLeft:
+                case CursorButton.TouchLeft:
                     {
-                        if (args.Status == CursorEvent.EventType.DOWN)
-                        {
-                            LeftTrackpad.Opacity += 0.10;
-                            var elapsed = time - prevLeftTrackPadTime;
-                            if (elapsed < 200)
-                                args.Flags = 30; // double tap
-                            prevLeftTrackPadTime = time;
-                        }
-                        else if (args.Status == CursorEvent.EventType.UP)
-                            LeftTrackpad.Opacity -= 0.10;
+                        point = args.GetTouchPoint(LeftTrackpad);
+                        flags = leftInput.Flags;
+
+                        leftInput.Timestamp = e.Timestamp;
                     }
                     break;
-
-                case TouchTarget.TrackpadRight:
+                case CursorButton.TouchRight:
                     {
-                        if (args.Status == CursorEvent.EventType.DOWN)
-                        {
-                            RightTrackpad.Opacity += 0.10;
-                            var elapsed = time - prevRightTrackPadTime;
-                            if (elapsed < 200)
-                                args.Flags = 30; // double tap
-                            prevRightTrackPadTime = time;
-                        }
-                        else if (args.Status == CursorEvent.EventType.UP)
-                            RightTrackpad.Opacity -= 0.10;
+                        point = args.GetTouchPoint(RightTrackpad);
+                        flags = rightInput.Flags;
 
-                        normalizedX += 0.5d;
+                        rightInput.Timestamp = e.Timestamp;
                     }
                     break;
             }
 
-            this.pipeClient.SendMessage(new PipeClientCursor
+            var normalizedX = (point.Position.X / (LeftTrackpad.ActualWidth) * dpiInput) / 2.0d;
+            var normalizedY = (point.Position.Y / (LeftTrackpad.ActualWidth) * dpiInput);
+
+            normalizedX += button == CursorButton.TouchRight ? 0.5d : 0.0d;
+
+            pipeClient.SendMessage(new PipeClientCursor
             {
-                action = args.Status == CursorEvent.EventType.DOWN ? CursorAction.CursorDown : args.Status == CursorEvent.EventType.UP ? CursorAction.CursorUp : CursorAction.CursorMove,
+                action = action,
                 x = normalizedX,
                 y = normalizedY,
-                button = Button,
-                flags = args.Flags
+                button = button,
+                flags = flags
             });
+        }
+
+        private void Trackpad_PreviewTouchMove(object sender, TouchEventArgs e)
+        {
+            string name = ((FrameworkElement)sender).Name;
+
+            switch(name)
+            {
+                default:
+                case "LeftTrackpad":
+                    {
+                        Trackpad_TouchInput(e, CursorAction.CursorMove, CursorButton.TouchLeft);
+                    }
+                    break;
+                case "RightTrackpad":
+                    {
+                        Trackpad_TouchInput(e, CursorAction.CursorMove, CursorButton.TouchRight);
+                    }
+                    break;
+            }
+
+            e.Handled = true;
+        }
+
+        private void Trackpad_PreviewTouchDown(object sender, TouchEventArgs e)
+        {
+            string name = ((FrameworkElement)sender).Name;
+
+            switch (name)
+            {
+                default:
+                case "LeftTrackpad":
+                    {
+                        var elapsed = e.Timestamp - leftInput.Timestamp;
+                        if (elapsed < 200)
+                            leftInput.Flags = 30;
+
+                        Trackpad_TouchInput(e, CursorAction.CursorDown, CursorButton.TouchLeft);
+
+                        LeftTrackpad.Opacity += 0.10;
+                    }
+                    break;
+                case "RightTrackpad":
+                    {
+                        var elapsed = e.Timestamp - rightInput.Timestamp;
+                        if (elapsed < 200)
+                            rightInput.Flags = 30;
+
+                        Trackpad_TouchInput(e, CursorAction.CursorDown, CursorButton.TouchRight);
+
+                        RightTrackpad.Opacity += 0.10;
+                    }
+                    break;
+            }
+
+            e.Handled = true;
+        }
+
+        private void Trackpad_PreviewTouchUp(object sender, TouchEventArgs e)
+        {
+            string name = ((FrameworkElement)sender).Name;
+
+            switch (name)
+            {
+                default:
+                case "LeftTrackpad":
+                    {
+                        leftInput.Flags = 0;
+                        Trackpad_TouchInput(e, CursorAction.CursorUp, CursorButton.TouchLeft);
+                        LeftTrackpad.Opacity -= 0.10;
+                    }
+                    break;
+                case "RightTrackpad":
+                    {
+                        rightInput.Flags = 0;
+                        Trackpad_TouchInput(e, CursorAction.CursorUp, CursorButton.TouchRight);
+                        RightTrackpad.Opacity -= 0.10;
+                    }
+                    break;
+            }
+
+            e.Handled = true;
         }
 
         public void UpdateControllerVisibility()

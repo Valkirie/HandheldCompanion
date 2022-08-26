@@ -20,7 +20,10 @@
                     CornerRadius="10"
                     Background="Black"
                     Opacity="0.25"
-                    HorizontalAlignment="Left" Height="250" Width="250">
+                    HorizontalAlignment="Left" Height="250" Width="250"
+                    PreviewTouchMove="Trackpad_PreviewTouchMove"
+                    PreviewTouchDown="Trackpad_PreviewTouchDown"
+                    PreviewTouchUp="Trackpad_PreviewTouchUp">
                 </Border>
 
                 <!-- Right Trackpad -->
@@ -29,7 +32,10 @@
                     CornerRadius="10"
                     Background="Black"
                     Opacity="0.25"
-                    HorizontalAlignment="Right" Height="250" Width="250">
+                    HorizontalAlignment="Right" Height="250" Width="250"
+                    PreviewTouchMove="Trackpad_PreviewTouchMove"
+                    PreviewTouchDown="Trackpad_PreviewTouchDown"
+                    PreviewTouchUp="Trackpad_PreviewTouchUp">
                 </Border>
             </Grid>
         
