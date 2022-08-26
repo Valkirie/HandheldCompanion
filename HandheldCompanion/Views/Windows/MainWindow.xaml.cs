@@ -52,8 +52,9 @@ namespace HandheldCompanion.Views
 
         // overlay(s) vars
         public static InputsManager inputsManager;
-        public static Overlay overlay;
-        public static QuickTools quickTools;
+        public static OverlayModel overlayModel;
+        public static OverlayTrackpad overlayTrackpad;
+        public static OverlayQuickTools overlayquickTools;
 
         // other vars
         public static bool IsElevated = false;
@@ -231,8 +232,9 @@ namespace HandheldCompanion.Views
             updateManager = new UpdateManager();
 
             // initialize windows
-            overlay = new Overlay(pipeClient, inputsManager);
-            quickTools = new QuickTools();
+            overlayModel = new OverlayModel();
+            overlayTrackpad = new OverlayTrackpad();
+            overlayquickTools = new OverlayQuickTools();
 
             // initialize pages
             controllerPage = new ControllerPage("controller");
@@ -247,8 +249,8 @@ namespace HandheldCompanion.Views
             {
                 // todo : create a settings manager
                 profilesPage.SettingsPage_SettingValueChanged(name, value);
-                quickTools.performancePage.SettingsPage_SettingValueChanged(name, value);
-                quickTools.profilesPage.SettingsPage_SettingValueChanged(name, value);
+                overlayquickTools.performancePage.SettingsPage_SettingValueChanged(name, value);
+                overlayquickTools.profilesPage.SettingsPage_SettingValueChanged(name, value);
 
                 switch (name)
                 {
@@ -267,7 +269,7 @@ namespace HandheldCompanion.Views
             // handle controllerPage events
             controllerPage.HIDchanged += (HID) =>
             {
-                overlay.UpdateHIDMode(HID);
+                overlayModel.UpdateHIDMode(HID);
             };
             controllerPage.ControllerChanged += (Controller) =>
             {
@@ -307,13 +309,13 @@ namespace HandheldCompanion.Views
                 switch (listener)
                 {
                     case "quickTools":
-                        quickTools.UpdateVisibility();
+                        overlayquickTools.UpdateVisibility();
                         break;
                     case "overlayGamepad":
-                        overlay.UpdateControllerVisibility();
+                        overlayModel.UpdateVisibility();
                         break;
                     case "overlayTrackpads":
-                        overlay.UpdateTrackpadsVisibility();
+                        overlayTrackpad.UpdateVisibility();
                         break;
                 }
             });
@@ -595,8 +597,9 @@ namespace HandheldCompanion.Views
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
 
-            overlay.Close();
-            quickTools.Close(true);
+            overlayModel.Close();
+            overlayTrackpad.Close();
+            overlayquickTools.Close(true);
 
             if (pipeClient.connected)
                 pipeClient.Close();

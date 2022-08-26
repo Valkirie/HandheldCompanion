@@ -1418,7 +1418,10 @@
     <Page Update="Views\QuickPages\QuickSettingsPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-    <Page Update="Views\Windows\QuickTools.xaml">
+    <Page Update="Views\Windows\OverlayTrackpad.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\Windows\OverlayQuickTools.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
   </ItemGroup>

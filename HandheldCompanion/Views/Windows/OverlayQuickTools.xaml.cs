@@ -17,7 +17,7 @@ namespace HandheldCompanion.Views.Windows
     /// <summary>
     /// Interaction logic for QuickTools.xaml
     /// </summary>
-    public partial class QuickTools : Window
+    public partial class OverlayQuickTools : Window
     {
         #region imports
         [ComImport, Guid("4ce576fa-83dc-4F88-951c-9d0782b4e376")]
@@ -57,7 +57,7 @@ namespace HandheldCompanion.Views.Windows
         // manager vers
         public static BrightnessControl brightnessControl;
 
-        public QuickTools()
+        public OverlayQuickTools()
         {
             InitializeComponent();
 

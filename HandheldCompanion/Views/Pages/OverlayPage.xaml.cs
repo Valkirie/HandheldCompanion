@@ -98,15 +98,15 @@ namespace HandheldCompanion.Views.Pages
             {
                 case 0:
                     TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Top;
-                    MainWindow.overlay.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Top;
+                    MainWindow.overlayTrackpad.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Top;
                     break;
                 case 1:
                     TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Center;
-                    MainWindow.overlay.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Center;
+                    MainWindow.overlayTrackpad.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Center;
                     break;
                 case 2:
                     TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Bottom;
-                    MainWindow.overlay.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Bottom;
+                    MainWindow.overlayTrackpad.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Bottom;
                     break;
             }
         }
@@ -128,19 +128,19 @@ namespace HandheldCompanion.Views.Pages
                 case 1:
                 case 2:
                     ControllerPositionUI.VerticalAlignment = VerticalAlignment.Top;
-                    MainWindow.overlay.VirtualController.VerticalAlignment = VerticalAlignment.Top;
+                    MainWindow.overlayModel.VirtualController.VerticalAlignment = VerticalAlignment.Top;
                     break;
                 case 3:
                 case 4:
                 case 5:
                     ControllerPositionUI.VerticalAlignment = VerticalAlignment.Center;
-                    MainWindow.overlay.VirtualController.VerticalAlignment = VerticalAlignment.Center;
+                    MainWindow.overlayModel.VirtualController.VerticalAlignment = VerticalAlignment.Center;
                     break;
                 case 6:
                 case 7:
                 case 8:
                     ControllerPositionUI.VerticalAlignment = VerticalAlignment.Bottom;
-                    MainWindow.overlay.VirtualController.VerticalAlignment = VerticalAlignment.Bottom;
+                    MainWindow.overlayModel.VirtualController.VerticalAlignment = VerticalAlignment.Bottom;
                     break;
             }
 
@@ -150,19 +150,19 @@ namespace HandheldCompanion.Views.Pages
                 case 3:
                 case 6:
                     ControllerPositionUI.HorizontalAlignment = HorizontalAlignment.Left;
-                    MainWindow.overlay.VirtualController.HorizontalAlignment = HorizontalAlignment.Left;
+                    MainWindow.overlayModel.VirtualController.HorizontalAlignment = HorizontalAlignment.Left;
                     break;
                 case 1:
                 case 4:
                 case 7:
                     ControllerPositionUI.HorizontalAlignment = HorizontalAlignment.Center;
-                    MainWindow.overlay.VirtualController.HorizontalAlignment = HorizontalAlignment.Center;
+                    MainWindow.overlayModel.VirtualController.HorizontalAlignment = HorizontalAlignment.Center;
                     break;
                 case 2:
                 case 5:
                 case 8:
                     ControllerPositionUI.HorizontalAlignment = HorizontalAlignment.Right;
-                    MainWindow.overlay.VirtualController.HorizontalAlignment = HorizontalAlignment.Right;
+                    MainWindow.overlayModel.VirtualController.HorizontalAlignment = HorizontalAlignment.Right;
                     break;
             }
         }
@@ -172,8 +172,8 @@ namespace HandheldCompanion.Views.Pages
             if (!Initialized)
                 return;
 
-            MainWindow.overlay.VirtualController.Width = SliderControllerSize.Value;
-            MainWindow.overlay.VirtualController.Height = SliderControllerSize.Value;
+            MainWindow.overlayModel.VirtualController.Width = SliderControllerSize.Value;
+            MainWindow.overlayModel.VirtualController.Height = SliderControllerSize.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerSize = (int)SliderControllerSize.Value;
@@ -185,8 +185,8 @@ namespace HandheldCompanion.Views.Pages
             if (!Initialized)
                 return;
 
-            MainWindow.overlay.LeftTrackpad.Height = MainWindow.overlay.LeftTrackpad.Width = SliderTrackpadsSize.Value;
-            MainWindow.overlay.RightTrackpad.Height = MainWindow.overlay.RightTrackpad.Width = SliderTrackpadsSize.Value;
+            MainWindow.overlayTrackpad.LeftTrackpad.Height = MainWindow.overlayTrackpad.LeftTrackpad.Width = SliderTrackpadsSize.Value;
+            MainWindow.overlayTrackpad.RightTrackpad.Height = MainWindow.overlayTrackpad.RightTrackpad.Width = SliderTrackpadsSize.Value;
 
             // save settings
             Properties.Settings.Default.OverlayTrackpadsSize = (int)SliderTrackpadsSize.Value;
@@ -199,7 +199,7 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // update overlay
-            MainWindow.overlay.UpdateOverlayMode((OverlayModelMode)OverlayModel.SelectedIndex);
+            MainWindow.overlayModel.UpdateOverlayMode((OverlayModelMode)OverlayModel.SelectedIndex);
 
             // save settings
             Properties.Settings.Default.OverlayModel = OverlayModel.SelectedIndex;
@@ -231,8 +231,8 @@ namespace HandheldCompanion.Views.Pages
             if (!Initialized)
                 return;
 
-            MainWindow.overlay.LeftTrackpad.Opacity = SliderTrackpadsOpacity.Value;
-            MainWindow.overlay.RightTrackpad.Opacity = SliderTrackpadsOpacity.Value;
+            MainWindow.overlayTrackpad.LeftTrackpad.Opacity = SliderTrackpadsOpacity.Value;
+            MainWindow.overlayTrackpad.RightTrackpad.Opacity = SliderTrackpadsOpacity.Value;
 
             // save settings
             Properties.Settings.Default.OverlayTrackpadsOpacity = SliderTrackpadsOpacity.Value;
@@ -249,7 +249,7 @@ namespace HandheldCompanion.Views.Pages
             if (!Initialized)
                 return;
 
-            MainWindow.overlay.FaceCamera = Toggle_FaceCamera.IsOn;
+            MainWindow.overlayModel.FaceCamera = Toggle_FaceCamera.IsOn;
             Slider_RestingPitch.IsEnabled = Toggle_FaceCamera.IsOn == true ? true : false;
 
             // save settings
@@ -261,7 +261,7 @@ namespace HandheldCompanion.Views.Pages
             if (!Initialized)
                 return;
 
-            MainWindow.overlay.DesiredAngleDeg.X = -1 * Slider_RestingPitch.Value;
+            MainWindow.overlayModel.DesiredAngleDeg.X = -1 * Slider_RestingPitch.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerRestingPitch = Slider_RestingPitch.Value;
@@ -273,7 +273,7 @@ namespace HandheldCompanion.Views.Pages
             if (!Initialized)
                 return;
 
-            MainWindow.overlay.ModelViewPort.SetValue(RenderOptions.EdgeModeProperty, Toggle_RenderAA.IsOn ? EdgeMode.Unspecified : EdgeMode.Aliased);
+            MainWindow.overlayModel.ModelViewPort.SetValue(RenderOptions.EdgeModeProperty, Toggle_RenderAA.IsOn ? EdgeMode.Unspecified : EdgeMode.Aliased);
 
             // save settings
             Properties.Settings.Default.OverlayRenderAntialiasing = Toggle_RenderAA.IsOn;
@@ -285,7 +285,7 @@ namespace HandheldCompanion.Views.Pages
             if (!Initialized)
                 return;
 
-            MainWindow.overlay.UpdateInterval(1000.0d / Slider_Framerate.Value);
+            MainWindow.overlayModel.UpdateInterval(1000.0d / Slider_Framerate.Value);
 
             // save settings
             Properties.Settings.Default.OverlayRenderInterval = Slider_Framerate.Value;
@@ -297,7 +297,7 @@ namespace HandheldCompanion.Views.Pages
             if (!Initialized)
                 return;
 
-            MainWindow.overlay.ModelViewPort.Opacity = SliderControllerOpacity.Value;
+            MainWindow.overlayModel.ModelViewPort.Opacity = SliderControllerOpacity.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerOpacity = SliderControllerOpacity.Value;
