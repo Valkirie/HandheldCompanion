@@ -1,6 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
+using HandheldCompanion.Common;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
 using SharpDX.XInput;
@@ -21,7 +22,7 @@ namespace HandheldCompanion.Views.Windows
     /// <summary>
     /// Interaction logic for Overlay.xaml
     /// </summary>
-    public partial class OverlayTrackpad : Window
+    public partial class OverlayTrackpad : OverlayWindow
     {
         private class TouchInput
         {

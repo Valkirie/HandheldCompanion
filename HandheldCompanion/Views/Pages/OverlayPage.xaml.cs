@@ -98,15 +98,15 @@ namespace HandheldCompanion.Views.Pages
             {
                 case 0:
                     TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Top;
-                    MainWindow.overlayTrackpad.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Top;
+                    MainWindow.overlayTrackpad.VerticalAlignment = VerticalAlignment.Top;
                     break;
                 case 1:
                     TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Center;
-                    MainWindow.overlayTrackpad.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Center;
+                    MainWindow.overlayTrackpad.VerticalAlignment = VerticalAlignment.Center;
                     break;
                 case 2:
                     TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Bottom;
-                    MainWindow.overlayTrackpad.VirtualTrackpads.VerticalAlignment = VerticalAlignment.Bottom;
+                    MainWindow.overlayTrackpad.VerticalAlignment = VerticalAlignment.Bottom;
                     break;
             }
         }
@@ -128,19 +128,19 @@ namespace HandheldCompanion.Views.Pages
                 case 1:
                 case 2:
                     ControllerPositionUI.VerticalAlignment = VerticalAlignment.Top;
-                    MainWindow.overlayModel.VirtualController.VerticalAlignment = VerticalAlignment.Top;
+                    MainWindow.overlayModel.VerticalAlignment = VerticalAlignment.Top;
                     break;
                 case 3:
                 case 4:
                 case 5:
                     ControllerPositionUI.VerticalAlignment = VerticalAlignment.Center;
-                    MainWindow.overlayModel.VirtualController.VerticalAlignment = VerticalAlignment.Center;
+                    MainWindow.overlayModel.VerticalAlignment = VerticalAlignment.Center;
                     break;
                 case 6:
                 case 7:
                 case 8:
                     ControllerPositionUI.VerticalAlignment = VerticalAlignment.Bottom;
-                    MainWindow.overlayModel.VirtualController.VerticalAlignment = VerticalAlignment.Bottom;
+                    MainWindow.overlayModel.VerticalAlignment = VerticalAlignment.Bottom;
                     break;
             }
 
@@ -150,19 +150,19 @@ namespace HandheldCompanion.Views.Pages
                 case 3:
                 case 6:
                     ControllerPositionUI.HorizontalAlignment = HorizontalAlignment.Left;
-                    MainWindow.overlayModel.VirtualController.HorizontalAlignment = HorizontalAlignment.Left;
+                    MainWindow.overlayModel.HorizontalAlignment = HorizontalAlignment.Left;
                     break;
                 case 1:
                 case 4:
                 case 7:
                     ControllerPositionUI.HorizontalAlignment = HorizontalAlignment.Center;
-                    MainWindow.overlayModel.VirtualController.HorizontalAlignment = HorizontalAlignment.Center;
+                    MainWindow.overlayModel.HorizontalAlignment = HorizontalAlignment.Center;
                     break;
                 case 2:
                 case 5:
                 case 8:
                     ControllerPositionUI.HorizontalAlignment = HorizontalAlignment.Right;
-                    MainWindow.overlayModel.VirtualController.HorizontalAlignment = HorizontalAlignment.Right;
+                    MainWindow.overlayModel.HorizontalAlignment = HorizontalAlignment.Right;
                     break;
             }
         }
@@ -172,8 +172,8 @@ namespace HandheldCompanion.Views.Pages
             if (!Initialized)
                 return;
 
-            MainWindow.overlayModel.VirtualController.Width = SliderControllerSize.Value;
-            MainWindow.overlayModel.VirtualController.Height = SliderControllerSize.Value;
+            MainWindow.overlayModel.Width = SliderControllerSize.Value;
+            MainWindow.overlayModel.Height = SliderControllerSize.Value;
 
             // save settings
             Properties.Settings.Default.OverlayControllerSize = (int)SliderControllerSize.Value;
@@ -185,8 +185,10 @@ namespace HandheldCompanion.Views.Pages
             if (!Initialized)
                 return;
 
-            MainWindow.overlayTrackpad.LeftTrackpad.Height = MainWindow.overlayTrackpad.LeftTrackpad.Width = SliderTrackpadsSize.Value;
-            MainWindow.overlayTrackpad.RightTrackpad.Height = MainWindow.overlayTrackpad.RightTrackpad.Width = SliderTrackpadsSize.Value;
+            MainWindow.overlayTrackpad.LeftTrackpad.Width = SliderTrackpadsSize.Value;
+            MainWindow.overlayTrackpad.RightTrackpad.Width = SliderTrackpadsSize.Value;
+            MainWindow.overlayTrackpad.Height = SliderTrackpadsSize.Value;
+            MainWindow.overlayTrackpad.HorizontalAlignment = HorizontalAlignment.Stretch;
 
             // save settings
             Properties.Settings.Default.OverlayTrackpadsSize = (int)SliderTrackpadsSize.Value;

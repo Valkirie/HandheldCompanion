@@ -1,6 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
+using HandheldCompanion.Common;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
 using SharpDX.XInput;
@@ -21,7 +22,7 @@ namespace HandheldCompanion.Views.Windows
     /// <summary>
     /// Interaction logic for Overlay.xaml
     /// </summary>
-    public partial class OverlayModel : Window
+    public partial class OverlayModel : OverlayWindow
     {
         private MultimediaTimer UpdateTimer;
 
@@ -247,7 +248,7 @@ namespace HandheldCompanion.Views.Windows
             });
 
             // skip virtual controller update if hidden or collapsed
-            if (VirtualController.Visibility != Visibility.Visible)
+            if (Visibility != Visibility.Visible)
                 return;
 
             // update model
