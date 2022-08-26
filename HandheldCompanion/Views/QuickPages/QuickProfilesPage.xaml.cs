@@ -96,12 +96,6 @@ namespace HandheldCompanion.Views.QuickPages
 
                 cB_Output.Items.Add(panel);
             }
-
-            // define slider(s) min and max values based on device specifications
-            var TDPdown = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideDown : MainWindow.handheldDevice.cTDP[0];
-            var TDPup = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideUp : MainWindow.handheldDevice.cTDP[1];
-            TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = TDPdown;
-            TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = TDPup;
         }
 
         public void SettingsPage_SettingValueChanged(string name, object value)

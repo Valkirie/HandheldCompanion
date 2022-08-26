@@ -26,12 +26,6 @@ namespace HandheldCompanion.Views.QuickPages
             MainWindow.profileManager.Applied += ProfileManager_Applied;
             MainWindow.profileManager.Discarded += ProfileManager_Discarded;
 
-            // define slider(s) min and max values based on device specifications
-            var cTDPdown = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideDown : MainWindow.handheldDevice.cTDP[0];
-            var cTDPup = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideUp : MainWindow.handheldDevice.cTDP[1];
-            TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = cTDPdown;
-            TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = cTDPup;
-
             // pull PowerMode settings
             var PowerMode = Properties.Settings.Default.QuickToolsPowerModeValue;
             if (PowerMode >= PowerModeSlider.Minimum && PowerMode <= PowerModeSlider.Maximum)

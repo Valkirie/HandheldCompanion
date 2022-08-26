@@ -72,8 +72,12 @@ namespace HandheldCompanion.Views.Pages
             Toggle_SensorPlacementUpsideDown.IsOn = Properties.Settings.Default.SensorPlacementUpsideDown;
             Toggle_cTDP.IsOn = Properties.Settings.Default.ConfigurableTDPOverride;
 
-            NumberBox_TDPMin.Value = Properties.Settings.Default.ConfigurableTDPOverrideDown;
-            NumberBox_TDPMax.Value = Properties.Settings.Default.ConfigurableTDPOverrideUp;
+            // define slider(s) min and max values based on device specifications
+            var cTDPdown = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideDown : MainWindow.handheldDevice.cTDP[0];
+            var cTDPup = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideUp : MainWindow.handheldDevice.cTDP[1];
+
+            NumberBox_TDPMin.Value = cTDPdown;
+            NumberBox_TDPMax.Value = cTDPup;
 
             // call function
             ApplyTheme((ApplicationTheme)cB_Theme.SelectedIndex);
