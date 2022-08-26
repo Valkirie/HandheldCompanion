@@ -415,7 +415,7 @@
 
                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N2, ElementName=SliderTrackpadsOpacity, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderTrackpadsOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="0.25" Minimum="0.01" Value="0.2" TickPlacement="BottomRight" SmallChange="0.01" TickFrequency="0.01" AutoToolTipPrecision="1" ValueChanged="SliderTrackpadsOpacity_ValueChanged" IsSnapToTickEnabled="True"
+                            <Slider Margin="6,0,0,0" Name="SliderTrackpadsOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="0.25" Minimum="0.01" Value="0.2" TickPlacement="BottomRight" SmallChange="0.01" TickFrequency="0.01" AutoToolTipPrecision="2" ValueChanged="SliderTrackpadsOpacity_ValueChanged" IsSnapToTickEnabled="True"
                             MouseEnter="Scrolllock_MouseEnter"
                             MouseLeave="Scrolllock_MouseLeave"/>
                         </DockPanel>
