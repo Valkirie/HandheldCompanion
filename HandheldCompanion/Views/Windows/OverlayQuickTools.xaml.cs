@@ -250,7 +250,7 @@ namespace HandheldCompanion.Views.Windows
                     Properties.Settings.Default.QuickToolsLeft = this.Left;
                     Properties.Settings.Default.QuickToolsTop = this.Top;
 
-                    Properties.Settings.Default.QuickToolsHeight = this.Height;
+                    Properties.Settings.Default.QuickToolsHeight = this.ActualHeight;
                     break;
             }
 

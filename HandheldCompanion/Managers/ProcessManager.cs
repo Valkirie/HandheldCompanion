@@ -329,7 +329,8 @@ namespace HandheldCompanion.Managers
             stopWatch = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
             stopWatch.EventArrived += new EventArrivedEventHandler(ProcessHalted);
 
-            listener = new WinEventProc(EventCallback);
+            listener = new WinEventProc(EventCallback);// hook: on window foregroud
+            winHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, listener, 0, 0, WINEVENT_OUTOFCONTEXT);
         }
 
         public override void Start()
@@ -346,9 +347,6 @@ namespace HandheldCompanion.Managers
 
             // hook: on process stop
             stopWatch.Start();
-
-            // hook: on window foregroud
-            winHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, listener, 0, 0, WINEVENT_OUTOFCONTEXT);
 
             // list all current processes
             EnumWindows(new WindowEnumCallback(AddWnd), 0);
