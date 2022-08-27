@@ -88,21 +88,28 @@ namespace HandheldCompanion.Views
             InitializeComponent();
             mainWindow = this;
 
+            Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
+            fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
+
+            switch (Properties.Settings.Default.StartMinimized)
+            {
+                case false:
+                    SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
+                    splashScreen.Show(true);
+                    break;
+            }
+
             // fix touch support
             var tablets = Tablet.TabletDevices;
 
             // define current directory
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
-            // initialize log manager
-            LogManager.Initialize("HandheldCompanion");
-
             // listen to system events
             SystemEvents.PowerModeChanged += OnPowerChangeAsync;
 
             // initialize log
-            Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-            fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
+            LogManager.Initialize("HandheldCompanion");
             LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
             // initialize notifyIcon

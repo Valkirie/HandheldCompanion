@@ -75,7 +75,7 @@
     <Resource Include="Resources\device_aya_next.png" />
     <Resource Include="Resources\device_gpd_winmax2.png" />
     <Resource Include="Resources\device_onexplayer_mini.png" />
-    <SplashScreen Include="Resources\icon.png" />
+    <Resource Include="Resources\icon.png" />
     <Resource Include="Resources\overlay_back.png" />
   </ItemGroup>
 

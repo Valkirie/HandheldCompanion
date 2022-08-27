@@ -251,6 +251,9 @@
     <value>Change the suspender hotkey by pressing a button or a special key</value>
     <comment>added on 01/07/2022</comment>
   </data>
+  <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="JoyXOff.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\JoyXOff.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
