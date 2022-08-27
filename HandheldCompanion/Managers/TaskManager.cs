@@ -10,20 +10,25 @@ namespace HandheldCompanion.Managers
         // TaskManager vars
         private Task task;
         private TaskDefinition taskDefinition;
+        private TaskService TaskServ;
+
         private string ServiceName, ServiceExecutable;
 
         public TaskManager(string ServiceName, string Executable)
         {
             this.ServiceName = ServiceName;
             this.ServiceExecutable = Executable;
+        }
 
-            TaskService TaskServ = new TaskService();
+        public override void Start()
+        {
+            TaskServ = new TaskService();
             task = TaskServ.FindTask(ServiceName);
 
             if (task != null)
             {
                 task.Definition.Actions.Clear();
-                task.Definition.Actions.Add(new ExecAction(Executable));
+                task.Definition.Actions.Add(new ExecAction(ServiceExecutable));
                 task = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, task.Definition);
             }
             else
@@ -36,9 +41,11 @@ namespace HandheldCompanion.Managers
                 taskDefinition.Settings.ExecutionTimeLimit = TimeSpan.Zero;
                 taskDefinition.Settings.Enabled = false;
                 taskDefinition.Triggers.Add(new LogonTrigger());
-                taskDefinition.Actions.Add(new ExecAction(Executable));
+                taskDefinition.Actions.Add(new ExecAction(ServiceExecutable));
                 task = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, taskDefinition);
             }
+
+            base.Start();
         }
 
         public void UpdateTask(bool value)

@@ -36,6 +36,7 @@ namespace HandheldCompanion.Views
     public partial class MainWindow : Window
     {
         public static FileVersionInfo fileVersionInfo;
+        private static Stopwatch stopwatch = new();
 
         // devices vars
         public static Device handheldDevice;
@@ -176,7 +177,17 @@ namespace HandheldCompanion.Views
 
             // start manager(s)
             foreach (Manager manager in _managers)
-                manager.Start();
+            {
+                if (manager.GetType() == typeof(InputsManager))
+                    manager.Start();
+                else
+                    {
+                    new Thread(() => {
+                        Thread.CurrentThread.IsBackground = true;
+                        manager.Start();
+                    }).Start();
+                }
+            }
 
             // update Position and Size
             this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.MainWindowHeight);
@@ -191,6 +202,9 @@ namespace HandheldCompanion.Views
 
         private void loadPages()
         {
+            stopwatch.Restart();
+            LogManager.LogDebug("Loading pages...");
+
             // initialize pages
             controllerPage = new ControllerPage("controller");
             profilesPage = new ProfilesPage("profiles");
@@ -239,18 +253,30 @@ namespace HandheldCompanion.Views
                 cheatManager.UpdateController(Controller); // update me
                 inputsManager.UpdateController(Controller);
             };
+
+            stopwatch.Stop();
+            LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
         }
 
         private void loadWindows()
         {
+            stopwatch.Restart();
+            LogManager.LogDebug("Loading windows...");
+
             // initialize overlay
             overlayModel = new OverlayModel();
             overlayTrackpad = new OverlayTrackpad();
             overlayquickTools = new OverlayQuickTools();
+
+            stopwatch.Stop();
+            LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
         }
 
         private void loadManagers()
         {
+            stopwatch.Restart();
+            LogManager.LogDebug("Loading managers...");
+
             // initialize managers
             toastManager = new ToastManager("HandheldCompanion");
             toastManager.Enabled = Properties.Settings.Default.ToastEnable;
@@ -314,6 +340,9 @@ namespace HandheldCompanion.Views
 
             systemManager.SerialArrived += SystemManager_Updated;
             systemManager.SerialRemoved += SystemManager_Updated;
+
+            stopwatch.Stop();
+            LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
         }
 
         private void SystemManager_Updated(PnPDevice device)
@@ -383,6 +412,7 @@ namespace HandheldCompanion.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // do something
+            LogManager.LogInformation("Displaying UI...");
         }
 
         public void UpdateSettings(Dictionary<string, string> args)

@@ -311,7 +311,6 @@ namespace HandheldCompanion.Managers
         private ProcessEx foregroundProcess;
 
         private object updateLock = new();
-        private bool isRunning;
 
         public event ForegroundChangedEventHandler ForegroundChanged;
         public delegate void ForegroundChangedEventHandler(ProcessEx processEx);
@@ -324,11 +323,8 @@ namespace HandheldCompanion.Managers
 
         public ProcessManager()
         {
-            Automation.AddAutomationEventHandler(
-                eventId: WindowPattern.WindowOpenedEvent,
-                element: AutomationElement.RootElement,
-                scope: TreeScope.Children,
-                eventHandler: OnWindowOpened);
+            MonitorTimer = new Timer(1000);
+            MonitorTimer.Elapsed += MonitorHelper;
 
             stopWatch = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
             stopWatch.EventArrived += new EventArrivedEventHandler(ProcessHalted);
@@ -338,29 +334,28 @@ namespace HandheldCompanion.Managers
 
         public override void Start()
         {
-            // list all current processes
-            new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                EnumWindows(new WindowEnumCallback(AddWnd), 0);
-            }).Start();
-
             // start processes monitor
-            MonitorTimer = new Timer(1000);
-            MonitorTimer.Elapsed += MonitorHelper;
             MonitorTimer.Start();
 
+            // hook: on window opened
+            Automation.AddAutomationEventHandler(
+                eventId: WindowPattern.WindowOpenedEvent,
+                element: AutomationElement.RootElement,
+                scope: TreeScope.Children,
+                eventHandler: OnWindowOpened);
+
+            // hook: on process stop
             stopWatch.Start();
+
+            // hook: on window foregroud
             winHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, listener, 0, 0, WINEVENT_OUTOFCONTEXT);
 
-            isRunning = true;
+            // list all current processes
+            EnumWindows(new WindowEnumCallback(AddWnd), 0);
         }
 
         public void Stop()
         {
-            if (!isRunning)
-                return;
-
             // stop processes monitor
             MonitorTimer.Elapsed -= MonitorHelper;
             MonitorTimer.Stop();

@@ -95,13 +95,6 @@ namespace HandheldCompanion.Managers
             gfxWatchdog = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
             gfxWatchdog.Elapsed += gfxWatchdog_Elapsed;
 
-            // initialize processor
-            processor = Processor.GetCurrent();
-            processor.ValueChanged += Processor_ValueChanged;
-            processor.StatusChanged += Processor_StatusChanged;
-            processor.LimitChanged += Processor_LimitChanged;
-            processor.MiscChanged += Processor_MiscChanged;
-
             MainWindow.profileManager.Applied += ProfileManager_Applied;
             MainWindow.profileManager.Updated += ProfileManager_Updated;
             MainWindow.profileManager.Discarded += ProfileManager_Discarded;
@@ -120,9 +113,6 @@ namespace HandheldCompanion.Managers
             var GPU = Properties.Settings.Default.QuickToolsPerformanceGPUEnabled ? Properties.Settings.Default.QuickToolsPerformanceGPUValue : 0;
             if (GPU != 0)
                 RequestGPUClock(GPU, true);
-
-            cpuWatchdog.Start();
-            gfxWatchdog.Start();
         }
 
         private void ProfileManager_Updated(Profile profile, bool backgroundtask, bool isCurrent)
@@ -311,9 +301,19 @@ namespace HandheldCompanion.Managers
         }
         #endregion
 
-        internal void Start()
+        public override void Start()
         {
+            cpuWatchdog.Start();
+            gfxWatchdog.Start();
+
+            // initialize processor
+            processor = Processor.GetCurrent();
+            processor.ValueChanged += Processor_ValueChanged;
+            processor.StatusChanged += Processor_StatusChanged;
+            processor.LimitChanged += Processor_LimitChanged;
+            processor.MiscChanged += Processor_MiscChanged;
             processor.Initialize();
+
             powerWatchdog.Start();
         }
 
