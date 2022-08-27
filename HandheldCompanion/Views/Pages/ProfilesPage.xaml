@@ -233,11 +233,11 @@
                                         <TextBlock Text="Sustained power limit" FontSize="14"/>
                                         <TextBlock Text="Change sustained thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
-                                    
-                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
+
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" />
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
-                                        <Slider Name="TDPSustainedSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ScrollViewer.PanningMode="HorizontalOnly"
+                                        <Slider Name="TDPSustainedSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 										ValueChanged="TDPSustainedSlider_ValueChanged"
 										SmallChange="1" LargeChange="5"/>
                                     </DockPanel>
@@ -258,10 +258,10 @@
                                         <TextBlock Text="Change boost thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
-                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
-                                        <Slider Name="TDPBoostSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ScrollViewer.PanningMode="HorizontalOnly"
+                                        <Slider Name="TDPBoostSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 										ValueChanged="TDPBoostSlider_ValueChanged"
 										SmallChange="1" LargeChange="5"/>
                                     </DockPanel>
@@ -298,9 +298,9 @@
                                             <TextBlock Text="{x:Static resx:Resources.ProfilesPage_GyrometerMultiplierDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                         </StackPanel>
 
-                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileGyroValue, Mode=OneWay}" />
-                                            <Slider Margin="6,0,0,0" Name="tb_ProfileGyroValue" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="3" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" Minimum="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ScrollViewer.PanningMode="HorizontalOnly" />
+                                            <Slider Margin="6,0,0,0" Name="tb_ProfileGyroValue" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="3" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" Minimum="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                                         </DockPanel>
                                     </Grid>
 
@@ -318,9 +318,9 @@
                                             <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AccelerometerMultiplierDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                         </StackPanel>
 
-                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAcceleroValue, Mode=OneWay}" />
-                                            <Slider Margin="6,0,0,0" Name="tb_ProfileAcceleroValue" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="1" Maximum="3" Minimum="0.1" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ScrollViewer.PanningMode="HorizontalOnly" />
+                                            <Slider Margin="6,0,0,0" Name="tb_ProfileAcceleroValue" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="1" Maximum="3" Minimum="0.1" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                                         </DockPanel>
                                     </Grid>
 
@@ -447,9 +447,9 @@
                                         <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
-                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzone, Mode=OneWay}" />
-                                        <Slider Margin="6,0,0,0" Name="tb_ProfileAntiDeadzone" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ScrollViewer.PanningMode="HorizontalOnly" />
+                                        <Slider Margin="6,0,0,0" Name="tb_ProfileAntiDeadzone" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                                     </DockPanel>
                                 </Grid>
 

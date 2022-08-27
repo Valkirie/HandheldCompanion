@@ -113,9 +113,9 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=SliderSteeringAngle, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderSteeringAngle" ValueChanged="SliderSteeringAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="80" Minimum="10" Value="35" TickPlacement="BottomRight" SmallChange="5" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ScrollViewer.PanningMode="HorizontalOnly" />
+                            <Slider Margin="6,0,0,0" Name="SliderSteeringAngle" ValueChanged="SliderSteeringAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="80" Minimum="10" Value="35" TickPlacement="BottomRight" SmallChange="5" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -141,9 +141,9 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderPower, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderPower" ValueChanged="SliderPower_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.5" Maximum="5" Minimum="0.2" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ScrollViewer.PanningMode="HorizontalOnly" />
+                            <Slider Margin="6,0,0,0" Name="SliderPower" ValueChanged="SliderPower_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.5" Maximum="5" Minimum="0.2" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -169,9 +169,9 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=SliderDeadzoneAngle, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderDeadzoneAngle" ValueChanged="SliderDeadzoneAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="5" TickPlacement="BottomRight" SmallChange="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ScrollViewer.PanningMode="HorizontalOnly" />
+                            <Slider Margin="6,0,0,0" Name="SliderDeadzoneAngle" ValueChanged="SliderDeadzoneAngle_ValueChanged" Grid.Column="4" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="5" TickPlacement="BottomRight" SmallChange="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                         </DockPanel>
                     </Grid>
                 </Border>
