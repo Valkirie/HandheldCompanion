@@ -102,7 +102,6 @@ namespace HandheldCompanion.Views.Windows
 
             switch(name)
             {
-                default:
                 case "LeftTrackpad":
                     {
                         Trackpad_TouchInput(e, CursorAction.CursorMove, CursorButton.TouchLeft);
@@ -124,7 +123,6 @@ namespace HandheldCompanion.Views.Windows
 
             switch (name)
             {
-                default:
                 case "LeftTrackpad":
                     {
                         var elapsed = e.Timestamp - leftInput.Timestamp;
@@ -158,7 +156,6 @@ namespace HandheldCompanion.Views.Windows
 
             switch (name)
             {
-                default:
                 case "LeftTrackpad":
                     {
                         leftInput.Flags = 0;
