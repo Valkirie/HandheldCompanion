@@ -635,5 +635,16 @@ namespace HandheldCompanion.Properties {
             }
         }
         
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MainWindowPrevState {
+            get {
+                return ((int)(this["MainWindowPrevState"]));
+            }
+            set {
+                this["MainWindowPrevState"] = value;
+            }
+        }
     }
 }

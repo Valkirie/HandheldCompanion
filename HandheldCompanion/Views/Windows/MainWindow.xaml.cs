@@ -198,6 +198,7 @@ namespace HandheldCompanion.Views
 
             // pull settings
             WindowState = Properties.Settings.Default.StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
+            prevWindowState = (WindowState)Properties.Settings.Default.MainWindowPrevState;
         }
 
         private void loadPages()
@@ -643,10 +644,8 @@ namespace HandheldCompanion.Views
                     Properties.Settings.Default.MainWindowLeft = this.Left;
                     Properties.Settings.Default.MainWindowTop = this.Top;
 
-                    Properties.Settings.Default.MainWindowWidth = this.Width;
-                    Properties.Settings.Default.MainWindowHeight = this.Height;
-
-                    Properties.Settings.Default.MainWindowState = (int)WindowState;
+                    Properties.Settings.Default.MainWindowWidth = this.ActualWidth;
+                    Properties.Settings.Default.MainWindowHeight = this.ActualHeight;
                     break;
                 case WindowState.Maximized:
                     Properties.Settings.Default.MainWindowLeft = 0;
@@ -655,9 +654,11 @@ namespace HandheldCompanion.Views
                     Properties.Settings.Default.MainWindowWidth = SystemParameters.MaximizedPrimaryScreenWidth;
                     Properties.Settings.Default.MainWindowHeight = SystemParameters.MaximizedPrimaryScreenHeight;
 
-                    Properties.Settings.Default.MainWindowState = (int)WindowState;
                     break;
             }
+
+            Properties.Settings.Default.MainWindowState = (int)WindowState;
+            Properties.Settings.Default.MainWindowPrevState = (int)prevWindowState;
 
             if (Properties.Settings.Default.CloseMinimises && !appClosing)
             {
