@@ -413,7 +413,6 @@ namespace HandheldCompanion.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // do something
-            LogManager.LogInformation("Displaying UI...");
         }
 
         public void UpdateSettings(Dictionary<string, string> args)
