@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ControllerCommon.Managers
 {
-    public class SystemManager
+    public class SystemManager : Manager
     {
         #region import
         [DllImport("hid.dll", EntryPoint = "HidD_GetHidGuid")]
@@ -43,7 +43,7 @@ namespace ControllerCommon.Managers
             xinputListener = new DeviceNotificationListener();
         }
 
-        public void Start()
+        public override void Start()
         {
             hidListener.StartListen(DeviceInterfaceIds.UsbDevice);
             hidListener.DeviceArrived += Listener_DeviceArrived;

@@ -185,95 +185,97 @@ namespace HandheldCompanion.Views.Pages
 
         private void UpdateManager_Updated(UpdateStatus status, UpdateFile updateFile, object value)
         {
-
-            switch (status)
+            this.Dispatcher.Invoke(() =>
             {
-                case UpdateStatus.Failed: // lazy ?
-                case UpdateStatus.Updated:
-                case UpdateStatus.Initialized:
-                    {
-                        if (updateFile != null)
+                switch (status)
+                {
+                    case UpdateStatus.Failed: // lazy ?
+                    case UpdateStatus.Updated:
+                    case UpdateStatus.Initialized:
                         {
-                            updateFile.updateDownload.Visibility = Visibility.Visible;
+                            if (updateFile != null)
+                            {
+                                updateFile.updateDownload.Visibility = Visibility.Visible;
 
-                            updateFile.updatePercentage.Visibility = Visibility.Collapsed;
-                            updateFile.updateInstall.Visibility = Visibility.Collapsed;
+                                updateFile.updatePercentage.Visibility = Visibility.Collapsed;
+                                updateFile.updateInstall.Visibility = Visibility.Collapsed;
+                            }
+                            else
+                            {
+                                LabelUpdate.Content = Properties.Resources.SettingsPage_UpToDate;
+                                LabelUpdateDate.Content = Properties.Resources.SettingsPage_LastChecked + MainWindow.updateManager.GetTime();
+
+                                LabelUpdateDate.Visibility = Visibility.Visible;
+                                GridUpdateSymbol.Visibility = Visibility.Visible;
+                                ProgressBarUpdate.Visibility = Visibility.Collapsed;
+                                B_CheckUpdate.IsEnabled = true;
+                            }
                         }
-                        else
-                        {
-                            LabelUpdate.Content = Properties.Resources.SettingsPage_UpToDate;
-                            LabelUpdateDate.Content = Properties.Resources.SettingsPage_LastChecked + MainWindow.updateManager.GetTime();
+                        break;
 
-                            LabelUpdateDate.Visibility = Visibility.Visible;
-                            GridUpdateSymbol.Visibility = Visibility.Visible;
+                    case UpdateStatus.CheckingATOM:
+                        {
+                            LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateCheck;
+
+                            GridUpdateSymbol.Visibility = Visibility.Collapsed;
+                            LabelUpdateDate.Visibility = Visibility.Collapsed;
+                            ProgressBarUpdate.Visibility = Visibility.Visible;
+                            B_CheckUpdate.IsEnabled = false;
+                        }
+                        break;
+
+                    case UpdateStatus.Ready:
+                        {
                             ProgressBarUpdate.Visibility = Visibility.Collapsed;
-                            B_CheckUpdate.IsEnabled = true;
+
+                            Dictionary<string, UpdateFile> updateFiles = (Dictionary<string, UpdateFile>)value;
+                            LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateAvailable;
+
+                            foreach (UpdateFile update in updateFiles.Values)
+                            {
+                                var border = update.Draw();
+
+                                // Set download button action
+                                update.updateDownload.Click += (sender, e) =>
+                                {
+                                    MainWindow.updateManager.DownloadUpdateFile(update);
+                                };
+
+                                // Set button action
+                                update.updateInstall.Click += (sender, e) =>
+                                {
+                                    MainWindow.updateManager.InstallUpdate(update);
+                                };
+
+                                CurrentUpdates.Children.Add(border);
+                            }
                         }
-                    }
-                    break;
+                        break;
 
-                case UpdateStatus.CheckingATOM:
-                    {
-                        LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateCheck;
-
-                        GridUpdateSymbol.Visibility = Visibility.Collapsed;
-                        LabelUpdateDate.Visibility = Visibility.Collapsed;
-                        ProgressBarUpdate.Visibility = Visibility.Visible;
-                        B_CheckUpdate.IsEnabled = false;
-                    }
-                    break;
-
-                case UpdateStatus.Ready:
-                    {
-                        ProgressBarUpdate.Visibility = Visibility.Collapsed;
-
-                        Dictionary<string, UpdateFile> updateFiles = (Dictionary<string, UpdateFile>)value;
-                        LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateAvailable;
-
-                        foreach (UpdateFile update in updateFiles.Values)
+                    case UpdateStatus.Download:
                         {
-                            var border = update.Draw();
-
-                            // Set download button action
-                            update.updateDownload.Click += (sender, e) =>
-                            {
-                                MainWindow.updateManager.DownloadUpdateFile(update);
-                            };
-
-                            // Set button action
-                            update.updateInstall.Click += (sender, e) =>
-                            {
-                                MainWindow.updateManager.InstallUpdate(update);
-                            };
-
-                            CurrentUpdates.Children.Add(border);
+                            updateFile.updateDownload.Visibility = Visibility.Collapsed;
+                            updateFile.updatePercentage.Visibility = Visibility.Visible;
                         }
-                    }
-                    break;
+                        break;
 
-                case UpdateStatus.Download:
-                    {
-                        updateFile.updateDownload.Visibility = Visibility.Collapsed;
-                        updateFile.updatePercentage.Visibility = Visibility.Visible;
-                    }
-                    break;
+                    case UpdateStatus.Downloading:
+                        {
+                            int progress = (int)value;
+                            updateFile.updatePercentage.Text = Properties.Resources.SettingsPage_DownloadingPercentage + $"{value} %";
+                        }
+                        break;
 
-                case UpdateStatus.Downloading:
-                    {
-                        int progress = (int)value;
-                        updateFile.updatePercentage.Text = Properties.Resources.SettingsPage_DownloadingPercentage + $"{value} %";
-                    }
-                    break;
+                    case UpdateStatus.Downloaded:
+                        {
+                            updateFile.updateInstall.Visibility = Visibility.Visible;
 
-                case UpdateStatus.Downloaded:
-                    {
-                        updateFile.updateInstall.Visibility = Visibility.Visible;
-
-                        updateFile.updateDownload.Visibility = Visibility.Collapsed;
-                        updateFile.updatePercentage.Visibility = Visibility.Collapsed;
-                    }
-                    break;
-            }
+                            updateFile.updateDownload.Visibility = Visibility.Collapsed;
+                            updateFile.updatePercentage.Visibility = Visibility.Collapsed;
+                        }
+                        break;
+                }
+            });
         }
 
         private void B_CheckUpdate_Click(object sender, System.Windows.RoutedEventArgs e)

@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using HandheldCompanion.Views;
 using SharpDX.XInput;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 
 namespace HandheldCompanion.Managers
 {
-    public class ControllerManager
+    public class ControllerManager : Manager
     {
         private Dictionary<string, ControllerEx> controllers;
         private List<PnPDeviceEx> devices = new();

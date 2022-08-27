@@ -208,7 +208,10 @@ namespace HandheldCompanion.Views.Pages
 
         private void ProfileLoaded()
         {
-            cB_Profiles.SelectedItem = MainWindow.profileManager.GetDefault();
+            this.Dispatcher.Invoke(() =>
+            {
+                cB_Profiles.SelectedItem = MainWindow.profileManager.GetDefault();
+            });
         }
         #endregion
 
@@ -325,7 +328,7 @@ namespace HandheldCompanion.Views.Pages
                     page = new ProfileSettingsMode1("ProfileSettingsMode1", currentProfile);
                     break;
             }
-            MainWindow.GetDefault().NavView_Navigate(page);
+            MainWindow.NavView_Navigate(page);
         }
 
         private void cB_Profiles_SelectionChanged(object sender, SelectionChangedEventArgs e)

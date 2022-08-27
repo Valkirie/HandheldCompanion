@@ -279,7 +279,7 @@ namespace HandheldCompanion.Managers
         }
     }
 
-    public class ProcessManager
+    public class ProcessManager : Manager
     {
         #region imports
         [DllImport("user32.dll", SetLastError = true)]
@@ -336,7 +336,7 @@ namespace HandheldCompanion.Managers
             listener = new WinEventProc(EventCallback);
         }
 
-        public void Start()
+        public override void Start()
         {
             // list all current processes
             new Thread(() =>

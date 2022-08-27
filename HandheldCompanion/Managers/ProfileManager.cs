@@ -15,7 +15,7 @@ using static ControllerCommon.Utils.ProcessUtils;
 
 namespace HandheldCompanion.Managers
 {
-    public class ProfileManager
+    public class ProfileManager : Manager
     {
         private Dictionary<bool, uint> CRCs = new Dictionary<bool, uint>()
         {
@@ -52,7 +52,7 @@ namespace HandheldCompanion.Managers
             MainWindow.processManager.ProcessStopped += ProcessManager_ProcessStopped;
         }
 
-        public void Start(string filter = "*.json")
+        public new void Start(string filter = "*.json")
         {
             path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "profiles");
 

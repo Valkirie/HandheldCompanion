@@ -1,10 +1,11 @@
-﻿using HandheldCompanion.Views;
+﻿using ControllerCommon.Managers;
+using HandheldCompanion.Views;
 using Microsoft.Win32.TaskScheduler;
 using System;
 
 namespace HandheldCompanion.Managers
 {
-    public class TaskManager
+    public class TaskManager : Manager
     {
         // TaskManager vars
         private Task task;

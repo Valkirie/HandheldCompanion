@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
@@ -121,7 +122,7 @@ namespace HandheldCompanion.Managers
         }
     }
 
-    public class UpdateManager
+    public class UpdateManager : Manager
     {
         private DateTime lastchecked;
         private Assembly assembly;
@@ -358,7 +359,7 @@ namespace HandheldCompanion.Managers
             webClient.DownloadStringAsync(latestHref);
         }
 
-        public void Start()
+        public override void Start()
         {
             DateTime dateTime = Properties.Settings.Default.UpdateLastChecked;
             lastchecked = dateTime;

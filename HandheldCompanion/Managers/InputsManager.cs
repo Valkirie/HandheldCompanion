@@ -15,7 +15,7 @@ using WindowsInput.Events;
 
 namespace HandheldCompanion.Managers
 {
-    public class InputsManager
+    public class InputsManager : Manager
     {
         // Gamepad vars
         private MultimediaTimer UpdateTimer;
@@ -325,7 +325,7 @@ namespace HandheldCompanion.Managers
             return keys;
         }
 
-        public void Start()
+        public override void Start()
         {
             foreach (var pair in Triggers)
                 Triggered[pair.Key] = false;

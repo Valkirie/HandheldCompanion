@@ -30,7 +30,7 @@ namespace HandheldCompanion.Managers
         public static List<Guid> PowerModes = new() { BetterBattery, BetterPerformance, BestPerformance };
     }
 
-    public class PowerManager
+    public class PowerManager : Manager
     {
         #region imports
         /// <summary>
