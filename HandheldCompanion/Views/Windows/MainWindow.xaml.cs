@@ -168,15 +168,15 @@ namespace HandheldCompanion.Views
             // load manager(s)
             loadManagers();
 
-            // start manager(s)
-            foreach(Manager manager in _managers)
-                manager.Start();
-
             // load window(s)
             loadWindows();
 
             // load page(s)
             loadPages();
+
+            // start manager(s)
+            foreach (Manager manager in _managers)
+                manager.Start();
 
             // update Position and Size
             this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.MainWindowHeight);
