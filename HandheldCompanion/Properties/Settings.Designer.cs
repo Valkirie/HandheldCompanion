@@ -622,5 +622,18 @@ namespace HandheldCompanion.Properties {
                 this["OverlayControllerOpacity"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#00000000")]
+        public string OverlayControllerBackgroundColor {
+            get {
+                return ((string)(this["OverlayControllerBackgroundColor"]));
+            }
+            set {
+                this["OverlayControllerBackgroundColor"] = value;
+            }
+        }
+        
     }
 }

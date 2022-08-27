@@ -1,8 +1,11 @@
 ﻿using ControllerCommon.Utils;
 using ModernWpf.Controls;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Color = System.Windows.Media.Color;
+using ColorConverter = System.Windows.Media.ColorConverter;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
@@ -66,6 +69,10 @@ namespace HandheldCompanion.Views.Pages
             // controller opacity
             SliderControllerOpacity.Value = Properties.Settings.Default.OverlayControllerOpacity;
             SliderControllerOpacity_ValueChanged(this, null);
+
+            // controller background color
+            ColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.OverlayControllerBackgroundColor);
+            StandardColorPicker_ColorChanged(this, null);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -303,6 +310,18 @@ namespace HandheldCompanion.Views.Pages
 
             // save settings
             Properties.Settings.Default.OverlayControllerOpacity = SliderControllerOpacity.Value;
+            Properties.Settings.Default.Save();
+        }
+
+        private void StandardColorPicker_ColorChanged(object sender, RoutedEventArgs e)
+        {
+            if (!Initialized)
+                return;
+
+            MainWindow.overlayModel.Background = new SolidColorBrush(ColorPicker.SelectedColor);
+
+            // save settings
+            Properties.Settings.Default.OverlayControllerBackgroundColor = ColorPicker.SelectedColor.ToString();
             Properties.Settings.Default.Save();
         }
     }

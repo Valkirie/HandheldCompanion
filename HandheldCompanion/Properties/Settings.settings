@@ -152,5 +152,8 @@
     <Setting Name="OverlayControllerOpacity" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0.8</Value>
     </Setting>
+    <Setting Name="OverlayControllerBackgroundColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#00000000</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

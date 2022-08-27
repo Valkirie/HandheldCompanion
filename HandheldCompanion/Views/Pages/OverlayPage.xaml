@@ -8,6 +8,7 @@
       xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       xmlns:conv="clr-namespace:HandheldCompanion.Converters"
+      xmlns:colorpicker="clr-namespace:ColorPicker;assembly=ColorPicker"
       mc:Ignorable="d" 
       d:DesignHeight="1500" d:DesignWidth="1000"
       KeepAlive="True"
@@ -196,6 +197,33 @@
                         <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderControllerOpacity, Mode=OneWay}" />
                             <Slider Margin="6,0,0,0" Name="SliderControllerOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="1" Minimum="0.1" Value="0.8" TickPlacement="BottomRight" SmallChange="0.1" TickFrequency="0.1" AutoToolTipPrecision="1" ValueChanged="SliderControllerOpacity_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                        </DockPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Background color -->
+                <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Background Color" FontSize="14"/>
+                                <TextBlock Text="Change the overlay controller background color" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                            <colorpicker:PortableColorPicker Name="ColorPicker" ShowAlpha="True" ColorChanged="StandardColorPicker_ColorChanged"/>
                         </DockPanel>
                     </Grid>
                 </Border>
