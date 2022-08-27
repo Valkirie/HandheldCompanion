@@ -124,9 +124,6 @@ namespace HandheldCompanion.Views.Pages
 
             Control Thumb = null;
 
-            double min_x = StackCurve.ActualWidth;
-            double dist_y = StackCurve.ActualHeight - e.GetPosition(StackCurve).Y;
-
             foreach (Control control in StackCurve.Children)
             {
                 Point position = e.GetPosition(control);
@@ -134,11 +131,8 @@ namespace HandheldCompanion.Views.Pages
 
                 control.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentLowBrush"];
 
-                if (dist_x < min_x)
-                {
+                if (dist_x <= control.Width)
                     Thumb = control;
-                    min_x = dist_x;
-                }
             }
 
             if (Thumb is null)
@@ -150,11 +144,9 @@ namespace HandheldCompanion.Views.Pages
             {
 
                 int idx = (int)Thumb.Tag;
-                Thumb.Height = dist_y;
+                Thumb.Height = StackCurve.ActualHeight - e.GetPosition(StackCurve).Y;
                 profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
             }
-
-            e.Handled = true;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
