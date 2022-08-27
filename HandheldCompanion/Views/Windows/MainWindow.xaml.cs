@@ -95,7 +95,7 @@ namespace HandheldCompanion.Views
             {
                 case false:
                     SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
-                    splashScreen.Show(true);
+                    splashScreen.Show(true, true);
                     break;
             }
 
