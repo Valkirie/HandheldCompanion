@@ -9,7 +9,7 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
         Closing="Window_Closing"
-        Title="Overlay" HorizontalAlignment="Stretch">
+        Title="Virtual Trackpads" HorizontalAlignment="Stretch">
 
     <Grid>
         <!-- Left Trackpad -->
