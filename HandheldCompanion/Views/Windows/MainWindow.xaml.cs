@@ -56,9 +56,6 @@ namespace HandheldCompanion.Views
         public static OverlayTrackpad overlayTrackpad;
         public static OverlayQuickTools overlayquickTools;
 
-        // other vars
-        public static bool IsElevated = false;
-
         // connectivity vars
         public static PipeClient pipeClient;
 
@@ -153,6 +150,9 @@ namespace HandheldCompanion.Views
             // initialize HidHide
             Hidder = new HidHide();
             Hidder.RegisterApplication(CurrentExe);
+
+            // initialize title
+            this.Title += $" ({fileVersionInfo.FileVersion})";
 
             // initialize device
             handheldDevice = Device.GetDefault();
@@ -383,7 +383,6 @@ namespace HandheldCompanion.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // do something
-            LogManager.LogInformation("LOAD COMPLETE");
         }
 
         public void UpdateSettings(Dictionary<string, string> args)
@@ -454,9 +453,6 @@ namespace HandheldCompanion.Views
                             notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
                             notifyIcon.ContextMenuStrip.Items[3].Enabled = true;
                         }
-
-                        b_ServiceDelete.IsEnabled = IsElevated;
-                        b_ServiceStart.IsEnabled = IsElevated;
                         break;
                     case ServiceControllerStatus.Running:
                         b_ServiceStop.IsEnabled = true;
@@ -471,8 +467,6 @@ namespace HandheldCompanion.Views
                             notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
                             notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
                         }
-
-                        b_ServiceStop.IsEnabled = IsElevated;
                         break;
                     case ServiceControllerStatus.ContinuePending:
                     case ServiceControllerStatus.PausePending:
@@ -504,8 +498,6 @@ namespace HandheldCompanion.Views
                             notifyIcon.ContextMenuStrip.Items[2].Enabled = true;
                             notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
                         }
-
-                        b_ServiceInstall.IsEnabled = IsElevated;
                         break;
                 }
 
@@ -644,12 +636,9 @@ namespace HandheldCompanion.Views
                 return;
             }
 
-            if (IsElevated)
-            {
-                // stop service with companion
-                if (Properties.Settings.Default.HaltServiceWithCompanion)
-                    _ = serviceManager.StopServiceAsync();
-            }
+            // stop service with companion
+            if (Properties.Settings.Default.HaltServiceWithCompanion)
+                _ = serviceManager.StopServiceAsync();
 
             Properties.Settings.Default.Save();
         }

@@ -52,7 +52,7 @@ namespace HandheldCompanion.Managers
             MainWindow.processManager.ProcessStopped += ProcessManager_ProcessStopped;
         }
 
-        public new void Start(string filter = "*.json")
+        public override void Start()
         {
             path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "profiles");
 
@@ -87,7 +87,7 @@ namespace HandheldCompanion.Managers
             profileWatcher.Deleted += ProfileDeleted;
 
             // process existing profiles
-            string[] fileEntries = Directory.GetFiles(path, filter, SearchOption.AllDirectories);
+            string[] fileEntries = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
                 ProcessProfile(fileName);
 

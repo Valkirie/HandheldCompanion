@@ -17,9 +17,6 @@ namespace HandheldCompanion.Managers
             this.ServiceName = ServiceName;
             this.ServiceExecutable = Executable;
 
-            if (!MainWindow.IsElevated)
-                return;
-
             TaskService TaskServ = new TaskService();
             task = TaskServ.FindTask(ServiceName);
 
