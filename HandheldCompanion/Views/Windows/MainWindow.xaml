@@ -14,6 +14,8 @@
         Closing="Window_Closing"
         StateChanged="Window_StateChanged"
         ui:WindowHelper.SystemBackdropType="Mica"
+        ui:WindowHelper.UseAcrylicBackdrop="True"
+        ui:WindowHelper.UseAeroBackdrop="True"
         ui:WindowHelper.UseModernWindowStyle="True"
         ui:ThemeManager.IsThemeAware="True"
         MinWidth="600" MinHeight="500" Icon="/Resources/icon.png">

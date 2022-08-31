@@ -15,6 +15,7 @@
         MaxWidth="540"
         Closing="Window_Closing"
         Loaded="Window_Loaded"
+        ui:TitleBar.ExtendViewIntoTitleBar="True"
         ui:WindowHelper.SystemBackdropType="Acrylic"
         ui:WindowHelper.UseModernWindowStyle="True"
         ui:ThemeManager.IsThemeAware="True"
