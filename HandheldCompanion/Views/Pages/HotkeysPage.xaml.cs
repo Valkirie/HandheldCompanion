@@ -1,5 +1,6 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Utils;
+using HandheldCompanion.Managers;
 using ModernWpf.Controls;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,9 +28,17 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.inputsManager.TriggerUpdated += TriggerUpdated;
 
             // trigger(s)
-            TriggerUpdated("overlayGamepad", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayControllerTriggerType, Properties.Settings.Default.OverlayControllerTriggerValue));
-            TriggerUpdated("overlayTrackpads", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayTrackpadsTriggerType, Properties.Settings.Default.OverlayTrackpadsTriggerValue));
-            TriggerUpdated("quickTools", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.QuickToolsTriggerType, Properties.Settings.Default.QuickToolsTriggerValue));
+            TriggerUpdated("overlayGamepad", new TriggerInputs(
+                (TriggerInputsType)SettingsManager.GetInt("OverlayControllerTriggerType"),
+                SettingsManager.GetString("OverlayControllerTriggerValue")));
+            
+            TriggerUpdated("overlayTrackpads", new TriggerInputs(
+                (TriggerInputsType)SettingsManager.GetInt("OverlayTrackpadsTriggerType"),
+                SettingsManager.GetString("OverlayTrackpadsTriggerValue")));
+            
+            TriggerUpdated("quickTools", new TriggerInputs(
+                (TriggerInputsType)SettingsManager.GetInt("QuickToolsTriggerType"),
+                SettingsManager.GetString("QuickToolsTriggerValue")));
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -93,29 +102,27 @@ namespace HandheldCompanion.Views.Pages
                         ControllerTriggerIcon.Glyph = glyph;
                         ControllerTriggerButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
 
-                        Properties.Settings.Default.OverlayControllerTriggerValue = input.GetValue();
-                        Properties.Settings.Default.OverlayControllerTriggerType = (int)input.type;
+                        SettingsManager.SetProperty("OverlayControllerTriggerValue", input.GetValue());
+                        SettingsManager.SetProperty("OverlayControllerTriggerType", (int)input.type);
                         break;
                     case "overlayTrackpads":
                         TrackpadsTriggerText.Text = text;
                         TrackpadsTriggerIcon.Glyph = glyph;
                         TrackpadsTriggerButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
 
-                        Properties.Settings.Default.OverlayTrackpadsTriggerValue = input.GetValue();
-                        Properties.Settings.Default.OverlayTrackpadsTriggerType = (int)input.type;
+                        SettingsManager.SetProperty("OverlayTrackpadsTriggerValue", input.GetValue());
+                        SettingsManager.SetProperty("OverlayTrackpadsTriggerType", (int)input.type);
                         break;
                     case "quickTools":
                         QuickToolsTriggerText.Text = text;
                         QuickToolsTriggerIcon.Glyph = glyph;
                         QuicktoolsTriggerButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
 
-                        Properties.Settings.Default.QuickToolsTriggerValue = input.GetValue();
-                        Properties.Settings.Default.QuickToolsTriggerType = (int)input.type;
+                        SettingsManager.SetProperty("QuickToolsTriggerValue", input.GetValue());
+                        SettingsManager.SetProperty("QuickToolsTriggerType", (int)input.type);
                         break;
                 }
             });
-
-            Properties.Settings.Default.Save();
         }
     }
 }

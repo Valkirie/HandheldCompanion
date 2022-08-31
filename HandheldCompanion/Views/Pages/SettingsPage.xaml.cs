@@ -341,6 +341,8 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("ConfigurableTDPOverride", Toggle_cTDP.IsOn);
+            SettingsManager.SetProperty("ConfigurableTDPOverrideUp", NumberBox_TDPMax.Value);
+            SettingsManager.SetProperty("ConfigurableTDPOverrideDown", NumberBox_TDPMin.Value);
 
             if (Toggle_cTDP.IsOn)
             {

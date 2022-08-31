@@ -47,7 +47,7 @@
     <Setting Name="OverlayControllerAlignment" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">7</Value>
     </Setting>
-    <Setting Name="OverlayControllerSize" Type="System.Int32" Scope="User">
+    <Setting Name="OverlayControllerSize" Type="System.Double" Scope="User">
       <Value Profile="(Default)">300</Value>
     </Setting>
     <Setting Name="OverlayControllerTriggerValue" Type="System.String" Scope="User">
@@ -62,7 +62,7 @@
     <Setting Name="OverlayTrackpadsOpacity" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0.25</Value>
     </Setting>
-    <Setting Name="OverlayTrackpadsSize" Type="System.Int32" Scope="User">
+    <Setting Name="OverlayTrackpadsSize" Type="System.Double" Scope="User">
       <Value Profile="(Default)">250</Value>
     </Setting>
     <Setting Name="CurrentCulture" Type="System.String" Scope="User">
@@ -160,6 +160,9 @@
     </Setting>
     <Setting Name="ServiceStartMode" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="FirstStart" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

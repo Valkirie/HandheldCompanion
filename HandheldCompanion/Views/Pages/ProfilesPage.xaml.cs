@@ -157,6 +157,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            DrawProfile();
         }
 
         public void Page_Closed()
@@ -342,7 +343,10 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             currentProfile = (Profile)cB_Profiles.SelectedItem;
-            DrawProfile();
+
+            // prevent useless calls
+            if (IsLoaded)
+                DrawProfile();
         }
 
         private void DrawProfile()
@@ -391,9 +395,10 @@ namespace HandheldCompanion.Views.Pages
                 TDPToggle.IsOn = currentProfile.TDP_override;
 
                 // define slider(s) min and max values based on device specifications
-                var TDPdown = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideDown : MainWindow.handheldDevice.cTDP[0];
-                var TDPup = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideUp : MainWindow.handheldDevice.cTDP[1];
+                var TDPdown = SettingsManager.GetInt("ConfigurableTDPOverrideDown");
                 TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = TDPdown;
+
+                var TDPup = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
                 TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = TDPup;
 
                 // UMC settings

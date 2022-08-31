@@ -206,9 +206,9 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("300")]
-        public int OverlayControllerSize {
+        public double OverlayControllerSize {
             get {
-                return ((int)(this["OverlayControllerSize"]));
+                return ((double)(this["OverlayControllerSize"]));
             }
             set {
                 this["OverlayControllerSize"] = value;
@@ -266,9 +266,9 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("250")]
-        public int OverlayTrackpadsSize {
+        public double OverlayTrackpadsSize {
             get {
-                return ((int)(this["OverlayTrackpadsSize"]));
+                return ((double)(this["OverlayTrackpadsSize"]));
             }
             set {
                 this["OverlayTrackpadsSize"] = value;
@@ -656,6 +656,18 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["ServiceStartMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FirstStart {
+            get {
+                return ((bool)(this["FirstStart"]));
+            }
+            set {
+                this["FirstStart"] = value;
             }
         }
     }

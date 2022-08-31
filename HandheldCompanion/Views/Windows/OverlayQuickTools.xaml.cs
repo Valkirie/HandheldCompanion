@@ -1,5 +1,6 @@
 ﻿using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Extensions;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Views.QuickPages;
 using ModernWpf.Controls;
 using System;
@@ -76,12 +77,12 @@ namespace HandheldCompanion.Views.Windows
             _pages.Add("QuickSuspenderPage", suspenderPage);
 
             // update Position and Size
-            this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.QuickToolsHeight);
+            Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("QuickToolsHeight"));
 
-            this.Left = Math.Min(SystemParameters.PrimaryScreenWidth - this.MinWidth, Properties.Settings.Default.QuickToolsLeft);
-            this.Top = Math.Min(SystemParameters.PrimaryScreenHeight - this.MinHeight, Properties.Settings.Default.QuickToolsTop);
+            Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("QuickToolsLeft"));
+            Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("QuickToolsTop"));
 
-            this.SourceInitialized += QuickTools_SourceInitialized;
+            SourceInitialized += QuickTools_SourceInitialized;
         }
 
         private void QuickTools_SourceInitialized(object? sender, EventArgs e)
@@ -247,14 +248,11 @@ namespace HandheldCompanion.Views.Windows
             {
                 case WindowState.Normal:
                 case WindowState.Maximized:
-                    Properties.Settings.Default.QuickToolsLeft = this.Left;
-                    Properties.Settings.Default.QuickToolsTop = this.Top;
-
-                    Properties.Settings.Default.QuickToolsHeight = this.ActualHeight;
+                    SettingsManager.SetProperty("QuickToolsLeft", Left);
+                    SettingsManager.SetProperty("QuickToolsTop", Top);
+                    SettingsManager.SetProperty("QuickToolsHeight", ActualHeight);
                     break;
             }
-
-            Properties.Settings.Default.Save();
 
             // stop manager(s)
             brightnessControl.Dispose();

@@ -69,16 +69,16 @@ namespace HandheldCompanion.Managers
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();
 
-            Triggers.Add("overlayGamepad",
-                new TriggerInputs((TriggerInputsType)SettingsManager.GetInt("OverlayControllerTriggerType"),
+            Triggers.Add("overlayGamepad", new TriggerInputs(
+                (TriggerInputsType)SettingsManager.GetInt("OverlayControllerTriggerType"),
                 SettingsManager.GetString("OverlayControllerTriggerValue")));
 
-            Triggers.Add("overlayTrackpads",
-                new TriggerInputs((TriggerInputsType)SettingsManager.GetInt("OverlayTrackpadsTriggerType"),
+            Triggers.Add("overlayTrackpads", new TriggerInputs(
+                (TriggerInputsType)SettingsManager.GetInt("OverlayTrackpadsTriggerType"),
                 SettingsManager.GetString("OverlayTrackpadsTriggerValue")));
 
-            Triggers.Add("quickTools",
-                new TriggerInputs((TriggerInputsType)SettingsManager.GetInt("QuickToolsTriggerType"),
+            Triggers.Add("quickTools", new TriggerInputs(
+                (TriggerInputsType)SettingsManager.GetInt("QuickToolsTriggerType"),
                 SettingsManager.GetString("QuickToolsTriggerValue")));
 
             // make sure we don't hang the keyboard

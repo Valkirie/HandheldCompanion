@@ -114,10 +114,12 @@ namespace HandheldCompanion.Views
             fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
 
             // initialize splash screen
-            if (!Properties.Settings.Default.StartMinimized)
+            if (SettingsManager.GetBoolean("FirstStart") || !SettingsManager.GetBoolean("StartMinimized"))
             {
                 SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
                 splashScreen.Show(true, true);
+
+                SettingsManager.SetProperty("FirstStart", false);
             }
 
             // fix touch support
@@ -212,15 +214,15 @@ namespace HandheldCompanion.Views
                 new Thread(() => { manager.Start(); }).Start();
 
             // update Position and Size
-            this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.MainWindowHeight);
-            this.Width = (int)Math.Max(this.MinWidth, Properties.Settings.Default.MainWindowWidth);
+            Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("MainWindowHeight"));
+            Width = (int)Math.Max(MinWidth, SettingsManager.GetDouble("MainWindowWidth"));
 
-            this.Left = Math.Min(SystemParameters.PrimaryScreenWidth - this.MinWidth, Properties.Settings.Default.MainWindowLeft);
-            this.Top = Math.Min(SystemParameters.PrimaryScreenHeight - this.MinHeight, Properties.Settings.Default.MainWindowTop);
+            Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("MainWindowLeft"));
+            Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("MainWindowTop"));
 
             // pull settings
-            WindowState = Properties.Settings.Default.StartMinimized ? WindowState.Minimized : (WindowState)Properties.Settings.Default.MainWindowState;
-            prevWindowState = (WindowState)Properties.Settings.Default.MainWindowPrevState;
+            WindowState = SettingsManager.GetBoolean("StartMinimized") ? WindowState.Minimized : (WindowState)SettingsManager.GetInt("MainWindowState");
+            prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
         }
 
         private void loadPages()
@@ -280,7 +282,7 @@ namespace HandheldCompanion.Views
 
             // initialize managers
             toastManager = new ToastManager("HandheldCompanion");
-            toastManager.Enabled = Properties.Settings.Default.ToastEnable;
+            toastManager.Enabled = SettingsManager.GetBoolean("ToastEnable");
 
             processManager = new();
             profileManager = new();
@@ -309,7 +311,7 @@ namespace HandheldCompanion.Views
             serviceManager.Updated += OnServiceUpdate;
             serviceManager.Ready += () =>
             {
-                if (Properties.Settings.Default.StartServiceWithCompanion)
+                if (SettingsManager.GetBoolean("StartServiceWithCompanion"))
                 {
                     if (!serviceManager.Exists())
                         serviceManager.CreateService(CurrentPathService);
@@ -326,7 +328,7 @@ namespace HandheldCompanion.Views
                 _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStopIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
             };
 
-            taskManager.UpdateTask(Properties.Settings.Default.RunAtStartup);
+            taskManager.UpdateTask(SettingsManager.GetBoolean("RunAtStartup"));
 
             cheatManager.Cheated += (cheat) =>
             {
@@ -418,10 +420,12 @@ namespace HandheldCompanion.Views
 
         private void OnClientConnected(object sender)
         {
-            // send all local settings to server ?
+            // lazy: send all local settings to server ?
             PipeClientSettings settings = new PipeClientSettings();
-            foreach (SettingsProperty currentProperty in Properties.Settings.Default.Properties)
-                settings.settings.Add(currentProperty.Name, Properties.Settings.Default[currentProperty.Name]);
+
+            foreach (KeyValuePair<string, object> values in SettingsManager.GetProperties())
+                settings.settings.Add(values.Key, values.Value);
+
             pipeClient?.SendMessage(settings);
         }
 
@@ -660,26 +664,24 @@ namespace HandheldCompanion.Views
             switch (WindowState)
             {
                 case WindowState.Normal:
-                    Properties.Settings.Default.MainWindowLeft = this.Left;
-                    Properties.Settings.Default.MainWindowTop = this.Top;
-
-                    Properties.Settings.Default.MainWindowWidth = this.ActualWidth;
-                    Properties.Settings.Default.MainWindowHeight = this.ActualHeight;
+                    SettingsManager.SetProperty("MainWindowLeft", Left);
+                    SettingsManager.SetProperty("MainWindowTop", Top);
+                    SettingsManager.SetProperty("MainWindowWidth", ActualWidth);
+                    SettingsManager.SetProperty("MainWindowHeight", ActualHeight);
                     break;
                 case WindowState.Maximized:
-                    Properties.Settings.Default.MainWindowLeft = 0;
-                    Properties.Settings.Default.MainWindowTop = 0;
-
-                    Properties.Settings.Default.MainWindowWidth = SystemParameters.MaximizedPrimaryScreenWidth;
-                    Properties.Settings.Default.MainWindowHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+                    SettingsManager.SetProperty("MainWindowLeft", 0);
+                    SettingsManager.SetProperty("MainWindowTop", 0);
+                    SettingsManager.SetProperty("MainWindowWidth", SystemParameters.MaximizedPrimaryScreenWidth);
+                    SettingsManager.SetProperty("MainWindowHeight", SystemParameters.MaximizedPrimaryScreenHeight);
 
                     break;
             }
 
-            Properties.Settings.Default.MainWindowState = (int)WindowState;
-            Properties.Settings.Default.MainWindowPrevState = (int)prevWindowState;
+            SettingsManager.SetProperty("MainWindowState", (int)WindowState);
+            SettingsManager.SetProperty("MainWindowPrevState", (int)prevWindowState);
 
-            if (Properties.Settings.Default.CloseMinimises && !appClosing)
+            if (SettingsManager.GetBoolean("CloseMinimises") && !appClosing)
             {
                 e.Cancel = true;
                 WindowState = WindowState.Minimized;
@@ -687,10 +689,8 @@ namespace HandheldCompanion.Views
             }
 
             // stop service with companion
-            if (Properties.Settings.Default.HaltServiceWithCompanion)
+            if (SettingsManager.GetBoolean("HaltServiceWithCompanion"))
                 _ = serviceManager.StopServiceAsync();
-
-            Properties.Settings.Default.Save();
         }
 
         private void Window_StateChanged(object sender, EventArgs e)

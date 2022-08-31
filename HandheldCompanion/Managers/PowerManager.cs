@@ -101,11 +101,7 @@ namespace HandheldCompanion.Managers
 
             // initialize settings
             double TDPdown = SettingsManager.GetDouble("QuickToolsPerformanceTDPSustainedValue");
-            TDPdown = TDPdown != 0 ? TDPdown : MainWindow.handheldDevice.nTDP[(int)PowerType.Slow];
-
             double TDPup = SettingsManager.GetDouble("QuickToolsPerformanceTDPBoostValue");
-            TDPup = TDPup != 0 ? TDPup : MainWindow.handheldDevice.nTDP[(int)PowerType.Fast];
-
             double GPU = SettingsManager.GetDouble("QuickToolsPerformanceGPUValue");
 
             // request TDP(s)
