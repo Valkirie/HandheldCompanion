@@ -355,7 +355,6 @@ namespace HandheldCompanion.Views
             settingsManager.SettingValueChanged += (name, value) =>
             {
                 // todo : create a settings manager
-                profilesPage.SettingsPage_SettingValueChanged(name, value);
                 overlayquickTools.performancePage.SettingsPage_SettingValueChanged(name, value);
                 overlayquickTools.profilesPage.SettingsPage_SettingValueChanged(name, value);
 

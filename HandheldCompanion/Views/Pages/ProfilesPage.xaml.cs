@@ -39,6 +39,7 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.profileManager.Deleted += ProfileDeleted;
             MainWindow.profileManager.Updated += ProfileUpdated;
             MainWindow.profileManager.Ready += ProfileLoaded;
+            MainWindow.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // draw gamepad activators
             foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
@@ -133,17 +134,20 @@ namespace HandheldCompanion.Views.Pages
             }
         }
 
-        public void SettingsPage_SettingValueChanged(string name, object value)
+        public void SettingsManager_SettingValueChanged(string name, object value)
         {
-            switch (name)
+            this.Dispatcher.Invoke(async () =>
             {
-                case "configurabletdp_down":
-                    TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = (double)value;
-                    break;
-                case "configurabletdp_up":
-                    TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = (double)value;
-                    break;
-            }
+                switch (name)
+                {
+                    case "ConfigurableTDPOverrideDown":
+                        TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = (double)value;
+                        break;
+                    case "ConfigurableTDPOverrideUp":
+                        TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = (double)value;
+                        break;
+                }
+            });
         }
 
         private void OnServerMessage(object sender, PipeMessage e)

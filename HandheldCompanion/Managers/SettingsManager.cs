@@ -30,6 +30,13 @@ namespace HandheldCompanion.Managers
             if (prevValue == strValue)
                 return;
 
+            switch(name)
+            {
+                case "OverlayControllerBackgroundColor":
+                    value = Convert.ToString(value);
+                    break;
+            }
+
             Properties.Settings.Default[name] = value;
             Properties.Settings.Default.Save();
 

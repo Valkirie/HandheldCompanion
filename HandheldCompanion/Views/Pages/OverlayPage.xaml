@@ -168,7 +168,7 @@
 
                         <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderControllerSize, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderControllerSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="200" Value="300" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderControllerSize_ValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                            <Slider Margin="6,0,0,0" Name="SliderControllerSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="200" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderControllerSize_ValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -196,7 +196,7 @@
 
                         <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderControllerOpacity, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderControllerOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="1" Minimum="0.1" Value="0.8" TickPlacement="BottomRight" SmallChange="0.1" TickFrequency="0.1" AutoToolTipPrecision="1" ValueChanged="SliderControllerOpacity_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                            <Slider Margin="6,0,0,0" Name="SliderControllerOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="1" Minimum="0.1" TickPlacement="BottomRight" SmallChange="0.1" TickFrequency="0.1" AutoToolTipPrecision="1" ValueChanged="SliderControllerOpacity_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -407,7 +407,7 @@
 
                         <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderTrackpadsSize, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderTrackpadsSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="100" Value="250" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderTrackpadsSize_ValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                            <Slider Margin="6,0,0,0" Name="SliderTrackpadsSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="100" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderTrackpadsSize_ValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -435,7 +435,7 @@
 
                         <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N2, ElementName=SliderTrackpadsOpacity, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderTrackpadsOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="0.25" Minimum="0.01" Value="0.2" TickPlacement="BottomRight" SmallChange="0.01" TickFrequency="0.01" AutoToolTipPrecision="1" ValueChanged="SliderTrackpadsOpacity_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                            <Slider Margin="6,0,0,0" Name="SliderTrackpadsOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="0.25" Minimum="0.01" TickPlacement="BottomRight" SmallChange="0.01" TickFrequency="0.01" AutoToolTipPrecision="1" ValueChanged="SliderTrackpadsOpacity_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                         </DockPanel>
                     </Grid>
                 </Border>
