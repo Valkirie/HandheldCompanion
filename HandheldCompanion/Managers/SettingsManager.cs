@@ -40,7 +40,7 @@ namespace HandheldCompanion.Managers
             Properties.Settings.Default[name] = value;
             Properties.Settings.Default.Save();
 
-            SettingValueChanged(name, value);
+            SettingValueChanged?.Invoke(name, value);
 
             LogManager.LogDebug("Settings {0} set to {1}", name, value);
         }
