@@ -41,25 +41,38 @@ namespace HandheldCompanion.Views.Pages
         {
             InitializeComponent();
 
+            // initialize components
             foreach (HIDmode mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.NoController))
                 cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
 
-            // pull Hidmode
-            cB_HidMode.SelectedIndex = Properties.Settings.Default.HIDmode;
-        }
-
-        public ControllerPage(string Tag) : this()
-        {
-            this.Tag = Tag;
-
             MainWindow.pipeClient.ServerMessage += OnServerMessage;
             MainWindow.serviceManager.Updated += OnServiceUpdate;
+            MainWindow.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // initialize controller manager
             controllerManager = new ControllerManager();
             controllerManager.ControllerPlugged += ControllerPlugged;
             controllerManager.ControllerUnplugged += ControllerUnplugged;
             controllerManager.Start();
+        }
+
+        public ControllerPage(string Tag) : this()
+        {
+            this.Tag = Tag;
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                switch (name)
+                {
+                    case "HIDmode":
+                        cB_HidMode.SelectedIndex = Convert.ToInt32(value);
+                        cB_HidMode_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        break;
+                }
+            });
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -277,6 +290,11 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.pipeClient?.SendMessage(settings);
 
             UpdateController();
+
+            if (!MainWindow.settingsManager.IsInitialized)
+                return;
+
+            MainWindow.settingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
         }
 
         private void B_ServiceSwitch_Click(object sender, RoutedEventArgs e)

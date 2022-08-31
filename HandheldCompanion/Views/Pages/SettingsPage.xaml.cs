@@ -46,6 +46,11 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
+        public SettingsPage(string Tag) : this()
+        {
+            this.Tag = Tag;
+        }
+
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
             this.Dispatcher.Invoke(() =>
@@ -99,11 +104,6 @@ namespace HandheldCompanion.Views.Pages
                         break;
                 }
             });
-        }
-
-        public SettingsPage(string Tag) : this()
-        {
-            this.Tag = Tag;
         }
 
         public void UpdateDevice(PnPDevice device)

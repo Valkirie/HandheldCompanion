@@ -1,5 +1,6 @@
 ﻿using ControllerCommon.Managers;
 using ControllerCommon.Utils;
+using HandheldCompanion.Views;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
@@ -361,7 +362,8 @@ namespace HandheldCompanion.Managers
 
         public override void Start()
         {
-            DateTime dateTime = Properties.Settings.Default.UpdateLastChecked;
+            DateTime dateTime = Convert.ToDateTime(MainWindow.settingsManager.GetProperty("UpdateLastChecked"));
+
             lastchecked = dateTime;
             Updated?.Invoke(UpdateStatus.Initialized, null, null);
 
@@ -376,8 +378,7 @@ namespace HandheldCompanion.Managers
         public void UpdateTime()
         {
             lastchecked = DateTime.Now;
-            Properties.Settings.Default.UpdateLastChecked = lastchecked;
-            Properties.Settings.Default.Save();
+            MainWindow.settingsManager.SetProperty("UpdateLastChecked", lastchecked);
         }
 
         public void StartProcess()
