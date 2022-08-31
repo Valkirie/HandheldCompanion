@@ -14,6 +14,7 @@
         Closing="Window_Closing"
         StateChanged="Window_StateChanged"
         ui:WindowHelper.UseModernWindowStyle="True"
+        ui:ThemeManager.IsThemeAware="True"
         MinWidth="600" MinHeight="500" Icon="/Resources/icon.png">
 
     <ui:NavigationView
