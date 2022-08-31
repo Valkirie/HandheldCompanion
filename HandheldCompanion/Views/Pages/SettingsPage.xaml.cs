@@ -372,6 +372,8 @@ namespace HandheldCompanion.Views.Pages
             if (double.IsNaN(value))
                 return;
 
+            NumberBox_TDPMin.Maximum = value;
+
             if (!SettingsManager.IsInitialized)
                 return;
 
@@ -383,6 +385,8 @@ namespace HandheldCompanion.Views.Pages
             double value = NumberBox_TDPMin.Value;
             if (double.IsNaN(value))
                 return;
+
+            NumberBox_TDPMax.Minimum = value;
 
             if (!SettingsManager.IsInitialized)
                 return;
