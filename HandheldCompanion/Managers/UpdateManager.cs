@@ -362,7 +362,7 @@ namespace HandheldCompanion.Managers
 
         public override void Start()
         {
-            DateTime dateTime = Convert.ToDateTime(MainWindow.settingsManager.GetProperty("UpdateLastChecked"));
+            DateTime dateTime = SettingsManager.GetDateTime("UpdateLastChecked");
 
             lastchecked = dateTime;
             Updated?.Invoke(UpdateStatus.Initialized, null, null);
@@ -386,7 +386,7 @@ namespace HandheldCompanion.Managers
         public void UpdateTime()
         {
             lastchecked = DateTime.Now;
-            MainWindow.settingsManager.SetProperty("UpdateLastChecked", lastchecked);
+            SettingsManager.SetProperty("UpdateLastChecked", lastchecked);
         }
 
         public void StartProcess()

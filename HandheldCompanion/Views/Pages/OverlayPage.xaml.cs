@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Utils;
+using HandheldCompanion.Managers;
 using ModernWpf.Controls;
 using System;
 using System.Drawing;
@@ -23,7 +24,7 @@ namespace HandheldCompanion.Views.Pages
             // initialize components
             OEMControllerRadio.IsEnabled = MainWindow.handheldDevice.ProductSupported;
 
-            MainWindow.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)
@@ -185,10 +186,10 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.overlayModel.Width = SliderControllerSize.Value;
             MainWindow.overlayModel.Height = SliderControllerSize.Value;
 
-            if (!MainWindow.settingsManager.IsInitialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            MainWindow.settingsManager.SetProperty("OverlayControllerSize", SliderControllerSize.Value);
+            SettingsManager.SetProperty("OverlayControllerSize", SliderControllerSize.Value);
         }
 
         private void SliderTrackpadsSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -198,10 +199,10 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.overlayTrackpad.Height = SliderTrackpadsSize.Value;
             MainWindow.overlayTrackpad.HorizontalAlignment = HorizontalAlignment.Stretch;
 
-            if (!MainWindow.settingsManager.IsInitialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            MainWindow.settingsManager.SetProperty("OverlayTrackpadsSize", SliderTrackpadsSize.Value);
+            SettingsManager.SetProperty("OverlayTrackpadsSize", SliderTrackpadsSize.Value);
         }
 
         private void OverlayModel_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -209,10 +210,10 @@ namespace HandheldCompanion.Views.Pages
             // update overlay
             MainWindow.overlayModel.UpdateOverlayMode((OverlayModelMode)OverlayModel.SelectedIndex);
 
-            if (!MainWindow.settingsManager.IsInitialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            MainWindow.settingsManager.SetProperty("OverlayModel", OverlayModel.SelectedIndex);
+            SettingsManager.SetProperty("OverlayModel", OverlayModel.SelectedIndex);
         }
 
         private void ControllerAlignment_Click(object sender, RoutedEventArgs e)
@@ -220,10 +221,10 @@ namespace HandheldCompanion.Views.Pages
             int Tag = int.Parse((string)((Button)sender).Tag);
             UpdateUI_ControllerPosition(Tag);
 
-            if (!MainWindow.settingsManager.IsInitialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            MainWindow.settingsManager.SetProperty("OverlayControllerAlignment", Tag);
+            SettingsManager.SetProperty("OverlayControllerAlignment", Tag);
         }
 
         private void TrackpadsAlignment_Click(object sender, RoutedEventArgs e)
@@ -231,10 +232,10 @@ namespace HandheldCompanion.Views.Pages
             int Tag = int.Parse((string)((Button)sender).Tag);
             UpdateUI_TrackpadsPosition(Tag);
 
-            if (!MainWindow.settingsManager.IsInitialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            MainWindow.settingsManager.SetProperty("OverlayTrackpadsAlignment", Tag);
+            SettingsManager.SetProperty("OverlayTrackpadsAlignment", Tag);
         }
 
         private void SliderTrackpadsOpacity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -242,10 +243,10 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.overlayTrackpad.LeftTrackpad.Opacity = SliderTrackpadsOpacity.Value;
             MainWindow.overlayTrackpad.RightTrackpad.Opacity = SliderTrackpadsOpacity.Value;
 
-            if (!MainWindow.settingsManager.IsInitialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            MainWindow.settingsManager.SetProperty("OverlayTrackpadsOpacity", SliderTrackpadsOpacity.Value);
+            SettingsManager.SetProperty("OverlayTrackpadsOpacity", SliderTrackpadsOpacity.Value);
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)
@@ -258,59 +259,59 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.overlayModel.FaceCamera = Toggle_FaceCamera.IsOn;
             Slider_RestingPitch.IsEnabled = Toggle_FaceCamera.IsOn == true ? true : false;
 
-            if (!MainWindow.settingsManager.IsInitialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            MainWindow.settingsManager.SetProperty("OverlayFaceCamera", Toggle_FaceCamera.IsOn);
+            SettingsManager.SetProperty("OverlayFaceCamera", Toggle_FaceCamera.IsOn);
         }
         private void Slider_RestingPitch_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             MainWindow.overlayModel.DesiredAngleDeg.X = -1 * Slider_RestingPitch.Value;
 
-            if (!MainWindow.settingsManager.IsInitialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            MainWindow.settingsManager.SetProperty("OverlayControllerRestingPitch", Slider_RestingPitch.Value);
+            SettingsManager.SetProperty("OverlayControllerRestingPitch", Slider_RestingPitch.Value);
         }
 
         private void Toggle_RenderAA_Toggled(object sender, RoutedEventArgs e)
         {
             MainWindow.overlayModel.ModelViewPort.SetValue(RenderOptions.EdgeModeProperty, Toggle_RenderAA.IsOn ? EdgeMode.Unspecified : EdgeMode.Aliased);
 
-            if (!MainWindow.settingsManager.IsInitialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            MainWindow.settingsManager.SetProperty("OverlayRenderAntialiasing", Toggle_RenderAA.IsOn);
+            SettingsManager.SetProperty("OverlayRenderAntialiasing", Toggle_RenderAA.IsOn);
         }
 
         private void Slider_Framerate_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             MainWindow.overlayModel.UpdateInterval(1000.0d / Slider_Framerate.Value);
 
-            if (!MainWindow.settingsManager.IsInitialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            MainWindow.settingsManager.SetProperty("OverlayRenderInterval", Slider_Framerate.Value);
+            SettingsManager.SetProperty("OverlayRenderInterval", Slider_Framerate.Value);
         }
 
         private void SliderControllerOpacity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             MainWindow.overlayModel.ModelViewPort.Opacity = SliderControllerOpacity.Value;
 
-            if (!MainWindow.settingsManager.IsInitialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            MainWindow.settingsManager.SetProperty("OverlayControllerOpacity", SliderControllerOpacity.Value);
+            SettingsManager.SetProperty("OverlayControllerOpacity", SliderControllerOpacity.Value);
         }
 
         private void StandardColorPicker_ColorChanged(object sender, RoutedEventArgs e)
         {
             MainWindow.overlayModel.Background = new SolidColorBrush(ColorPicker.SelectedColor);
 
-            if (!MainWindow.settingsManager.IsInitialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            MainWindow.settingsManager.SetProperty("OverlayControllerBackgroundColor", ColorPicker.SelectedColor);
+            SettingsManager.SetProperty("OverlayControllerBackgroundColor", ColorPicker.SelectedColor);
         }
     }
 }

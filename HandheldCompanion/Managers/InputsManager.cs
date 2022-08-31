@@ -70,16 +70,16 @@ namespace HandheldCompanion.Managers
             m_InputSimulator = new InputSimulator();
 
             Triggers.Add("overlayGamepad",
-                new TriggerInputs((TriggerInputsType)MainWindow.settingsManager.GetProperty("OverlayControllerTriggerType"),
-                Convert.ToString(MainWindow.settingsManager.GetProperty("OverlayControllerTriggerValue"))));
+                new TriggerInputs((TriggerInputsType)SettingsManager.GetInt("OverlayControllerTriggerType"),
+                SettingsManager.GetString("OverlayControllerTriggerValue")));
 
             Triggers.Add("overlayTrackpads",
-                new TriggerInputs((TriggerInputsType)MainWindow.settingsManager.GetProperty("OverlayTrackpadsTriggerType"),
-                Convert.ToString(MainWindow.settingsManager.GetProperty("OverlayTrackpadsTriggerValue"))));
+                new TriggerInputs((TriggerInputsType)SettingsManager.GetInt("OverlayTrackpadsTriggerType"),
+                SettingsManager.GetString("OverlayTrackpadsTriggerValue")));
 
             Triggers.Add("quickTools",
-                new TriggerInputs((TriggerInputsType)MainWindow.settingsManager.GetProperty("QuickToolsTriggerType"),
-                Convert.ToString(MainWindow.settingsManager.GetProperty("QuickToolsTriggerValue"))));
+                new TriggerInputs((TriggerInputsType)SettingsManager.GetInt("QuickToolsTriggerType"),
+                SettingsManager.GetString("QuickToolsTriggerValue")));
 
             // make sure we don't hang the keyboard
             Thread.CurrentThread.Priority = ThreadPriority.Highest;

@@ -9,20 +9,20 @@ using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers
 {
-    public class SettingsManager : Manager
+    public static class SettingsManager
     {
-        public event SettingValueChangedEventHandler SettingValueChanged;
+        public static bool IsInitialized { get; internal set; }
+
+        public static event SettingValueChangedEventHandler SettingValueChanged;
         public delegate void SettingValueChangedEventHandler(string name, object value);
 
-        public override void Start()
+        public static void Start()
         {
             foreach (SettingsProperty property in Properties.Settings.Default.Properties)
                 SettingValueChanged(property.Name, GetProperty(property.Name));
-
-            base.Start();
         }
 
-        public void SetProperty(string name, object value)
+        public static void SetProperty(string name, object value)
         {
             string prevValue = Convert.ToString(Properties.Settings.Default[name]);
             string strValue = Convert.ToString(value);
@@ -45,32 +45,32 @@ namespace HandheldCompanion.Managers
             LogManager.LogDebug("Settings {0} set to {1}", name, value);
         }
 
-        public object GetProperty(string name)
+        private static object GetProperty(string name)
         {
             // used to handle cases
             switch(name)
             {
                 case "ConfigurableTDPOverrideDown":
                     {
-                        bool TDPoverride = Convert.ToBoolean(GetProperty("ConfigurableTDPOverride"));
+                        bool TDPoverride = GetBoolean("ConfigurableTDPOverride");
                         return TDPoverride ? GetProperty("ConfigurableTDPOverrideDown") : MainWindow.handheldDevice.cTDP[0];
                     }
 
                 case "ConfigurableTDPOverrideUp":
                     {
-                        bool TDPoverride = Convert.ToBoolean(GetProperty("ConfigurableTDPOverride"));
+                        bool TDPoverride = GetBoolean("ConfigurableTDPOverride");
                         return TDPoverride ? GetProperty("ConfigurableTDPOverrideUp") : MainWindow.handheldDevice.cTDP[1];
                     }
 
                 case "QuickToolsPerformanceTDPSustainedValue":
                     {
-                        bool TDPoverride = Convert.ToBoolean(GetProperty("QuickToolsPerformanceTDPEnabled"));
+                        bool TDPoverride = GetBoolean("QuickToolsPerformanceTDPEnabled");
                         return TDPoverride ? GetProperty("QuickToolsPerformanceTDPSustainedValue") : 0;
                     }
 
                 case "QuickToolsPerformanceTDPBoostValue":
                     {
-                        bool TDPoverride = Convert.ToBoolean(GetProperty("QuickToolsPerformanceTDPEnabled"));
+                        bool TDPoverride = GetBoolean("QuickToolsPerformanceTDPEnabled");
                         return TDPoverride ? GetProperty("QuickToolsPerformanceTDPBoostValue") : 0;
                     }
 
@@ -85,6 +85,31 @@ namespace HandheldCompanion.Managers
             }
 
             return null;
+        }
+
+        public static string GetString(string name)
+        {
+            return Convert.ToString(GetProperty(name));
+        }
+
+        public static bool GetBoolean(string name)
+        {
+            return Convert.ToBoolean(GetProperty(name));
+        }
+
+        public static int GetInt(string name)
+        {
+            return Convert.ToInt32(GetProperty(name));
+        }
+
+        public static DateTime GetDateTime(string name)
+        {
+            return Convert.ToDateTime(GetProperty(name));
+        }
+
+        public static double GetDouble(string name)
+        {
+            return Convert.ToDouble(GetProperty(name));
         }
     }
 }

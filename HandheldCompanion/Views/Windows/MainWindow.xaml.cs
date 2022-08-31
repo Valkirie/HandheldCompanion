@@ -76,7 +76,6 @@ namespace HandheldCompanion.Views
         public static SystemManager systemManager;
         public static PowerManager powerManager;
         public static UpdateManager updateManager;
-        public static SettingsManager settingsManager;
 
         private WindowState prevWindowState;
         private NotifyIcon notifyIcon;
@@ -91,7 +90,7 @@ namespace HandheldCompanion.Views
             mainWindow = this;
 
             // define culture settings
-            string CurrentCulture = Properties.Settings.Default.CurrentCulture;
+            string CurrentCulture = SettingsManager.GetString("CurrentCulture");
             CultureInfo culture = CultureInfo.CurrentCulture;
 
             switch (CurrentCulture)
@@ -204,21 +203,13 @@ namespace HandheldCompanion.Views
             // load page(s)
             loadPages();
 
-            // start manager(s)
+            // start manager(s) synchroneously
+            inputsManager.Start();
+            SettingsManager.Start();
+
+            // start manager(s) asynchroneously
             foreach (Manager manager in _managers)
-            {
-                if (manager.GetType() == typeof(InputsManager))
-                    manager.Start();
-                else if (manager.GetType() == typeof(SettingsManager))
-                    manager.Start();
-                else
-                {
-                    new Thread(() => {
-                        Thread.CurrentThread.IsBackground = true;
-                        manager.Start();
-                    }).Start();
-                }
-            }
+                new Thread(() => { manager.Start(); }).Start();
 
             // update Position and Size
             this.Height = (int)Math.Max(this.MinHeight, Properties.Settings.Default.MainWindowHeight);
@@ -291,7 +282,6 @@ namespace HandheldCompanion.Views
             toastManager = new ToastManager("HandheldCompanion");
             toastManager.Enabled = Properties.Settings.Default.ToastEnable;
 
-            settingsManager = new();
             processManager = new();
             profileManager = new();
             inputsManager = new();
@@ -303,11 +293,9 @@ namespace HandheldCompanion.Views
             updateManager = new();
 
             // store managers
-            _managers.Add(settingsManager);
             _managers.Add(toastManager);
             _managers.Add(processManager);
             _managers.Add(profileManager);
-            _managers.Add(inputsManager);
             _managers.Add(serviceManager);
             _managers.Add(taskManager);
             _managers.Add(cheatManager);
@@ -354,7 +342,7 @@ namespace HandheldCompanion.Views
             systemManager.SerialRemoved += SystemManager_Updated;
 
             // handle settingsPage events
-            settingsManager.SettingValueChanged += (name, value) =>
+            SettingsManager.SettingValueChanged += (name, value) =>
             {
                 // todo : create a settings manager
                 overlayquickTools.performancePage.SettingsPage_SettingValueChanged(name, value);

@@ -47,7 +47,7 @@ namespace HandheldCompanion.Views.Pages
 
             MainWindow.pipeClient.ServerMessage += OnServerMessage;
             MainWindow.serviceManager.Updated += OnServiceUpdate;
-            MainWindow.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // initialize controller manager
             controllerManager = new ControllerManager();
@@ -291,10 +291,10 @@ namespace HandheldCompanion.Views.Pages
 
             UpdateController();
 
-            if (!MainWindow.settingsManager.IsInitialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            MainWindow.settingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
+            SettingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
         }
 
         private void B_ServiceSwitch_Click(object sender, RoutedEventArgs e)
