@@ -35,7 +35,7 @@ namespace HandheldCompanion.Views.QuickPages
                 switch (name)
                 {
                     case "QuickToolsPowerModeValue":
-                        PowerModeSlider.Value = Convert.ToInt32(value);
+                        PowerModeSlider.Value = Convert.ToDouble(value);
                         break;
                     case "QuickToolsPerformanceTDPEnabled":
                         TDPToggle.IsOn = Convert.ToBoolean(value);

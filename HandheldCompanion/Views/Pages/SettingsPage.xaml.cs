@@ -93,10 +93,10 @@ namespace HandheldCompanion.Views.Pages
                         Toggle_cTDP.IsOn = Convert.ToBoolean(value);
                         break;
                     case "ConfigurableTDPOverrideDown":
-                        NumberBox_TDPMin.Value = Convert.ToInt32(value);
+                        NumberBox_TDPMin.Value = Convert.ToDouble(value);
                         break;
                     case "ConfigurableTDPOverrideUp":
-                        NumberBox_TDPMax.Value = Convert.ToInt32(value);
+                        NumberBox_TDPMax.Value = Convert.ToDouble(value);
                         break;
                     case "CurrentCulture":
                         cB_Language.SelectedItem = new CultureInfo((string)value);

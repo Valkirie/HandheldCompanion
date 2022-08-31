@@ -43,31 +43,31 @@ namespace HandheldCompanion.Views.Pages
                         UpdateUI_ControllerPosition(Convert.ToInt32(value));
                         break;
                     case "OverlayControllerSize":
-                        SliderControllerSize.Value = Convert.ToInt32(value);
+                        SliderControllerSize.Value = Convert.ToDouble(value);
                         break;
                     case "OverlayRenderInterval":
-                        Slider_Framerate.Value = Convert.ToInt32(value);
+                        Slider_Framerate.Value = Convert.ToDouble(value);
                         break;
                     case "OverlayRenderAntialiasing":
                         Toggle_RenderAA.IsOn = Convert.ToBoolean(value);
                         break;
                     case "OverlayTrackpadsSize":
-                        SliderTrackpadsSize.Value = Convert.ToInt32(value);
+                        SliderTrackpadsSize.Value = Convert.ToDouble(value);
                         break;
                     case "OverlayFaceCamera":
                         Toggle_FaceCamera.IsOn = Convert.ToBoolean(value);
                         break;
                     case "OverlayControllerRestingPitch":
-                        Slider_RestingPitch.Value = Convert.ToInt32(value);
+                        Slider_RestingPitch.Value = Convert.ToDouble(value);
                         break;
                     case "OverlayTrackpadsAlignment":
                         UpdateUI_TrackpadsPosition(Convert.ToInt32(value));
                         break;
                     case "OverlayTrackpadsOpacity":
-                        SliderTrackpadsOpacity.Value = Convert.ToInt32(value);
+                        SliderTrackpadsOpacity.Value = Convert.ToDouble(value);
                         break;
                     case "OverlayControllerOpacity":
-                        SliderControllerOpacity.Value = Convert.ToInt32(value);
+                        SliderControllerOpacity.Value = Convert.ToDouble(value);
                         break;
                     case "OverlayControllerBackgroundColor":
                         ColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(value));
