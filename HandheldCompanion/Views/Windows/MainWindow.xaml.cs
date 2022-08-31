@@ -209,8 +209,10 @@ namespace HandheldCompanion.Views
             {
                 if (manager.GetType() == typeof(InputsManager))
                     manager.Start();
+                else if (manager.GetType() == typeof(SettingsManager))
+                    manager.Start();
                 else
-                    {
+                {
                     new Thread(() => {
                         Thread.CurrentThread.IsBackground = true;
                         manager.Start();
