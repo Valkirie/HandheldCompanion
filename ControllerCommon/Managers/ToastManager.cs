@@ -63,8 +63,16 @@ namespace ControllerCommon.Managers
             catch (Exception) { }
         }
 
+        public override void Start()
+        {
+            base.Start();
+        }
+
         public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             foreach (KeyValuePair<string, Timer> pair in m_Threads)
             {
                 m_Threads[pair.Key].Stop();

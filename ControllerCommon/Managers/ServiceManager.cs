@@ -86,6 +86,9 @@ namespace ControllerCommon.Managers
 
         public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             MonitorTimer.Elapsed -= MonitorHelper;
             MonitorTimer = null;
 

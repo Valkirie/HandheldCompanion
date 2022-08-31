@@ -26,14 +26,6 @@ namespace HandheldCompanion.Managers
             MainWindow.systemManager.XInputRemoved += SystemManager_XInputUpdated;
         }
 
-        public override void Stop()
-        {
-            MainWindow.systemManager.XInputArrived -= SystemManager_XInputUpdated;
-            MainWindow.systemManager.XInputRemoved -= SystemManager_XInputUpdated;
-
-            base.Stop();
-        }
-
         public override void Start()
         {
             lock (devices)
@@ -62,6 +54,17 @@ namespace HandheldCompanion.Managers
             }
 
             base.Start();
+        }
+
+        public override void Stop()
+        {
+            if (!IsInitialized)
+                return;
+
+            MainWindow.systemManager.XInputArrived -= SystemManager_XInputUpdated;
+            MainWindow.systemManager.XInputRemoved -= SystemManager_XInputUpdated;
+
+            base.Stop();
         }
 
         private void SystemManager_XInputRemoved(PnPDeviceEx device)

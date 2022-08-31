@@ -58,6 +58,9 @@ namespace ControllerCommon.Managers
 
         public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             hidListener.StopListen(DeviceInterfaceIds.UsbDevice);
             hidListener.DeviceArrived -= Listener_DeviceArrived;
             hidListener.DeviceRemoved -= Listener_DeviceRemoved;

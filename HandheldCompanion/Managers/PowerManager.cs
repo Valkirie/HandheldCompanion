@@ -324,6 +324,9 @@ namespace HandheldCompanion.Managers
 
         public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+            
             processor.Stop();
             powerWatchdog.Stop();
 

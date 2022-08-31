@@ -356,6 +356,9 @@ namespace HandheldCompanion.Managers
 
         public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             UpdateTimer.Stop();
 
             //It is recommened to dispose it

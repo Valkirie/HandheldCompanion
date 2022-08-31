@@ -50,6 +50,9 @@ namespace HandheldCompanion.Managers
 
         public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             base.Stop();
         }
 

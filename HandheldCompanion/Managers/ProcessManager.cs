@@ -356,6 +356,9 @@ namespace HandheldCompanion.Managers
 
         public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             // stop processes monitor
             MonitorTimer.Elapsed -= MonitorHelper;
             MonitorTimer.Stop();

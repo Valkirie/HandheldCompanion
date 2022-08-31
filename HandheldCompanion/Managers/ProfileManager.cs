@@ -99,6 +99,9 @@ namespace HandheldCompanion.Managers
 
         public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             profileWatcher.Deleted -= ProfileDeleted;
             profileWatcher.Dispose();
 

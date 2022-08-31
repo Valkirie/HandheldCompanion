@@ -370,6 +370,14 @@ namespace HandheldCompanion.Managers
             base.Start();
         }
 
+        public override void Stop()
+        {
+            if (!IsInitialized)
+                return;
+
+            base.Stop();
+        }
+
         public DateTime GetTime()
         {
             return lastchecked;

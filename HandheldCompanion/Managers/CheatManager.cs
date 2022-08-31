@@ -35,6 +35,9 @@ namespace HandheldCompanion.Managers
 
         public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             UpdateTimer.Tick -= UpdateReport;
             UpdateTimer.Stop();
 
