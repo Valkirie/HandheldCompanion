@@ -19,7 +19,7 @@ namespace HandheldCompanion.Managers
         public event CheatedEventHandler Cheated;
         public delegate void CheatedEventHandler(string cheat);
 
-        public CheatManager()
+        public CheatManager() : base()
         {
             // initialize timers
             UpdateTimer = new MultimediaTimer(10);
@@ -29,12 +29,16 @@ namespace HandheldCompanion.Managers
         {
             UpdateTimer.Tick += UpdateReport;
             UpdateTimer.Start();
+
+            base.Start();
         }
 
-        public void Stop()
+        public override void Stop()
         {
             UpdateTimer.Tick -= UpdateReport;
             UpdateTimer.Stop();
+
+            base.Stop();
         }
 
         public void UpdateController(ControllerEx controllerEx)

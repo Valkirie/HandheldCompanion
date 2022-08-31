@@ -83,7 +83,7 @@ namespace HandheldCompanion.Managers
         // Power modes
         private Guid RequestedPowerMode;
 
-        public PowerManager()
+        public PowerManager() : base()
         {
             // initialize timer(s)
             powerWatchdog = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
@@ -315,12 +315,16 @@ namespace HandheldCompanion.Managers
             processor.Initialize();
 
             powerWatchdog.Start();
+
+            base.Start();
         }
 
-        internal void Stop()
+        public override void Stop()
         {
             processor.Stop();
             powerWatchdog.Stop();
+
+            base.Stop();
         }
     }
 }

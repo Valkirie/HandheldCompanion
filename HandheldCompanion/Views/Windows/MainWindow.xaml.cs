@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -75,6 +76,7 @@ namespace HandheldCompanion.Views
         public static SystemManager systemManager;
         public static PowerManager powerManager;
         public static UpdateManager updateManager;
+        public static SettingsManager settingsManager;
 
         private WindowState prevWindowState;
         private NotifyIcon notifyIcon;
@@ -88,15 +90,35 @@ namespace HandheldCompanion.Views
             InitializeComponent();
             mainWindow = this;
 
+            // define culture settings
+            string CurrentCulture = Properties.Settings.Default.CurrentCulture;
+            CultureInfo culture = CultureInfo.CurrentCulture;
+
+            switch (CurrentCulture)
+            {
+                default:
+                    culture = new CultureInfo("en-US");
+                    break;
+                case "fr-FR":
+                case "en-US":
+                case "zh-CN":
+                case "zh-Hant":
+                    culture = new CultureInfo(CurrentCulture);
+                    break;
+            }
+
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+
+            // get current assembly
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
             fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
 
-            switch (Properties.Settings.Default.StartMinimized)
+            // initialize splash screen
+            if (!Properties.Settings.Default.StartMinimized)
             {
-                case false:
-                    SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
-                    splashScreen.Show(true, true);
-                    break;
+                SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
+                splashScreen.Show(true, true);
             }
 
             // fix touch support
@@ -229,28 +251,6 @@ namespace HandheldCompanion.Views
             _pages.Add("SettingsPage", settingsPage);
             _pages.Add("HotkeysPage", hotkeysPage);
 
-            // handle settingsPage events
-            settingsPage.SettingValueChanged += (name, value) =>
-            {
-                // todo : create a settings manager
-                profilesPage.SettingsPage_SettingValueChanged(name, value);
-                overlayquickTools.performancePage.SettingsPage_SettingValueChanged(name, value);
-                overlayquickTools.profilesPage.SettingsPage_SettingValueChanged(name, value);
-
-                switch (name)
-                {
-                    case "toast_notification":
-                        toastManager.Enabled = (bool)value;
-                        break;
-                    case "autostart":
-                        taskManager.UpdateTask((bool)value);
-                        break;
-                    case "service_startup_type":
-                        serviceManager.SetStartType((ServiceStartMode)value);
-                        break;
-                }
-            };
-
             // handle controllerPage events
             controllerPage.HIDchanged += (HID) =>
             {
@@ -298,6 +298,7 @@ namespace HandheldCompanion.Views
             systemManager = new();
             powerManager = new();
             updateManager = new();
+            settingsManager = new();
 
             // store managers
             _managers.Add(toastManager);
@@ -310,6 +311,7 @@ namespace HandheldCompanion.Views
             _managers.Add(systemManager);
             _managers.Add(powerManager);
             _managers.Add(updateManager);
+            _managers.Add(settingsManager);
 
             // hook into managers events
             inputsManager.TriggerRaised += InputsManager_TriggerRaised;
@@ -348,6 +350,28 @@ namespace HandheldCompanion.Views
 
             systemManager.SerialArrived += SystemManager_Updated;
             systemManager.SerialRemoved += SystemManager_Updated;
+
+            // handle settingsPage events
+            settingsManager.SettingValueChanged += (name, value) =>
+            {
+                // todo : create a settings manager
+                profilesPage.SettingsPage_SettingValueChanged(name, value);
+                overlayquickTools.performancePage.SettingsPage_SettingValueChanged(name, value);
+                overlayquickTools.profilesPage.SettingsPage_SettingValueChanged(name, value);
+
+                switch (name)
+                {
+                    case "toast_notification":
+                        toastManager.Enabled = (bool)value;
+                        break;
+                    case "autostart":
+                        taskManager.UpdateTask((bool)value);
+                        break;
+                    case "service_startup_type":
+                        serviceManager.SetStartType((ServiceStartMode)value);
+                        break;
+                }
+            };
 
             stopwatch.Stop();
             LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);

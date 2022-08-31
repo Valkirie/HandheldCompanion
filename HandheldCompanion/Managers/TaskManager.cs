@@ -14,7 +14,7 @@ namespace HandheldCompanion.Managers
 
         private string ServiceName, ServiceExecutable;
 
-        public TaskManager(string ServiceName, string Executable)
+        public TaskManager(string ServiceName, string Executable) : base()
         {
             this.ServiceName = ServiceName;
             this.ServiceExecutable = Executable;
@@ -46,6 +46,11 @@ namespace HandheldCompanion.Managers
             }
 
             base.Start();
+        }
+
+        public override void Stop()
+        {
+            base.Stop();
         }
 
         public void UpdateTask(bool value)

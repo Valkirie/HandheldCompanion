@@ -59,7 +59,7 @@ namespace HandheldCompanion.Views.Pages
             controllerManager = new ControllerManager();
             controllerManager.ControllerPlugged += ControllerPlugged;
             controllerManager.ControllerUnplugged += ControllerUnplugged;
-            controllerManager.StartListen();
+            controllerManager.Start();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -70,7 +70,7 @@ namespace HandheldCompanion.Views.Pages
         {
             MainWindow.pipeClient.ServerMessage -= OnServerMessage;
             MainWindow.serviceManager.Updated -= OnServiceUpdate;
-            controllerManager.StopListen();
+            controllerManager.Stop();
         }
 
         private async void OnServiceUpdate(ServiceControllerStatus status, int mode)

@@ -14,8 +14,10 @@ namespace HandheldCompanion.Converters
             object parameter,
             System.Globalization.CultureInfo culture)
         {
-            return System.Convert.ToDouble(value) *
-                   System.Convert.ToDouble(parameter);
+            double d_value = System.Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
+            double d_parameter = System.Convert.ToDouble(parameter, System.Globalization.CultureInfo.InvariantCulture);
+
+            return d_value * d_parameter;
         }
 
         public object ConvertBack(object value,

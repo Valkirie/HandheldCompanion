@@ -321,7 +321,7 @@ namespace HandheldCompanion.Managers
         public event ProcessStoppedEventHandler ProcessStopped;
         public delegate void ProcessStoppedEventHandler(ProcessEx processEx);
 
-        public ProcessManager()
+        public ProcessManager() : base()
         {
             MonitorTimer = new Timer(1000);
             MonitorTimer.Elapsed += MonitorHelper;
@@ -350,9 +350,11 @@ namespace HandheldCompanion.Managers
 
             // list all current processes
             EnumWindows(new WindowEnumCallback(AddWnd), 0);
+
+            base.Start();
         }
 
-        public void Stop()
+        public override void Stop()
         {
             // stop processes monitor
             MonitorTimer.Elapsed -= MonitorHelper;
@@ -362,6 +364,8 @@ namespace HandheldCompanion.Managers
             Automation.RemoveAllEventHandlers();
 
             UnhookWinEvent(winHook);
+
+            base.Stop();
         }
 
         public ProcessEx GetForegroundProcess()

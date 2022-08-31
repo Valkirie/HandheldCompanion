@@ -138,7 +138,7 @@ namespace HandheldCompanion.Managers
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(UpdateStatus status, UpdateFile update, object value);
 
-        public UpdateManager()
+        public UpdateManager() : base()
         {
             // check assembly
             assembly = Assembly.GetExecutingAssembly();
@@ -364,6 +364,8 @@ namespace HandheldCompanion.Managers
             DateTime dateTime = Properties.Settings.Default.UpdateLastChecked;
             lastchecked = dateTime;
             Updated?.Invoke(UpdateStatus.Initialized, null, null);
+
+            base.Start();
         }
 
         public DateTime GetTime()

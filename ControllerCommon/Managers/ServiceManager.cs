@@ -80,12 +80,16 @@ namespace ControllerCommon.Managers
         public override void Start()
         {
             MonitorTimer.Elapsed += MonitorHelper;
+
+            base.Start();
         }
 
-        public void Stop()
+        public override void Stop()
         {
             MonitorTimer.Elapsed -= MonitorHelper;
             MonitorTimer = null;
+
+            base.Stop();
         }
 
         public bool Exists()

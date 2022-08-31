@@ -277,7 +277,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("en-US")]
         public string CurrentCulture {
             get {
                 return ((string)(this["CurrentCulture"]));
@@ -644,6 +644,18 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["MainWindowPrevState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int ServiceStartMode {
+            get {
+                return ((int)(this["ServiceStartMode"]));
+            }
+            set {
+                this["ServiceStartMode"] = value;
             }
         }
     }

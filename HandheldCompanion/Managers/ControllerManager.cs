@@ -18,7 +18,7 @@ namespace HandheldCompanion.Managers
         public event ControllerUnpluggedEventHandler ControllerUnplugged;
         public delegate void ControllerUnpluggedEventHandler(ControllerEx controller);
 
-        public ControllerManager()
+        public ControllerManager() : base()
         {
             controllers = new();
 
@@ -26,13 +26,15 @@ namespace HandheldCompanion.Managers
             MainWindow.systemManager.XInputRemoved += SystemManager_XInputUpdated;
         }
 
-        public void StopListen()
+        public override void Stop()
         {
             MainWindow.systemManager.XInputArrived -= SystemManager_XInputUpdated;
             MainWindow.systemManager.XInputRemoved -= SystemManager_XInputUpdated;
+
+            base.Stop();
         }
 
-        public void StartListen()
+        public override void Start()
         {
             lock (devices)
             {
@@ -58,6 +60,8 @@ namespace HandheldCompanion.Managers
                     ControllerPlugged?.Invoke(controllerEx);
                 }
             }
+
+            base.Start();
         }
 
         private void SystemManager_XInputRemoved(PnPDeviceEx device)

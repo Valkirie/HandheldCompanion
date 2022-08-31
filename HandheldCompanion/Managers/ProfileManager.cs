@@ -45,7 +45,7 @@ namespace HandheldCompanion.Managers
 
         private string path;
 
-        public ProfileManager()
+        public ProfileManager() : base()
         {
             MainWindow.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
             MainWindow.processManager.ProcessStarted += ProcessManager_ProcessStarted;
@@ -93,12 +93,16 @@ namespace HandheldCompanion.Managers
 
             // warn owner
             Ready?.Invoke();
+
+            base.Start();
         }
 
-        public void Stop()
+        public override void Stop()
         {
             profileWatcher.Deleted -= ProfileDeleted;
             profileWatcher.Dispose();
+
+            base.Stop();
         }
 
         public bool Contains(Profile profile)

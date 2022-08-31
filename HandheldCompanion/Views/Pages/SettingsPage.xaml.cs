@@ -24,12 +24,6 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class SettingsPage : Page
     {
-        private bool Initialized;
-        public Dictionary<string, string> Settings = new Dictionary<string, string>();
-
-        public event SettingValueChangedEventHandler SettingValueChanged;
-        public delegate void SettingValueChangedEventHandler(string name, object value);
-
         public SettingsPage()
         {
             InitializeComponent();
@@ -43,53 +37,68 @@ namespace HandheldCompanion.Views.Pages
             cB_Language.Items.Add(new CultureInfo("zh-CN"));
             cB_Language.Items.Add(new CultureInfo("zh-Hant"));
 
-            // pull settings
-            string CurrentCulture = Thread.CurrentThread.CurrentCulture.Name;
-            switch (CurrentCulture)
-            {
-                // unsupported languages
-                default:
-                    cB_Language.SelectedItem = new CultureInfo("en-US");
-                    break;
-                // supported languages
-                case "fr-FR":
-                case "en-US":
-                case "zh-CN":
-                case "zh-Hant":
-                    cB_Language.SelectedItem = new CultureInfo(CurrentCulture);
-                    break;
-            }
-
-            cB_Theme.SelectedIndex = Properties.Settings.Default.MainWindowTheme;
-            cB_SensorSelection.SelectedIndex = Properties.Settings.Default.SensorSelection;
-
-            Toggle_AutoStart.IsOn = Properties.Settings.Default.RunAtStartup;
-            Toggle_Background.IsOn = Properties.Settings.Default.StartMinimized;
-            Toggle_CloseMinimizes.IsOn = Properties.Settings.Default.CloseMinimises;
-            Toggle_Notification.IsOn = Properties.Settings.Default.ToastEnable;
-            Toggle_ServiceStartup.IsOn = Properties.Settings.Default.StartServiceWithCompanion;
-            Toggle_ServiceShutdown.IsOn = Properties.Settings.Default.HaltServiceWithCompanion;
-            Toggle_SensorPlacementUpsideDown.IsOn = Properties.Settings.Default.SensorPlacementUpsideDown;
-            Toggle_cTDP.IsOn = Properties.Settings.Default.ConfigurableTDPOverride;
-
-            // define slider(s) min and max values based on device specifications
-            var cTDPdown = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideDown : MainWindow.handheldDevice.cTDP[0];
-            var cTDPup = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideUp : MainWindow.handheldDevice.cTDP[1];
-
-            NumberBox_TDPMin.Value = cTDPdown;
-            NumberBox_TDPMax.Value = cTDPup;
-
             // call function
-            ApplyTheme((ApplicationTheme)cB_Theme.SelectedIndex);
-            UpdateUI_SensorPlacement(Properties.Settings.Default.SensorPlacement);
             UpdateDevice(null);
-
-            // we are ready !
-            Initialized = true;
 
             // initialize manager(s)
             MainWindow.serviceManager.Updated += OnServiceUpdate;
             MainWindow.updateManager.Updated += UpdateManager_Updated;
+            MainWindow.settingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                switch (name)
+                {
+                    case "MainWindowTheme":
+                        cB_Theme.SelectedIndex = Convert.ToInt32(value);
+                        cB_Theme_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        break;
+                    case "SensorSelection":
+                        cB_SensorSelection.SelectedIndex = Convert.ToInt32(value);
+                        cB_SensorSelection_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        break;
+                    case "RunAtStartup":
+                        Toggle_AutoStart.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "StartMinimized":
+                        Toggle_Background.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "CloseMinimises":
+                        Toggle_CloseMinimizes.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "ToastEnable":
+                        Toggle_Notification.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "StartServiceWithCompanion":
+                        Toggle_ServiceStartup.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "HaltServiceWithCompanion":
+                        Toggle_ServiceShutdown.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "SensorPlacementUpsideDown":
+                        Toggle_SensorPlacementUpsideDown.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "ConfigurableTDPOverride":
+                        Toggle_cTDP.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "ConfigurableTDPOverrideDown":
+                        NumberBox_TDPMin.Value = Convert.ToInt32(value);
+                        break;
+                    case "ConfigurableTDPOverrideUp":
+                        NumberBox_TDPMax.Value = Convert.ToInt32(value);
+                        break;
+                    case "CurrentCulture":
+                        cB_Language.SelectedItem = new CultureInfo((string)value);
+                        cB_Language_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        break;
+                    case "SensorPlacement":
+                        UpdateUI_SensorPlacement(Convert.ToInt32(value));
+                        break;
+                }
+            });
         }
 
         public SettingsPage(string Tag) : this()
@@ -104,8 +113,6 @@ namespace HandheldCompanion.Views.Pages
                 SensorInternal.IsEnabled = MainWindow.handheldDevice.hasInternal;
                 SensorExternal.IsEnabled = MainWindow.handheldDevice.hasExternal;
             });
-
-            cB_SensorSelection_SelectionChanged(null, null);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -120,26 +127,18 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_AutoStart_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("autostart", Toggle_AutoStart.IsOn);
-
-            if (!Initialized)
+            if (!MainWindow.settingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.RunAtStartup = Toggle_AutoStart.IsOn;
-            Properties.Settings.Default.Save();
+            MainWindow.settingsManager.SetProperty("RunAtStartup", Toggle_AutoStart.IsOn);
         }
 
         private void Toggle_Background_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("start_minimized", Toggle_Background.IsOn);
-
-            if (!Initialized)
+            if (!MainWindow.settingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.StartMinimized = Toggle_Background.IsOn;
-            Properties.Settings.Default.Save();
+            MainWindow.settingsManager.SetProperty("StartMinimized", Toggle_Background.IsOn);
         }
 
         private void cB_StartupType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -167,20 +166,15 @@ namespace HandheldCompanion.Views.Pages
             if (!cB_StartupType.IsEnabled)
                 return;
 
-            // raise event
-            SettingValueChanged?.Invoke("service_startup_type", mode);
+            MainWindow.settingsManager.SetProperty("ServiceStartMode", cB_StartupType.SelectedIndex);
         }
 
         private void Toggle_CloseMinimizes_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("close_minimizes", Toggle_CloseMinimizes.IsOn);
-
-            if (!Initialized)
+            if (!MainWindow.settingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.CloseMinimises = Toggle_CloseMinimizes.IsOn;
-            Properties.Settings.Default.Save();
+            MainWindow.settingsManager.SetProperty("CloseMinimises", Toggle_CloseMinimizes.IsOn);
         }
 
         private void UpdateManager_Updated(UpdateStatus status, UpdateFile updateFile, object value)
@@ -285,47 +279,35 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_ServiceShutdown_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("haltservice_onclose", Toggle_ServiceShutdown.IsOn);
-
-            if (!Initialized)
+            if (!MainWindow.settingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.HaltServiceWithCompanion = Toggle_ServiceShutdown.IsOn;
-            Properties.Settings.Default.Save();
+            MainWindow.settingsManager.SetProperty("HaltServiceWithCompanion", Toggle_ServiceShutdown.IsOn);
         }
 
         private void Toggle_ServiceStartup_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("startservice_onstart", Toggle_ServiceStartup.IsOn);
-
-            if (!Initialized)
+            if (!MainWindow.settingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.StartServiceWithCompanion = Toggle_ServiceStartup.IsOn;
-            Properties.Settings.Default.Save();
+            MainWindow.settingsManager.SetProperty("StartServiceWithCompanion", Toggle_ServiceStartup.IsOn);
         }
 
         private void cB_Language_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             CultureInfo culture = (CultureInfo)cB_Language.SelectedItem;
 
-            // raise event
-            SettingValueChanged?.Invoke("language", culture.Name);
-
-            if (!Initialized)
+            if (culture is null)
                 return;
 
-            if (cB_Language.SelectedItem == null)
+            if (!MainWindow.settingsManager.IsInitialized)
                 return;
 
-            // skip if setting is identical to current
-            if (culture.Name == Properties.Settings.Default.CurrentCulture)
-                return;
+            MainWindow.settingsManager.SetProperty("CurrentCulture", culture.Name);
 
-            Properties.Settings.Default.CurrentCulture = culture.Name;
-            Properties.Settings.Default.Save();
+            // prevent message from being displayed again...
+            if (culture.Name == CultureInfo.CurrentCulture.Name)
+                return;
 
             _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_AppLanguageWarning}",
                 Properties.Resources.SettingsPage_AppLanguageWarningDesc,
@@ -334,44 +316,31 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_Notification_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("toast_notification", Toggle_Notification.IsOn);
-
-            if (!Initialized)
+            if (!MainWindow.settingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.ToastEnable = Toggle_Notification.IsOn;
-            Properties.Settings.Default.Save();
+            MainWindow.settingsManager.SetProperty("ToastEnable", Toggle_Notification.IsOn);
         }
 
         private void cB_Theme_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("theme", cB_Theme.SelectedIndex);
-
-            if (!Initialized)
-                return;
-
             if (cB_Theme.SelectedIndex == -1)
                 return;
 
-            // skip if setting is identical to current
-            if (cB_Theme.SelectedIndex == Properties.Settings.Default.MainWindowTheme)
+            ApplyTheme(cB_Theme.SelectedIndex);
+
+            if (!MainWindow.settingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.MainWindowTheme = cB_Theme.SelectedIndex;
-            Properties.Settings.Default.Save();
-
-            ApplyTheme((ApplicationTheme)cB_Theme.SelectedIndex);
+            MainWindow.settingsManager.SetProperty("MainWindowTheme", cB_Theme.SelectedIndex);
         }
 
         private async void Toggle_cTDP_Toggled(object sender, RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("configurabletdp_override", Toggle_cTDP.IsOn);
-
-            if (!Initialized)
+            if (!MainWindow.settingsManager.IsInitialized)
                 return;
+
+            MainWindow.settingsManager.SetProperty("ConfigurableTDPOverride", Toggle_cTDP.IsOn);
 
             if (Toggle_cTDP.IsOn)
             {
@@ -394,9 +363,6 @@ namespace HandheldCompanion.Views.Pages
                         return;
                 }
             }
-
-            Properties.Settings.Default.ConfigurableTDPOverride = Toggle_cTDP.IsOn;
-            Properties.Settings.Default.Save();
         }
 
         private void NumberBox_TDPMax_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
@@ -405,14 +371,10 @@ namespace HandheldCompanion.Views.Pages
             if (double.IsNaN(value))
                 return;
 
-            // raise event
-            SettingValueChanged?.Invoke("configurabletdp_up", value);
-
-            if (!Initialized)
+            if (!MainWindow.settingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.ConfigurableTDPOverrideUp = value;
-            Properties.Settings.Default.Save();
+            MainWindow.settingsManager.SetProperty("ConfigurableTDPOverrideUp", value);
         }
 
         private void NumberBox_TDPMin_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
@@ -421,69 +383,53 @@ namespace HandheldCompanion.Views.Pages
             if (double.IsNaN(value))
                 return;
 
-            // raise event
-            SettingValueChanged?.Invoke("configurabletdp_down", value);
-
-            if (!Initialized)
+            if (!MainWindow.settingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.ConfigurableTDPOverrideDown = value;
-            Properties.Settings.Default.Save();
+            MainWindow.settingsManager.SetProperty("ConfigurableTDPOverrideDown", value);
         }
 
-        public void ApplyTheme(ApplicationTheme Theme)
+        public void ApplyTheme(int idx)
         {
-            ThemeManager.Current.ApplicationTheme = Theme;
+            ThemeManager.Current.ApplicationTheme = (ApplicationTheme)idx;
         }
 
         private void cB_SensorSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("sensor_selection", cB_SensorSelection.SelectedIndex);
-
-            if (cB_SensorSelection.SelectedIndex == -1)
-                return;
-
+            // update dependencies
             Toggle_SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == 1 ? true : false;
             SensorPlacementVisualisation.IsEnabled = cB_SensorSelection.SelectedIndex == 1 ? true : false;
-
-            if (!Initialized)
-                return;
-
-            // skip if setting is identical to current
-            if (cB_SensorSelection.SelectedIndex == Properties.Settings.Default.SensorSelection)
-                return;
-
-            // save settings
-            Properties.Settings.Default.SensorSelection = cB_SensorSelection.SelectedIndex;
-            Properties.Settings.Default.Save();
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
             MainWindow.pipeClient.SendMessage(settings);
+
+            if (!MainWindow.settingsManager.IsInitialized)
+                return;
+
+            MainWindow.settingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
         }
 
         private void SensorPlacement_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             int Tag = int.Parse((string)((Button)sender).Tag);
 
-            // raise event
-            SettingValueChanged?.Invoke("sensor_placement", Tag);
-
             UpdateUI_SensorPlacement(Tag);
-
-            // save settings
-            Properties.Settings.Default.SensorPlacement = Tag;
-            Properties.Settings.Default.Save();
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorPlacement", Tag);
             MainWindow.pipeClient.SendMessage(settings);
+
+            if (!MainWindow.settingsManager.IsInitialized)
+                return;
+
+            MainWindow.settingsManager.SetProperty("SensorPlacement", Tag);
         }
 
         private void UpdateUI_SensorPlacement(int SensorPlacement)
         {
             foreach (SimpleStackPanel panel in SensorPlacementVisualisation.Children)
+            {
                 foreach (Button button in panel.Children)
                 {
                     if (int.Parse((string)button.Tag) == SensorPlacement)
@@ -491,24 +437,20 @@ namespace HandheldCompanion.Views.Pages
                     else
                         button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
                 }
-
+            }
         }
         private void Toggle_SensorPlacementUpsideDown_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("sensor_upsidedown", Toggle_SensorPlacementUpsideDown.IsOn);
-
-            if (!Initialized)
-                return;
-
-            Properties.Settings.Default.SensorPlacementUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
-            Properties.Settings.Default.Save();
-
             bool isUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorPlacementUpsideDown", isUpsideDown);
             MainWindow.pipeClient?.SendMessage(settings);
+
+            if (!MainWindow.settingsManager.IsInitialized)
+                return;
+
+            MainWindow.settingsManager.SetProperty("SensorPlacementUpsideDown", isUpsideDown);
         }
 
         #region serviceManager

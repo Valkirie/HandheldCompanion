@@ -52,9 +52,11 @@ namespace ControllerCommon.Managers
             xinputListener.StartListen(DeviceInterfaceIds.XUsbDevice);
             xinputListener.DeviceArrived += XinputListener_DeviceArrived;
             xinputListener.DeviceRemoved += XinputListener_DeviceRemoved;
+
+            base.Start();
         }
 
-        public void Stop()
+        public override void Stop()
         {
             hidListener.StopListen(DeviceInterfaceIds.UsbDevice);
             hidListener.DeviceArrived -= Listener_DeviceArrived;
@@ -63,6 +65,8 @@ namespace ControllerCommon.Managers
             xinputListener.StopListen(DeviceInterfaceIds.XUsbDevice);
             xinputListener.DeviceArrived -= XinputListener_DeviceArrived;
             xinputListener.DeviceRemoved -= XinputListener_DeviceRemoved;
+
+            base.Stop();
         }
 
         public static bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)

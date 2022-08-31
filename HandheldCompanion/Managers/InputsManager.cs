@@ -62,7 +62,7 @@ namespace HandheldCompanion.Managers
         private const int m_fastInterval = 20;
         private const int m_slowInterval = 100;
 
-        public InputsManager()
+        public InputsManager() : base()
         {
             // initialize timers
             UpdateTimer = new MultimediaTimer(10);
@@ -343,15 +343,19 @@ namespace HandheldCompanion.Managers
 
             m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
+
+            base.Start();
         }
 
-        public void Stop()
+        public override void Stop()
         {
             UpdateTimer.Stop();
 
             //It is recommened to dispose it
             m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
+
+            base.Stop();
         }
 
         private void UpdateReport(object? sender, EventArgs e)
