@@ -221,6 +221,11 @@ namespace HandheldCompanion.Views
             prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
         }
 
+        public static MainWindow GetCurrent()
+        {
+            return mainWindow;
+        }
+
         private void loadPages()
         {
             stopwatch.Restart();

@@ -151,6 +151,31 @@
                     </Grid>
                 </Border>
 
+                <!-- Application theme -->
+                <Border  
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Use Acrylic backdrop" FontSize="14"/>
+                                <TextBlock Text="The application will use acrylic backdrop" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch Name="Toggle_Backdrop" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_Backdrop_Toggled"/>
+                    </Grid>
+                </Border>
+
                 <!-- Application language -->
                 <Border  
                         Padding="15,12,12,12"

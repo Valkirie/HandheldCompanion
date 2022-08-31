@@ -3,6 +3,7 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using ModernWpf;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
@@ -59,6 +60,9 @@ namespace HandheldCompanion.Views.Pages
                     case "MainWindowTheme":
                         cB_Theme.SelectedIndex = Convert.ToInt32(value);
                         cB_Theme_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        break;
+                    case "MainWindowBackdrop":
+                        Toggle_Backdrop.IsOn = Convert.ToBoolean(value);
                         break;
                     case "SensorSelection":
                         cB_SensorSelection.SelectedIndex = Convert.ToInt32(value);
@@ -326,12 +330,44 @@ namespace HandheldCompanion.Views.Pages
             if (cB_Theme.SelectedIndex == -1)
                 return;
 
-            ApplyTheme(cB_Theme.SelectedIndex);
+            ThemeManager.Current.ApplicationTheme = (ApplicationTheme)cB_Theme.SelectedIndex;
 
             if (!SettingsManager.IsInitialized)
                 return;
 
             SettingsManager.SetProperty("MainWindowTheme", cB_Theme.SelectedIndex);
+        }
+
+        private void Toggle_Backdrop_Toggled(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (OSVersionHelper.IsWindows11OrGreater)
+            {
+                BackdropType newType;
+                switch (Toggle_Backdrop.IsOn)
+                {
+                    case true:
+                        newType = BackdropType.Acrylic;
+                        break;
+                    default:
+                    case false:
+                        newType = BackdropType.Mica;
+                        break;
+                }
+                WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), newType);
+            }
+            else if (OSVersionHelper.IsWindows10OrGreater)
+            {
+                WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), Toggle_Backdrop.IsOn);
+            }
+            else if (OSVersionHelper.IsWindowsVistaOrGreater)
+            {
+                WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), Toggle_Backdrop.IsOn);
+            }
+
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("MainWindowBackdrop", Toggle_Backdrop.IsOn);
         }
 
         private async void Toggle_cTDP_Toggled(object sender, RoutedEventArgs e)
@@ -392,11 +428,6 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("ConfigurableTDPOverrideDown", value);
-        }
-
-        public void ApplyTheme(int idx)
-        {
-            ThemeManager.Current.ApplicationTheme = (ApplicationTheme)idx;
         }
 
         private void cB_SensorSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
