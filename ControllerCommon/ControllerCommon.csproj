@@ -22,8 +22,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.2" />
-    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.9.116" />
-    <PackageReference Include="Nefarius.ViGEm.Client" Version="1.19.199" />
+    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="2.8.107" />
+    <PackageReference Include="Nefarius.ViGEm.Client" Version="1.17.183" />
     <PackageReference Include="NetCoreNamedPipeWrapper" Version="1.0.4" />
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
