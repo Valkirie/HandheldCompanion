@@ -1,7 +1,6 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Processor;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Views.Windows;
 using System;
 using System.Windows;
 using System.Windows.Controls;

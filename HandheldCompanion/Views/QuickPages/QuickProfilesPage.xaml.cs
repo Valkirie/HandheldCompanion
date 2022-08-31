@@ -2,12 +2,10 @@ using ControllerCommon;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Views.Windows;
 using ModernWpf.Controls;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages

@@ -4,9 +4,6 @@ using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers
 {
@@ -33,7 +30,7 @@ namespace HandheldCompanion.Managers
             if (prevValue == strValue)
                 return;
 
-            switch(name)
+            switch (name)
             {
                 case "OverlayControllerBackgroundColor":
                     value = Convert.ToString(value);
@@ -61,7 +58,7 @@ namespace HandheldCompanion.Managers
         private static object GetProperty(string name)
         {
             // used to handle cases
-            switch(name)
+            switch (name)
             {
                 case "ConfigurableTDPOverrideDown":
                     {

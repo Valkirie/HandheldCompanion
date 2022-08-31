@@ -8,9 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Navigation;
-using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Windows

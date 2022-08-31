@@ -31,11 +31,11 @@ namespace HandheldCompanion.Views.Pages
             TriggerUpdated("overlayGamepad", new TriggerInputs(
                 (TriggerInputsType)SettingsManager.GetInt("OverlayControllerTriggerType"),
                 SettingsManager.GetString("OverlayControllerTriggerValue")));
-            
+
             TriggerUpdated("overlayTrackpads", new TriggerInputs(
                 (TriggerInputsType)SettingsManager.GetInt("OverlayTrackpadsTriggerType"),
                 SettingsManager.GetString("OverlayTrackpadsTriggerValue")));
-            
+
             TriggerUpdated("quickTools", new TriggerInputs(
                 (TriggerInputsType)SettingsManager.GetInt("QuickToolsTriggerType"),
                 SettingsManager.GetString("QuickToolsTriggerValue")));

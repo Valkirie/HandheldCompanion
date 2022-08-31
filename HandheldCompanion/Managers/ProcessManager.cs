@@ -9,7 +9,6 @@ using System.Drawing;
 using System.IO;
 using System.Management;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -566,7 +565,7 @@ namespace HandheldCompanion.Managers
                 case "procmon.exe":
                 case "procmon64.exe":
                 case "widgets.exe":
-                
+
                 // System shell
                 case "dwm.exe":
                 case "explorer.exe":

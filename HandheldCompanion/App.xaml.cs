@@ -1,11 +1,4 @@
-﻿using ControllerCommon;
-using ControllerCommon.Managers;
-using HandheldCompanion.Views;
-using System;
-using System.Globalization;
-using System.IO;
-using System.Threading;
-using System.Windows;
+﻿using System.Windows;
 
 namespace HandheldCompanion
 {

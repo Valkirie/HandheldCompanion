@@ -1,7 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
-using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
@@ -11,7 +10,6 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -19,13 +17,11 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
-using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
@@ -65,7 +61,7 @@ namespace HandheldCompanion.Views
         public static HidHide Hidder;
 
         // manager(s) vars
-        private static List<Manager> _managers = new(); 
+        private static List<Manager> _managers = new();
         public static InputsManager inputsManager;
         public static ToastManager toastManager;
         public static ProcessManager processManager;

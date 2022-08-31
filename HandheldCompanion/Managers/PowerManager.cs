@@ -322,7 +322,7 @@ namespace HandheldCompanion.Managers
         {
             if (!IsInitialized)
                 return;
-            
+
             processor.Stop();
             powerWatchdog.Stop();
 

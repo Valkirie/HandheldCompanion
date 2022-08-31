@@ -4,7 +4,6 @@ using ControllerCommon.Processor.Intel;
 using System;
 using System.Collections.Generic;
 using System.Management;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace ControllerCommon.Processor

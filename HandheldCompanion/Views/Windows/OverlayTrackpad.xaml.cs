@@ -1,21 +1,8 @@
 using ControllerCommon;
-using ControllerCommon.Managers;
-using ControllerCommon.Utils;
 using HandheldCompanion.Common;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Models;
-using SharpDX.XInput;
-using System;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
-using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
 
 namespace HandheldCompanion.Views.Windows
 {
@@ -100,7 +87,7 @@ namespace HandheldCompanion.Views.Windows
         {
             string name = ((FrameworkElement)sender).Name;
 
-            switch(name)
+            switch (name)
             {
                 case "LeftTrackpad":
                     {
