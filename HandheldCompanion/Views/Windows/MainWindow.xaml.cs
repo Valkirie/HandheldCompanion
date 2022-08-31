@@ -289,6 +289,7 @@ namespace HandheldCompanion.Views
             toastManager = new ToastManager("HandheldCompanion");
             toastManager.Enabled = Properties.Settings.Default.ToastEnable;
 
+            settingsManager = new();
             processManager = new();
             profileManager = new();
             inputsManager = new();
@@ -298,9 +299,9 @@ namespace HandheldCompanion.Views
             systemManager = new();
             powerManager = new();
             updateManager = new();
-            settingsManager = new();
 
             // store managers
+            _managers.Add(settingsManager);
             _managers.Add(toastManager);
             _managers.Add(processManager);
             _managers.Add(profileManager);
@@ -311,7 +312,6 @@ namespace HandheldCompanion.Views
             _managers.Add(systemManager);
             _managers.Add(powerManager);
             _managers.Add(updateManager);
-            _managers.Add(settingsManager);
 
             // hook into managers events
             inputsManager.TriggerRaised += InputsManager_TriggerRaised;

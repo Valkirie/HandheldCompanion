@@ -62,6 +62,24 @@ namespace HandheldCompanion.Managers
                         return TDPoverride ? GetProperty("ConfigurableTDPOverrideUp") : MainWindow.handheldDevice.cTDP[1];
                     }
 
+                case "QuickToolsPerformanceTDPSustainedValue":
+                    {
+                        bool TDPoverride = Convert.ToBoolean(GetProperty("QuickToolsPerformanceTDPEnabled"));
+                        return TDPoverride ? GetProperty("QuickToolsPerformanceTDPSustainedValue") : 0;
+                    }
+
+                case "QuickToolsPerformanceTDPBoostValue":
+                    {
+                        bool TDPoverride = Convert.ToBoolean(GetProperty("QuickToolsPerformanceTDPEnabled"));
+                        return TDPoverride ? GetProperty("QuickToolsPerformanceTDPBoostValue") : 0;
+                    }
+
+                case "QuickToolsPerformanceGPUValue":
+                    {
+                        bool TDPoverride = Convert.ToBoolean(GetProperty("QuickToolsPerformanceGPUEnabled"));
+                        return TDPoverride ? GetProperty("QuickToolsPerformanceGPUValue") : 0;
+                    }
+
                 default:
                     return Properties.Settings.Default[name];
             }

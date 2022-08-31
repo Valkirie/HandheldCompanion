@@ -39,12 +39,7 @@ namespace HandheldCompanion.Managers
 
         private Dictionary<string, bool> Triggered = new Dictionary<string, bool>();
 
-        private Dictionary<string, TriggerInputs> Triggers = new()
-        {
-            { "overlayGamepad", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayControllerTriggerType, Properties.Settings.Default.OverlayControllerTriggerValue) },
-            { "overlayTrackpads", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayTrackpadsTriggerType, Properties.Settings.Default.OverlayTrackpadsTriggerValue) },
-            { "quickTools", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.QuickToolsTriggerType, Properties.Settings.Default.QuickToolsTriggerValue) },
-        };
+        private Dictionary<string, TriggerInputs> Triggers = new();
 
         // Keyboard vars
         private IKeyboardMouseEvents m_GlobalHook;
@@ -73,6 +68,18 @@ namespace HandheldCompanion.Managers
 
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();
+
+            Triggers.Add("overlayGamepad",
+                new TriggerInputs((TriggerInputsType)MainWindow.settingsManager.GetProperty("OverlayControllerTriggerType"),
+                Convert.ToString(MainWindow.settingsManager.GetProperty("OverlayControllerTriggerValue"))));
+
+            Triggers.Add("overlayTrackpads",
+                new TriggerInputs((TriggerInputsType)MainWindow.settingsManager.GetProperty("OverlayTrackpadsTriggerType"),
+                Convert.ToString(MainWindow.settingsManager.GetProperty("OverlayTrackpadsTriggerValue"))));
+
+            Triggers.Add("quickTools",
+                new TriggerInputs((TriggerInputsType)MainWindow.settingsManager.GetProperty("QuickToolsTriggerType"),
+                Convert.ToString(MainWindow.settingsManager.GetProperty("QuickToolsTriggerValue"))));
 
             // make sure we don't hang the keyboard
             Thread.CurrentThread.Priority = ThreadPriority.Highest;

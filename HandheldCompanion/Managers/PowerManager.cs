@@ -100,17 +100,20 @@ namespace HandheldCompanion.Managers
             MainWindow.profileManager.Discarded += ProfileManager_Discarded;
 
             // initialize settings
-            var TDPdown = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPSustainedValue : 0;
-            var TDPup = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPBoostValue : 0;
-
+            double TDPdown = Convert.ToDouble(MainWindow.settingsManager.GetProperty("QuickToolsPerformanceTDPSustainedValue"));
             TDPdown = TDPdown != 0 ? TDPdown : MainWindow.handheldDevice.nTDP[(int)PowerType.Slow];
+
+            double TDPup = Convert.ToDouble(MainWindow.settingsManager.GetProperty("QuickToolsPerformanceTDPBoostValue"));
             TDPup = TDPup != 0 ? TDPup : MainWindow.handheldDevice.nTDP[(int)PowerType.Fast];
 
+            double GPU = Convert.ToDouble(MainWindow.settingsManager.GetProperty("QuickToolsPerformanceGPUValue"));
+
+            // request TDP(s)
             RequestTDP(PowerType.Slow, TDPdown);
             RequestTDP(PowerType.Stapm, TDPdown);
             RequestTDP(PowerType.Fast, TDPup);
 
-            var GPU = Properties.Settings.Default.QuickToolsPerformanceGPUEnabled ? Properties.Settings.Default.QuickToolsPerformanceGPUValue : 0;
+            // request GPUclock
             if (GPU != 0)
                 RequestGPUClock(GPU, true);
         }
