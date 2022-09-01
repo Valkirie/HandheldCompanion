@@ -116,11 +116,7 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             if (profile.executable == currentProfile.executable)
-            {
-                currentProcess = null;
-                currentProfile = null;
-                ProfileUpdated(profile, false, true);
-            }
+                ProcessManager_ForegroundChanged(currentProcess);
         }
 
         private void ProfileUpdated(Profile profile, bool backgroundtask, bool isCurrent)
@@ -179,6 +175,10 @@ namespace HandheldCompanion.Views.QuickPages
                 {
                     b_CreateProfile.Visibility = Visibility.Visible;
                     GridProfile.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    ProfileUpdated(currentProfile, true, true);
                 }
             });
         }
