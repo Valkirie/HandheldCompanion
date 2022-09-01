@@ -243,7 +243,6 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 // restore default GPU clock
                 MainWindow.powerManager.RequestGPUClock(255 * 50);
-                return;
             }
 
             MainWindow.powerManager.RequestGPUClock(GPUSlider.Value);
