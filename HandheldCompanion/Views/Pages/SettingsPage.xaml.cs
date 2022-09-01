@@ -315,11 +315,6 @@ namespace HandheldCompanion.Views.Pages
             if (culture.Name == CultureInfo.CurrentCulture.Name)
                 return;
 
-            Thread.CurrentThread.CurrentCulture = culture;
-            Thread.CurrentThread.CurrentUICulture = culture;
-            CultureInfo.DefaultThreadCurrentCulture = culture;
-            CultureInfo.DefaultThreadCurrentUICulture = culture;
-
             _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_AppLanguageWarning}",
                 Properties.Resources.SettingsPage_AppLanguageWarningDesc,
                 ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
