@@ -49,10 +49,10 @@
                 <Label Content="{x:Static resx:Resources.SettingsPage_GeneralOptions}" FontWeight="SemiBold"></Label>
 
                 <!-- Auto-start application -->
-                <Border                      
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                <Border     
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -75,9 +75,9 @@
 
                 <!-- Open application in background -->
                 <Border  
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -100,9 +100,9 @@
 
                 <!-- Close minimizes -->
                 <Border  
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -125,9 +125,9 @@
 
                 <!-- Application theme -->
                 <Border  
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -153,9 +153,10 @@
 
                 <!-- Application theme -->
                 <Border  
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    Visibility="Collapsed">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
