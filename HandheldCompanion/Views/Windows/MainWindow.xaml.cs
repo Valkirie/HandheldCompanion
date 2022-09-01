@@ -85,6 +85,14 @@ namespace HandheldCompanion.Views
             InitializeComponent();
             mainWindow = this;
 
+            // get current assembly
+            Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
+            fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
+
+            // initialize log
+            LogManager.Initialize("HandheldCompanion");
+            LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
+
             // define culture settings
             string CurrentCulture = SettingsManager.GetString("CurrentCulture");
             CultureInfo culture = CultureInfo.CurrentCulture;
@@ -105,10 +113,6 @@ namespace HandheldCompanion.Views
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
 
-            // get current assembly
-            Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-            fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
-
             // initialize splash screen
             if (SettingsManager.GetBoolean("FirstStart") || !SettingsManager.GetBoolean("StartMinimized"))
             {
@@ -126,10 +130,6 @@ namespace HandheldCompanion.Views
 
             // listen to system events
             SystemEvents.PowerModeChanged += OnPowerChangeAsync;
-
-            // initialize log
-            LogManager.Initialize("HandheldCompanion");
-            LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
             // initialize notifyIcon
             notifyIcon = new()
