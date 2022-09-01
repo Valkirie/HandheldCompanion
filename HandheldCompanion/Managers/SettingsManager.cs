@@ -41,16 +41,16 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            // should not happen
-            if (value.GetType() != prevValue.GetType())
-                return;
+            try
+            {
+                Properties.Settings.Default[name] = value;
+                Properties.Settings.Default.Save();
 
-            Properties.Settings.Default[name] = value;
-            Properties.Settings.Default.Save();
+                SettingValueChanged?.Invoke(name, value);
 
-            SettingValueChanged?.Invoke(name, value);
-
-            LogManager.LogDebug("Settings {0} set to {1}", name, value);
+                LogManager.LogDebug("Settings {0} set to {1}", name, value);
+            }
+            catch (Exception) { }
         }
 
         private static bool PropertyExists(string name)

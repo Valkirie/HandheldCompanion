@@ -674,9 +674,9 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public short MainWindowBackdrop {
+        public int MainWindowBackdrop {
             get {
-                return ((short)(this["MainWindowBackdrop"]));
+                return ((int)(this["MainWindowBackdrop"]));
             }
             set {
                 this["MainWindowBackdrop"] = value;

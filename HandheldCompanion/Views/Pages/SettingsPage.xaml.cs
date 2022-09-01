@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.ServiceProcess;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -313,6 +314,11 @@ namespace HandheldCompanion.Views.Pages
             // prevent message from being displayed again...
             if (culture.Name == CultureInfo.CurrentCulture.Name)
                 return;
+
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
 
             _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_AppLanguageWarning}",
                 Properties.Resources.SettingsPage_AppLanguageWarningDesc,

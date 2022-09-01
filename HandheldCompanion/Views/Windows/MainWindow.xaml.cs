@@ -93,26 +93,6 @@ namespace HandheldCompanion.Views
             LogManager.Initialize("HandheldCompanion");
             LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
-            // define culture settings
-            string CurrentCulture = SettingsManager.GetString("CurrentCulture");
-            CultureInfo culture = CultureInfo.CurrentCulture;
-
-            switch (CurrentCulture)
-            {
-                default:
-                    culture = new CultureInfo("en-US");
-                    break;
-                case "fr-FR":
-                case "en-US":
-                case "zh-CN":
-                case "zh-Hant":
-                    culture = new CultureInfo(CurrentCulture);
-                    break;
-            }
-
-            Thread.CurrentThread.CurrentCulture = culture;
-            Thread.CurrentThread.CurrentUICulture = culture;
-
             // initialize splash screen
             if (SettingsManager.GetBoolean("FirstStart") || !SettingsManager.GetBoolean("StartMinimized"))
             {
