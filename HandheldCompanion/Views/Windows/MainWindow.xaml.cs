@@ -327,10 +327,6 @@ namespace HandheldCompanion.Views
             // handle settingsPage events
             SettingsManager.SettingValueChanged += (name, value) =>
             {
-                // todo : create a settings manager
-                overlayquickTools.performancePage.SettingsPage_SettingValueChanged(name, value);
-                overlayquickTools.profilesPage.SettingsPage_SettingValueChanged(name, value);
-
                 switch (name)
                 {
                     case "toast_notification":
