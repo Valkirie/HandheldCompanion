@@ -77,15 +77,14 @@
             <!-- Warning -->
             <Border
                 Name="TDPWarning"
-                Visibility="Collapsed"
                 Background="{DynamicResource AccentAcrylicBackgroundFillColorBaseBrush}"
                 Padding="15,2,15,2"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Visibility="Collapsed">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition Width="0.2*" MinWidth="80"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
                     <DockPanel>
