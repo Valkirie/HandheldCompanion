@@ -18,7 +18,6 @@
         ui:TitleBar.ExtendViewIntoTitleBar="True"
         ui:WindowHelper.SystemBackdropType="Acrylic"
         ui:WindowHelper.UseModernWindowStyle="True"
-        ui:ThemeManager.IsThemeAware="True"
         Title="QuickTools" Topmost="True" WindowStyle="ToolWindow" ShowInTaskbar="False">
 
     <ui:NavigationView

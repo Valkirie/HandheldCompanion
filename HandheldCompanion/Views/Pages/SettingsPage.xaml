@@ -172,7 +172,12 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_Backdrop" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_Backdrop_Toggled"/>
+                        <ui:RadioButtons Name="cB_Backdrop" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="cB_Backdrop_SelectionChanged">
+                            <Label Content="None"/>
+                            <Label Content="Mica"/>
+                            <Label Content="Tabbed"/>
+                            <Label Content="Acrylic"/>
+                        </ui:RadioButtons>
                     </Grid>
                 </Border>
 

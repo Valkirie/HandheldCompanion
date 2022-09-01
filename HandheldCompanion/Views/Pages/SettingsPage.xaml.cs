@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Windows.Foundation;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
@@ -62,7 +63,8 @@ namespace HandheldCompanion.Views.Pages
                         cB_Theme_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
                         break;
                     case "MainWindowBackdrop":
-                        Toggle_Backdrop.IsOn = Convert.ToBoolean(value);
+                        cB_Backdrop.SelectedIndex = Convert.ToInt32(value);
+                        cB_Backdrop_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
                         break;
                     case "SensorSelection":
                         cB_SensorSelection.SelectedIndex = Convert.ToInt32(value);
@@ -338,36 +340,39 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("MainWindowTheme", cB_Theme.SelectedIndex);
         }
 
-        private void Toggle_Backdrop_Toggled(object sender, System.Windows.RoutedEventArgs e)
+        private void cB_Backdrop_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (OSVersionHelper.IsWindows11OrGreater)
+            if (cB_Backdrop.SelectedIndex == -1)
+                return;
+
+            switch (cB_Backdrop.SelectedIndex)
             {
-                BackdropType newType;
-                switch (Toggle_Backdrop.IsOn)
-                {
-                    case true:
-                        newType = BackdropType.Acrylic;
-                        break;
-                    default:
-                    case false:
-                        newType = BackdropType.Mica;
-                        break;
-                }
-                WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), newType);
-            }
-            else if (OSVersionHelper.IsWindows10OrGreater)
-            {
-                WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), Toggle_Backdrop.IsOn);
-            }
-            else if (OSVersionHelper.IsWindowsVistaOrGreater)
-            {
-                WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), Toggle_Backdrop.IsOn);
+                case 0: // "None":
+                    WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), BackdropType.None);
+                    WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), false);
+                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), false);
+                    break;
+                case 1: // "Mica":
+                    WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), BackdropType.Mica);
+                    WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), false);
+                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), false);
+                    break;
+                case 2: // "Tabbed":
+                    WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), BackdropType.Tabbed);
+                    WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), false);
+                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), false);
+                    break;
+                case 3: // "Acrylic":
+                    WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), BackdropType.Acrylic);
+                    WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), true);
+                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), true);
+                    break;
             }
 
             if (!SettingsManager.IsInitialized)
                 return;
 
-            SettingsManager.SetProperty("MainWindowBackdrop", Toggle_Backdrop.IsOn);
+            SettingsManager.SetProperty("MainWindowBackdrop", cB_Backdrop.SelectedIndex);
         }
 
         private async void Toggle_cTDP_Toggled(object sender, RoutedEventArgs e)

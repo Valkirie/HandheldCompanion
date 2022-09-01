@@ -673,10 +673,10 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool MainWindowBackdrop {
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public short MainWindowBackdrop {
             get {
-                return ((bool)(this["MainWindowBackdrop"]));
+                return ((short)(this["MainWindowBackdrop"]));
             }
             set {
                 this["MainWindowBackdrop"] = value;
