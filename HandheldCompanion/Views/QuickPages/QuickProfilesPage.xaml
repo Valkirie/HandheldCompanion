@@ -175,13 +175,12 @@
             </Grid>
 
             <!-- Thermal Power (TDP) Limit -->
-            <ui:SimpleStackPanel Name="StackProfilePower" Spacing="2">
+            <ui:SimpleStackPanel Name="StackProfilePower" Spacing="2" IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
                 <!-- Header -->
                 <Border
                     Padding="15,12,15,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
-                    IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
+                    Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
