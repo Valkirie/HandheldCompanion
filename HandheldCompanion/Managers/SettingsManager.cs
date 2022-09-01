@@ -4,6 +4,7 @@ using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 
 namespace HandheldCompanion.Managers
 {
@@ -24,10 +25,13 @@ namespace HandheldCompanion.Managers
 
         public static void SetProperty(string name, object value)
         {
-            string prevValue = Convert.ToString(Properties.Settings.Default[name]);
-            string strValue = Convert.ToString(value);
+            // should not happen
+            if (!PropertyExists(name))
+                return;
 
-            if (prevValue == strValue)
+            object prevValue = Properties.Settings.Default[name];
+
+            if (prevValue.ToString() == value.ToString())
                 return;
 
             switch (name)
@@ -37,12 +41,21 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
+            // should not happen
+            if (value.GetType() != prevValue.GetType())
+                return;
+
             Properties.Settings.Default[name] = value;
             Properties.Settings.Default.Save();
 
             SettingValueChanged?.Invoke(name, value);
 
             LogManager.LogDebug("Settings {0} set to {1}", name, value);
+        }
+
+        private static bool PropertyExists(string name)
+        {
+            return Properties.Settings.Default.Properties.Cast<SettingsProperty>().Any(prop => prop.Name == name);
         }
 
         public static Dictionary<string, object> GetProperties()
