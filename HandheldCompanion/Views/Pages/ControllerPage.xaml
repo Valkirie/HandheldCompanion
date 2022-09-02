@@ -41,7 +41,7 @@
                             
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
@@ -90,7 +90,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -115,7 +115,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>

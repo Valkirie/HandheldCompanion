@@ -179,7 +179,7 @@ namespace HandheldCompanion.Managers
             catch (Exception) { }
         }
 
-        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
+        private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
             try
             {

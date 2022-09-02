@@ -376,21 +376,47 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("MainWindowBackdrop", cB_Backdrop.SelectedIndex);
         }
 
-        private async void Toggle_cTDP_Toggled(object sender, RoutedEventArgs e)
+        private async void Toggle_EnergyStar_Toggled(object sender, RoutedEventArgs e)
         {
             if (!SettingsManager.IsInitialized)
                 return;
 
-            SettingsManager.SetProperty("ConfigurableTDPOverride", Toggle_cTDP.IsOn);
-            SettingsManager.SetProperty("ConfigurableTDPOverrideUp", NumberBox_TDPMax.Value);
-            SettingsManager.SetProperty("ConfigurableTDPOverrideDown", NumberBox_TDPMin.Value);
+            if (Toggle_EnergyStar.IsOn)
+            {
+                // todo: localize me !
+                Task<ContentDialogResult> result = Dialog.ShowAsync(
+                    "Warning",
+                    "EnergyStar leverages Windows EcoQoS API but has few known limitations on track to be addressed. Use at your own risk.",
+                    ContentDialogButton.Primary, "Cancel", Properties.Resources.ProfilesPage_OK);
+
+                await result; // sync call
+
+                switch (result.Result)
+                {
+                    case ContentDialogResult.Primary:
+                        break;
+                    default:
+                    case ContentDialogResult.None:
+                        // restore previous state
+                        Toggle_EnergyStar.IsOn = false;
+                        return;
+                }
+            }
+
+            SettingsManager.SetProperty("UseEnergyStar", Toggle_EnergyStar.IsOn);
+        }
+
+        private async void Toggle_cTDP_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!SettingsManager.IsInitialized)
+                return;
 
             if (Toggle_cTDP.IsOn)
             {
                 // todo: localize me !
                 Task<ContentDialogResult> result = Dialog.ShowAsync(
                     "Warning",
-                    "Altering minimum and maximum CPU power values might cause instabilities. Product warranties may not apply if the processor is operated beyond its specifications.",
+                    "Altering minimum and maximum CPU power values might cause instabilities. Product warranties may not apply if the processor is operated beyond its specifications. Use at your own risk.",
                     ContentDialogButton.Primary, "Cancel", Properties.Resources.ProfilesPage_OK);
 
                 await result; // sync call
@@ -406,6 +432,10 @@ namespace HandheldCompanion.Views.Pages
                         return;
                 }
             }
+
+            SettingsManager.SetProperty("ConfigurableTDPOverride", Toggle_cTDP.IsOn);
+            SettingsManager.SetProperty("ConfigurableTDPOverrideUp", NumberBox_TDPMax.Value);
+            SettingsManager.SetProperty("ConfigurableTDPOverrideDown", NumberBox_TDPMin.Value);
         }
 
         private void NumberBox_TDPMax_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)

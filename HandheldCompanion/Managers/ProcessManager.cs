@@ -308,11 +308,12 @@ namespace HandheldCompanion.Managers
 
         private ConcurrentDictionary<uint, ProcessEx> Processes = new();
         private ProcessEx foregroundProcess;
+        private ProcessEx backgroundProcess;
 
         private object updateLock = new();
 
         public event ForegroundChangedEventHandler ForegroundChanged;
-        public delegate void ForegroundChangedEventHandler(ProcessEx processEx);
+        public delegate void ForegroundChangedEventHandler(ProcessEx processEx, ProcessEx backgroundEx);
 
         public event ProcessStartedEventHandler ProcessStarted;
         public delegate void ProcessStartedEventHandler(ProcessEx processEx, bool startup);
@@ -425,15 +426,8 @@ namespace HandheldCompanion.Managers
                 return;
 
             // save previous process (if exists)
-            if (foregroundProcess != null && !foregroundProcess.Bypassed)
-            {
-                // set efficiency mode if event pId is different from foreground pId
-                if (procId != foregroundProcess.Id)
-                {
-                    ProcessUtils.ToggleEfficiencyMode(foregroundProcess.Handle, false);
-                    LogManager.LogDebug("Process {0} set to power saving mode", foregroundProcess.Name);
-                }
-            }
+            if (foregroundProcess != null)
+                backgroundProcess = foregroundProcess;
 
             if (Processes.ContainsKey(procId))
                 foregroundProcess = Processes[procId];
@@ -449,14 +443,7 @@ namespace HandheldCompanion.Managers
             // update main window handle
             foregroundProcess.MainWindowHandle = hWnd;
 
-            // set efficency mode
-            if (!foregroundProcess.Bypassed)
-            {
-                ProcessUtils.ToggleEfficiencyMode(foregroundProcess.Handle, true);
-                LogManager.LogDebug("Process {0} set to efficient mode", foregroundProcess.Name);
-            }
-
-            ForegroundChanged?.Invoke(foregroundProcess);
+            ForegroundChanged?.Invoke(foregroundProcess, backgroundProcess);
         }
 
         private void MonitorHelper(object? sender, EventArgs e)
@@ -521,12 +508,6 @@ namespace HandheldCompanion.Managers
 
                     if (processEx.Bypassed)
                         return;
-
-                    if (startup)
-                    {
-                        // EnergyStar
-                        ProcessUtils.ToggleEfficiencyMode(processEx.Handle, false);
-                    }
 
                     // raise event
                     ProcessStarted?.Invoke(processEx, startup);

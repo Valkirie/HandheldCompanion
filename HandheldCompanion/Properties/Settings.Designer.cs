@@ -682,5 +682,17 @@ namespace HandheldCompanion.Properties {
                 this["MainWindowBackdrop"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseEnergyStar {
+            get {
+                return ((bool)(this["UseEnergyStar"]));
+            }
+            set {
+                this["UseEnergyStar"] = value;
+            }
+        }
     }
 }

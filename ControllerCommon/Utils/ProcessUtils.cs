@@ -121,54 +121,6 @@ namespace ControllerCommon.Utils
         public static extern bool CloseHandle(IntPtr hObject);
         #endregion
 
-        #region structs
-        [StructLayout(LayoutKind.Sequential)]
-        public struct PROCESS_POWER_THROTTLING_STATE
-        {
-            public const uint PROCESS_POWER_THROTTLING_CURRENT_VERSION = 1;
-
-            public uint Version;
-            public ProcessorPowerThrottlingFlags ControlMask;
-            public ProcessorPowerThrottlingFlags StateMask;
-        }
-        #endregion
-
-        // EnergyManager
-        private static IntPtr pThrottleOn = IntPtr.Zero;
-        private static IntPtr pThrottleOff = IntPtr.Zero;
-        private static int szControlBlock = 0;
-
-        static ProcessUtils()
-        {
-            szControlBlock = Marshal.SizeOf<PROCESS_POWER_THROTTLING_STATE>();
-            pThrottleOn = Marshal.AllocHGlobal(szControlBlock);
-            pThrottleOff = Marshal.AllocHGlobal(szControlBlock);
-
-            var throttleState = new PROCESS_POWER_THROTTLING_STATE
-            {
-                Version = PROCESS_POWER_THROTTLING_STATE.PROCESS_POWER_THROTTLING_CURRENT_VERSION,
-                ControlMask = ProcessorPowerThrottlingFlags.PROCESS_POWER_THROTTLING_EXECUTION_SPEED,
-                StateMask = ProcessorPowerThrottlingFlags.PROCESS_POWER_THROTTLING_EXECUTION_SPEED,
-            };
-
-            var unthrottleState = new PROCESS_POWER_THROTTLING_STATE
-            {
-                Version = PROCESS_POWER_THROTTLING_STATE.PROCESS_POWER_THROTTLING_CURRENT_VERSION,
-                ControlMask = ProcessorPowerThrottlingFlags.PROCESS_POWER_THROTTLING_EXECUTION_SPEED,
-                StateMask = ProcessorPowerThrottlingFlags.None,
-            };
-
-            Marshal.StructureToPtr(throttleState, pThrottleOn, false);
-            Marshal.StructureToPtr(unthrottleState, pThrottleOff, false);
-        }
-
-        public static void ToggleEfficiencyMode(IntPtr hProcess, bool enable)
-        {
-            SetProcessInformation(hProcess, PROCESS_INFORMATION_CLASS.ProcessPowerThrottling,
-                enable ? pThrottleOn : pThrottleOff, (uint)szControlBlock);
-            SetPriorityClass(hProcess, enable ? PriorityClass.IDLE_PRIORITY_CLASS : PriorityClass.NORMAL_PRIORITY_CLASS);
-        }
-
         public class WinAPIFunctions
         {
             public static int GetWindowProcessId(IntPtr hwnd)

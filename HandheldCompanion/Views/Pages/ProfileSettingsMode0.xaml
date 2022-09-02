@@ -28,7 +28,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -65,7 +65,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_FlickStickEnable}" FontSize="14" VerticalAlignment="Center"/>
@@ -79,7 +79,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
@@ -99,7 +99,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">

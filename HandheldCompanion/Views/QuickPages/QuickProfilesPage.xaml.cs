@@ -116,7 +116,7 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             if (profile.executable == currentProfile.executable)
-                ProcessManager_ForegroundChanged(currentProcess);
+                ProcessManager_ForegroundChanged(currentProcess, null);
         }
 
         private void ProfileUpdated(Profile profile, bool backgroundtask, bool isCurrent)
@@ -158,7 +158,7 @@ namespace HandheldCompanion.Views.QuickPages
             IsReady = true;
         }
 
-        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
+        private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
             if (processEx.Bypassed)
                 return;

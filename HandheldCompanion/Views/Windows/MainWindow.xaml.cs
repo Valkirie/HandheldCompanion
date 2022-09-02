@@ -183,6 +183,8 @@ namespace HandheldCompanion.Views
 
             // start manager(s) synchroneously
             inputsManager.Start();
+
+            EnergyManager.Start();
             SettingsManager.Start();
 
             // start manager(s) asynchroneously
