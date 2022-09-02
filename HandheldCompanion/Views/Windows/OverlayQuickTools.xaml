@@ -17,6 +17,8 @@
         Loaded="Window_Loaded"
         ui:TitleBar.ExtendViewIntoTitleBar="True"
         ui:WindowHelper.SystemBackdropType="Acrylic"
+        ui:WindowHelper.UseAcrylicBackdrop="True"
+        ui:WindowHelper.UseAeroBackdrop="True"
         ui:WindowHelper.UseModernWindowStyle="True"
         Title="QuickTools" Topmost="True" WindowStyle="ToolWindow" ShowInTaskbar="False">
 
