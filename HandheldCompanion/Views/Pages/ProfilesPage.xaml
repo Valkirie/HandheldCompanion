@@ -142,8 +142,8 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="80"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -155,7 +155,7 @@
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 
-                            <ui:ToggleSwitch Grid.Column="1" Name="Toggle_EnableProfile" Width="40" HorizontalAlignment="Right" Toggled="Toggle_EnableProfile_Toggled"/>                           
+                            <ui:ToggleSwitch Grid.Column="1" Name="Toggle_EnableProfile" Toggled="Toggle_EnableProfile_Toggled"/>                           
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>
@@ -207,8 +207,8 @@
 
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="80"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -216,7 +216,7 @@
                                         <TextBlock Text="Override the processor thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
-                                    <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="TDPToggle" Toggled="TDPToggle_Toggled"/>
+                                    <ui:ToggleSwitch Grid.Column="1" Name="TDPToggle" Toggled="TDPToggle_Toggled"/>
                                 </Grid>
 
                                 <!-- Separator -->
@@ -226,7 +226,7 @@
                                 <Grid IsEnabled="{Binding ElementName=TDPToggle, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -250,7 +250,7 @@
                                 <Grid IsEnabled="{Binding ElementName=TDPToggle, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -290,7 +290,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
@@ -310,7 +310,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
@@ -329,8 +329,8 @@
 
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
@@ -390,13 +390,13 @@
                             <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="80"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCEnable}" FontSize="14" VerticalAlignment="Center"/>
 
-                                    <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="Toggle_UniversalMotion" Toggled="Toggle_UniversalMotion_Toggled"/>
+                                    <ui:ToggleSwitch Grid.Column="1" Name="Toggle_UniversalMotion" Toggled="Toggle_UniversalMotion_Toggled"/>
                                 </Grid>
 
                                 <!-- Separator -->
@@ -404,8 +404,8 @@
 
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -413,7 +413,7 @@
                                         <TextBlock Name="Text_InputHint" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
-                                    <ui:RadioButtons Margin="6,0,0,0" Name="cB_Input" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Input_SelectionChanged"/>
+                                    <ui:RadioButtons Margin="6,0,0,0" Name="cB_Input" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Input_SelectionChanged"/>
                                 </Grid>
 
                                 <!-- Separator -->
@@ -421,8 +421,8 @@
 
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -439,7 +439,7 @@
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -458,8 +458,8 @@
 
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
                                     
                                     <StackPanel Orientation="Vertical">

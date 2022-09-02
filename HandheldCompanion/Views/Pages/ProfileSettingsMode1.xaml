@@ -28,8 +28,8 @@
 
                     <Grid Name="SteeringVisualsGrid">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"/>
-                            <ColumnDefinition Width="5*" MinWidth="200"/>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <lvc:AngularGauge
@@ -101,7 +101,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -129,7 +129,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -157,7 +157,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>

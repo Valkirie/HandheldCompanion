@@ -386,7 +386,7 @@ namespace HandheldCompanion.Views.Pages
                 // todo: localize me !
                 Task<ContentDialogResult> result = Dialog.ShowAsync(
                     "Warning",
-                    "EnergyStar leverages Windows EcoQoS API but has few known limitations on track to be addressed. Use at your own risk.",
+                    "EcoQoS is a new Quality of Service (QoS) level introduced to Windows, leading to better energy efficiency. Use at your own risk.",
                     ContentDialogButton.Primary, "Cancel", Properties.Resources.ProfilesPage_OK);
 
                 await result; // sync call

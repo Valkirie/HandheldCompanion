@@ -110,8 +110,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -154,7 +154,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -182,7 +182,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -210,7 +210,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -248,7 +248,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">
@@ -269,8 +269,8 @@
                             <!-- Anti-Aliasing -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">
@@ -278,10 +278,7 @@
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_RenderSettingsAntialiasingDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </StackPanel>
 
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <ui:ToggleSwitch Name="Toggle_RenderAA" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_RenderAA_Toggled" IsOn="False">
-                                    </ui:ToggleSwitch>
-                                </DockPanel>
+                                <ui:ToggleSwitch Name="Toggle_RenderAA" Grid.Column="1" Toggled="Toggle_RenderAA_Toggled" IsOn="False"/>
                             </Grid>
                         </ui:SimpleStackPanel>
                     </Expander.Content>
@@ -304,21 +301,19 @@
                         <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
 
                             <!-- Face camera -->
-                            
+
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_FaceCamera}" FontSize="14"/>
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_FaceCameraDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                </StackPanel>
+                                </StackPanel>                                
 
-                                
-
-                                <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="Toggle_FaceCamera" Toggled="Toggle_FaceCamera_Toggled"/>
+                                <ui:ToggleSwitch Grid.Column="1" Name="Toggle_FaceCamera" Toggled="Toggle_FaceCamera_Toggled"/>
                             </Grid>
 
                             <!-- Separator -->
@@ -329,7 +324,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">
@@ -393,7 +388,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -421,7 +416,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>

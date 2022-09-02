@@ -86,7 +86,7 @@ namespace HandheldCompanion.Managers
             {
                 case "UseEnergyStar":
                     IsEnabled = Convert.ToBoolean(value);
-                    break;
+                    break; 
             }
         }
 

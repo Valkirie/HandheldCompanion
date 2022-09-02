@@ -28,7 +28,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -64,13 +64,13 @@
                         <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_FlickStickEnable}" FontSize="14" VerticalAlignment="Center"/>
 
-                                <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="Toggle_FlickStick" Toggled="Toggle_FlickStick_Toggled"/>
+                                <ui:ToggleSwitch Grid.Column="1" Name="Toggle_FlickStick" Toggled="Toggle_FlickStick_Toggled"/>
                             </Grid>
 
                             <!-- Separator -->
@@ -79,7 +79,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
@@ -99,7 +99,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">

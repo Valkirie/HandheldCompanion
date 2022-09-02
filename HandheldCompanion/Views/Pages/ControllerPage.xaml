@@ -41,7 +41,7 @@
                             
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
@@ -89,8 +89,8 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="80"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -102,7 +102,7 @@
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 
-                            <ui:ToggleSwitch Name="Toggle_Cloaked" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_Cloaked_Toggled"/>
+                            <ui:ToggleSwitch Name="Toggle_Cloaked" Grid.Column="1" Toggled="Toggle_Cloaked_Toggled"/>
                         </Grid>
                     </Border>
 
@@ -114,8 +114,8 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
+                                <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="80"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -127,7 +127,7 @@
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 
-                            <ui:ToggleSwitch Name="Toggle_Uncloak" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_Uncloak_Toggled"/>
+                            <ui:ToggleSwitch Name="Toggle_Uncloak" Grid.Column="1" Toggled="Toggle_Uncloak_Toggled"/>
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>
