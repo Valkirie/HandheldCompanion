@@ -72,7 +72,7 @@ Display a 3D virtual controller, showcasing the motion of the device and all but
   - ZDO+ controller
   - Fisher-Price controller
 
-![image](https://user-images.githubusercontent.com/934757/188308130-a4ca935c-6177-4787-8fbb-6c368808309d.png)
+![image](https://thumbs.gfycat.com/BlackandwhiteRareBorderterrier-size_restricted.gif)
 
 ## Contribute
 ### Bugs & Features
