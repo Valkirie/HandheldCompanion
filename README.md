@@ -36,12 +36,10 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - Chinese (Traditional)
 
 ## Visuals
-![image](https://user-images.githubusercontent.com/934757/175270847-0638207d-f2c2-4bf7-becd-da6860638b0b.png)
-![image](https://user-images.githubusercontent.com/934757/175270868-b2bffc77-878b-4a58-b2db-7387324c2390.png)
-![image](https://user-images.githubusercontent.com/934757/175270899-edd658b5-1103-4bda-aaa6-1685e2b3d3f5.png)
-![image](https://user-images.githubusercontent.com/934757/175270908-54eddc08-2620-4831-bc91-bfeb4340462a.png)
-![image](https://user-images.githubusercontent.com/934757/175271013-6c130e24-ec81-4d9a-9d85-cb74c5e7e327.png)
-![image](https://user-images.githubusercontent.com/934757/175271036-52fde73c-f9d4-4f67-aede-4a5618e0fe28.png)
+![image](https://user-images.githubusercontent.com/934757/188308169-abfcc335-39e9-44c5-ac9a-bc0e02ac7cec.png)
+![image](https://user-images.githubusercontent.com/934757/188308173-6fcd01ce-eabf-4340-b2f2-a9f63a5b4072.png)
+![image](https://user-images.githubusercontent.com/934757/188308180-3dc34830-4e5e-4c74-a3cf-33eee5c77cd9.png)
+![image](https://user-images.githubusercontent.com/934757/188308184-e8893451-127a-48b3-be90-6229c614c317.png)
 
 ## Overlay
 The software has multiple built-in overlay options. 
@@ -60,10 +58,12 @@ Quicktools profile TDP motion settings with Borderlands Pre-Sequel.
 
 Virtual touchpad on top of your gaming sessions. The virtual touchpad is used to mimic the DualShock 4 physical touchpad and grants maximum compatibility with PS Now, PS Remote software suites and games that make specific use of the Steampad touchpads.
 
-![Touchpad](https://user-images.githubusercontent.com/14330834/184550796-24f86f7a-af58-461d-b7c2-eb0d7735f5d5.gif)
-Virtual Touchpad input demonstration with [VSCView](https://github.com/Nielk1/VSCView)
+![Touchpad](https://thumbs.gfycat.com/DiscreteJollyBluemorphobutterfly-size_restricted.gif)
+
+Virtual Touchpad input demonstration with [PS Remote Play](https://remoteplay.dl.playstation.net/remoteplay/lang/en/)
 
 ![Example02](https://user-images.githubusercontent.com/14330834/184550793-d81e2ec9-0271-4aae-bc44-7aeb393631ea.png)
+
 PS Remote Play, The Last of Us Part 2
 
 ### 3D Controller
@@ -74,7 +74,7 @@ Display a 3D virtual controller, showcasing the motion of the device and all but
   - ZDO+ controller
   - Fisher-Price controller
 
-![image](https://user-images.githubusercontent.com/934757/175498734-29c9dc25-e7ed-44f3-a6f6-9600122c35cd.png)
+![image](https://thumbs.gfycat.com/BlackandwhiteRareBorderterrier-size_restricted.gif)
 
 ## Contribute
 ### Bugs & Features
