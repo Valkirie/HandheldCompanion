@@ -58,10 +58,12 @@ Quicktools profile TDP motion settings with Borderlands Pre-Sequel.
 
 Virtual touchpad on top of your gaming sessions. The virtual touchpad is used to mimic the DualShock 4 physical touchpad and grants maximum compatibility with PS Now, PS Remote software suites and games that make specific use of the Steampad touchpads.
 
-![Touchpad](https://user-images.githubusercontent.com/14330834/184550796-24f86f7a-af58-461d-b7c2-eb0d7735f5d5.gif)
-Virtual Touchpad input demonstration with [VSCView](https://github.com/Nielk1/VSCView)
+![Touchpad](https://thumbs.gfycat.com/DiscreteJollyBluemorphobutterfly-size_restricted.gif)
+
+Virtual Touchpad input demonstration with [PS Remote Play](https://remoteplay.dl.playstation.net/remoteplay/lang/en/)
 
 ![Example02](https://user-images.githubusercontent.com/14330834/184550793-d81e2ec9-0271-4aae-bc44-7aeb393631ea.png)
+
 PS Remote Play, The Last of Us Part 2
 
 ### 3D Controller
