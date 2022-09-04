@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using HandheldCompanion.Views;
 using SharpDX.XInput;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 
 namespace HandheldCompanion.Managers
 {
-    public class ControllerManager
+    public class ControllerManager : Manager
     {
         private Dictionary<string, ControllerEx> controllers;
         private List<PnPDeviceEx> devices = new();
@@ -17,7 +18,7 @@ namespace HandheldCompanion.Managers
         public event ControllerUnpluggedEventHandler ControllerUnplugged;
         public delegate void ControllerUnpluggedEventHandler(ControllerEx controller);
 
-        public ControllerManager()
+        public ControllerManager() : base()
         {
             controllers = new();
 
@@ -25,13 +26,7 @@ namespace HandheldCompanion.Managers
             MainWindow.systemManager.XInputRemoved += SystemManager_XInputUpdated;
         }
 
-        public void StopListen()
-        {
-            MainWindow.systemManager.XInputArrived -= SystemManager_XInputUpdated;
-            MainWindow.systemManager.XInputRemoved -= SystemManager_XInputUpdated;
-        }
-
-        public void StartListen()
+        public override void Start()
         {
             lock (devices)
             {
@@ -57,6 +52,19 @@ namespace HandheldCompanion.Managers
                     ControllerPlugged?.Invoke(controllerEx);
                 }
             }
+
+            base.Start();
+        }
+
+        public override void Stop()
+        {
+            if (!IsInitialized)
+                return;
+
+            MainWindow.systemManager.XInputArrived -= SystemManager_XInputUpdated;
+            MainWindow.systemManager.XInputRemoved -= SystemManager_XInputUpdated;
+
+            base.Stop();
         }
 
         private void SystemManager_XInputRemoved(PnPDeviceEx device)

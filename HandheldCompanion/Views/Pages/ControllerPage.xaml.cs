@@ -41,25 +41,38 @@ namespace HandheldCompanion.Views.Pages
         {
             InitializeComponent();
 
+            // initialize components
             foreach (HIDmode mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.NoController))
                 cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
 
-            // pull Hidmode
-            cB_HidMode.SelectedIndex = Properties.Settings.Default.HIDmode;
-        }
-
-        public ControllerPage(string Tag) : this()
-        {
-            this.Tag = Tag;
-
             MainWindow.pipeClient.ServerMessage += OnServerMessage;
             MainWindow.serviceManager.Updated += OnServiceUpdate;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // initialize controller manager
             controllerManager = new ControllerManager();
             controllerManager.ControllerPlugged += ControllerPlugged;
             controllerManager.ControllerUnplugged += ControllerUnplugged;
-            controllerManager.StartListen();
+            controllerManager.Start();
+        }
+
+        public ControllerPage(string Tag) : this()
+        {
+            this.Tag = Tag;
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                switch (name)
+                {
+                    case "HIDmode":
+                        cB_HidMode.SelectedIndex = Convert.ToInt32(value);
+                        cB_HidMode_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        break;
+                }
+            });
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -70,7 +83,7 @@ namespace HandheldCompanion.Views.Pages
         {
             MainWindow.pipeClient.ServerMessage -= OnServerMessage;
             MainWindow.serviceManager.Updated -= OnServiceUpdate;
-            controllerManager.StopListen();
+            controllerManager.Stop();
         }
 
         private async void OnServiceUpdate(ServiceControllerStatus status, int mode)
@@ -277,6 +290,11 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.pipeClient?.SendMessage(settings);
 
             UpdateController();
+
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
         }
 
         private void B_ServiceSwitch_Click(object sender, RoutedEventArgs e)
@@ -305,16 +323,6 @@ namespace HandheldCompanion.Views.Pages
         {
             PipeClientSettings settings = new PipeClientSettings("HIDstrength", SliderStrength.Value);
             MainWindow.pipeClient?.SendMessage(settings);
-        }
-
-        private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = true;
-        }
-
-        private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = false;
         }
 
         private ControllerEx currentController;

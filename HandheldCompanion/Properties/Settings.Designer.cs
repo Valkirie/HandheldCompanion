@@ -12,7 +12,7 @@ namespace HandheldCompanion.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.2.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.3.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -206,9 +206,9 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("300")]
-        public int OverlayControllerSize {
+        public double OverlayControllerSize {
             get {
-                return ((int)(this["OverlayControllerSize"]));
+                return ((double)(this["OverlayControllerSize"]));
             }
             set {
                 this["OverlayControllerSize"] = value;
@@ -266,9 +266,9 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("250")]
-        public int OverlayTrackpadsSize {
+        public double OverlayTrackpadsSize {
             get {
-                return ((int)(this["OverlayTrackpadsSize"]));
+                return ((double)(this["OverlayTrackpadsSize"]));
             }
             set {
                 this["OverlayTrackpadsSize"] = value;
@@ -277,7 +277,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("en-US")]
         public string CurrentCulture {
             get {
                 return ((string)(this["CurrentCulture"]));
@@ -620,6 +620,78 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["OverlayControllerOpacity"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#00000000")]
+        public string OverlayControllerBackgroundColor {
+            get {
+                return ((string)(this["OverlayControllerBackgroundColor"]));
+            }
+            set {
+                this["OverlayControllerBackgroundColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MainWindowPrevState {
+            get {
+                return ((int)(this["MainWindowPrevState"]));
+            }
+            set {
+                this["MainWindowPrevState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int ServiceStartMode {
+            get {
+                return ((int)(this["ServiceStartMode"]));
+            }
+            set {
+                this["ServiceStartMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FirstStart {
+            get {
+                return ((bool)(this["FirstStart"]));
+            }
+            set {
+                this["FirstStart"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int MainWindowBackdrop {
+            get {
+                return ((int)(this["MainWindowBackdrop"]));
+            }
+            set {
+                this["MainWindowBackdrop"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseEnergyStar {
+            get {
+                return ((bool)(this["UseEnergyStar"]));
+            }
+            set {
+                this["UseEnergyStar"] = value;
             }
         }
     }

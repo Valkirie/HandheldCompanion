@@ -22,7 +22,7 @@ namespace ControllerCommon.Managers
         Uninstalled = 8
     }
 
-    public class ServiceManager
+    public class ServiceManager : Manager
     {
         private string ServiceName;
         private string DisplayName;
@@ -77,15 +77,22 @@ namespace ControllerCommon.Managers
             MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
         }
 
-        public void Start()
+        public override void Start()
         {
             MonitorTimer.Elapsed += MonitorHelper;
+
+            base.Start();
         }
 
-        public void Stop()
+        public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             MonitorTimer.Elapsed -= MonitorHelper;
             MonitorTimer = null;
+
+            base.Stop();
         }
 
         public bool Exists()

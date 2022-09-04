@@ -111,15 +111,5 @@ namespace HandheldCompanion.Views.Pages
 
             return SteeringLinearityPoints;
         }
-
-        private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = true;
-        }
-
-        private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = false;
-        }
     }
 }

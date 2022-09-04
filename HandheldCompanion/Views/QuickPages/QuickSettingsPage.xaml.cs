@@ -3,7 +3,6 @@ using HandheldCompanion.Views.Windows;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace HandheldCompanion.Views.QuickPages
 {
@@ -23,10 +22,10 @@ namespace HandheldCompanion.Views.QuickPages
             InitializeComponent();
             Initialized = true;
 
-            QuickTools.brightnessControl.BrightnessChanged += BrightnessControl_BrightnessChanged;
+            OverlayQuickTools.brightnessControl.BrightnessChanged += BrightnessControl_BrightnessChanged;
 
             // get current system brightness
-            SliderBrightness.Value = QuickTools.brightnessControl.GetBrightness();
+            SliderBrightness.Value = OverlayQuickTools.brightnessControl.GetBrightness();
 
             // get current system volume
             DevEnum = new MMDeviceEnumerator();
@@ -59,16 +58,6 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
-        private void Scrolllock_MouseEnter(object sender, MouseEventArgs e)
-        {
-            QuickTools.scrollLock = true;
-        }
-
-        private void Scrolllock_MouseLeave(object sender, MouseEventArgs e)
-        {
-            QuickTools.scrollLock = false;
-        }
-
         private void SliderBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (!Initialized)
@@ -79,7 +68,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (IgnoreMe)
                 return;
 
-            QuickTools.brightnessControl.SetBrightness(SliderBrightness.Value);
+            OverlayQuickTools.brightnessControl.SetBrightness(SliderBrightness.Value);
             //SetMonitorBrightness(mainMonitor, SliderBrightness.Value / 100);
         }
 

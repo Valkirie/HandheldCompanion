@@ -49,15 +49,15 @@
                 <Label Content="{x:Static resx:Resources.SettingsPage_GeneralOptions}" FontWeight="SemiBold"></Label>
 
                 <!-- Auto-start application -->
-                <Border                      
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                <Border     
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -69,20 +69,20 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_AutoStart" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_AutoStart_Toggled"/>
+                        <ui:ToggleSwitch Name="Toggle_AutoStart" Grid.Column="1" Toggled="Toggle_AutoStart_Toggled"/>
                     </Grid>
                 </Border>
 
                 <!-- Open application in background -->
                 <Border  
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -94,20 +94,20 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_Background" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_Background_Toggled"/>
+                        <ui:ToggleSwitch Name="Toggle_Background" Grid.Column="1" Toggled="Toggle_Background_Toggled"/>
                     </Grid>
                 </Border>
 
                 <!-- Close minimizes -->
                 <Border  
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -119,20 +119,20 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_CloseMinimizes" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_CloseMinimizes_Toggled"/>
+                        <ui:ToggleSwitch Name="Toggle_CloseMinimizes" Grid.Column="1" Toggled="Toggle_CloseMinimizes_Toggled"/>
                     </Grid>
                 </Border>
 
                 <!-- Application theme -->
                 <Border  
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -144,9 +144,40 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:RadioButtons Name="cB_Theme" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="cB_Theme_SelectionChanged">
+                        <ui:RadioButtons Name="cB_Theme" Grid.Column="1" MaxColumns="2" HorizontalAlignment="Right" SelectionChanged="cB_Theme_SelectionChanged">
                             <Label Content="{x:Static resx:Resources.SettingsPage_ThemeLight}"/>
                             <Label Content="{x:Static resx:Resources.SettingsPage_ThemeDark}"/>
+                        </ui:RadioButtons>
+                    </Grid>
+                </Border>
+
+                <!-- Application theme -->
+                <Border  
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    Visibility="Collapsed">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Use Acrylic backdrop" FontSize="14"/>
+                                <TextBlock Text="The application will use acrylic backdrop" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:RadioButtons Name="cB_Backdrop" Grid.Column="1" MaxColumns="2" HorizontalAlignment="Right" SelectionChanged="cB_Backdrop_SelectionChanged">
+                            <Label Content="None"/>
+                            <Label Content="Mica"/>
+                            <Label Content="Tabbed"/>
+                            <Label Content="Acrylic"/>
                         </ui:RadioButtons>
                     </Grid>
                 </Border>
@@ -159,8 +190,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -172,7 +203,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:RadioButtons Name="cB_Language" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" SelectionChanged="cB_Language_SelectionChanged"/>
+                        <ui:RadioButtons Name="cB_Language" Grid.Column="1" MaxColumns="2" HorizontalAlignment="Right" SelectionChanged="cB_Language_SelectionChanged"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
@@ -189,8 +220,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -202,7 +233,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_Notification" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_Notification_Toggled"/>
+                        <ui:ToggleSwitch Name="Toggle_Notification" Grid.Column="1" Toggled="Toggle_Notification_Toggled"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
@@ -219,8 +250,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -232,7 +263,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:RadioButtons Name="cB_StartupType" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1" SelectionChanged="cB_StartupType_SelectionChanged" />
+                        <ui:RadioButtons Name="cB_StartupType" Grid.Column="1" MaxColumns="1" HorizontalAlignment="Right" SelectionChanged="cB_StartupType_SelectionChanged" />
                     </Grid>
                 </Border>
 
@@ -244,8 +275,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -257,7 +288,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_ServiceStartup" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceStartup_Toggled" IsEnabled="False" IsOn="True">
+                        <ui:ToggleSwitch Name="Toggle_ServiceStartup" Grid.Column="1" Toggled="Toggle_ServiceStartup_Toggled" IsEnabled="False" IsOn="True">
 
                         </ui:ToggleSwitch>
                     </Grid>
@@ -271,8 +302,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -284,7 +315,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_ServiceShutdown" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_ServiceShutdown_Toggled" IsEnabled="False" IsOn="True"/>
+                        <ui:ToggleSwitch Name="Toggle_ServiceShutdown" Grid.Column="1" Toggled="Toggle_ServiceShutdown_Toggled" IsEnabled="False" IsOn="True"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
@@ -301,8 +332,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -341,8 +372,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -384,8 +415,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -397,7 +428,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_SensorPlacementUpsideDown" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_SensorPlacementUpsideDown_Toggled" IsEnabled="False"/>
+                        <ui:ToggleSwitch Name="Toggle_SensorPlacementUpsideDown" Grid.Column="1" Toggled="Toggle_SensorPlacementUpsideDown_Toggled" IsEnabled="False"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
@@ -405,7 +436,32 @@
             <!-- Power options -->
             <ui:SimpleStackPanel Spacing="6">
                 <Label Content="Power options" FontWeight="SemiBold"></Label>
-                
+
+                <!-- EnergyStar -->
+                <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEA95;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="EcoQoS" FontSize="14"/>
+                                <TextBlock Text="Throttle inactive or background processes and applications to improve energy efficency" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch Name="Toggle_EnergyStar" Grid.Column="1" Toggled="Toggle_EnergyStar_Toggled"/>
+                    </Grid>
+                </Border>
+
                 <!-- Configurable TDP -->
                 <Border                      
                         Padding="15,12,12,12"
@@ -414,8 +470,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -427,7 +483,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_cTDP" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_cTDP_Toggled"/>
+                        <ui:ToggleSwitch Name="Toggle_cTDP" Grid.Column="1" Toggled="Toggle_cTDP_Toggled"/>
                     </Grid>
                 </Border>
 
@@ -440,8 +496,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="1.5*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -453,7 +509,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:NumberBox Name="NumberBox_TDPMin" Grid.Column="1" VerticalAlignment="Center" Minimum="5" Maximum="{Binding ElementName=NumberBox_TDPMax, Path=Value}" SpinButtonPlacementMode="Inline" Value="0" ValueChanged="NumberBox_TDPMin_ValueChanged"></ui:NumberBox>
+                        <ui:NumberBox Name="NumberBox_TDPMin" Grid.Column="1" VerticalAlignment="Center" Minimum="5" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TDPMin_ValueChanged"></ui:NumberBox>
                     </Grid>
                 </Border>
 
@@ -466,8 +522,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="1.5*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -479,7 +535,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:NumberBox Name="NumberBox_TDPMax" Grid.Column="1" VerticalAlignment="Center" Minimum="{Binding ElementName=NumberBox_TDPMin, Path=Value}" Maximum="64" SpinButtonPlacementMode="Inline" Value="0" ValueChanged="NumberBox_TDPMax_ValueChanged"></ui:NumberBox>
+                        <ui:NumberBox Name="NumberBox_TDPMax" Grid.Column="1" VerticalAlignment="Center" Maximum="64" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TDPMax_ValueChanged"></ui:NumberBox>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>

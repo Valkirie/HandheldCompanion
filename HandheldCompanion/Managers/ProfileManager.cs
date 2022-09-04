@@ -15,7 +15,7 @@ using static ControllerCommon.Utils.ProcessUtils;
 
 namespace HandheldCompanion.Managers
 {
-    public class ProfileManager
+    public class ProfileManager : Manager
     {
         private Dictionary<bool, uint> CRCs = new Dictionary<bool, uint>()
         {
@@ -45,14 +45,14 @@ namespace HandheldCompanion.Managers
 
         private string path;
 
-        public ProfileManager()
+        public ProfileManager() : base()
         {
             MainWindow.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
             MainWindow.processManager.ProcessStarted += ProcessManager_ProcessStarted;
             MainWindow.processManager.ProcessStopped += ProcessManager_ProcessStopped;
         }
 
-        public void Start(string filter = "*.json")
+        public override void Start()
         {
             path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "profiles");
 
@@ -87,18 +87,25 @@ namespace HandheldCompanion.Managers
             profileWatcher.Deleted += ProfileDeleted;
 
             // process existing profiles
-            string[] fileEntries = Directory.GetFiles(path, filter, SearchOption.AllDirectories);
+            string[] fileEntries = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
                 ProcessProfile(fileName);
 
             // warn owner
             Ready?.Invoke();
+
+            base.Start();
         }
 
-        public void Stop()
+        public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             profileWatcher.Deleted -= ProfileDeleted;
             profileWatcher.Dispose();
+
+            base.Stop();
         }
 
         public bool Contains(Profile profile)
@@ -172,7 +179,7 @@ namespace HandheldCompanion.Managers
             catch (Exception) { }
         }
 
-        private void ProcessManager_ForegroundChanged(ProcessEx processEx)
+        private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
             try
             {

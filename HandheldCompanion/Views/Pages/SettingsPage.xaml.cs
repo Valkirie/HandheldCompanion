@@ -3,6 +3,7 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using ModernWpf;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Windows.Foundation;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
@@ -24,12 +26,6 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class SettingsPage : Page
     {
-        private bool Initialized;
-        public Dictionary<string, string> Settings = new Dictionary<string, string>();
-
-        public event SettingValueChangedEventHandler SettingValueChanged;
-        public delegate void SettingValueChangedEventHandler(string name, object value);
-
         public SettingsPage()
         {
             InitializeComponent();
@@ -43,54 +39,77 @@ namespace HandheldCompanion.Views.Pages
             cB_Language.Items.Add(new CultureInfo("zh-CN"));
             cB_Language.Items.Add(new CultureInfo("zh-Hant"));
 
-            // pull settings
-            string CurrentCulture = Thread.CurrentThread.CurrentCulture.Name;
-            switch (CurrentCulture)
-            {
-                // unsupported languages
-                default:
-                    cB_Language.SelectedItem = new CultureInfo("en-US");
-                    break;
-                // supported languages
-                case "fr-FR":
-                case "en-US":
-                case "zh-CN":
-                case "zh-Hant":
-                    cB_Language.SelectedItem = new CultureInfo(CurrentCulture);
-                    break;
-            }
-
-            cB_Theme.SelectedIndex = Properties.Settings.Default.MainWindowTheme;
-            cB_SensorSelection.SelectedIndex = Properties.Settings.Default.SensorSelection;
-
-            Toggle_AutoStart.IsOn = Properties.Settings.Default.RunAtStartup;
-            Toggle_Background.IsOn = Properties.Settings.Default.StartMinimized;
-            Toggle_CloseMinimizes.IsOn = Properties.Settings.Default.CloseMinimises;
-            Toggle_Notification.IsOn = Properties.Settings.Default.ToastEnable;
-            Toggle_ServiceStartup.IsOn = Properties.Settings.Default.StartServiceWithCompanion;
-            Toggle_ServiceShutdown.IsOn = Properties.Settings.Default.HaltServiceWithCompanion;
-            Toggle_SensorPlacementUpsideDown.IsOn = Properties.Settings.Default.SensorPlacementUpsideDown;
-            Toggle_cTDP.IsOn = Properties.Settings.Default.ConfigurableTDPOverride;
-
-            NumberBox_TDPMin.Value = Properties.Settings.Default.ConfigurableTDPOverrideDown;
-            NumberBox_TDPMax.Value = Properties.Settings.Default.ConfigurableTDPOverrideUp;
-
             // call function
-            ApplyTheme((ApplicationTheme)cB_Theme.SelectedIndex);
-            UpdateUI_SensorPlacement(Properties.Settings.Default.SensorPlacement);
             UpdateDevice(null);
-
-            // we are ready !
-            Initialized = true;
 
             // initialize manager(s)
             MainWindow.serviceManager.Updated += OnServiceUpdate;
             MainWindow.updateManager.Updated += UpdateManager_Updated;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
         public SettingsPage(string Tag) : this()
         {
             this.Tag = Tag;
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                switch (name)
+                {
+                    case "MainWindowTheme":
+                        cB_Theme.SelectedIndex = Convert.ToInt32(value);
+                        cB_Theme_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        break;
+                    case "MainWindowBackdrop":
+                        cB_Backdrop.SelectedIndex = Convert.ToInt32(value);
+                        cB_Backdrop_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        break;
+                    case "SensorSelection":
+                        cB_SensorSelection.SelectedIndex = Convert.ToInt32(value);
+                        cB_SensorSelection_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        break;
+                    case "RunAtStartup":
+                        Toggle_AutoStart.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "StartMinimized":
+                        Toggle_Background.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "CloseMinimises":
+                        Toggle_CloseMinimizes.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "ToastEnable":
+                        Toggle_Notification.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "StartServiceWithCompanion":
+                        Toggle_ServiceStartup.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "HaltServiceWithCompanion":
+                        Toggle_ServiceShutdown.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "SensorPlacementUpsideDown":
+                        Toggle_SensorPlacementUpsideDown.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "ConfigurableTDPOverride":
+                        Toggle_cTDP.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "ConfigurableTDPOverrideDown":
+                        NumberBox_TDPMin.Value = Convert.ToDouble(value);
+                        break;
+                    case "ConfigurableTDPOverrideUp":
+                        NumberBox_TDPMax.Value = Convert.ToDouble(value);
+                        break;
+                    case "CurrentCulture":
+                        cB_Language.SelectedItem = new CultureInfo((string)value);
+                        cB_Language_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        break;
+                    case "SensorPlacement":
+                        UpdateUI_SensorPlacement(Convert.ToInt32(value));
+                        break;
+                }
+            });
         }
 
         public void UpdateDevice(PnPDevice device)
@@ -100,8 +119,6 @@ namespace HandheldCompanion.Views.Pages
                 SensorInternal.IsEnabled = MainWindow.handheldDevice.hasInternal;
                 SensorExternal.IsEnabled = MainWindow.handheldDevice.hasExternal;
             });
-
-            cB_SensorSelection_SelectionChanged(null, null);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -116,26 +133,18 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_AutoStart_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("autostart", Toggle_AutoStart.IsOn);
-
-            if (!Initialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.RunAtStartup = Toggle_AutoStart.IsOn;
-            Properties.Settings.Default.Save();
+            SettingsManager.SetProperty("RunAtStartup", Toggle_AutoStart.IsOn);
         }
 
         private void Toggle_Background_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("start_minimized", Toggle_Background.IsOn);
-
-            if (!Initialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.StartMinimized = Toggle_Background.IsOn;
-            Properties.Settings.Default.Save();
+            SettingsManager.SetProperty("StartMinimized", Toggle_Background.IsOn);
         }
 
         private void cB_StartupType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -163,113 +172,110 @@ namespace HandheldCompanion.Views.Pages
             if (!cB_StartupType.IsEnabled)
                 return;
 
-            // raise event
-            SettingValueChanged?.Invoke("service_startup_type", mode);
+            SettingsManager.SetProperty("ServiceStartMode", cB_StartupType.SelectedIndex);
         }
 
         private void Toggle_CloseMinimizes_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("close_minimizes", Toggle_CloseMinimizes.IsOn);
-
-            if (!Initialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.CloseMinimises = Toggle_CloseMinimizes.IsOn;
-            Properties.Settings.Default.Save();
+            SettingsManager.SetProperty("CloseMinimises", Toggle_CloseMinimizes.IsOn);
         }
 
         private void UpdateManager_Updated(UpdateStatus status, UpdateFile updateFile, object value)
         {
-
-            switch (status)
+            this.Dispatcher.Invoke(() =>
             {
-                case UpdateStatus.Failed: // lazy ?
-                case UpdateStatus.Updated:
-                case UpdateStatus.Initialized:
-                    {
-                        if (updateFile != null)
+                switch (status)
+                {
+                    case UpdateStatus.Failed: // lazy ?
+                    case UpdateStatus.Updated:
+                    case UpdateStatus.Initialized:
                         {
-                            updateFile.updateDownload.Visibility = Visibility.Visible;
+                            if (updateFile != null)
+                            {
+                                updateFile.updateDownload.Visibility = Visibility.Visible;
 
-                            updateFile.updatePercentage.Visibility = Visibility.Collapsed;
-                            updateFile.updateInstall.Visibility = Visibility.Collapsed;
+                                updateFile.updatePercentage.Visibility = Visibility.Collapsed;
+                                updateFile.updateInstall.Visibility = Visibility.Collapsed;
+                            }
+                            else
+                            {
+                                LabelUpdate.Content = Properties.Resources.SettingsPage_UpToDate;
+                                LabelUpdateDate.Content = Properties.Resources.SettingsPage_LastChecked + MainWindow.updateManager.GetTime();
+
+                                LabelUpdateDate.Visibility = Visibility.Visible;
+                                GridUpdateSymbol.Visibility = Visibility.Visible;
+                                ProgressBarUpdate.Visibility = Visibility.Collapsed;
+                                B_CheckUpdate.IsEnabled = true;
+                            }
                         }
-                        else
-                        {
-                            LabelUpdate.Content = Properties.Resources.SettingsPage_UpToDate;
-                            LabelUpdateDate.Content = Properties.Resources.SettingsPage_LastChecked + MainWindow.updateManager.GetTime();
+                        break;
 
-                            LabelUpdateDate.Visibility = Visibility.Visible;
-                            GridUpdateSymbol.Visibility = Visibility.Visible;
+                    case UpdateStatus.CheckingATOM:
+                        {
+                            LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateCheck;
+
+                            GridUpdateSymbol.Visibility = Visibility.Collapsed;
+                            LabelUpdateDate.Visibility = Visibility.Collapsed;
+                            ProgressBarUpdate.Visibility = Visibility.Visible;
+                            B_CheckUpdate.IsEnabled = false;
+                        }
+                        break;
+
+                    case UpdateStatus.Ready:
+                        {
                             ProgressBarUpdate.Visibility = Visibility.Collapsed;
-                            B_CheckUpdate.IsEnabled = true;
+
+                            Dictionary<string, UpdateFile> updateFiles = (Dictionary<string, UpdateFile>)value;
+                            LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateAvailable;
+
+                            foreach (UpdateFile update in updateFiles.Values)
+                            {
+                                var border = update.Draw();
+
+                                // Set download button action
+                                update.updateDownload.Click += (sender, e) =>
+                                {
+                                    MainWindow.updateManager.DownloadUpdateFile(update);
+                                };
+
+                                // Set button action
+                                update.updateInstall.Click += (sender, e) =>
+                                {
+                                    MainWindow.updateManager.InstallUpdate(update);
+                                };
+
+                                CurrentUpdates.Children.Add(border);
+                            }
                         }
-                    }
-                    break;
+                        break;
 
-                case UpdateStatus.CheckingATOM:
-                    {
-                        LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateCheck;
-
-                        GridUpdateSymbol.Visibility = Visibility.Collapsed;
-                        LabelUpdateDate.Visibility = Visibility.Collapsed;
-                        ProgressBarUpdate.Visibility = Visibility.Visible;
-                        B_CheckUpdate.IsEnabled = false;
-                    }
-                    break;
-
-                case UpdateStatus.Ready:
-                    {
-                        ProgressBarUpdate.Visibility = Visibility.Collapsed;
-
-                        Dictionary<string, UpdateFile> updateFiles = (Dictionary<string, UpdateFile>)value;
-                        LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateAvailable;
-
-                        foreach (UpdateFile update in updateFiles.Values)
+                    case UpdateStatus.Download:
                         {
-                            var border = update.Draw();
-
-                            // Set download button action
-                            update.updateDownload.Click += (sender, e) =>
-                            {
-                                MainWindow.updateManager.DownloadUpdateFile(update);
-                            };
-
-                            // Set button action
-                            update.updateInstall.Click += (sender, e) =>
-                            {
-                                MainWindow.updateManager.InstallUpdate(update);
-                            };
-
-                            CurrentUpdates.Children.Add(border);
+                            updateFile.updateDownload.Visibility = Visibility.Collapsed;
+                            updateFile.updatePercentage.Visibility = Visibility.Visible;
                         }
-                    }
-                    break;
+                        break;
 
-                case UpdateStatus.Download:
-                    {
-                        updateFile.updateDownload.Visibility = Visibility.Collapsed;
-                        updateFile.updatePercentage.Visibility = Visibility.Visible;
-                    }
-                    break;
+                    case UpdateStatus.Downloading:
+                        {
+                            int progress = (int)value;
+                            updateFile.updatePercentage.Text = Properties.Resources.SettingsPage_DownloadingPercentage + $"{value} %";
+                        }
+                        break;
 
-                case UpdateStatus.Downloading:
-                    {
-                        int progress = (int)value;
-                        updateFile.updatePercentage.Text = Properties.Resources.SettingsPage_DownloadingPercentage + $"{value} %";
-                    }
-                    break;
+                    case UpdateStatus.Downloaded:
+                        {
+                            updateFile.updateInstall.Visibility = Visibility.Visible;
 
-                case UpdateStatus.Downloaded:
-                    {
-                        updateFile.updateInstall.Visibility = Visibility.Visible;
-
-                        updateFile.updateDownload.Visibility = Visibility.Collapsed;
-                        updateFile.updatePercentage.Visibility = Visibility.Collapsed;
-                    }
-                    break;
-            }
+                            updateFile.updateDownload.Visibility = Visibility.Collapsed;
+                            updateFile.updatePercentage.Visibility = Visibility.Collapsed;
+                        }
+                        break;
+                }
+            });
         }
 
         private void B_CheckUpdate_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -279,47 +285,35 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_ServiceShutdown_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("haltservice_onclose", Toggle_ServiceShutdown.IsOn);
-
-            if (!Initialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.HaltServiceWithCompanion = Toggle_ServiceShutdown.IsOn;
-            Properties.Settings.Default.Save();
+            SettingsManager.SetProperty("HaltServiceWithCompanion", Toggle_ServiceShutdown.IsOn);
         }
 
         private void Toggle_ServiceStartup_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("startservice_onstart", Toggle_ServiceStartup.IsOn);
-
-            if (!Initialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.StartServiceWithCompanion = Toggle_ServiceStartup.IsOn;
-            Properties.Settings.Default.Save();
+            SettingsManager.SetProperty("StartServiceWithCompanion", Toggle_ServiceStartup.IsOn);
         }
 
         private void cB_Language_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             CultureInfo culture = (CultureInfo)cB_Language.SelectedItem;
 
-            // raise event
-            SettingValueChanged?.Invoke("language", culture.Name);
-
-            if (!Initialized)
+            if (culture is null)
                 return;
 
-            if (cB_Language.SelectedItem == null)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            // skip if setting is identical to current
-            if (culture.Name == Properties.Settings.Default.CurrentCulture)
-                return;
+            SettingsManager.SetProperty("CurrentCulture", culture.Name);
 
-            Properties.Settings.Default.CurrentCulture = culture.Name;
-            Properties.Settings.Default.Save();
+            // prevent message from being displayed again...
+            if (culture.Name == CultureInfo.CurrentCulture.Name)
+                return;
 
             _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_AppLanguageWarning}",
                 Properties.Resources.SettingsPage_AppLanguageWarningDesc,
@@ -328,43 +322,93 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_Notification_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("toast_notification", Toggle_Notification.IsOn);
-
-            if (!Initialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.ToastEnable = Toggle_Notification.IsOn;
-            Properties.Settings.Default.Save();
+            SettingsManager.SetProperty("ToastEnable", Toggle_Notification.IsOn);
         }
 
         private void cB_Theme_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("theme", cB_Theme.SelectedIndex);
-
-            if (!Initialized)
-                return;
-
             if (cB_Theme.SelectedIndex == -1)
                 return;
 
-            // skip if setting is identical to current
-            if (cB_Theme.SelectedIndex == Properties.Settings.Default.MainWindowTheme)
+            ThemeManager.Current.ApplicationTheme = (ApplicationTheme)cB_Theme.SelectedIndex;
+
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.MainWindowTheme = cB_Theme.SelectedIndex;
-            Properties.Settings.Default.Save();
+            SettingsManager.SetProperty("MainWindowTheme", cB_Theme.SelectedIndex);
+        }
 
-            ApplyTheme((ApplicationTheme)cB_Theme.SelectedIndex);
+        private void cB_Backdrop_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cB_Backdrop.SelectedIndex == -1)
+                return;
+
+            switch (cB_Backdrop.SelectedIndex)
+            {
+                case 0: // "None":
+                    WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), BackdropType.None);
+                    WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), false);
+                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), false);
+                    break;
+                case 1: // "Mica":
+                    WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), BackdropType.Mica);
+                    WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), false);
+                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), false);
+                    break;
+                case 2: // "Tabbed":
+                    WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), BackdropType.Tabbed);
+                    WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), false);
+                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), false);
+                    break;
+                case 3: // "Acrylic":
+                    WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), BackdropType.Acrylic);
+                    WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), true);
+                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), true);
+                    break;
+            }
+
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("MainWindowBackdrop", cB_Backdrop.SelectedIndex);
+        }
+
+        private async void Toggle_EnergyStar_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            if (Toggle_EnergyStar.IsOn)
+            {
+                // todo: localize me !
+                Task<ContentDialogResult> result = Dialog.ShowAsync(
+                    "Warning",
+                    "EcoQoS is a new Quality of Service (QoS) level introduced to Windows, leading to better energy efficiency. Use at your own risk.",
+                    ContentDialogButton.Primary, "Cancel", Properties.Resources.ProfilesPage_OK);
+
+                await result; // sync call
+
+                switch (result.Result)
+                {
+                    case ContentDialogResult.Primary:
+                        break;
+                    default:
+                    case ContentDialogResult.None:
+                        // restore previous state
+                        Toggle_EnergyStar.IsOn = false;
+                        return;
+                }
+            }
+
+            SettingsManager.SetProperty("UseEnergyStar", Toggle_EnergyStar.IsOn);
         }
 
         private async void Toggle_cTDP_Toggled(object sender, RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("configurabletdp_override", Toggle_cTDP.IsOn);
-
-            if (!Initialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
             if (Toggle_cTDP.IsOn)
@@ -372,7 +416,7 @@ namespace HandheldCompanion.Views.Pages
                 // todo: localize me !
                 Task<ContentDialogResult> result = Dialog.ShowAsync(
                     "Warning",
-                    "Altering minimum and maximum CPU power values might cause instabilities. Product warranties may not apply if the processor is operated beyond its specifications.",
+                    "Altering minimum and maximum CPU power values might cause instabilities. Product warranties may not apply if the processor is operated beyond its specifications. Use at your own risk.",
                     ContentDialogButton.Primary, "Cancel", Properties.Resources.ProfilesPage_OK);
 
                 await result; // sync call
@@ -389,8 +433,9 @@ namespace HandheldCompanion.Views.Pages
                 }
             }
 
-            Properties.Settings.Default.ConfigurableTDPOverride = Toggle_cTDP.IsOn;
-            Properties.Settings.Default.Save();
+            SettingsManager.SetProperty("ConfigurableTDPOverride", Toggle_cTDP.IsOn);
+            SettingsManager.SetProperty("ConfigurableTDPOverrideUp", NumberBox_TDPMax.Value);
+            SettingsManager.SetProperty("ConfigurableTDPOverrideDown", NumberBox_TDPMin.Value);
         }
 
         private void NumberBox_TDPMax_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
@@ -399,14 +444,12 @@ namespace HandheldCompanion.Views.Pages
             if (double.IsNaN(value))
                 return;
 
-            // raise event
-            SettingValueChanged?.Invoke("configurabletdp_up", value);
+            NumberBox_TDPMin.Maximum = value;
 
-            if (!Initialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.ConfigurableTDPOverrideUp = value;
-            Properties.Settings.Default.Save();
+            SettingsManager.SetProperty("ConfigurableTDPOverrideUp", value);
         }
 
         private void NumberBox_TDPMin_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
@@ -415,79 +458,50 @@ namespace HandheldCompanion.Views.Pages
             if (double.IsNaN(value))
                 return;
 
-            // raise event
-            SettingValueChanged?.Invoke("configurabletdp_down", value);
+            NumberBox_TDPMax.Minimum = value;
 
-            if (!Initialized)
+            if (!SettingsManager.IsInitialized)
                 return;
 
-            Properties.Settings.Default.ConfigurableTDPOverrideDown = value;
-            Properties.Settings.Default.Save();
-        }
-
-        public void ApplyTheme(ApplicationTheme Theme)
-        {
-            ThemeManager.Current.ApplicationTheme = Theme;
-        }
-
-        private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = true;
-        }
-
-        private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = false;
+            SettingsManager.SetProperty("ConfigurableTDPOverrideDown", value);
         }
 
         private void cB_SensorSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("sensor_selection", cB_SensorSelection.SelectedIndex);
-
-            if (cB_SensorSelection.SelectedIndex == -1)
-                return;
-
+            // update dependencies
             Toggle_SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == 1 ? true : false;
             SensorPlacementVisualisation.IsEnabled = cB_SensorSelection.SelectedIndex == 1 ? true : false;
-
-            if (!Initialized)
-                return;
-
-            // skip if setting is identical to current
-            if (cB_SensorSelection.SelectedIndex == Properties.Settings.Default.SensorSelection)
-                return;
-
-            // save settings
-            Properties.Settings.Default.SensorSelection = cB_SensorSelection.SelectedIndex;
-            Properties.Settings.Default.Save();
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
             MainWindow.pipeClient.SendMessage(settings);
+
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
         }
 
         private void SensorPlacement_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             int Tag = int.Parse((string)((Button)sender).Tag);
 
-            // raise event
-            SettingValueChanged?.Invoke("sensor_placement", Tag);
-
             UpdateUI_SensorPlacement(Tag);
-
-            // save settings
-            Properties.Settings.Default.SensorPlacement = Tag;
-            Properties.Settings.Default.Save();
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorPlacement", Tag);
             MainWindow.pipeClient.SendMessage(settings);
+
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("SensorPlacement", Tag);
         }
 
         private void UpdateUI_SensorPlacement(int SensorPlacement)
         {
             foreach (SimpleStackPanel panel in SensorPlacementVisualisation.Children)
+            {
                 foreach (Button button in panel.Children)
                 {
                     if (int.Parse((string)button.Tag) == SensorPlacement)
@@ -495,24 +509,20 @@ namespace HandheldCompanion.Views.Pages
                     else
                         button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
                 }
-
+            }
         }
         private void Toggle_SensorPlacementUpsideDown_Toggled(object sender, System.Windows.RoutedEventArgs e)
         {
-            // raise event
-            SettingValueChanged?.Invoke("sensor_upsidedown", Toggle_SensorPlacementUpsideDown.IsOn);
-
-            if (!Initialized)
-                return;
-
-            Properties.Settings.Default.SensorPlacementUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
-            Properties.Settings.Default.Save();
-
             bool isUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorPlacementUpsideDown", isUpsideDown);
             MainWindow.pipeClient?.SendMessage(settings);
+
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("SensorPlacementUpsideDown", isUpsideDown);
         }
 
         #region serviceManager

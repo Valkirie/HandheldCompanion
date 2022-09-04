@@ -1,9 +1,6 @@
-﻿using ControllerCommon;
-using ControllerCommon.Managers;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
-using System;
 using System.Globalization;
-using System.IO;
 using System.Threading;
 using System.Windows;
 
@@ -14,22 +11,30 @@ namespace HandheldCompanion
     /// </summary>
     public partial class App : Application
     {
-        static MainWindow m_MainWindow;
-        static PipeClient m_PipeClient;
-        static StartupEventArgs m_Arguments;
-
-        static Mutex mutex = new Mutex(true, "HandheldCompanion");
-        static AutoResetEvent autoEvent = new AutoResetEvent(false);
-
-        [STAThread]
-        private void Main(object sender, StartupEventArgs Arguments)
+        /// <summary>
+        /// Initializes the singleton application object.  This is the first line of authored code
+        /// executed, and as such is the logical equivalent of main() or WinMain().
+        /// </summary>
+        public App()
         {
-            string CurrentCulture = HandheldCompanion.Properties.Settings.Default.CurrentCulture;
+            InitializeComponent();
+        }
+
+        /// <summary>
+        /// Invoked when the application is launched normally by the end user.  Other entry points
+        /// will be used such as when the application is launched to open a specific file.
+        /// </summary>
+        /// <param name="args">Details about the launch request and process.</param>
+        protected override void OnStartup(StartupEventArgs args)
+        {
+            // define culture settings
+            string CurrentCulture = SettingsManager.GetString("CurrentCulture");
             CultureInfo culture = CultureInfo.CurrentCulture;
 
             switch (CurrentCulture)
             {
                 default:
+                    culture = new CultureInfo("en-US");
                     break;
                 case "fr-FR":
                 case "en-US":
@@ -41,47 +46,12 @@ namespace HandheldCompanion
 
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-            if (mutex.WaitOne(TimeSpan.Zero, true))
-            {
-                Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
-
-                // initialize log manager
-                LogManager.Initialize("HandheldCompanion");
-
-                MainWindow wnd = new MainWindow(Arguments);
-                wnd.Show();
-
-                mutex.ReleaseMutex();
-            }
-            else
-            {
-                m_Arguments = Arguments;
-
-                m_PipeClient = new PipeClient("HandheldCompanion");
-                m_PipeClient.Connected += OnServerConnected;
-                m_PipeClient.ServerMessage += OnServerMessage;
-                m_PipeClient.Open();
-
-                // Wait for work method to signal and kill after 4seconds
-                autoEvent.WaitOne(4000);
-                Application.Current.Shutdown();
-            }
-        }
-
-        private static void OnServerMessage(object sender, PipeMessage e)
-        {
-            switch (e.code)
-            {
-                case PipeCode.FORCE_SHUTDOWN:
-                    autoEvent.Set();
-                    break;
-            }
-        }
-
-        private static void OnServerConnected(object sender)
-        {
-            m_PipeClient.SendMessage(new PipeConsoleArgs() { args = m_Arguments.Args });
+            MainWindow = new MainWindow();
+            MainWindow.Show();
+            MainWindow.Activate();
         }
     }
 }

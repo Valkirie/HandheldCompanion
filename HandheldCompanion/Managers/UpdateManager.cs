@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
@@ -121,7 +122,7 @@ namespace HandheldCompanion.Managers
         }
     }
 
-    public class UpdateManager
+    public class UpdateManager : Manager
     {
         private DateTime lastchecked;
         private Assembly assembly;
@@ -137,7 +138,7 @@ namespace HandheldCompanion.Managers
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(UpdateStatus status, UpdateFile update, object value);
 
-        public UpdateManager()
+        public UpdateManager() : base()
         {
             // check assembly
             assembly = Assembly.GetExecutingAssembly();
@@ -358,11 +359,22 @@ namespace HandheldCompanion.Managers
             webClient.DownloadStringAsync(latestHref);
         }
 
-        public void Start()
+        public override void Start()
         {
-            DateTime dateTime = Properties.Settings.Default.UpdateLastChecked;
+            DateTime dateTime = SettingsManager.GetDateTime("UpdateLastChecked");
+
             lastchecked = dateTime;
             Updated?.Invoke(UpdateStatus.Initialized, null, null);
+
+            base.Start();
+        }
+
+        public override void Stop()
+        {
+            if (!IsInitialized)
+                return;
+
+            base.Stop();
         }
 
         public DateTime GetTime()
@@ -373,8 +385,7 @@ namespace HandheldCompanion.Managers
         public void UpdateTime()
         {
             lastchecked = DateTime.Now;
-            Properties.Settings.Default.UpdateLastChecked = lastchecked;
-            Properties.Settings.Default.Save();
+            SettingsManager.SetProperty("UpdateLastChecked", lastchecked);
         }
 
         public void StartProcess()

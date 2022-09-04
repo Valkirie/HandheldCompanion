@@ -13,7 +13,7 @@
       Loaded="Page_Loaded"
       Title="{x:Static resx:Resources.ProfilesPage_Profiles}">
 
-    <Grid Name="MainGrid" Margin="20" >
+    <Grid Name="MainGrid" Margin="20">
         <Border>
             <ui:SimpleStackPanel Name="StackPanel_Profiles" Spacing="24">
                 <ui:SimpleStackPanel Spacing="6">
@@ -26,7 +26,7 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
                                 <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
@@ -93,7 +93,7 @@
                         <ui:SimpleStackPanel Spacing="6">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
@@ -111,7 +111,7 @@
 
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
@@ -142,8 +142,8 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="80"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -155,7 +155,7 @@
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 
-                            <ui:ToggleSwitch Grid.Column="1" Name="Toggle_EnableProfile" Width="40" HorizontalAlignment="Right" Toggled="Toggle_EnableProfile_Toggled"/>                           
+                            <ui:ToggleSwitch Grid.Column="1" Name="Toggle_EnableProfile" Toggled="Toggle_EnableProfile_Toggled"/>                           
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>
@@ -207,8 +207,8 @@
 
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="80"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -216,7 +216,7 @@
                                         <TextBlock Text="Override the processor thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
-                                    <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="TDPToggle" Toggled="TDPToggle_Toggled"/>
+                                    <ui:ToggleSwitch Grid.Column="1" Name="TDPToggle" Toggled="TDPToggle_Toggled"/>
                                 </Grid>
 
                                 <!-- Separator -->
@@ -226,21 +226,20 @@
                                 <Grid IsEnabled="{Binding ElementName=TDPToggle, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock Text="Sustained power limit" FontSize="14"/>
                                         <TextBlock Text="Change sustained thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
-                                    
-                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
+
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" />
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
-                                        <Slider Name="TDPSustainedSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                                                ValueChanged="TDPSustainedSlider_ValueChanged"
-                                                MouseEnter="Scrolllock_MouseEnter"
-                                                MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5"/>
+                                        <Slider Name="TDPSustainedSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+										ValueChanged="TDPSustainedSlider_ValueChanged"
+										SmallChange="1" LargeChange="5"/>
                                     </DockPanel>
                                 </Grid>
 
@@ -251,7 +250,7 @@
                                 <Grid IsEnabled="{Binding ElementName=TDPToggle, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -259,13 +258,12 @@
                                         <TextBlock Text="Change boost thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
-                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
-                                        <Slider Name="TDPBoostSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                                                ValueChanged="TDPBoostSlider_ValueChanged"
-                                                MouseEnter="Scrolllock_MouseEnter"
-                                                MouseLeave="Scrolllock_MouseLeave" SmallChange="1" LargeChange="5"/>
+                                        <Slider Name="TDPBoostSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+										ValueChanged="TDPBoostSlider_ValueChanged"
+										SmallChange="1" LargeChange="5"/>
                                     </DockPanel>
                                 </Grid>
                             </ui:SimpleStackPanel>
@@ -292,7 +290,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
@@ -300,11 +298,9 @@
                                             <TextBlock Text="{x:Static resx:Resources.ProfilesPage_GyrometerMultiplierDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                         </StackPanel>
 
-                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileGyroValue, Mode=OneWay}" />
-                                            <Slider Margin="6,0,0,0" Name="tb_ProfileGyroValue" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="3" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" Minimum="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True"
-                                                    MouseEnter="Scrolllock_MouseEnter"
-                                                    MouseLeave="Scrolllock_MouseLeave"/>
+                                            <Slider Margin="6,0,0,0" Name="tb_ProfileGyroValue" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="3" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" Minimum="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                                         </DockPanel>
                                     </Grid>
 
@@ -314,7 +310,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
@@ -322,11 +318,9 @@
                                             <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AccelerometerMultiplierDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                         </StackPanel>
 
-                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAcceleroValue, Mode=OneWay}" />
-                                            <Slider Margin="6,0,0,0" Name="tb_ProfileAcceleroValue" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="1" Maximum="3" Minimum="0.1" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True"
-                                                    MouseEnter="Scrolllock_MouseEnter"
-                                                    MouseLeave="Scrolllock_MouseLeave"/>
+                                            <Slider Margin="6,0,0,0" Name="tb_ProfileAcceleroValue" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="1" Maximum="3" Minimum="0.1" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                                         </DockPanel>
                                     </Grid>
 
@@ -335,8 +329,8 @@
 
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
@@ -378,7 +372,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <DockPanel Margin="0,12,12,12">
@@ -396,13 +390,13 @@
                             <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="80"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCEnable}" FontSize="14" VerticalAlignment="Center"/>
 
-                                    <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="Toggle_UniversalMotion" Toggled="Toggle_UniversalMotion_Toggled"/>
+                                    <ui:ToggleSwitch Grid.Column="1" Name="Toggle_UniversalMotion" Toggled="Toggle_UniversalMotion_Toggled"/>
                                 </Grid>
 
                                 <!-- Separator -->
@@ -410,8 +404,8 @@
 
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -419,7 +413,7 @@
                                         <TextBlock Name="Text_InputHint" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
-                                    <ui:RadioButtons Margin="6,0,0,0" Name="cB_Input" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Input_SelectionChanged"/>
+                                    <ui:RadioButtons Margin="6,0,0,0" Name="cB_Input" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Input_SelectionChanged"/>
                                 </Grid>
 
                                 <!-- Separator -->
@@ -427,8 +421,8 @@
 
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -445,7 +439,7 @@
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -453,11 +447,9 @@
                                         <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
-                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzone, Mode=OneWay}" />
-                                        <Slider Margin="6,0,0,0" Name="tb_ProfileAntiDeadzone" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="true"
-                                                MouseEnter="Scrolllock_MouseEnter"
-                                                MouseLeave="Scrolllock_MouseLeave"/>
+                                        <Slider Margin="6,0,0,0" Name="tb_ProfileAntiDeadzone" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                                     </DockPanel>
                                 </Grid>
 
@@ -466,8 +458,8 @@
 
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
                                     
                                     <StackPanel Orientation="Vertical">

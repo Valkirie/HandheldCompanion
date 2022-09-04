@@ -15,7 +15,7 @@ using WindowsInput.Events;
 
 namespace HandheldCompanion.Managers
 {
-    public class InputsManager
+    public class InputsManager : Manager
     {
         // Gamepad vars
         private MultimediaTimer UpdateTimer;
@@ -39,12 +39,7 @@ namespace HandheldCompanion.Managers
 
         private Dictionary<string, bool> Triggered = new Dictionary<string, bool>();
 
-        private Dictionary<string, TriggerInputs> Triggers = new()
-        {
-            { "overlayGamepad", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayControllerTriggerType, Properties.Settings.Default.OverlayControllerTriggerValue) },
-            { "overlayTrackpads", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.OverlayTrackpadsTriggerType, Properties.Settings.Default.OverlayTrackpadsTriggerValue) },
-            { "quickTools", new TriggerInputs((TriggerInputsType)Properties.Settings.Default.QuickToolsTriggerType, Properties.Settings.Default.QuickToolsTriggerValue) },
-        };
+        private Dictionary<string, TriggerInputs> Triggers = new();
 
         // Keyboard vars
         private IKeyboardMouseEvents m_GlobalHook;
@@ -62,7 +57,7 @@ namespace HandheldCompanion.Managers
         private const int m_fastInterval = 20;
         private const int m_slowInterval = 100;
 
-        public InputsManager()
+        public InputsManager() : base()
         {
             // initialize timers
             UpdateTimer = new MultimediaTimer(10);
@@ -73,6 +68,18 @@ namespace HandheldCompanion.Managers
 
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();
+
+            Triggers.Add("overlayGamepad", new TriggerInputs(
+                (TriggerInputsType)SettingsManager.GetInt("OverlayControllerTriggerType"),
+                SettingsManager.GetString("OverlayControllerTriggerValue")));
+
+            Triggers.Add("overlayTrackpads", new TriggerInputs(
+                (TriggerInputsType)SettingsManager.GetInt("OverlayTrackpadsTriggerType"),
+                SettingsManager.GetString("OverlayTrackpadsTriggerValue")));
+
+            Triggers.Add("quickTools", new TriggerInputs(
+                (TriggerInputsType)SettingsManager.GetInt("QuickToolsTriggerType"),
+                SettingsManager.GetString("QuickToolsTriggerValue")));
 
             // make sure we don't hang the keyboard
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
@@ -325,7 +332,7 @@ namespace HandheldCompanion.Managers
             return keys;
         }
 
-        public void Start()
+        public override void Start()
         {
             foreach (var pair in Triggers)
                 Triggered[pair.Key] = false;
@@ -343,15 +350,22 @@ namespace HandheldCompanion.Managers
 
             m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
+
+            base.Start();
         }
 
-        public void Stop()
+        public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             UpdateTimer.Stop();
 
             //It is recommened to dispose it
             m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
+
+            base.Stop();
         }
 
         private void UpdateReport(object? sender, EventArgs e)

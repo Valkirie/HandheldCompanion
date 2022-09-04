@@ -9,7 +9,6 @@ using System.Drawing;
 using System.IO;
 using System.Management;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -279,7 +278,7 @@ namespace HandheldCompanion.Managers
         }
     }
 
-    public class ProcessManager
+    public class ProcessManager : Manager
     {
         #region imports
         [DllImport("user32.dll", SetLastError = true)]
@@ -309,12 +308,12 @@ namespace HandheldCompanion.Managers
 
         private ConcurrentDictionary<uint, ProcessEx> Processes = new();
         private ProcessEx foregroundProcess;
+        private ProcessEx backgroundProcess;
 
         private object updateLock = new();
-        private bool isRunning;
 
         public event ForegroundChangedEventHandler ForegroundChanged;
-        public delegate void ForegroundChangedEventHandler(ProcessEx processEx);
+        public delegate void ForegroundChangedEventHandler(ProcessEx processEx, ProcessEx backgroundEx);
 
         public event ProcessStartedEventHandler ProcessStarted;
         public delegate void ProcessStartedEventHandler(ProcessEx processEx, bool startup);
@@ -322,43 +321,42 @@ namespace HandheldCompanion.Managers
         public event ProcessStoppedEventHandler ProcessStopped;
         public delegate void ProcessStoppedEventHandler(ProcessEx processEx);
 
-        public ProcessManager()
+        public ProcessManager() : base()
         {
+            MonitorTimer = new Timer(1000);
+            MonitorTimer.Elapsed += MonitorHelper;
+
+            stopWatch = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
+            stopWatch.EventArrived += new EventArrivedEventHandler(ProcessHalted);
+
+            listener = new WinEventProc(EventCallback);// hook: on window foregroud
+            winHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, listener, 0, 0, WINEVENT_OUTOFCONTEXT);
+        }
+
+        public override void Start()
+        {
+            // start processes monitor
+            MonitorTimer.Start();
+
+            // hook: on window opened
             Automation.AddAutomationEventHandler(
                 eventId: WindowPattern.WindowOpenedEvent,
                 element: AutomationElement.RootElement,
                 scope: TreeScope.Children,
                 eventHandler: OnWindowOpened);
 
-            stopWatch = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
-            stopWatch.EventArrived += new EventArrivedEventHandler(ProcessHalted);
-
-            listener = new WinEventProc(EventCallback);
-        }
-
-        public void Start()
-        {
-            // list all current processes
-            new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                EnumWindows(new WindowEnumCallback(AddWnd), 0);
-            }).Start();
-
-            // start processes monitor
-            MonitorTimer = new Timer(1000);
-            MonitorTimer.Elapsed += MonitorHelper;
-            MonitorTimer.Start();
-
+            // hook: on process stop
             stopWatch.Start();
-            winHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, listener, 0, 0, WINEVENT_OUTOFCONTEXT);
 
-            isRunning = true;
+            // list all current processes
+            EnumWindows(new WindowEnumCallback(AddWnd), 0);
+
+            base.Start();
         }
 
-        public void Stop()
+        public override void Stop()
         {
-            if (!isRunning)
+            if (!IsInitialized)
                 return;
 
             // stop processes monitor
@@ -369,6 +367,8 @@ namespace HandheldCompanion.Managers
             Automation.RemoveAllEventHandlers();
 
             UnhookWinEvent(winHook);
+
+            base.Stop();
         }
 
         public ProcessEx GetForegroundProcess()
@@ -426,15 +426,8 @@ namespace HandheldCompanion.Managers
                 return;
 
             // save previous process (if exists)
-            if (foregroundProcess != null && !foregroundProcess.Bypassed)
-            {
-                // set efficiency mode if event pId is different from foreground pId
-                if (procId != foregroundProcess.Id)
-                {
-                    ProcessUtils.ToggleEfficiencyMode(foregroundProcess.Handle, false);
-                    LogManager.LogDebug("Process {0} set to power saving mode", foregroundProcess.Name);
-                }
-            }
+            if (foregroundProcess != null)
+                backgroundProcess = foregroundProcess;
 
             if (Processes.ContainsKey(procId))
                 foregroundProcess = Processes[procId];
@@ -450,14 +443,7 @@ namespace HandheldCompanion.Managers
             // update main window handle
             foregroundProcess.MainWindowHandle = hWnd;
 
-            // set efficency mode
-            if (!foregroundProcess.Bypassed)
-            {
-                ProcessUtils.ToggleEfficiencyMode(foregroundProcess.Handle, true);
-                LogManager.LogDebug("Process {0} set to efficient mode", foregroundProcess.Name);
-            }
-
-            ForegroundChanged?.Invoke(foregroundProcess);
+            ForegroundChanged?.Invoke(foregroundProcess, backgroundProcess);
         }
 
         private void MonitorHelper(object? sender, EventArgs e)
@@ -523,12 +509,6 @@ namespace HandheldCompanion.Managers
                     if (processEx.Bypassed)
                         return;
 
-                    if (startup)
-                    {
-                        // EnergyStar
-                        ProcessUtils.ToggleEfficiencyMode(processEx.Handle, false);
-                    }
-
                     // raise event
                     ProcessStarted?.Invoke(processEx, startup);
 
@@ -566,7 +546,7 @@ namespace HandheldCompanion.Managers
                 case "procmon.exe":
                 case "procmon64.exe":
                 case "widgets.exe":
-                
+
                 // System shell
                 case "dwm.exe":
                 case "explorer.exe":

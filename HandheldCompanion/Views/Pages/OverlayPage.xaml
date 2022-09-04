@@ -8,6 +8,7 @@
       xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       xmlns:conv="clr-namespace:HandheldCompanion.Converters"
+      xmlns:colorpicker="clr-namespace:ColorPicker;assembly=ColorPicker"
       mc:Ignorable="d" 
       d:DesignHeight="1500" d:DesignWidth="1000"
       KeepAlive="True"
@@ -109,8 +110,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -153,7 +154,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -165,11 +166,9 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderControllerSize, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderControllerSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="200" Value="300" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderControllerSize_ValueChanged"  IsSnapToTickEnabled="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
+                            <Slider Margin="6,0,0,0" Name="SliderControllerSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="200" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderControllerSize_ValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -183,7 +182,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -195,11 +194,36 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=SliderControllerOpacity, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderControllerOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="1" Minimum="0.1" Value="0.8" TickPlacement="BottomRight" SmallChange="0.1" TickFrequency="0.1" AutoToolTipPrecision="1" ValueChanged="SliderControllerOpacity_ValueChanged" IsSnapToTickEnabled="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
+                            <Slider Margin="6,0,0,0" Name="SliderControllerOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.2" Maximum="1" Minimum="0.1" TickPlacement="BottomRight" SmallChange="0.1" TickFrequency="0.1" AutoToolTipPrecision="1" ValueChanged="SliderControllerOpacity_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                        </DockPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Background color -->
+                <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Background Color" FontSize="14"/>
+                                <TextBlock Text="Change the overlay controller background color" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                            <colorpicker:PortableColorPicker Name="ColorPicker" ShowAlpha="True" ColorChanged="StandardColorPicker_ColorChanged"/>
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -224,7 +248,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">
@@ -232,11 +256,10 @@
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_RenderSettingsFramerateDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </StackPanel>
 
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=Slider_Framerate, Mode=OneWay}" />
-                                    <Slider Margin="6,0,0,0" Name="Slider_Framerate" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="60" TickFrequency="5" TickPlacement="BottomRight" Minimum="10" IsSnapToTickEnabled="True"
-									MouseEnter="Scrolllock_MouseEnter"
-									MouseLeave="Scrolllock_MouseLeave" LargeChange="10" SmallChange="5" ValueChanged="Slider_Framerate_ValueChanged"/>
+                                    <Slider Margin="6,0,0,0" Name="Slider_Framerate" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="60" TickFrequency="5" TickPlacement="BottomRight" Minimum="10" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+									 LargeChange="10" SmallChange="5" ValueChanged="Slider_Framerate_ValueChanged"/>
                                 </DockPanel>
                             </Grid>
 
@@ -246,8 +269,8 @@
                             <!-- Anti-Aliasing -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">
@@ -255,10 +278,7 @@
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_RenderSettingsAntialiasingDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </StackPanel>
 
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <ui:ToggleSwitch Name="Toggle_RenderAA" Grid.Column="1" Width="40" HorizontalAlignment="Right" Toggled="Toggle_RenderAA_Toggled" IsOn="False">
-                                    </ui:ToggleSwitch>
-                                </DockPanel>
+                                <ui:ToggleSwitch Name="Toggle_RenderAA" Grid.Column="1" Toggled="Toggle_RenderAA_Toggled" IsOn="False"/>
                             </Grid>
                         </ui:SimpleStackPanel>
                     </Expander.Content>
@@ -281,21 +301,19 @@
                         <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
 
                             <!-- Face camera -->
-                            
+
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_FaceCamera}" FontSize="14"/>
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_FaceCameraDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                </StackPanel>
+                                </StackPanel>                                
 
-                                
-
-                                <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="Toggle_FaceCamera" Toggled="Toggle_FaceCamera_Toggled"/>
+                                <ui:ToggleSwitch Grid.Column="1" Name="Toggle_FaceCamera" Toggled="Toggle_FaceCamera_Toggled"/>
                             </Grid>
 
                             <!-- Separator -->
@@ -306,7 +324,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">
@@ -314,11 +332,10 @@
                                     <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAnglePitchDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </StackPanel>
 
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=Slider_RestingPitch, Mode=OneWay}" />
-                                    <Slider Margin="6,0,0,0" Name="Slider_RestingPitch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="90" TickFrequency="5" TickPlacement="BottomRight" Minimum="0" AutoToolTipPrecision="1" IsSnapToTickEnabled="True"
-									MouseEnter="Scrolllock_MouseEnter"
-									MouseLeave="Scrolllock_MouseLeave" LargeChange="10" SmallChange="5" ValueChanged="Slider_RestingPitch_ValueChanged" IsEnabled="False"/>
+                                    <Slider Margin="6,0,0,0" Name="Slider_RestingPitch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="90" TickFrequency="5" TickPlacement="BottomRight" Minimum="0" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+									 LargeChange="10" SmallChange="5" ValueChanged="Slider_RestingPitch_ValueChanged" IsEnabled="False"/>
                                 </DockPanel>
                             </Grid>
      
@@ -340,7 +357,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="1*" MinWidth="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -371,7 +388,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -383,11 +400,9 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderTrackpadsSize, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderTrackpadsSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="100" Value="250" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderTrackpadsSize_ValueChanged"  IsSnapToTickEnabled="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
+                            <Slider Margin="6,0,0,0" Name="SliderTrackpadsSize" Grid.Column="3" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="100" Maximum="800" Minimum="100" TickPlacement="BottomRight" SmallChange="50" TickFrequency="50" ValueChanged="SliderTrackpadsSize_ValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -401,7 +416,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -413,11 +428,9 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N2, ElementName=SliderTrackpadsOpacity, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderTrackpadsOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="0.25" Minimum="0.01" Value="0.2" TickPlacement="BottomRight" SmallChange="0.01" TickFrequency="0.01" AutoToolTipPrecision="2" ValueChanged="SliderTrackpadsOpacity_ValueChanged" IsSnapToTickEnabled="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
+                            <Slider Margin="6,0,0,0" Name="SliderTrackpadsOpacity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="0.25" Minimum="0.01" TickPlacement="BottomRight" SmallChange="0.01" TickFrequency="0.01" AutoToolTipPrecision="1" ValueChanged="SliderTrackpadsOpacity_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                         </DockPanel>
                     </Grid>
                 </Border>

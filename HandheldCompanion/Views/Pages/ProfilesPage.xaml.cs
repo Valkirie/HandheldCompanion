@@ -2,6 +2,7 @@ using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
+using HandheldCompanion.Managers;
 using Microsoft.Win32;
 using ModernWpf.Controls;
 using System;
@@ -39,6 +40,7 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.profileManager.Deleted += ProfileDeleted;
             MainWindow.profileManager.Updated += ProfileUpdated;
             MainWindow.profileManager.Ready += ProfileLoaded;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // draw gamepad activators
             foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
@@ -133,17 +135,20 @@ namespace HandheldCompanion.Views.Pages
             }
         }
 
-        public void SettingsPage_SettingValueChanged(string name, object value)
+        public void SettingsManager_SettingValueChanged(string name, object value)
         {
-            switch (name)
+            this.Dispatcher.Invoke(async () =>
             {
-                case "configurabletdp_down":
-                    TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = (double)value;
-                    break;
-                case "configurabletdp_up":
-                    TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = (double)value;
-                    break;
-            }
+                switch (name)
+                {
+                    case "ConfigurableTDPOverrideDown":
+                        TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = (double)value;
+                        break;
+                    case "ConfigurableTDPOverrideUp":
+                        TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = (double)value;
+                        break;
+                }
+            });
         }
 
         private void OnServerMessage(object sender, PipeMessage e)
@@ -152,6 +157,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            DrawProfile();
         }
 
         public void Page_Closed()
@@ -208,7 +214,10 @@ namespace HandheldCompanion.Views.Pages
 
         private void ProfileLoaded()
         {
-            cB_Profiles.SelectedItem = MainWindow.profileManager.GetDefault();
+            this.Dispatcher.Invoke(() =>
+            {
+                cB_Profiles.SelectedItem = MainWindow.profileManager.GetDefault();
+            });
         }
         #endregion
 
@@ -325,7 +334,7 @@ namespace HandheldCompanion.Views.Pages
                     page = new ProfileSettingsMode1("ProfileSettingsMode1", currentProfile);
                     break;
             }
-            MainWindow.GetDefault().NavView_Navigate(page);
+            MainWindow.NavView_Navigate(page);
         }
 
         private void cB_Profiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -334,7 +343,10 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             currentProfile = (Profile)cB_Profiles.SelectedItem;
-            DrawProfile();
+
+            // prevent useless calls
+            if (IsLoaded)
+                DrawProfile();
         }
 
         private void DrawProfile()
@@ -383,9 +395,10 @@ namespace HandheldCompanion.Views.Pages
                 TDPToggle.IsOn = currentProfile.TDP_override;
 
                 // define slider(s) min and max values based on device specifications
-                var TDPdown = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideDown : MainWindow.handheldDevice.cTDP[0];
-                var TDPup = Properties.Settings.Default.ConfigurableTDPOverride ? Properties.Settings.Default.ConfigurableTDPOverrideUp : MainWindow.handheldDevice.cTDP[1];
+                var TDPdown = SettingsManager.GetInt("ConfigurableTDPOverrideDown");
                 TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = TDPdown;
+
+                var TDPup = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
                 TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = TDPup;
 
                 // UMC settings
@@ -534,16 +547,6 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !currentProfile.isDefault;
-        }
-
-        private void Scrolllock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = true;
-        }
-
-        private void Scrolllock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            MainWindow.scrollLock = false;
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)

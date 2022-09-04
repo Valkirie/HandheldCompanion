@@ -30,7 +30,7 @@ namespace HandheldCompanion.Managers
         public static List<Guid> PowerModes = new() { BetterBattery, BetterPerformance, BestPerformance };
     }
 
-    public class PowerManager
+    public class PowerManager : Manager
     {
         #region imports
         /// <summary>
@@ -83,7 +83,7 @@ namespace HandheldCompanion.Managers
         // Power modes
         private Guid RequestedPowerMode;
 
-        public PowerManager()
+        public PowerManager() : base()
         {
             // initialize timer(s)
             powerWatchdog = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
@@ -95,34 +95,23 @@ namespace HandheldCompanion.Managers
             gfxWatchdog = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
             gfxWatchdog.Elapsed += gfxWatchdog_Elapsed;
 
-            // initialize processor
-            processor = Processor.GetCurrent();
-            processor.ValueChanged += Processor_ValueChanged;
-            processor.StatusChanged += Processor_StatusChanged;
-            processor.LimitChanged += Processor_LimitChanged;
-            processor.MiscChanged += Processor_MiscChanged;
-
             MainWindow.profileManager.Applied += ProfileManager_Applied;
             MainWindow.profileManager.Updated += ProfileManager_Updated;
             MainWindow.profileManager.Discarded += ProfileManager_Discarded;
 
             // initialize settings
-            var TDPdown = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPSustainedValue : 0;
-            var TDPup = Properties.Settings.Default.QuickToolsPerformanceTDPEnabled ? Properties.Settings.Default.QuickToolsPerformanceTDPBoostValue : 0;
+            double TDPdown = SettingsManager.GetDouble("QuickToolsPerformanceTDPSustainedValue");
+            double TDPup = SettingsManager.GetDouble("QuickToolsPerformanceTDPBoostValue");
+            double GPU = SettingsManager.GetDouble("QuickToolsPerformanceGPUValue");
 
-            TDPdown = TDPdown != 0 ? TDPdown : MainWindow.handheldDevice.nTDP[(int)PowerType.Slow];
-            TDPup = TDPup != 0 ? TDPup : MainWindow.handheldDevice.nTDP[(int)PowerType.Fast];
-
+            // request TDP(s)
             RequestTDP(PowerType.Slow, TDPdown);
             RequestTDP(PowerType.Stapm, TDPdown);
             RequestTDP(PowerType.Fast, TDPup);
 
-            var GPU = Properties.Settings.Default.QuickToolsPerformanceGPUEnabled ? Properties.Settings.Default.QuickToolsPerformanceGPUValue : 0;
+            // request GPUclock
             if (GPU != 0)
                 RequestGPUClock(GPU, true);
-
-            cpuWatchdog.Start();
-            gfxWatchdog.Start();
         }
 
         private void ProfileManager_Updated(Profile profile, bool backgroundtask, bool isCurrent)
@@ -311,16 +300,33 @@ namespace HandheldCompanion.Managers
         }
         #endregion
 
-        internal void Start()
+        public override void Start()
         {
+            cpuWatchdog.Start();
+            gfxWatchdog.Start();
+
+            // initialize processor
+            processor = Processor.GetCurrent();
+            processor.ValueChanged += Processor_ValueChanged;
+            processor.StatusChanged += Processor_StatusChanged;
+            processor.LimitChanged += Processor_LimitChanged;
+            processor.MiscChanged += Processor_MiscChanged;
             processor.Initialize();
+
             powerWatchdog.Start();
+
+            base.Start();
         }
 
-        internal void Stop()
+        public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             processor.Stop();
             powerWatchdog.Stop();
+
+            base.Stop();
         }
     }
 }

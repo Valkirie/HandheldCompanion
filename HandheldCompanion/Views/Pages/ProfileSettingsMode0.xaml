@@ -28,7 +28,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -40,11 +40,9 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderSensivity, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderSensivity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderSensivity_ValueChanged" IsSnapToTickEnabled="True"
-                            MouseEnter="Scrolllock_MouseEnter"
-                            MouseLeave="Scrolllock_MouseLeave"/>
+                            <Slider Margin="6,0,0,0" Name="SliderSensivity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderSensivity_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -66,13 +64,13 @@
                         <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_FlickStickEnable}" FontSize="14" VerticalAlignment="Center"/>
 
-                                <ui:ToggleSwitch Grid.Column="1" Width="40" HorizontalAlignment="Right" Name="Toggle_FlickStick" Toggled="Toggle_FlickStick_Toggled"/>
+                                <ui:ToggleSwitch Grid.Column="1" Name="Toggle_FlickStick" Toggled="Toggle_FlickStick_Toggled"/>
                             </Grid>
 
                             <!-- Separator -->
@@ -81,7 +79,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
@@ -89,11 +87,9 @@
                                     <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_FlickDurationDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </StackPanel>
 
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=tb_ProfileFlickDuration, Mode=OneWay}" />
-                                    <Slider Margin="6,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="tb_ProfileFlickDuration" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="800" Minimum="100" TickFrequency="10" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" ValueChanged="SliderFlickDuration_ValueChanged"
-                                            MouseEnter="Scrolllock_MouseEnter"
-                                            MouseLeave="Scrolllock_MouseLeave"/>
+                                    <Slider Margin="6,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="tb_ProfileFlickDuration" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="800" Minimum="100" TickFrequency="10" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="SliderFlickDuration_ValueChanged" />
                                 </DockPanel>
                             </Grid>
 
@@ -103,7 +99,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="3*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
@@ -111,11 +107,9 @@
                                     <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_StickSensitivtityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </StackPanel>
 
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileStickSensitivity, Mode=OneWay}" />
-                                    <Slider Margin="6,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="tb_ProfileStickSensitivity" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="10" Minimum="0.1" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" ValueChanged="SliderStickSensivity_ValueChanged"
-                                            MouseEnter="Scrolllock_MouseEnter"
-                                            MouseLeave="Scrolllock_MouseLeave"/>
+                                    <Slider Margin="6,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="tb_ProfileStickSensitivity" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="10" Minimum="0.1" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="SliderStickSensivity_ValueChanged" />
                                 </DockPanel>
                             </Grid>
                         </ui:SimpleStackPanel>
@@ -135,9 +129,8 @@
                         <ui:SimpleStackPanel Orientation="Horizontal"
                                              HorizontalAlignment="Center"
                                              Spacing="12"
-                                             MouseEnter="Scrolllock_MouseEnter"
-                                             MouseLeave="Scrolllock_MouseLeave"
-                                             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                                             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                                             ScrollViewer.PanningMode="HorizontalOnly">
                             <Label Content="{x:Static resx:Resources.ProfileSettingsMode0_CustomResponseCurveGameOutput}" VerticalAlignment="Center">
                                 <Label.LayoutTransform>
                                     <TransformGroup>
@@ -148,7 +141,10 @@
                             </Label>
                             <ui:SimpleStackPanel Orientation="Vertical" Spacing="12">
                                 <Label Content="{x:Static resx:Resources.ProfileSettingsMode0_CustomResponseIntensity}" HorizontalAlignment="Center"/>
-                                <ui:SimpleStackPanel Name="StackCurve" Orientation="Horizontal" Width="480" Height="400" MouseDown="StackCurve_MouseDown" MouseMove="StackCurve_MouseMove" Spacing="2">
+                                <ui:SimpleStackPanel Name="StackCurve" Orientation="Horizontal" Spacing="2"
+                                                     Width="480" Height="400"
+                                                     MouseDown="StackCurve_MouseDown"
+                                                     MouseMove="StackCurve_MouseMove">
                                     <ui:SimpleStackPanel.Background>
                                         <DrawingBrush TileMode="Tile" Viewport="40,40,40,40" 
                                              ViewportUnits="Absolute">

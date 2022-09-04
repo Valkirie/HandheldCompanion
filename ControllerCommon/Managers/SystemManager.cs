@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ControllerCommon.Managers
 {
-    public class SystemManager
+    public class SystemManager : Manager
     {
         #region import
         [DllImport("hid.dll", EntryPoint = "HidD_GetHidGuid")]
@@ -43,7 +43,7 @@ namespace ControllerCommon.Managers
             xinputListener = new DeviceNotificationListener();
         }
 
-        public void Start()
+        public override void Start()
         {
             hidListener.StartListen(DeviceInterfaceIds.UsbDevice);
             hidListener.DeviceArrived += Listener_DeviceArrived;
@@ -52,10 +52,15 @@ namespace ControllerCommon.Managers
             xinputListener.StartListen(DeviceInterfaceIds.XUsbDevice);
             xinputListener.DeviceArrived += XinputListener_DeviceArrived;
             xinputListener.DeviceRemoved += XinputListener_DeviceRemoved;
+
+            base.Start();
         }
 
-        public void Stop()
+        public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             hidListener.StopListen(DeviceInterfaceIds.UsbDevice);
             hidListener.DeviceArrived -= Listener_DeviceArrived;
             hidListener.DeviceRemoved -= Listener_DeviceRemoved;
@@ -63,6 +68,8 @@ namespace ControllerCommon.Managers
             xinputListener.StopListen(DeviceInterfaceIds.XUsbDevice);
             xinputListener.DeviceArrived -= XinputListener_DeviceArrived;
             xinputListener.DeviceRemoved -= XinputListener_DeviceRemoved;
+
+            base.Stop();
         }
 
         public static bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)

@@ -6,7 +6,7 @@ using Timer = System.Timers.Timer;
 
 namespace ControllerCommon.Managers
 {
-    public class ToastManager
+    public class ToastManager : Manager
     {
         private const int m_Interval = 5000;
 
@@ -14,6 +14,9 @@ namespace ControllerCommon.Managers
 
         private string m_Group;
         public bool Enabled;
+
+        public ToastManager()
+        { }
 
         public ToastManager(string group)
         {
@@ -60,13 +63,23 @@ namespace ControllerCommon.Managers
             catch (Exception) { }
         }
 
-        public void Stop()
+        public override void Start()
         {
+            base.Start();
+        }
+
+        public override void Stop()
+        {
+            if (!IsInitialized)
+                return;
+
             foreach (KeyValuePair<string, Timer> pair in m_Threads)
             {
                 m_Threads[pair.Key].Stop();
                 m_Threads[pair.Key] = null;
             }
+
+            base.Stop();
         }
     }
 }

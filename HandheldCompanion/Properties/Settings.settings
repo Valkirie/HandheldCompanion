@@ -47,7 +47,7 @@
     <Setting Name="OverlayControllerAlignment" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">7</Value>
     </Setting>
-    <Setting Name="OverlayControllerSize" Type="System.Int32" Scope="User">
+    <Setting Name="OverlayControllerSize" Type="System.Double" Scope="User">
       <Value Profile="(Default)">300</Value>
     </Setting>
     <Setting Name="OverlayControllerTriggerValue" Type="System.String" Scope="User">
@@ -62,11 +62,11 @@
     <Setting Name="OverlayTrackpadsOpacity" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0.25</Value>
     </Setting>
-    <Setting Name="OverlayTrackpadsSize" Type="System.Int32" Scope="User">
+    <Setting Name="OverlayTrackpadsSize" Type="System.Double" Scope="User">
       <Value Profile="(Default)">250</Value>
     </Setting>
     <Setting Name="CurrentCulture" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">en-US</Value>
     </Setting>
     <Setting Name="OverlayControllerRestingPitch" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -151,6 +151,24 @@
     </Setting>
     <Setting Name="OverlayControllerOpacity" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0.8</Value>
+    </Setting>
+    <Setting Name="OverlayControllerBackgroundColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#00000000</Value>
+    </Setting>
+    <Setting Name="MainWindowPrevState" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ServiceStartMode" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="FirstStart" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="MainWindowBackdrop" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="UseEnergyStar" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

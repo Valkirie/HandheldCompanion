@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 
 namespace HandheldCompanion.Managers
 {
-    public class CheatManager
+    public class CheatManager : Manager
     {
         // Gamepad vars
         private MultimediaTimer UpdateTimer;
@@ -18,22 +19,29 @@ namespace HandheldCompanion.Managers
         public event CheatedEventHandler Cheated;
         public delegate void CheatedEventHandler(string cheat);
 
-        public CheatManager()
+        public CheatManager() : base()
         {
             // initialize timers
             UpdateTimer = new MultimediaTimer(10);
         }
 
-        public void Start()
+        public override void Start()
         {
             UpdateTimer.Tick += UpdateReport;
             UpdateTimer.Start();
+
+            base.Start();
         }
 
-        public void Stop()
+        public override void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             UpdateTimer.Tick -= UpdateReport;
             UpdateTimer.Stop();
+
+            base.Stop();
         }
 
         public void UpdateController(ControllerEx controllerEx)

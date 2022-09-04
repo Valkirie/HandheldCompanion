@@ -23,11 +23,6 @@
                 Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="380"></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-
                     <DockPanel>
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE748;" Height="40" HorizontalAlignment="Center"/>
 
@@ -42,7 +37,6 @@
 
         <!-- Buttons -->
         <Button Name="b_CreateProfile" Margin="12,2,15,2" Click="b_CreateProfile_Click" HorizontalAlignment="Stretch" Content="Create profile" Style="{DynamicResource AccentButtonStyle}" Visibility="Collapsed" />
-        <Button Name="b_UpdateProfile" Margin="15,2,15,2" Click="b_UpdateProfile_Click" HorizontalAlignment="Stretch" Content="Update profile" Style="{DynamicResource AccentButtonStyle}" Visibility="Collapsed" />
         
         <ui:SimpleStackPanel Spacing="6" Name="GridProfile" Visibility="Collapsed">
             <Grid Name="StackProfileToggle">
@@ -54,8 +48,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="380"></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="0.2*" MinWidth="80"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -83,8 +77,8 @@
                     <ui:SimpleStackPanel Spacing="10">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="380"></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="0.2*" MinWidth="80"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -169,13 +163,10 @@
                             </Grid>
 
                             <!-- Content -->
-                            <DockPanel Grid.Column="1" Margin="0,0,0,0">
+                            <DockPanel Grid.Column="1" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                 <TextBlock Width="30" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderSensivity, Mode=OneWay}" />
-                                <Slider Name="SliderSensivity" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                                        ValueChanged="SliderSensivity_ValueChanged"
-                                        IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
-                                        MouseEnter="Scrolllock_MouseEnter"
-                                        MouseLeave="Scrolllock_MouseLeave"/>
+                                <Slider Name="SliderSensivity" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+								ValueChanged="SliderSensivity_ValueChanged" />
                             </DockPanel>
                         </ui:SimpleStackPanel>
 
@@ -184,18 +175,17 @@
             </Grid>
 
             <!-- Thermal Power (TDP) Limit -->
-            <ui:SimpleStackPanel Name="StackProfilePower" Spacing="2">
+            <ui:SimpleStackPanel Name="StackProfilePower" Spacing="2" IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
                 <!-- Header -->
                 <Border
                     Padding="15,12,15,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
-                    IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
+                    Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="380"></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="0.2*" MinWidth="80"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -218,15 +208,12 @@
                     Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                    <DockPanel Grid.Column="1" Margin="8,0,0,0">
+                    <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                         <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" />
                         <TextBlock VerticalAlignment="Center" Text="W" />
-                        <Slider Name="TDPSustainedSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" TickFrequency="1" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                                MouseEnter="Scrolllock_MouseEnter"
-                                MouseLeave="Scrolllock_MouseLeave"
-                                IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
-                                SmallChange="1" LargeChange="5"
-                                ValueChanged="TDPSustainedSlider_ValueChanged"/>
+                        <Slider Name="TDPSustainedSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" TickFrequency="1" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+						SmallChange="1" LargeChange="5"
+						ValueChanged="TDPSustainedSlider_ValueChanged"/>
                     </DockPanel>
                 </Border>
 
@@ -237,15 +224,12 @@
                     Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                    <DockPanel Grid.Column="1" Margin="8,0,0,0">
+                    <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                         <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
                         <TextBlock VerticalAlignment="Center" Text="W" />
-                        <Slider Name="TDPBoostSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" TickFrequency="1" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True"
-                                MouseEnter="Scrolllock_MouseEnter"
-                                MouseLeave="Scrolllock_MouseLeave"
-                                IsMoveToPointEnabled="True" ext:SliderTools.MoveToPointOnDrag="True"
-                                SmallChange="1" LargeChange="5"
-                                ValueChanged="TDPBoostSlider_ValueChanged"/>
+                        <Slider Name="TDPBoostSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" TickFrequency="1" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+						SmallChange="1" LargeChange="5"
+						ValueChanged="TDPBoostSlider_ValueChanged"/>
                     </DockPanel>
                 </Border>
                 

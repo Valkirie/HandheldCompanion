@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HandheldCompanion"
+        xmlns:common="clr-namespace:HandheldCompanion.Common"
         xmlns:resx="clr-namespace:HandheldCompanion.Properties"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
@@ -12,6 +13,7 @@
         Closed="Window_Closed"
         Closing="Window_Closing"
         StateChanged="Window_StateChanged"
+        ui:WindowHelper.SystemBackdropType="Mica"
         ui:WindowHelper.UseModernWindowStyle="True"
         MinWidth="600" MinHeight="500" Icon="/Resources/icon.png">
 
@@ -83,18 +85,11 @@
                 Icon="Delete" Content="{x:Static resx:Resources.MainWindow_serviceRemove}" Name="b_ServiceDelete" Tag="ServiceDelete" Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}" SelectsOnInvoked="False" />
         </ui:NavigationView.FooterMenuItems>
 
-        <ui:ScrollViewerEx
-            PanningMode="VerticalOnly"
-            Name="scrollViewer"
-            PreviewMouseLeftButtonDown="ScrollViewer_PreviewMouseLeftButtonDown"
-            PreviewMouseMove="ScrollViewer_PreviewMouseMove"
-            PreviewMouseLeftButtonUp="ScrollViewer_PreviewMouseLeftButtonUp"
-            PreviewMouseWheel="ScrollViewer_PreviewMouseWheel"
-            MouseLeave="scrollViewer_MouseLeave">
+        <common:TouchScrollViewer x:Name="scrollViewer" PanningMode="VerticalOnly">
             <ui:Frame
                     Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
                     Name="ContentFrame" MaxWidth="1100"
                     HorizontalAlignment="Left"/>
-        </ui:ScrollViewerEx>
+        </common:TouchScrollViewer>
     </ui:NavigationView>
 </Window>
