@@ -81,13 +81,13 @@
 
   <ItemGroup>
     <PackageReference Include="CodeHollow.FeedReader" Version="1.2.4" />
-    <PackageReference Include="CoreAudio" Version="1.12.0" />
+    <PackageReference Include="CoreAudio" Version="1.16.0" />
     <PackageReference Include="FluentWPF" Version="0.10.2" />
     <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.3.4" />
-    <PackageReference Include="HelixToolkit.Wpf" Version="2.21.1" />
+    <PackageReference Include="HelixToolkit.Wpf" Version="2.22.0" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-    <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1" />
+    <PackageReference Include="Microsoft.UI.Xaml" Version="2.8.1" />
     <PackageReference Include="PixiEditor.ColorPicker" Version="3.3.1" />
     <PackageReference Include="Serilog" Version="2.11.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
@@ -95,6 +95,12 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
+    <PackageReference Include="PInvoke.Kernel32" Version="0.7.124">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="PInvoke.User32" Version="0.7.124">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
