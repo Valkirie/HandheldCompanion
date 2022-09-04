@@ -379,7 +379,7 @@ end;
 #define MyBuildId 'HandheldCompanion'
 #define MyAppVersion '0.11.6.0'
 #define MyAppPublisher 'BenjaminLSR'
-#define MyAppCopyright 'Copyright Â© BenjaminLSR'
+#define MyAppCopyright 'Copyright © BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/ControllerService'
 #define MyAppExeName "HandheldCompanion.exe"
 #define MySerExeName "ControllerService.exe"
@@ -442,7 +442,6 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 [Run]
 
 [UninstallRun]
-Filename: "{app}\{#MyAppExeName}"; Parameters: "service --action=""uninstall"""; RunOnceId: "UninstallService"; Flags: runascurrentuser runhidden
 Filename: "{sys}\sc.exe"; Parameters: "stop ControllerService" ; RunOnceId: "StopService"; Flags: runascurrentuser runhidden
 Filename: "{sys}\sc.exe"; Parameters: "delete ControllerService" ; RunOnceId: "DeleteService"; Flags: runascurrentuser runhidden
 Filename: "C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe"; Parameters: "--cloak-off" ; RunOnceId: "CloakOff"; Flags: runascurrentuser runhidden
