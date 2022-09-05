@@ -302,9 +302,6 @@ namespace HandheldCompanion.Managers
 
         public override void Start()
         {
-            cpuWatchdog.Start();
-            gfxWatchdog.Start();
-
             // initialize processor
             processor = Processor.GetCurrent();
             processor.ValueChanged += Processor_ValueChanged;
@@ -312,6 +309,9 @@ namespace HandheldCompanion.Managers
             processor.LimitChanged += Processor_LimitChanged;
             processor.MiscChanged += Processor_MiscChanged;
             processor.Initialize();
+
+            cpuWatchdog.Start();
+            gfxWatchdog.Start();
 
             powerWatchdog.Start();
 
