@@ -30,36 +30,50 @@ namespace HandheldCompanion
 
         public void SetBrightness(double brightness)
         {
-            ManagementClass WmiMonitorBrightnessMethods = new ManagementClass("root/wmi", "WmiMonitorBrightnessMethods", null);
-
-            foreach (ManagementObject mo in WmiMonitorBrightnessMethods.GetInstances())
+            // Catch desktop lack of brightness control
+            try
             {
-                ManagementBaseObject inParams = mo.GetMethodParameters("WmiSetBrightness");
-                inParams["Brightness"] = brightness;
-                inParams["Timeout"] = 5;
-                mo.InvokeMethod("WmiSetBrightness", inParams, null);
+                ManagementClass WmiMonitorBrightnessMethods = new ManagementClass("root/wmi", "WmiMonitorBrightnessMethods", null);
+
+                foreach (ManagementObject mo in WmiMonitorBrightnessMethods.GetInstances())
+                {
+                    ManagementBaseObject inParams = mo.GetMethodParameters("WmiSetBrightness");
+                    inParams["Brightness"] = brightness;
+                    inParams["Timeout"] = 5;
+                    mo.InvokeMethod("WmiSetBrightness", inParams, null);
+                }
             }
+            catch { }
+
         }
 
         public int GetBrightness()
         {
-            ManagementScope s = new ManagementScope("root\\WMI");
-            SelectQuery q = new SelectQuery("WmiMonitorBrightness");
-            ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q);
-            ManagementObjectCollection moc = mos.Get();
-
-            //store result
-            byte curBrightness = 0;
-            foreach (ManagementObject o in moc)
+            // Catch desktop lack of brightness control
+            try
             {
-                curBrightness = (byte)o.GetPropertyValue("CurrentBrightness");
-                break; //only work on the first object
+                ManagementScope s = new ManagementScope("root\\WMI");
+                SelectQuery q = new SelectQuery("WmiMonitorBrightness");
+                ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q);
+                ManagementObjectCollection moc = mos.Get();
+
+                //store result
+                byte curBrightness = 0;
+                foreach (ManagementObject o in moc)
+                {
+                    curBrightness = (byte)o.GetPropertyValue("CurrentBrightness");
+                    break; //only work on the first object
+                }
+
+                moc.Dispose();
+                mos.Dispose();
+
+                return curBrightness;
             }
-
-            moc.Dispose();
-            mos.Dispose();
-
-            return curBrightness;
+            catch (Exception e)
+            {
+                return 100;
+            }
         }
 
         internal void Dispose()
