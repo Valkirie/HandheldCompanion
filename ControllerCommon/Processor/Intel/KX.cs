@@ -46,20 +46,28 @@ namespace ControllerCommon.Processor.Intel
             {
                 while (!ProcessOutput.StandardOutput.EndOfStream)
                 {
-                    string line = ProcessOutput.StandardOutput.ReadLine();
+                    try
+                    {
+                        string line = ProcessOutput.StandardOutput.ReadLine();
 
-                    if (!line.Contains("Return"))
-                        continue;
+                        if (!line.Contains("Return"))
+                            continue;
 
-                    // parse result
-                    line = CommonUtils.Between(line, "Return ");
-                    long returned = long.Parse(line);
-                    string output = "0x" + returned.ToString("X2").Substring(0, 4);
+                        // parse result
+                        line = CommonUtils.Between(line, "Return ");
+                        long returned = long.Parse(line);
+                        string output = "0x" + returned.ToString("X2").Substring(0, 4);
 
-                    mchbar = output;
+                        mchbar = output;
 
-                    ProcessOutput.Close();
-                    return true;
+                        ProcessOutput.Close();
+                        return true;
+                    }
+                    catch (Exception e)
+                    {
+                        return false;
+                    }
+
                 }
                 ProcessOutput.Close();
             }
