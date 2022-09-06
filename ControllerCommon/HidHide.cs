@@ -24,12 +24,15 @@ namespace ControllerCommon
         public HidHide()
         {
             // verifying HidHide is installed
-            string path = Path.Combine(key, "x64", "HidHideCLI.exe");
+            string path = null;
+
+            if (key != null)
+                Path.Combine(key, "x64", "HidHideCLI.exe");
 
             if (!File.Exists(path))
             {
-                LogManager.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
-                throw new InvalidOperationException();
+                LogManager.LogWarning("HidHide is missing. Application behavior will be degraded. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
+                // throw new InvalidOperationException();
             }
 
             process = new Process
