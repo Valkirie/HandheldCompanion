@@ -2,9 +2,9 @@
 
 namespace ControllerCommon.Devices
 {
-    public class GPDWinMax2 : Device
+    public class GPDWinMax2Intel : Device
     {
-        public GPDWinMax2() : base()
+        public GPDWinMax2Intel() : base()
         {
             this.ProductSupported = true;
 
@@ -12,7 +12,6 @@ namespace ControllerCommon.Devices
             this.WidthHeightRatio = 2.4f;
             this.ProductIllustration = "device_gpd_winmax2";
 
-            // https://www.amd.com/fr/products/apu/amd-ryzen-7-6800u
             this.nTDP = new double[] { 15, 15, 20 };
             this.cTDP = new double[] { 15, 28 };
 

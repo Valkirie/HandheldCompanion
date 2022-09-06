@@ -1,4 +1,4 @@
-﻿using ControllerCommon.Managers;
+using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using System.Collections.Generic;
@@ -116,7 +116,10 @@ namespace ControllerCommon.Devices
                         switch (ProductName)
                         {
                             case "G1619-03":
-                                device = new GPDWinMax2();
+                                device = new GPDWinMax2Intel();
+                                break;
+                            case "G1619-04":
+                                device = new GPDWinMax2AMD();
                                 break;
                         }
                     }
