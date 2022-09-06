@@ -41,28 +41,32 @@ namespace ControllerCommon.Processor.Intel
             if (startInfo == null)
                 return false;
 
-            startInfo.Arguments = "/RdPci32 0 0 0 0x48";
-            using (var ProcessOutput = Process.Start(startInfo))
+            try
             {
-                while (!ProcessOutput.StandardOutput.EndOfStream)
+                startInfo.Arguments = "/RdPci32 0 0 0 0x48";
+                using (var ProcessOutput = Process.Start(startInfo))
                 {
-                    string line = ProcessOutput.StandardOutput.ReadLine();
+                    while (!ProcessOutput.StandardOutput.EndOfStream)
+                    {
+                        string line = ProcessOutput.StandardOutput.ReadLine();
 
-                    if (!line.Contains("Return"))
-                        continue;
+                        if (!line.Contains("Return"))
+                            continue;
 
-                    // parse result
-                    line = CommonUtils.Between(line, "Return ");
-                    long returned = long.Parse(line);
-                    string output = "0x" + returned.ToString("X2").Substring(0, 4);
+                        // parse result
+                        line = CommonUtils.Between(line, "Return ");
+                        long returned = long.Parse(line);
+                        string output = "0x" + returned.ToString("X2").Substring(0, 4);
 
-                    mchbar = output;
+                        mchbar = output;
 
+                        ProcessOutput.Close();
+                        return true;
+                    }
                     ProcessOutput.Close();
-                    return true;
                 }
-                ProcessOutput.Close();
             }
+            catch (Exception) { }
 
             return false;
         }
