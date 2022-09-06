@@ -26,6 +26,7 @@
     <PackageReference Include="Nefarius.ViGEm.Client" Version="1.19.199" />
     <PackageReference Include="NetCoreNamedPipeWrapper" Version="1.0.4" />
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
+    <PackageReference Include="PInvoke.User32" Version="0.7.124" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
