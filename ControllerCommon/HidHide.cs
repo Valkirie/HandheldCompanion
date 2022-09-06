@@ -27,7 +27,7 @@ namespace ControllerCommon
             string path = null;
 
             if (key != null)
-                Path.Combine(key, "x64", "HidHideCLI.exe");
+                path = Path.Combine(key, "x64", "HidHideCLI.exe");
 
             if (!File.Exists(path))
             {
