@@ -11,6 +11,8 @@ namespace HandheldCompanion
         public event BrightnessChangedHandler BrightnessChanged;
         public delegate void BrightnessChangedHandler(int brightness);
 
+        private readonly bool Supported;
+
         public BrightnessControl()
         {
             // connecting the scope
@@ -21,6 +23,16 @@ namespace HandheldCompanion
             watcher = new ManagementEventWatcher(scope, new EventQuery("Select * From WmiMonitorBrightnessEvent"));
             watcher.EventArrived += new EventArrivedEventHandler(this.onWMIEvent);
             watcher.Start();
+
+            try
+            {
+                GetBrightness();
+                Supported = true;
+            }
+            catch(Exception)
+            {
+                Supported = false;
+            }
         }
 
         private void onWMIEvent(object sender, EventArrivedEventArgs e)
@@ -30,36 +42,40 @@ namespace HandheldCompanion
 
         public void SetBrightness(double brightness)
         {
-            ManagementClass WmiMonitorBrightnessMethods = new ManagementClass("root/wmi", "WmiMonitorBrightnessMethods", null);
+            if (!Supported)
+                return;
 
-            foreach (ManagementObject mo in WmiMonitorBrightnessMethods.GetInstances())
+            using (var mclass = new ManagementClass("WmiMonitorBrightnessMethods"))
             {
-                ManagementBaseObject inParams = mo.GetMethodParameters("WmiSetBrightness");
-                inParams["Brightness"] = brightness;
-                inParams["Timeout"] = 5;
-                mo.InvokeMethod("WmiSetBrightness", inParams, null);
+                mclass.Scope = new ManagementScope(@"\\.\root\wmi");
+                using (var instances = mclass.GetInstances())
+                {
+                    foreach (ManagementObject instance in instances)
+                    {
+                        object[] args = new object[] { 1, brightness };
+                        instance.InvokeMethod("WmiSetBrightness", args);
+                    }
+                }
             }
         }
 
-        public int GetBrightness()
+        public ushort GetBrightness()
         {
-            ManagementScope s = new ManagementScope("root\\WMI");
-            SelectQuery q = new SelectQuery("WmiMonitorBrightness");
-            ManagementObjectSearcher mos = new ManagementObjectSearcher(s, q);
-            ManagementObjectCollection moc = mos.Get();
+            if (!Supported)
+                return 100;
 
-            //store result
-            byte curBrightness = 0;
-            foreach (ManagementObject o in moc)
+            using (var mclass = new ManagementClass("WmiMonitorBrightness"))
             {
-                curBrightness = (byte)o.GetPropertyValue("CurrentBrightness");
-                break; //only work on the first object
+                mclass.Scope = new ManagementScope(@"\\.\root\wmi");
+                using (var instances = mclass.GetInstances())
+                {
+                    foreach (ManagementObject instance in instances)
+                    {
+                        return (byte)instance.GetPropertyValue("CurrentBrightness");
+                    }
+                }
             }
-
-            moc.Dispose();
-            mos.Dispose();
-
-            return curBrightness;
+            return 0;
         }
 
         internal void Dispose()

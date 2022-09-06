@@ -29,6 +29,7 @@ namespace ControllerCommon.Processor
 
         protected bool CanChangeTDP, CanChangeGPU;
         protected object IsBusy = new();
+        public bool IsInitialized;
 
         protected Timer updateTimer = new Timer() { Interval = 3000, AutoReset = true };
 
@@ -174,7 +175,8 @@ namespace ControllerCommon.Processor
 
         public IntelProcessor() : base()
         {
-            if (platform.init())
+            IsInitialized = platform.init();
+            if (IsInitialized)
             {
                 family = ProcessorID.Substring(ProcessorID.Length - 5);
 
@@ -321,7 +323,9 @@ namespace ControllerCommon.Processor
         {
             ry = RyzenAdj.init_ryzenadj();
 
-            if (ry != IntPtr.Zero)
+            if (ry == IntPtr.Zero)
+                IsInitialized = false;
+            else
             {
                 family = RyzenAdj.get_cpu_family(ry);
 

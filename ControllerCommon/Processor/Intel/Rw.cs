@@ -41,21 +41,25 @@ namespace ControllerCommon.Processor.Intel
             if (startInfo == null)
                 return false;
 
-            startInfo.Arguments = "/Min /Nologo /Stdout /command=\"rpci32 0 0 0 0x48;rwexit\"";
-            using (var ProcessOutput = Process.Start(startInfo))
+            try
             {
-                while (!ProcessOutput.StandardOutput.EndOfStream)
+                startInfo.Arguments = "/Min /Nologo /Stdout /command=\"rpci32 0 0 0 0x48;rwexit\"";
+                using (var ProcessOutput = Process.Start(startInfo))
                 {
-                    string line = ProcessOutput.StandardOutput.ReadLine();
+                    while (!ProcessOutput.StandardOutput.EndOfStream)
+                    {
+                        string line = ProcessOutput.StandardOutput.ReadLine();
 
-                    if (!line.Contains("0x"))
-                        continue;
+                        if (!line.Contains("0x"))
+                            continue;
 
-                    line = line.Substring(line.Length - 10);
-                    mchbar = line.Substring(0, 6);
-                    return true;
+                        line = line.Substring(line.Length - 10);
+                        mchbar = line.Substring(0, 6);
+                        return true;
+                    }
                 }
             }
+            catch (Exception) { }
 
             return false;
         }
