@@ -4,9 +4,9 @@ using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
-    public class AYANEOAIR : Device
+    public class AYANEOAIRLite : Device
     {
-        public AYANEOAIR() : base()
+        public AYANEOAIRLite() : base()
         {
             this.ProductSupported = true;
 
@@ -15,8 +15,8 @@ namespace ControllerCommon.Devices
             this.ProductIllustration = "device_aya_air";
 
             // https://www.amd.com/en/products/apu/amd-ryzen-5-5560u
-            this.nTDP = new double[] { 12, 12, 15 };
-            this.cTDP = new double[] { 8, 15 };
+            this.nTDP = new double[] { 8, 8, 12 };
+            this.cTDP = new double[] { 8, 12 };
 
             this.AngularVelocityAxisSwap = new()
             {
