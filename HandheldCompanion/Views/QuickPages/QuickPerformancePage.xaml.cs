@@ -226,10 +226,7 @@ namespace HandheldCompanion.Views.QuickPages
                 MainWindow.powerManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
             }
             else
-            {
-                // restore default TDP
-                MainWindow.powerManager.RequestTDP(MainWindow.handheldDevice.nTDP);
-            }
+                MainWindow.powerManager.RequestTDP(MainWindow.handheldDevice.nTDP); // restore default TDP
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -239,13 +236,10 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void GPUToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!GPUToggle.IsOn)
-            {
-                // restore default GPU clock
-                MainWindow.powerManager.RequestGPUClock(255 * 50);
-            }
-
-            MainWindow.powerManager.RequestGPUClock(GPUSlider.Value);
+            if (GPUToggle.IsOn)
+                MainWindow.powerManager.RequestGPUClock(GPUSlider.Value);
+            else
+                MainWindow.powerManager.RequestGPUClock(255 * 50);  // restore default GPU clock
 
             if (!SettingsManager.IsInitialized)
                 return;
