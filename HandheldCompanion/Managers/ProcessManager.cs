@@ -166,14 +166,13 @@ namespace HandheldCompanion.Managers
 
             ColumnDefinition colDef1 = new ColumnDefinition()
             {
-                Width = new GridLength(5, GridUnitType.Star),
-                MinWidth = 200
+                Width = new GridLength(8, GridUnitType.Star)
             };
             processGrid.ColumnDefinitions.Add(colDef1);
 
             ColumnDefinition colDef2 = new ColumnDefinition()
             {
-                Width = new GridLength(3, GridUnitType.Star),
+                Width = new GridLength(2, GridUnitType.Star),
                 MinWidth = 120
             };
             processGrid.ColumnDefinitions.Add(colDef2);
