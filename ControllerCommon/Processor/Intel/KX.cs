@@ -58,7 +58,7 @@ namespace ControllerCommon.Processor.Intel
                         long returned = long.Parse(line);
                         string output = "0x" + returned.ToString("X2").Substring(0, 4);
 
-                        mchbar = output;
+                        mchbar = output + pnt_limit;
 
                         ProcessOutput.Close();
                         return true;
@@ -97,7 +97,7 @@ namespace ControllerCommon.Processor.Intel
 
         internal int get_limit(string pointer)
         {
-            startInfo.Arguments = $"/rdmem16 {mchbar}{pnt_limit}{pointer}";
+            startInfo.Arguments = $"/rdmem16 {mchbar}{pointer}";
             using (var ProcessOutput = Process.Start(startInfo))
             {
                 try
@@ -183,7 +183,7 @@ namespace ControllerCommon.Processor.Intel
             string hex = TDPToHex(limit);
 
             // register command
-            startInfo.Arguments = $"/wrmem16 {mchbar}{pnt_limit}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)}";
+            startInfo.Arguments = $"/wrmem16 {mchbar}{pointer1} 0x8{hex.Substring(0, 1)}{hex.Substring(1)}";
             using (var ProcessOutput = Process.Start(startInfo))
             {
                 ProcessOutput.StandardOutput.ReadToEnd();
