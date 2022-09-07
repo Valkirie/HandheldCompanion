@@ -157,7 +157,6 @@ namespace HandheldCompanion.Views.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            DrawProfile();
         }
 
         public void Page_Closed()
@@ -345,7 +344,7 @@ namespace HandheldCompanion.Views.Pages
             currentProfile = (Profile)cB_Profiles.SelectedItem;
 
             // prevent useless calls
-            if (IsLoaded)
+            if (IsLoaded || currentProfile.isDefault)
                 DrawProfile();
         }
 
