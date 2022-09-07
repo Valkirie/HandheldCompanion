@@ -562,6 +562,10 @@ namespace HandheldCompanion.Managers
                 case "svchost.exe":
                 case "wudfrd.exe":
 
+                // Other
+                case "bdagent.exe":             // Bitdefender Agent
+                case "radeonsoftware.exe":
+
                 // handheld companion
                 case "handheldcompanion.exe":
                 case "controllerservice.exe":
