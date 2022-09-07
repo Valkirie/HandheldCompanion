@@ -216,7 +216,7 @@ namespace HandheldCompanion.Managers
                 else if (processor.GetType() == typeof(IntelProcessor))
                 {
                     // not ready yet
-                    if (CurrentGfxClock == 12750)
+                    if (CurrentGfxClock == 0)
                         return;
                 }
 
