@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System;
@@ -16,6 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using Windows.System.Diagnostics;
 using static ControllerCommon.Utils.ProcessUtils;
+using static ControllerCommon.WinAPI;
 using Image = System.Windows.Controls.Image;
 using ThreadState = System.Diagnostics.ThreadState;
 using Timer = System.Timers.Timer;
@@ -47,7 +49,7 @@ namespace HandheldCompanion.Managers
 
         public Process Process;
         public IntPtr MainWindowHandle;
-        public IntPtr Handle;
+        public object processInfo;
 
         public uint Id;
         public string Name;
@@ -64,15 +66,12 @@ namespace HandheldCompanion.Managers
         public Image processIcon;
         public Button processSuspend;
         public Button processResume;
+        public FontIcon processQoS;
 
         public ProcessEx(Process process)
         {
             this.Process = process;
             this.Id = (uint)process.Id;
-
-            // EnergyStar
-            this.Handle = OpenProcess((uint)(ProcessAccessFlags.QueryLimitedInformation | ProcessAccessFlags.SetInformation), false, Id);
-            CloseHandle(Handle);
         }
 
         public void Timer_Tick(object? sender, EventArgs e)
@@ -101,6 +100,7 @@ namespace HandheldCompanion.Managers
                     else
                         processBorder.Visibility = Visibility.Collapsed;
 
+                    // manage process state
                     switch (processThread.ThreadState)
                     {
                         case ThreadState.Wait:
@@ -130,6 +130,22 @@ namespace HandheldCompanion.Managers
                             threadWaitReason = ThreadWaitReason.UserRequest;
                             break;
                     }
+
+                    // manage process throttling
+                    EnergyManager.GetProcessInfo(Process.Handle, WinAPI.PROCESS_INFORMATION_CLASS.ProcessPowerThrottling, out processInfo);
+                    PROCESS_POWER_THROTTLING_STATE state = (PROCESS_POWER_THROTTLING_STATE)processInfo;
+
+                    switch(state.StateMask)
+                    {
+                        case 1: // EcoQoS
+                            processQoS.Glyph = "\uE8BE";
+                            break;
+                        default:
+                        case 0: // HighQoS
+                            processQoS.Glyph = "\uE945";
+                            break;
+                    }
+
                 }), DispatcherPriority.ContextIdle);
             }
             catch (Exception) { }
@@ -172,10 +188,17 @@ namespace HandheldCompanion.Managers
 
             ColumnDefinition colDef2 = new ColumnDefinition()
             {
-                Width = new GridLength(2, GridUnitType.Star),
+                Width = new GridLength(1, GridUnitType.Star),
                 MinWidth = 120
             };
             processGrid.ColumnDefinitions.Add(colDef2);
+
+            ColumnDefinition colDef3 = new ColumnDefinition()
+            {
+                Width = new GridLength(1, GridUnitType.Star),
+                MinWidth = 32
+            };
+            processGrid.ColumnDefinitions.Add(colDef3);
 
             // Create PersonPicture
             var icon = Icon.ExtractAssociatedIcon(Path);
@@ -249,6 +272,18 @@ namespace HandheldCompanion.Managers
 
             Grid.SetColumn(processResume, 2);
             processGrid.Children.Add(processResume);
+
+            // Create EcoQos indicator
+            processQoS = new FontIcon()
+            {
+                FontSize = 14,
+                Glyph = "\uE945",
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Right,
+            };
+
+            Grid.SetColumn(processQoS, 3);
+            processGrid.Children.Add(processQoS);
 
             processBorder.Child = processGrid;
         }

@@ -16,6 +16,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Windows.System.Diagnostics;
+using static ControllerCommon.WinAPI;
 
 namespace ControllerCommon.Utils
 {
@@ -95,11 +96,6 @@ namespace ControllerCommon.Utils
         [DllImport("user32.dll")]
         static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern int GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
         public delegate bool WindowEnumProc(IntPtr hwnd, IntPtr lparam);
 
         [DllImport("user32.dll")]
@@ -107,34 +103,8 @@ namespace ControllerCommon.Utils
         public static extern bool EnumChildWindows(IntPtr hwnd, WindowEnumProc callback, IntPtr lParam);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern IntPtr OpenProcess(uint processAccess, bool bInheritHandle, uint processId);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern bool SetProcessInformation([In] IntPtr hProcess, PROCESS_INFORMATION_CLASS ProcessInformationClass, IntPtr ProcessInformation, uint ProcessInformationSize);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetPriorityClass(IntPtr handle, PriorityClass priorityClass);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [SuppressUnmanagedCodeSecurity]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool CloseHandle(IntPtr hObject);
         #endregion
-
-        public class WinAPIFunctions
-        {
-            public static int GetWindowProcessId(IntPtr hwnd)
-            {
-                int pid;
-                GetWindowThreadProcessId(hwnd, out pid);
-                return pid;
-            }
-
-            public static IntPtr GetforegroundWindow()
-            {
-                return GetForegroundWindow();
-            }
-        }
 
         public class FindHostedProcess
         {
@@ -151,7 +121,7 @@ namespace ControllerCommon.Utils
                     if (foregroundProcessID == IntPtr.Zero)
                         return;
 
-                    Process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPIFunctions.GetWindowProcessId(foregroundProcessID));
+                    Process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(foregroundProcessID));
 
                     if (Process == null)
                         return;
@@ -171,7 +141,7 @@ namespace ControllerCommon.Utils
 
             private bool ChildWindowCallback(IntPtr hwnd, IntPtr lparam)
             {
-                var process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPIFunctions.GetWindowProcessId(hwnd));
+                var process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(hwnd));
 
                 if (!Process.ExecutableFileName.Equals(UWPFrameHostApp, StringComparison.InvariantCultureIgnoreCase))
                     Process = process;
@@ -179,19 +149,6 @@ namespace ControllerCommon.Utils
                 attempt++;
                 return true;
             }
-        }
-
-        public static string GetActiveWindowTitle()
-        {
-            const int nChars = 256;
-            StringBuilder Buff = new StringBuilder(nChars);
-            IntPtr handle = GetForegroundWindow();
-
-            if (GetWindowText(handle, Buff, nChars) > 0)
-            {
-                return Buff.ToString();
-            }
-            return null;
         }
 
         public static string GetWindowTitle(IntPtr handle)
