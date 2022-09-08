@@ -144,8 +144,9 @@ namespace HandheldCompanion.Views.QuickPages
 
                 TDPToggle.IsOn = profile.TDP_override;
 
-                // Sensivity settings
+                // Slider settings
                 SliderSensivity.Value = profile.aiming_sensivity;
+                SliderAntiDeadzone.Value = profile.antideadzone;
 
                 if (backgroundtask)
                     return;
@@ -228,10 +229,12 @@ namespace HandheldCompanion.Views.QuickPages
                 case Input.JoystickCamera:
                     cB_Output.SelectedIndex = (int)Output.RightStick;
                     GridSensivity.Visibility = Visibility.Visible;
+                    GridAntiDeadzone.Visibility = Visibility.Visible;
                     break;
                 case Input.JoystickSteering:
                     cB_Output.SelectedIndex = (int)Output.LeftStick;
                     GridSensivity.Visibility = Visibility.Collapsed;
+                    GridAntiDeadzone.Visibility = Visibility.Collapsed;
                     break;
             }
 
@@ -324,6 +327,19 @@ namespace HandheldCompanion.Views.QuickPages
 
             // Sensivity settings
             currentProfile.aiming_sensivity = (float)SliderSensivity.Value;
+            UpdateProfile();
+        }
+
+        private void SliderAntiDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (currentProfile is null)
+                return;
+
+            if (!IsReady)
+                return;
+
+            // Antideadzone settings
+            currentProfile.antideadzone = (float)SliderAntiDeadzone.Value;
             UpdateProfile();
         }
     }
