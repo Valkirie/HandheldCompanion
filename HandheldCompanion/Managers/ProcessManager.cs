@@ -8,16 +8,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Management;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Windows.System.Diagnostics;
 using static ControllerCommon.Utils.ProcessUtils;
 using static ControllerCommon.WinAPI;
+using static HandheldCompanion.Managers.EnergyManager;
+using Color = System.Windows.Media.Color;
 using Image = System.Windows.Controls.Image;
 using ThreadState = System.Diagnostics.ThreadState;
 using Timer = System.Timers.Timer;
@@ -50,6 +55,7 @@ namespace HandheldCompanion.Managers
         public Process Process;
         public IntPtr MainWindowHandle;
         public object processInfo;
+        public QualityOfServiceLevel QoL;
 
         public uint Id;
         public string Name;
@@ -132,20 +138,21 @@ namespace HandheldCompanion.Managers
                     }
 
                     // manage process throttling
-                    EnergyManager.GetProcessInfo(Process.Handle, WinAPI.PROCESS_INFORMATION_CLASS.ProcessPowerThrottling, out processInfo);
-                    PROCESS_POWER_THROTTLING_STATE state = (PROCESS_POWER_THROTTLING_STATE)processInfo;
-
-                    switch(state.StateMask)
+                    // var result = EnergyManager.GetProcessInfo(Process.Handle, WinAPI.PROCESS_INFORMATION_CLASS.ProcessPowerThrottling, out processInfo);
+                    switch (QoL)
                     {
-                        case 1: // EcoQoS
-                            processQoS.Glyph = "\uE8BE";
-                            break;
-                        default:
-                        case 0: // HighQoS
+                        // HighQoS
+                        case QualityOfServiceLevel.Default:
+                        case QualityOfServiceLevel.High:
                             processQoS.Glyph = "\uE945";
+                            processQoS.Foreground = new SolidColorBrush(Color.FromRgb(25, 144, 161));
+                            break;
+                        // EcoQoS
+                        case QualityOfServiceLevel.Eco:
+                            processQoS.Glyph = "\uE8BE";
+                            processQoS.Foreground = new SolidColorBrush(Color.FromRgb(193, 127, 48));
                             break;
                     }
-
                 }), DispatcherPriority.ContextIdle);
             }
             catch (Exception) { }
@@ -385,6 +392,10 @@ namespace HandheldCompanion.Managers
             // list all current processes
             EnumWindows(new WindowEnumCallback(AddWnd), 0);
 
+            // get current foreground process
+            IntPtr hWnd = GetforegroundWindow();
+            EventCallback((IntPtr)0, 0, hWnd, 0, 0, 0, 0);
+
             base.Start();
         }
 
@@ -408,6 +419,11 @@ namespace HandheldCompanion.Managers
         public ProcessEx GetForegroundProcess()
         {
             return foregroundProcess;
+        }
+
+        public List<ProcessEx> GetProcesses()
+        {
+            return Processes.Values.ToList();
         }
 
         private void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)

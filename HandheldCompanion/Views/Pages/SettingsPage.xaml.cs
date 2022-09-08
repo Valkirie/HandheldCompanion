@@ -108,6 +108,9 @@ namespace HandheldCompanion.Views.Pages
                     case "SensorPlacement":
                         UpdateUI_SensorPlacement(Convert.ToInt32(value));
                         break;
+                    case "UseEnergyStar":
+                        Toggle_EnergyStar.IsOn = Convert.ToBoolean(value);
+                        break;
                 }
             });
         }

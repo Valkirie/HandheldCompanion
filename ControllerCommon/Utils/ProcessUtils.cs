@@ -33,57 +33,6 @@ namespace ControllerCommon.Utils
             SCS_POSIX_BINARY = 4,   // A POSIX based application
             SCS_WOW_BINARY = 2      // A 16-bit Windows-based application
         }
-
-        [Flags]
-        public enum ProcessAccessFlags : uint
-        {
-            All = 0x001F0FFF,
-            Terminate = 0x00000001,
-            CreateThread = 0x00000002,
-            VirtualMemoryOperation = 0x00000008,
-            VirtualMemoryRead = 0x00000010,
-            VirtualMemoryWrite = 0x00000020,
-            DuplicateHandle = 0x00000040,
-            CreateProcess = 0x000000080,
-            SetQuota = 0x00000100,
-            SetInformation = 0x00000200,
-            QueryInformation = 0x00000400,
-            QueryLimitedInformation = 0x00001000,
-            Synchronize = 0x00100000
-        }
-
-        public enum PROCESS_INFORMATION_CLASS
-        {
-            ProcessMemoryPriority,
-            ProcessMemoryExhaustionInfo,
-            ProcessAppMemoryInfo,
-            ProcessInPrivateInfo,
-            ProcessPowerThrottling,
-            ProcessReservedValue1,
-            ProcessTelemetryCoverageInfo,
-            ProcessProtectionLevelInfo,
-            ProcessLeapSecondInfo,
-            ProcessInformationClassMax,
-        }
-
-        [Flags]
-        public enum ProcessorPowerThrottlingFlags : uint
-        {
-            None = 0x0,
-            PROCESS_POWER_THROTTLING_EXECUTION_SPEED = 0x1,
-        }
-
-        public enum PriorityClass : uint
-        {
-            ABOVE_NORMAL_PRIORITY_CLASS = 0x8000,
-            BELOW_NORMAL_PRIORITY_CLASS = 0x4000,
-            HIGH_PRIORITY_CLASS = 0x80,
-            IDLE_PRIORITY_CLASS = 0x40,
-            NORMAL_PRIORITY_CLASS = 0x20,
-            PROCESS_MODE_BACKGROUND_BEGIN = 0x100000,// 'Windows Vista/2008 and higher
-            PROCESS_MODE_BACKGROUND_END = 0x200000,//   'Windows Vista/2008 and higher
-            REALTIME_PRIORITY_CLASS = 0x100
-        }
         #endregion
 
         #region imports
@@ -101,9 +50,6 @@ namespace ControllerCommon.Utils
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool EnumChildWindows(IntPtr hwnd, WindowEnumProc callback, IntPtr lParam);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern bool SetPriorityClass(IntPtr handle, PriorityClass priorityClass);
         #endregion
 
         public class FindHostedProcess
