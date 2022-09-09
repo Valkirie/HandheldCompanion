@@ -1004,15 +1004,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Activation button description?.
-        /// </summary>
-        public static string ProfileSettingsMode0_AimingDownSightsActivationDesc {
-            get {
-                return ResourceManager.GetString("ProfileSettingsMode0_AimingDownSightsActivationDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An additional motion sensitivity multiplier when aiming down sights or scope through the use of the configured activation button.
         /// </summary>
         public static string ProfileSettingsMode0_AimingDownSightsDesc {
@@ -1027,15 +1018,6 @@ namespace HandheldCompanion.Properties {
         public static string ProfileSettingsMode0_AimingDownSightsMultiplier {
             get {
                 return ResourceManager.GetString("ProfileSettingsMode0_AimingDownSightsMultiplier", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Multiplier value description?.
-        /// </summary>
-        public static string ProfileSettingsMode0_AimingDownSightsMultiplierDesc {
-            get {
-                return ResourceManager.GetString("ProfileSettingsMode0_AimingDownSightsMultiplierDesc", resourceCulture);
             }
         }
         

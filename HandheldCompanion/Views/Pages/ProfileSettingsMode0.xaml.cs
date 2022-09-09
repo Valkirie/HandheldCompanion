@@ -1,11 +1,16 @@
 using ControllerCommon;
+using ControllerCommon.Utils;
 using ControllerService.Sensors;
+using ModernWpf.Controls;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using GamepadButtonFlagsExt = ControllerCommon.Utils.GamepadButtonFlagsExt;
+using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -15,6 +20,8 @@ namespace HandheldCompanion.Views.Pages
     public partial class ProfileSettingsMode0 : Page
     {
         private Profile profileCurrent;
+
+        private Dictionary<GamepadButtonFlagsExt, CheckBox> activators = new();
 
         public ProfileSettingsMode0()
         {
@@ -56,6 +63,30 @@ namespace HandheldCompanion.Views.Pages
                 };
 
                 StackCurve.Children.Add(thumb);
+            }
+
+            // draw gamepad activators
+            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+            {
+                // create panel
+                SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+
+                // create icon
+                FontIcon icon = new FontIcon() { Glyph = "" };
+                icon.Glyph = InputUtils.GamepadButtonToGlyph(button);
+
+                if (icon.Glyph != "")
+                    panel.Children.Add(icon);
+
+                // create textblock
+                string description = EnumUtils.GetDescriptionFromEnumValue(button);
+                TextBlock text = new TextBlock() { Text = description };
+                panel.Children.Add(text);
+
+                // create checkbox
+                CheckBox checkbox = new CheckBox() { Tag = button, Content = panel, Width = 170 };
+                cB_AimingDownSightsActivationButtons.Children.Add(checkbox);
+                activators.Add(button, checkbox);
             }
         }
 
