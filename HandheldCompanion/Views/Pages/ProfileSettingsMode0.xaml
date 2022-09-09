@@ -47,6 +47,63 @@
                     </Grid>
                 </Border>
 
+                <!-- Aiming down sights/scope multiplier settings -->
+                <Expander Name="Expander_AimingDownSights" Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
+                    <Expander.Header>
+                        <DockPanel Margin="0,12,12,12">
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE710;" Height="40"/>
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_AimingDownSights}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_AimingDownSightsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+                    </Expander.Header>
+
+                    <Expander.Content>
+                        <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_AimingDownSightsMultiplier}" FontSize="14"/>
+                                </StackPanel>
+
+                                <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAimingDownSightsMultiplier, Mode=OneWay}" />
+                                    <Slider Margin="6,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="tb_ProfileAimingDownSightsMultiplier" AutoToolTipPlacement="TopLeft" LargeChange="0.5" Maximum="3.0" Minimum="0.5" TickFrequency="0.1" Value="1" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="SliderAimingDownSightsMultiplier_ValueChanged" />
+                                </DockPanel>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_AimingDownSightsActivation}" FontSize="14" VerticalAlignment="Center"/>
+                                </StackPanel>
+
+                            </Grid>
+
+                            <Grid>
+                                <ui:LayoutPanel Name="cB_AimingDownSightsActivationButtons" HorizontalAlignment="Center">
+                                    <ui:LayoutPanel.Layout>
+                                        <ui:UniformGridLayout/>
+                                    </ui:LayoutPanel.Layout>
+                                </ui:LayoutPanel>
+                            </Grid>
+                        </ui:SimpleStackPanel>
+                    </Expander.Content>
+                </Expander>
+                
                 <!-- Flick Stick settings -->
                 <Expander Name="Expander_FlickStick" Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
                     <Expander.Header>

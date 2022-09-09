@@ -432,6 +432,24 @@
   <data name="ProfileSettingsMode0_AdditionalSettings" xml:space="preserve">
     <value>Additional settings</value>
   </data>
+  <data name="ProfileSettingsMode0_AimingDownSights" xml:space="preserve">
+    <value>Aiming down sights motion multiplier</value>
+  </data>
+  <data name="ProfileSettingsMode0_AimingDownSightsActivation" xml:space="preserve">
+    <value>Activation button</value>
+  </data>
+  <data name="ProfileSettingsMode0_AimingDownSightsActivationDesc" xml:space="preserve">
+    <value>Activation button description?</value>
+  </data>
+  <data name="ProfileSettingsMode0_AimingDownSightsDesc" xml:space="preserve">
+    <value>An additional motion sensitivity multiplier when aiming down sights or scope through the use of the configured activation button</value>
+  </data>
+  <data name="ProfileSettingsMode0_AimingDownSightsMultiplier" xml:space="preserve">
+    <value>Multiplier value</value>
+  </data>
+  <data name="ProfileSettingsMode0_AimingDownSightsMultiplierDesc" xml:space="preserve">
+    <value>Multiplier value description?</value>
+  </data>
   <data name="ProfileSettingsMode0_CameraOptions" xml:space="preserve">
     <value>Camera options</value>
   </data>

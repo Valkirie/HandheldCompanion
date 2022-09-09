@@ -194,6 +194,15 @@ namespace HandheldCompanion.Views.Pages
             ((Expander)sender).BringIntoView();
         }
 
+        private void SliderAimingDownSightsMultiplier_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (profileCurrent is null)
+                return;
+
+            // todo
+            //profileCurrent.stick_sensivity = (float)tb_ProfileStickSensitivity.Value;
+        }
+
         private void Toggle_FlickStick_Toggled(object sender, RoutedEventArgs e)
         {
             if (profileCurrent == null)
