@@ -21,7 +21,7 @@ namespace HandheldCompanion.Views.Pages
     {
         private Profile profileCurrent;
 
-        private Dictionary<GamepadButtonFlagsExt, CheckBox> activators = new();
+        private Dictionary<GamepadButtonFlagsExt, CheckBox> AimingDownSightsActivators = new();
 
         public ProfileSettingsMode0()
         {
@@ -36,6 +36,7 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.pipeClient.ServerMessage += OnServerMessage;
 
             SliderSensivity.Value = profileCurrent.aiming_sensivity;
+            tb_ProfileAimingDownSightsMultiplier.Value = profileCurrent.aiming_down_sights_multiplier;
             Toggle_FlickStick.IsOn = profileCurrent.flickstick_enabled;
             tb_ProfileFlickDuration.Value = profileCurrent.flick_duration * 1000;
             tb_ProfileStickSensitivity.Value = profileCurrent.stick_sensivity;
@@ -86,8 +87,14 @@ namespace HandheldCompanion.Views.Pages
                 // create checkbox
                 CheckBox checkbox = new CheckBox() { Tag = button, Content = panel, Width = 170 };
                 cB_AimingDownSightsActivationButtons.Children.Add(checkbox);
-                activators.Add(button, checkbox);
+                AimingDownSightsActivators.Add(button, checkbox);
             }
+
+            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+                if (profileCurrent.aiming_down_sights_activation.HasFlag(button))
+                    AimingDownSightsActivators[button].IsChecked = true;
+                else
+                    AimingDownSightsActivators[button].IsChecked = false;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -230,8 +237,13 @@ namespace HandheldCompanion.Views.Pages
             if (profileCurrent is null)
                 return;
 
-            // todo
-            //profileCurrent.stick_sensivity = (float)tb_ProfileStickSensitivity.Value;
+            profileCurrent.aiming_down_sights_multiplier = (float)tb_ProfileAimingDownSightsMultiplier.Value;
+
+            // Todo, do on tickbox change(s)
+            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+                if ((bool)AimingDownSightsActivators[button].IsChecked)
+                    profileCurrent.aiming_down_sights_activation |= button;
+
         }
 
         private void Toggle_FlickStick_Toggled(object sender, RoutedEventArgs e)
