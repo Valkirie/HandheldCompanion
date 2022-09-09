@@ -148,6 +148,11 @@ namespace ControllerService.Targets
                                 // apply device width ratio
                                 Angular.X *= ControllerService.handheldDevice.WidthHeightRatio;
 
+                                // apply aiming down scopes multiplier if activated
+                                if ((ControllerService.profile.aiming_down_sights_activation & buttons) != 0) {
+                                    Angular *= ControllerService.profile.aiming_down_sights_multiplier;
+                                }
+
                                 // apply sensivity
                                 Vector2 GamepadThumb = new Vector2(
                                     Angular.X * ControllerService.profile.GetSensiviy(),

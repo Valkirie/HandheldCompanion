@@ -240,9 +240,9 @@ namespace HandheldCompanion.Views.Pages
             profileCurrent.aiming_down_sights_multiplier = (float)tb_ProfileAimingDownSightsMultiplier.Value;
 
             // Todo, do on tickbox change(s)
-            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
-                if ((bool)AimingDownSightsActivators[button].IsChecked)
-                    profileCurrent.aiming_down_sights_activation |= button;
+            //foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+            //    if ((bool)AimingDownSightsActivators[button].IsChecked)
+            //        profileCurrent.aiming_down_sights_activation |= button;
 
         }
 
