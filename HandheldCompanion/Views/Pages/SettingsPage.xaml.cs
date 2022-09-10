@@ -111,6 +111,10 @@ namespace HandheldCompanion.Views.Pages
                     case "UseEnergyStar":
                         Toggle_EnergyStar.IsOn = Convert.ToBoolean(value);
                         break;
+                    case "ServiceStartMode":
+                        cB_StartupType.SelectedIndex = Convert.ToInt32(value);
+                        cB_StartupType_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        break;
                 }
             });
         }

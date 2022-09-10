@@ -17,6 +17,18 @@ namespace HandheldCompanion.Managers
         {
             this.ServiceName = ServiceName;
             this.ServiceExecutable = Executable;
+
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            switch(name)
+            {
+                case "RunAtStartup":
+                    UpdateTask(Convert.ToBoolean(value));
+                    break;
+            }
         }
 
         public override void Start()

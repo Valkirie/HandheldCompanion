@@ -311,8 +311,6 @@ namespace HandheldCompanion.Views
                 _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStopIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
             };
 
-            taskManager.UpdateTask(SettingsManager.GetBoolean("RunAtStartup"));
-
             cheatManager.Cheated += (cheat) =>
             {
                 switch (cheat)
@@ -326,18 +324,15 @@ namespace HandheldCompanion.Views
             systemManager.SerialArrived += SystemManager_Updated;
             systemManager.SerialRemoved += SystemManager_Updated;
 
-            // handle settingsPage events
+            // handle settings events and forward to common managers
             SettingsManager.SettingValueChanged += (name, value) =>
             {
                 switch (name)
                 {
-                    case "toast_notification":
-                        toastManager.Enabled = (bool)value;
+                    case "ToastEnable":
+                        toastManager.Enabled = Convert.ToBoolean(value);
                         break;
-                    case "autostart":
-                        taskManager.UpdateTask((bool)value);
-                        break;
-                    case "service_startup_type":
+                    case "ServiceStartMode":
                         serviceManager.SetStartType((ServiceStartMode)value);
                         break;
                 }
