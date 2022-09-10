@@ -79,19 +79,6 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
-        public void SettingsPage_SettingValueChanged(string name, object value)
-        {
-            switch (name)
-            {
-                case "configurabletdp_down":
-                    TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = (double)value;
-                    break;
-                case "configurabletdp_up":
-                    TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = (double)value;
-                    break;
-            }
-        }
-
         private void ProfileManager_Updated(Profile profile, bool backgroundtask, bool isCurrent)
         {
             if (!isCurrent)

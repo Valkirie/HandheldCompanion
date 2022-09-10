@@ -17,7 +17,13 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            foreach (SettingsProperty property in Properties.Settings.Default.Properties)
+            var properties = Properties.Settings
+                .Default
+                .Properties
+                .Cast<System.Configuration.SettingsProperty>()
+                .OrderBy(s => s.Name);
+
+            foreach (SettingsProperty property in properties)
                 SettingValueChanged(property.Name, GetProperty(property.Name));
 
             IsInitialized = true;
