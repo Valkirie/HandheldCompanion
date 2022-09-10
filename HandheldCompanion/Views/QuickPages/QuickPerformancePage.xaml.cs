@@ -13,6 +13,7 @@ namespace HandheldCompanion.Views.QuickPages
     public partial class QuickPerformancePage : Page
     {
         private bool CanChangeTDP, CanChangeGPU;
+        private Profile currentProfile;
 
         public QuickPerformancePage()
         {
@@ -84,7 +85,9 @@ namespace HandheldCompanion.Views.QuickPages
             if (!isCurrent)
                 return;
 
-            LockTDP(profile);
+            currentProfile = profile;
+
+            UpdateControls();
         }
 
         private void ProfileManager_Discarded(Profile profile, bool isCurrent)
@@ -92,33 +95,35 @@ namespace HandheldCompanion.Views.QuickPages
             if (!isCurrent)
                 return;
 
-            UnlockTDP(profile);
+            currentProfile = null;
+
+            UpdateControls();
         }
 
         private void ProfileManager_Applied(Profile profile)
         {
-            LockTDP(profile);
+            currentProfile = profile;
+
+            UpdateControls();
         }
 
-        private void LockTDP(Profile profile)
+        private void UpdateControls()
         {
             this.Dispatcher.Invoke(() =>
             {
-                TDPToggle.IsEnabled = !profile.TDP_override;
-                TDPSustainedSlider.IsEnabled = !profile.TDP_override;
-                TDPBoostSlider.IsEnabled = !profile.TDP_override;
-                TDPWarning.Visibility = profile.TDP_override ? Visibility.Visible : Visibility.Collapsed;
-            });
-        }
+                if (currentProfile != null)
+                {
+                    TDPToggle.IsEnabled = TDPSustainedSlider.IsEnabled = TDPBoostSlider.IsEnabled = CanChangeTDP && !currentProfile.TDP_override;
+                    TDPWarning.Visibility = currentProfile.TDP_override ? Visibility.Visible : Visibility.Collapsed;
+                }
+                else
+                {
+                    TDPToggle.IsEnabled = TDPSustainedSlider.IsEnabled = TDPBoostSlider.IsEnabled = CanChangeTDP;
+                    TDPWarning.Visibility = Visibility.Collapsed;
+                }
 
-        private void UnlockTDP(Profile profile)
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                TDPToggle.IsEnabled = CanChangeTDP;
-                TDPSustainedSlider.IsEnabled = CanChangeTDP;
-                TDPBoostSlider.IsEnabled = CanChangeTDP;
-                TDPWarning.Visibility = Visibility.Collapsed;
+                GPUToggle.IsEnabled = CanChangeGPU;
+                GPUSlider.IsEnabled = CanChangeGPU;
             });
         }
 
@@ -127,15 +132,7 @@ namespace HandheldCompanion.Views.QuickPages
             this.CanChangeTDP = CanChangeTDP;
             this.CanChangeGPU = CanChangeGPU;
 
-            this.Dispatcher.Invoke(() =>
-            {
-                TDPToggle.IsEnabled = CanChangeTDP;
-                TDPSustainedSlider.IsEnabled = CanChangeTDP;
-                TDPBoostSlider.IsEnabled = CanChangeTDP;
-
-                GPUToggle.IsEnabled = CanChangeGPU;
-                GPUSlider.IsEnabled = CanChangeGPU;
-            });
+            UpdateControls();
         }
 
         private void PowerManager_LimitChanged(PowerType type, int limit)
