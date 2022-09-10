@@ -211,9 +211,16 @@ namespace HandheldCompanion.Views.QuickPages
                 MainWindow.powerManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
                 MainWindow.powerManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
                 MainWindow.powerManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
+
+                MainWindow.powerManager.StartTDPWatchdog();
             }
             else
-                MainWindow.powerManager.RequestTDP(MainWindow.handheldDevice.nTDP); // restore default TDP
+            {
+                // restore default TDP and halt watchdog
+                MainWindow.powerManager.RequestTDP(MainWindow.handheldDevice.nTDP);
+
+                MainWindow.powerManager.StopTDPWatchdog();
+            }
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -224,9 +231,16 @@ namespace HandheldCompanion.Views.QuickPages
         private void GPUToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (GPUToggle.IsOn)
+            {
                 MainWindow.powerManager.RequestGPUClock(GPUSlider.Value);
+                MainWindow.powerManager.StartGPUWatchdog();
+            }
             else
-                MainWindow.powerManager.RequestGPUClock(255 * 50);  // restore default GPU clock
+            {
+                // restore default GPU clock and halt watchdog
+                MainWindow.powerManager.RequestGPUClock(255 * 50);
+                MainWindow.powerManager.StopGPUWatchdog();
+            }
 
             if (!SettingsManager.IsInitialized)
                 return;

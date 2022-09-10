@@ -57,9 +57,11 @@ namespace HandheldCompanion.Managers
 
         private Timer cpuWatchdog;
         protected object cpuLock = new();
+        private bool cpuWatchdogPendingStop;
 
         private Timer gfxWatchdog;
         protected object gfxLock = new();
+        private bool gfxWatchdogPendingStop;
 
         public event LimitChangedHandler PowerLimitChanged;
         public delegate void LimitChangedHandler(PowerType type, int limit);
@@ -152,6 +154,9 @@ namespace HandheldCompanion.Managers
         {
             lock (cpuLock)
             {
+                bool TDPdone = false;
+                bool MSRdone = false;
+
                 // read current values and (re)apply requested TDP if needed
                 foreach (PowerType type in (PowerType[])Enum.GetValues(typeof(PowerType)))
                 {
@@ -183,6 +188,8 @@ namespace HandheldCompanion.Managers
                     // only request an update if current limit is different than stored
                     if (CurrentTDP[idx] != TDP)
                         processor.SetTDPLimit(type, TDP);
+                    else
+                        TDPdone = true;
                 }
 
                 // processor specific
@@ -199,7 +206,13 @@ namespace HandheldCompanion.Managers
                     if (CurrentTDP[(int)PowerType.MsrSlow] != TDPslow ||
                         CurrentTDP[(int)PowerType.MsrFast] != TDPfast)
                         ((IntelProcessor)processor).SetMSRLimit(TDPslow, TDPfast);
+                    else
+                        MSRdone = true;
                 }
+
+                // user requested to halt cpu watchdog
+                if (TDPdone && MSRdone && cpuWatchdogPendingStop)
+                    cpuWatchdog.Stop();
             }
         }
 
@@ -207,6 +220,8 @@ namespace HandheldCompanion.Managers
         {
             lock (gfxLock)
             {
+                bool GPUdone = false;
+
                 if (processor.GetType() == typeof(AMDProcessor))
                 {
                     // not ready yet
@@ -227,7 +242,33 @@ namespace HandheldCompanion.Managers
                 // only request an update if current gfx clock is different than stored
                 if (CurrentGfxClock != StoredGfxClock)
                     processor.SetGPUClock(StoredGfxClock);
+                else
+                    GPUdone = true;
+
+                // user requested to halt gpu watchdog
+                if (GPUdone && gfxWatchdogPendingStop)
+                    gfxWatchdog.Stop();
             }
+        }
+
+        internal void StartGPUWatchdog()
+        {
+            gfxWatchdog.Start();
+        }
+
+        internal void StopGPUWatchdog()
+        {
+            gfxWatchdogPendingStop = true;
+        }
+
+        internal void StopTDPWatchdog()
+        {
+            cpuWatchdogPendingStop = true;
+        }
+
+        internal void StartTDPWatchdog()
+        {
+            cpuWatchdog.Start();
         }
 
         public void RequestTDP(PowerType type, double value, bool UserRequested = true)
@@ -316,9 +357,6 @@ namespace HandheldCompanion.Managers
             processor.LimitChanged += Processor_LimitChanged;
             processor.MiscChanged += Processor_MiscChanged;
             processor.Initialize();
-
-            cpuWatchdog.Start();
-            gfxWatchdog.Start();
 
             base.Start();
         }
