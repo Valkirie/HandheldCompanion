@@ -328,6 +328,7 @@ namespace ControllerCommon.Processor
             else
             {
                 family = RyzenAdj.get_cpu_family(ry);
+                IsInitialized = true;
 
                 switch (family)
                 {
