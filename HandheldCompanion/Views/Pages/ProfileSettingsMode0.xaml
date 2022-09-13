@@ -79,7 +79,7 @@
                             </Grid>
 
                             <!-- Separator -->
-                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-60,0,-60,0" />
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
 
                             <Grid>
                                 <Grid.ColumnDefinitions>
