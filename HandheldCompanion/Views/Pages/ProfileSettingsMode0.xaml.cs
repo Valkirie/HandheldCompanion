@@ -1,11 +1,16 @@
 using ControllerCommon;
+using ControllerCommon.Utils;
 using ControllerService.Sensors;
+using ModernWpf.Controls;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using GamepadButtonFlagsExt = ControllerCommon.Utils.GamepadButtonFlagsExt;
+using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -15,6 +20,8 @@ namespace HandheldCompanion.Views.Pages
     public partial class ProfileSettingsMode0 : Page
     {
         private Profile profileCurrent;
+
+        private Dictionary<GamepadButtonFlagsExt, CheckBox> AimingDownSightsActivators = new();
 
         public ProfileSettingsMode0()
         {
@@ -29,6 +36,7 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.pipeClient.ServerMessage += OnServerMessage;
 
             SliderSensivity.Value = profileCurrent.aiming_sensivity;
+            tb_ProfileAimingDownSightsMultiplier.Value = profileCurrent.aiming_down_sights_multiplier;
             Toggle_FlickStick.IsOn = profileCurrent.flickstick_enabled;
             tb_ProfileFlickDuration.Value = profileCurrent.flick_duration * 1000;
             tb_ProfileStickSensitivity.Value = profileCurrent.stick_sensivity;
@@ -57,6 +65,40 @@ namespace HandheldCompanion.Views.Pages
 
                 StackCurve.Children.Add(thumb);
             }
+
+            // draw aiming down sight activators
+            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+            {
+                // create panel
+                SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+
+                // create icon
+                FontIcon icon = new FontIcon() { Glyph = "" };
+                icon.Glyph = InputUtils.GamepadButtonToGlyph(button);
+
+                if (icon.Glyph != "")
+                    panel.Children.Add(icon);
+
+                // create textblock
+                string description = EnumUtils.GetDescriptionFromEnumValue(button);
+                TextBlock text = new TextBlock() { Text = description };
+                panel.Children.Add(text);
+
+                // create checkbox
+                CheckBox checkbox = new CheckBox() { Tag = button, Content = panel, Width = 170 };
+                checkbox.Checked += AimingDownSightsActivatorsTickedEvent;
+                checkbox.Unchecked += AimingDownSightsActivatorsUntickedEvent;
+
+                cB_AimingDownSightsActivationButtons.Children.Add(checkbox);
+                AimingDownSightsActivators.Add(button, checkbox);
+            }
+
+            // Fill activators based on profile
+            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+                if (profileCurrent.aiming_down_sights_activation.HasFlag(button))
+                    AimingDownSightsActivators[button].IsChecked = true;
+                else
+                    AimingDownSightsActivators[button].IsChecked = false;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -192,6 +234,37 @@ namespace HandheldCompanion.Views.Pages
         private void Expander_Expanded(object sender, RoutedEventArgs e)
         {
             ((Expander)sender).BringIntoView();
+        }
+
+        private void SliderAimingDownSightsMultiplier_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (profileCurrent is null)
+                return;
+
+            profileCurrent.aiming_down_sights_multiplier = (float)tb_ProfileAimingDownSightsMultiplier.Value;
+        }
+
+        private void AimingDownSightsActivatorsTickedEvent(object sender, RoutedEventArgs e)
+        {
+            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt))) { 
+                if ((bool)AimingDownSightsActivators[button].IsChecked) 
+                { 
+                    profileCurrent.aiming_down_sights_activation |= button; 
+                }
+            }
+        }
+
+        private void AimingDownSightsActivatorsUntickedEvent(object sender, RoutedEventArgs e)
+        {
+            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+            {
+                if (!(bool)AimingDownSightsActivators[button].IsChecked)
+                {
+                    // Perform a bitwise "AND" mask with every bit set
+                    // except the ones already ticked, use complement.
+                    profileCurrent.aiming_down_sights_activation &= ~button;
+                }
+            }
         }
 
         private void Toggle_FlickStick_Toggled(object sender, RoutedEventArgs e)
