@@ -131,10 +131,20 @@ namespace HandheldCompanion.Managers
 
             // restore user defined TDP
             RequestTDP(FallbackTDP, false);
+
+            // stop cpuWatchdog if system settings is disabled
+            bool cpuWatchdogState = SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled");
+            if (profile.TDP_override && !cpuWatchdogState)
+                StopTDPWatchdog();
         }
 
         private void ProfileManager_Applied(Profile profile)
         {
+            // start cpuWatchdog if system settings is disabled
+            bool cpuWatchdogState = SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled");
+            if (profile.TDP_override && !cpuWatchdogState)
+                StartTDPWatchdog();
+
             // apply profile defined TDP
             if (profile.TDP_override && profile.TDP_value != null)
                 RequestTDP(profile.TDP_value, false);
