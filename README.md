@@ -1,7 +1,7 @@
 # Controller Service & Handheld Companion
 
 A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include:
-- Motion control through a device's inertial measurement unit (IMU, Gyroscope and Accelerometer) or external sensor.
+- Motion control a.k.a. gyro control through a device's inertial measurement unit (IMU, Gyroscope and Accelerometer) or external sensor.
 - Virtual controller simulation of [Microsoft Xbox 360 Controller](https://en.wikipedia.org/wiki/Xbox_360_controller) and [Sony DualShock 4 Controller](https://en.wikipedia.org/wiki/DualShock#DualShock_4)
 - Overlay, virtual touchpads and 3D controller model
 - Per application based profile settings system
@@ -10,6 +10,7 @@ A combination of a Windows service and a touch interface optimized GUI to increa
 
 ## Use cases
 A few examples of the most common use cases are:
+- You want to add universal motion controls (UMC) to any Windows game.
 - You want to add high-precision motion controls to your Windows game library through [Steam](https://store.steampowered.com/controller/update/dec15).
 - You want to play your Sony Playstation 4 library through [PlayStation Now](https://www.playstation.com/en-us/ps-now/) or [PS4 Remote Play](<https://remoteplay.dl.playstation.net/remoteplay/>).
 - You want to enjoy all your [Wii](https://dolphin-emu.org/), [WiiU](https://cemu.info/) and [Switch](https://yuzu-emu.org/) games with full motion controls through UDP motion control protocol.
@@ -22,8 +23,9 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 ## Supported Devices
 - AYA Neo and its different versions
 - AYA Next and its different versions
+- Aya Neo Air and it's different versions
 - ONEXPLAYER MINI and its different versions (Intel, AMD, Gundam)
-- GPD WIN Max 2
+- GPD WIN Max 2 (Intel and AMD)
 
 ## Supported Sensors
 - Bosch BMI160 (and similar)
@@ -52,7 +54,7 @@ On the fly adjustment of TDP (global and profile), brightness, hotkeys and motio
 Quicktools profile TDP control with Axiom Verge.
 
 ![Quicktools-02](https://user-images.githubusercontent.com/14330834/184693443-117d8594-f4e5-4400-8341-2fb95b986d01.png)
-Quicktools profile TDP motion settings with Borderlands Pre-Sequel.
+Quicktools profile motion settings with Borderlands Pre-Sequel.
 
 ### Virtual touchpad
 
@@ -73,13 +75,15 @@ Display a 3D virtual controller, showcasing the motion of the device and all but
   - Emulated controller (DualShock 4, Xbox 360)
   - ZDO+ controller
   - Fisher-Price controller
+  - Machenike HG510 
+  - 8BitDo Lite 2
 
 ![image](https://thumbs.gfycat.com/BlackandwhiteRareBorderterrier-size_restricted.gif)
 
 ## Contribute
 ### Bugs & Features
 Found a bug and want it fixed? Open a detailed issue on the [GitHub issue tracker](../../issues)!
-Have an idea for a new feature? Let's have a chat about your request on [Discord](https://discord.gg/cKaZ5SX8kx).
+Have an idea for a new feature? Let's have a chat about your request on [Discord](https://discord.com/channels/717181357109018694/1025057041422757978).
 
 ### Questions & Support
 Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Discord server](https://discord.gg/cKaZ5SX8kx), where you're welcome to check out and engage in discussions!
