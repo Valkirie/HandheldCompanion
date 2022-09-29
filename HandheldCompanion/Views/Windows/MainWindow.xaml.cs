@@ -96,8 +96,10 @@ namespace HandheldCompanion.Views
             // initialize splash screen
             if (SettingsManager.GetBoolean("FirstStart") || !SettingsManager.GetBoolean("StartMinimized"))
             {
+#if !DEBUG
                 SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
                 splashScreen.Show(true, true);
+#endif
 
                 SettingsManager.SetProperty("FirstStart", false);
             }
