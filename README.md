@@ -10,7 +10,7 @@ A combination of a Windows service and a touch interface optimized GUI to increa
 
 ## Use cases
 A few examples of the most common use cases are:
-- You want to add universal motion controls (UMC) to any Windows game.
+- You want to add universal motion controls (UMC) to any game.
 - You want to add high-precision motion controls to your Windows game library through [Steam](https://store.steampowered.com/controller/update/dec15).
 - You want to play your Sony Playstation 4 library through [PlayStation Now](https://www.playstation.com/en-us/ps-now/) or [PS4 Remote Play](<https://remoteplay.dl.playstation.net/remoteplay/>).
 - You want to enjoy all your [Wii](https://dolphin-emu.org/), [WiiU](https://cemu.info/) and [Switch](https://yuzu-emu.org/) games with full motion controls through UDP motion control protocol.
@@ -83,10 +83,10 @@ Display a 3D virtual controller, showcasing the motion of the device and all but
 ## Contribute
 ### Bugs & Features
 Found a bug and want it fixed? Open a detailed issue on the [GitHub issue tracker](../../issues)!
-Have an idea for a new feature? Let's have a chat about your request on [Discord](https://discord.com/channels/717181357109018694/1025057041422757978).
+Have an idea for a new feature? Let's have a chat about your request on [Discord](https://discord.gg/CY6GFskwwg).
 
 ### Questions & Support
-Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Discord server](https://discord.gg/cKaZ5SX8kx), where you're welcome to check out and engage in discussions!
+Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Discord server](https://discord.gg/CY6GFskwwg), where you're welcome to check out and engage in discussions!
 
 ### Donation
 If you would like to support this project, please consider making a donation to `BenjaminLSR` via [PayPal](https://www.paypal.com/paypalme/BenjaminLSR).
