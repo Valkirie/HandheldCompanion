@@ -72,13 +72,16 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
-            Hotkeys.Add(hotkey.hotkey.Name, hotkey);
+            string listener = hotkey.hotkey.GetListener();
+            Hotkeys.Add(listener, hotkey);
             HotkeyCreated?.Invoke(hotkey);
         }
 
         public static void SerializeHotkey(Hotkey hotkey, bool overwrite = false)
         {
-            string settingsPath = System.IO.Path.Combine(Path, $"{hotkey.hotkey.Name}.json");
+            string listener = hotkey.hotkey.GetListener();
+
+            string settingsPath = System.IO.Path.Combine(Path, $"{listener}.json");
             if (!File.Exists(settingsPath) || overwrite)
             {
                 var options = new JsonSerializerOptions { WriteIndented = true };
@@ -89,7 +92,10 @@ namespace HandheldCompanion.Managers
 
         private static void TriggerRaised(string listener, InputsChord input)
         {
-            // do something
+            switch(listener)
+            {
+
+            }
         }
 
         private static void TriggerUpdated(string listener, InputsChord inputs)

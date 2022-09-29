@@ -449,7 +449,7 @@ namespace HandheldCompanion.Managers
 
         private static void TriggerCreated(Hotkey hotkey)
         {
-            string listener = hotkey.hotkey.Name;
+            string listener = hotkey.hotkey.GetListener();
 
             Triggers.Add(listener, hotkey.chord);
             Triggered[listener] = false;

@@ -49,11 +49,13 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Dispatcher.Invoke(() =>
             {
+                string listener = hotkey.hotkey.GetListener();
+
                 hotkey.DrawControl();
                 var element = hotkey.GetBorder();
 
                 Button button = hotkey.GetButton();
-                button.Click += (sender, e) => TriggerButton_Click(hotkey.hotkey.Name, button);
+                button.Click += (sender, e) => TriggerButton_Click(listener, button);
 
                 HotkeysPanel.Children.Add(element);
             });

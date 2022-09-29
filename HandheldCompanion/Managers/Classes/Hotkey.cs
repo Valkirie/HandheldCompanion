@@ -45,7 +45,7 @@ namespace HandheldCompanion.Managers.Classes
             {
                 Padding = new Thickness(20, 12, 12, 12),
                 Visibility = Visibility.Visible,
-                Tag = hotkey.Name
+                Tag = hotkey.GetId()
             };
             mainBorder.SetResourceReference(Control.BackgroundProperty, "SystemControlBackgroundChromeMediumLowBrush");
 
@@ -73,7 +73,7 @@ namespace HandheldCompanion.Managers.Classes
             currentIcon = new FontIcon()
             {
                 Height = 40,
-                Glyph = hotkey.Glyph,
+                Glyph = hotkey.GetGlyph(),
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Right
             };
@@ -87,13 +87,13 @@ namespace HandheldCompanion.Managers.Classes
 
             contentName = new TextBlock()
             {
-                Text = hotkey.Name, // localize me !
+                Text = hotkey.GetName(),
                 FontSize = 14
             };
 
             contentDesc = new TextBlock()
             {
-                Text = hotkey.Description, // localize me !
+                Text = hotkey.GetDescription(),
                 TextWrapping = TextWrapping.Wrap,
                 FontSize = 12
             };

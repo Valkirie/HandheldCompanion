@@ -353,21 +353,18 @@ namespace HandheldCompanion.Views
 
         private void InputsManager_TriggerRaised(string listener, InputsChord input)
         {
-            this.Dispatcher.Invoke(() =>
+            switch (listener)
             {
-                switch (listener)
-                {
-                    case "quickTools":
-                        overlayquickTools.UpdateVisibility();
-                        break;
-                    case "overlayGamepad":
-                        overlayModel.UpdateVisibility();
-                        break;
-                    case "overlayTrackpads":
-                        overlayTrackpad.UpdateVisibility();
-                        break;
-                }
-            });
+                case "quickTools":
+                    overlayquickTools.UpdateVisibility();
+                    break;
+                case "overlayGamepad":
+                    overlayModel.UpdateVisibility();
+                    break;
+                case "overlayTrackpads":
+                    overlayTrackpad.UpdateVisibility();
+                    break;
+            }
         }
 
         private void MenuItem_Click(object? sender, EventArgs e)
