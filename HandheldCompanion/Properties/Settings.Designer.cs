@@ -12,7 +12,7 @@ namespace HandheldCompanion.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.2.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.3.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -217,18 +217,6 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("33")]
-        public string OverlayControllerTriggerValue {
-            get {
-                return ((string)(this["OverlayControllerTriggerValue"]));
-            }
-            set {
-                this["OverlayControllerTriggerValue"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int OverlayTrackpadsAlignment {
             get {
@@ -236,18 +224,6 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["OverlayTrackpadsAlignment"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("34")]
-        public string OverlayTrackpadsTriggerValue {
-            get {
-                return ((string)(this["OverlayTrackpadsTriggerValue"]));
-            }
-            set {
-                this["OverlayTrackpadsTriggerValue"] = value;
             }
         }
         
@@ -409,30 +385,6 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int OverlayControllerTriggerType {
-            get {
-                return ((int)(this["OverlayControllerTriggerType"]));
-            }
-            set {
-                this["OverlayControllerTriggerType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int OverlayTrackpadsTriggerType {
-            get {
-                return ((int)(this["OverlayTrackpadsTriggerType"]));
-            }
-            set {
-                this["OverlayTrackpadsTriggerType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool OverlayFaceCamera {
             get {
@@ -440,30 +392,6 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["OverlayFaceCamera"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int QuickToolsTriggerType {
-            get {
-                return ((int)(this["QuickToolsTriggerType"]));
-            }
-            set {
-                this["QuickToolsTriggerType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("36")]
-        public string QuickToolsTriggerValue {
-            get {
-                return ((string)(this["QuickToolsTriggerValue"]));
-            }
-            set {
-                this["QuickToolsTriggerValue"] = value;
             }
         }
         

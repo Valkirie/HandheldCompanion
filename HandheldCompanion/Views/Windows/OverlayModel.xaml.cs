@@ -1,7 +1,8 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
-using HandheldCompanion.Common;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
+using HandheldCompanion.Views.Classes;
 using SharpDX.XInput;
 using System;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace HandheldCompanion.Views.Windows
             InitializeComponent();
 
             MainWindow.pipeClient.ServerMessage += OnServerMessage;
-            MainWindow.inputsManager.Updated += UpdateReport;
+            InputsManager.Updated += UpdateReport;
 
             // initialize timers
             UpdateTimer = new MultimediaTimer();

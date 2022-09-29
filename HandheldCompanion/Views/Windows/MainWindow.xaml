@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HandheldCompanion"
-        xmlns:common="clr-namespace:HandheldCompanion.Common"
+        xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
         xmlns:resx="clr-namespace:HandheldCompanion.Properties"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"

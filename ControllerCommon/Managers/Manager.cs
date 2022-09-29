@@ -4,6 +4,7 @@
     {
         public bool IsEnabled { get; set; }
         public bool IsInitialized { get; set; }
+        protected string Path { get; set; }
 
         public virtual void Start()
         {

@@ -2,6 +2,7 @@ using ControllerCommon;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using Microsoft.Win32;
@@ -62,7 +63,6 @@ namespace HandheldCompanion.Views
 
         // manager(s) vars
         private static List<Manager> _managers = new();
-        public static InputsManager inputsManager;
         public static ToastManager toastManager;
         public static ProcessManager processManager;
         public static ServiceManager serviceManager;
@@ -184,10 +184,10 @@ namespace HandheldCompanion.Views
             loadPages();
 
             // start manager(s) synchroneously
-            inputsManager.Start();
-
+            InputsManager.Start();
             EnergyManager.Start();
             SettingsManager.Start();
+            HotkeysManager.Start();
 
             // start manager(s) asynchroneously
             foreach (Manager manager in _managers)
@@ -239,7 +239,7 @@ namespace HandheldCompanion.Views
             controllerPage.ControllerChanged += (Controller) =>
             {
                 cheatManager.UpdateController(Controller); // update me
-                inputsManager.UpdateController(Controller);
+                InputsManager.UpdateController(Controller);
             };
 
             stopwatch.Stop();
@@ -271,7 +271,6 @@ namespace HandheldCompanion.Views
 
             processManager = new();
             profileManager = new();
-            inputsManager = new();
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
             taskManager = new TaskManager("HandheldCompanion", CurrentExe);
             cheatManager = new();
@@ -291,7 +290,7 @@ namespace HandheldCompanion.Views
             _managers.Add(updateManager);
 
             // hook into managers events
-            inputsManager.TriggerRaised += InputsManager_TriggerRaised;
+            InputsManager.TriggerRaised += InputsManager_TriggerRaised;
 
             serviceManager.Updated += OnServiceUpdate;
             serviceManager.Ready += () =>
@@ -352,7 +351,7 @@ namespace HandheldCompanion.Views
             settingsPage.UpdateDevice(device);
         }
 
-        private void InputsManager_TriggerRaised(string listener, TriggerInputs input)
+        private void InputsManager_TriggerRaised(string listener, InputsChord input)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -436,7 +435,7 @@ namespace HandheldCompanion.Views
             }
         }
 
-        #region pipeClient
+#region pipeClient
         private void OnServerMessage(object sender, PipeMessage message)
         {
             switch (message.code)
@@ -452,9 +451,9 @@ namespace HandheldCompanion.Views
                     break;
             }
         }
-        #endregion
+#endregion
 
-        #region serviceManager
+#region serviceManager
 
         /*
          * Stop
@@ -539,9 +538,9 @@ namespace HandheldCompanion.Views
                 }
             });
         }
-        #endregion
+#endregion
 
-        #region UI
+#region UI
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             if (args.InvokedItemContainer != null)
@@ -618,7 +617,7 @@ namespace HandheldCompanion.Views
                 pipeClient.Close();
 
             cheatManager.Stop();
-            inputsManager.Stop();
+            InputsManager.Stop();
 
             // stop listening to system events
             SystemEvents.PowerModeChanged += OnPowerChangeAsync;
@@ -739,7 +738,7 @@ namespace HandheldCompanion.Views
                 navView.Header = new TextBlock() { Text = (string)((Page)e.Content).Title };
             }
         }
-        #endregion
+#endregion
 
         private async void OnPowerChangeAsync(object s, PowerModeChangedEventArgs e)
         {
@@ -753,13 +752,13 @@ namespace HandheldCompanion.Views
                 case PowerModes.Suspend:
                     {
                         //pause inputs manager
-                        inputsManager.Stop();
+                        InputsManager.Stop();
                     }
                     break;
                 case PowerModes.Resume:
                     {
                         // restore inputs manager
-                        inputsManager.Start();
+                        InputsManager.Start();
                     }
                     break;
             }

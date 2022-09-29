@@ -132,20 +132,20 @@ namespace HandheldCompanion.Views.Windows
                         StartTabTip();
                         break;
                     case "shortcutDesktop":
-                        MainWindow.inputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
+                        InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
                         break;
                     case "shortcutESC":
                         if (foregroundProcess != null)
                         {
                             SetForegroundWindow(foregroundProcess.MainWindowHandle);
-                            MainWindow.inputsManager.KeyPress(VirtualKeyCode.ESCAPE);
+                            InputsManager.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
                         if (foregroundProcess != null)
                         {
                             SetForegroundWindow(foregroundProcess.MainWindowHandle);
-                            MainWindow.inputsManager.KeyStroke(VirtualKeyCode.LMENU, VirtualKeyCode.RETURN);
+                            InputsManager.KeyStroke(VirtualKeyCode.LMENU, VirtualKeyCode.RETURN);
                         }
                         break;
                 }

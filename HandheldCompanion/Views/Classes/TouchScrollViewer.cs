@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace HandheldCompanion.Common
+namespace HandheldCompanion.Views.Classes
 {
     public class TouchScrollViewer : ScrollViewer
     {
@@ -20,13 +20,13 @@ namespace HandheldCompanion.Common
 
             while (hit != null && hit != ancestor)
             {
-                this.ancestor = hit;
+                ancestor = hit;
 
-                PanningMode mode = (PanningMode)hit.GetValue(ScrollViewer.PanningModeProperty);
+                PanningMode mode = (PanningMode)hit.GetValue(PanningModeProperty);
 
                 if (mode == PanningMode.HorizontalOnly)
                 {
-                    this.PanningMode = PanningMode.None;
+                    PanningMode = PanningMode.None;
                     return;
                 }
 
@@ -38,7 +38,7 @@ namespace HandheldCompanion.Common
 
         protected override void OnManipulationCompleted(ManipulationCompletedEventArgs e)
         {
-            this.PanningMode = PanningMode.VerticalOnly;
+            PanningMode = PanningMode.VerticalOnly;
             base.OnManipulationCompleted(e);
         }
     }

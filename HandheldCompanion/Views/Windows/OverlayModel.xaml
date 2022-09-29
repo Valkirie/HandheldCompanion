@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HandheldCompanion.Views.Windows"
-        xmlns:common="clr-namespace:HandheldCompanion.Common"
+        xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
         xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"

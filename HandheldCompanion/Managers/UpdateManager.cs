@@ -144,7 +144,7 @@ namespace HandheldCompanion.Managers
             assembly = Assembly.GetExecutingAssembly();
             build = assembly.GetName().Version;
 
-            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "cache");
+            path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "cache");
 
             // initialize folder
             if (!Directory.Exists(path))
@@ -259,7 +259,7 @@ namespace HandheldCompanion.Managers
                     UpdateFile update = new UpdateFile()
                     {
                         idx = resultIdx,
-                        filename = Path.GetFileName(href.LocalPath),
+                        filename = System.IO.Path.GetFileName(href.LocalPath),
                         uri = href,
                         filesize = GetFileSize(href)
                     };
@@ -293,7 +293,7 @@ namespace HandheldCompanion.Managers
                 return; // lazy
 
             // download release
-            string filename = Path.Combine(path, update.filename);
+            string filename = System.IO.Path.Combine(path, update.filename);
             webClient.DownloadFileAsync(update.uri, filename, update.filename);
             Updated?.Invoke(UpdateStatus.Download, update, null);
         }
@@ -401,7 +401,7 @@ namespace HandheldCompanion.Managers
 
         public void InstallUpdate(UpdateFile updateFile)
         {
-            string filename = Path.Combine(path, updateFile.filename);
+            string filename = System.IO.Path.Combine(path, updateFile.filename);
 
             if (!File.Exists(filename))
             {

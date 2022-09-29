@@ -158,12 +158,12 @@ namespace HandheldCompanion.Managers
             catch (Exception) { }
         }
 
-        public Border GetBorder()
+        public Border GetControl()
         {
             return processBorder;
         }
 
-        public void Draw()
+        public void DrawControl()
         {
             if (processBorder != null)
                 return;
@@ -468,7 +468,7 @@ namespace HandheldCompanion.Managers
             uint procId = (uint)proc.Id;
 
             string path = ProcessUtils.GetPathToApp(proc);
-            string exec = Path.GetFileName(path);
+            string exec = System.IO.Path.GetFileName(path);
 
             bool self = IsSelf(exec, path);
 
@@ -492,6 +492,8 @@ namespace HandheldCompanion.Managers
 
             // update main window handle
             foregroundProcess.MainWindowHandle = hWnd;
+
+            LogManager.LogDebug("{0} now has the foreground", foregroundProcess.Name);
 
             ForegroundChanged?.Invoke(foregroundProcess, backgroundProcess);
         }
@@ -541,7 +543,7 @@ namespace HandheldCompanion.Managers
                     return;
 
                 string path = ProcessUtils.GetPathToApp(proc);
-                string exec = Path.GetFileName(path);
+                string exec = System.IO.Path.GetFileName(path);
 
                 if (!Processes.ContainsKey((uint)proc.Id))
                 {
