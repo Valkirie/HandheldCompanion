@@ -160,6 +160,9 @@ namespace HandheldCompanion.Managers
                             InputsManager.KeyStroke(VirtualKeyCode.LMENU, VirtualKeyCode.RETURN);
                         }
                         break;
+                    case "shortcutTaskview":
+                        InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.TAB });
+                        break;
                 }
             }
             catch(Exception)

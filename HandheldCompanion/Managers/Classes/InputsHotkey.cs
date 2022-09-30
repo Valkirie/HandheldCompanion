@@ -26,6 +26,7 @@ namespace HandheldCompanion.Managers.Classes
             { 5, new InputsHotkey(InputsHotkeyType.Windows, "\uE782", "shortcutDesktop", "Summon desktop", "HoloLens MDL2 Assets") },
             { 6, new InputsHotkey(InputsHotkeyType.Windows, "\uEF2C", "shortcutESC", "Send ESCAPE key") },
             { 7, new InputsHotkey(InputsHotkeyType.Windows, "\uEE49", "shortcutExpand", "Send ALT + ENTER keystroke") },
+            { 8, new InputsHotkey(InputsHotkeyType.Windows, "\uE7C4", "shortcutTaskview", "Send WINDOWS + TAB keystroke") },
         };
 
         public string Glyph { get; set; }

@@ -264,6 +264,12 @@
   <data name="InputsHotkey_shortcutKeyboardDesc" xml:space="preserve">
     <value>Change the touch keyboard hotkey by pressing a button or a special key</value>
   </data>
+  <data name="InputsHotkey_shortcutTaskview" xml:space="preserve">
+    <value>Open Task view</value>
+  </data>
+  <data name="InputsHotkey_shortcutTaskviewDesc" xml:space="preserve">
+    <value>Windows logo key  + Tab</value>
+  </data>
   <data name="JoyXOff.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\JoyXOff.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>

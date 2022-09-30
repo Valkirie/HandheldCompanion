@@ -508,6 +508,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Task view.
+        /// </summary>
+        public static string InputsHotkey_shortcutTaskview {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutTaskview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Windows logo key  + Tab.
+        /// </summary>
+        public static string InputsHotkey_shortcutTaskviewDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutTaskviewDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {
         ///  &quot;name&quot;: &quot;Joyxoff&quot;,
         ///  &quot;path&quot;: &quot;Joyxoff.exe&quot;,
