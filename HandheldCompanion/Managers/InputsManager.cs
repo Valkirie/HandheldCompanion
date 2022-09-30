@@ -180,6 +180,11 @@ namespace HandheldCompanion.Managers
                             prevKeyUp[listener] = args.Timestamp;
                         }
 
+                        LogManager.LogDebug("Triggered: {0} at {1}, down: {2}, up: {3}", listener, args.Timestamp, args.IsKeyDown, args.IsKeyUp);
+
+                        if (args.IsKeyDown)
+                            return;
+
                         // skip call if too close
                         if (time_last < TIME_BURST)
                             break;
@@ -187,8 +192,6 @@ namespace HandheldCompanion.Managers
                         time_duration = args.Timestamp - prevKeyDown[listener];
                         if (time_duration > TIME_LONG)
                             listener += " (HOLD)";
-
-                        LogManager.LogDebug("Triggered: {0} at {1}", listener, args.Timestamp);
 
                         if (string.IsNullOrEmpty(TriggerListener))
                         {
@@ -308,15 +311,16 @@ namespace HandheldCompanion.Managers
                     int d_Timestamp = n_Timestamp - Timestamp;
                     m_InputSimulator.Keyboard.Sleep(d_Timestamp);
                 }
-
-                TriggerLock = false;
-
-                // clear buffer
-                TriggerBuffer.Clear();
             }
             catch (Exception)
             {
             }
+
+            // release lock
+            TriggerLock = false;
+
+            // clear buffer
+            TriggerBuffer.Clear();
         }
 
         private static List<KeyCode> GetBufferKeys()
