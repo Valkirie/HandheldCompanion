@@ -418,6 +418,10 @@ namespace HandheldCompanion.Managers
 
         public static void StartListening(string listener)
         {
+            // already listening for input ?
+            if (!String.IsNullOrEmpty(TriggerListener))
+                ListenerExpired(null, null);
+
             TriggerListener = listener;
             TriggerBuffer = new();
 
