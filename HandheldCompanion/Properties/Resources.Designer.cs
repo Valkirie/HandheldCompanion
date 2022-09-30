@@ -382,56 +382,128 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 3D controller hotkey.
+        ///   Looks up a localized string similar to Display 3D controller.
         /// </summary>
-        public static string InputsHotkey0 {
+        public static string InputsHotkey_overlayGamepad {
             get {
-                return ResourceManager.GetString("InputsHotkey0", resourceCulture);
+                return ResourceManager.GetString("InputsHotkey_overlayGamepad", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Change the 3D controller hotkey by pressing a button or a special key.
         /// </summary>
-        public static string InputsHotkey0Desc {
+        public static string InputsHotkey_overlayGamepadDesc {
             get {
-                return ResourceManager.GetString("InputsHotkey0Desc", resourceCulture);
+                return ResourceManager.GetString("InputsHotkey_overlayGamepadDesc", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Trackpads hotkey.
+        ///   Looks up a localized string similar to Display virtual trackpads.
         /// </summary>
-        public static string InputsHotkey1 {
+        public static string InputsHotkey_overlayTrackpads {
             get {
-                return ResourceManager.GetString("InputsHotkey1", resourceCulture);
+                return ResourceManager.GetString("InputsHotkey_overlayTrackpads", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Change the trackpads hotkey by pressing a button or a special key.
         /// </summary>
-        public static string InputsHotkey1Desc {
+        public static string InputsHotkey_overlayTrackpadsDesc {
             get {
-                return ResourceManager.GetString("InputsHotkey1Desc", resourceCulture);
+                return ResourceManager.GetString("InputsHotkey_overlayTrackpadsDesc", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Quicktools hotkey.
+        ///   Looks up a localized string similar to Summon quick tools window.
         /// </summary>
-        public static string InputsHotkey2 {
+        public static string InputsHotkey_quickTools {
             get {
-                return ResourceManager.GetString("InputsHotkey2", resourceCulture);
+                return ResourceManager.GetString("InputsHotkey_quickTools", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Change the quicktools hotkey by pressing a button or a special key.
         /// </summary>
-        public static string InputsHotkey2Desc {
+        public static string InputsHotkey_quickToolsDesc {
             get {
-                return ResourceManager.GetString("InputsHotkey2Desc", resourceCulture);
+                return ResourceManager.GetString("InputsHotkey_quickToolsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display and hide the desktop.
+        /// </summary>
+        public static string InputsHotkey_shortcutDesktop {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutDesktop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Windows logo key  + D.
+        /// </summary>
+        public static string InputsHotkey_shortcutDesktopDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutDesktopDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exit.
+        /// </summary>
+        public static string InputsHotkey_shortcutESC {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Escape.
+        /// </summary>
+        public static string InputsHotkey_shortcutESCDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutESCDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switches between window and full screen.
+        /// </summary>
+        public static string InputsHotkey_shortcutExpand {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutExpand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alt + Enter.
+        /// </summary>
+        public static string InputsHotkey_shortcutExpandDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutExpandDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display touch keyboard.
+        /// </summary>
+        public static string InputsHotkey_shortcutKeyboard {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutKeyboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the touch keyboard hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string InputsHotkey_shortcutKeyboardDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutKeyboardDesc", resourceCulture);
             }
         }
         

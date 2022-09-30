@@ -1,20 +1,26 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon.Processor;
+using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Xml.Linq;
 using Windows.ApplicationModel.Contacts;
 using static System.Net.Mime.MediaTypeNames;
+using Application = System.Windows.Application;
 
 namespace HandheldCompanion.Managers.Classes
 {
     public class Hotkey
     {
-        public InputsHotkey hotkey { get; set; }
-        public InputsChord chord { get; set; }
+        public InputsHotkey inputsHotkey;
+        public ushort hotkeyId { get; set; }
+
+        public InputsChord inputsChord { get; set; }
 
         // UI vars
         public Border mainBorder;
@@ -29,10 +35,26 @@ namespace HandheldCompanion.Managers.Classes
 
         public SimpleStackPanel buttonPanel;
         public FontIcon buttonIcon;
-        public Button buttonButton;
+        public Button mainButton;
+
+        public Button deleteButton;
 
         public Hotkey()
         {
+        }
+
+        public Hotkey(ushort id, InputsHotkey inputsHotkey)
+        {
+            hotkeyId = id;
+            this.inputsHotkey = inputsHotkey;
+            inputsChord = new();
+        }
+
+        public Hotkey(ushort id)
+        {
+            hotkeyId = id;
+            this.inputsHotkey = InputsHotkey.Hotkeys[id];
+            inputsChord = new();
         }
 
         public void DrawControl()
@@ -45,7 +67,7 @@ namespace HandheldCompanion.Managers.Classes
             {
                 Padding = new Thickness(20, 12, 12, 12),
                 Visibility = Visibility.Visible,
-                Tag = hotkey.GetId()
+                Tag = hotkeyId
             };
             mainBorder.SetResourceReference(Control.BackgroundProperty, "SystemControlBackgroundChromeMediumLowBrush");
 
@@ -72,8 +94,9 @@ namespace HandheldCompanion.Managers.Classes
 
             currentIcon = new FontIcon()
             {
-                Height = 40,
-                Glyph = hotkey.GetGlyph(),
+                Height = 30,
+                FontFamily = inputsHotkey.fontFamily,
+                Glyph = inputsHotkey.GetGlyph(),
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Right
             };
@@ -87,13 +110,13 @@ namespace HandheldCompanion.Managers.Classes
 
             contentName = new TextBlock()
             {
-                Text = hotkey.GetName(),
+                Text = inputsHotkey.GetName(),
                 FontSize = 14
             };
 
             contentDesc = new TextBlock()
             {
-                Text = hotkey.GetDescription(),
+                Text = inputsHotkey.GetDescription(),
                 TextWrapping = TextWrapping.Wrap,
                 FontSize = 12
             };
@@ -113,20 +136,28 @@ namespace HandheldCompanion.Managers.Classes
 
             buttonIcon = new FontIcon()
             {
-                Height = 40
+                Height = 30
             };
 
-            buttonButton = new Button()
+            mainButton = new Button()
             {
                 Width = 200,
                 Height = 30
             };
+            mainButton.Click += ButtonButton_Click;
 
-            UpdateButton();
+            deleteButton = new Button()
+            {
+                Height = 30,
+                Content = new FontIcon() { Glyph = "\uE75C", FontSize = 14 }
+            };
+            deleteButton.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
+            deleteButton.Click += DeleteButton_Click;
 
             // add elements to main panel
             buttonPanel.Children.Add(buttonIcon);
-            buttonPanel.Children.Add(buttonButton);
+            buttonPanel.Children.Add(mainButton);
+            buttonPanel.Children.Add(deleteButton);
 
             // add elements to main panel
             mainPanel.Children.Add(currentIcon);
@@ -138,6 +169,25 @@ namespace HandheldCompanion.Managers.Classes
 
             // add elements to border
             mainBorder.Child = mainGrid;
+
+            // update buttons name and states
+            UpdateButtons();
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            InputsManager.ClearListening(inputsHotkey.Listener);
+        }
+
+        private void ButtonButton_Click(object sender, RoutedEventArgs e)
+        {
+            InputsManager.StartListening(inputsHotkey.Listener);
+
+            // update button text
+            mainButton.Content = Properties.Resources.OverlayPage_Listening;
+
+            // update buton style
+            mainButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
         }
 
         public Border GetBorder()
@@ -145,42 +195,36 @@ namespace HandheldCompanion.Managers.Classes
             return mainBorder;
         }
 
-        public Button GetButton()
+        public Button GetMainButton()
         {
-            return buttonButton;
+            return mainButton;
         }
 
-        public void UpdateButton()
+        public Button GetDeleteButton()
         {
-            switch (chord.type)
+            return deleteButton;
+        }
+
+        public void UpdateButtons()
+        {
+            switch (inputsChord.type)
             {
                 default:
                 case InputsChordType.None:
-                    buttonButton.Content = "";
+                    mainButton.Content = "";
+                    buttonIcon.Glyph = "\uE9CE";
+                    deleteButton.IsEnabled = false;
                     break;
                 case InputsChordType.Gamepad:
-                    buttonButton.Content = EnumUtils.GetDescriptionFromEnumValue(chord.buttons);
+                    mainButton.Content = EnumUtils.GetDescriptionFromEnumValue(inputsChord.buttons);
+                    buttonIcon.Glyph = "\uE7FC";
+                    deleteButton.IsEnabled = true;
                     break;
                 case InputsChordType.Keyboard:
-                    // todo, display custom button name instead
-                    buttonButton.Content = string.Join(", ", chord.name);
+                    mainButton.Content = string.Join(", ", inputsChord.name);
+                    buttonIcon.Glyph = "\uE765";
+                    deleteButton.IsEnabled = true;
                     break;
-            }
-
-            buttonIcon.Glyph = TriggerTypeToGlyph(chord.type);
-        }
-
-        public static string TriggerTypeToGlyph(InputsChordType type)
-        {
-            switch (type)
-            {
-                default:
-                case InputsChordType.None:
-                    return "\uE9CE";
-                case InputsChordType.Gamepad:
-                    return "\uE7FC";
-                case InputsChordType.Keyboard:
-                    return "\uE765";
             }
         }
     }

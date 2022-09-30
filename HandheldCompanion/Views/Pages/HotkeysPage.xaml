@@ -14,13 +14,6 @@
       Title="Hotkeys">
 
     <Grid Name="MainGrid" Margin="20">
-        <ui:SimpleStackPanel Spacing="24">
-            
-            <!-- Overlay -->
-            <ui:SimpleStackPanel Spacing="6" Name="HotkeysPanel">
-                <Label Content="User hotkeys" FontWeight="SemiBold"></Label>
-            </ui:SimpleStackPanel>
-
-        </ui:SimpleStackPanel>
+        <ui:SimpleStackPanel Spacing="24" Name="HotkeysPanel" />
     </Grid>
 </Page>

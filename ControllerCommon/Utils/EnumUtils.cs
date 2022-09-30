@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ControllerCommon.Managers;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace ControllerCommon.Utils
             if (root != null)
                 return root;
 
-            Debug.WriteLine("Missing localization value for enum: {0}", key);
+            LogManager.LogError("Missing localization value for enum: {0}", key);
 
             // return description otherwise
             DescriptionAttribute attribute = null;

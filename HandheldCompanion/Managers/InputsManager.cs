@@ -211,7 +211,7 @@ namespace HandheldCompanion.Managers
                             if (args.IsKeyUp)
                                 StopListening(inputs);
                         }
-                        return;
+                        return; // prevent multiple shortcuts from being triggered
                     }
                 }
             }
@@ -389,6 +389,7 @@ namespace HandheldCompanion.Managers
                         {
                             Triggered[listener] = true;
                             TriggerRaised?.Invoke(listener, Triggers[listener]);
+                            return; // prevent multiple shortcuts from being triggered
                         }
                     }
                     else if (Triggered.ContainsKey(listener) && Triggered[listener])
@@ -442,6 +443,12 @@ namespace HandheldCompanion.Managers
             StopListening(chordBuffer);
         }
 
+        public static void ClearListening(string listener)
+        {
+            TriggerUpdated?.Invoke(listener, new InputsChord());
+            Triggers[listener] = new();
+        }
+
         public static void UpdateController(ControllerEx _controllerEx)
         {
             controllerEx = _controllerEx;
@@ -449,9 +456,9 @@ namespace HandheldCompanion.Managers
 
         private static void TriggerCreated(Hotkey hotkey)
         {
-            string listener = hotkey.hotkey.GetListener();
+            string listener = hotkey.inputsHotkey.GetListener();
 
-            Triggers.Add(listener, hotkey.chord);
+            Triggers.Add(listener, hotkey.inputsChord);
             Triggered[listener] = false;
         }
     }
