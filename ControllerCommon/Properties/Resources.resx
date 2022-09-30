@@ -198,6 +198,15 @@
   <data name="Enum.Input.PlayerSpace" xml:space="preserve">
     <value>Player space</value>
   </data>
+  <data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">
+    <value>Overlay hotkeys</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Quicktools" xml:space="preserve">
+    <value>Quick tools hotkeys</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Windows" xml:space="preserve">
+    <value>Windows hotkeys</value>
+  </data>
   <data name="Enum.Output.LeftStick" xml:space="preserve">
     <value>Left joystick</value>
   </data>

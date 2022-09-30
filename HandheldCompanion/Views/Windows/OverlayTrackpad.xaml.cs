@@ -1,5 +1,5 @@
 using ControllerCommon;
-using HandheldCompanion.Common;
+using HandheldCompanion.Views.Classes;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;

@@ -1,7 +1,9 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Classes;
 using ModernWpf.Controls;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -13,32 +15,17 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class HotkeysPage : Page
     {
-        private bool Initialized;
-
         public HotkeysPage()
         {
             InitializeComponent();
-            Initialized = true;
+
+            HotkeysManager.HotkeyCreated += HotkeysManager_HotkeyCreated;
+            HotkeysManager.HotkeyTypeCreated += HotkeysManager_HotkeyTypeCreated;
         }
 
         public HotkeysPage(string Tag) : this()
         {
             this.Tag = Tag;
-
-            MainWindow.inputsManager.TriggerUpdated += TriggerUpdated;
-
-            // trigger(s)
-            TriggerUpdated("overlayGamepad", new TriggerInputs(
-                (TriggerInputsType)SettingsManager.GetInt("OverlayControllerTriggerType"),
-                SettingsManager.GetString("OverlayControllerTriggerValue")));
-
-            TriggerUpdated("overlayTrackpads", new TriggerInputs(
-                (TriggerInputsType)SettingsManager.GetInt("OverlayTrackpadsTriggerType"),
-                SettingsManager.GetString("OverlayTrackpadsTriggerValue")));
-
-            TriggerUpdated("quickTools", new TriggerInputs(
-                (TriggerInputsType)SettingsManager.GetInt("QuickToolsTriggerType"),
-                SettingsManager.GetString("QuickToolsTriggerValue")));
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -49,79 +36,32 @@ namespace HandheldCompanion.Views.Pages
         {
         }
 
-        private void ControllerTriggerButton_Click(object sender, RoutedEventArgs e)
-        {
-            TriggerButton_Click("overlayGamepad", sender);
-        }
-
-        private void TrackpadsTriggerButton_Click(object sender, RoutedEventArgs e)
-        {
-            TriggerButton_Click("overlayTrackpads", sender);
-        }
-
-        private void QuickToolsTriggerButton_Click(object sender, RoutedEventArgs e)
-        {
-            TriggerButton_Click("quickTools", sender);
-        }
-
-        private void TriggerButton_Click(string listener, object sender)
-        {
-            MainWindow.inputsManager.StartListening(listener);
-
-            Button button = (Button)sender;
-            SimpleStackPanel stackpanel = (SimpleStackPanel)button.Content;
-            TextBlock text = (TextBlock)stackpanel.Children[1];
-
-            text.Text = Properties.Resources.OverlayPage_Listening;
-            button.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
-        }
-
-        private void TriggerUpdated(string listener, TriggerInputs input)
+        private void HotkeysManager_HotkeyTypeCreated(InputsHotkey.InputsHotkeyType type)
         {
             this.Dispatcher.Invoke(() =>
             {
-                string text = string.Empty;
-                string glyph = InputUtils.TriggerTypeToGlyph(input.type);
-
-                switch (input.type)
+                SimpleStackPanel stackPanel = new()
                 {
-                    default:
-                    case TriggerInputsType.Gamepad:
-                        text = EnumUtils.GetDescriptionFromEnumValue(input.buttons);
-                        break;
-                    case TriggerInputsType.Keyboard:
-                        // todo, display custom button name instead
-                        text = string.Join(", ", input.name);
-                        break;
-                }
+                    Tag = type,
+                    Spacing = 6
+                };
+                string text = EnumUtils.GetDescriptionFromEnumValue(type);
+                stackPanel.Children.Add(new TextBlock() { Text = text, FontWeight = FontWeights.SemiBold });
 
-                switch (listener)
-                {
-                    case "overlayGamepad":
-                        ControllerTriggerText.Text = text;
-                        ControllerTriggerIcon.Glyph = glyph;
-                        ControllerTriggerButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                HotkeysPanel.Children.Add(stackPanel);
+            });
+        }
 
-                        SettingsManager.SetProperty("OverlayControllerTriggerValue", input.GetValue());
-                        SettingsManager.SetProperty("OverlayControllerTriggerType", (int)input.type);
-                        break;
-                    case "overlayTrackpads":
-                        TrackpadsTriggerText.Text = text;
-                        TrackpadsTriggerIcon.Glyph = glyph;
-                        TrackpadsTriggerButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+        private void HotkeysManager_HotkeyCreated(Hotkey hotkey)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                Border hotkeyBorder = hotkey.GetBorder();
 
-                        SettingsManager.SetProperty("OverlayTrackpadsTriggerValue", input.GetValue());
-                        SettingsManager.SetProperty("OverlayTrackpadsTriggerType", (int)input.type);
-                        break;
-                    case "quickTools":
-                        QuickToolsTriggerText.Text = text;
-                        QuickToolsTriggerIcon.Glyph = glyph;
-                        QuicktoolsTriggerButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                ushort idx = (ushort)hotkey.inputsHotkey.hotkeyType;
+                SimpleStackPanel stackPanel = (SimpleStackPanel)HotkeysPanel.Children[idx];
 
-                        SettingsManager.SetProperty("QuickToolsTriggerValue", input.GetValue());
-                        SettingsManager.SetProperty("QuickToolsTriggerType", (int)input.type);
-                        break;
-                }
+                stackPanel.Children.Add(hotkeyBorder);
             });
         }
     }

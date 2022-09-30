@@ -304,6 +304,33 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Overlay hotkeys.
+        /// </summary>
+        public static string Enum_InputsHotkeyType_Overlay {
+            get {
+                return ResourceManager.GetString("Enum.InputsHotkeyType.Overlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quick tools hotkeys.
+        /// </summary>
+        public static string Enum_InputsHotkeyType_Quicktools {
+            get {
+                return ResourceManager.GetString("Enum.InputsHotkeyType.Quicktools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Windows hotkeys.
+        /// </summary>
+        public static string Enum_InputsHotkeyType_Windows {
+            get {
+                return ResourceManager.GetString("Enum.InputsHotkeyType.Windows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Left joystick.
         /// </summary>
         public static string Enum_Output_LeftStick {

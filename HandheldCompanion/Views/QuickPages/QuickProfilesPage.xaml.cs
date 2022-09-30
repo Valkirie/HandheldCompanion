@@ -161,9 +161,6 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
-            if (processEx.Bypassed)
-                return;
-
             currentProcess = processEx;
             currentProfile = MainWindow.profileManager.GetProfileFromExec(currentProcess.Name);
 
@@ -171,6 +168,9 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 ProcessName.Text = currentProcess.Name;
                 ProcessPath.Text = currentProcess.Path;
+
+                // disable create button if process is bypassed
+                b_CreateProfile.IsEnabled = !processEx.Bypassed;
 
                 if (currentProfile is null)
                 {

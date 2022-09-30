@@ -23,7 +23,7 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    var element = processEx.GetBorder();
+                    var element = processEx.GetControl();
                     if (CurrentProcesses.Children.Contains(element))
                         CurrentProcesses.Children.Remove(element);
                 });
@@ -39,8 +39,8 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    processEx.Draw();
-                    var element = processEx.GetBorder();
+                    processEx.DrawControl();
+                    var element = processEx.GetControl();
 
                     if (!CurrentProcesses.Children.Contains(element))
                         CurrentProcesses.Children.Add(element);

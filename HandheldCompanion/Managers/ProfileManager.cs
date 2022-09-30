@@ -43,10 +43,13 @@ namespace HandheldCompanion.Managers
 
         public Profile currentProfile = new();
 
-        private string path;
-
         public ProfileManager() : base()
         {
+            // initialiaze path
+            Path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "profiles");
+            if (!Directory.Exists(Path))
+                Directory.CreateDirectory(Path);
+
             MainWindow.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
             MainWindow.processManager.ProcessStarted += ProcessManager_ProcessStarted;
             MainWindow.processManager.ProcessStopped += ProcessManager_ProcessStopped;
@@ -54,12 +57,6 @@ namespace HandheldCompanion.Managers
 
         public override void Start()
         {
-            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "profiles");
-
-            // initialize folder
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
             // initialize profile files
             ResourceSet resourceSet = Properties.Resources.ResourceManager.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
             foreach (DictionaryEntry entry in resourceSet)
@@ -69,7 +66,7 @@ namespace HandheldCompanion.Managers
                     continue;
 
                 object resource = entry.Value;
-                string profile_path = Path.Combine(path, resourceKey);
+                string profile_path = System.IO.Path.Combine(Path, resourceKey);
 
                 if (!File.Exists(profile_path))
                     File.WriteAllText(profile_path, (string)resource);
@@ -78,7 +75,7 @@ namespace HandheldCompanion.Managers
             // monitor profile file deletions
             profileWatcher = new FileSystemWatcher()
             {
-                Path = path,
+                Path = Path,
                 EnableRaisingEvents = true,
                 IncludeSubdirectories = true,
                 Filter = "*.json",
@@ -87,7 +84,7 @@ namespace HandheldCompanion.Managers
             profileWatcher.Deleted += ProfileDeleted;
 
             // process existing profiles
-            string[] fileEntries = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+            string[] fileEntries = Directory.GetFiles(Path, "*.json", SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
                 ProcessProfile(fileName);
 
@@ -262,13 +259,13 @@ namespace HandheldCompanion.Managers
             }
             catch (Exception ex)
             {
-                LogManager.LogError("Could not parse {0}. {1}", fileName, ex.Message);
+                LogManager.LogError("Could not parse profile {0}. {1}", fileName, ex.Message);
             }
 
             // failed to parse
             if (profile == null || profile.name == null || profile.path == null)
             {
-                LogManager.LogError("Could not parse {0}.", fileName);
+                LogManager.LogError("Could not parse profile {0}.", fileName);
                 return;
             }
 
@@ -285,7 +282,7 @@ namespace HandheldCompanion.Managers
 
         public void DeleteProfile(Profile profile)
         {
-            string settingsPath = Path.Combine(path, profile.json);
+            string settingsPath = System.IO.Path.Combine(Path, profile.json);
 
             if (profiles.ContainsKey(profile.name))
             {
@@ -318,13 +315,13 @@ namespace HandheldCompanion.Managers
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(profile, options);
 
-            string settingsPath = Path.Combine(path, profile.json);
+            string settingsPath = System.IO.Path.Combine(Path, profile.json);
             File.WriteAllText(settingsPath, jsonString);
         }
 
         private ProfileErrorCode SanitizeProfile(Profile profile)
         {
-            string processpath = Path.GetDirectoryName(profile.fullpath);
+            string processpath = System.IO.Path.GetDirectoryName(profile.fullpath);
 
             if (profile.isDefault)
                 return ProfileErrorCode.IsDefault;
@@ -345,7 +342,7 @@ namespace HandheldCompanion.Managers
         {
             // refresh error code
             profile.error = SanitizeProfile(profile);
-            profile.json = $"{Path.GetFileNameWithoutExtension(profile.executable)}.json";
+            profile.json = $"{System.IO.Path.GetFileNameWithoutExtension(profile.executable)}.json";
 
             // update database
             profiles[profile.name] = profile;
@@ -407,8 +404,8 @@ namespace HandheldCompanion.Managers
 
             foreach (string fullpath in fullpaths)
             {
-                string processpath = Path.GetDirectoryName(fullpath);
-                string inipath = Path.Combine(processpath, "XInputPlus.ini");
+                string processpath = System.IO.Path.GetDirectoryName(fullpath);
+                string inipath = System.IO.Path.Combine(processpath, "XInputPlus.ini");
                 bool iniexist = File.Exists(inipath);
 
                 // get binary type (x64, x86)
@@ -422,14 +419,14 @@ namespace HandheldCompanion.Managers
 
                 for (int i = 0; i < 5; i++)
                 {
-                    string dllpath = Path.Combine(processpath, $"xinput1_{i + 1}.dll");
-                    string backpath = Path.Combine(processpath, $"xinput1_{i + 1}.back");
+                    string dllpath = System.IO.Path.Combine(processpath, $"xinput1_{i + 1}.dll");
+                    string backpath = System.IO.Path.Combine(processpath, $"xinput1_{i + 1}.back");
 
                     // dll has a different naming format
                     if (i == 4)
                     {
-                        dllpath = Path.Combine(processpath, $"xinput9_1_0.dll");
-                        backpath = Path.Combine(processpath, $"xinput9_1_0.back");
+                        dllpath = System.IO.Path.Combine(processpath, $"xinput9_1_0.dll");
+                        backpath = System.IO.Path.Combine(processpath, $"xinput9_1_0.back");
                     }
 
                     bool dllexist = File.Exists(dllpath);

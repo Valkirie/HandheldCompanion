@@ -18,32 +18,6 @@ namespace HandheldCompanion.Views.Windows
     /// </summary>
     public partial class OverlayQuickTools : Window
     {
-        #region imports
-        [ComImport, Guid("4ce576fa-83dc-4F88-951c-9d0782b4e376")]
-        class UIHostNoLaunch
-        {
-        }
-
-        [ComImport, Guid("37c994e7-432b-4834-a2f7-dce1f13b834b")]
-        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        interface ITipInvocation
-        {
-            void Toggle(IntPtr hwnd);
-        }
-
-        [DllImport("user32.dll", SetLastError = false)]
-        static extern IntPtr GetDesktopWindow();
-
-        [DllImport("user32.dll")]
-        static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        // Pinvoke declaration for ShowWindow
-        private const int SW_SHOWMAXIMIZED = 3;
-
-        [DllImport("user32.dll")]
-        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-        #endregion
-
         // page vars
         private Dictionary<string, Page> _pages = new();
         private string preNavItemTag;
@@ -129,24 +103,10 @@ namespace HandheldCompanion.Views.Windows
                         preNavItemTag = navItemTag;
                         break;
                     case "shortcutKeyboard":
-                        StartTabTip();
-                        break;
                     case "shortcutDesktop":
-                        MainWindow.inputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
-                        break;
                     case "shortcutESC":
-                        if (foregroundProcess != null)
-                        {
-                            SetForegroundWindow(foregroundProcess.MainWindowHandle);
-                            MainWindow.inputsManager.KeyPress(VirtualKeyCode.ESCAPE);
-                        }
-                        break;
                     case "shortcutExpand":
-                        if (foregroundProcess != null)
-                        {
-                            SetForegroundWindow(foregroundProcess.MainWindowHandle);
-                            MainWindow.inputsManager.KeyStroke(VirtualKeyCode.LMENU, VirtualKeyCode.RETURN);
-                        }
+                        HotkeysManager.TriggerRaised(navItemTag, null);
                         break;
                 }
 
@@ -230,14 +190,6 @@ namespace HandheldCompanion.Views.Windows
             }
         }
         #endregion
-
-        private void StartTabTip()
-        {
-            var uiHostNoLaunch = new UIHostNoLaunch();
-            var tipInvocation = (ITipInvocation)uiHostNoLaunch;
-            tipInvocation.Toggle(GetDesktopWindow());
-            Marshal.ReleaseComObject(uiHostNoLaunch);
-        }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
