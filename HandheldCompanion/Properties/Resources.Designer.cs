@@ -508,6 +508,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display and hide main window.
+        /// </summary>
+        public static string InputsHotkey_shortcutMainwindow {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutMainwindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the quicktools hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string InputsHotkey_shortcutMainwindowDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutMainwindowDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Task view.
         /// </summary>
         public static string InputsHotkey_shortcutTaskview {

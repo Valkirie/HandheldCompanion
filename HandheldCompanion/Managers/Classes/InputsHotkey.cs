@@ -15,6 +15,7 @@ namespace HandheldCompanion.Managers.Classes
             Overlay = 0,
             Quicktools = 1,
             Windows = 2,
+            Handheld = 3,
         }
 
         public static Dictionary<ushort, InputsHotkey> Hotkeys = new()
@@ -27,6 +28,7 @@ namespace HandheldCompanion.Managers.Classes
             { 6, new InputsHotkey(InputsHotkeyType.Windows, "\uEF2C", "shortcutESC", "Send ESCAPE key") },
             { 7, new InputsHotkey(InputsHotkeyType.Windows, "\uEE49", "shortcutExpand", "Send ALT + ENTER keystroke") },
             { 8, new InputsHotkey(InputsHotkeyType.Windows, "\uE7C4", "shortcutTaskview", "Send WINDOWS + TAB keystroke") },
+            { 9, new InputsHotkey(InputsHotkeyType.Handheld, "\uE7C4", "shortcutMainwindow", "Summon main window") },
         };
 
         public string Glyph { get; set; }

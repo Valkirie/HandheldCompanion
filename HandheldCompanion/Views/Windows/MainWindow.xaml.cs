@@ -122,10 +122,7 @@ namespace HandheldCompanion.Views
                 ContextMenuStrip = new()
             };
 
-            notifyIcon.DoubleClick += (sender, e) =>
-            {
-                WindowState = prevWindowState;
-            };
+            notifyIcon.DoubleClick += (sender, e) => { SwapWindowState(); };
 
             foreach (NavigationViewItem item in navView.FooterMenuItems)
             {
@@ -203,6 +200,20 @@ namespace HandheldCompanion.Views
             // pull settings
             WindowState = SettingsManager.GetBoolean("StartMinimized") ? WindowState.Minimized : (WindowState)SettingsManager.GetInt("MainWindowState");
             prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
+        }
+
+        public void SwapWindowState()
+        {
+            switch (WindowState)
+            {
+                case WindowState.Normal:
+                case WindowState.Maximized:
+                    WindowState = WindowState.Minimized;
+                    break;
+                case WindowState.Minimized:
+                    WindowState = prevWindowState;
+                    break;
+            }
         }
 
         public static MainWindow GetCurrent()

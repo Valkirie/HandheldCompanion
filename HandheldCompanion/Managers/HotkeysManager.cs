@@ -163,6 +163,9 @@ namespace HandheldCompanion.Managers
                     case "shortcutTaskview":
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.TAB });
                         break;
+                    case "shortcutMainwindow":
+                        MainWindow.GetCurrent().SwapWindowState(); 
+                        break;
                 }
             }
             catch(Exception)

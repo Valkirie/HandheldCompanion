@@ -264,6 +264,12 @@
   <data name="InputsHotkey_shortcutKeyboardDesc" xml:space="preserve">
     <value>Change the touch keyboard hotkey by pressing a button or a special key</value>
   </data>
+  <data name="InputsHotkey_shortcutMainwindow" xml:space="preserve">
+    <value>Display and hide main window</value>
+  </data>
+  <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
+    <value>Change the quicktools hotkey by pressing a button or a special key</value>
+  </data>
   <data name="InputsHotkey_shortcutTaskview" xml:space="preserve">
     <value>Open Task view</value>
   </data>
