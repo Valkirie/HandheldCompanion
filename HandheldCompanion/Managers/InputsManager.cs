@@ -108,13 +108,17 @@ namespace HandheldCompanion.Managers
             if (string.IsNullOrEmpty(TriggerListener))
             {
                 var trigger = GetTriggerFromName(KeyDownListener, KeyDownType);
+                var trigger2 = GetTriggerFromName(KeyDownListener, InputsChordType.Click);
 
                 LogManager.LogDebug("KeyReleased: {0}, Listener: {1}, Type: {2}", trigger, KeyDownListener, KeyDownType);
 
                 // trigger isn't used
                 if (string.IsNullOrEmpty(trigger))
-                {
-                    TriggerBuffer.AddRange(Intercepted);
+                { 
+                    // is click also unused ?
+                    if (string.IsNullOrEmpty(trigger2))
+                        TriggerBuffer.AddRange(Intercepted);
+
                     return false;
                 }
                 else
