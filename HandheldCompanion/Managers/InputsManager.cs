@@ -180,14 +180,14 @@ namespace HandheldCompanion.Managers
                             prevKeyUp[listener] = args.Timestamp;
                         }
 
+                        // skip call if too close
+                        if (time_last < TIME_BURST)
+                            break;
+
                         LogManager.LogDebug("Triggered: {0} at {1}, down: {2}, up: {3}", listener, args.Timestamp, args.IsKeyDown, args.IsKeyUp);
 
                         if (args.IsKeyDown)
                             return;
-
-                        // skip call if too close
-                        if (time_last < TIME_BURST)
-                            break;
 
                         time_duration = args.Timestamp - prevKeyDown[listener];
                         if (time_duration > TIME_LONG)
