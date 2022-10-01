@@ -204,16 +204,19 @@ namespace HandheldCompanion.Views
 
         public void SwapWindowState()
         {
-            switch (WindowState)
+            this.Dispatcher.Invoke(() =>
             {
-                case WindowState.Normal:
-                case WindowState.Maximized:
-                    WindowState = WindowState.Minimized;
-                    break;
-                case WindowState.Minimized:
-                    WindowState = prevWindowState;
-                    break;
-            }
+                switch (WindowState)
+                {
+                    case WindowState.Normal:
+                    case WindowState.Maximized:
+                        WindowState = WindowState.Minimized;
+                        break;
+                    case WindowState.Minimized:
+                        WindowState = prevWindowState;
+                        break;
+                }
+            });
         }
 
         public static MainWindow GetCurrent()
