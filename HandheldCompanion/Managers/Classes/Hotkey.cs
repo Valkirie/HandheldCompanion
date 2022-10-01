@@ -1,16 +1,7 @@
-﻿using ControllerCommon.Processor;
-using ControllerCommon.Utils;
+﻿using ControllerCommon.Utils;
 using ModernWpf.Controls;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Xml.Linq;
-using Windows.ApplicationModel.Contacts;
-using static System.Net.Mime.MediaTypeNames;
 using Application = System.Windows.Application;
 
 namespace HandheldCompanion.Managers.Classes

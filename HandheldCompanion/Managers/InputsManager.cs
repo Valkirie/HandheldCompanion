@@ -9,14 +9,10 @@ using HandheldCompanion.Views;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
-using System.Windows.Documents;
 using System.Windows.Forms;
 using WindowsInput.Events;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace HandheldCompanion.Managers
 {

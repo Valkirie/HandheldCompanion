@@ -1,5 +1,4 @@
-﻿using ControllerCommon.Utils;
-using SharpDX.XInput;
+﻿using SharpDX.XInput;
 using System;
 
 namespace HandheldCompanion.Managers.Classes

@@ -29,7 +29,7 @@ namespace HandheldCompanion
                 GetBrightness();
                 Supported = true;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 Supported = false;
             }

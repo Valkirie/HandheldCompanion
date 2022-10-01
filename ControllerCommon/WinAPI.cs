@@ -1,14 +1,11 @@
-﻿using System.Runtime.InteropServices;
-
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Security;
+using static PInvoke.Kernel32;
 using BOOL = System.Int32;
+using DWORD = System.Int32;
 using HANDLE = System.IntPtr;
 using LPVOID = System.IntPtr;
-using DWORD = System.Int32;
-using ULONG = System.UInt32;
-using System;
-using System.Security;
-using static ControllerCommon.Utils.ProcessUtils;
-using static PInvoke.Kernel32;
 
 namespace ControllerCommon
 {

@@ -1,19 +1,9 @@
-﻿using ControllerCommon;
-using ControllerCommon.Managers;
-using ControllerCommon.Processor;
+﻿using ControllerCommon.Managers;
 using HandheldCompanion.Views;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using static ControllerCommon.Utils.ProcessUtils;
 using static ControllerCommon.WinAPI;
 using static PInvoke.Kernel32;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 
 namespace HandheldCompanion.Managers
 {
@@ -135,7 +125,7 @@ namespace HandheldCompanion.Managers
                         {
                             if (processEx == foregroundProcess)
                                 ToggleEfficiencyMode(processEx, QualityOfServiceLevel.High);
-                            
+
                             ToggleEfficiencyMode(processEx, QualityOfServiceLevel.Eco);
                         }
                     }
@@ -146,7 +136,7 @@ namespace HandheldCompanion.Managers
         private static void ToggleEfficiencyMode(ProcessEx processEx, QualityOfServiceLevel level)
         {
             bool result = false;
-            switch(level)
+            switch (level)
             {
                 case QualityOfServiceLevel.High:
                     result = SwitchToHighQoS(processEx.Process.Handle);

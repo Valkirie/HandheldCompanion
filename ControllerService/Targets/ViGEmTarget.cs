@@ -149,7 +149,8 @@ namespace ControllerService.Targets
                                 Angular.X *= ControllerService.handheldDevice.WidthHeightRatio;
 
                                 // apply aiming down scopes multiplier if activated
-                                if ((ControllerService.profile.aiming_down_sights_activation & buttons) != 0) {
+                                if ((ControllerService.profile.aiming_down_sights_activation & buttons) != 0)
+                                {
                                     Angular *= ControllerService.profile.aiming_down_sights_multiplier;
                                 }
 

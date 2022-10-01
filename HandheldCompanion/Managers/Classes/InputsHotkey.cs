@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using FontFamily = System.Windows.Media.FontFamily;
 
 namespace HandheldCompanion.Managers.Classes

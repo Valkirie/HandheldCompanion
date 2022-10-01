@@ -10,12 +10,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.ServiceProcess;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Windows.Foundation;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 

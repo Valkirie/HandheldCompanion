@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -446,7 +445,7 @@ namespace HandheldCompanion.Views
             }
         }
 
-#region pipeClient
+        #region pipeClient
         private void OnServerMessage(object sender, PipeMessage message)
         {
             switch (message.code)
@@ -462,9 +461,9 @@ namespace HandheldCompanion.Views
                     break;
             }
         }
-#endregion
+        #endregion
 
-#region serviceManager
+        #region serviceManager
 
         /*
          * Stop
@@ -549,9 +548,9 @@ namespace HandheldCompanion.Views
                 }
             });
         }
-#endregion
+        #endregion
 
-#region UI
+        #region UI
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             if (args.InvokedItemContainer != null)
@@ -749,7 +748,7 @@ namespace HandheldCompanion.Views
                 navView.Header = new TextBlock() { Text = (string)((Page)e.Content).Title };
             }
         }
-#endregion
+        #endregion
 
         private async void OnPowerChangeAsync(object s, PowerModeChangedEventArgs e)
         {

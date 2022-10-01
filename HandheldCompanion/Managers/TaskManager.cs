@@ -23,7 +23,7 @@ namespace HandheldCompanion.Managers
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            switch(name)
+            switch (name)
             {
                 case "RunAtStartup":
                     UpdateTask(Convert.ToBoolean(value));

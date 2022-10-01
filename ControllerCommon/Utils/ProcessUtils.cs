@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Management;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,7 +15,6 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Windows.System.Diagnostics;
-using static ControllerCommon.WinAPI;
 
 namespace ControllerCommon.Utils
 {

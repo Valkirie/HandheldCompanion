@@ -1,18 +1,12 @@
-﻿using ControllerCommon;
-using ControllerCommon.Managers;
-using ControllerCommon.Utils;
+﻿using ControllerCommon.Managers;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
 using static HandheldCompanion.Managers.Classes.InputsHotkey;
 
@@ -164,11 +158,11 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.TAB });
                         break;
                     case "shortcutMainwindow":
-                        MainWindow.GetCurrent().SwapWindowState(); 
+                        MainWindow.GetCurrent().SwapWindowState();
                         break;
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 LogManager.LogError("Failed to parse trigger {0}", listener);
             }

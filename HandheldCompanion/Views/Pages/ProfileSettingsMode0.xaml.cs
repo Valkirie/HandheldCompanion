@@ -246,10 +246,11 @@ namespace HandheldCompanion.Views.Pages
 
         private void AimingDownSightsActivatorsTickedEvent(object sender, RoutedEventArgs e)
         {
-            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt))) { 
-                if ((bool)AimingDownSightsActivators[button].IsChecked) 
-                { 
-                    profileCurrent.aiming_down_sights_activation |= button; 
+            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+            {
+                if ((bool)AimingDownSightsActivators[button].IsChecked)
+                {
+                    profileCurrent.aiming_down_sights_activation |= button;
                 }
             }
         }
