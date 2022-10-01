@@ -76,7 +76,7 @@ namespace ControllerCommon.Managers
         {
             while (device is not null)
             {
-                var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+                var parentId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
                 if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
                     break;
@@ -111,7 +111,7 @@ namespace ControllerCommon.Managers
 
                 while (device is not null)
                 {
-                    var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+                    var parentId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
                     if (parentId == owner.DeviceId)
                     {
@@ -122,7 +122,7 @@ namespace ControllerCommon.Managers
                             path = path,
                             isVirtual = IsVirtualDevice(pnpDevice),
                             deviceIndex = deviceIndex,
-                            arrivalDate = pnpDevice.GetProperty<DateTimeOffset>(DevicePropertyDevice.LastArrivalDate)
+                            arrivalDate = pnpDevice.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate)
                         };
                         devices.Add(deviceEx);
                     }
@@ -155,7 +155,7 @@ namespace ControllerCommon.Managers
 
                 while (device is not null)
                 {
-                    var parentId = device.GetProperty<string>(DevicePropertyDevice.Parent);
+                    var parentId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
                     if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.OrdinalIgnoreCase))
                         break;
@@ -179,7 +179,7 @@ namespace ControllerCommon.Managers
                     path = path,
                     isVirtual = IsVirtualDevice(pnpDevice),
                     deviceIndex = deviceIndex,
-                    arrivalDate = pnpDevice.GetProperty<DateTimeOffset>(DevicePropertyDevice.LastArrivalDate)
+                    arrivalDate = pnpDevice.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate)
                 });
             }
 

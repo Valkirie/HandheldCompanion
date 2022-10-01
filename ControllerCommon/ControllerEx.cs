@@ -90,8 +90,8 @@ namespace ControllerCommon
                 deviceInstancePath = deviceEx.deviceUSB.DeviceId;
                 baseContainerDeviceInstancePath = deviceEx.deviceHID.DeviceId;
 
-                DeviceDesc = deviceEx.deviceUSB.GetProperty<string>(DevicePropertyDevice.DeviceDesc);
-                Manufacturer = deviceEx.deviceUSB.GetProperty<string>(DevicePropertyDevice.Manufacturer);
+                DeviceDesc = deviceEx.deviceUSB.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc);
+                Manufacturer = deviceEx.deviceUSB.GetProperty<string>(DevicePropertyKey.Device_Manufacturer);
 
                 devices.Remove(deviceEx);
                 break;
