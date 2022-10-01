@@ -105,7 +105,7 @@ namespace HandheldCompanion.Managers
             ExecuteSequence();
         }
 
-        private static void ExecuteSequence()
+        private static bool ExecuteSequence()
         {
             KeyDownTimer.Stop();
 
@@ -117,7 +117,10 @@ namespace HandheldCompanion.Managers
 
                 // trigger isn't used
                 if (string.IsNullOrEmpty(trigger))
+                {
                     TriggerBuffer.AddRange(Intercepted);
+                    return false;
+                }
                 else
                     TriggerRaised?.Invoke(trigger, Triggers[trigger]);
             }
@@ -128,6 +131,7 @@ namespace HandheldCompanion.Managers
                 Triggers[TriggerListener] = inputs;
                 StopListening(inputs);
             }
+            return true;
         }
 
         private static void InjectModifiers(KeyEventArgsExt args)
@@ -215,6 +219,9 @@ namespace HandheldCompanion.Managers
                         {
                             time_last = args.Timestamp - prevKeyDown[KeyDownListener];
                             prevKeyDown[KeyDownListener] = args.Timestamp;
+
+                            KeyDownTimer.Restart();
+                            KeyDownType = InputsChordType.Click;
                         }
                         else if (args.IsKeyUp)
                         {
@@ -229,16 +236,15 @@ namespace HandheldCompanion.Managers
                         LogManager.LogDebug("KeyEvent: {0} at {1}, down: {2}, up: {3}", KeyDownListener, args.Timestamp, args.IsKeyDown, args.IsKeyUp);
 
                         if (args.IsKeyDown)
-                        {
-                            KeyDownTimer.Stop();
-                            KeyDownTimer.Start();
-                            KeyDownType = InputsChordType.Click;
                             return;
-                        }
 
                         // long press has been captured already
                         if (KeyDownType == InputsChordType.Click)
-                            ExecuteSequence();
+                        {
+                            bool success = ExecuteSequence();
+                            if (!success)
+                                break;
+                        }
 
                         return; // prevent multiple shortcuts from being triggered
                     }

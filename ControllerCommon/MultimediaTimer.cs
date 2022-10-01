@@ -65,6 +65,12 @@ namespace ControllerCommon
             timerID = 0;
         }
 
+        public void Restart()
+        {
+            Stop();
+            Start();
+        }
+
         public bool Enabled
         {
             get
