@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using SharpDX.XInput;
 
 namespace ControllerCommon.Utils
 {
@@ -174,6 +175,43 @@ namespace ControllerCommon.Utils
             // Apply direction again
             return (JoystickPos < 0.0) ? -Result : Result;
         }
+
+        // Provide direction depended vibration feedback to player when physical 
+        // device reaches configured max angle to be used for joystick input
+        public static Vibration MaxSteerAngleReachedVibration(float Angle, float DeviceAngleMax, double VibrationStrength)
+        {
+            // Default 0
+            Vibration maxSteerAngleReachedVibration = new() { LeftMotorSpeed = 0, RightMotorSpeed = 0 };
+
+            // Turn right is negative angle, turn left is postive angle
+            // Within normal range, no vibration, default scenario
+            if (Math.Abs(Angle) < DeviceAngleMax)
+            {
+                maxSteerAngleReachedVibration = new() { LeftMotorSpeed = 0, RightMotorSpeed = 0 };
+            }
+            // Vibrate motor left
+            else if (Angle > DeviceAngleMax)
+            {
+                maxSteerAngleReachedVibration = new()
+                {
+                    LeftMotorSpeed = (ushort)(ushort.MaxValue * VibrationStrength),
+                    RightMotorSpeed = 0,
+                };
+            }
+            // Vibrate motor right
+            else if (Angle < DeviceAngleMax)
+            {
+                maxSteerAngleReachedVibration = new()
+                {
+                    LeftMotorSpeed = 0,
+                    RightMotorSpeed = (ushort)(ushort.MaxValue * VibrationStrength),
+                };
+            }
+
+            return maxSteerAngleReachedVibration;
+        }
+
+
 
         // Compensation for in game deadzone
         // Inputs: raw ThumbValue and deadzone 0-100%

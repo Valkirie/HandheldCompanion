@@ -203,6 +203,17 @@ namespace ControllerService.Targets
                                     ControllerService.profile.steering_power,
                                     ControllerService.profile.steering_deadzone);
 
+                                Vibration maxSteerAngleReachedVibration = InputUtils.MaxSteerAngleReachedVibration(
+                                    xinputController.sensorFusion.DeviceAngle.Y,
+                                    ControllerService.profile.steering_max_angle,
+                                    vibrationStrength);
+
+                                // Only apply if max angle is reached, as set vibration overrules in game vibrations, no mixing (yet?)
+                                if (maxSteerAngleReachedVibration.LeftMotorSpeed > 0 
+                                    || maxSteerAngleReachedVibration.RightMotorSpeed > 0) {
+                                    physicalController.SetVibration(maxSteerAngleReachedVibration);
+                                }
+
                                 switch (ControllerService.profile.umc_output)
                                 {
                                     default:
