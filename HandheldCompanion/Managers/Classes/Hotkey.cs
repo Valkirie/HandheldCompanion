@@ -207,21 +207,21 @@ namespace HandheldCompanion.Managers.Classes
 
         public void UpdateButtons()
         {
-            switch (inputsChord.type)
+            switch (inputsChord.family)
             {
                 default:
-                case InputsChordType.None:
+                case InputsChordFamily.None:
                     mainButton.Content = "";
                     buttonIcon.Glyph = "\uE9CE";
                     deleteButton.IsEnabled = false;
                     break;
-                case InputsChordType.Gamepad:
+                case InputsChordFamily.Gamepad:
                     mainButton.Content = EnumUtils.GetDescriptionFromEnumValue(inputsChord.buttons);
                     buttonIcon.Glyph = "\uE7FC";
                     deleteButton.IsEnabled = true;
                     break;
-                case InputsChordType.Keyboard:
-                    mainButton.Content = string.Join(", ", inputsChord.name);
+                case InputsChordFamily.Keyboard:
+                    mainButton.Content = string.Join(" ", inputsChord.name, inputsChord.type);
                     buttonIcon.Glyph = "\uE765";
                     deleteButton.IsEnabled = true;
                     break;

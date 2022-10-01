@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
+using System.Windows.Documents;
 using System.Windows.Forms;
 using WindowsInput.Events;
 using static System.Net.Mime.MediaTypeNames;
@@ -26,6 +27,11 @@ namespace HandheldCompanion.Managers
         private static MultimediaTimer ResetTimer;
         private static MultimediaTimer ListenerTimer;
 
+        private static MultimediaTimer KeyDownTimer;
+        private static string KeyDownListener = string.Empty;
+        private static InputsChordType KeyDownType = InputsChordType.Click;
+        private static List<KeyCode> KeyDownChord;
+
         private static Dictionary<string, long> prevKeyDown = new();
         private static Dictionary<string, long> prevKeyUp = new();
 
@@ -35,7 +41,7 @@ namespace HandheldCompanion.Managers
         private static State GamepadState;
 
         private const int TIME_BURST = 200;
-        private const int TIME_LONG = 800;
+        private const int TIME_LONG = 500;
 
         private static bool TriggerLock;
         private static string TriggerListener = string.Empty;
@@ -79,6 +85,9 @@ namespace HandheldCompanion.Managers
             ListenerTimer = new MultimediaTimer(3000);
             ListenerTimer.Tick += ListenerExpired;
 
+            KeyDownTimer = new MultimediaTimer(TIME_LONG) { AutoReset = false };
+            KeyDownTimer.Tick += KeyDownTimer_Tick;
+
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();
 
@@ -86,6 +95,39 @@ namespace HandheldCompanion.Managers
 
             // make sure we don't hang the keyboard
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
+        }
+
+        private static void KeyDownTimer_Tick(object? sender, EventArgs e)
+        {
+            // triggered when key is pressed for a long time
+            KeyDownType = InputsChordType.Hold;
+
+            ExecuteSequence();
+        }
+
+        private static void ExecuteSequence()
+        {
+            KeyDownTimer.Stop();
+
+            if (string.IsNullOrEmpty(TriggerListener))
+            {
+                var trigger = GetTriggerFromName(KeyDownListener, KeyDownType);
+
+                LogManager.LogDebug("KeyReleased: {0}, Listener: {1}, Type: {2}", trigger, KeyDownListener, KeyDownType);
+
+                // trigger isn't used
+                if (string.IsNullOrEmpty(trigger))
+                    TriggerBuffer.AddRange(Intercepted);
+                else
+                    TriggerRaised?.Invoke(trigger, Triggers[trigger]);
+            }
+            else
+            {
+                string chords = string.Join(",", KeyDownChord);
+                InputsChord inputs = new InputsChord(InputsChordFamily.Keyboard, chords, KeyDownListener, KeyDownType);
+                Triggers[TriggerListener] = inputs;
+                StopListening(inputs);
+            }
         }
 
         private static void InjectModifiers(KeyEventArgsExt args)
@@ -152,11 +194,11 @@ namespace HandheldCompanion.Managers
                 // search for matching triggers
                 foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
                 {
-                    string listener = pair.name;
-                    List<KeyCode> chord = pair.chord;
+                    KeyDownListener = pair.name;
+                    KeyDownChord = pair.chord;
 
                     // compare ordered enumerable
-                    var chord_keys = chord.OrderBy(key => key);
+                    var chord_keys = KeyDownChord.OrderBy(key => key);
                     var buffer_keys = GetBufferKeys().OrderBy(key => key);
 
                     if (chord_keys.SequenceEqual(buffer_keys))
@@ -171,49 +213,33 @@ namespace HandheldCompanion.Managers
 
                         if (args.IsKeyDown)
                         {
-                            time_last = args.Timestamp - prevKeyDown[listener];
-                            prevKeyDown[listener] = args.Timestamp;
+                            time_last = args.Timestamp - prevKeyDown[KeyDownListener];
+                            prevKeyDown[KeyDownListener] = args.Timestamp;
                         }
                         else if (args.IsKeyUp)
                         {
-                            time_last = args.Timestamp - prevKeyUp[listener];
-                            prevKeyUp[listener] = args.Timestamp;
+                            time_last = args.Timestamp - prevKeyUp[KeyDownListener];
+                            prevKeyUp[KeyDownListener] = args.Timestamp;
                         }
 
                         // skip call if too close
                         if (time_last < TIME_BURST)
                             break;
 
-                        LogManager.LogDebug("Triggered: {0} at {1}, down: {2}, up: {3}", listener, args.Timestamp, args.IsKeyDown, args.IsKeyUp);
+                        LogManager.LogDebug("KeyEvent: {0} at {1}, down: {2}, up: {3}", KeyDownListener, args.Timestamp, args.IsKeyDown, args.IsKeyUp);
 
                         if (args.IsKeyDown)
+                        {
+                            KeyDownTimer.Stop();
+                            KeyDownTimer.Start();
+                            KeyDownType = InputsChordType.Click;
                             return;
-
-                        time_duration = args.Timestamp - prevKeyDown[listener];
-                        if (time_duration > TIME_LONG)
-                            listener += " (HOLD)";
-
-                        if (string.IsNullOrEmpty(TriggerListener))
-                        {
-                            string trigger = GetTriggerFromName(listener);
-
-                            // trigger isn't used
-                            if (string.IsNullOrEmpty(trigger))
-                            {
-                                TriggerBuffer.AddRange(Intercepted);
-                                break;
-                            }
-                            else if (args.IsKeyUp)
-                                TriggerRaised?.Invoke(trigger, Triggers[trigger]);
                         }
-                        else
-                        {
-                            InputsChord inputs = new InputsChord(InputsChordType.Keyboard, string.Join(",", chord), listener);
-                            Triggers[TriggerListener] = inputs;
 
-                            if (args.IsKeyUp)
-                                StopListening(inputs);
-                        }
+                        // long press has been captured already
+                        if (KeyDownType == InputsChordType.Click)
+                            ExecuteSequence();
+
                         return; // prevent multiple shortcuts from being triggered
                     }
                 }
@@ -222,15 +248,16 @@ namespace HandheldCompanion.Managers
             ResetTimer.Start();
         }
 
-        private static string GetTriggerFromName(string name)
+        private static string GetTriggerFromName(string KeyDownListener, InputsChordType chordType)
         {
             foreach (var pair in Triggers)
             {
-                string p_trigger = pair.Key;
-                string p_name = pair.Value.name;
+                string triggerName = pair.Value.name;
+                InputsChordType triggerType = pair.Value.type;
 
-                if (p_name == name)
-                    return p_trigger;
+                if (triggerName == KeyDownListener &&
+                    triggerType == chordType)
+                    return pair.Key;
             }
 
             return "";
@@ -382,7 +409,7 @@ namespace HandheldCompanion.Managers
                     string listener = pair.Key;
                     InputsChord inputs = pair.Value;
 
-                    if (inputs.type != InputsChordType.Gamepad)
+                    if (inputs.family != InputsChordFamily.Gamepad)
                         continue;
 
                     GamepadButtonFlags buttons = inputs.buttons;
@@ -408,7 +435,7 @@ namespace HandheldCompanion.Managers
 
                 else if (Gamepad.Buttons == 0 && Triggers[TriggerListener].buttons != GamepadButtonFlags.None)
                 {
-                    Triggers[TriggerListener].type = InputsChordType.Gamepad;
+                    Triggers[TriggerListener].family = InputsChordFamily.Gamepad;
 
                     StopListening(Triggers[TriggerListener]);
                 }
