@@ -140,9 +140,9 @@ namespace HandheldCompanion.Managers.Classes
             deleteButton = new Button()
             {
                 Height = 30,
-                Content = new FontIcon() { Glyph = "\uE75C", FontSize = 14 }
+                Content = new FontIcon() { Glyph = "\uE75C", FontSize = 14 },
+                Style = Application.Current.FindResource("AccentButtonStyle") as Style
             };
-            deleteButton.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
             deleteButton.Click += DeleteButton_Click;
 
             // add elements to main panel
@@ -203,7 +203,7 @@ namespace HandheldCompanion.Managers.Classes
                 default:
                 case InputsChordFamily.None:
                     mainButton.Content = "";
-                    buttonIcon.Glyph = "\uE9CE";
+                    buttonIcon.Glyph = "";
                     deleteButton.IsEnabled = false;
                     break;
                 case InputsChordFamily.Gamepad:

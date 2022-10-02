@@ -304,7 +304,7 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Handheld Companion hotkeys.
+        ///   Looks up a localized string similar to Handheld Companion.
         /// </summary>
         public static string Enum_InputsHotkeyType_Handheld {
             get {
@@ -313,7 +313,7 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Overlay hotkeys.
+        ///   Looks up a localized string similar to Overlay.
         /// </summary>
         public static string Enum_InputsHotkeyType_Overlay {
             get {
@@ -322,7 +322,7 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Quick tools hotkeys.
+        ///   Looks up a localized string similar to Quick tools.
         /// </summary>
         public static string Enum_InputsHotkeyType_Quicktools {
             get {
@@ -331,7 +331,7 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Windows hotkeys.
+        ///   Looks up a localized string similar to Windows.
         /// </summary>
         public static string Enum_InputsHotkeyType_Windows {
             get {
