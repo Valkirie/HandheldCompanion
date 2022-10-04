@@ -129,6 +129,18 @@ namespace ControllerCommon
     }
 
     [Serializable]
+    public partial class PipeClientInput : PipeMessage
+    {
+        public uint Buttons;
+        public ushort sButtons;
+
+        public PipeClientInput()
+        {
+            code = PipeCode.CLIENT_INPUT;
+        }
+    }
+
+    [Serializable]
     public partial class PipeConsoleArgs : PipeMessage
     {
         public string[] args;

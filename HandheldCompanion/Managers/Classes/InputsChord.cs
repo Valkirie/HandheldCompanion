@@ -13,9 +13,9 @@ namespace HandheldCompanion.Managers.Classes
 
     public class InputsChord
     {
-        public GamepadButtonFlags buttons { get; set; }
-        public string key { get; set; }
-        public InputsChordType type { get; set; }
+        public GamepadButtonFlags buttons { get; set; } = GamepadButtonFlags.None;
+        public string key { get; set; } = string.Empty;
+        public InputsChordType type { get; set; } = InputsChordType.Click;
 
         public InputsChord(string buttons, string key, InputsChordType type)
         {

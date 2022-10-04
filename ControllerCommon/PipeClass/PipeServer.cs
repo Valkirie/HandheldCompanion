@@ -25,7 +25,8 @@ namespace ControllerCommon
         SERVER_SETTINGS = 6,                // Sent to client during initialization
                                             // args: ...
 
-        OBSOLETE_0 = 7,                     // OBSOLETE, REUSEME
+        CLIENT_INPUT = 7,                   // Sent to server to request a specific gamepad input
+                                            // args: ...
 
         CLIENT_SETTINGS = 8,                // Sent to server to update settings
                                             // args: ...

@@ -21,35 +21,33 @@ namespace HandheldCompanion.Managers.Classes
             { 2, new InputsHotkey(InputsHotkeyType.Overlay, "\uEDA4", "overlayTrackpads", "Display virtual trackpads") },
             { 3, new InputsHotkey(InputsHotkeyType.Quicktools, "\uEC7A", "quickTools", "Summon quicktools window") },
             { 4, new InputsHotkey(InputsHotkeyType.Windows, "\uE765", "shortcutKeyboard", "Summon touch keyboard") },
-            { 5, new InputsHotkey(InputsHotkeyType.Windows, "\uE782", "shortcutDesktop", "Summon desktop", "HoloLens MDL2 Assets") },
-            { 6, new InputsHotkey(InputsHotkeyType.Windows, "\uEF2C", "shortcutESC", "Send ESCAPE key") },
+            { 5, new InputsHotkey(InputsHotkeyType.Windows, "\uE138", "shortcutDesktop", "Summon desktop", "Segoe UI Symbol") },
+            { 6, new InputsHotkey(InputsHotkeyType.Windows, "ESC", "shortcutESC", "Send ESCAPE key", "Segoe UI", 12) },
             { 7, new InputsHotkey(InputsHotkeyType.Windows, "\uEE49", "shortcutExpand", "Send ALT + ENTER keystroke") },
             { 8, new InputsHotkey(InputsHotkeyType.Windows, "\uE7C4", "shortcutTaskview", "Send WINDOWS + TAB keystroke") },
             { 9, new InputsHotkey(InputsHotkeyType.Handheld, "\uE7C4", "shortcutMainwindow", "Summon main window") },
+            { 10, new InputsHotkey(InputsHotkeyType.Handheld, "\uE2E8", "shortcutGuide", "Send Microsoft Guide or Sony button input", "Segoe UI Symbol") },
         };
 
         public string Glyph { get; set; }
         public string Listener { get; set; }
         public string Description { get; set; }
         public FontFamily fontFamily { get; set; }
+        public double fontSize { get; set; }
         public InputsHotkeyType hotkeyType { get; set; }
 
-        public InputsHotkey(InputsHotkeyType _hotkeyType, string glyph, string listener, string description, string _fontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets,Segoe UI Symbol, HoloLens MDL2 Assets")
+        public InputsHotkey(InputsHotkeyType hotkeyType, string glyph, string listener, string description, string fontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets,Segoe UI Symbol, HoloLens MDL2 Assets", double fontSize = 14.0d)
         {
-            hotkeyType = _hotkeyType;
-            Glyph = glyph;
-            Listener = listener;
-            Description = description;
-            fontFamily = new FontFamily(_fontFamily);
+            this.hotkeyType = hotkeyType;
+            this.Glyph = glyph;
+            this.Listener = listener;
+            this.Description = description;
+            this.fontFamily = new FontFamily(fontFamily);
+            this.fontSize = fontSize;
         }
 
         public InputsHotkey()
         {
-        }
-
-        public string GetGlyph()
-        {
-            return Glyph;
         }
 
         public string GetListener()

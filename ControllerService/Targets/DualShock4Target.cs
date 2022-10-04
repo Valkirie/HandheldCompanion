@@ -7,7 +7,6 @@ using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using SharpDX.XInput;
 using System.Collections.Generic;
-using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
 
 namespace ControllerService.Targets
 {
@@ -134,28 +133,28 @@ namespace ControllerService.Targets
 
             unchecked
             {
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.A))
+                if (Buttons.HasFlag(GamepadButtonFlagsExt.A))
                     tempButtons |= DualShock4Button.Cross.Value;
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.B))
+                if (Buttons.HasFlag(GamepadButtonFlagsExt.B))
                     tempButtons |= DualShock4Button.Circle.Value;
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.X))
+                if (Buttons.HasFlag(GamepadButtonFlagsExt.X))
                     tempButtons |= DualShock4Button.Square.Value;
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.Y))
+                if (Buttons.HasFlag(GamepadButtonFlagsExt.Y))
                     tempButtons |= DualShock4Button.Triangle.Value;
 
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.Start))
+                if (Buttons.HasFlag(GamepadButtonFlagsExt.Start))
                     tempButtons |= DualShock4Button.Options.Value;
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back))
+                if (Buttons.HasFlag(GamepadButtonFlagsExt.Back))
                     tempButtons |= DualShock4Button.Share.Value;
 
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb))
+                if (Buttons.HasFlag(GamepadButtonFlagsExt.RightThumb))
                     tempButtons |= DualShock4Button.ThumbRight.Value;
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb))
+                if (Buttons.HasFlag(GamepadButtonFlagsExt.LeftThumb))
                     tempButtons |= DualShock4Button.ThumbLeft.Value;
 
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder))
+                if (Buttons.HasFlag(GamepadButtonFlagsExt.RightShoulder))
                     tempButtons |= DualShock4Button.ShoulderRight.Value;
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder))
+                if (Buttons.HasFlag(GamepadButtonFlagsExt.LeftShoulder))
                     tempButtons |= DualShock4Button.ShoulderLeft.Value;
 
                 if (Gamepad.LeftTrigger > 0)
@@ -163,28 +162,28 @@ namespace ControllerService.Targets
                 if (Gamepad.RightTrigger > 0)
                     tempButtons |= DualShock4Button.TriggerRight.Value;
 
-                if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) &&
-                    Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
+                if (Buttons.HasFlag(GamepadButtonFlagsExt.DPadUp) &&
+                    Buttons.HasFlag(GamepadButtonFlagsExt.DPadRight))
                     tempDPad = DualShock4DPadDirection.Northeast;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp) &&
-                         Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
+                else if (Buttons.HasFlag(GamepadButtonFlagsExt.DPadUp) &&
+                         Buttons.HasFlag(GamepadButtonFlagsExt.DPadLeft))
                     tempDPad = DualShock4DPadDirection.Northwest;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp))
+                else if (Buttons.HasFlag(GamepadButtonFlagsExt.DPadUp))
                     tempDPad = DualShock4DPadDirection.North;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight) &&
-                         Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
+                else if (Buttons.HasFlag(GamepadButtonFlagsExt.DPadRight) &&
+                         Buttons.HasFlag(GamepadButtonFlagsExt.DPadDown))
                     tempDPad = DualShock4DPadDirection.Southeast;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
+                else if (Buttons.HasFlag(GamepadButtonFlagsExt.DPadRight))
                     tempDPad = DualShock4DPadDirection.East;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown) &&
-                         Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
+                else if (Buttons.HasFlag(GamepadButtonFlagsExt.DPadDown) &&
+                         Buttons.HasFlag(GamepadButtonFlagsExt.DPadLeft))
                     tempDPad = DualShock4DPadDirection.Southwest;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
+                else if (Buttons.HasFlag(GamepadButtonFlagsExt.DPadDown))
                     tempDPad = DualShock4DPadDirection.South;
-                else if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
+                else if (Buttons.HasFlag(GamepadButtonFlagsExt.DPadLeft))
                     tempDPad = DualShock4DPadDirection.West;
 
-                if ((state_s.wButtons & 0x0400) == 0x0400)
+                if ((sState.wButtons & 0x0400) == 0x0400)
                     tempSpecial |= DualShock4SpecialButton.Ps.Value;
                 if (Touch.OutputClickButton)
                     tempSpecial |= DualShock4SpecialButton.Touchpad.Value;

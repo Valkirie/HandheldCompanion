@@ -411,6 +411,11 @@ namespace ControllerService
                     PipeOverlay overlay = (PipeOverlay)message;
                     CurrentOverlayStatus = overlay.Visibility;
                     break;
+
+                case PipeCode.CLIENT_INPUT:
+                    PipeClientInput input = (PipeClientInput)message;
+                    VirtualTarget?.InjectReport((GamepadButtonFlagsExt)input.Buttons, input.sButtons);
+                    break;
             }
         }
 

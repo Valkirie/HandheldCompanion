@@ -42,7 +42,11 @@ namespace ControllerService.Targets
         protected ViGEmClient client { get; }
         protected IVirtualGamepad virtualController;
 
-        protected XInputStateSecret state_s;
+        protected XInputStateSecret sState;
+        protected XInputStateSecret sStateInjector;
+
+        protected GamepadButtonFlagsExt Buttons;            // used to read/write buttons
+        protected GamepadButtonFlagsExt ButtonsInjector;    // used to store injected buttons
 
         protected double vibrationStrength;
 
@@ -63,7 +67,7 @@ namespace ControllerService.Targets
             flickStick = new FlickStick();
 
             // initialize secret state
-            state_s = new();
+            sState = new();
 
             // initialize controller
             this.client = client;
@@ -100,15 +104,23 @@ namespace ControllerService.Targets
             LogManager.LogInformation("{0} disconnected", ToString());
         }
 
+        public void InjectReport(GamepadButtonFlagsExt buttons, ushort sButtons)
+        {
+            ButtonsInjector |= Buttons;
+            sStateInjector.wButtons |= sButtons;
+        }
+
         public virtual unsafe void UpdateReport(Gamepad Gamepad)
         {
             // get current gamepad state
-            XInputGetStateSecret13((int)physicalController.UserIndex, out state_s);
+            XInputGetStateSecret13((int)physicalController.UserIndex, out sState);
+            sState.wButtons |= sStateInjector.wButtons;
 
             // get buttons values
-            GamepadButtonFlagsExt buttons = (GamepadButtonFlagsExt)Gamepad.Buttons;
-            buttons |= (Gamepad.LeftTrigger > 0 ? GamepadButtonFlagsExt.LeftTrigger : 0);
-            buttons |= (Gamepad.RightTrigger > 0 ? GamepadButtonFlagsExt.RightTrigger : 0);
+            Buttons = (GamepadButtonFlagsExt)Gamepad.Buttons;
+            Buttons |= (Gamepad.LeftTrigger > 0 ? GamepadButtonFlagsExt.LeftTrigger : 0);
+            Buttons |= (Gamepad.RightTrigger > 0 ? GamepadButtonFlagsExt.RightTrigger : 0);
+            Buttons |= ButtonsInjector;
 
             // get sticks values
             LeftThumb = new Vector2(Gamepad.LeftThumbX, Gamepad.LeftThumbY);
@@ -116,8 +128,8 @@ namespace ControllerService.Targets
 
             if (ControllerService.profile.umc_enabled)
             {
-                if (((ControllerService.profile.umc_motion_defaultoffon == UMC_Motion_Default.Off) && (ControllerService.profile.umc_trigger & buttons) != 0) ||
-                    ((ControllerService.profile.umc_motion_defaultoffon == UMC_Motion_Default.On) && (ControllerService.profile.umc_trigger & buttons) == 0))
+                if (((ControllerService.profile.umc_motion_defaultoffon == UMC_Motion_Default.Off) && (ControllerService.profile.umc_trigger & Buttons) != 0) ||
+                    ((ControllerService.profile.umc_motion_defaultoffon == UMC_Motion_Default.On) && (ControllerService.profile.umc_trigger & Buttons) == 0))
                 {
                     switch (ControllerService.profile.umc_input)
                     {
@@ -149,7 +161,7 @@ namespace ControllerService.Targets
                                 Angular.X *= ControllerService.handheldDevice.WidthHeightRatio;
 
                                 // apply aiming down scopes multiplier if activated
-                                if ((ControllerService.profile.aiming_down_sights_activation & buttons) != 0)
+                                if ((ControllerService.profile.aiming_down_sights_activation & Buttons) != 0)
                                 {
                                     Angular *= ControllerService.profile.aiming_down_sights_multiplier;
                                 }
@@ -234,6 +246,8 @@ namespace ControllerService.Targets
 
         internal void SubmitReport()
         {
+            ButtonsInjector = 0;
+            sStateInjector.wButtons = 0;
         }
 
         public virtual void Dispose()

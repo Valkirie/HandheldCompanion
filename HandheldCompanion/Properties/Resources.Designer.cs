@@ -391,7 +391,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the 3D controller hotkey by pressing a button or a special key.
+        ///   Looks up a localized string similar to Change the 3D hotkey by pressing a button or a special key.
         /// </summary>
         public static string InputsHotkey_overlayGamepadDesc {
             get {
@@ -409,7 +409,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the trackpads hotkey by pressing a button or a special key.
+        ///   Looks up a localized string similar to Change the hotkey by pressing a button or a special key.
         /// </summary>
         public static string InputsHotkey_overlayTrackpadsDesc {
             get {
@@ -427,7 +427,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the quicktools hotkey by pressing a button or a special key.
+        ///   Looks up a localized string similar to Change the hotkey by pressing a button or a special key.
         /// </summary>
         public static string InputsHotkey_quickToolsDesc {
             get {
@@ -490,6 +490,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Guide or PS button.
+        /// </summary>
+        public static string InputsHotkey_shortcutGuide {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutGuide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Simulate a Xbox Guide or Sony PS button input.
+        /// </summary>
+        public static string InputsHotkey_shortcutGuideDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutGuideDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display touch keyboard.
         /// </summary>
         public static string InputsHotkey_shortcutKeyboard {
@@ -499,7 +517,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the touch keyboard hotkey by pressing a button or a special key.
+        ///   Looks up a localized string similar to Change the hotkey by pressing a button or a special key.
         /// </summary>
         public static string InputsHotkey_shortcutKeyboardDesc {
             get {
@@ -517,7 +535,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the quicktools hotkey by pressing a button or a special key.
+        ///   Looks up a localized string similar to Change the hotkey by pressing a button or a special key.
         /// </summary>
         public static string InputsHotkey_shortcutMainwindowDesc {
             get {

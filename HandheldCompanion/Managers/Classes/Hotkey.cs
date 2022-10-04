@@ -86,9 +86,10 @@ namespace HandheldCompanion.Managers.Classes
             {
                 Height = 30,
                 FontFamily = inputsHotkey.fontFamily,
-                Glyph = inputsHotkey.GetGlyph(),
+                FontSize = inputsHotkey.fontSize,
+                Glyph = inputsHotkey.Glyph,
                 VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Right
+                HorizontalAlignment = HorizontalAlignment.Stretch,
             };
 
             // create content panel
@@ -206,7 +207,8 @@ namespace HandheldCompanion.Managers.Classes
             else if (hasbuttons)
                 content = buttons;
 
-            content = string.Join(" ", content, inputsChord.type);
+            if (!string.IsNullOrEmpty(content))
+                content = string.Join(" ", content, inputsChord.type);
 
             mainButton.Content = content;
 

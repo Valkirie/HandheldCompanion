@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views;
@@ -159,6 +160,9 @@ namespace HandheldCompanion.Managers
                         break;
                     case "shortcutMainwindow":
                         MainWindow.GetCurrent().SwapWindowState();
+                        break;
+                    case "shortcutGuide":
+                        MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)0x0400 });
                         break;
                 }
             }

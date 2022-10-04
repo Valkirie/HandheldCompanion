@@ -107,9 +107,11 @@ namespace ControllerService.Targets
 
             foreach (Xbox360Button button in ButtonMap)
             {
-                GamepadButtonFlags value = (GamepadButtonFlags)button.Value;
-                virtualController.SetButtonState(button, Gamepad.Buttons.HasFlag(value));
+                GamepadButtonFlagsExt value = (GamepadButtonFlagsExt)button.Value;
+                virtualController.SetButtonState(button, Buttons.HasFlag(value));
             }
+
+            virtualController.SetButtonState(Xbox360Button.Guide, (sState.wButtons & 0x0400) == 0x0400);
 
             virtualController.SetSliderValue(Xbox360Slider.LeftTrigger, Gamepad.LeftTrigger);
             virtualController.SetSliderValue(Xbox360Slider.RightTrigger, Gamepad.RightTrigger);
