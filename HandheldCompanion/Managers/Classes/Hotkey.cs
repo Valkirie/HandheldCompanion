@@ -25,7 +25,6 @@ namespace HandheldCompanion.Managers.Classes
         public TextBlock contentDesc;
 
         public SimpleStackPanel buttonPanel;
-        public FontIcon buttonIcon;
         public Button mainButton;
 
         public Button deleteButton;
@@ -76,7 +75,7 @@ namespace HandheldCompanion.Managers.Classes
             ColumnDefinition colDef1 = new ColumnDefinition()
             {
                 Width = new GridLength(4, GridUnitType.Star),
-                MinWidth = 200
+                MinWidth = 360
             };
             mainGrid.ColumnDefinitions.Add(colDef1);
 
@@ -125,14 +124,10 @@ namespace HandheldCompanion.Managers.Classes
             };
             Grid.SetColumn(buttonPanel, 1);
 
-            buttonIcon = new FontIcon()
-            {
-                Height = 30
-            };
-
             mainButton = new Button()
             {
-                Width = 200,
+                Width = 300,
+                FontSize = 12,
                 Height = 30
             };
             mainButton.Click += ButtonButton_Click;
@@ -146,7 +141,6 @@ namespace HandheldCompanion.Managers.Classes
             deleteButton.Click += DeleteButton_Click;
 
             // add elements to main panel
-            buttonPanel.Children.Add(buttonIcon);
             buttonPanel.Children.Add(mainButton);
             buttonPanel.Children.Add(deleteButton);
 
@@ -198,25 +192,25 @@ namespace HandheldCompanion.Managers.Classes
 
         public void UpdateButtons()
         {
-            switch (inputsChord.family)
-            {
-                default:
-                case InputsChordFamily.None:
-                    mainButton.Content = "";
-                    buttonIcon.Glyph = "";
-                    deleteButton.IsEnabled = false;
-                    break;
-                case InputsChordFamily.Gamepad:
-                    mainButton.Content = EnumUtils.GetDescriptionFromEnumValue(inputsChord.buttons);
-                    buttonIcon.Glyph = "\uE7FC";
-                    deleteButton.IsEnabled = true;
-                    break;
-                case InputsChordFamily.Keyboard:
-                    mainButton.Content = string.Join(" ", inputsChord.name, inputsChord.type);
-                    buttonIcon.Glyph = "\uE765";
-                    deleteButton.IsEnabled = true;
-                    break;
-            }
+            string content = string.Empty;
+
+            bool haskey = !string.IsNullOrEmpty(inputsChord.key);
+            bool hasbuttons = (inputsChord.buttons != SharpDX.XInput.GamepadButtonFlags.None);
+
+            string buttons = EnumUtils.GetDescriptionFromEnumValue(inputsChord.buttons);
+
+            if (haskey && hasbuttons)
+                content = string.Join(" + ", inputsChord.key, buttons);
+            else if (haskey)
+                content = inputsChord.key;
+            else if (hasbuttons)
+                content = buttons;
+
+            content = string.Join(" ", content, inputsChord.type);
+
+            mainButton.Content = content;
+
+            deleteButton.IsEnabled = true;
         }
     }
 }

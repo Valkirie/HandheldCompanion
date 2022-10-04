@@ -4,42 +4,33 @@ using System;
 namespace HandheldCompanion.Managers.Classes
 {
     [Flags]
-    public enum InputsChordFamily : ushort
-    {
-        None = 0,
-        Gamepad = 1,
-        Keyboard = 2,
-    }
-
-    [Flags]
     public enum InputsChordType : ushort
     {
-        Click = 0,
-        Hold = 1,
+        None = 0,
+        Click = 1,
+        Hold = 2,
     }
 
     public class InputsChord
     {
-        public InputsChordFamily family { get; set; }
         public GamepadButtonFlags buttons { get; set; }
-        public string name { get; set; }
+        public string key { get; set; }
         public InputsChordType type { get; set; }
 
-        public InputsChord(InputsChordFamily family, string value, string name, InputsChordType type)
+        public InputsChord(string buttons, string key, InputsChordType type)
         {
-            this.name = name;
-            this.family = family;
+            this.key = key;
             this.type = type;
 
-            switch (family)
-            {
-                case InputsChordFamily.Gamepad:
-                    this.buttons = (GamepadButtonFlags)Enum.Parse(typeof(GamepadButtonFlags), value, true);
-                    break;
+            this.buttons = (GamepadButtonFlags)Enum.Parse(typeof(GamepadButtonFlags), buttons, true);
+        }
 
-                case InputsChordFamily.Keyboard:
-                    break;
-            }
+        public InputsChord(GamepadButtonFlags buttons, string key, InputsChordType type)
+        {
+            this.key = key;
+            this.type = type;
+
+            this.buttons = buttons;
         }
 
         public InputsChord()
