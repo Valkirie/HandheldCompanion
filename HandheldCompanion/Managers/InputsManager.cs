@@ -124,16 +124,17 @@ namespace HandheldCompanion.Managers
                 var trigger2 = GetTriggerFromChord(KeyDownChord);
 
                 if (!string.IsNullOrEmpty(trigger))
+                {
                     TriggerBuffer.AddRange(Intercepted);
 
-                // trigger isn't used
-                if (!string.IsNullOrEmpty(trigger2))
-                    TriggerRaised?.Invoke(trigger2, KeyDownChord);
+                    if (!string.IsNullOrEmpty(trigger2))
+                        TriggerRaised?.Invoke(trigger2, KeyDownChord);
+                }
             }
             else
                 StopListening(KeyDownChord);
 
-            KeyDownChord.key = String.Empty;
+            KeyDownChord = new();
         }
 
         private static void InjectModifiers(KeyEventArgsExt args)
