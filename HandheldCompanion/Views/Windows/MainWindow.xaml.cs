@@ -17,6 +17,7 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -759,16 +760,19 @@ namespace HandheldCompanion.Views
                 default:
                 case PowerModes.StatusChange:
                     break;
+                case PowerModes.Resume:
+                    {
+                        // resume delay (arbitrary)
+                        await Task.Delay(5000);
+
+                        // restore inputs manager
+                        InputsManager.Start();
+                    }
+                    break;
                 case PowerModes.Suspend:
                     {
                         //pause inputs manager
                         InputsManager.Stop();
-                    }
-                    break;
-                case PowerModes.Resume:
-                    {
-                        // restore inputs manager
-                        InputsManager.Start();
                     }
                     break;
             }
