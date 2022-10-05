@@ -59,10 +59,10 @@ namespace HandheldCompanion.Managers.Classes
             // return localized string if available
             string root = Properties.Resources.ResourceManager.GetString($"InputsHotkey_{Listener}");
 
-            if (String.IsNullOrEmpty(root))
-                return Listener;
-            else
+            if (!String.IsNullOrEmpty(root))
                 return root;
+            
+            return Listener;
         }
 
         public string GetDescription()
@@ -70,7 +70,7 @@ namespace HandheldCompanion.Managers.Classes
             // return localized string if available
             string root = Properties.Resources.ResourceManager.GetString($"InputsHotkey_{Listener}Desc");
 
-            if (String.IsNullOrEmpty(root))
+            if (!String.IsNullOrEmpty(root))
                 return root;
 
             return String.Empty;
