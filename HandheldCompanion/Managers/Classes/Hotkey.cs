@@ -87,9 +87,7 @@ namespace HandheldCompanion.Managers.Classes
                 Height = 30,
                 FontFamily = inputsHotkey.fontFamily,
                 FontSize = inputsHotkey.fontSize,
-                Glyph = inputsHotkey.Glyph,
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Glyph = inputsHotkey.Glyph
             };
 
             // create content panel

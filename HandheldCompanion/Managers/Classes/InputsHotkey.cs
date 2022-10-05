@@ -33,10 +33,10 @@ namespace HandheldCompanion.Managers.Classes
         public string Listener { get; set; }
         public string Description { get; set; }
         public FontFamily fontFamily { get; set; }
-        public double fontSize { get; set; }
+        public double fontSize { get; set; } = 16.0d;
         public InputsHotkeyType hotkeyType { get; set; }
 
-        public InputsHotkey(InputsHotkeyType hotkeyType, string glyph, string listener, string description, string fontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets,Segoe UI Symbol, HoloLens MDL2 Assets", double fontSize = 14.0d)
+        public InputsHotkey(InputsHotkeyType hotkeyType, string glyph, string listener, string description, string fontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets,Segoe UI Symbol", double fontSize = 16.0d)
         {
             this.hotkeyType = hotkeyType;
             this.Glyph = glyph;
