@@ -49,11 +49,6 @@ namespace HandheldCompanion.Managers.Classes
         {
         }
 
-        public string GetListener()
-        {
-            return Listener;
-        }
-
         public string GetName()
         {
             // return localized string if available

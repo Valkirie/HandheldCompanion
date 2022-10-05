@@ -106,14 +106,14 @@ namespace HandheldCompanion.Managers
             hotkey.inputsHotkey = InputsHotkey.Hotkeys[hotkey.hotkeyId];
             hotkey.DrawControl();
 
-            string listener = hotkey.inputsHotkey.GetListener();
+            string listener = hotkey.inputsHotkey.Listener;
             Hotkeys.Add(listener, hotkey);
             HotkeyCreated?.Invoke(hotkey);
         }
 
         public static void SerializeHotkey(Hotkey hotkey, bool overwrite = false)
         {
-            string listener = hotkey.inputsHotkey.GetListener();
+            string listener = hotkey.inputsHotkey.Listener;
 
             string settingsPath = System.IO.Path.Combine(Path, $"{listener}.json");
             if (!File.Exists(settingsPath) || overwrite)
