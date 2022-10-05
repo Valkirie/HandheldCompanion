@@ -334,7 +334,7 @@ begin
   // https://www.microsoft.com/en-US/download/details.aspx?id=35
   Dependency_Add('HidHide_1.2.98_x64.exe',
     '/quiet /norestart',
-    'HidHide Runtime',
+    'HidHide Drivers v1.2.98',
     'https://github.com/ViGEm/HidHide/releases/download/v1.2.98.0/HidHide_1.2.98_x64.exe',
     '', True, False);
 end;
@@ -342,10 +342,10 @@ end;
 procedure Dependency_AddViGem;
 begin
   // https://www.microsoft.com/en-US/download/details.aspx?id=35
-  Dependency_Add('ViGEmBus_1.18.367_x64_x86.exe',
+  Dependency_Add('ViGEmBus_1.21.442_x64_x86_arm64.exe',
     '/quiet /norestart',
-    'ViGEmBus Runtime',
-    'https://github.com/ViGEm/ViGEmBus/releases/download/v1.18.367.0/ViGEmBus_1.18.367_x64_x86.exe',
+    'ViGEmBus Setup 1.21.442',
+    'https://github.com/ViGEm/ViGEmBus/releases/download/v1.21.442.0/ViGEmBus_1.21.442_x64_x86_arm64.exe',
     '', True, False);
 end;
 
@@ -428,7 +428,7 @@ Source: "netcorecheck_x64.exe"; Flags: dontcopy noencryption
 Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#SourcePath}\bin\{#MyConfiguration}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
-Source: "{#SourcePath}\redist\ViGEmBus_1.18.367_x64_x86.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourcePath}\redist\ViGEmBus_1.21.442_x64_x86_arm64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#SourcePath}\redist\HidHide_1.2.98_x64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]

@@ -305,7 +305,7 @@ Source: "windowsdesktop-runtime-6.0.6-win-x64.exe"; Flags: dontcopy noencryption
 Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#SourcePath}\bin\{#MyConfiguration}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
-Source: "{#SourcePath}\redist\ViGEmBus_1.18.367_x64_x86.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourcePath}\redist\ViGEmBus_1.21.442_x64_x86_arm64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#SourcePath}\redist\HidHide_1.2.98_x64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
@@ -328,7 +328,7 @@ Filename: "{tmp}\vcredist2005_x64.exe"; StatusMsg: "Installing Visual C++ 2005 R
 Filename: "{tmp}\windowsdesktop-runtime-6.0.6-win-x64.exe"; StatusMsg: ".NET Desktop Runtime 6.0.6"; Parameters: "/passive /norestart"; Flags: waituntilterminated
 Filename: "{tmp}\dotnet-runtime-6.0.6-win-x64.exe"; StatusMsg: "Installing .NET Runtime 6.0.6"; Parameters: "/passive /norestart"; Flags: waituntilterminated
 
-Filename: "{app}\redist\ViGEmBus_1.18.367_x64_x86.exe"; StatusMsg: "Installing ViGEmBus"; Parameters: "/quiet /norestart"; Flags: runascurrentuser
+Filename: "{app}\redist\ViGEmBus_1.21.442_x64_x86_arm64.exe"; StatusMsg: "Installing ViGEmBus"; Parameters: "/quiet /norestart"; Flags: runascurrentuser
 Filename: "{app}\redist\HidHide_1.2.98_x64.exe"; StatusMsg: "Installing HidHide"; Parameters: "/quiet /norestart"; Flags: runascurrentuser
 
 [UninstallRun]
@@ -419,7 +419,7 @@ begin
 #endif
 
 #ifdef UseViGem
-  ExtractTemporaryFile('ViGEmBus_1.18.367_x64_x86.exe');
+  ExtractTemporaryFile('ViGEmBus_1.21.442_x64_x86_arm64.exe');
 #endif
 
   Result := True;
