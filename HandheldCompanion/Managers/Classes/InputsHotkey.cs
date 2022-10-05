@@ -17,16 +17,16 @@ namespace HandheldCompanion.Managers.Classes
 
         public static Dictionary<ushort, InputsHotkey> Hotkeys = new()
         {
-            { 1, new InputsHotkey(InputsHotkeyType.Overlay, "\uEDE3", "overlayGamepad", "Display virtual controller") },
-            { 2, new InputsHotkey(InputsHotkeyType.Overlay, "\uEDA4", "overlayTrackpads", "Display virtual trackpads") },
-            { 3, new InputsHotkey(InputsHotkeyType.Quicktools, "\uEC7A", "quickTools", "Summon quicktools window") },
-            { 4, new InputsHotkey(InputsHotkeyType.Windows, "\uE765", "shortcutKeyboard", "Summon touch keyboard") },
-            { 5, new InputsHotkey(InputsHotkeyType.Windows, "\uE138", "shortcutDesktop", "Summon desktop", "Segoe UI Symbol") },
-            { 6, new InputsHotkey(InputsHotkeyType.Windows, "ESC", "shortcutESC", "Send ESCAPE key", "Segoe UI", 12) },
-            { 7, new InputsHotkey(InputsHotkeyType.Windows, "\uEE49", "shortcutExpand", "Send ALT + ENTER keystroke") },
-            { 8, new InputsHotkey(InputsHotkeyType.Windows, "\uE7C4", "shortcutTaskview", "Send WINDOWS + TAB keystroke") },
-            { 9, new InputsHotkey(InputsHotkeyType.Handheld, "\uE7C4", "shortcutMainwindow", "Summon main window") },
-            { 10, new InputsHotkey(InputsHotkeyType.Handheld, "\uE2E8", "shortcutGuide", "Send Microsoft Guide or Sony button input", "Segoe UI Symbol") },
+            { 1, new InputsHotkey(InputsHotkeyType.Overlay, "\uEDE3", "overlayGamepad") },
+            { 2, new InputsHotkey(InputsHotkeyType.Overlay, "\uEDA4", "overlayTrackpads") },
+            { 3, new InputsHotkey(InputsHotkeyType.Quicktools, "\uEC7A", "quickTools") },
+            { 4, new InputsHotkey(InputsHotkeyType.Windows, "\uE765", "shortcutKeyboard") },
+            { 5, new InputsHotkey(InputsHotkeyType.Windows, "\uE138", "shortcutDesktop", "Segoe UI Symbol") },
+            { 6, new InputsHotkey(InputsHotkeyType.Windows, "ESC", "shortcutESC", "Segoe UI", 12) },
+            { 7, new InputsHotkey(InputsHotkeyType.Windows, "\uEE49", "shortcutExpand") },
+            { 8, new InputsHotkey(InputsHotkeyType.Windows, "\uE7C4", "shortcutTaskview") },
+            { 9, new InputsHotkey(InputsHotkeyType.Handheld, "\uE7C4", "shortcutMainwindow") },
+            { 10, new InputsHotkey(InputsHotkeyType.Handheld, "\uE2E8", "shortcutGuide", "Segoe UI Symbol") },
         };
 
         public string Glyph { get; set; }
@@ -36,12 +36,11 @@ namespace HandheldCompanion.Managers.Classes
         public double fontSize { get; set; } = 16.0d;
         public InputsHotkeyType hotkeyType { get; set; }
 
-        public InputsHotkey(InputsHotkeyType hotkeyType, string glyph, string listener, string description, string fontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets,Segoe UI Symbol", double fontSize = 16.0d)
+        public InputsHotkey(InputsHotkeyType hotkeyType, string glyph, string listener, string fontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets,Segoe UI Symbol", double fontSize = 16.0d)
         {
             this.hotkeyType = hotkeyType;
             this.Glyph = glyph;
             this.Listener = listener;
-            this.Description = description;
             this.fontFamily = new FontFamily(fontFamily);
             this.fontSize = fontSize;
         }
@@ -72,9 +71,9 @@ namespace HandheldCompanion.Managers.Classes
             string root = Properties.Resources.ResourceManager.GetString($"InputsHotkey_{Listener}Desc");
 
             if (String.IsNullOrEmpty(root))
-                return Description;
-            else
                 return root;
+
+            return String.Empty;
         }
     }
 }
