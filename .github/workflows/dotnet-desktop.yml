@@ -84,4 +84,8 @@ jobs:
         Configuration: ${{ matrix.configuration }}
 
 
-
+    - name: Restore the application
+      uses: actions/upload-artifact@v3
+      with:
+        name: my-artifact
+        path: bin/Rekease/ # or path/to/artifact
