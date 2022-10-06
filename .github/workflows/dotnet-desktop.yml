@@ -93,4 +93,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: my-artifact
-        path: ControllerService/ControllerService/bin/Rekease/ # or path/to/artifact
+        path: ControllerService/ControllerService/bin/Release/ # or path/to/artifact
