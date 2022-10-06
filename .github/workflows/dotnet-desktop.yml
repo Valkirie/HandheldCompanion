@@ -83,8 +83,10 @@ jobs:
       env:
         Configuration: ${{ matrix.configuration }}
 
+    - name: LS
+      run: ls
 
-    - name: Restore the application
+    - name: Grab artifacts
       uses: actions/upload-artifact@v3
       with:
         name: my-artifact
