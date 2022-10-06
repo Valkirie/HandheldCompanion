@@ -65,8 +65,6 @@ namespace ControllerService
 
         public ControllerService(IHostApplicationLifetime lifetime)
         {
-            Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
 
@@ -80,25 +78,22 @@ namespace ControllerService
             configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             HIDcloaked = bool.Parse(configuration.AppSettings.Settings["HIDcloaked"].Value);
-            HIDuncloakonclose = bool.Parse(configuration.AppSettings.Settings["HIDuncloakonclose"].Value); // Properties.Settings.Default.HIDuncloakonclose;
-            HIDmode = Enum.Parse<HIDmode>(configuration.AppSettings.Settings["HIDmode"].Value); // Properties.Settings.Default.HIDmode;
-            HIDstatus = Enum.Parse<HIDstatus>(configuration.AppSettings.Settings["HIDstatus"].Value); // Properties.Settings.Default.HIDstatus;
-            DSUEnabled = bool.Parse(configuration.AppSettings.Settings["DSUEnabled"].Value); // Properties.Settings.Default.DSUEnabled;
-            DSUip = configuration.AppSettings.Settings["DSUip"].Value; // Properties.Settings.Default.DSUip;
-            DSUport = int.Parse(configuration.AppSettings.Settings["DSUport"].Value); // Properties.Settings.Default.DSUport;
-            HIDrate = int.Parse(configuration.AppSettings.Settings["HIDrate"].Value); // Properties.Settings.Default.HIDrate;
-            HIDstrength = double.Parse(configuration.AppSettings.Settings["HIDstrength"].Value); // Properties.Settings.Default.HIDstrength;
+            HIDuncloakonclose = bool.Parse(configuration.AppSettings.Settings["HIDuncloakonclose"].Value);
+            HIDmode = Enum.Parse<HIDmode>(configuration.AppSettings.Settings["HIDmode"].Value);
+            HIDstatus = Enum.Parse<HIDstatus>(configuration.AppSettings.Settings["HIDstatus"].Value);
+            DSUEnabled = bool.Parse(configuration.AppSettings.Settings["DSUEnabled"].Value);
+            DSUip = configuration.AppSettings.Settings["DSUip"].Value;
+            DSUport = int.Parse(configuration.AppSettings.Settings["DSUport"].Value);
+            HIDrate = int.Parse(configuration.AppSettings.Settings["HIDrate"].Value);
+            HIDstrength = double.Parse(configuration.AppSettings.Settings["HIDstrength"].Value);
 
-            SensorSelection = Enum.Parse<SensorFamily>(configuration.AppSettings.Settings["SensorSelection"].Value); // Properties.Settings.Default.SensorSelection;
-            SensorPlacement = int.Parse(configuration.AppSettings.Settings["SensorPlacement"].Value); // Properties.Settings.Default.SensorPlacement;
-            SensorPlacementUpsideDown = bool.Parse(configuration.AppSettings.Settings["SensorPlacementUpsideDown"].Value); // Properties.Settings.Default.SensorPlacementUpsideDown;
+            SensorSelection = Enum.Parse<SensorFamily>(configuration.AppSettings.Settings["SensorSelection"].Value);
+            SensorPlacement = int.Parse(configuration.AppSettings.Settings["SensorPlacement"].Value);
+            SensorPlacementUpsideDown = bool.Parse(configuration.AppSettings.Settings["SensorPlacementUpsideDown"].Value);
 
-            HIDidx = Enum.Parse<UserIndex>(configuration.AppSettings.Settings["HIDidx"].Value); // Properties.Settings.Default.HIDidx;
-            deviceInstancePath = configuration.AppSettings.Settings["deviceInstancePath"].Value; // Properties.Settings.Default.deviceInstancePath;
-            baseContainerDeviceInstancePath = configuration.AppSettings.Settings["baseContainerDeviceInstancePath"].Value; // Properties.Settings.Default.baseContainerDeviceInstancePath;
-
-            // initialize log
-            LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.ProductVersion);
+            HIDidx = Enum.Parse<UserIndex>(configuration.AppSettings.Settings["HIDidx"].Value);
+            deviceInstancePath = configuration.AppSettings.Settings["deviceInstancePath"].Value;
+            baseContainerDeviceInstancePath = configuration.AppSettings.Settings["baseContainerDeviceInstancePath"].Value;
 
             // verifying ViGEm is installed
             try
