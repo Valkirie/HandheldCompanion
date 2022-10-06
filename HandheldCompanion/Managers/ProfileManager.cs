@@ -11,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Resources;
 using System.Text.Json;
-using Windows.ApplicationModel.Background;
 using static ControllerCommon.Utils.ProcessUtils;
 
 namespace HandheldCompanion.Managers
