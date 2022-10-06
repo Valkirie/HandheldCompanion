@@ -55,6 +55,7 @@ namespace ControllerCommon
     public partial class PipeClientProfile : PipeMessage
     {
         public Profile profile;
+        public bool backgroundTask;
 
         public PipeClientProfile()
         {

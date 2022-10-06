@@ -59,7 +59,7 @@ namespace ControllerService
         private static bool SensorPlacementUpsideDown;
 
         // profile vars
-        public static Profile profile = new();
+        public static Profile currentProfile = new();
         public static Profile defaultProfile = new();
 
         public ControllerService(IHostApplicationLifetime lifetime)
@@ -344,7 +344,7 @@ namespace ControllerService
 
                 case PipeCode.CLIENT_PROFILE:
                     PipeClientProfile profile = (PipeClientProfile)message;
-                    ProfileUpdated(profile.profile, true);
+                    ProfileUpdated(profile.profile, profile.backgroundTask);
                     break;
 
                 case PipeCode.CLIENT_CURSOR:
@@ -427,19 +427,16 @@ namespace ControllerService
 
         internal void ProfileUpdated(Profile profile, bool backgroundtask)
         {
-            // skip if not enabled
-            if (!profile.isEnabled)
-                return;
-
             // skip if current profile
-            if (profile == ControllerService.profile)
+            if (profile == currentProfile)
                 return;
 
             // restore default profile
-            if (profile == null)
+            if (profile == null || !profile.isEnabled)
                 profile = defaultProfile;
 
-            ControllerService.profile = profile;
+            // update current profile
+            currentProfile = profile;
 
             // update default profile
             if (profile.isDefault)

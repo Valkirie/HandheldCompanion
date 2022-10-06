@@ -131,19 +131,19 @@ namespace ControllerService.Sensors
                 Z = center ? this.reading_fixed.Z : this.reading.Z
             };
 
-            reading *= ControllerService.profile.gyrometer;
+            reading *= ControllerService.currentProfile.gyrometer;
 
-            var readingZ = ControllerService.profile.steering == 0 ? reading.Z : reading.Y;
-            var readingY = ControllerService.profile.steering == 0 ? reading.Y : reading.Z;
-            var readingX = ControllerService.profile.steering == 0 ? reading.X : reading.X;
+            var readingZ = ControllerService.currentProfile.steering == 0 ? reading.Z : reading.Y;
+            var readingY = ControllerService.currentProfile.steering == 0 ? reading.Y : reading.Z;
+            var readingX = ControllerService.currentProfile.steering == 0 ? reading.X : reading.X;
 
-            if (ControllerService.profile.inverthorizontal)
+            if (ControllerService.currentProfile.inverthorizontal)
             {
                 readingY *= -1.0f;
                 readingZ *= -1.0f;
             }
 
-            if (ControllerService.profile.invertvertical)
+            if (ControllerService.currentProfile.invertvertical)
             {
                 readingY *= -1.0f;
                 readingX *= -1.0f;

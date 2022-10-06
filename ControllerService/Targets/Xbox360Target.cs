@@ -94,7 +94,7 @@ namespace ControllerService.Targets
             if (!IsConnected)
                 return;
 
-            if (ControllerService.profile.whitelisted)
+            if (ControllerService.currentProfile.whitelisted)
                 return;
 
             base.UpdateReport(Gamepad);

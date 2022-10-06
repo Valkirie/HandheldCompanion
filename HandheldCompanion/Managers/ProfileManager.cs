@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Resources;
 using System.Text.Json;
+using Windows.ApplicationModel.Background;
 using static ControllerCommon.Utils.ProcessUtils;
 
 namespace HandheldCompanion.Managers
@@ -204,7 +205,7 @@ namespace HandheldCompanion.Managers
                 if (profile.isDefault)
                 {
                     // inform service
-                    MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = profile });
+                    MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = profile, backgroundTask = true });
 
                     // do not update default profile path
                     return;
@@ -355,7 +356,7 @@ namespace HandheldCompanion.Managers
 
             // inform service
             if (isCurrent)
-                MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
+                MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile, backgroundTask = backgroundtask });
 
             if (profile.error != ProfileErrorCode.None && !profile.isDefault)
             {
