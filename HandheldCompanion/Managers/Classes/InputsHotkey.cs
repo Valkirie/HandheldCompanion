@@ -56,7 +56,7 @@ namespace HandheldCompanion.Managers.Classes
 
             if (!String.IsNullOrEmpty(root))
                 return root;
-            
+
             return Listener;
         }
 
