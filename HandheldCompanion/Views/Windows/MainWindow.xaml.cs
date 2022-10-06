@@ -33,7 +33,6 @@ namespace HandheldCompanion.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static FileVersionInfo fileVersionInfo;
         private static Stopwatch stopwatch = new();
 
         // devices vars
@@ -79,19 +78,15 @@ namespace HandheldCompanion.Views
         public static string CurrentExe, CurrentPath, CurrentPathService;
         private bool appClosing;
 
-        private static MainWindow mainWindow;
-        public MainWindow()
+        private static MainWindow CurrentWindow;
+        public static FileVersionInfo fileVersionInfo;
+
+        public MainWindow(FileVersionInfo _fileVersionInfo)
         {
             InitializeComponent();
-            mainWindow = this;
 
-            // get current assembly
-            Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-            fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
-
-            // initialize log
-            LogManager.Initialize("HandheldCompanion");
-            LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
+            fileVersionInfo = _fileVersionInfo;
+            CurrentWindow = this;
 
             // initialize splash screen
             if (SettingsManager.GetBoolean("FirstStart") || !SettingsManager.GetBoolean("StartMinimized"))
@@ -221,7 +216,7 @@ namespace HandheldCompanion.Views
 
         public static MainWindow GetCurrent()
         {
-            return mainWindow;
+            return CurrentWindow;
         }
 
         private void loadPages()
@@ -600,7 +595,7 @@ namespace HandheldCompanion.Views
 
         public static void NavView_Navigate(Page _page)
         {
-            mainWindow.ContentFrame.Navigate(_page);
+            CurrentWindow.ContentFrame.Navigate(_page);
         }
 
         private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)

@@ -1,6 +1,11 @@
-﻿using HandheldCompanion.Managers;
+﻿using ControllerCommon.Managers;
+using ControllerCommon.Utils;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
+using System;
+using System.Diagnostics;
 using System.Globalization;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 
@@ -27,6 +32,32 @@ namespace HandheldCompanion
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnStartup(StartupEventArgs args)
         {
+            // get current assembly
+            Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(CurrentAssembly.Location);
+
+            // initialize log
+            LogManager.Initialize("HandheldCompanion");
+            LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
+
+            string proc = Process.GetCurrentProcess().ProcessName;
+            Process[] processes = Process.GetProcessesByName(proc);
+
+            if (processes.Length > 1)
+            {
+                Process process = processes[0];
+
+                IntPtr handle = process.MainWindowHandle;
+                if (ProcessUtils.IsIconic(handle))
+                    ProcessUtils.ShowWindow(handle, ProcessUtils.SW_RESTORE);
+
+                ProcessUtils.SetForegroundWindow(handle);
+
+                // force close this iteration
+                Process.GetCurrentProcess().Kill();
+                return;
+            }
+
             // define culture settings
             string CurrentCulture = SettingsManager.GetString("CurrentCulture");
             CultureInfo culture = CultureInfo.CurrentCulture;
@@ -49,7 +80,7 @@ namespace HandheldCompanion
             CultureInfo.DefaultThreadCurrentCulture = culture;
             CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-            MainWindow = new MainWindow();
+            MainWindow = new MainWindow(fileVersionInfo);
             MainWindow.Show();
             MainWindow.Activate();
         }
