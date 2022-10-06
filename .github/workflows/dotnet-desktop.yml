@@ -82,7 +82,7 @@ jobs:
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+      run: msbuild $env:Solution_Name /t:Restore /p:OutputPath=BuildOutput /p:Configuration=Release
       env:
         Configuration: ${{ matrix.configuration }}
 
@@ -93,4 +93,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: my-artifact
-        path: ./ # or path/to/artifact
+        path: ./HandheldCompanion/BuildOutput # or path/to/artifact
