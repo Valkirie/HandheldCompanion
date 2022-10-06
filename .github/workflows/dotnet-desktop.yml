@@ -80,9 +80,9 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
 
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    # Build
     - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:OutputPath=BuildOutput /p:Configuration=Release -verbosity:diag
+      run: msbuild $env:Solution_Name /p:Configuration=Release -verbosity:diag
       env:
         Configuration: ${{ matrix.configuration }}
 
@@ -93,4 +93,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: my-artifact
-        path: ./HandheldCompanion/BuildOutput # or path/to/artifact
+        path: ./bin # or path/to/artifact
