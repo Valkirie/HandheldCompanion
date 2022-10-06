@@ -1,5 +1,6 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views;
@@ -15,32 +16,6 @@ namespace HandheldCompanion.Managers
 {
     public static class HotkeysManager
     {
-        #region imports
-        [ComImport, Guid("4ce576fa-83dc-4F88-951c-9d0782b4e376")]
-        class UIHostNoLaunch
-        {
-        }
-
-        [ComImport, Guid("37c994e7-432b-4834-a2f7-dce1f13b834b")]
-        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        interface ITipInvocation
-        {
-            void Toggle(IntPtr hwnd);
-        }
-
-        [DllImport("user32.dll", SetLastError = false)]
-        static extern IntPtr GetDesktopWindow();
-
-        [DllImport("user32.dll")]
-        static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        // Pinvoke declaration for ShowWindow
-        private const int SW_SHOWMAXIMIZED = 3;
-
-        [DllImport("user32.dll")]
-        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-        #endregion
-
         static string Path;
 
         public static event HotkeyTypeCreatedEventHandler HotkeyTypeCreated;
@@ -133,9 +108,9 @@ namespace HandheldCompanion.Managers
                 switch (listener)
                 {
                     case "shortcutKeyboard":
-                        var uiHostNoLaunch = new UIHostNoLaunch();
-                        var tipInvocation = (ITipInvocation)uiHostNoLaunch;
-                        tipInvocation.Toggle(GetDesktopWindow());
+                        var uiHostNoLaunch = new ProcessUtils.UIHostNoLaunch();
+                        var tipInvocation = (ProcessUtils.ITipInvocation)uiHostNoLaunch;
+                        tipInvocation.Toggle(ProcessUtils.GetDesktopWindow());
                         Marshal.ReleaseComObject(uiHostNoLaunch);
                         break;
                     case "shortcutDesktop":
@@ -144,14 +119,14 @@ namespace HandheldCompanion.Managers
                     case "shortcutESC":
                         if (foregroundProcess != null)
                         {
-                            SetForegroundWindow(foregroundProcess.MainWindowHandle);
+                            ProcessUtils.SetForegroundWindow(foregroundProcess.MainWindowHandle);
                             InputsManager.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
                         if (foregroundProcess != null)
                         {
-                            SetForegroundWindow(foregroundProcess.MainWindowHandle);
+                            ProcessUtils.SetForegroundWindow(foregroundProcess.MainWindowHandle);
                             InputsManager.KeyStroke(VirtualKeyCode.LMENU, VirtualKeyCode.RETURN);
                         }
                         break;

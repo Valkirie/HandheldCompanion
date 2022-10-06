@@ -27,27 +27,6 @@ namespace HandheldCompanion.Managers
 {
     public class ProcessEx
     {
-        #region imports
-        [DllImport("ntdll.dll", EntryPoint = "NtSuspendProcess", SetLastError = true, ExactSpelling = false)]
-        private static extern UIntPtr NtSuspendProcess(IntPtr processHandle);
-        [DllImport("ntdll.dll", EntryPoint = "NtResumeProcess", SetLastError = true, ExactSpelling = false)]
-        private static extern UIntPtr NtResumeProcess(IntPtr processHandle);
-
-        public enum ShowWindowCommands : int
-        {
-            Hide = 0,
-            Normal = 1,
-            Minimized = 2,
-            Maximized = 3,
-        }
-
-        [DllImport("user32.dll")]
-        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-        #endregion
-
         public Process Process;
         public IntPtr MainWindowHandle;
         public object processInfo;
@@ -296,9 +275,9 @@ namespace HandheldCompanion.Managers
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 processResume.IsEnabled = false;
-                NtResumeProcess(Process.Handle);
+                ProcessUtils.NtResumeProcess(Process.Handle);
                 Task.Delay(500);
-                ShowWindow(MainWindowHandle, 9);
+                ProcessUtils.ShowWindow(MainWindowHandle, ProcessUtils.SW_RESTORE);
             }));
         }
 
@@ -308,9 +287,9 @@ namespace HandheldCompanion.Managers
             {
                 processSuspend.IsEnabled = false;
 
-                ShowWindow(MainWindowHandle, 2);
+                ProcessUtils.ShowWindow(MainWindowHandle, ProcessUtils.SW_MINIMIZE);
                 Task.Delay(500);
-                NtSuspendProcess(Process.Handle);
+                ProcessUtils.NtSuspendProcess(Process.Handle);
             }));
         }
     }

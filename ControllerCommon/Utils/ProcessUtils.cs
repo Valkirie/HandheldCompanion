@@ -48,6 +48,40 @@ namespace ControllerCommon.Utils
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool EnumChildWindows(IntPtr hwnd, WindowEnumProc callback, IntPtr lParam);
+
+        [DllImport("User32.dll")]
+        public static extern bool SetForegroundWindow(IntPtr handle);
+
+        [DllImport("User32.dll")]
+        public static extern bool ShowWindow(IntPtr handle, int nCmdShow);
+
+        [DllImport("User32.dll")]
+        public static extern bool IsIconic(IntPtr handle);
+
+        [ComImport, Guid("4ce576fa-83dc-4F88-951c-9d0782b4e376")]
+        public class UIHostNoLaunch
+        {
+        }
+
+        [ComImport, Guid("37c994e7-432b-4834-a2f7-dce1f13b834b")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        public interface ITipInvocation
+        {
+            void Toggle(IntPtr hwnd);
+        }
+
+        [DllImport("user32.dll", SetLastError = false)]
+        public static extern IntPtr GetDesktopWindow();
+
+        [DllImport("ntdll.dll", EntryPoint = "NtSuspendProcess", SetLastError = true, ExactSpelling = false)]
+        public static extern UIntPtr NtSuspendProcess(IntPtr processHandle);
+
+        [DllImport("ntdll.dll", EntryPoint = "NtResumeProcess", SetLastError = true, ExactSpelling = false)]
+        public static extern UIntPtr NtResumeProcess(IntPtr processHandle);
+
+        public const int SW_RESTORE = 9;
+        public const int SW_MAXIMIZE = 3;
+        public const int SW_MINIMIZE = 2;
         #endregion
 
         public class FindHostedProcess
