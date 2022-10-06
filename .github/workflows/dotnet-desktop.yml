@@ -82,7 +82,7 @@ jobs:
 
     # Build
     - name: Restore the application
-      run: msbuild $env:Solution_Name /p:Configuration=Release -verbosity:diag
+      run: msbuild $env:Solution_Name /p:Configuration=Release
       env:
         Configuration: ${{ matrix.configuration }}
 
