@@ -184,8 +184,8 @@ namespace HandheldCompanion.Views.Pages
                 else
                     cB_Profiles.Items.Add(profile);
 
-                cB_Profiles.SelectedItem = profile;
                 cB_Profiles.Items.Refresh();
+                cB_Profiles.SelectedItem = profile;
             });
 
             if (backgroundtask)
@@ -343,9 +343,7 @@ namespace HandheldCompanion.Views.Pages
 
             currentProfile = (Profile)cB_Profiles.SelectedItem;
 
-            // prevent useless calls
-            if (IsLoaded || currentProfile.isDefault)
-                DrawProfile();
+            DrawProfile();
         }
 
         private void DrawProfile()
