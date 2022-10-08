@@ -55,12 +55,21 @@ jobs:
     runs-on: windows-latest
     needs: build
     
+    env:
+      INNO_VERSION: 6.2.1
+    
     steps:
     
     - name: Fetch Built Project Artifact
       uses: actions/download-artifact@v2
       with:
         name: built-project
+        
+    - name: Download Inno Setup installer
+      run: curl -L -o installer.exe http://files.jrsoftware.org/is/6/innosetup-${{ env.INNO_VERSION }}.exe
+      
+    - name: Install Inno Setup
+      run: ./installer.exe /verysilent /allusers /dir=inst
     
     - name: Upload Bin Artifact
       uses: actions/upload-artifact@v3
