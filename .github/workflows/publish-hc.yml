@@ -1,10 +1,7 @@
 name: Build and Publish Handheld Companion
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
 
