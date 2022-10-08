@@ -43,6 +43,9 @@ jobs:
     # Build ControllerService project
     - name: Build
       run: msbuild $env:Solution_Name /p:Configuration=Release
+    
+    - name: LS
+      run: ls
       
   publish:
     name: Publish Artifacts
@@ -51,6 +54,9 @@ jobs:
     
     steps:
     # Upload bin folder to artifacts
+    - name: LS
+      run: ls
+    
     - name: Grab artifacts
       uses: actions/upload-artifact@v3
       with:
