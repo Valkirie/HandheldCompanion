@@ -412,6 +412,33 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Default.
+        /// </summary>
+        public static string Enum_QualityOfServiceLevel_Default {
+            get {
+                return ResourceManager.GetString("Enum.QualityOfServiceLevel.Default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Eco.
+        /// </summary>
+        public static string Enum_QualityOfServiceLevel_Eco {
+            get {
+                return ResourceManager.GetString("Enum.QualityOfServiceLevel.Eco", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to High.
+        /// </summary>
+        public static string Enum_QualityOfServiceLevel_High {
+            get {
+                return ResourceManager.GetString("Enum.QualityOfServiceLevel.High", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Automatic.
         /// </summary>
         public static string Enum_ServiceStartMode_Automatic {
