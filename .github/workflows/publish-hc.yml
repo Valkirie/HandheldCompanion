@@ -79,5 +79,5 @@ jobs:
     - name: Upload Bin Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: my-artifact
-        path: ./bin # or path/to/artifact
+        name: install-files
+        path: ./install
