@@ -41,28 +41,6 @@ jobs:
     - name: Build Project
       run: msbuild $env:Solution_Name /p:Configuration=Release
     
-    - name: Upload Built Project Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: built-project
-        path: ./
-      
-  publish:
-    name: Publish Artifacts
-    runs-on: windows-latest
-    needs: build
-    
-    env:
-      INNO_VERSION: 6.2.1
-    
-    steps:
-    
-    # Fetch built project
-    - name: Fetch Built Project Artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: built-project
-        
     # Download Inno Setup
     - name: Download Inno Setup installer
       run: curl -L -o installer.exe http://files.jrsoftware.org/is/6/innosetup-${{ env.INNO_VERSION }}.exe
