@@ -48,18 +48,15 @@ jobs:
 
   build:
 
-    strategy:
-      matrix:
-        configuration: [Debug, Release]
+    # strategy:
+      # matrix:
+        # configuration: [Debug, Release]
 
     runs-on: windows-latest  # For a list of available runner types, refer to
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
     env:
       Solution_Name: ControllerService.sln                         # Replace with your solution name, i.e. MyWpfApp.sln.
-      # Test_Project_Path: your-test-project-path                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
-      Wap_Project_Directory: ControllerService.Package    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
-      Wap_Project_Path: ControllerService.Package\ControllerService.Package.wapproj                   # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
 
     steps:
     - name: Checkout
@@ -87,10 +84,10 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
 
     # Build
-    - name: Restore the application
+    - name: Build
       run: msbuild $env:Solution_Name /p:Configuration=Release
-      env:
-        Configuration: ${{ matrix.configuration }}
+      # env:
+        # Configuration: ${{ matrix.configuration }}
 
     - name: LS
       run: ls
