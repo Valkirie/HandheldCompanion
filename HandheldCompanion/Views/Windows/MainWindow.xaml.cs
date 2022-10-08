@@ -68,7 +68,6 @@ namespace HandheldCompanion.Views
         public static ProfileManager profileManager;
         public static TaskManager taskManager;
         public static CheatManager cheatManager;
-        public static SystemManager systemManager;
         public static PowerManager powerManager;
         public static UpdateManager updateManager;
 
@@ -180,6 +179,7 @@ namespace HandheldCompanion.Views
             EnergyManager.Start();
             SettingsManager.Start();
             HotkeysManager.Start();
+            SystemManager.Start();
 
             // start manager(s) asynchroneously
             foreach (Manager manager in _managers)
@@ -283,7 +283,6 @@ namespace HandheldCompanion.Views
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
             taskManager = new TaskManager("HandheldCompanion", CurrentExe);
             cheatManager = new();
-            systemManager = new();
             powerManager = new();
             updateManager = new();
 
@@ -294,7 +293,6 @@ namespace HandheldCompanion.Views
             _managers.Add(serviceManager);
             _managers.Add(taskManager);
             _managers.Add(cheatManager);
-            _managers.Add(systemManager);
             _managers.Add(powerManager);
             _managers.Add(updateManager);
 
@@ -331,8 +329,8 @@ namespace HandheldCompanion.Views
                 }
             };
 
-            systemManager.SerialArrived += SystemManager_Updated;
-            systemManager.SerialRemoved += SystemManager_Updated;
+            SystemManager.SerialArrived += SystemManager_Updated;
+            SystemManager.SerialRemoved += SystemManager_Updated;
 
             // handle settings events and forward to common managers
             SettingsManager.SettingValueChanged += (name, value) =>
@@ -608,7 +606,6 @@ namespace HandheldCompanion.Views
             processManager.Stop();
             serviceManager.Stop();
             profileManager.Stop();
-            systemManager.Stop();
             powerManager.Stop();
             toastManager.Stop();
 
@@ -624,6 +621,7 @@ namespace HandheldCompanion.Views
 
             cheatManager.Stop();
             InputsManager.Stop();
+            SystemManager.Stop();
 
             // stop listening to system events
             SystemEvents.PowerModeChanged += OnPowerChangeAsync;

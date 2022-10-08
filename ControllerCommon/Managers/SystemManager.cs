@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ControllerCommon.Managers
 {
-    public class SystemManager : Manager
+    public static class SystemManager
     {
         #region import
         [DllImport("hid.dll", EntryPoint = "HidD_GetHidGuid")]
@@ -17,23 +17,23 @@ namespace ControllerCommon.Managers
         #endregion
 
         public static Guid HidDevice;
-        private DeviceNotificationListener hidListener;
-        private DeviceNotificationListener xinputListener;
-        private List<PnPDeviceEx> devices = new();
+        private static DeviceNotificationListener hidListener;
+        private static DeviceNotificationListener xinputListener;
+        private static List<PnPDeviceEx> devices = new();
 
-        public event XInputArrivedEventHandler XInputArrived;
+        public static event XInputArrivedEventHandler XInputArrived;
         public delegate void XInputArrivedEventHandler(PnPDeviceEx device);
 
-        public event XInputRemovedEventHandler XInputRemoved;
+        public static event XInputRemovedEventHandler XInputRemoved;
         public delegate void XInputRemovedEventHandler(PnPDeviceEx device);
 
-        public event SerialArrivedEventHandler SerialArrived;
+        public static event SerialArrivedEventHandler SerialArrived;
         public delegate void SerialArrivedEventHandler(PnPDevice device);
 
-        public event SerialRemovedEventHandler SerialRemoved;
+        public static event SerialRemovedEventHandler SerialRemoved;
         public delegate void SerialRemovedEventHandler(PnPDevice device);
 
-        public SystemManager()
+        static SystemManager()
         {
             // initialize hid
             HidD_GetHidGuidMethod(out var interfaceGuid);
@@ -43,7 +43,7 @@ namespace ControllerCommon.Managers
             xinputListener = new DeviceNotificationListener();
         }
 
-        public override void Start()
+        public static void Start()
         {
             hidListener.StartListen(DeviceInterfaceIds.UsbDevice);
             hidListener.DeviceArrived += Listener_DeviceArrived;
@@ -52,15 +52,10 @@ namespace ControllerCommon.Managers
             xinputListener.StartListen(DeviceInterfaceIds.XUsbDevice);
             xinputListener.DeviceArrived += XinputListener_DeviceArrived;
             xinputListener.DeviceRemoved += XinputListener_DeviceRemoved;
-
-            base.Start();
         }
 
-        public override void Stop()
+        public static void Stop()
         {
-            if (!IsInitialized)
-                return;
-
             hidListener.StopListen(DeviceInterfaceIds.UsbDevice);
             hidListener.DeviceArrived -= Listener_DeviceArrived;
             hidListener.DeviceRemoved -= Listener_DeviceRemoved;
@@ -68,8 +63,6 @@ namespace ControllerCommon.Managers
             xinputListener.StopListen(DeviceInterfaceIds.XUsbDevice);
             xinputListener.DeviceArrived -= XinputListener_DeviceArrived;
             xinputListener.DeviceRemoved -= XinputListener_DeviceRemoved;
-
-            base.Stop();
         }
 
         public static bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)
@@ -96,7 +89,7 @@ namespace ControllerCommon.Managers
                     || device.InstanceId.StartsWith(@"ROOT\USB", StringComparison.OrdinalIgnoreCase));
         }
 
-        private PnPDeviceEx GetDeviceEx(PnPDevice owner)
+        private static PnPDeviceEx GetDeviceEx(PnPDevice owner)
         {
             PnPDeviceEx deviceEx = new PnPDeviceEx()
             {
@@ -143,7 +136,7 @@ namespace ControllerCommon.Managers
             return deviceEx;
         }
 
-        public List<PnPDeviceEx> GetDeviceExs()
+        public static List<PnPDeviceEx> GetDeviceExs()
         {
             devices.Clear();
 
@@ -186,12 +179,12 @@ namespace ControllerCommon.Managers
             return devices;
         }
 
-        private PnPDeviceEx GetPnPDeviceEx(string InstanceId)
+        private static PnPDeviceEx GetPnPDeviceEx(string InstanceId)
         {
             return devices.Where(a => a.deviceUSB.InstanceId == InstanceId).FirstOrDefault();
         }
 
-        private void XinputListener_DeviceRemoved(DeviceEventArgs obj)
+        private static void XinputListener_DeviceRemoved(DeviceEventArgs obj)
         {
             // XInput device removed
             try
@@ -207,7 +200,7 @@ namespace ControllerCommon.Managers
             catch (Exception) { }
         }
 
-        private async void XinputListener_DeviceArrived(DeviceEventArgs obj)
+        private async static void XinputListener_DeviceArrived(DeviceEventArgs obj)
         {
             // XInput device arrived
             try
@@ -220,7 +213,7 @@ namespace ControllerCommon.Managers
             catch (Exception) { }
         }
 
-        private void Listener_DeviceRemoved(DeviceEventArgs obj)
+        private static void Listener_DeviceRemoved(DeviceEventArgs obj)
         {
             try
             {
@@ -234,7 +227,7 @@ namespace ControllerCommon.Managers
             catch (Exception) { }
         }
 
-        private void Listener_DeviceArrived(DeviceEventArgs obj)
+        private static void Listener_DeviceArrived(DeviceEventArgs obj)
         {
             try
             {

@@ -30,7 +30,6 @@ namespace ControllerService
         public XInputController XInputController;
 
         private PipeServer pipeServer;
-        private SystemManager systemManager;
         private DSUServer DSUServer;
         public HidHide Hidder;
 
@@ -116,10 +115,9 @@ namespace ControllerService
             pipeServer.ClientMessage += OnClientMessage;
 
             // initialize manager(s)
-            systemManager = new SystemManager();
-            systemManager.SerialArrived += SystemManager_SerialArrived;
-            systemManager.SerialRemoved += SystemManager_SerialRemoved;
-            systemManager.Start();
+            SystemManager.SerialArrived += SystemManager_SerialArrived;
+            SystemManager.SerialRemoved += SystemManager_SerialRemoved;
+            SystemManager.Start();
             SystemManager_SerialArrived(null);
 
             // initialize device
@@ -596,7 +594,7 @@ namespace ControllerService
             pipeServer?.Close();
 
             // stop System Manager
-            systemManager.Stop();
+            SystemManager.Stop();
 
             return Task.CompletedTask;
         }
