@@ -60,23 +60,33 @@ jobs:
     
     steps:
     
+    # Fetch built project
     - name: Fetch Built Project Artifact
       uses: actions/download-artifact@v2
       with:
         name: built-project
         
+    # Download Inno Setup
     - name: Download Inno Setup installer
       run: curl -L -o installer.exe http://files.jrsoftware.org/is/6/innosetup-${{ env.INNO_VERSION }}.exe
       
+    # Install Inno Setup
     - name: Install Inno Setup
       run: ./installer.exe /verysilent /allusers /dir=inst
       
-    - name: Run thing
+    # Create Installers
+    - name: Create Installer
       run: |
           "%programfiles(x86)%\Inno Setup 6\iscc.exe" "ControllerService.iss"
       shell: cmd
+      
+    - name: Create Offline Installer
+      run: |
+          "%programfiles(x86)%\Inno Setup 6\iscc.exe" "ControllerService-offline.iss"
+      shell: cmd
     
-    - name: Upload Bin Artifact
+    # Upload install file artifacts
+    - name: Upload Installs Artifact
       uses: actions/upload-artifact@v3
       with:
         name: install-files
