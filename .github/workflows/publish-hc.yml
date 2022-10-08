@@ -70,6 +70,11 @@ jobs:
       
     - name: Install Inno Setup
       run: ./installer.exe /verysilent /allusers /dir=inst
+      
+    - name: Run thing
+      run: |
+          "%programfiles(x86)%\Inno Setup 6\iscc.exe" "ControllerService.iss"
+      shell: cmd
     
     - name: Upload Bin Artifact
       uses: actions/upload-artifact@v3
