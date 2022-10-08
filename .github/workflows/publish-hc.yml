@@ -43,7 +43,7 @@ jobs:
     
     # Download Inno Setup
     - name: Download Inno Setup installer
-      run: curl -L -o installer.exe http://files.jrsoftware.org/is/6/innosetup-${{ env.INNO_VERSION }}.exe
+      run: curl -L -o ./installer.exe http://files.jrsoftware.org/is/6/innosetup-${{ env.INNO_VERSION }}.exe
       
     # Install Inno Setup
     - name: Install Inno Setup
