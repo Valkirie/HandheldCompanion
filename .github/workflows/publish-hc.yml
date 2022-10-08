@@ -11,6 +11,7 @@ jobs:
 
     env:
       Solution_Name: ControllerService.sln
+      INNO_VERSION: 6.2.1
 
     steps:
     
