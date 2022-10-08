@@ -1,4 +1,4 @@
-name: Controller Service Build
+name: Build and Publish Handheld Companion
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 jobs:
 
   build:
-    name: Build and create installer
+    name: Build and Publish Installer
  
     runs-on: windows-latest 
 
