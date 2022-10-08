@@ -9,8 +9,7 @@ on:
 jobs:
 
   build:
-    name: Build and Publish Installer
- 
+    name: Build (Release)
     runs-on: windows-latest 
 
     env:
@@ -44,7 +43,13 @@ jobs:
     # Build ControllerService project
     - name: Build
       run: msbuild $env:Solution_Name /p:Configuration=Release
-
+      
+  publish:
+    name: Publish Artifacts
+    runs-on: windows-latest
+    needs: build
+    
+    steps:
     # Upload bin folder to artifacts
     - name: Grab artifacts
       uses: actions/upload-artifact@v3
