@@ -41,11 +41,14 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
 
     # Build ControllerService project
-    - name: Build
+    - name: Build Project
       run: msbuild $env:Solution_Name /p:Configuration=Release
     
-    - name: LS
-      run: ls
+    - name: Upload Built Project Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: built-project
+        path: ./
       
   publish:
     name: Publish Artifacts
@@ -53,11 +56,13 @@ jobs:
     needs: build
     
     steps:
-    # Upload bin folder to artifacts
-    - name: LS
-      run: ls
     
-    - name: Grab artifacts
+    - name: Fetch Built Project Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: built-project
+    
+    - name: Upload Bin Artifact
       uses: actions/upload-artifact@v3
       with:
         name: my-artifact
