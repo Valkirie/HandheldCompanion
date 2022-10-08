@@ -2,6 +2,7 @@ using ControllerCommon;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Classes;
 using ModernWpf.Controls;
 using System;
 using System.Windows;

@@ -1085,6 +1085,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resume.
+        /// </summary>
+        public static string ProcessEx_processResume {
+            get {
+                return ResourceManager.GetString("ProcessEx_processResume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suspend.
+        /// </summary>
+        public static string ProcessEx_processSuspend {
+            get {
+                return ResourceManager.GetString("ProcessEx_processSuspend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Additional settings.
         /// </summary>
         public static string ProfileSettingsMode0_AdditionalSettings {

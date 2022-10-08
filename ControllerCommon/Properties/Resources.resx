@@ -234,6 +234,15 @@
   <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
     <value>Nothing to see here.</value>
   </data>
+  <data name="Enum.QualityOfServiceLevel.Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Enum.QualityOfServiceLevel.Eco" xml:space="preserve">
+    <value>Eco</value>
+  </data>
+  <data name="Enum.QualityOfServiceLevel.High" xml:space="preserve">
+    <value>High</value>
+  </data>
   <data name="Enum.ServiceStartMode.Automatic" xml:space="preserve">
     <value>Automatic</value>
   </data>

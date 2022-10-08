@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using static HandheldCompanion.Managers.EnergyManager;
+using Brush = System.Windows.Media.Brush;
 using Color = System.Windows.Media.Color;
 using Image = System.Windows.Controls.Image;
 
@@ -30,13 +31,18 @@ namespace HandheldCompanion.Managers.Classes
         private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
 
         // UI vars
-        public Border processBorder;
+        public Expander processExpander;
         public Grid processGrid;
+
         public TextBlock processName;
+        public TextBlock processDescription;
+
         public Image processIcon;
         public Button processSuspend;
         public Button processResume;
-        public FontIcon processQoS;
+
+        public SimpleStackPanel processStackPanel;
+        public TextBlock processQoS;
 
         public ProcessEx(Process process)
         {
@@ -59,16 +65,16 @@ namespace HandheldCompanion.Managers.Classes
                 {
                     if (MainWindowHandle != IntPtr.Zero)
                     {
-                        if (processBorder is null)
+                        if (processExpander is null)
                             return;
 
-                        processBorder.Visibility = Visibility.Visible;
+                        processExpander.Visibility = Visibility.Visible;
                         string MainWindowTitle = ProcessUtils.GetWindowTitle(MainWindowHandle);
                         if (!string.IsNullOrEmpty(MainWindowTitle))
-                            processName.Text = MainWindowTitle;
+                            processDescription.Text = MainWindowTitle;
                     }
                     else
-                        processBorder.Visibility = Visibility.Collapsed;
+                        processExpander.Visibility = Visibility.Collapsed;
 
                     // manage process state
                     switch (processThread.ThreadState)
@@ -102,43 +108,30 @@ namespace HandheldCompanion.Managers.Classes
                     }
 
                     // manage process throttling
-                    // var result = EnergyManager.GetProcessInfo(Process.Handle, WinAPI.PROCESS_INFORMATION_CLASS.ProcessPowerThrottling, out processInfo);
-                    switch (QoL)
-                    {
-                        // HighQoS
-                        case QualityOfServiceLevel.Default:
-                        case QualityOfServiceLevel.High:
-                            processQoS.Glyph = "\uE945";
-                            processQoS.Foreground = new SolidColorBrush(Color.FromRgb(25, 144, 161));
-                            break;
-                        // EcoQoS
-                        case QualityOfServiceLevel.Eco:
-                            processQoS.Glyph = "\uE8BE";
-                            processQoS.Foreground = new SolidColorBrush(Color.FromRgb(193, 127, 48));
-                            break;
-                    }
+                    processQoS.Text = EnumUtils.GetDescriptionFromEnumValue(QoL);
                 }), DispatcherPriority.ContextIdle);
             }
             catch (Exception) { }
         }
 
-        public Border GetControl()
+        public Expander GetControl()
         {
-            return processBorder;
+            return processExpander;
         }
 
         public void DrawControl()
         {
-            if (processBorder != null)
+            if (processExpander != null)
                 return;
 
-            processBorder = new Border()
+            processExpander = new Expander()
             {
                 Padding = new Thickness(20, 12, 12, 12),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
                 Visibility = Visibility.Collapsed,
                 Tag = Name
             };
-            processBorder.SetResourceReference(Control.BackgroundProperty, "LayerOnMicaBaseAltFillColorDefaultBrush");
+            processExpander.SetResourceReference(Control.BackgroundProperty, "LayerOnMicaBaseAltFillColorDefaultBrush");
 
             // Create Grid
             processGrid = new();
@@ -159,24 +152,17 @@ namespace HandheldCompanion.Managers.Classes
 
             ColumnDefinition colDef2 = new ColumnDefinition()
             {
-                Width = new GridLength(1, GridUnitType.Star),
+                Width = new GridLength(2, GridUnitType.Star),
                 MinWidth = 120
             };
             processGrid.ColumnDefinitions.Add(colDef2);
-
-            ColumnDefinition colDef3 = new ColumnDefinition()
-            {
-                Width = new GridLength(1, GridUnitType.Star),
-                MinWidth = 32
-            };
-            processGrid.ColumnDefinitions.Add(colDef3);
 
             // Create PersonPicture
             var icon = Icon.ExtractAssociatedIcon(Path);
             processIcon = new Image()
             {
-                Height = 32,
-                Width = 32,
+                Height = 24,
+                Width = 24,
                 Source = icon.ToImageSource()
             };
             Grid.SetColumn(processIcon, 0);
@@ -193,7 +179,7 @@ namespace HandheldCompanion.Managers.Classes
             processName = new TextBlock()
             {
                 FontSize = 14,
-                Text = Name,
+                Text = Executable,
                 TextWrapping = TextWrapping.Wrap,
                 VerticalAlignment = VerticalAlignment.Center
             };
@@ -201,16 +187,16 @@ namespace HandheldCompanion.Managers.Classes
             processName.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
             StackPanel.Children.Add(processName);
 
-            var processExecutable = new TextBlock()
+            processDescription = new TextBlock()
             {
                 FontSize = 12,
-                Text = Executable,
-                TextWrapping = TextWrapping.Wrap,
+                Text = Name,
+                TextWrapping = TextWrapping.NoWrap,
                 VerticalAlignment = VerticalAlignment.Center
             };
 
-            processExecutable.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-            StackPanel.Children.Add(processExecutable);
+            processDescription.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+            StackPanel.Children.Add(processDescription);
 
             Grid.SetColumn(StackPanel, 1);
             processGrid.Children.Add(StackPanel);
@@ -219,10 +205,9 @@ namespace HandheldCompanion.Managers.Classes
             processSuspend = new Button()
             {
                 FontSize = 14,
-                Content = "Suspend", // localize me !
+                Content = Properties.Resources.ResourceManager.GetString("ProcessEx_processSuspend"),
                 VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                // Style = Application.Current.FindResource("DefaultButtonStyle") as Style
+                HorizontalAlignment = HorizontalAlignment.Right
             };
             processSuspend.Click += ProcessSuspend_Click;
 
@@ -233,7 +218,7 @@ namespace HandheldCompanion.Managers.Classes
             processResume = new Button()
             {
                 FontSize = 14,
-                Content = "Resume", // localize me !
+                Content = Properties.Resources.ResourceManager.GetString("ProcessEx_processResume"),
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Visibility = Visibility.Collapsed,
@@ -245,18 +230,37 @@ namespace HandheldCompanion.Managers.Classes
             processGrid.Children.Add(processResume);
 
             // Create EcoQos indicator
-            processQoS = new FontIcon()
+            processQoS = new TextBlock()
             {
                 FontSize = 14,
-                Glyph = "\uE945",
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Right,
             };
 
-            Grid.SetColumn(processQoS, 3);
-            processGrid.Children.Add(processQoS);
+            processStackPanel = new SimpleStackPanel()
+            {
+                Spacing = 12,
+                Margin = new Thickness(30, 0, 0, 0),
+            };
 
-            processBorder.Child = processGrid;
+            Grid row1 = new Grid();
+            row1.Children.Add(new TextBlock() { Text = "Process ID", HorizontalAlignment = HorizontalAlignment.Left });
+            row1.Children.Add(new TextBlock() { Text = Id.ToString(), HorizontalAlignment = HorizontalAlignment.Right });
+            processStackPanel.Children.Add(row1);
+
+            processStackPanel.Children.Add(new Separator()
+            {
+                Margin = new Thickness(-50, 0, -20, 0),
+                Background = Application.Current.FindResource("SystemControlBackgroundChromeMediumBrush") as Brush
+            });
+
+            Grid row2 = new Grid();
+            row2.Children.Add(new TextBlock() { Text = "EcoQoS", HorizontalAlignment = HorizontalAlignment.Left });
+            row2.Children.Add(processQoS);
+            processStackPanel.Children.Add(row2);
+
+            processExpander.Header = processGrid;
+            processExpander.Content = processStackPanel;
         }
 
         private void ProcessResume_Click(object sender, RoutedEventArgs e)

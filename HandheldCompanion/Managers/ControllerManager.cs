@@ -22,15 +22,15 @@ namespace HandheldCompanion.Managers
         {
             controllers = new();
 
-            MainWindow.systemManager.XInputArrived += SystemManager_XInputUpdated;
-            MainWindow.systemManager.XInputRemoved += SystemManager_XInputUpdated;
+            SystemManager.XInputArrived += SystemManager_XInputUpdated;
+            SystemManager.XInputRemoved += SystemManager_XInputUpdated;
         }
 
         public override void Start()
         {
             lock (devices)
             {
-                devices = MainWindow.systemManager.GetDeviceExs();
+                devices = SystemManager.GetDeviceExs();
 
                 // rely on device Last arrival date
                 devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();
@@ -61,8 +61,8 @@ namespace HandheldCompanion.Managers
             if (!IsInitialized)
                 return;
 
-            MainWindow.systemManager.XInputArrived -= SystemManager_XInputUpdated;
-            MainWindow.systemManager.XInputRemoved -= SystemManager_XInputUpdated;
+            SystemManager.XInputArrived -= SystemManager_XInputUpdated;
+            SystemManager.XInputRemoved -= SystemManager_XInputUpdated;
 
             base.Stop();
         }
@@ -81,7 +81,7 @@ namespace HandheldCompanion.Managers
         {
             lock (devices)
             {
-                devices = MainWindow.systemManager.GetDeviceExs();
+                devices = SystemManager.GetDeviceExs();
 
                 // rely on device Last arrival date
                 devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();

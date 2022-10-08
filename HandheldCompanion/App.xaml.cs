@@ -80,7 +80,7 @@ namespace HandheldCompanion
             CultureInfo.DefaultThreadCurrentCulture = culture;
             CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-            MainWindow = new MainWindow(fileVersionInfo);
+            MainWindow = new MainWindow(fileVersionInfo, CurrentAssembly);
             MainWindow.Show();
             MainWindow.Activate();
         }

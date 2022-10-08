@@ -457,6 +457,12 @@
   <data name="PowerControlPanel.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PowerControlPanel.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="ProcessEx_processResume" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="ProcessEx_processSuspend" xml:space="preserve">
+    <value>Suspend</value>
+  </data>
   <data name="ProfileSettingsMode0_AdditionalSettings" xml:space="preserve">
     <value>Additional settings</value>
   </data>
