@@ -81,7 +81,7 @@ namespace HandheldCompanion.Views
         private static MainWindow CurrentWindow;
         public static FileVersionInfo fileVersionInfo;
 
-        public MainWindow(FileVersionInfo _fileVersionInfo)
+        public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
         {
             InitializeComponent();
 
