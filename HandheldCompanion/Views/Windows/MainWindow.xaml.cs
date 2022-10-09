@@ -5,7 +5,6 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
-using Microsoft.Win32;
 using ModernWpf.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -104,9 +103,6 @@ namespace HandheldCompanion.Views
 
             // define current directory
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
-
-            // listen to system events
-            SystemManager.SystemStatusChanged += OnSystemStatusChanged;
 
             // initialize notifyIcon
             notifyIcon = new()
@@ -299,6 +295,9 @@ namespace HandheldCompanion.Views
 
             // hook into managers events
             InputsManager.TriggerRaised += InputsManager_TriggerRaised;
+
+            // listen to system events
+            SystemManager.SystemStatusChanged += OnSystemStatusChanged;
 
             serviceManager.Updated += OnServiceUpdate;
             serviceManager.Ready += () =>
@@ -747,8 +746,6 @@ namespace HandheldCompanion.Views
 
         private async void OnSystemStatusChanged(SystemStatus status)
         {
-            LogManager.LogInformation("System status set to {0}", status);
-
             switch (status)
             {
                 case SystemStatus.Ready:

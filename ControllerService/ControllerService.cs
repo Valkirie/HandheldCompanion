@@ -4,7 +4,6 @@ using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
@@ -608,8 +607,8 @@ namespace ControllerService
             {
                 case SystemStatus.Ready:
                     {
-                    // resume delay (arbitrary)
-                    await Task.Delay(5000);
+                        // resume delay (arbitrary)
+                        await Task.Delay(5000);
 
                         // (re)initialize sensors
                         XInputController?.UpdateSensors();
@@ -620,7 +619,7 @@ namespace ControllerService
                         SetControllerMode(HIDmode);
                     }
                     break;
-                    case SystemStatus.Unready:
+                case SystemStatus.Unready:
                     {
                         VirtualTarget.Dispose();
                         VirtualTarget = null;

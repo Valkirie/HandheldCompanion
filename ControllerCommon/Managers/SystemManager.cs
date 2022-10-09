@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace ControllerCommon.Managers
 {
@@ -77,6 +76,8 @@ namespace ControllerCommon.Managers
             xinputListener.StartListen(DeviceInterfaceIds.XUsbDevice);
             xinputListener.DeviceArrived += XinputListener_DeviceArrived;
             xinputListener.DeviceRemoved += XinputListener_DeviceRemoved;
+
+            IsInitialized = true;
         }
 
         public static void Stop()
@@ -95,6 +96,8 @@ namespace ControllerCommon.Managers
             xinputListener.StopListen(DeviceInterfaceIds.XUsbDevice);
             xinputListener.DeviceArrived -= XinputListener_DeviceArrived;
             xinputListener.DeviceRemoved -= XinputListener_DeviceRemoved;
+
+            IsInitialized = false;
         }
 
         public static bool IsVirtualDevice(PnPDevice device, bool isRemoved = false)
@@ -316,7 +319,10 @@ namespace ControllerCommon.Managers
 
             // only raise event is system status has changed
             if (previousSystemStatus != currentSystemStatus)
+            {
+                LogManager.LogInformation("System status set to {0}", currentSystemStatus);
                 SystemStatusChanged?.Invoke(currentSystemStatus);
+            }
 
             previousSystemStatus = currentSystemStatus;
         }
