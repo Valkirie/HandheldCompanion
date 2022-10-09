@@ -374,6 +374,9 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
+            if (IsInitialized)
+                return;
+
             foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
             {
                 string listener = pair.name;

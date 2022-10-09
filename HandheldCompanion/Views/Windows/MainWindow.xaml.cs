@@ -23,6 +23,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using static ControllerCommon.Managers.SystemManager;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
@@ -105,7 +106,7 @@ namespace HandheldCompanion.Views
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
             // listen to system events
-            SystemEvents.PowerModeChanged += OnPowerChangeAsync;
+            SystemManager.SystemStatusChanged += OnSystemStatusChanged;
 
             // initialize notifyIcon
             notifyIcon = new()
@@ -624,7 +625,7 @@ namespace HandheldCompanion.Views
             SystemManager.Stop();
 
             // stop listening to system events
-            SystemEvents.PowerModeChanged += OnPowerChangeAsync;
+            SystemManager.SystemStatusChanged -= OnSystemStatusChanged;
 
             // closing page(s)
             controllerPage.Page_Closed();
@@ -744,16 +745,13 @@ namespace HandheldCompanion.Views
         }
         #endregion
 
-        private async void OnPowerChangeAsync(object s, PowerModeChangedEventArgs e)
+        private async void OnSystemStatusChanged(SystemStatus status)
         {
-            LogManager.LogInformation("Device power mode set to {0}", e.Mode);
+            LogManager.LogInformation("System status set to {0}", status);
 
-            switch (e.Mode)
+            switch (status)
             {
-                default:
-                case PowerModes.StatusChange:
-                    break;
-                case PowerModes.Resume:
+                case SystemStatus.Ready:
                     {
                         // resume delay (arbitrary)
                         await Task.Delay(5000);
@@ -762,7 +760,7 @@ namespace HandheldCompanion.Views
                         InputsManager.Start();
                     }
                     break;
-                case PowerModes.Suspend:
+                case SystemStatus.Unready:
                     {
                         //pause inputs manager
                         InputsManager.Stop();

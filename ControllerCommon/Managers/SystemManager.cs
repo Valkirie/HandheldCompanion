@@ -1,11 +1,13 @@
 ﻿using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
+using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace ControllerCommon.Managers
 {
@@ -16,11 +18,7 @@ namespace ControllerCommon.Managers
         static internal extern void HidD_GetHidGuidMethod(out Guid hidGuid);
         #endregion
 
-        public static Guid HidDevice;
-        private static DeviceNotificationListener hidListener;
-        private static DeviceNotificationListener xinputListener;
-        private static List<PnPDeviceEx> devices = new();
-
+        #region events
         public static event XInputArrivedEventHandler XInputArrived;
         public delegate void XInputArrivedEventHandler(PnPDeviceEx device);
 
@@ -33,18 +31,42 @@ namespace ControllerCommon.Managers
         public static event SerialRemovedEventHandler SerialRemoved;
         public delegate void SerialRemovedEventHandler(PnPDevice device);
 
+        public static event SystemStatusChangedEventHandler SystemStatusChanged;
+        public delegate void SystemStatusChangedEventHandler(SystemStatus status);
+        #endregion
+
+        public static Guid HidDevice;
+        private static DeviceNotificationListener hidListener = new();
+        private static DeviceNotificationListener xinputListener = new();
+        private static List<PnPDeviceEx> devices = new();
+
+        private static bool IsPowerSuspended;
+        private static bool IsSessionLocked;
+
+        public static bool IsInitialized;
+
+        public enum SystemStatus
+        {
+            Unready = 0,
+            Ready = 1,
+        }
+
         static SystemManager()
         {
             // initialize hid
             HidD_GetHidGuidMethod(out var interfaceGuid);
             HidDevice = interfaceGuid;
-
-            hidListener = new DeviceNotificationListener();
-            xinputListener = new DeviceNotificationListener();
         }
 
         public static void Start()
         {
+            if (IsInitialized)
+                return;
+
+            // listen to system events
+            SystemEvents.PowerModeChanged += OnPowerChange;
+            SystemEvents.SessionSwitch += OnSessionSwitch;
+
             hidListener.StartListen(DeviceInterfaceIds.UsbDevice);
             hidListener.DeviceArrived += Listener_DeviceArrived;
             hidListener.DeviceRemoved += Listener_DeviceRemoved;
@@ -56,6 +78,13 @@ namespace ControllerCommon.Managers
 
         public static void Stop()
         {
+            if (!IsInitialized)
+                return;
+
+            // stop listening to system events
+            SystemEvents.PowerModeChanged -= OnPowerChange;
+            SystemEvents.SessionSwitch -= OnSessionSwitch;
+
             hidListener.StopListen(DeviceInterfaceIds.UsbDevice);
             hidListener.DeviceArrived -= Listener_DeviceArrived;
             hidListener.DeviceRemoved -= Listener_DeviceRemoved;
@@ -239,6 +268,48 @@ namespace ControllerCommon.Managers
                     SerialArrived?.Invoke(null);
             }
             catch (Exception) { }
+        }
+
+        private static void OnPowerChange(object s, PowerModeChangedEventArgs e)
+        {
+            LogManager.LogInformation("Device power mode set to {0}", e.Mode);
+
+            switch (e.Mode)
+            {
+                case PowerModes.Resume:
+                    IsPowerSuspended = false;
+                    break;
+                case PowerModes.Suspend:
+                    IsPowerSuspended = true;
+                    break;
+            }
+
+            SystemRoutine();
+        }
+
+        private static void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
+        {
+            LogManager.LogInformation("Session switched to {0}", e.Reason);
+
+            switch (e.Reason)
+            {
+                case SessionSwitchReason.SessionUnlock:
+                    IsSessionLocked = false;
+                    break;
+                case SessionSwitchReason.SessionLock:
+                    IsSessionLocked = true;
+                    break;
+            }
+
+            SystemRoutine();
+        }
+
+        private static void SystemRoutine()
+        {
+            if (!IsPowerSuspended && !IsSessionLocked)
+                SystemStatusChanged?.Invoke(SystemStatus.Ready);
+            else
+                SystemStatusChanged?.Invoke(SystemStatus.Unready);
         }
     }
 }
