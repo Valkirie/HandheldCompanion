@@ -43,6 +43,9 @@ namespace ControllerCommon.Managers
         private static bool IsPowerSuspended;
         private static bool IsSessionLocked;
 
+        private static SystemStatus currentSystemStatus = SystemStatus.Ready;
+        private static SystemStatus previousSystemStatus = SystemStatus.Ready;
+
         public static bool IsInitialized;
 
         public enum SystemStatus
@@ -307,9 +310,15 @@ namespace ControllerCommon.Managers
         private static void SystemRoutine()
         {
             if (!IsPowerSuspended && !IsSessionLocked)
-                SystemStatusChanged?.Invoke(SystemStatus.Ready);
+                currentSystemStatus = SystemStatus.Ready;
             else
-                SystemStatusChanged?.Invoke(SystemStatus.Unready);
+                currentSystemStatus = SystemStatus.Unready;
+
+            // only raise event is system status has changed
+            if (previousSystemStatus != currentSystemStatus)
+                SystemStatusChanged?.Invoke(currentSystemStatus);
+
+            previousSystemStatus = currentSystemStatus;
         }
     }
 }
