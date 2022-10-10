@@ -95,7 +95,7 @@
                             <RadioButton Name="MachenikeHG510Radio">
                                 <Label Content="{x:Static resx:Resources.OverlayPage_MachenikeHG510Controller}"></Label>
                             </RadioButton>
-                            <RadioButton Name="ToyControllerRadio" IsEnabled="False">
+                            <RadioButton Name="ToyControllerRadio">
                                 <Label Content="{x:Static resx:Resources.OverlayPage_ToyController}"></Label>
                             </RadioButton>
                         </ui:RadioButtons>

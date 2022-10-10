@@ -67,7 +67,6 @@ namespace HandheldCompanion.Views
         public static ServiceManager serviceManager;
         public static ProfileManager profileManager;
         public static TaskManager taskManager;
-        public static CheatManager cheatManager;
         public static PowerManager powerManager;
         public static UpdateManager updateManager;
 
@@ -244,7 +243,6 @@ namespace HandheldCompanion.Views
             };
             controllerPage.ControllerChanged += (Controller) =>
             {
-                cheatManager.UpdateController(Controller); // update me
                 InputsManager.UpdateController(Controller);
             };
 
@@ -279,7 +277,6 @@ namespace HandheldCompanion.Views
             profileManager = new();
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
             taskManager = new TaskManager("HandheldCompanion", CurrentExe);
-            cheatManager = new();
             powerManager = new();
             updateManager = new();
 
@@ -289,7 +286,6 @@ namespace HandheldCompanion.Views
             _managers.Add(profileManager);
             _managers.Add(serviceManager);
             _managers.Add(taskManager);
-            _managers.Add(cheatManager);
             _managers.Add(powerManager);
             _managers.Add(updateManager);
 
@@ -317,16 +313,6 @@ namespace HandheldCompanion.Views
             serviceManager.StopFailed += (status) =>
             {
                 _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStopIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
-            };
-
-            cheatManager.Cheated += (cheat) =>
-            {
-                switch (cheat)
-                {
-                    case "OverlayControllerFisherPrice":
-                        overlayPage?.UnlockToyController();
-                        break;
-                }
             };
 
             SystemManager.SerialArrived += SystemManager_Updated;
@@ -619,7 +605,6 @@ namespace HandheldCompanion.Views
             if (pipeClient.connected)
                 pipeClient.Close();
 
-            cheatManager.Stop();
             InputsManager.Stop();
             SystemManager.Stop();
 
