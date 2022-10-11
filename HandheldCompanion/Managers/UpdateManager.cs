@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Managers;
-using ControllerCommon.Utils;
+using HandheldCompanion.Managers.Classes;
 using ModernWpf.Controls;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,120 +9,10 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Xml;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace HandheldCompanion.Managers
 {
-    public enum UpdateStatus
-    {
-        Initialized,
-        Updated,
-        CheckingATOM,
-        CheckingMETA,
-        Ready,
-        Download,
-        Downloading,
-        Downloaded,
-        Failed
-    }
-
-    public class UpdateFile
-    {
-        public short idx;
-        public Uri uri;
-        public double filesize = 0.0d;
-        public string filename;
-
-        // UI vars
-        public Border updateBorder;
-        public Grid updateGrid;
-        public TextBlock updateFilename;
-        public TextBlock updatePercentage;
-        public Button updateDownload;
-        public Button updateInstall;
-
-        public Border Draw()
-        {
-            updateBorder = new Border()
-            {
-                Padding = new Thickness(20, 12, 12, 12),
-                Background = (Brush)Application.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"],
-                Tag = filename
-            };
-
-            // Create Grid
-            updateGrid = new();
-
-            // Define the Columns
-            ColumnDefinition colDef1 = new ColumnDefinition()
-            {
-                Width = new GridLength(5, GridUnitType.Star),
-                MinWidth = 200
-            };
-            updateGrid.ColumnDefinitions.Add(colDef1);
-
-            ColumnDefinition colDef2 = new ColumnDefinition()
-            {
-                Width = new GridLength(3, GridUnitType.Star),
-                MinWidth = 120
-            };
-            updateGrid.ColumnDefinitions.Add(colDef2);
-
-            // Create TextBlock
-            updateFilename = new TextBlock()
-            {
-                FontSize = 14,
-                Text = filename,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            Grid.SetColumn(updateFilename, 0);
-            updateGrid.Children.Add(updateFilename);
-
-            // Create TextBlock
-            updatePercentage = new TextBlock()
-            {
-                FontSize = 14,
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Visibility = Visibility.Collapsed
-            };
-            Grid.SetColumn(updatePercentage, 1);
-            updateGrid.Children.Add(updatePercentage);
-
-            // Create Download Button
-            updateDownload = new Button()
-            {
-                FontSize = 14,
-                Content = Properties.Resources.SettingsPage_Download,
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Right
-            };
-
-            Grid.SetColumn(updateDownload, 1);
-            updateGrid.Children.Add(updateDownload);
-
-            // Create Install Button
-            updateInstall = new Button()
-            {
-                FontSize = 14,
-                Content = Properties.Resources.SettingsPage_InstallNow,
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Visibility = Visibility.Collapsed
-            };
-
-            Grid.SetColumn(updateInstall, 1);
-            updateGrid.Children.Add(updateInstall);
-
-            updateBorder.Child = updateGrid;
-
-            return updateBorder;
-        }
-    }
-
     public class UpdateManager : Manager
     {
         private DateTime lastchecked;
@@ -136,7 +27,20 @@ namespace HandheldCompanion.Managers
         private string path;
 
         public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(UpdateStatus status, UpdateFile update, object value);
+        public delegate void UpdatedEventHandler(UpdateStatus status, UpdateFile? update, object? value);
+
+        public enum UpdateStatus
+        {
+            Initialized,
+            Updated,
+            Checking,
+            Changelog,
+            Ready,
+            Download,
+            Downloading,
+            Downloaded,
+            Failed
+        }
 
         public UpdateManager() : base()
         {
@@ -152,13 +56,15 @@ namespace HandheldCompanion.Managers
 
             webClient = new WebClient();
             webClient.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+            ServicePointManager.Expect100Continue = true;
+            webClient.Headers.Add("user-agent", "request");
 
             webClient.DownloadStringCompleted += WebClient_DownloadStringCompleted;
             webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
             webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
         }
 
-        private double GetFileSize(Uri uriPath)
+        private int GetFileSize(Uri uriPath)
         {
             try
             {
@@ -168,15 +74,15 @@ namespace HandheldCompanion.Managers
                 using (var webResponse = webRequest.GetResponse())
                 {
                     var fileSize = webResponse.Headers.Get("Content-Length");
-                    return Math.Round(Convert.ToDouble(fileSize) / 1024.0 / 1024.0, 2); // MB
+                    return Convert.ToInt32(fileSize);
                 }
             }
-            catch (Exception ex) { return 0.0d; }
+            catch (Exception) { return 0; }
         }
 
         private void WebClient_DownloadFileCompleted(object? sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            if (e.UserState is null)
+            if (status != UpdateStatus.Downloading)
                 return;
 
             var filename = (string)e.UserState;
@@ -185,12 +91,14 @@ namespace HandheldCompanion.Managers
                 return;
 
             UpdateFile update = updateFiles[filename];
-            Updated?.Invoke(UpdateStatus.Downloaded, update, null);
+
+            status = UpdateStatus.Downloaded;
+            Updated?.Invoke(status, update, null);
         }
 
         private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            if (e.UserState is null)
+            if (status != UpdateStatus.Download && status != UpdateStatus.Downloading)
                 return;
 
             var filename = (string)e.UserState;
@@ -198,7 +106,9 @@ namespace HandheldCompanion.Managers
             if (updateFiles.ContainsKey(filename))
             {
                 UpdateFile update = updateFiles[filename];
-                Updated?.Invoke(UpdateStatus.Downloading, update, e.ProgressPercentage);
+
+                status = UpdateStatus.Downloading;
+                Updated?.Invoke(status, update, e.ProgressPercentage);
             }
         }
 
@@ -217,74 +127,26 @@ namespace HandheldCompanion.Managers
 
                     _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
                         Properties.Resources.SettingsPage_UpdateFailedDownload,
-                        ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+                        ContentDialogButton.Primary, String.Empty, $"{Properties.Resources.ProfilesPage_OK}");
                 }
                 else
                 {
                     _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
                         Properties.Resources.SettingsPage_UpdateFailedGithub,
-                        ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+                        ContentDialogButton.Primary, String.Empty, $"{Properties.Resources.ProfilesPage_OK}");
                 }
 
-                Updated?.Invoke(UpdateStatus.Failed, update, e.Error);
+                status = UpdateStatus.Failed;
+                Updated?.Invoke(status, update, e.Error);
                 return;
             }
 
             switch (status)
             {
-                case UpdateStatus.CheckingATOM:
-                    ParseATOM(e.Result);
-                    break;
-                case UpdateStatus.CheckingMETA:
-                    ParseMETA(e.Result);
+                case UpdateStatus.Checking:
+                    ParseLatest(e.Result);
                     break;
             }
-        }
-
-        private short resultIdx;
-        private void ParseMETA(string Result)
-        {
-            try
-            {
-                resultIdx = 0;
-                updateFiles.Clear();
-
-                string assets = CommonUtils.Between(Result, "Assets</h3>", "</details>");
-                string asset = CommonUtils.Between(assets, "<a", "</a>", true);
-
-                while (!string.IsNullOrEmpty(asset))
-                {
-                    Uri href = new Uri($"https://github.com{CommonUtils.Between(asset, "href=\"", "\"")}");
-
-                    UpdateFile update = new UpdateFile()
-                    {
-                        idx = resultIdx,
-                        filename = System.IO.Path.GetFileName(href.LocalPath),
-                        uri = href,
-                        filesize = GetFileSize(href)
-                    };
-
-                    if (update.filesize != 0)
-                        updateFiles.Add(update.filename, update);
-
-                    assets = assets.Replace(asset, null);
-
-                    // get next iteration
-                    asset = CommonUtils.Between(assets, "<a", "</a>", true);
-                    resultIdx++;
-                }
-
-                // asset_size = double.Parse(CommonUtils.Between(Result, "asset-size-label\">", " MB</span>"), CultureInfo.InvariantCulture);
-            }
-            catch (Exception) { }
-
-            if (updateFiles.Count == 0)
-            {
-                Updated?.Invoke(UpdateStatus.Failed, null, null);
-                return;
-            }
-
-            Updated?.Invoke(UpdateStatus.Ready, null, updateFiles);
         }
 
         public void DownloadUpdateFile(UpdateFile update)
@@ -292,71 +154,81 @@ namespace HandheldCompanion.Managers
             if (webClient.IsBusy)
                 return; // lazy
 
+            status = UpdateStatus.Download;
+            Updated?.Invoke(status, update, null);
+
             // download release
             string filename = System.IO.Path.Combine(path, update.filename);
             webClient.DownloadFileAsync(update.uri, filename, update.filename);
-            Updated?.Invoke(UpdateStatus.Download, update, null);
         }
 
-        private void ParseATOM(string Result)
+        private void ParseLatest(string contentsJson)
         {
-            // pull build from github
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(Result);
-
-            XmlNodeList entries = doc.GetElementsByTagName("entry");
-            var entry = entries[0];
-
-            Version latestBuild = new Version(0, 0, 0, 0);
-            Uri latestHref = null;
-
-            foreach (XmlNode child in entry.ChildNodes)
+            try
             {
-                switch (child.Name)
+                GitRelease latestRelease = JsonConvert.DeserializeObject<GitRelease>(contentsJson);
+
+                // get latest build version
+                Version latestBuild = new Version(latestRelease.tag_name);
+
+                // update latest check time
+                UpdateTime();
+
+                // skip if user is already running latest build
+                if (latestBuild <= build)
                 {
-                    case "id":
-                        {
-                            string innerText = child.InnerText;
-                            int idx = innerText.LastIndexOf("-") + 1;
-                            int len = innerText.Length;
-
-                            latestBuild = Version.Parse(innerText.Substring(idx, len - idx));
-                        }
-                        break;
-
-                    case "link":
-                        {
-                            foreach (XmlAttribute attribute in child.Attributes)
-                            {
-                                switch (attribute.Name)
-                                {
-                                    case "href":
-                                        latestHref = new Uri(attribute.Value);
-                                        break;
-                                }
-                                continue;
-                            }
-                        }
-                        break;
+                    status = UpdateStatus.Updated;
+                    Updated?.Invoke(status, null, null);
+                    return;
                 }
+
+                // send changelog
+                status = UpdateStatus.Changelog;
+                Updated?.Invoke(status, null, latestRelease.body);
+
+                // skip if no assets are currently linked to the release
+                if (latestRelease.assets.Count == 0)
+                {
+                    status = UpdateStatus.Updated;
+                    Updated?.Invoke(status, null, null);
+                    return;
+                }
+
+                foreach (Asset asset in latestRelease.assets)
+                {
+                    Uri uri = new Uri(asset.browser_download_url);
+                    UpdateFile update = new UpdateFile()
+                    {
+                        idx = (short)asset.id,
+                        filename = asset.name,
+                        uri = uri,
+                        filesize = GetFileSize(uri),
+                        debug = asset.name.Contains("Debug", StringComparison.InvariantCultureIgnoreCase)
+                    };
+
+                    // making sure there was no corruption
+                    if (update.filesize == asset.size)
+                        updateFiles.Add(update.filename, update);
+                }
+
+                // skip if we failed to parse updates
+                if (updateFiles.Count == 0)
+                {
+                    status = UpdateStatus.Failed;
+                    Updated?.Invoke(status, null, null);
+                    return;
+                }
+
+                status = UpdateStatus.Ready;
+                Updated?.Invoke(status, null, updateFiles);
             }
-
-            UpdateTime();
-
-            if (latestBuild <= build)
+            catch (Exception)
             {
-                Updated?.Invoke(UpdateStatus.Updated, null, null);
+                // failed to parse Json
+                status = UpdateStatus.Failed;
+                Updated?.Invoke(status, null, null);
                 return;
             }
-
-            if (latestHref == null)
-            {
-                Updated?.Invoke(UpdateStatus.Failed, null, null);
-                return;
-            }
-
-            status = UpdateStatus.CheckingMETA;
-            webClient.DownloadStringAsync(latestHref);
         }
 
         public override void Start()
@@ -364,7 +236,9 @@ namespace HandheldCompanion.Managers
             DateTime dateTime = SettingsManager.GetDateTime("UpdateLastChecked");
 
             lastchecked = dateTime;
-            Updated?.Invoke(UpdateStatus.Initialized, null, null);
+
+            status = UpdateStatus.Initialized;
+            Updated?.Invoke(status, null, null);
 
             base.Start();
         }
@@ -391,12 +265,11 @@ namespace HandheldCompanion.Managers
         public void StartProcess()
         {
             // Update UI
-            status = UpdateStatus.CheckingATOM;
+            status = UpdateStatus.Checking;
             Updated?.Invoke(status, null, null);
 
             // download github
-            string restUrl = $"https://github.com/Valkirie/ControllerService/releases.atom?{random.Next()}";
-            webClient.DownloadStringAsync(new Uri(restUrl));
+            webClient.DownloadStringAsync(new Uri("https://api.github.com/repos/Valkirie/ControllerService/releases/latest"));
         }
 
         public void InstallUpdate(UpdateFile updateFile)
@@ -405,9 +278,9 @@ namespace HandheldCompanion.Managers
 
             if (!File.Exists(filename))
             {
-                Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
+                _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
                     Properties.Resources.SettingsPage_UpdateFailedInstall,
-                    ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+                    ContentDialogButton.Primary, String.Empty, $"{Properties.Resources.ProfilesPage_OK}");
                 return;
             }
 
