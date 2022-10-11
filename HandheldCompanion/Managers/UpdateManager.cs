@@ -18,7 +18,6 @@ namespace HandheldCompanion.Managers
         private DateTime lastchecked;
         private Assembly assembly;
         private WebClient webClient;
-        private Random random = new();
 
         private Version build;
         private Dictionary<string, UpdateFile> updateFiles = new();

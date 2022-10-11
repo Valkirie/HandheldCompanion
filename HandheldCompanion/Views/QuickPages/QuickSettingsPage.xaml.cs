@@ -14,13 +14,11 @@ namespace HandheldCompanion.Views.QuickPages
         private MMDeviceEnumerator DevEnum;
         private MMDevice multimediaDevice;
 
-        private bool Initialized;
         private bool IgnoreMe;      // used to avoid infinite loop
 
         public QuickSettingsPage()
         {
             InitializeComponent();
-            Initialized = true;
 
             OverlayQuickTools.brightnessControl.BrightnessChanged += BrightnessControl_BrightnessChanged;
 
@@ -60,7 +58,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void SliderBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (!Initialized)
+            if (!IsLoaded)
                 return;
 
             // todo: change glyph based on volume percentage
@@ -77,7 +75,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (multimediaDevice == null || multimediaDevice.AudioEndpointVolume == null)
                 return;
 
-            if (!Initialized)
+            if (!IsLoaded)
                 return;
 
             if (IgnoreMe)
