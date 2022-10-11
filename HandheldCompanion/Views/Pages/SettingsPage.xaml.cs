@@ -1,6 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Classes;
 using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
@@ -10,10 +11,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.ServiceProcess;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using static HandheldCompanion.Managers.UpdateManager;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
@@ -46,12 +49,12 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
-        public SettingsPage(string Tag) : this()
+        public SettingsPage(string? Tag) : this()
         {
             this.Tag = Tag;
         }
 
-        private void SettingsManager_SettingValueChanged(string name, object value)
+        private void SettingsManager_SettingValueChanged(string? name, object value)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -117,7 +120,7 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
-        public void UpdateDevice(PnPDevice device)
+        public void UpdateDevice(PnPDevice? device)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -126,7 +129,7 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object? sender, RoutedEventArgs? e)
         {
             MainWindow.updateManager.Start();
         }
@@ -136,7 +139,7 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.serviceManager.Updated -= OnServiceUpdate;
         }
 
-        private void Toggle_AutoStart_Toggled(object sender, System.Windows.RoutedEventArgs e)
+        private void Toggle_AutoStart_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
         {
             if (!SettingsManager.IsInitialized)
                 return;
@@ -144,7 +147,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("RunAtStartup", Toggle_AutoStart.IsOn);
         }
 
-        private void Toggle_Background_Toggled(object sender, System.Windows.RoutedEventArgs e)
+        private void Toggle_Background_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
         {
             if (!SettingsManager.IsInitialized)
                 return;
@@ -152,7 +155,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("StartMinimized", Toggle_Background.IsOn);
         }
 
-        private void cB_StartupType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void cB_StartupType_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
         {
             ServiceStartMode mode;
             switch (cB_StartupType.SelectedIndex)
@@ -180,7 +183,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("ServiceStartMode", cB_StartupType.SelectedIndex);
         }
 
-        private void Toggle_CloseMinimizes_Toggled(object sender, System.Windows.RoutedEventArgs e)
+        private void Toggle_CloseMinimizes_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
         {
             if (!SettingsManager.IsInitialized)
                 return;
@@ -218,7 +221,7 @@ namespace HandheldCompanion.Views.Pages
                         }
                         break;
 
-                    case UpdateStatus.CheckingATOM:
+                    case UpdateStatus.Checking:
                         {
                             LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateCheck;
 
@@ -257,6 +260,13 @@ namespace HandheldCompanion.Views.Pages
                         }
                         break;
 
+                    case UpdateStatus.Changelog:
+                        {
+                            CurrentChangelog.Visibility = Visibility.Visible;
+                            CurrentChangelog.AppendText((string)value);
+                        }
+                        break;
+
                     case UpdateStatus.Download:
                         {
                             updateFile.updateDownload.Visibility = Visibility.Collapsed;
@@ -283,12 +293,15 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
-        private void B_CheckUpdate_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void B_CheckUpdate_Click(object? sender, System.Windows.RoutedEventArgs? e)
         {
-            MainWindow.updateManager.StartProcess();
+            new Thread(() =>
+            {
+                MainWindow.updateManager.StartProcess();
+            }).Start();
         }
 
-        private void Toggle_ServiceShutdown_Toggled(object sender, System.Windows.RoutedEventArgs e)
+        private void Toggle_ServiceShutdown_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
         {
             if (!SettingsManager.IsInitialized)
                 return;
@@ -296,7 +309,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("HaltServiceWithCompanion", Toggle_ServiceShutdown.IsOn);
         }
 
-        private void Toggle_ServiceStartup_Toggled(object sender, System.Windows.RoutedEventArgs e)
+        private void Toggle_ServiceStartup_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
         {
             if (!SettingsManager.IsInitialized)
                 return;
@@ -304,7 +317,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("StartServiceWithCompanion", Toggle_ServiceStartup.IsOn);
         }
 
-        private void cB_Language_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void cB_Language_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
         {
             CultureInfo culture = (CultureInfo)cB_Language.SelectedItem;
 
@@ -322,10 +335,10 @@ namespace HandheldCompanion.Views.Pages
 
             _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_AppLanguageWarning}",
                 Properties.Resources.SettingsPage_AppLanguageWarningDesc,
-                ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+                ContentDialogButton.Primary, String.Empty, $"{Properties.Resources.ProfilesPage_OK}");
         }
 
-        private void Toggle_Notification_Toggled(object sender, System.Windows.RoutedEventArgs e)
+        private void Toggle_Notification_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
         {
             if (!SettingsManager.IsInitialized)
                 return;
@@ -333,7 +346,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("ToastEnable", Toggle_Notification.IsOn);
         }
 
-        private void cB_Theme_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void cB_Theme_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
         {
             if (cB_Theme.SelectedIndex == -1)
                 return;
@@ -346,7 +359,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("MainWindowTheme", cB_Theme.SelectedIndex);
         }
 
-        private void cB_Backdrop_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void cB_Backdrop_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
         {
             if (cB_Backdrop.SelectedIndex == -1)
                 return;
@@ -381,7 +394,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("MainWindowBackdrop", cB_Backdrop.SelectedIndex);
         }
 
-        private async void Toggle_EnergyStar_Toggled(object sender, RoutedEventArgs e)
+        private async void Toggle_EnergyStar_Toggled(object? sender, RoutedEventArgs? e)
         {
             if (!SettingsManager.IsInitialized)
                 return;
@@ -411,7 +424,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("UseEnergyStar", Toggle_EnergyStar.IsOn);
         }
 
-        private async void Toggle_cTDP_Toggled(object sender, RoutedEventArgs e)
+        private async void Toggle_cTDP_Toggled(object? sender, RoutedEventArgs? e)
         {
             if (!SettingsManager.IsInitialized)
                 return;
@@ -443,7 +456,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("ConfigurableTDPOverrideDown", NumberBox_TDPMin.Value);
         }
 
-        private void NumberBox_TDPMax_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+        private void NumberBox_TDPMax_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
         {
             double value = NumberBox_TDPMax.Value;
             if (double.IsNaN(value))
@@ -457,7 +470,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("ConfigurableTDPOverrideUp", value);
         }
 
-        private void NumberBox_TDPMin_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+        private void NumberBox_TDPMin_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
         {
             double value = NumberBox_TDPMin.Value;
             if (double.IsNaN(value))
@@ -471,7 +484,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("ConfigurableTDPOverrideDown", value);
         }
 
-        private void cB_SensorSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void cB_SensorSelection_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
         {
             // update dependencies
             Toggle_SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == 1 ? true : false;
@@ -487,7 +500,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
         }
 
-        private void SensorPlacement_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void SensorPlacement_Click(object sender, System.Windows.RoutedEventArgs? e)
         {
             int Tag = int.Parse((string)((Button)sender).Tag);
 
@@ -503,7 +516,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("SensorPlacement", Tag);
         }
 
-        private void UpdateUI_SensorPlacement(int SensorPlacement)
+        private void UpdateUI_SensorPlacement(int? SensorPlacement)
         {
             foreach (SimpleStackPanel panel in SensorPlacementVisualisation.Children)
             {
@@ -516,7 +529,7 @@ namespace HandheldCompanion.Views.Pages
                 }
             }
         }
-        private void Toggle_SensorPlacementUpsideDown_Toggled(object sender, System.Windows.RoutedEventArgs e)
+        private void Toggle_SensorPlacementUpsideDown_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
         {
             bool isUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
 

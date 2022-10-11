@@ -137,7 +137,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void SettingsManager_SettingValueChanged(string name, object value)
         {
-            this.Dispatcher.Invoke(async () =>
+            this.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -167,7 +167,7 @@ namespace HandheldCompanion.Views.Pages
         #region UI
         public void ProfileUpdated(Profile profile, bool backgroundtask, bool isCurrent)
         {
-            this.Dispatcher.Invoke(async () =>
+            this.Dispatcher.Invoke(() =>
             {
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
