@@ -38,13 +38,17 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
 
-    # Build ControllerService project
-    - name: Build Project
+    # Build ControllerService solution
+    - name: Build Entire Solution
       run: msbuild $env:Solution_Name /p:Configuration=Release
+      
+    # Rebuild ControllerService project
+    - name: Rebuild ControllerService Project
+      run: msbuild $env:Solution_Name /t:ControllerService:rebuild /p:Configuration="Release"
     
     # Download Inno Setup
     - name: Download Inno Setup installer
-      run: curl -L -o ./installer.exe http://files.jrsoftware.org/is/6/innosetup-${{ env.INNO_VERSION }}.exe
+      run: curl -L -o ./installer.exe http://files.jrsoftware.org/is/6/innosetup-${{ env.INNO_VERSION }}.exe      
       
     # Install Inno Setup
     - name: Install Inno Setup
