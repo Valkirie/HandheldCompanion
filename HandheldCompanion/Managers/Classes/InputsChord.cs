@@ -17,14 +17,6 @@ namespace HandheldCompanion.Managers.Classes
         public string key { get; set; } = string.Empty;
         public InputsChordType type { get; set; } = InputsChordType.Click;
 
-        public InputsChord(string buttons, string key, InputsChordType type)
-        {
-            this.key = key;
-            this.type = type;
-
-            this.buttons = (GamepadButtonFlags)Enum.Parse(typeof(GamepadButtonFlags), buttons, true);
-        }
-
         public InputsChord(GamepadButtonFlags buttons, string key, InputsChordType type)
         {
             this.key = key;

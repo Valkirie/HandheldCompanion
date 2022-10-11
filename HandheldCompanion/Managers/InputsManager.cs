@@ -116,20 +116,26 @@ namespace HandheldCompanion.Managers
             if (string.IsNullOrEmpty(KeyDownChord.key) && KeyDownChord.buttons == GamepadButtonFlags.None)
                 return;
 
-            LogManager.LogDebug("SequenceReleased: KeyDown: {0}, ButtonFlags: {1}, Type: {2}", KeyDownChord.key, KeyDownChord.buttons, KeyDownChord.type);
-
             if (string.IsNullOrEmpty(TriggerListener))
             {
-                var trigger = GetTriggerFromName(KeyDownChord.key);
-                var trigger2 = GetTriggerFromChord(KeyDownChord);
+                var trigger = GetTriggerFromChord(KeyDownChord);
 
                 if (!string.IsNullOrEmpty(trigger))
                 {
-                    TriggerBuffer.AddRange(Intercepted);
+                    LogManager.LogDebug("Captured: KeyDown: {0}, ButtonFlags: {1}, Type: {2}", KeyDownChord.key, KeyDownChord.buttons, KeyDownChord.type);
 
-                    if (!string.IsNullOrEmpty(trigger2))
-                        TriggerRaised?.Invoke(trigger2, KeyDownChord);
+                    TriggerBuffer.Clear();
+                    TriggerRaised?.Invoke(trigger, KeyDownChord);
                 }
+                else
+                {
+                    LogManager.LogDebug("Released: KeyDown: {0}, ButtonFlags: {1}, Type: {2}", KeyDownChord.key, KeyDownChord.buttons, KeyDownChord.type);
+
+                    TriggerBuffer.AddRange(Intercepted);
+                    ResetTimer.Start();
+                }
+
+                Intercepted.Clear();
             }
             else
                 StopListening(KeyDownChord);
@@ -154,11 +160,11 @@ namespace HandheldCompanion.Managers
 
         private static void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
         {
-            ResetTimer.Stop();
-            KeyUsed = false;
-
             if (TriggerLock)
                 return;
+
+            ResetTimer.Stop();
+            KeyUsed = false;
 
             KeyEventArgsExt args = (KeyEventArgsExt)e;
             KeyCode hookKey = (KeyCode)args.KeyValue;
@@ -207,10 +213,6 @@ namespace HandheldCompanion.Managers
 
                     if (chord_keys.SequenceEqual(buffer_keys))
                     {
-                        Intercepted.Clear();
-                        TriggerBuffer.Clear();
-                        Intercepted.AddRange(TriggerBuffer);
-
                         long time_last = TIME_BURST;
                         long time_duration = time_last;
 
@@ -225,8 +227,18 @@ namespace HandheldCompanion.Managers
                             prevKeyUp[pair.name] = args.Timestamp;
                         }
 
-                        // skip call if too close
-                        if (time_last < TIME_BURST)
+                        // check if inputs timestamp are too close from one to another
+                        bool tooshort = time_last < TIME_BURST;
+
+                        // only intercept inputs if not too close
+                        if (!tooshort)
+                            Intercepted.AddRange(TriggerBuffer);
+
+                        // clear buffer
+                        TriggerBuffer.Clear();
+
+                        // leave if inputs are too close
+                        if (tooshort)
                             break;
 
                         LogManager.LogDebug("KeyEvent: {0} at {1}, down: {2}, up: {3}", pair.name, args.Timestamp, args.IsKeyDown, args.IsKeyUp);
