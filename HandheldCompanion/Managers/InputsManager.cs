@@ -41,7 +41,10 @@ namespace HandheldCompanion.Managers
         private const int TIME_LONG = 800;
 
         private static bool TriggerLock;
-        private static string TriggerListener = string.Empty;
+        private static bool TriggerIsCombo;
+        private static InputsHotkey inputsHotkey = new();
+
+        private static InputsChord prevChord;
         private static List<KeyEventArgsExt> TriggerBuffer = new();
         private static List<KeyEventArgsExt> Intercepted = new();
 
@@ -74,16 +77,16 @@ namespace HandheldCompanion.Managers
         {
             // initialize timers
             UpdateTimer = new MultimediaTimer(10);
-            UpdateTimer.Tick += UpdateReport;
+            UpdateTimer.Tick += (sender, e) => UpdateReport();
 
             ResetTimer = new MultimediaTimer(m_fastInterval) { AutoReset = false };
-            ResetTimer.Tick += ReleaseBuffer;
+            ResetTimer.Tick += (sender, e) => ReleaseBuffer();
 
             ListenerTimer = new MultimediaTimer(3000);
-            ListenerTimer.Tick += ListenerExpired;
+            ListenerTimer.Tick += (sender, e) => ListenerExpired();
 
             KeyDownTimer = new MultimediaTimer(TIME_LONG) { AutoReset = false };
-            KeyDownTimer.Tick += KeyDownTimer_Tick;
+            KeyDownTimer.Tick += (sender, e) => KeyDownTimer_Tick();
 
             KeyDownBufferTimer = new MultimediaTimer(m_slowInterval) { AutoReset = false };
             KeyDownBufferTimer.Tick += (sender, e) => { ExecuteSequence(); };
@@ -97,7 +100,7 @@ namespace HandheldCompanion.Managers
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
         }
 
-        private static void KeyDownTimer_Tick(object? sender, EventArgs e)
+        private static void KeyDownTimer_Tick()
         {
             // triggered when key is pressed for a long time
             KeyDownChord.type = InputsChordType.Hold;
@@ -116,7 +119,7 @@ namespace HandheldCompanion.Managers
             if (string.IsNullOrEmpty(KeyDownChord.key) && KeyDownChord.buttons == GamepadButtonFlags.None)
                 return;
 
-            if (string.IsNullOrEmpty(TriggerListener))
+            if (string.IsNullOrEmpty(inputsHotkey.Listener))
             {
                 var trigger = GetTriggerFromChord(KeyDownChord);
 
@@ -143,19 +146,23 @@ namespace HandheldCompanion.Managers
             KeyDownChord = new();
         }
 
-        private static void InjectModifiers(KeyEventArgsExt args)
+        private static List<KeyEventArgsExt> InjectModifiers(KeyEventArgsExt args)
         {
+            List<KeyEventArgsExt> mods = new();
+
             if (args.Modifiers == Keys.None)
-                return;
+                return mods;
 
             foreach (Keys mode in ((Keys[])Enum.GetValues(typeof(Keys))).Where(a => a != Keys.None))
             {
                 if (args.Modifiers.HasFlag(mode))
                 {
                     KeyEventArgsExt mod = new KeyEventArgsExt(mode, args.ScanCode, args.Timestamp, args.IsKeyDown, args.IsKeyUp, true);
-                    TriggerBuffer.Add(mod);
+                    mods.Add(mod);
                 }
             }
+
+            return mods;
         }
 
         private static void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
@@ -168,6 +175,20 @@ namespace HandheldCompanion.Managers
 
             KeyEventArgsExt args = (KeyEventArgsExt)e;
             KeyCode hookKey = (KeyCode)args.KeyValue;
+
+            if (TriggerIsCombo)
+            {
+                args.SuppressKeyPress = true;
+                if (args.IsKeyUp && args.IsExtendedKey)
+                    Intercepted.AddRange(InjectModifiers(args));
+
+                // add key to buffer
+                Intercepted.Add(args);
+
+                KeyDownBufferTimer.Restart();
+
+                return;
+            }
 
             foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
             {
@@ -202,7 +223,7 @@ namespace HandheldCompanion.Managers
                 TriggerBuffer.Add(args);
 
                 if (args.IsKeyUp && args.IsExtendedKey)
-                    InjectModifiers(args);
+                    TriggerBuffer.AddRange(InjectModifiers(args));
 
                 // search for matching triggers
                 foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
@@ -273,7 +294,7 @@ namespace HandheldCompanion.Managers
                 if (pair.Value.key == KeyDownListener)
                     return pair.Key;
 
-            return String.Empty;
+            return string.Empty;
         }
 
         private static string GetTriggerFromChord(InputsChord chord)
@@ -284,7 +305,7 @@ namespace HandheldCompanion.Managers
                     pair.Value.buttons == chord.buttons)
                     return pair.Key;
 
-            return String.Empty;
+            return string.Empty;
         }
 
         public static void KeyPress(VirtualKeyCode key)
@@ -314,7 +335,7 @@ namespace HandheldCompanion.Managers
             m_InputSimulator.Keyboard.ModifiedKeyStroke(mod, key);
         }
 
-        private static void ReleaseBuffer(object? sender, EventArgs e)
+        private static void ReleaseBuffer()
         {
             if (TriggerBuffer.Count == 0)
                 return;
@@ -421,7 +442,7 @@ namespace HandheldCompanion.Managers
         }
 
         private static bool GamepadClearPending;
-        private static void UpdateReport(object? sender, EventArgs e)
+        private static void UpdateReport()
         {
             // get current gamepad state
             if (controllerEx != null && controllerEx.IsConnected())
@@ -461,48 +482,51 @@ namespace HandheldCompanion.Managers
             prevGamepad = Gamepad;
         }
 
-        private static InputsChord chordBuffer;
-
-        public static void StartListening(string listener)
+        public static void StartListening(InputsHotkey hotkey)
         {
             // already listening for input ?
-            if (!String.IsNullOrEmpty(TriggerListener))
-                ListenerExpired(null, null);
+            if (!string.IsNullOrEmpty(inputsHotkey.Listener))
+                ListenerExpired();
 
-            TriggerListener = listener;
+            inputsHotkey = hotkey;
+
             TriggerBuffer = new();
+            KeyDownChord = new();
 
             // store triggers
-            chordBuffer = Triggers[TriggerListener];
-            KeyDownChord = new();
-            Triggers[TriggerListener] = KeyDownChord;
+            prevChord = Triggers[inputsHotkey.Listener];
+            Triggers[inputsHotkey.Listener] = KeyDownChord;
 
             ListenerTimer.Start();
         }
 
-        private static void StopListening(InputsChord chord)
+        private static void StopListening(InputsChord chord = null)
         {
-            Triggers[TriggerListener] = new InputsChord(chord.buttons, chord.key, chord.type);
-            TriggerUpdated?.Invoke(TriggerListener, chord);
+            if (chord == null)
+                chord = new InputsChord();
 
-            LogManager.LogDebug("Trigger: {0} updated. key: {1}, buttons: {2}, type: {3}", TriggerListener, chord.key, chord.buttons, chord.type);
+            Triggers[inputsHotkey.Listener] = new InputsChord(chord.buttons, chord.key, chord.combo, chord.type);
+            TriggerUpdated?.Invoke(inputsHotkey.Listener, chord);
 
-            TriggerListener = string.Empty;
+            LogManager.LogDebug("Trigger: {0} updated. key: {1}, buttons: {2}, type: {3}", inputsHotkey.Listener, chord.key, chord.buttons, chord.type);
+
+            inputsHotkey = new();
 
             ListenerTimer.Stop();
             KeyDownTimer.Stop();
             KeyDownBufferTimer.Stop();
         }
 
-        private static void ListenerExpired(object? sender, EventArgs e)
+        private static void ListenerExpired()
         {
-            StopListening(chordBuffer);
+            // restore previous chord
+            StopListening(prevChord);
         }
 
-        public static void ClearListening(string listener)
+        public static void ClearListening(InputsHotkey hotkey)
         {
-            TriggerListener = listener;
-            StopListening(new InputsChord());
+            inputsHotkey = hotkey;
+            StopListening();
         }
 
         public static void UpdateController(ControllerEx _controllerEx)

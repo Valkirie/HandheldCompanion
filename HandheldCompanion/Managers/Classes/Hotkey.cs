@@ -125,11 +125,12 @@ namespace HandheldCompanion.Managers.Classes
 
             mainButton = new Button()
             {
-                Width = 300,
+                MinWidth = 200,
+                MaxWidth = 300,
                 FontSize = 12,
                 Height = 30
             };
-            mainButton.Click += ButtonButton_Click;
+            mainButton.Click += (sender, e) => ButtonButton_Click((Button)sender);
 
             deleteButton = new Button()
             {
@@ -137,7 +138,25 @@ namespace HandheldCompanion.Managers.Classes
                 Content = new FontIcon() { Glyph = "\uE75C", FontSize = 14 },
                 Style = Application.Current.FindResource("AccentButtonStyle") as Style
             };
-            deleteButton.Click += DeleteButton_Click;
+            deleteButton.Click += (sender, e) => DeleteButton_Click();
+
+            switch (inputsHotkey.hotkeyType)
+            {
+                case InputsHotkey.InputsHotkeyType.Custom:
+                    {
+                        var subButton = new Button()
+                        {
+                            MinWidth = 100,
+                            MaxWidth = 200,
+                            FontSize = 12,
+                            Height = 30
+                        };
+                        subButton.Click += (sender, e) => ButtonButton_Click((Button)sender);
+
+                        buttonPanel.Children.Add(subButton);
+                    }
+                break;
+            }
 
             // add elements to main panel
             buttonPanel.Children.Add(mainButton);
@@ -158,20 +177,20 @@ namespace HandheldCompanion.Managers.Classes
             UpdateButtons();
         }
 
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        private void DeleteButton_Click()
         {
-            InputsManager.ClearListening(inputsHotkey.Listener);
+            InputsManager.ClearListening(inputsHotkey);
         }
 
-        private void ButtonButton_Click(object sender, RoutedEventArgs e)
+        private void ButtonButton_Click(Button sender)
         {
-            InputsManager.StartListening(inputsHotkey.Listener);
+            InputsManager.StartListening(inputsHotkey);
 
             // update button text
-            mainButton.Content = Properties.Resources.OverlayPage_Listening;
+            sender.Content = Properties.Resources.OverlayPage_Listening;
 
             // update buton style
-            mainButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+            sender.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
         }
 
         public Border GetBorder()

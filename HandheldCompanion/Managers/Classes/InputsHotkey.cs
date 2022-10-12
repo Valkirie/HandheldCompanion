@@ -13,6 +13,7 @@ namespace HandheldCompanion.Managers.Classes
             Quicktools = 1,
             Windows = 2,
             Handheld = 3,
+            Custom = 4,
         }
 
         public static Dictionary<ushort, InputsHotkey> Hotkeys = new()
@@ -26,7 +27,12 @@ namespace HandheldCompanion.Managers.Classes
             { 7, new InputsHotkey(InputsHotkeyType.Windows, "\uEE49", "shortcutExpand") },
             { 8, new InputsHotkey(InputsHotkeyType.Windows, "\uE7C4", "shortcutTaskview") },
             { 9, new InputsHotkey(InputsHotkeyType.Handheld, "\uE7C4", "shortcutMainwindow") },
-            { 10, new InputsHotkey(InputsHotkeyType.Handheld, "\uE2E8", "shortcutGuide", "Segoe UI Symbol") },
+            { 10, new InputsHotkey(InputsHotkeyType.Handheld, "\uE2E8", "shortcutGuide") },
+            { 40, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom0") },
+            { 41, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom1") },
+            { 42, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom2") },
+            { 43, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom3") },
+            { 44, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom3") },
         };
 
         public string Glyph { get; set; }
@@ -54,7 +60,7 @@ namespace HandheldCompanion.Managers.Classes
             // return localized string if available
             string root = Properties.Resources.ResourceManager.GetString($"InputsHotkey_{Listener}");
 
-            if (!String.IsNullOrEmpty(root))
+            if (!string.IsNullOrEmpty(root))
                 return root;
 
             return Listener;
@@ -65,10 +71,10 @@ namespace HandheldCompanion.Managers.Classes
             // return localized string if available
             string root = Properties.Resources.ResourceManager.GetString($"InputsHotkey_{Listener}Desc");
 
-            if (!String.IsNullOrEmpty(root))
+            if (!string.IsNullOrEmpty(root))
                 return root;
 
-            return String.Empty;
+            return string.Empty;
         }
     }
 }
