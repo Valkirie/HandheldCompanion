@@ -2,6 +2,7 @@
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace HandheldCompanion.Managers.Classes
 {
@@ -13,25 +14,57 @@ namespace HandheldCompanion.Managers.Classes
         Hold = 2,
     }
 
+    [Serializable]
+    public class OutputKey
+    {
+        public int KeyValue { get; set; }
+        public int ScanCode { get; set; }
+        public int Timestamp { get; set; }
+        public bool IsKeyDown { get; set; }
+        public bool IsKeyUp { get; set; }
+        public bool IsExtendedKey { get; set; }
+
+        public override string ToString()
+        {
+            return ((Keys)KeyValue).ToString();
+        }
+    }
+
+    [Serializable]
     public class InputsChord
     {
-        public GamepadButtonFlags buttons { get; set; } = GamepadButtonFlags.None;
-        public string key { get; set; } = string.Empty;
-        public List<KeyEventArgsExt> combo { get; set; } = new();
+        public GamepadButtonFlags GamepadButtons { get; set; } = GamepadButtonFlags.None;
+        public string SpecialKey { get; set; } = string.Empty;
+        public List<OutputKey> OutputKeys { get; set; } = new();
 
-        public InputsChordType type { get; set; } = InputsChordType.Click;
+        public InputsChordType InputsType { get; set; } = InputsChordType.Click;
 
-        public InputsChord(GamepadButtonFlags buttons, string key, List<KeyEventArgsExt> combo, InputsChordType type)
+        public InputsChord(GamepadButtonFlags GamepadButtons, string SpecialKey, List<OutputKey> OutputKeys, InputsChordType InputsType)
         {
-            this.buttons = buttons;
-            this.key = key;
-            this.combo = combo;
+            this.GamepadButtons = GamepadButtons;
+            this.SpecialKey = SpecialKey;
+            this.OutputKeys = OutputKeys;
 
-            this.type = type;
+            this.InputsType = InputsType;
         }
 
         public InputsChord()
         {
+        }
+
+        public void AddKey(KeyEventArgsExt args)
+        {
+            OutputKey key = new OutputKey()
+            {
+                KeyValue = args.KeyValue,
+                ScanCode = args.ScanCode,
+                Timestamp = args.Timestamp,
+                IsKeyDown = args.IsKeyDown,
+                IsKeyUp = args.IsKeyUp,
+                IsExtendedKey = args.IsExtendedKey,
+            };
+
+            OutputKeys.Add(key);
         }
     }
 }

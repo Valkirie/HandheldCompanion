@@ -7,6 +7,7 @@ using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Media;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Windows;
@@ -139,7 +140,12 @@ namespace HandheldCompanion.Managers
                     case "shortcutGuide":
                         MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)0x0400 });
                         break;
+                    default:
+                        InputsManager.KeyPress(input.OutputKeys);
+                        break;
                 }
+
+                SystemManager.PlayWindowsMedia("Windows Navigation Start.wav");
             }
             catch (Exception)
             {
@@ -154,9 +160,7 @@ namespace HandheldCompanion.Managers
                 Hotkey hotkey = Hotkeys[listener];
                 hotkey.inputsChord = inputs;
 
-                hotkey.UpdateButtons();
-
-                hotkey.mainButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                hotkey.UpdateHotkey(true);
 
                 SerializeHotkey(hotkey, true);
             }));

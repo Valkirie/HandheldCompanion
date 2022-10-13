@@ -20,19 +20,23 @@ namespace HandheldCompanion.Managers.Classes
         {
             { 1, new InputsHotkey(InputsHotkeyType.Overlay, "\uEDE3", "overlayGamepad") },
             { 2, new InputsHotkey(InputsHotkeyType.Overlay, "\uEDA4", "overlayTrackpads") },
+
             { 3, new InputsHotkey(InputsHotkeyType.Quicktools, "\uEC7A", "quickTools") },
+
             { 4, new InputsHotkey(InputsHotkeyType.Windows, "\uE765", "shortcutKeyboard") },
             { 5, new InputsHotkey(InputsHotkeyType.Windows, "\uE138", "shortcutDesktop", "Segoe UI Symbol") },
             { 6, new InputsHotkey(InputsHotkeyType.Windows, "ESC", "shortcutESC", "Segoe UI", 12) },
             { 7, new InputsHotkey(InputsHotkeyType.Windows, "\uEE49", "shortcutExpand") },
             { 8, new InputsHotkey(InputsHotkeyType.Windows, "\uE7C4", "shortcutTaskview") },
+
             { 9, new InputsHotkey(InputsHotkeyType.Handheld, "\uE7C4", "shortcutMainwindow") },
             { 10, new InputsHotkey(InputsHotkeyType.Handheld, "\uE2E8", "shortcutGuide") },
+
             { 40, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom0") },
             { 41, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom1") },
             { 42, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom2") },
             { 43, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom3") },
-            { 44, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom3") },
+            { 44, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom4") },
         };
 
         public string Glyph { get; set; }
@@ -58,7 +62,16 @@ namespace HandheldCompanion.Managers.Classes
         public string GetName()
         {
             // return localized string if available
-            string root = Properties.Resources.ResourceManager.GetString($"InputsHotkey_{Listener}");
+            string listener = Listener;
+
+            switch(hotkeyType)
+            {
+                case InputsHotkeyType.Custom:
+                    listener = "shortcutCustom";
+                    break;
+            }
+
+            string root = Properties.Resources.ResourceManager.GetString($"InputsHotkey_{listener}");
 
             if (!string.IsNullOrEmpty(root))
                 return root;
@@ -69,7 +82,16 @@ namespace HandheldCompanion.Managers.Classes
         public string GetDescription()
         {
             // return localized string if available
-            string root = Properties.Resources.ResourceManager.GetString($"InputsHotkey_{Listener}Desc");
+            string listener = Listener;
+
+            switch (hotkeyType)
+            {
+                case InputsHotkeyType.Custom:
+                    listener = "shortcutCustom";
+                    break;
+            }
+
+            string root = Properties.Resources.ResourceManager.GetString($"InputsHotkey_{listener}Desc");
 
             if (!string.IsNullOrEmpty(root))
                 return root;

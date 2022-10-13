@@ -4,7 +4,9 @@ using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Media;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -325,6 +327,13 @@ namespace ControllerCommon.Managers
             }
 
             previousSystemStatus = currentSystemStatus;
+        }
+
+        public static void PlayWindowsMedia(string file)
+        {
+            string path = Path.Combine(@"c:\Windows\Media\", file);
+            if (File.Exists(path))
+                new SoundPlayer(path).Play();
         }
     }
 }
