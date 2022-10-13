@@ -279,7 +279,13 @@ namespace HandheldCompanion.Managers.Classes
                 else
                 {
                     // set fallback content
-                    comboContent.Children.Add(new TextBlock() { Text = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackOutput"), Foreground = Application.Current.FindResource("SystemControlForegroundBaseMediumBrush") as Brush });
+                    TextBlock fallback = new TextBlock()
+                    {
+                        Text = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackOutput")
+                    };
+                    fallback.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+
+                    comboContent.Children.Add(fallback);
                 }
 
                 // update button content
@@ -328,8 +334,14 @@ namespace HandheldCompanion.Managers.Classes
             }
             else
             {
+                TextBlock fallback = new TextBlock()
+                {
+                    Text = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackInput")
+                };
+                fallback.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+
                 // set fallback content
-                mainContent.Children.Add(new TextBlock() { Text = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackInput"), Foreground = Application.Current.FindResource("SystemControlForegroundBaseMediumBrush") as Brush });
+                mainContent.Children.Add(fallback);
             }
 
             // update button content
