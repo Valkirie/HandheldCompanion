@@ -24,6 +24,9 @@ namespace HandheldCompanion.Managers
         public static event HotkeyCreatedEventHandler HotkeyCreated;
         public delegate void HotkeyCreatedEventHandler(Hotkey hotkey);
 
+        public static event CommandExecutedEventHandler CommandExecuted;
+        public delegate void CommandExecutedEventHandler(string listener);
+
         public static Dictionary<string, Hotkey> Hotkeys = new();
 
         static HotkeysManager()
@@ -140,6 +143,8 @@ namespace HandheldCompanion.Managers
                         MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)0x0400 });
                         break;
                 }
+
+                CommandExecuted?.Invoke(listener);
             }
             catch (Exception)
             {

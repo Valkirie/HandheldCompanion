@@ -26,7 +26,35 @@ namespace HandheldCompanion.Views.QuickPages
             MainWindow.profileManager.Updated += ProfileManager_Updated;
             MainWindow.profileManager.Applied += ProfileManager_Applied;
             MainWindow.profileManager.Discarded += ProfileManager_Discarded;
+
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
+        }
+
+        private void HotkeysManager_CommandExecuted(string listener)
+        {
+            switch(listener)
+            {
+                case "increaseTDP":
+                    {
+                        if (currentProfile != null && currentProfile.TDP_override)
+                            return;
+
+                        TDPSustainedSlider.Value++;
+                        TDPBoostSlider.Value++;
+                    }
+                    break;
+                case "decreaseTDP":
+                    {
+                        if (currentProfile != null && currentProfile.TDP_override)
+                            return;
+
+                        TDPSustainedSlider.Value--;
+                        TDPBoostSlider.Value--;
+                    }
+                    break;
+            }
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)
