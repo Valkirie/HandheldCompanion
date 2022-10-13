@@ -25,6 +25,9 @@ namespace HandheldCompanion.Managers
         public static event HotkeyCreatedEventHandler HotkeyCreated;
         public delegate void HotkeyCreatedEventHandler(Hotkey hotkey);
 
+        public static event CommandExecutedEventHandler CommandExecuted;
+        public delegate void CommandExecutedEventHandler(string listener);
+
         public static Dictionary<string, Hotkey> Hotkeys = new();
 
         static HotkeysManager()
@@ -144,8 +147,12 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(input.OutputKeys);
                         break;
                 }
-
+                
+                // play a tune to notify a command was executed
                 SystemManager.PlayWindowsMedia("Windows Navigation Start.wav");
+                
+                // raise an event
+                CommandExecuted?.Invoke(listener);
             }
             catch (Exception)
             {

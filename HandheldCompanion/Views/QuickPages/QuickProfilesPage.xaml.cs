@@ -28,6 +28,7 @@ namespace HandheldCompanion.Views.QuickPages
             MainWindow.profileManager.Updated += ProfileUpdated;
             MainWindow.profileManager.Deleted += ProfileDeleted;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
             {
@@ -93,6 +94,31 @@ namespace HandheldCompanion.Views.QuickPages
                 panel.Children.Add(text);
 
                 cB_Output.Items.Add(panel);
+            }
+        }
+
+        private void HotkeysManager_CommandExecuted(string listener)
+        {
+            switch (listener)
+            {
+                case "increaseTDP":
+                    {
+                        if (currentProfile == null || !currentProfile.TDP_override)
+                            return;
+
+                        TDPSustainedSlider.Value++;
+                        TDPBoostSlider.Value++;
+                    }
+                    break;
+                case "decreaseTDP":
+                    {
+                        if (currentProfile == null || !currentProfile.TDP_override)
+                            return;
+
+                        TDPSustainedSlider.Value--;
+                        TDPBoostSlider.Value--;
+                    }
+                    break;
             }
         }
 
