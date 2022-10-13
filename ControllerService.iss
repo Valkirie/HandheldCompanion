@@ -377,13 +377,16 @@ end;
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
-#define MyAppVersion '0.12.0.0'
+#define MyAppVersion '0.12.1.0'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/ControllerService'
 #define MyAppExeName "HandheldCompanion.exe"
 #define MySerExeName "ControllerService.exe"
 #define MyConfiguration "Release"
+
+; #define ClearProfiles
+#define ClearHotkeys
 
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
@@ -449,6 +452,15 @@ Filename: "C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCL
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
 
+[InstallDelete]
+#ifdef ClearHotkeys
+Type: filesandordirs; Name: "{userdocs}\{#MyBuildId}\hotkeys"
+#endif
+
+#ifdef ClearProfiles
+Type: filesandordirs; Name: "{userdocs}\{#MyBuildId}\profiles"
+#endif
+
 [Registry]
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps"; Flags: uninsdeletekeyifempty
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{userdocs}\HandheldCompanion\dumps"; Flags: uninsdeletekey
@@ -460,10 +472,15 @@ begin
   if CurUninstallStep = usUninstall then
   begin
   
-    if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\Profiles'))  then
+    if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'))  then
       if MsgBox('Do you want to delete all existing profiles?', mbConfirmation, MB_YESNO) = IDYES
       then
-        DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\Profiles'), True, True, True);
+        DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'), True, True, True);
+  
+    if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'))  then
+      if MsgBox('Do you want to delete all existing hotkeys?', mbConfirmation, MB_YESNO) = IDYES
+      then
+        DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'), True, True, True);
 		
     if MsgBox('Do you want to delete all existing settings?', mbConfirmation, MB_YESNO) = IDYES
     then
