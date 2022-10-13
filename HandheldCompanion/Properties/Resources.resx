@@ -226,7 +226,7 @@
     <value>Press to define hotkey input</value>
   </data>
   <data name="InputsHotkey_fallbackOutput" xml:space="preserve">
-    <value>Press to define hotkey output</value>
+    <value>Press to define keyboard output</value>
   </data>
   <data name="InputsHotkey_overlayGamepad" xml:space="preserve">
     <value>Display 3D controller</value>

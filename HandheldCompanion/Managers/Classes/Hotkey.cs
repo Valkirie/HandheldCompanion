@@ -92,7 +92,7 @@ namespace HandheldCompanion.Managers.Classes
             // main panel content
             currentIcon = new FontIcon()
             {
-                Height = 30,
+                Height = 40,
                 FontFamily = inputsHotkey.fontFamily,
                 FontSize = inputsHotkey.fontSize,
                 Glyph = inputsHotkey.Glyph
@@ -202,10 +202,13 @@ namespace HandheldCompanion.Managers.Classes
             {
                 case "Combo":
                     IsCombo = true;
+                    inputsChord.OutputKeys.Clear();
                     break;
                 default:
                 case "Chord":
                     IsCombo = false;
+                    inputsChord.GamepadButtons = SharpDX.XInput.GamepadButtonFlags.None;
+                    inputsChord.SpecialKey = string.Empty;
                     break;
             }
 

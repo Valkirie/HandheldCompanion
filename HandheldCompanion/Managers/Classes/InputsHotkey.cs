@@ -18,35 +18,40 @@ namespace HandheldCompanion.Managers.Classes
 
         public static Dictionary<ushort, InputsHotkey> Hotkeys = new()
         {
-            { 1, new InputsHotkey(InputsHotkeyType.Overlay, "\uEDE3", "overlayGamepad") },
-            { 2, new InputsHotkey(InputsHotkeyType.Overlay, "\uEDA4", "overlayTrackpads") },
+            { 01, new InputsHotkey(InputsHotkeyType.Overlay,     "\uEDE3",   "overlayGamepad",       "Segoe Fluent Icons",   20) },
+            { 02, new InputsHotkey(InputsHotkeyType.Overlay,     "\uEDA4",   "overlayTrackpads",     "Segoe Fluent Icons",   20) },
 
-            { 3, new InputsHotkey(InputsHotkeyType.Quicktools, "\uEC7A", "quickTools") },
+            { 10, new InputsHotkey(InputsHotkeyType.Quicktools,  "\uEC7A",   "quickTools",           "Segoe Fluent Icons",   20) },
 
-            { 4, new InputsHotkey(InputsHotkeyType.Windows, "\uE765", "shortcutKeyboard") },
-            { 5, new InputsHotkey(InputsHotkeyType.Windows, "\uE138", "shortcutDesktop", "Segoe UI Symbol") },
-            { 6, new InputsHotkey(InputsHotkeyType.Windows, "ESC", "shortcutESC", "Segoe UI", 12) },
-            { 7, new InputsHotkey(InputsHotkeyType.Windows, "\uEE49", "shortcutExpand") },
-            { 8, new InputsHotkey(InputsHotkeyType.Windows, "\uE7C4", "shortcutTaskview") },
+            { 20, new InputsHotkey(InputsHotkeyType.Windows,     "\uE765",   "shortcutKeyboard",     "Segoe Fluent Icons",   20) },
+            { 21, new InputsHotkey(InputsHotkeyType.Windows,     "\uE138",   "shortcutDesktop",      "Segoe UI Symbol",      20) },
+            { 22, new InputsHotkey(InputsHotkeyType.Windows,     "ESC",      "shortcutESC",          "Segoe UI",             12) },
+            { 23, new InputsHotkey(InputsHotkeyType.Windows,     "\uEE49",   "shortcutExpand",       "Segoe Fluent Icons",   20) },
+            { 24, new InputsHotkey(InputsHotkeyType.Windows,     "\uE7C4",   "shortcutTaskview",     "Segoe Fluent Icons",   20) },
 
-            { 9, new InputsHotkey(InputsHotkeyType.Handheld, "\uE7C4", "shortcutMainwindow") },
-            { 10, new InputsHotkey(InputsHotkeyType.Handheld, "\uE2E8", "shortcutGuide") },
+            { 30, new InputsHotkey(InputsHotkeyType.Handheld,    "\uE7C4",   "shortcutMainwindow",   "Segoe Fluent Icons",   20) },
+            { 31, new InputsHotkey(InputsHotkeyType.Handheld,   "\uE2E8",   "shortcutGuide",        "Segoe UI Symbol",      20) },
 
-            { 40, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom0") },
-            { 41, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom1") },
-            { 42, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom2") },
-            { 43, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom3") },
-            { 44, new InputsHotkey(InputsHotkeyType.Custom, "\uEC32", "shortcutCustom4") },
+            { 40, new InputsHotkey(InputsHotkeyType.Custom,     "\u2780",   "shortcutCustom0",      "Segoe UI Symbol",      20) },
+            { 41, new InputsHotkey(InputsHotkeyType.Custom,     "\u2781",   "shortcutCustom1",      "Segoe UI Symbol",      20) },
+            { 42, new InputsHotkey(InputsHotkeyType.Custom,     "\u2782",   "shortcutCustom2",      "Segoe UI Symbol",      20) },
+            { 43, new InputsHotkey(InputsHotkeyType.Custom,     "\u2783",   "shortcutCustom3",      "Segoe UI Symbol",      20) },
+            { 44, new InputsHotkey(InputsHotkeyType.Custom,     "\u2784",   "shortcutCustom4",      "Segoe UI Symbol",      20) },
+            { 45, new InputsHotkey(InputsHotkeyType.Custom,     "\u2785",   "shortcutCustom5",      "Segoe UI Symbol",      20) },
+            { 46, new InputsHotkey(InputsHotkeyType.Custom,     "\u2786",   "shortcutCustom6",      "Segoe UI Symbol",      20) },
+            { 47, new InputsHotkey(InputsHotkeyType.Custom,     "\u2787",   "shortcutCustom7",      "Segoe UI Symbol",      20) },
+            { 48, new InputsHotkey(InputsHotkeyType.Custom,     "\u2788",   "shortcutCustom8",      "Segoe UI Symbol",      20) },
+            { 49, new InputsHotkey(InputsHotkeyType.Custom,     "\u2789",   "shortcutCustom9",      "Segoe UI Symbol",      20) },
         };
 
         public string Glyph { get; set; }
         public string Listener { get; set; }
         public string Description { get; set; }
         public FontFamily fontFamily { get; set; }
-        public double fontSize { get; set; } = 16.0d;
+        public double fontSize { get; set; }
         public InputsHotkeyType hotkeyType { get; set; }
 
-        public InputsHotkey(InputsHotkeyType hotkeyType, string glyph, string listener, string fontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets,Segoe UI Symbol", double fontSize = 16.0d)
+        public InputsHotkey(InputsHotkeyType hotkeyType, string glyph, string listener, string fontFamily, double fontSize)
         {
             this.hotkeyType = hotkeyType;
             this.Glyph = glyph;

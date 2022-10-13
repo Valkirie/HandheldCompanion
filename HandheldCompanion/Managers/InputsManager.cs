@@ -73,6 +73,12 @@ namespace HandheldCompanion.Managers
 
         public static bool IsInitialized;
 
+        /*
+         * InputsManager v3
+         * Note: I'd like to modify the InputSimulator library to extend its capacities and ModifiedKeyDown and ModifiedKeyUp
+         *       https://github.com/GregsStack/InputSimulatorStandard
+         */
+
         static InputsManager()
         {
             // initialize timers
