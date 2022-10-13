@@ -222,23 +222,35 @@
   <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="InputsHotkey_fallbackInput" xml:space="preserve">
+    <value>Press to define hotkey input</value>
+  </data>
+  <data name="InputsHotkey_fallbackOutput" xml:space="preserve">
+    <value>Press to define keyboard output</value>
+  </data>
   <data name="InputsHotkey_overlayGamepad" xml:space="preserve">
     <value>Display 3D controller</value>
   </data>
   <data name="InputsHotkey_overlayGamepadDesc" xml:space="preserve">
-    <value>Change the 3D hotkey by pressing a button or a special key</value>
+    <value>Change 3D hotkey by pressing a button or a special key</value>
   </data>
   <data name="InputsHotkey_overlayTrackpads" xml:space="preserve">
     <value>Display virtual trackpads</value>
   </data>
   <data name="InputsHotkey_overlayTrackpadsDesc" xml:space="preserve">
-    <value>Change the hotkey by pressing a button or a special key</value>
+    <value>Change hotkey by pressing a button or a special key</value>
   </data>
   <data name="InputsHotkey_quickTools" xml:space="preserve">
     <value>Summon quick tools window</value>
   </data>
   <data name="InputsHotkey_quickToolsDesc" xml:space="preserve">
-    <value>Change the hotkey by pressing a button or a special key</value>
+    <value>Change hotkey by pressing a button or a special key</value>
+  </data>
+  <data name="InputsHotkey_shortcutCustom" xml:space="preserve">
+    <value>Custom shortcut</value>
+  </data>
+  <data name="InputsHotkey_shortcutCustomDesc" xml:space="preserve">
+    <value>Change hotkey by pressing a button or a special key</value>
   </data>
   <data name="InputsHotkey_shortcutDesktop" xml:space="preserve">
     <value>Display and hide the desktop</value>
@@ -268,13 +280,13 @@
     <value>Display touch keyboard</value>
   </data>
   <data name="InputsHotkey_shortcutKeyboardDesc" xml:space="preserve">
-    <value>Change the hotkey by pressing a button or a special key</value>
+    <value>Change hotkey by pressing a button or a special key</value>
   </data>
   <data name="InputsHotkey_shortcutMainwindow" xml:space="preserve">
     <value>Display and hide main window</value>
   </data>
   <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
-    <value>Change the hotkey by pressing a button or a special key</value>
+    <value>Change hotkey by pressing a button or a special key</value>
   </data>
   <data name="InputsHotkey_shortcutTaskview" xml:space="preserve">
     <value>Open Task view</value>

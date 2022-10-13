@@ -126,13 +126,13 @@ namespace HandheldCompanion.Managers
 
                     _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
                         Properties.Resources.SettingsPage_UpdateFailedDownload,
-                        ContentDialogButton.Primary, String.Empty, $"{Properties.Resources.ProfilesPage_OK}");
+                        ContentDialogButton.Primary, string.Empty, $"{Properties.Resources.ProfilesPage_OK}");
                 }
                 else
                 {
                     _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
                         Properties.Resources.SettingsPage_UpdateFailedGithub,
-                        ContentDialogButton.Primary, String.Empty, $"{Properties.Resources.ProfilesPage_OK}");
+                        ContentDialogButton.Primary, string.Empty, $"{Properties.Resources.ProfilesPage_OK}");
                 }
 
                 status = UpdateStatus.Failed;
@@ -279,7 +279,7 @@ namespace HandheldCompanion.Managers
             {
                 _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
                     Properties.Resources.SettingsPage_UpdateFailedInstall,
-                    ContentDialogButton.Primary, String.Empty, $"{Properties.Resources.ProfilesPage_OK}");
+                    ContentDialogButton.Primary, string.Empty, $"{Properties.Resources.ProfilesPage_OK}");
                 return;
             }
 

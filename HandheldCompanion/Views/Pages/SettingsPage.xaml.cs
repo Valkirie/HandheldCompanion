@@ -335,7 +335,7 @@ namespace HandheldCompanion.Views.Pages
 
             _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_AppLanguageWarning}",
                 Properties.Resources.SettingsPage_AppLanguageWarningDesc,
-                ContentDialogButton.Primary, String.Empty, $"{Properties.Resources.ProfilesPage_OK}");
+                ContentDialogButton.Primary, string.Empty, $"{Properties.Resources.ProfilesPage_OK}");
         }
 
         private void Toggle_Notification_Toggled(object? sender, System.Windows.RoutedEventArgs? e)

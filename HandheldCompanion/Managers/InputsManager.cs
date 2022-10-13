@@ -18,34 +18,37 @@ namespace HandheldCompanion.Managers
 {
     public static class InputsManager
     {
-        // Gamepad vars
-        private static MultimediaTimer UpdateTimer;
-        private static MultimediaTimer ResetTimer;
-        private static MultimediaTimer ListenerTimer;
-
-        private static MultimediaTimer KeyDownTimer;
-        private static MultimediaTimer KeyDownBufferTimer;
-
-        private static bool KeyDownSequenced;
-        private static InputsChord KeyDownChord = new();
-
-        private static Dictionary<string, long> prevKeyDown = new();
-        private static Dictionary<string, long> prevKeyUp = new();
-
+        // Gamepad variables
         private static ControllerEx controllerEx;
         private static Gamepad Gamepad;
         private static Gamepad prevGamepad;
         private static State GamepadState;
+        private static MultimediaTimer UpdateTimer;
+        private static MultimediaTimer ResetTimer;
 
+        // InputsChord variables
+        private static InputsChord InputsChord = new();
+        private static InputsChord prevChord;
+
+        private static MultimediaTimer InputsChordHoldTimer;
+        private static MultimediaTimer InputsChordInputTimer;
+
+        private static Dictionary<string, long> prevKeyDown = new();
+        private static Dictionary<string, long> prevKeyUp = new();
+
+        // Global variables
+        private static MultimediaTimer ListenerTimer;
+
+        private const int TIME_NEXT = 500;
         private const int TIME_BURST = 200;
         private const int TIME_LONG = 800;
 
-        private static bool TriggerLock;
-        private static string TriggerListener = string.Empty;
-        private static List<KeyEventArgsExt> TriggerBuffer = new();
-        private static List<KeyEventArgsExt> Intercepted = new();
+        private static bool IsLocked;
+        private static bool IsCombo;
+        private static InputsHotkey inputsHotkey = new();
 
-        private static Dictionary<string, bool> Triggered = new Dictionary<string, bool>();
+        private static List<KeyEventArgsExt> ReleasedKeys = new();
+        private static List<KeyEventArgsExt> CapturedKeys = new();
 
         private static Dictionary<string, InputsChord> Triggers = new();
 
@@ -62,31 +65,39 @@ namespace HandheldCompanion.Managers
         public static event TriggerUpdatedEventHandler TriggerUpdated;
         public delegate void TriggerUpdatedEventHandler(string listener, InputsChord inputs);
 
-        private const int m_fastInterval = 20;
-        private const int m_slowInterval = 100;
+        private const int m_fastInterval = 20;      // default interval before releasing a keyboard key
+        private const int m_slowInterval = 100;     // default interval before releasing a captured key
 
         private static int KeyIndex;
         private static bool KeyUsed;
 
         public static bool IsInitialized;
 
+        /*
+         * InputsManager v3
+         * Note: I'd like to modify the InputSimulator library to extend its capacities and ModifiedKeyDown and ModifiedKeyUp
+         *       https://github.com/GregsStack/InputSimulatorStandard
+         */
+
         static InputsManager()
         {
             // initialize timers
             UpdateTimer = new MultimediaTimer(10);
-            UpdateTimer.Tick += UpdateReport;
+            UpdateTimer.Tick += (sender, e) => UpdateReport();
 
             ResetTimer = new MultimediaTimer(m_fastInterval) { AutoReset = false };
-            ResetTimer.Tick += ReleaseBuffer;
+            ResetTimer.Tick += (sender, e) => ReleaseBuffer();
 
             ListenerTimer = new MultimediaTimer(3000);
-            ListenerTimer.Tick += ListenerExpired;
+            ListenerTimer.Tick += (sender, e) => ListenerExpired();
 
-            KeyDownTimer = new MultimediaTimer(TIME_LONG) { AutoReset = false };
-            KeyDownTimer.Tick += KeyDownTimer_Tick;
+            // timer is used to trigger Hold type if inputs are maintainged for more than TIME_LONG interval
+            InputsChordHoldTimer = new MultimediaTimer(TIME_LONG) { AutoReset = false };
+            InputsChordHoldTimer.Tick += (sender, e) => InputsChordHold_Elapsed();
 
-            KeyDownBufferTimer = new MultimediaTimer(m_slowInterval) { AutoReset = false };
-            KeyDownBufferTimer.Tick += (sender, e) => { ExecuteSequence(); };
+            // timer is used to wait for the next inputs during TIME_NEXT interval
+            InputsChordInputTimer = new MultimediaTimer(TIME_NEXT) { AutoReset = false };
+            InputsChordInputTimer.Tick += (sender, e) => { ExecuteSequence(); };
 
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();
@@ -97,71 +108,103 @@ namespace HandheldCompanion.Managers
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
         }
 
-        private static void KeyDownTimer_Tick(object? sender, EventArgs e)
+        public static void UpdateController(ControllerEx _controllerEx)
+        {
+            controllerEx = _controllerEx;
+        }
+
+        private static void InputsChordHold_Elapsed()
         {
             // triggered when key is pressed for a long time
-            KeyDownChord.type = InputsChordType.Hold;
+            InputsChord.InputsType = InputsChordType.Hold;
 
             ExecuteSequence();
         }
 
         private static void ExecuteSequence()
         {
-            KeyDownTimer.Stop();
-            KeyDownBufferTimer.Stop();
+            InputsChordHoldTimer.Stop();
+            InputsChordInputTimer.Stop();
 
-            KeyDownSequenced = true;
-
-            // what the fuck are we doing here ?
-            if (string.IsNullOrEmpty(KeyDownChord.key) && KeyDownChord.buttons == GamepadButtonFlags.None)
+            if (string.IsNullOrEmpty(InputsChord.SpecialKey) &&
+                InputsChord.GamepadButtons == GamepadButtonFlags.None &&
+                InputsChord.OutputKeys.Count == 0)
                 return;
 
-            LogManager.LogDebug("SequenceReleased: KeyDown: {0}, ButtonFlags: {1}, Type: {2}", KeyDownChord.key, KeyDownChord.buttons, KeyDownChord.type);
-
-            if (string.IsNullOrEmpty(TriggerListener))
+            if (string.IsNullOrEmpty(inputsHotkey.Listener))
             {
-                var trigger = GetTriggerFromName(KeyDownChord.key);
-                var trigger2 = GetTriggerFromChord(KeyDownChord);
+                string key = GetTriggerFromChord(InputsChord);
 
-                if (!string.IsNullOrEmpty(trigger))
+                if (!string.IsNullOrEmpty(key))
                 {
-                    TriggerBuffer.AddRange(Intercepted);
+                    LogManager.LogDebug("Captured: KeyDown: {0}, ButtonFlags: {1}, Type: {2}", InputsChord.SpecialKey, InputsChord.GamepadButtons, InputsChord.InputsType);
 
-                    if (!string.IsNullOrEmpty(trigger2))
-                        TriggerRaised?.Invoke(trigger2, KeyDownChord);
+                    ReleasedKeys.Clear();
+
+                    InputsChord chord = Triggers[key];
+                    TriggerRaised?.Invoke(key, chord);
                 }
+                else
+                {
+                    LogManager.LogDebug("Released: KeyDown: {0}, ButtonFlags: {1}, Type: {2}", InputsChord.SpecialKey, InputsChord.GamepadButtons, InputsChord.InputsType);
+
+                    ReleasedKeys.AddRange(CapturedKeys);
+                    ResetTimer.Start();
+                }
+
+                CapturedKeys.Clear();
             }
             else
-                StopListening(KeyDownChord);
+                StopListening(InputsChord);
 
-            KeyDownChord = new();
+            // reset chord
+            InputsChord = new();
         }
 
-        private static void InjectModifiers(KeyEventArgsExt args)
+        private static List<KeyEventArgsExt> InjectModifiers(KeyEventArgsExt args)
         {
+            List<KeyEventArgsExt> mods = new();
+
             if (args.Modifiers == Keys.None)
-                return;
+                return mods;
 
             foreach (Keys mode in ((Keys[])Enum.GetValues(typeof(Keys))).Where(a => a != Keys.None))
             {
                 if (args.Modifiers.HasFlag(mode))
                 {
                     KeyEventArgsExt mod = new KeyEventArgsExt(mode, args.ScanCode, args.Timestamp, args.IsKeyDown, args.IsKeyUp, true);
-                    TriggerBuffer.Add(mod);
+                    mods.Add(mod);
                 }
             }
+
+            return mods;
         }
 
         private static void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
         {
+            if (IsLocked)
+                return;
+
             ResetTimer.Stop();
             KeyUsed = false;
 
-            if (TriggerLock)
-                return;
-
             KeyEventArgsExt args = (KeyEventArgsExt)e;
             KeyCode hookKey = (KeyCode)args.KeyValue;
+
+            // are we listening for keyboards inputs as part of a custom hotkey ?
+            if (IsCombo)
+            {
+                args.SuppressKeyPress = true;
+                if (args.IsKeyUp && args.IsExtendedKey)
+                    CapturedKeys.AddRange(InjectModifiers(args));
+
+                // add key to InputsChord
+                InputsChord.AddKey(args);
+
+                InputsChordInputTimer.Restart();
+
+                return;
+            }
 
             foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
             {
@@ -193,10 +236,10 @@ namespace HandheldCompanion.Managers
                 args.SuppressKeyPress = true;
 
                 // add key to buffer
-                TriggerBuffer.Add(args);
+                ReleasedKeys.Add(args);
 
                 if (args.IsKeyUp && args.IsExtendedKey)
-                    InjectModifiers(args);
+                    ReleasedKeys.AddRange(InjectModifiers(args));
 
                 // search for matching triggers
                 foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
@@ -207,10 +250,6 @@ namespace HandheldCompanion.Managers
 
                     if (chord_keys.SequenceEqual(buffer_keys))
                     {
-                        Intercepted.Clear();
-                        TriggerBuffer.Clear();
-                        Intercepted.AddRange(TriggerBuffer);
-
                         long time_last = TIME_BURST;
                         long time_duration = time_last;
 
@@ -225,27 +264,36 @@ namespace HandheldCompanion.Managers
                             prevKeyUp[pair.name] = args.Timestamp;
                         }
 
-                        // skip call if too close
-                        if (time_last < TIME_BURST)
+                        // check if inputs timestamp are too close from one to another
+                        bool tooshort = time_last < TIME_BURST;
+
+                        // only intercept inputs if not too close
+                        if (!tooshort)
+                            CapturedKeys.AddRange(ReleasedKeys);
+
+                        // clear buffer
+                        ReleasedKeys.Clear();
+
+                        // leave if inputs are too close
+                        if (tooshort)
                             break;
 
                         LogManager.LogDebug("KeyEvent: {0} at {1}, down: {2}, up: {3}", pair.name, args.Timestamp, args.IsKeyDown, args.IsKeyUp);
 
                         if (args.IsKeyDown)
                         {
-                            KeyDownTimer.Start();
-                            KeyDownSequenced = false;
+                            InputsChordHoldTimer.Start();
 
                             // update vars
-                            KeyDownChord.key = pair.name;
-                            KeyDownChord.type = InputsChordType.Click;
+                            InputsChord.SpecialKey = pair.name;
+                            InputsChord.InputsType = InputsChordType.Click;
 
                             return;
                         }
 
                         // Sequence was intercepted already
-                        if (!KeyDownSequenced)
-                            KeyDownBufferTimer.Start();
+                        if (InputsChordHoldTimer.Enabled)
+                            InputsChordInputTimer.Start();
 
                         return; // prevent multiple shortcuts from being triggered
                     }
@@ -258,35 +306,35 @@ namespace HandheldCompanion.Managers
         private static string GetTriggerFromName(string KeyDownListener)
         {
             foreach (var pair in Triggers)
-                if (pair.Value.key == KeyDownListener)
+                if (pair.Value.SpecialKey == KeyDownListener)
                     return pair.Key;
 
-            return String.Empty;
+            return string.Empty;
         }
 
         private static string GetTriggerFromChord(InputsChord chord)
         {
             foreach (var pair in Triggers)
-                if (pair.Value.key == chord.key &&
-                    pair.Value.type == chord.type &&
-                    pair.Value.buttons == chord.buttons)
+                if (pair.Value.SpecialKey == chord.SpecialKey &&
+                    pair.Value.InputsType == chord.InputsType &&
+                    pair.Value.GamepadButtons == chord.GamepadButtons)
                     return pair.Key;
 
-            return String.Empty;
+            return string.Empty;
         }
 
         public static void KeyPress(VirtualKeyCode key)
         {
-            TriggerLock = true;
+            IsLocked = true;
 
             m_InputSimulator.Keyboard.KeyPress(key);
 
-            TriggerLock = false;
+            IsLocked = false;
         }
 
         public static void KeyPress(VirtualKeyCode[] keys)
         {
-            TriggerLock = true;
+            IsLocked = true;
 
             foreach (VirtualKeyCode key in keys)
                 m_InputSimulator.Keyboard.KeyDown(key);
@@ -294,7 +342,22 @@ namespace HandheldCompanion.Managers
             foreach (VirtualKeyCode key in keys)
                 m_InputSimulator.Keyboard.KeyUp(key);
 
-            TriggerLock = false;
+            IsLocked = false;
+        }
+
+        public static void KeyPress(List<OutputKey> keys)
+        {
+            IsLocked = true;
+
+            foreach (OutputKey key in keys)
+            {
+                if (key.IsKeyDown)
+                    m_InputSimulator.Keyboard.KeyDown((VirtualKeyCode)key.KeyValue);
+                else
+                    m_InputSimulator.Keyboard.KeyUp((VirtualKeyCode)key.KeyValue);
+            }
+
+            IsLocked = false;
         }
 
         public static void KeyStroke(VirtualKeyCode mod, VirtualKeyCode key)
@@ -302,9 +365,9 @@ namespace HandheldCompanion.Managers
             m_InputSimulator.Keyboard.ModifiedKeyStroke(mod, key);
         }
 
-        private static void ReleaseBuffer(object? sender, EventArgs e)
+        private static void ReleaseBuffer()
         {
-            if (TriggerBuffer.Count == 0)
+            if (ReleasedKeys.Count == 0)
                 return;
 
             // reset index
@@ -312,11 +375,11 @@ namespace HandheldCompanion.Managers
 
             try
             {
-                TriggerLock = true;
+                IsLocked = true;
 
-                for (int i = 0; i < TriggerBuffer.Count; i++)
+                for (int i = 0; i < ReleasedKeys.Count; i++)
                 {
-                    KeyEventArgsExt args = TriggerBuffer[i];
+                    KeyEventArgsExt args = ReleasedKeys[i];
 
                     // improve me
                     VirtualKeyCode key = (VirtualKeyCode)args.KeyValue;
@@ -341,11 +404,11 @@ namespace HandheldCompanion.Managers
                     }
 
                     // send after initial delay
-                    int Timestamp = TriggerBuffer[i].Timestamp;
+                    int Timestamp = ReleasedKeys[i].Timestamp;
                     int n_Timestamp = Timestamp;
 
-                    if (i + 1 < TriggerBuffer.Count)
-                        n_Timestamp = TriggerBuffer[i + 1].Timestamp;
+                    if (i + 1 < ReleasedKeys.Count)
+                        n_Timestamp = ReleasedKeys[i + 1].Timestamp;
 
                     int d_Timestamp = n_Timestamp - Timestamp;
                     m_InputSimulator.Keyboard.Sleep(d_Timestamp);
@@ -356,17 +419,17 @@ namespace HandheldCompanion.Managers
             }
 
             // release lock
-            TriggerLock = false;
+            IsLocked = false;
 
             // clear buffer
-            TriggerBuffer.Clear();
+            ReleasedKeys.Clear();
         }
 
         private static List<KeyCode> GetBufferKeys()
         {
             List<KeyCode> keys = new List<KeyCode>();
 
-            foreach (KeyEventArgsExt e in TriggerBuffer)
+            foreach (KeyEventArgsExt e in ReleasedKeys)
                 keys.Add((KeyCode)e.KeyValue);
 
             return keys;
@@ -409,7 +472,7 @@ namespace HandheldCompanion.Managers
         }
 
         private static bool GamepadClearPending;
-        private static void UpdateReport(object? sender, EventArgs e)
+        private static void UpdateReport()
         {
             // get current gamepad state
             if (controllerEx != null && controllerEx.IsConnected())
@@ -426,76 +489,76 @@ namespace HandheldCompanion.Managers
             {
                 if (GamepadClearPending)
                 {
-                    KeyDownChord.buttons = Gamepad.Buttons;
+                    InputsChord.GamepadButtons = Gamepad.Buttons;
                     GamepadClearPending = false;
                 }
                 else
-                    KeyDownChord.buttons |= Gamepad.Buttons;
+                    InputsChord.GamepadButtons |= Gamepad.Buttons;
 
-                KeyDownTimer.Start();
-                KeyDownSequenced = false;
+                InputsChordHoldTimer.Start();
             }
             // IsKeyUp
-            else if (Gamepad.Buttons == 0 && KeyDownChord.buttons != GamepadButtonFlags.None)
+            else if (Gamepad.Buttons == 0 && InputsChord.GamepadButtons != GamepadButtonFlags.None)
             {
                 GamepadClearPending = true;
 
                 // Sequence was intercepted already
-                if (!KeyDownSequenced)
-                    KeyDownBufferTimer.Start();
+                if (InputsChordHoldTimer.Enabled)
+                    InputsChordInputTimer.Start();
             }
 
             Updated?.Invoke(Gamepad);
             prevGamepad = Gamepad;
         }
 
-        private static InputsChord chordBuffer;
-
-        public static void StartListening(string listener)
+        public static void StartListening(Hotkey hotkey)
         {
             // already listening for input ?
-            if (!String.IsNullOrEmpty(TriggerListener))
-                ListenerExpired(null, null);
+            if (!string.IsNullOrEmpty(inputsHotkey.Listener))
+                ListenerExpired();
 
-            TriggerListener = listener;
-            TriggerBuffer = new();
+            inputsHotkey = hotkey.inputsHotkey;
+            InputsChord = hotkey.inputsChord;
+            IsCombo = hotkey.IsCombo;
+
+            ReleasedKeys = new();
 
             // store triggers
-            chordBuffer = Triggers[TriggerListener];
-            KeyDownChord = new();
-            Triggers[TriggerListener] = KeyDownChord;
+            prevChord = Triggers[inputsHotkey.Listener];
+            Triggers[inputsHotkey.Listener] = InputsChord;
 
             ListenerTimer.Start();
         }
 
-        private static void StopListening(InputsChord chord)
+        private static void StopListening(InputsChord chord = null)
         {
-            Triggers[TriggerListener] = new InputsChord(chord.buttons, chord.key, chord.type);
-            TriggerUpdated?.Invoke(TriggerListener, chord);
+            if (chord == null)
+                chord = new InputsChord();
 
-            LogManager.LogDebug("Trigger: {0} updated. key: {1}, buttons: {2}, type: {3}", TriggerListener, chord.key, chord.buttons, chord.type);
+            Triggers[inputsHotkey.Listener] = new InputsChord(chord.GamepadButtons, chord.SpecialKey, chord.OutputKeys, chord.InputsType);
+            TriggerUpdated?.Invoke(inputsHotkey.Listener, chord);
 
-            TriggerListener = string.Empty;
+            LogManager.LogDebug("Trigger: {0} updated. key: {1}, buttons: {2}, type: {3}", inputsHotkey.Listener, chord.SpecialKey, chord.GamepadButtons, chord.InputsType);
+
+            inputsHotkey = new();
+            InputsChord = new();
+            IsCombo = false;
 
             ListenerTimer.Stop();
-            KeyDownTimer.Stop();
-            KeyDownBufferTimer.Stop();
+            InputsChordHoldTimer.Stop();
+            InputsChordInputTimer.Stop();
         }
 
-        private static void ListenerExpired(object? sender, EventArgs e)
+        private static void ListenerExpired()
         {
-            StopListening(chordBuffer);
+            // restore previous chord
+            StopListening(prevChord);
         }
 
-        public static void ClearListening(string listener)
+        public static void ClearListening(Hotkey hotkey)
         {
-            TriggerListener = listener;
-            StopListening(new InputsChord());
-        }
-
-        public static void UpdateController(ControllerEx _controllerEx)
-        {
-            controllerEx = _controllerEx;
+            inputsHotkey = hotkey.inputsHotkey;
+            StopListening();
         }
 
         private static void TriggerCreated(Hotkey hotkey)
@@ -503,7 +566,6 @@ namespace HandheldCompanion.Managers
             string listener = hotkey.inputsHotkey.Listener;
 
             Triggers.Add(listener, hotkey.inputsChord);
-            Triggered[listener] = false;
         }
     }
 }

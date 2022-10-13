@@ -53,7 +53,7 @@ namespace IKriv.Wpf
                 if (targetType == typeof(int)) return (int)result;
                 if (targetType == typeof(double)) return (double)result;
                 if (targetType == typeof(long)) return (long)result;
-                throw new ArgumentException(String.Format("Unsupported target type {0}", targetType.FullName));
+                throw new ArgumentException(string.Format("Unsupported target type {0}", targetType.FullName));
             }
             catch (Exception ex)
             {
@@ -104,7 +104,7 @@ namespace IKriv.Wpf
             {
                 if (!decimal.TryParse(text, out _value))
                 {
-                    throw new ArgumentException(String.Format("'{0}' is not a valid number", text));
+                    throw new ArgumentException(string.Format("'{0}' is not a valid number", text));
                 }
             }
 
@@ -122,7 +122,7 @@ namespace IKriv.Wpf
             {
                 if (!int.TryParse(text, out _index) || _index < 0)
                 {
-                    throw new ArgumentException(String.Format("'{0}' is not a valid parameter index", text));
+                    throw new ArgumentException(string.Format("'{0}' is not a valid parameter index", text));
                 }
             }
 
@@ -135,7 +135,7 @@ namespace IKriv.Wpf
             {
                 if (_index >= args.Length)
                 {
-                    throw new ArgumentException(String.Format("MathConverter: parameter index {0} is out of range. {1} parameter(s) supplied", _index, args.Length));
+                    throw new ArgumentException(string.Format("MathConverter: parameter index {0} is out of range. {1} parameter(s) supplied", _index, args.Length));
                 }
 
                 return System.Convert.ToDecimal(args[_index]);
@@ -201,7 +201,7 @@ namespace IKriv.Wpf
                 catch (Exception ex)
                 {
                     string msg =
-                        String.Format("MathConverter: error parsing expression '{0}'. {1} at position {2}", text, ex.Message, pos);
+                        string.Format("MathConverter: error parsing expression '{0}'. {1} at position {2}", text, ex.Message, pos);
 
                     throw new ArgumentException(msg, ex);
                 }
@@ -309,7 +309,7 @@ namespace IKriv.Wpf
                 }
                 else
                 {
-                    throw new ArgumentException(String.Format("Unexpeted character '{0}'", c));
+                    throw new ArgumentException(string.Format("Unexpeted character '{0}'", c));
                 }
             }
 
