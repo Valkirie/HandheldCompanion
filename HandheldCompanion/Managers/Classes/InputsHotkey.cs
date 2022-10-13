@@ -18,18 +18,18 @@ namespace HandheldCompanion.Managers.Classes
 
         public static Dictionary<ushort, InputsHotkey> Hotkeys = new()
         {
-            { 01, new InputsHotkey(InputsHotkeyType.Overlay,     "\uEDE3",   "overlayGamepad",       "Segoe Fluent Icons",   20) },
-            { 02, new InputsHotkey(InputsHotkeyType.Overlay,     "\uEDA4",   "overlayTrackpads",     "Segoe Fluent Icons",   20) },
+            { 01, new InputsHotkey(InputsHotkeyType.Overlay,     "\uEDE3",  "overlayGamepad",       "Segoe Fluent Icons",   20) },
+            { 02, new InputsHotkey(InputsHotkeyType.Overlay,     "\uEDA4",  "overlayTrackpads",     "Segoe Fluent Icons",   20) },
 
-            { 10, new InputsHotkey(InputsHotkeyType.Quicktools,  "\uEC7A",   "quickTools",           "Segoe Fluent Icons",   20) },
+            { 10, new InputsHotkey(InputsHotkeyType.Quicktools,  "\uEC7A",  "quickTools",           "Segoe Fluent Icons",   20) },
 
-            { 20, new InputsHotkey(InputsHotkeyType.Windows,     "\uE765",   "shortcutKeyboard",     "Segoe Fluent Icons",   20) },
-            { 21, new InputsHotkey(InputsHotkeyType.Windows,     "\uE138",   "shortcutDesktop",      "Segoe UI Symbol",      20) },
-            { 22, new InputsHotkey(InputsHotkeyType.Windows,     "ESC",      "shortcutESC",          "Segoe UI",             12) },
-            { 23, new InputsHotkey(InputsHotkeyType.Windows,     "\uEE49",   "shortcutExpand",       "Segoe Fluent Icons",   20) },
-            { 24, new InputsHotkey(InputsHotkeyType.Windows,     "\uE7C4",   "shortcutTaskview",     "Segoe Fluent Icons",   20) },
+            { 20, new InputsHotkey(InputsHotkeyType.Windows,     "\uE765",  "shortcutKeyboard",     "Segoe Fluent Icons",   20) },
+            { 21, new InputsHotkey(InputsHotkeyType.Windows,     "\uE138",  "shortcutDesktop",      "Segoe UI Symbol",      20) },
+            { 22, new InputsHotkey(InputsHotkeyType.Windows,     "ESC",     "shortcutESC",          "Segoe UI",             12) },
+            { 23, new InputsHotkey(InputsHotkeyType.Windows,     "\uEE49",  "shortcutExpand",       "Segoe Fluent Icons",   20) },
+            { 24, new InputsHotkey(InputsHotkeyType.Windows,     "\uE7C4",  "shortcutTaskview",     "Segoe Fluent Icons",   20) },
 
-            { 30, new InputsHotkey(InputsHotkeyType.Handheld,    "\uE7C4",   "shortcutMainwindow",   "Segoe Fluent Icons",   20) },
+            { 30, new InputsHotkey(InputsHotkeyType.Handheld,    "\uE7C4",  "shortcutMainwindow",   "Segoe Fluent Icons",   20) },
             { 31, new InputsHotkey(InputsHotkeyType.Handheld,   "\uE2E8",   "shortcutGuide",        "Segoe UI Symbol",      20) },
 
             { 40, new InputsHotkey(InputsHotkeyType.Custom,     "\u2780",   "shortcutCustom0",      "Segoe UI Symbol",      20) },
