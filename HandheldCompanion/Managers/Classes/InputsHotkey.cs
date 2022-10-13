@@ -22,6 +22,8 @@ namespace HandheldCompanion.Managers.Classes
             { 02, new InputsHotkey(InputsHotkeyType.Overlay,     "\uEDA4",  "overlayTrackpads",     "Segoe Fluent Icons",   20) },
 
             { 10, new InputsHotkey(InputsHotkeyType.Quicktools,  "\uEC7A",  "quickTools",           "Segoe Fluent Icons",   20) },
+            { 11, new InputsHotkey(InputsHotkeyType.Quicktools,  "\u2795",  "increaseTDP",          "Segoe UI Symbol",      20) },
+            { 12, new InputsHotkey(InputsHotkeyType.Quicktools,  "\u2796",  "decreaseTDP",          "Segoe UI Symbol",      20) },
 
             { 20, new InputsHotkey(InputsHotkeyType.Windows,     "\uE765",  "shortcutKeyboard",     "Segoe Fluent Icons",   20) },
             { 21, new InputsHotkey(InputsHotkeyType.Windows,     "\uE138",  "shortcutDesktop",      "Segoe UI Symbol",      20) },

@@ -34,27 +34,30 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void HotkeysManager_CommandExecuted(string listener)
         {
-            switch(listener)
+            this.Dispatcher.Invoke(() =>
             {
-                case "increaseTDP":
-                    {
-                        if (currentProfile != null && currentProfile.TDP_override)
-                            return;
+                switch (listener)
+                {
+                    case "increaseTDP":
+                        {
+                            if (currentProfile != null && !currentProfile.isDefault || currentProfile.TDP_override)
+                                return;
 
-                        TDPSustainedSlider.Value++;
-                        TDPBoostSlider.Value++;
-                    }
-                    break;
-                case "decreaseTDP":
-                    {
-                        if (currentProfile != null && currentProfile.TDP_override)
-                            return;
+                            TDPSustainedSlider.Value++;
+                            TDPBoostSlider.Value++;
+                        }
+                        break;
+                    case "decreaseTDP":
+                        {
+                            if (currentProfile != null && !currentProfile.isDefault || currentProfile.TDP_override)
+                                return;
 
-                        TDPSustainedSlider.Value--;
-                        TDPBoostSlider.Value--;
-                    }
-                    break;
-            }
+                            TDPSustainedSlider.Value--;
+                            TDPBoostSlider.Value--;
+                        }
+                        break;
+                }
+            });
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)

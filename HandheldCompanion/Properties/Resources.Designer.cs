@@ -382,6 +382,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Decrease Thermal Power (TDP) Limit.
+        /// </summary>
+        public static string InputsHotkey_decreaseTDP {
+            get {
+                return ResourceManager.GetString("InputsHotkey_decreaseTDP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrease system or currently applied profile TDP by 1 watt.
+        /// </summary>
+        public static string InputsHotkey_decreaseTDPDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_decreaseTDPDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Press to define hotkey input.
         /// </summary>
         public static string InputsHotkey_fallbackInput {
@@ -396,6 +414,24 @@ namespace HandheldCompanion.Properties {
         public static string InputsHotkey_fallbackOutput {
             get {
                 return ResourceManager.GetString("InputsHotkey_fallbackOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase Thermal Power (TDP) Limit.
+        /// </summary>
+        public static string InputsHotkey_increaseTDP {
+            get {
+                return ResourceManager.GetString("InputsHotkey_increaseTDP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase system or currently applied profile TDP by 1 watt.
+        /// </summary>
+        public static string InputsHotkey_increaseTDPDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_increaseTDPDesc", resourceCulture);
             }
         }
         
