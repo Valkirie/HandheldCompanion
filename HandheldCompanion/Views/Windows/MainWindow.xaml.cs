@@ -5,7 +5,6 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
-using Microsoft.Win32;
 using ModernWpf.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -23,6 +22,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using static ControllerCommon.Managers.SystemManager;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
@@ -67,7 +67,6 @@ namespace HandheldCompanion.Views
         public static ServiceManager serviceManager;
         public static ProfileManager profileManager;
         public static TaskManager taskManager;
-        public static CheatManager cheatManager;
         public static PowerManager powerManager;
         public static UpdateManager updateManager;
 
@@ -103,9 +102,6 @@ namespace HandheldCompanion.Views
 
             // define current directory
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
-
-            // listen to system events
-            SystemEvents.PowerModeChanged += OnPowerChangeAsync;
 
             // initialize notifyIcon
             notifyIcon = new()
@@ -247,7 +243,6 @@ namespace HandheldCompanion.Views
             };
             controllerPage.ControllerChanged += (Controller) =>
             {
-                cheatManager.UpdateController(Controller); // update me
                 InputsManager.UpdateController(Controller);
             };
 
@@ -282,7 +277,6 @@ namespace HandheldCompanion.Views
             profileManager = new();
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
             taskManager = new TaskManager("HandheldCompanion", CurrentExe);
-            cheatManager = new();
             powerManager = new();
             updateManager = new();
 
@@ -292,12 +286,14 @@ namespace HandheldCompanion.Views
             _managers.Add(profileManager);
             _managers.Add(serviceManager);
             _managers.Add(taskManager);
-            _managers.Add(cheatManager);
             _managers.Add(powerManager);
             _managers.Add(updateManager);
 
             // hook into managers events
             InputsManager.TriggerRaised += InputsManager_TriggerRaised;
+
+            // listen to system events
+            SystemManager.SystemStatusChanged += OnSystemStatusChanged;
 
             serviceManager.Updated += OnServiceUpdate;
             serviceManager.Ready += () =>
@@ -317,16 +313,6 @@ namespace HandheldCompanion.Views
             serviceManager.StopFailed += (status) =>
             {
                 _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStopIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
-            };
-
-            cheatManager.Cheated += (cheat) =>
-            {
-                switch (cheat)
-                {
-                    case "OverlayControllerFisherPrice":
-                        overlayPage?.UnlockToyController();
-                        break;
-                }
             };
 
             SystemManager.SerialArrived += SystemManager_Updated;
@@ -619,12 +605,11 @@ namespace HandheldCompanion.Views
             if (pipeClient.connected)
                 pipeClient.Close();
 
-            cheatManager.Stop();
             InputsManager.Stop();
             SystemManager.Stop();
 
             // stop listening to system events
-            SystemEvents.PowerModeChanged += OnPowerChangeAsync;
+            SystemManager.SystemStatusChanged -= OnSystemStatusChanged;
 
             // closing page(s)
             controllerPage.Page_Closed();
@@ -744,16 +729,11 @@ namespace HandheldCompanion.Views
         }
         #endregion
 
-        private async void OnPowerChangeAsync(object s, PowerModeChangedEventArgs e)
+        private async void OnSystemStatusChanged(SystemStatus status)
         {
-            LogManager.LogInformation("Device power mode set to {0}", e.Mode);
-
-            switch (e.Mode)
+            switch (status)
             {
-                default:
-                case PowerModes.StatusChange:
-                    break;
-                case PowerModes.Resume:
+                case SystemStatus.Ready:
                     {
                         // resume delay (arbitrary)
                         await Task.Delay(5000);
@@ -762,7 +742,7 @@ namespace HandheldCompanion.Views
                         InputsManager.Start();
                     }
                     break;
-                case PowerModes.Suspend:
+                case SystemStatus.Unready:
                     {
                         //pause inputs manager
                         InputsManager.Stop();

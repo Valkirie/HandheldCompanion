@@ -191,7 +191,7 @@ namespace HandheldCompanion.Managers.Classes
 
         public void UpdateButtons()
         {
-            string content = string.Empty;
+            SimpleStackPanel content = new() { Orientation = Orientation.Horizontal, Spacing = 6 };
 
             bool haskey = !string.IsNullOrEmpty(inputsChord.key);
             bool hasbuttons = (inputsChord.buttons != SharpDX.XInput.GamepadButtonFlags.None);
@@ -199,14 +199,19 @@ namespace HandheldCompanion.Managers.Classes
             string buttons = EnumUtils.GetDescriptionFromEnumValue(inputsChord.buttons);
 
             if (haskey && hasbuttons)
-                content = string.Join(" + ", inputsChord.key, buttons);
+                content.Children.Add(new TextBlock() { Text = string.Join(" + ", inputsChord.key, buttons) });
             else if (haskey)
-                content = inputsChord.key;
+                content.Children.Add(new TextBlock() { Text = inputsChord.key });
             else if (hasbuttons)
-                content = buttons;
+                content.Children.Add(new TextBlock() { Text = buttons });
 
-            if (!string.IsNullOrEmpty(content))
-                content = string.Join(" ", content, inputsChord.type);
+            if (content.Children.Count > 0)
+            {
+                TextBlock type = new TextBlock() { Text = inputsChord.type.ToString() };
+                type.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
+
+                content.Children.Add(type);
+            }
 
             mainButton.Content = content;
 

@@ -89,14 +89,6 @@ namespace HandheldCompanion.Views.Pages
         {
         }
 
-        public void UnlockToyController()
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                ToyControllerRadio.IsEnabled = true;
-            });
-        }
-
         private void UpdateUI_TrackpadsPosition(int trackpadsAlignment)
         {
             foreach (Button button in OverlayTrackpadsAlignment.Children)

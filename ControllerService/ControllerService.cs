@@ -4,7 +4,6 @@ using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
@@ -17,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static ControllerCommon.Managers.SystemManager;
 using static ControllerCommon.Utils.DeviceUtils;
 using Device = ControllerCommon.Devices.Device;
 
@@ -565,7 +565,7 @@ namespace ControllerService
             pipeServer.Open();
 
             // listen to system events
-            SystemEvents.PowerModeChanged += OnPowerChangeAsync;
+            SystemManager.SystemStatusChanged += OnSystemStatusChanged;
 
             // OnPowerChange(null, new PowerModeChangedEventArgs(PowerModes.Suspend));
             // OnPowerChange(null, new PowerModeChangedEventArgs(PowerModes.Resume));
@@ -585,7 +585,7 @@ namespace ControllerService
             SetControllerMode(HIDmode.NoController);
 
             // stop listening to system events
-            SystemEvents.PowerModeChanged -= OnPowerChangeAsync;
+            SystemManager.SystemStatusChanged -= OnSystemStatusChanged;
 
             // stop DSUClient
             DSUServer?.Stop();
@@ -599,16 +599,13 @@ namespace ControllerService
             return Task.CompletedTask;
         }
 
-        private async void OnPowerChangeAsync(object s, PowerModeChangedEventArgs e)
+        private async void OnSystemStatusChanged(SystemStatus status)
         {
-            LogManager.LogInformation("Device power mode set to {0}", e.Mode);
+            LogManager.LogInformation("System status set to {0}", status);
 
-            switch (e.Mode)
+            switch (status)
             {
-                default:
-                case PowerModes.StatusChange:
-                    break;
-                case PowerModes.Resume:
+                case SystemStatus.Ready:
                     {
                         // resume delay (arbitrary)
                         await Task.Delay(5000);
@@ -622,7 +619,7 @@ namespace ControllerService
                         SetControllerMode(HIDmode);
                     }
                     break;
-                case PowerModes.Suspend:
+                case SystemStatus.Unready:
                     {
                         VirtualTarget.Dispose();
                         VirtualTarget = null;

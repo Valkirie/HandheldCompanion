@@ -122,8 +122,6 @@ namespace HandheldCompanion.Managers
                 default:
                     return Properties.Settings.Default[name];
             }
-
-            return null;
         }
 
         public static string GetString(string name)

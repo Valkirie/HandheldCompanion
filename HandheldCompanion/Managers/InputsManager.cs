@@ -374,6 +374,9 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
+            if (IsInitialized)
+                return;
+
             foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
             {
                 string listener = pair.name;
@@ -387,6 +390,8 @@ namespace HandheldCompanion.Managers
 
             m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
+
+            IsInitialized = true;
         }
 
         public static void Stop()
@@ -399,6 +404,8 @@ namespace HandheldCompanion.Managers
             //It is recommened to dispose it
             m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
+
+            IsInitialized = false;
         }
 
         private static bool GamepadClearPending;
