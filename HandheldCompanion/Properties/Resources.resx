@@ -222,6 +222,12 @@
   <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="InputsHotkey_fallbackInput" xml:space="preserve">
+    <value>Press to define hotkey input</value>
+  </data>
+  <data name="InputsHotkey_fallbackOutput" xml:space="preserve">
+    <value>Press to define hotkey output</value>
+  </data>
   <data name="InputsHotkey_overlayGamepad" xml:space="preserve">
     <value>Display 3D controller</value>
   </data>
@@ -244,8 +250,7 @@
     <value>Custom shortcut</value>
   </data>
   <data name="InputsHotkey_shortcutCustomDesc" xml:space="preserve">
-    <value>Change hotkey by pressing a button or a special key
-Change output keys by pressing keyboard keys</value>
+    <value>Change hotkey by pressing a button or a special key</value>
   </data>
   <data name="InputsHotkey_shortcutDesktop" xml:space="preserve">
     <value>Display and hide the desktop</value>

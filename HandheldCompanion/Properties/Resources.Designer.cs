@@ -382,6 +382,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Press to define hotkey input.
+        /// </summary>
+        public static string InputsHotkey_fallbackInput {
+            get {
+                return ResourceManager.GetString("InputsHotkey_fallbackInput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press to define hotkey output.
+        /// </summary>
+        public static string InputsHotkey_fallbackOutput {
+            get {
+                return ResourceManager.GetString("InputsHotkey_fallbackOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display 3D controller.
         /// </summary>
         public static string InputsHotkey_overlayGamepad {
@@ -445,8 +463,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key
-        ///Change output keys by pressing keyboard keys.
+        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
         /// </summary>
         public static string InputsHotkey_shortcutCustomDesc {
             get {

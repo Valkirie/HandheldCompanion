@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Application = System.Windows.Application;
 
 namespace HandheldCompanion.Managers.Classes
@@ -272,6 +273,11 @@ namespace HandheldCompanion.Managers.Classes
                         Text = combo
                     });
                 }
+                else
+                {
+                    // set fallback content
+                    comboContent.Children.Add(new TextBlock() { Text = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackOutput"), Foreground = Application.Current.FindResource("SystemControlForegroundBaseMediumBrush") as Brush });
+                }
 
                 // update button content
                 comboButton.Content = comboContent;
@@ -317,11 +323,17 @@ namespace HandheldCompanion.Managers.Classes
 
                 mainContent.Children.Add(type);
             }
+            else
+            {
+                // set fallback content
+                mainContent.Children.Add(new TextBlock() { Text = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackInput"), Foreground = Application.Current.FindResource("SystemControlForegroundBaseMediumBrush") as Brush });
+            }
 
             // update button content
             mainButton.Content = mainContent;
 
-            deleteButton.IsEnabled = true;
+            // update delete button status
+            deleteButton.IsEnabled = haskey || hasbuttons || hascombo;
         }
     }
 }
