@@ -40,7 +40,7 @@ namespace HandheldCompanion.Views.QuickPages
                 {
                     case "increaseTDP":
                         {
-                            if (currentProfile != null && !currentProfile.isDefault || currentProfile.TDP_override)
+                            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled") || currentProfile.TDP_override)
                                 return;
 
                             TDPSustainedSlider.Value++;
@@ -49,7 +49,7 @@ namespace HandheldCompanion.Views.QuickPages
                         break;
                     case "decreaseTDP":
                         {
-                            if (currentProfile != null && !currentProfile.isDefault || currentProfile.TDP_override)
+                            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled") || currentProfile.TDP_override)
                                 return;
 
                             TDPSustainedSlider.Value--;
