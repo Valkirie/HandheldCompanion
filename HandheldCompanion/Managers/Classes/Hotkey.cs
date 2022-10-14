@@ -202,13 +202,10 @@ namespace HandheldCompanion.Managers.Classes
             {
                 case "Combo":
                     IsCombo = true;
-                    inputsChord.OutputKeys.Clear();
                     break;
                 default:
                 case "Chord":
                     IsCombo = false;
-                    inputsChord.GamepadButtons = SharpDX.XInput.GamepadButtonFlags.None;
-                    inputsChord.SpecialKey = string.Empty;
                     break;
             }
 
