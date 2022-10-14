@@ -35,7 +35,7 @@ namespace ControllerCommon.Devices
             listeners.Add(new DeviceChord("WIN key", new List<KeyCode>() { KeyCode.LWin }));
             //listeners.Add("TM key", new ChordClick(KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete)); // Conflicts with OS
             listeners.Add(new DeviceChord("ESC key", new List<KeyCode>() { KeyCode.Escape }));
-            listeners.Add(new DeviceChord("KB key", new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin })); // Conflicts with Ayaspace when installed
+            listeners.Add(new DeviceChord("KB key", new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O })); // Conflicts with Ayaspace when installed
         }
     }
 }
