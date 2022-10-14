@@ -1,10 +1,8 @@
 ﻿using ControllerCommon.Utils;
 using ModernWpf.Controls;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using Application = System.Windows.Application;
 
 namespace HandheldCompanion.Managers.Classes
@@ -198,7 +196,7 @@ namespace HandheldCompanion.Managers.Classes
 
         private void ButtonButton_Click(Button sender)
         {
-            switch(sender.Tag)
+            switch (sender.Tag)
             {
                 case "Combo":
                     IsCombo = true;

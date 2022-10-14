@@ -1,5 +1,4 @@
-﻿using ControllerCommon.Managers;
-using ControllerCommon.Sensors;
+﻿using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using System;
 using System.Collections.Generic;

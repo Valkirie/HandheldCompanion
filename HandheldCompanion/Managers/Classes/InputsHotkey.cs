@@ -71,7 +71,7 @@ namespace HandheldCompanion.Managers.Classes
             // return localized string if available
             string listener = Listener;
 
-            switch(hotkeyType)
+            switch (hotkeyType)
             {
                 case InputsHotkeyType.Custom:
                     listener = "shortcutCustom";

@@ -7,7 +7,6 @@ using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Media;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Windows;
@@ -147,10 +146,10 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(input.OutputKeys);
                         break;
                 }
-                
+
                 // play a tune to notify a command was executed
                 SystemManager.PlayWindowsMedia("Windows Navigation Start.wav");
-                
+
                 // raise an event
                 CommandExecuted?.Invoke(listener);
             }
