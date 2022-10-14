@@ -38,9 +38,15 @@ namespace HandheldCompanion.Managers
         // Global variables
         private static MultimediaTimer ListenerTimer;
 
-        private const short TIME_NEXT = 500;
-        private const short TIME_LONG = 800;
-        private const short TIME_EXPIRED = 3000;
+        private const short TIME_RELEASE = 10;      // default interval between gamepad updates
+        private const short TIME_FLUSH = 20;        // default interval between buffer flush
+        private const short TIME_FLUSH_EXT = 100;   // extended buffer flush interval when expecting another chord key
+
+        private const short TIME_NEXT = 500;        // default interval before submitting output keys used in combo
+        private const short TIME_LONG = 800;        // default interval between two inputs from a chord
+                                                    // default interval before considering a chord as hold
+
+        private const short TIME_EXPIRED = 3000;    // default interval before considering a chord as expired if no input is detected
 
         private static bool IsLocked;
         private static bool IsCombo;
@@ -64,10 +70,7 @@ namespace HandheldCompanion.Managers
         public static event TriggerUpdatedEventHandler TriggerUpdated;
         public delegate void TriggerUpdatedEventHandler(string listener, InputsChord inputs);
 
-        private const short m_fastInterval = 20;      // default interval before releasing a keyboard key
-        private const short m_slowInterval = 100;     // default interval before releasing a captured key
-
-        private static int KeyIndex;
+        private static short KeyIndex;
         private static bool KeyUsed;
 
         public static bool IsInitialized;
@@ -81,20 +84,18 @@ namespace HandheldCompanion.Managers
         static InputsManager()
         {
             // initialize timers
-            UpdateTimer = new MultimediaTimer(10);
+            UpdateTimer = new MultimediaTimer(TIME_RELEASE);
             UpdateTimer.Tick += (sender, e) => UpdateReport();
 
-            ResetTimer = new MultimediaTimer(m_fastInterval) { AutoReset = false };
+            ResetTimer = new MultimediaTimer(TIME_FLUSH) { AutoReset = false };
             ResetTimer.Tick += (sender, e) => ReleaseBuffer();
 
             ListenerTimer = new MultimediaTimer(TIME_EXPIRED);
             ListenerTimer.Tick += (sender, e) => ListenerExpired();
 
-            // timer is used to trigger Hold type if inputs are maintainged for more than TIME_LONG interval
             InputsChordHoldTimer = new MultimediaTimer(TIME_LONG) { AutoReset = false };
             InputsChordHoldTimer.Tick += (sender, e) => InputsChordHold_Elapsed();
 
-            // timer is used to wait for the next inputs during TIME_NEXT interval
             InputsChordInputTimer = new MultimediaTimer(TIME_NEXT) { AutoReset = false };
             InputsChordInputTimer.Tick += (sender, e) => { ExecuteSequence(); };
 
@@ -103,7 +104,6 @@ namespace HandheldCompanion.Managers
 
             HotkeysManager.HotkeyCreated += TriggerCreated;
 
-            // make sure we don't hang the keyboard
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
         }
 
@@ -218,14 +218,14 @@ namespace HandheldCompanion.Managers
                     KeyIndex++;
 
                     // increase interval as we're expecting a new chord key
-                    ResetTimer.Interval = m_slowInterval;
+                    ResetTimer.Interval = TIME_FLUSH_EXT;
 
                     break; // leave loop
                 }
                 else
                 {
                     // restore default interval
-                    ResetTimer.Interval = m_fastInterval;
+                    ResetTimer.Interval = TIME_FLUSH;
                 }
             }
 
@@ -261,8 +261,8 @@ namespace HandheldCompanion.Managers
                         {
                             if (!chord_keys.SequenceEqual(prevKeyDown))
                                 unexpected = true;
-
-                            prevKeyDown.Clear();
+                            else
+                                prevKeyDown.Clear();
                         }
 
                         // only intercept inputs if not too close
@@ -280,7 +280,7 @@ namespace HandheldCompanion.Managers
 
                         if (args.IsKeyDown)
                         {
-                            InputsChordHoldTimer.Start();
+                            InputsChordHoldTimer.Restart();
 
                             // update vars
                             inputsChord.SpecialKey = pair.name;
@@ -291,7 +291,7 @@ namespace HandheldCompanion.Managers
 
                         // Sequence was intercepted already
                         if (InputsChordHoldTimer.Enabled)
-                            InputsChordInputTimer.Start();
+                            ExecuteSequence();
 
                         return; // prevent multiple shortcuts from being triggered
                     }
@@ -484,7 +484,7 @@ namespace HandheldCompanion.Managers
                 else
                     inputsChord.GamepadButtons |= Gamepad.Buttons;
 
-                InputsChordHoldTimer.Start();
+                InputsChordHoldTimer.Restart();
             }
             // IsKeyUp
             else if (Gamepad.Buttons == 0 && inputsChord.GamepadButtons != GamepadButtonFlags.None)
@@ -493,7 +493,7 @@ namespace HandheldCompanion.Managers
 
                 // Sequence was intercepted already
                 if (InputsChordHoldTimer.Enabled)
-                    InputsChordInputTimer.Start();
+                    ExecuteSequence();
             }
 
             Updated?.Invoke(Gamepad);
