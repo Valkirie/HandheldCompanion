@@ -313,6 +313,7 @@ namespace HandheldCompanion.Managers
                 // Other
                 case "bdagent.exe":             // Bitdefender Agent
                 case "radeonsoftware.exe":
+                case "monotificationux.exe": 
 
                 // handheld companion
                 case "handheldcompanion.exe":
