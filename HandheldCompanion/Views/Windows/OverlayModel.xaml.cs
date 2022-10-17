@@ -3,6 +3,8 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
 using HandheldCompanion.Views.Classes;
+using Microsoft.VisualBasic;
+using PrecisionTiming;
 using SharpDX.XInput;
 using System;
 using System.Linq;
@@ -18,7 +20,7 @@ namespace HandheldCompanion.Views.Windows
     /// </summary>
     public partial class OverlayModel : OverlayWindow
     {
-        private MultimediaTimer UpdateTimer;
+        private PrecisionTimer UpdateTimer;
 
         private Model CurrentModel;
         private OverlayModelMode Modelmode;
@@ -48,7 +50,8 @@ namespace HandheldCompanion.Views.Windows
             InputsManager.Updated += UpdateReport;
 
             // initialize timers
-            UpdateTimer = new MultimediaTimer();
+            UpdateTimer = new PrecisionTimer();
+            UpdateTimer.SetAutoResetMode(true);
             UpdateTimer.Tick += DrawModel;
 
             UpdateModel();
@@ -63,7 +66,7 @@ namespace HandheldCompanion.Views.Windows
         public void UpdateInterval(double interval)
         {
             UpdateTimer.Stop();
-            UpdateTimer.Interval = (int)interval;
+            UpdateTimer.SetInterval((int)interval);
             UpdateTimer.Start();
         }
 

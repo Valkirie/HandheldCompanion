@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Threading.Tasks;
+using PrecisionTiming;
 using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerService
@@ -28,7 +29,7 @@ namespace ControllerService
 
         public Vector3 Angle;
 
-        public MultimediaTimer UpdateTimer;
+        public PrecisionTimer UpdateTimer;
         public double vibrationStrength = 100.0d;
         public int updateInterval = 10;
 
@@ -81,14 +82,16 @@ namespace ControllerService
             stopwatch = new Stopwatch();
 
             // initialize timers
-            UpdateTimer = new MultimediaTimer(updateInterval);
+            UpdateTimer = new PrecisionTimer();
+            UpdateTimer.SetInterval(updateInterval);
+            UpdateTimer.SetAutoResetMode(true);
+
+            UpdateTimer.Tick += UpdateTimer_Ticked;
         }
 
         public void StartListening()
         {
             stopwatch.Start();
-
-            UpdateTimer.Tick += UpdateTimer_Ticked;
             UpdateTimer.Start();
         }
 
@@ -235,12 +238,6 @@ namespace ControllerService
             }
         }
 
-        public void SetPollRate(int HIDrate)
-        {
-            updateInterval = HIDrate;
-            UpdateTimer.Interval = HIDrate;
-        }
-
         public void SetVibrationStrength(double strength)
         {
             vibrationStrength = strength;
@@ -254,7 +251,6 @@ namespace ControllerService
 
             this.virtualTarget = target;
 
-            SetPollRate(updateInterval);
             SetVibrationStrength(vibrationStrength);
 
             LogManager.LogInformation("{0} attached to {1} on slot {2}", target, ProductName, controllerEx.Controller.UserIndex);
