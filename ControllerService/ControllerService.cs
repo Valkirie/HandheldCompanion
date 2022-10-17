@@ -47,7 +47,7 @@ namespace ControllerService
         Configuration configuration;
         private string DSUip;
         private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
-        private int DSUport, HIDrate;
+        private int DSUport;
         private double HIDstrength;
         private HIDmode HIDmode = HIDmode.NoController;
         private HIDstatus HIDstatus = HIDstatus.Disconnected;
@@ -82,7 +82,6 @@ namespace ControllerService
             DSUEnabled = bool.Parse(configuration.AppSettings.Settings["DSUEnabled"].Value);
             DSUip = configuration.AppSettings.Settings["DSUip"].Value;
             DSUport = int.Parse(configuration.AppSettings.Settings["DSUport"].Value);
-            HIDrate = int.Parse(configuration.AppSettings.Settings["HIDrate"].Value);
             HIDstrength = double.Parse(configuration.AppSettings.Settings["HIDstrength"].Value);
 
             SensorSelection = Enum.Parse<SensorFamily>(configuration.AppSettings.Settings["SensorSelection"].Value);
@@ -126,7 +125,6 @@ namespace ControllerService
             // XInputController settings
             XInputController = new XInputController(SensorSelection, pipeServer);
             XInputController.SetVibrationStrength(HIDstrength);
-            XInputController.SetPollRate(HIDrate);
             XInputController.Updated += OnTargetSubmited;
 
             // prepare physical controller
@@ -488,12 +486,6 @@ namespace ControllerService
                     {
                         HIDstatus value = Enum.Parse<HIDstatus>(property);
                         SetControllerStatus(value);
-                    }
-                    break;
-                case "HIDrate":
-                    {
-                        int value = int.Parse(property);
-                        XInputController.SetPollRate(value);
                     }
                     break;
                 case "HIDstrength":

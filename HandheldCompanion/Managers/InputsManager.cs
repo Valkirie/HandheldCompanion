@@ -6,6 +6,7 @@ using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views;
+using PrecisionTiming;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -23,20 +24,20 @@ namespace HandheldCompanion.Managers
         private static Gamepad Gamepad;
         private static Gamepad prevGamepad;
         private static State GamepadState;
-        private static MultimediaTimer UpdateTimer;
-        private static MultimediaTimer ResetTimer;
+        private static PrecisionTimer UpdateTimer;
+        private static PrecisionTimer ResetTimer;
 
         // InputsChord variables
         private static InputsChord inputsChord = new();
         private static InputsChord prevChord = new();
 
-        private static MultimediaTimer InputsChordHoldTimer;
-        private static MultimediaTimer InputsChordInputTimer;
+        private static PrecisionTimer InputsChordHoldTimer;
+        private static PrecisionTimer InputsChordInputTimer;
 
         private static List<KeyCode> prevKeyDown = new();
 
         // Global variables
-        private static MultimediaTimer ListenerTimer;
+        private static PrecisionTimer ListenerTimer;
 
         private const short TIME_RELEASE = 10;      // default interval between gamepad updates
         private const short TIME_FLUSH = 20;        // default interval between buffer flush
@@ -84,19 +85,34 @@ namespace HandheldCompanion.Managers
         static InputsManager()
         {
             // initialize timers
-            UpdateTimer = new MultimediaTimer(TIME_RELEASE);
+            UpdateTimer = new PrecisionTimer();
+            UpdateTimer.SetInterval(TIME_RELEASE);
+            UpdateTimer.SetAutoResetMode(true);
+
             UpdateTimer.Tick += (sender, e) => UpdateReport();
 
-            ResetTimer = new MultimediaTimer(TIME_FLUSH) { AutoReset = false };
+            ResetTimer = new PrecisionTimer();
+            ResetTimer.SetInterval(TIME_FLUSH);
+            ResetTimer.SetAutoResetMode(false);
+
             ResetTimer.Tick += (sender, e) => ReleaseBuffer();
 
-            ListenerTimer = new MultimediaTimer(TIME_EXPIRED);
+            ListenerTimer = new PrecisionTimer();
+            ListenerTimer.SetInterval(TIME_FLUSH);
+            ListenerTimer.SetAutoResetMode(true);
+
             ListenerTimer.Tick += (sender, e) => ListenerExpired();
 
-            InputsChordHoldTimer = new MultimediaTimer(TIME_LONG) { AutoReset = false };
+            InputsChordHoldTimer = new PrecisionTimer();
+            InputsChordHoldTimer.SetInterval(TIME_LONG);
+            InputsChordHoldTimer.SetAutoResetMode(false);
+
             InputsChordHoldTimer.Tick += (sender, e) => InputsChordHold_Elapsed();
 
-            InputsChordInputTimer = new MultimediaTimer(TIME_NEXT) { AutoReset = false };
+            InputsChordInputTimer = new PrecisionTimer();
+            InputsChordInputTimer.SetInterval(TIME_NEXT);
+            InputsChordInputTimer.SetAutoResetMode(false);
+
             InputsChordInputTimer.Tick += (sender, e) => { ExecuteSequence(); };
 
             m_GlobalHook = Hook.GlobalEvents();
@@ -200,7 +216,8 @@ namespace HandheldCompanion.Managers
                 // add key to InputsChord
                 inputsChord.AddKey(args);
 
-                InputsChordInputTimer.Restart();
+                InputsChordInputTimer.Stop();
+                InputsChordInputTimer.Start();
 
                 return;
             }
@@ -218,14 +235,14 @@ namespace HandheldCompanion.Managers
                     KeyIndex++;
 
                     // increase interval as we're expecting a new chord key
-                    ResetTimer.Interval = TIME_FLUSH_EXT;
+                    ResetTimer.SetInterval(TIME_FLUSH_EXT);
 
                     break; // leave loop
                 }
                 else
                 {
                     // restore default interval
-                    ResetTimer.Interval = TIME_FLUSH;
+                    ResetTimer.SetInterval(TIME_FLUSH);
                 }
             }
 
@@ -280,7 +297,8 @@ namespace HandheldCompanion.Managers
 
                         if (args.IsKeyDown)
                         {
-                            InputsChordHoldTimer.Restart();
+                            InputsChordHoldTimer.Stop();
+                            InputsChordHoldTimer.Start();
 
                             // update vars
                             inputsChord.SpecialKey = pair.name;
@@ -290,7 +308,7 @@ namespace HandheldCompanion.Managers
                         }
 
                         // Sequence was intercepted already
-                        if (InputsChordHoldTimer.Enabled)
+                        if (InputsChordHoldTimer.IsRunning())
                             ExecuteSequence();
 
                         return; // prevent multiple shortcuts from being triggered
@@ -484,7 +502,8 @@ namespace HandheldCompanion.Managers
                 else
                     inputsChord.GamepadButtons |= Gamepad.Buttons;
 
-                InputsChordHoldTimer.Restart();
+                InputsChordHoldTimer.Stop();
+                InputsChordHoldTimer.Start();
             }
             // IsKeyUp
             else if (Gamepad.Buttons == 0 && inputsChord.GamepadButtons != GamepadButtonFlags.None)
@@ -492,7 +511,7 @@ namespace HandheldCompanion.Managers
                 GamepadClearPending = true;
 
                 // Sequence was intercepted already
-                if (InputsChordHoldTimer.Enabled)
+                if (InputsChordHoldTimer.IsRunning())
                     ExecuteSequence();
             }
 
