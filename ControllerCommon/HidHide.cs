@@ -31,7 +31,7 @@ namespace ControllerCommon
             if (!File.Exists(path))
             {
                 LogManager.LogWarning("HidHide is missing. Application behavior will be degraded. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
-                // throw new InvalidOperationException();
+                throw new InvalidOperationException();
             }
 
             process = new Process
