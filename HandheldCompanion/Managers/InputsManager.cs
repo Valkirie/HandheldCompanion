@@ -98,8 +98,8 @@ namespace HandheldCompanion.Managers
             ResetTimer.Tick += (sender, e) => ReleaseBuffer();
 
             ListenerTimer = new PrecisionTimer();
-            ListenerTimer.SetInterval(TIME_FLUSH);
-            ListenerTimer.SetAutoResetMode(true);
+            ListenerTimer.SetInterval(TIME_EXPIRED);
+            ListenerTimer.SetAutoResetMode(false);
 
             ListenerTimer.Tick += (sender, e) => ListenerExpired();
 
