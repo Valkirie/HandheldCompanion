@@ -34,7 +34,7 @@ namespace HandheldCompanion.Managers
         private static PrecisionTimer InputsChordHoldTimer;
         private static PrecisionTimer InputsChordInputTimer;
 
-        private static List<KeyCode> prevKeyDown = new();
+        private static bool prevKeyDown = false;
 
         // Global variables
         private static PrecisionTimer ListenerTimer;
@@ -224,7 +224,7 @@ namespace HandheldCompanion.Managers
 
             foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
             {
-                List<KeyCode> chord = pair.chord;
+                List<KeyCode> chord = pair.chords[args.IsKeyDown];
                 if (KeyIndex >= chord.Count)
                     continue;
 
@@ -263,7 +263,7 @@ namespace HandheldCompanion.Managers
                 foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
                 {
                     // compare ordered enumerable
-                    List<KeyCode> chord_keys = pair.chord.OrderBy(key => key).ToList();
+                    List<KeyCode> chord_keys = pair.chords[args.IsKeyDown].OrderBy(key => key).ToList();
 
                     if (chord_keys.SequenceEqual(buffer_keys))
                     {
@@ -272,14 +272,14 @@ namespace HandheldCompanion.Managers
 
                         if (args.IsKeyDown)
                         {
-                            prevKeyDown = chord_keys;
+                            prevKeyDown = true;
                         }
                         else if (args.IsKeyUp)
                         {
-                            if (!chord_keys.SequenceEqual(prevKeyDown))
+                            if (!prevKeyDown)
                                 unexpected = true;
                             else
-                                prevKeyDown.Clear();
+                                prevKeyDown = false;
                         }
 
                         // only intercept inputs if not too close
