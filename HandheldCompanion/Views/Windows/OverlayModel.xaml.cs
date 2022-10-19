@@ -104,6 +104,9 @@ namespace HandheldCompanion.Views.Windows
                             case "AYANEONext":
                                 newModel = new ModelAYANEONext();
                                 break;
+                            case "AYANEOAir":
+                                newModel = new ModelAYANEOAir();
+                                break;
                             case "ONEXPLAYERMini":
                                 newModel = new ModelOneXPlayerMini();
                                 break;
