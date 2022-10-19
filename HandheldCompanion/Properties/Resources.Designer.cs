@@ -1959,6 +1959,114 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Manual GPU Clock Control.
+        /// </summary>
+        public static string QuickPerformancePage_GPUControl {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_GPUControl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sets the GPU to a fixed clock.
+        /// </summary>
+        public static string QuickPerformancePage_GPUControlDesc {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_GPUControlDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  MHz.
+        /// </summary>
+        public static string QuickPerformancePage_GPUUnit {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_GPUUnit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Power mode.
+        /// </summary>
+        public static string QuickPerformancePage_PowerMode {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_PowerMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Balanced.
+        /// </summary>
+        public static string QuickPerformancePage_PowerModeBalanced {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_PowerModeBalanced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Optimize your device based on power use and performance.
+        /// </summary>
+        public static string QuickPerformancePage_PowerModeDesc {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_PowerModeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Efficiency.
+        /// </summary>
+        public static string QuickPerformancePage_PowerModeEfficiency {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_PowerModeEfficiency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Performance.
+        /// </summary>
+        public static string QuickPerformancePage_PowerModePerformance {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_PowerModePerformance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thermal Power (TDP) Limit.
+        /// </summary>
+        public static string QuickPerformancePage_TDPLimit {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_TDPLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Limits processor power for less total power.
+        /// </summary>
+        public static string QuickPerformancePage_TDPLimitDesc {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_TDPLimitDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thermal Power Limit is overwritten by a profile.
+        /// </summary>
+        public static string QuickPerformancePage_TDPOverWrittenWarning {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_TDPOverWrittenWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W.
+        /// </summary>
+        public static string QuickPerformancePage_TDPUnitWatt {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_TDPUnitWatt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and the virtual controller disabled..
         /// </summary>
         public static string ServiceDescription {
