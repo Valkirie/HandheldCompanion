@@ -63,7 +63,7 @@ namespace HandheldCompanion.Managers
 
         private static void ProcessHotkey(string fileName)
         {
-            Hotkey hotkey = null;
+            Hotkey hotkey;
             try
             {
                 string outputraw = File.ReadAllText(fileName);
@@ -72,13 +72,19 @@ namespace HandheldCompanion.Managers
             catch (Exception ex)
             {
                 LogManager.LogError("Could not parse hotkey {0}. {1}", fileName, ex.Message);
+                return;
             }
 
             // failed to parse
-            if (hotkey == null || hotkey.hotkeyId == 0 || hotkey.inputsChord == null)
+            if (hotkey == null)
             {
-                LogManager.LogError("Could not parse hotkey {0}.", fileName);
-                return;
+                LogManager.LogError("Error while parsing hotkey {0}. Object is null.", fileName);
+            }
+
+            if (!InputsHotkey.Hotkeys.ContainsKey(hotkey.hotkeyId))
+            {
+                LogManager.LogError("Error while parsing {0}. InputsHotkey is outdated.", fileName);
+                hotkey.hotkeyId = 0;
             }
 
             hotkey.inputsHotkey = InputsHotkey.Hotkeys[hotkey.hotkeyId];
