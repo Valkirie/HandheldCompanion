@@ -102,8 +102,6 @@ namespace ControllerService
             Inclinometer.StopListening(sensorFamily);
 
             stopwatch.Stop();
-
-            UpdateTimer.Tick -= UpdateTimer_Ticked;
             UpdateTimer.Stop();
         }
 
