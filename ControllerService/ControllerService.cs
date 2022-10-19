@@ -604,6 +604,7 @@ namespace ControllerService
 
                         // (re)initialize sensors
                         XInputController?.UpdateSensors();
+                        XInputController?.StartListening();
 
                         // (re)initialize ViGEm
                         VirtualClient = new ViGEmClient();
