@@ -736,7 +736,7 @@ namespace HandheldCompanion.Views
                 case SystemStatus.Ready:
                     {
                         // resume delay (arbitrary)
-                        await Task.Delay(5000);
+                        await Task.Delay(2000);
 
                         // restore inputs manager
                         InputsManager.Start();
