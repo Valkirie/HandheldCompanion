@@ -10,18 +10,6 @@ using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerCommon.Devices
 {
-    public class DeviceChord
-    {
-        public string name;
-        public List<KeyCode> chord;
-
-        public DeviceChord(string name, List<KeyCode> chord)
-        {
-            this.name = name;
-            this.chord = chord;
-        }
-    }
-
     public abstract class Device
     {
         protected USBDeviceInfo sensor = new USBDeviceInfo();

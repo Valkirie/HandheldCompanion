@@ -34,13 +34,18 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add(new DeviceChord("Keyboard key", new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O, KeyCode.LWin, KeyCode.O }));
-            listeners.Add(new DeviceChord("Function key", new List<KeyCode>() { KeyCode.LWin, KeyCode.D }));
-            listeners.Add(new DeviceChord("Function + Volume Up", new List<KeyCode>() { KeyCode.F1 }));
+            listeners.Add(new DeviceChord("Keyboard key", new List<KeyCode>() { KeyCode.LWin, KeyCode.RControlKey, KeyCode.O }));
 
-            // Workaround: Function + Fan is sending one PrintScreen *down* and two PrintScreen *up*
-            listeners.Add(new DeviceChord("Function + Fan", new List<KeyCode>() { KeyCode.LWin, KeyCode.PrintScreen }));
-            listeners.Add(new DeviceChord("Function + Fan", new List<KeyCode>() { KeyCode.LWin, KeyCode.PrintScreen, KeyCode.PrintScreen }));
+            listeners.Add(new DeviceChord("Function key", new List<KeyCode>() { KeyCode.LWin, KeyCode.D }));
+            listeners.Add(new DeviceChord("Function + Volume Up",
+                new List<KeyCode>() { KeyCode.F1 },
+                new List<KeyCode>() { KeyCode.F1, KeyCode.F1 }
+                ));
+
+            listeners.Add(new DeviceChord("Function + Fan",
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot },
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot, KeyCode.Snapshot }
+                ));
         }
     }
 }
