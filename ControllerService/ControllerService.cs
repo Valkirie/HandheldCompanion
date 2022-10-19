@@ -600,7 +600,7 @@ namespace ControllerService
                 case SystemStatus.Ready:
                     {
                         // resume delay (arbitrary)
-                        await Task.Delay(5000);
+                        await Task.Delay(4000);
 
                         // (re)initialize sensors
                         XInputController?.UpdateSensors();
@@ -613,6 +613,8 @@ namespace ControllerService
                     break;
                 case SystemStatus.Unready:
                     {
+                        XInputController?.StopListening();
+
                         VirtualTarget.Dispose();
                         VirtualTarget = null;
 
