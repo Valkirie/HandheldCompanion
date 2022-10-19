@@ -13,6 +13,7 @@ namespace ControllerCommon.Devices
             // device specific settings
             this.WidthHeightRatio = 2.4f;
             this.ProductIllustration = "device_aya_air";
+            this.ProductModel = "AYANEOAir";
 
             // https://www.amd.com/en/products/apu/amd-ryzen-7-5825u
             this.nTDP = new double[] { 12, 12, 15 };
