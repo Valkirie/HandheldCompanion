@@ -1,0 +1,73 @@
+name: Build and Publish Handheld Companion
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    name: Build (Release)
+    runs-on: windows-latest 
+
+    env:
+      Solution_Name: ControllerService.sln
+      INNO_VERSION: 6.2.1
+
+    steps:
+    
+    # Checkout project
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    
+    # Setup NuGet and run Restore
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-version: '5.x'
+    - run: nuget restore ControllerService.sln
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    # Build ControllerService solution
+    - name: Build Entire Solution
+      run: msbuild $env:Solution_Name /p:Configuration=Release
+      
+    # Rebuild ControllerService project
+    - name: Rebuild ControllerService Project
+      run: msbuild $env:Solution_Name /t:ControllerService:rebuild /p:Configuration="Release"
+    
+    # Download Inno Setup
+    - name: Download Inno Setup installer
+      run: curl -L -o ./installer.exe http://files.jrsoftware.org/is/6/innosetup-${{ env.INNO_VERSION }}.exe      
+      
+    # Install Inno Setup
+    - name: Install Inno Setup
+      run: ./installer.exe /verysilent /allusers /dir=inst
+      
+    # Create Installers
+    - name: Create Installer
+      run: |
+          "%programfiles(x86)%\Inno Setup 6\iscc.exe" "ControllerService.iss"
+      shell: cmd
+      
+    - name: Create Offline Installer
+      run: |
+          "%programfiles(x86)%\Inno Setup 6\iscc.exe" "ControllerService-offline.iss"
+      shell: cmd
+    
+    # Upload install file artifacts
+    - name: Upload Installs Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: install-files
+        path: ./install
