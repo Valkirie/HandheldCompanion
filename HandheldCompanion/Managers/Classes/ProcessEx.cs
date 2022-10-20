@@ -10,8 +10,10 @@ using System.Management;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Threading;
 using static HandheldCompanion.Managers.EnergyManager;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 using Brush = System.Windows.Media.Brush;
 using Image = System.Windows.Controls.Image;
 
@@ -20,11 +22,11 @@ namespace HandheldCompanion.Managers.Classes
     public class ProcessEx
     {
         public Process Process;
-        public List<IntPtr> hProcesses = new();
+        public List<int> Children = new();
 
         public IntPtr MainWindowHandle;
         public object processInfo;
-        public QualityOfServiceLevel QoL;
+        public QualityOfServiceLevel EcoQos;
 
         public int Id;
         public string Name;
@@ -48,22 +50,16 @@ namespace HandheldCompanion.Managers.Classes
         public SimpleStackPanel processStackPanel;
         public TextBlock processQoS;
 
+        public event ChildProcessCreatedEventHandler ChildProcessCreated;
+        public delegate void ChildProcessCreatedEventHandler(ProcessEx parent, int Id);
+
         public ProcessEx(Process process)
         {
             this.Process = process;
             this.Id = process.Id;
         }
 
-        public static List<Process> GetChildProcesses(Process process)
-        => new ManagementObjectSearcher(
-                $"Select * From Win32_Process Where ParentProcessID={process.Id}")
-            .Get()
-            .Cast<ManagementObject>()
-            .Select(mo =>
-                Process.GetProcessById(Convert.ToInt32(mo["ProcessID"])))
-            .ToList();
-
-        public void Timer_Tick(object? sender, EventArgs e)
+        public void Refresh()
         {
             try
             {
@@ -71,6 +67,19 @@ namespace HandheldCompanion.Managers.Classes
 
                 if (Process.HasExited)
                     return;
+
+                // refresh all child processes
+                List<int> childs = ProcessUtils.GetChildIds(this.Process);
+
+                // remove exited children
+                Children.RemoveAll(item => !childs.Contains(item));
+
+                // raise event on new children
+                foreach (int child in childs.Where(item => !Children.Contains(item)))
+                {
+                    Children.Add(child);
+                    ChildProcessCreated?.Invoke(this, child);
+                }
 
                 var processThread = Process.Threads[0];
 
@@ -121,7 +130,7 @@ namespace HandheldCompanion.Managers.Classes
                     }
 
                     // manage process throttling
-                    processQoS.Text = EnumUtils.GetDescriptionFromEnumValue(QoL);
+                    processQoS.Text = EnumUtils.GetDescriptionFromEnumValue(EcoQos);
                 }), DispatcherPriority.ContextIdle);
             }
             catch (Exception) { }
@@ -193,7 +202,7 @@ namespace HandheldCompanion.Managers.Classes
             {
                 FontSize = 14,
                 Text = Executable,
-                TextWrapping = TextWrapping.Wrap,
+                TextWrapping = TextWrapping.NoWrap,
                 VerticalAlignment = VerticalAlignment.Center
             };
 

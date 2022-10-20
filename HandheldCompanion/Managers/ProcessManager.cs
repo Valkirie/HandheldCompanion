@@ -43,7 +43,7 @@ namespace HandheldCompanion.Managers
         private Timer MonitorTimer;
         private ManagementEventWatcher stopWatch;
 
-        private ConcurrentDictionary<int, ProcessEx> Processes = new();
+        public ConcurrentDictionary<int, ProcessEx> Processes = new();
         private ProcessEx foregroundProcess;
         private ProcessEx backgroundProcess;
 
@@ -199,21 +199,21 @@ namespace HandheldCompanion.Managers
             lock (updateLock)
             {
                 foreach (ProcessEx proc in Processes.Values)
-                    proc.Timer_Tick(sender, e);
+                    proc.Refresh();
             }
         }
 
-        void ProcessHalted(object sender, EventArrivedEventArgs e)
+        private void ProcessHalted(object sender, EventArrivedEventArgs e)
         {
             try
             {
-                int processId = (int)e.NewEvent.Properties["ProcessID"].Value;
+                int processId = int.Parse(e.NewEvent.Properties["ProcessID"].Value.ToString());
                 ProcessHalted(processId);
             }
             catch (Exception) { }
         }
 
-        void ProcessHalted(int processId)
+        private void ProcessHalted(int processId)
         {
             if (Processes.ContainsKey(processId))
             {
@@ -252,6 +252,8 @@ namespace HandheldCompanion.Managers
                         Bypassed = !IsValid(exec, path)
                     };
 
+                    processEx.ChildProcessCreated += ChildProcessCreated;
+
                     Processes.TryAdd(processEx.Id, processEx);
 
                     if (processEx.Bypassed)
@@ -268,6 +270,11 @@ namespace HandheldCompanion.Managers
                 // process has too high elevation
                 return;
             }
+        }
+
+        private void ChildProcessCreated(ProcessEx parent, int Id)
+        {
+            EnergyManager.ToggleEfficiencyMode(Id, parent.EcoQos, true);
         }
 
         private bool IsValid(string exec, string path)
