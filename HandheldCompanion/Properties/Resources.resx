@@ -390,6 +390,12 @@
   <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
     <value>Change the angle, in degree</value>
   </data>
+  <data name="OverlayPage_Color" xml:space="preserve">
+    <value>Background Color</value>
+  </data>
+  <data name="OverlayPage_ColorDesc" xml:space="preserve">
+    <value />
+  </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
     <value>Controller options</value>
   </data>
@@ -625,6 +631,12 @@
   <data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
     <value>This item will be overwriten. You can't undo this action.</value>
   </data>
+  <data name="ProfilesPage_BoostPower" xml:space="preserve">
+    <value>Boost power limit</value>
+  </data>
+  <data name="ProfilesPage_BoostPowerDesc" xml:space="preserve">
+    <value>Change boost thermal power limit</value>
+  </data>
   <data name="ProfilesPage_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -676,6 +688,12 @@
   <data name="ProfilesPage_OK" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="ProfilesPage_PowerSettings" xml:space="preserve">
+    <value>Power settings</value>
+  </data>
+  <data name="ProfilesPage_PowerSettingsDesc" xml:space="preserve">
+    <value>Change the power settings</value>
+  </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
     <value>Profile details</value>
   </data>
@@ -717,6 +735,18 @@
   </data>
   <data name="ProfilesPage_StyleofOutputTooltip" xml:space="preserve">
     <value>Select the device that will receive the motion commands</value>
+  </data>
+  <data name="ProfilesPage_SustainedPower" xml:space="preserve">
+    <value>Sustained power limit</value>
+  </data>
+  <data name="ProfilesPage_SustainedPowerDesc" xml:space="preserve">
+    <value>Change sustained thermal power limit</value>
+  </data>
+  <data name="ProfilesPage_TDPOverride" xml:space="preserve">
+    <value>Thermal Power (TDP) Override</value>
+  </data>
+  <data name="ProfilesPage_TDPOverrideDesc" xml:space="preserve">
+    <value>Override the processor thermal power limit</value>
   </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
     <value>Enable universal motion controler</value>
@@ -761,6 +791,48 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="Properties.Resources.ControllerPage_Disconnect" xml:space="preserve">
     <value>Properties.Resources.ControllerPage_Disconnect</value>
   </data>
+  <data name="QuickPerformancePage_GPUControl" xml:space="preserve">
+    <value>Manual GPU Clock Control</value>
+  </data>
+  <data name="QuickPerformancePage_GPUControlDesc" xml:space="preserve">
+    <value>Sets the GPU to a fixed clock</value>
+  </data>
+  <data name="QuickPerformancePage_GPUUnit" xml:space="preserve">
+    <value> MHz</value>
+  </data>
+  <data name="QuickPerformancePage_PowerMode" xml:space="preserve">
+    <value>Power mode</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModeBalanced" xml:space="preserve">
+    <value>Balanced</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModeDesc" xml:space="preserve">
+    <value>Optimize your device based on power use and performance</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModeEfficiency" xml:space="preserve">
+    <value>Efficiency</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModePerformance" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="QuickPerformancePage_TDPLimit" xml:space="preserve">
+    <value>Thermal Power (TDP) Limit</value>
+  </data>
+  <data name="QuickPerformancePage_TDPLimitDesc" xml:space="preserve">
+    <value>Limits processor power for less total power</value>
+  </data>
+  <data name="QuickPerformancePage_TDPOverWrittenWarning" xml:space="preserve">
+    <value>Thermal Power Limit is overwritten by a profile</value>
+  </data>
+  <data name="QuickPerformancePage_TDPUnitWatt" xml:space="preserve">
+    <value> W</value>
+  </data>
+  <data name="QuickProfilesPage_Create" xml:space="preserve">
+    <value>Create profile</value>
+  </data>
+  <data name="QuickProfilesPage_Waiting" xml:space="preserve">
+    <value>Waiting for foreground process...</value>
+  </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and the virtual controller disabled.</value>
   </data>
@@ -791,6 +863,24 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="SettingsPage_AutoStartAppDesc" xml:space="preserve">
     <value>The application will start automatically when I sign in to Windows</value>
   </data>
+  <data name="SettingsPage_Backdrop" xml:space="preserve">
+    <value>Use Acrylic backdrop</value>
+  </data>
+  <data name="SettingsPage_BackdropAcrylic" xml:space="preserve">
+    <value>Acrylic</value>
+  </data>
+  <data name="SettingsPage_BackdropDesc" xml:space="preserve">
+    <value>The application will use acrylic backdrop</value>
+  </data>
+  <data name="SettingsPage_BackdropMica" xml:space="preserve">
+    <value>Mica</value>
+  </data>
+  <data name="SettingsPage_BackdropNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="SettingsPage_BackdropTabbed" xml:space="preserve">
+    <value>Tabbed</value>
+  </data>
   <data name="SettingsPage_CheckForUpdates" xml:space="preserve">
     <value>Check for updates</value>
   </data>
@@ -806,6 +896,12 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
     <value>Downloading - </value>
+  </data>
+  <data name="SettingsPage_EcoQoS" xml:space="preserve">
+    <value>EcoQoS</value>
+  </data>
+  <data name="SettingsPage_EcoQoSDesc" xml:space="preserve">
+    <value>Throttle inactive or background processes and applications to improve energy efficency</value>
   </data>
   <data name="SettingsPage_GeneralOptions" xml:space="preserve">
     <value>General options</value>
@@ -877,6 +973,24 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_StartWithCompanionDesc" xml:space="preserve">
     <value>Automatically turn on service when companion starts</value>
+  </data>
+  <data name="SettingsPage_TDPMax" xml:space="preserve">
+    <value>Maximum Power</value>
+  </data>
+  <data name="SettingsPage_TDPMaxDesc" xml:space="preserve">
+    <value>The maximum power in watts supplied to the processor</value>
+  </data>
+  <data name="SettingsPage_TDPMin" xml:space="preserve">
+    <value>Minimum Power</value>
+  </data>
+  <data name="SettingsPage_TDPMinDesc" xml:space="preserve">
+    <value>The minimum power in watts supplied to the processor</value>
+  </data>
+  <data name="SettingsPage_TDPRangeOverride" xml:space="preserve">
+    <value>Configurable Power (cTDP) override</value>
+  </data>
+  <data name="SettingsPage_TDPRangeOverrideDesc" xml:space="preserve">
+    <value>Allows to modify the minimum and maximum power values (TDP) beyond the CPU specifications</value>
   </data>
   <data name="SettingsPage_ThemeDark" xml:space="preserve">
     <value>Dark</value>

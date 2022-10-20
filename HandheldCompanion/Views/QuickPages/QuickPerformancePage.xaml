@@ -33,8 +33,8 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <TextBlock Text="Thermal Power (TDP) Limit" FontSize="14"/>
-                            <TextBlock Text="Limits processor power for less total power" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_TDPLimit}" FontSize="14"/>
+                            <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_TDPLimitDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
 
@@ -51,7 +51,7 @@
 
                 <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                     <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" IsManipulationEnabled="True" />
-                    <TextBlock VerticalAlignment="Center" Text="W" />
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
                     <Slider Name="TDPSustainedSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 					ValueChanged="TDPSustainedSlider_ValueChanged"
 					SmallChange="1" LargeChange="5"/>
@@ -67,10 +67,11 @@
 
                 <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                     <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
-                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="W" />
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
                     <Slider Name="TDPBoostSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 					ValueChanged="TDPBoostSlider_ValueChanged"
-					SmallChange="1" LargeChange="5"/>
+					SmallChange="1" LargeChange="5" 
+                    />
                 </DockPanel>
             </Border>
 
@@ -92,7 +93,7 @@
                             <ui:FontIcon Foreground="White" FontFamily="{DynamicResource SymbolThemeFontFamily}" Height="40" Glyph="&#xF136;" />
                             <ui:FontIcon Foreground="Black" FontFamily="{DynamicResource SymbolThemeFontFamily}" Height="40" Glyph="&#xF13C;" />
                         </Grid>
-                        <TextBlock Name="WarningContent" Margin="12,0,0,0" TextWrapping="Wrap" Grid.Column="1" Text="Thermal Power Limit is overwritten by a profile" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                        <TextBlock Name="WarningContent" Margin="12,0,0,0" TextWrapping="Wrap" Grid.Column="1" Text="{x:Static resx:Resources.QuickPerformancePage_TDPOverWrittenWarning}" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                     </DockPanel>
                 </Grid>
             </Border>
@@ -114,8 +115,8 @@
                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" HorizontalAlignment="Center"/>
 
                     <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                        <TextBlock Text="Manual GPU Clock Control" FontSize="14"/>
-                        <TextBlock Text="Sets the GPU to a fixed clock" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                        <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" FontSize="14"/>
+                        <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_GPUControlDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
                 </DockPanel>
 
@@ -132,7 +133,7 @@
 
             <DockPanel Grid.Column="1" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                 <TextBlock Width="30" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}" />
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" MHz" />
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_GPUUnit}" />
                 <Slider Name="GPUSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="50" Minimum="100" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 				ValueChanged="GPUSlider_ValueChanged" />
             </DockPanel>
@@ -157,8 +158,8 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEC48;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <TextBlock Text="Power mode" FontSize="14"/>
-                            <TextBlock Text="Optimize your device based on power use and performance" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_PowerMode}" FontSize="14"/>
+                            <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_PowerModeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
@@ -181,9 +182,9 @@
                                 <ColumnDefinition Width="3*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="0" HorizontalAlignment="Left" Text="Power efficiency"/>
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Center" Text="Balanced"/>
-                            <TextBlock Grid.Column="2" HorizontalAlignment="Right" Text="Best Performance"/>
+                            <TextBlock Grid.Column="0" HorizontalAlignment="Left" Text="{x:Static resx:Resources.QuickPerformancePage_PowerModeEfficiency}"/>
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_PowerModeBalanced}"/>
+                            <TextBlock Grid.Column="2" HorizontalAlignment="Right" Text="{x:Static resx:Resources.QuickPerformancePage_PowerModePerformance}"/>
                         </Grid>
                     </ui:SimpleStackPanel>
                 </DockPanel>

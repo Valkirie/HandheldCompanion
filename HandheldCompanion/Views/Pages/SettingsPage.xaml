@@ -171,16 +171,16 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Use Acrylic backdrop" FontSize="14"/>
-                                <TextBlock Text="The application will use acrylic backdrop" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_Backdrop}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_BackdropDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
                         <ui:RadioButtons Name="cB_Backdrop" Grid.Column="1" MaxColumns="2" HorizontalAlignment="Right" SelectionChanged="cB_Backdrop_SelectionChanged">
-                            <Label Content="None"/>
-                            <Label Content="Mica"/>
-                            <Label Content="Tabbed"/>
-                            <Label Content="Acrylic"/>
+                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropNone}"/>
+                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropMica}"/>
+                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropTabbed}"/>
+                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropAcrylic}"/>
                         </ui:RadioButtons>
                     </Grid>
                 </Border>
@@ -456,8 +456,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEA95;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="EcoQoS" FontSize="14"/>
-                                <TextBlock Text="Throttle inactive or background processes and applications to improve energy efficency" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_EcoQoS}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_EcoQoSDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -481,8 +481,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Configurable Power (cTDP) override" FontSize="14"/>
-                                <TextBlock Text="Allows to modify the minimum and maximum power values (TDP) beyond the CPU specifications" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverride}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverrideDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -507,8 +507,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Minimum Power" FontSize="14"/>
-                                <TextBlock Text="The minimum power in watts supplied to the processor" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMin}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMinDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -533,8 +533,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Maximum Power" FontSize="14"/>
-                                <TextBlock Text="The maximum power in watts supplied to the processor" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMax}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMaxDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
