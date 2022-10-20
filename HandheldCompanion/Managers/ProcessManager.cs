@@ -288,7 +288,7 @@ namespace HandheldCompanion.Managers
 
         private static void ChildProcessCreated(ProcessEx parent, int Id)
         {
-            EnergyManager.ToggleEfficiencyMode(Id, parent.EcoQos, true);
+            EnergyManager.ToggleEfficiencyMode(Id, parent.EcoQoS, parent);
         }
 
         private static bool IsValid(string exec, string path)

@@ -26,7 +26,7 @@ namespace HandheldCompanion.Managers.Classes
 
         public IntPtr MainWindowHandle;
         public object processInfo;
-        public QualityOfServiceLevel EcoQos;
+        public QualityOfServiceLevel EcoQoS;
 
         public int Id;
         public string Name;
@@ -130,7 +130,7 @@ namespace HandheldCompanion.Managers.Classes
                     }
 
                     // manage process throttling
-                    processQoS.Text = EnumUtils.GetDescriptionFromEnumValue(EcoQos);
+                    processQoS.Text = EnumUtils.GetDescriptionFromEnumValue(EcoQoS);
                 }), DispatcherPriority.ContextIdle);
             }
             catch (Exception) { }
@@ -256,7 +256,7 @@ namespace HandheldCompanion.Managers.Classes
             Grid.SetColumn(processResume, 2);
             processGrid.Children.Add(processResume);
 
-            // Create EcoQos indicator
+            // Create EcoQoS indicator
             processQoS = new TextBlock()
             {
                 FontSize = 14,

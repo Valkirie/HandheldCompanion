@@ -22,7 +22,6 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
-using static ControllerCommon.Managers.SystemManager;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
@@ -605,6 +604,7 @@ namespace HandheldCompanion.Views
             InputsManager.Stop();
             SystemManager.Stop();
             ProcessManager.Stop();
+            EnergyManager.Stop();
 
             // stop listening to system events
             SystemManager.SystemStatusChanged -= OnSystemStatusChanged;
@@ -727,11 +727,11 @@ namespace HandheldCompanion.Views
         }
         #endregion
 
-        private async void OnSystemStatusChanged(SystemStatus status)
+        private async void OnSystemStatusChanged(SystemManager.SystemStatus status)
         {
             switch (status)
             {
-                case SystemStatus.Ready:
+                case SystemManager.SystemStatus.Ready:
                     {
                         // resume delay (arbitrary)
                         await Task.Delay(2000);
@@ -740,7 +740,7 @@ namespace HandheldCompanion.Views
                         InputsManager.Start();
                     }
                     break;
-                case SystemStatus.Unready:
+                case SystemManager.SystemStatus.Unready:
                     {
                         //pause inputs manager
                         InputsManager.Stop();
