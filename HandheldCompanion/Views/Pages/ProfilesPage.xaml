@@ -196,8 +196,8 @@
                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE83F;" Height="40" HorizontalAlignment="Center"/>
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="Power settings" FontSize="14"/>
-                                    <TextBlock Text="Change the power settings" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_PowerSettings}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_PowerSettingsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </ui:SimpleStackPanel>
                             </DockPanel>
                         </Expander.Header>
@@ -212,8 +212,8 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="Thermal Power (TDP) Override" FontSize="14"/>
-                                        <TextBlock Text="Override the processor thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TDPOverride}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TDPOverrideDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
                                     <ui:ToggleSwitch Grid.Column="1" Name="TDPToggle" Toggled="TDPToggle_Toggled"/>
@@ -230,13 +230,13 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="Sustained power limit" FontSize="14"/>
-                                        <TextBlock Text="Change sustained thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_SustainedPower}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_SustainedPowerDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
                                     <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" />
-                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
                                         <Slider Name="TDPSustainedSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 										ValueChanged="TDPSustainedSlider_ValueChanged"
 										SmallChange="1" LargeChange="5"/>
@@ -254,13 +254,13 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="Boost power limit" FontSize="14"/>
-                                        <TextBlock Text="Change boost thermal power limit" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_BoostPower}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_BoostPowerDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
                                     <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
-                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text=" W" />
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
                                         <Slider Name="TDPBoostSlider" Margin="6,0,0,0" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 										ValueChanged="TDPBoostSlider_ValueChanged"
 										SmallChange="1" LargeChange="5"/>

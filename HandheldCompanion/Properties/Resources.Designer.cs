@@ -865,6 +865,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Background Color.
+        /// </summary>
+        public static string OverlayPage_Color {
+            get {
+                return ResourceManager.GetString("OverlayPage_Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string OverlayPage_ColorDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_ColorDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controller options.
         /// </summary>
         public static string OverlayPage_ControllerOptions {
@@ -1553,6 +1571,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Boost power limit.
+        /// </summary>
+        public static string ProfilesPage_BoostPower {
+            get {
+                return ResourceManager.GetString("ProfilesPage_BoostPower", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change boost thermal power limit.
+        /// </summary>
+        public static string ProfilesPage_BoostPowerDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_BoostPowerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string ProfilesPage_Cancel {
@@ -1706,6 +1742,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Power settings.
+        /// </summary>
+        public static string ProfilesPage_PowerSettings {
+            get {
+                return ResourceManager.GetString("ProfilesPage_PowerSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the power settings.
+        /// </summary>
+        public static string ProfilesPage_PowerSettingsDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_PowerSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Profile details.
         /// </summary>
         public static string ProfilesPage_ProfileDetails {
@@ -1828,6 +1882,42 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_StyleofOutputTooltip {
             get {
                 return ResourceManager.GetString("ProfilesPage_StyleofOutputTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sustained power limit.
+        /// </summary>
+        public static string ProfilesPage_SustainedPower {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SustainedPower", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change sustained thermal power limit.
+        /// </summary>
+        public static string ProfilesPage_SustainedPowerDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SustainedPowerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thermal Power (TDP) Override.
+        /// </summary>
+        public static string ProfilesPage_TDPOverride {
+            get {
+                return ResourceManager.GetString("ProfilesPage_TDPOverride", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Override the processor thermal power limit.
+        /// </summary>
+        public static string ProfilesPage_TDPOverrideDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_TDPOverrideDesc", resourceCulture);
             }
         }
         
@@ -2058,11 +2148,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to W.
+        ///   Looks up a localized string similar to  W.
         /// </summary>
         public static string QuickPerformancePage_TDPUnitWatt {
             get {
                 return ResourceManager.GetString("QuickPerformancePage_TDPUnitWatt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create profile.
+        /// </summary>
+        public static string QuickProfilesPage_Create {
+            get {
+                return ResourceManager.GetString("QuickProfilesPage_Create", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Waiting for foreground process....
+        /// </summary>
+        public static string QuickProfilesPage_Waiting {
+            get {
+                return ResourceManager.GetString("QuickProfilesPage_Waiting", resourceCulture);
             }
         }
         
@@ -2157,6 +2265,60 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use Acrylic backdrop.
+        /// </summary>
+        public static string SettingsPage_Backdrop {
+            get {
+                return ResourceManager.GetString("SettingsPage_Backdrop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Acrylic.
+        /// </summary>
+        public static string SettingsPage_BackdropAcrylic {
+            get {
+                return ResourceManager.GetString("SettingsPage_BackdropAcrylic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The application will use acrylic backdrop.
+        /// </summary>
+        public static string SettingsPage_BackdropDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_BackdropDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mica.
+        /// </summary>
+        public static string SettingsPage_BackdropMica {
+            get {
+                return ResourceManager.GetString("SettingsPage_BackdropMica", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string SettingsPage_BackdropNone {
+            get {
+                return ResourceManager.GetString("SettingsPage_BackdropNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tabbed.
+        /// </summary>
+        public static string SettingsPage_BackdropTabbed {
+            get {
+                return ResourceManager.GetString("SettingsPage_BackdropTabbed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Check for updates.
         /// </summary>
         public static string SettingsPage_CheckForUpdates {
@@ -2198,6 +2360,24 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_DownloadingPercentage {
             get {
                 return ResourceManager.GetString("SettingsPage_DownloadingPercentage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EcoQoS.
+        /// </summary>
+        public static string SettingsPage_EcoQoS {
+            get {
+                return ResourceManager.GetString("SettingsPage_EcoQoS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Throttle inactive or background processes and applications to improve energy efficency.
+        /// </summary>
+        public static string SettingsPage_EcoQoSDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_EcoQoSDesc", resourceCulture);
             }
         }
         
@@ -2405,6 +2585,60 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_StartWithCompanionDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_StartWithCompanionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximum Power.
+        /// </summary>
+        public static string SettingsPage_TDPMax {
+            get {
+                return ResourceManager.GetString("SettingsPage_TDPMax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The maximum power in watts supplied to the processor.
+        /// </summary>
+        public static string SettingsPage_TDPMaxDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_TDPMaxDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimum Power.
+        /// </summary>
+        public static string SettingsPage_TDPMin {
+            get {
+                return ResourceManager.GetString("SettingsPage_TDPMin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The minimum power in watts supplied to the processor.
+        /// </summary>
+        public static string SettingsPage_TDPMinDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_TDPMinDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configurable Power (cTDP) override.
+        /// </summary>
+        public static string SettingsPage_TDPRangeOverride {
+            get {
+                return ResourceManager.GetString("SettingsPage_TDPRangeOverride", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allows to modify the minimum and maximum power values (TDP) beyond the CPU specifications.
+        /// </summary>
+        public static string SettingsPage_TDPRangeOverrideDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_TDPRangeOverrideDesc", resourceCulture);
             }
         }
         
