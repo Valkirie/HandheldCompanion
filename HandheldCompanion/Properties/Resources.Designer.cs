@@ -632,7 +632,7 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("InputsHotkey_shortcutTaskviewDesc", resourceCulture);
             }
         }
-		
+        
         /// <summary>
         ///   Looks up a localized string similar to Toggle Suspender.
         /// </summary>
@@ -640,7 +640,16 @@ namespace HandheldCompanion.Properties {
             get {
                 return ResourceManager.GetString("InputsHotkey_suspendResumeTask", resourceCulture);
             }
-        }		
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Suspend or resume the foreground application.
+        /// </summary>
+        public static string InputsHotkey_suspendResumeTaskDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_suspendResumeTaskDesc", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to {
