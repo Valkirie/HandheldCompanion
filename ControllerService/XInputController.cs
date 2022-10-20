@@ -85,13 +85,13 @@ namespace ControllerService
             UpdateTimer = new PrecisionTimer();
             UpdateTimer.SetInterval(updateInterval);
             UpdateTimer.SetAutoResetMode(true);
-
-            UpdateTimer.Tick += UpdateTimer_Ticked;
         }
 
         public void StartListening()
         {
             stopwatch.Start();
+
+            UpdateTimer.Tick += UpdateTimer_Ticked;
             UpdateTimer.Start();
         }
 
@@ -101,8 +101,10 @@ namespace ControllerService
             Accelerometer.StopListening(sensorFamily);
             Inclinometer.StopListening(sensorFamily);
 
-            stopwatch.Stop();
+            UpdateTimer.Tick -= UpdateTimer_Ticked;
             UpdateTimer.Stop();
+
+            stopwatch.Stop();
         }
 
         public void UpdateSensors()

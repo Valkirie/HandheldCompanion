@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Automation;
 using Windows.System.Diagnostics;
 using static ControllerCommon.WinAPI;
@@ -15,7 +16,7 @@ using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
 {
-    public class ProcessManager : Manager
+    public static class ProcessManager
     {
         #region imports
         [DllImport("user32.dll", SetLastError = true)]
@@ -26,8 +27,8 @@ namespace HandheldCompanion.Managers
 
         const uint WINEVENT_OUTOFCONTEXT = 0;
         const uint EVENT_SYSTEM_FOREGROUND = 3;
-        private IntPtr winHook;
-        private WinEventProc listener;
+        private static IntPtr winHook;
+        private static WinEventProc listener;
 
         public delegate bool WindowEnumCallback(IntPtr hwnd, int lparam);
 
@@ -40,37 +41,41 @@ namespace HandheldCompanion.Managers
         #endregion
 
         // process vars
-        private Timer MonitorTimer;
-        private ManagementEventWatcher stopWatch;
+        private static Timer MonitorTimer;
+        private static ManagementEventWatcher stopWatch;
 
-        private ConcurrentDictionary<uint, ProcessEx> Processes = new();
-        private ProcessEx foregroundProcess;
-        private ProcessEx backgroundProcess;
+        private static ConcurrentDictionary<int, ProcessEx> Processes = new();
 
-        private object updateLock = new();
+        private static ProcessEx foregroundProcess;
+        private static ProcessEx backgroundProcess;
 
-        public event ForegroundChangedEventHandler ForegroundChanged;
+        private static object updateLock = new();
+        private static bool IsInitialized;
+
+        public static event ForegroundChangedEventHandler ForegroundChanged;
         public delegate void ForegroundChangedEventHandler(ProcessEx processEx, ProcessEx backgroundEx);
 
-        public event ProcessStartedEventHandler ProcessStarted;
+        public static event ProcessStartedEventHandler ProcessStarted;
         public delegate void ProcessStartedEventHandler(ProcessEx processEx, bool startup);
 
-        public event ProcessStoppedEventHandler ProcessStopped;
+        public static event ProcessStoppedEventHandler ProcessStopped;
         public delegate void ProcessStoppedEventHandler(ProcessEx processEx);
 
-        public ProcessManager() : base()
+        static ProcessManager()
         {
             MonitorTimer = new Timer(1000);
             MonitorTimer.Elapsed += MonitorHelper;
 
+            // hook: on process halt
             stopWatch = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
             stopWatch.EventArrived += new EventArrivedEventHandler(ProcessHalted);
-
-            listener = new WinEventProc(EventCallback);// hook: on window foregroud
+            
+            // hook: on window foregroud
+            listener = new WinEventProc(EventCallback);
             winHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, listener, 0, 0, WINEVENT_OUTOFCONTEXT);
         }
 
-        public override void Start()
+        public static void Start()
         {
             // start processes monitor
             MonitorTimer.Start();
@@ -91,11 +96,9 @@ namespace HandheldCompanion.Managers
             // get current foreground process
             IntPtr hWnd = GetforegroundWindow();
             EventCallback((IntPtr)0, 0, hWnd, 0, 0, 0, 0);
-
-            base.Start();
         }
 
-        public override void Stop()
+        public static void Stop()
         {
             if (!IsInitialized)
                 return;
@@ -108,21 +111,32 @@ namespace HandheldCompanion.Managers
             Automation.RemoveAllEventHandlers();
 
             UnhookWinEvent(winHook);
-
-            base.Stop();
         }
 
-        public ProcessEx GetForegroundProcess()
+        public static ProcessEx GetForegroundProcess()
         {
             return foregroundProcess;
         }
 
-        public List<ProcessEx> GetProcesses()
+        public static ProcessEx GetSuspendedProcess()
+        {
+            return Processes.Values.Where(item => !item.IsIgnored && item.IsSuspended()).FirstOrDefault();
+        }
+
+        public static List<ProcessEx> GetProcesses()
         {
             return Processes.Values.ToList();
         }
 
-        private void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
+        public static ProcessEx GetProcesses(int pId)
+        {
+            if (Processes.ContainsKey(pId))
+                return Processes[pId];
+
+            return null;
+        }
+
+        private static void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
         {
             try
             {
@@ -141,7 +155,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private bool AddWnd(IntPtr hWnd, int lparam)
+        private static bool AddWnd(IntPtr hWnd, int lparam)
         {
             if (IsWindowVisible((int)hWnd))
             {
@@ -153,7 +167,7 @@ namespace HandheldCompanion.Managers
             return true;
         }
 
-        private void EventCallback(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
+        private static void EventCallback(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
         {
             ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd).Process;
 
@@ -161,7 +175,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             Process proc = Process.GetProcessById((int)processInfo.ProcessId);
-            uint procId = (uint)proc.Id;
+            int procId = proc.Id;
 
             string path = ProcessUtils.GetPathToApp(proc);
             string exec = System.IO.Path.GetFileName(path);
@@ -183,7 +197,7 @@ namespace HandheldCompanion.Managers
                     Name = exec,
                     Executable = exec,
                     Path = path,
-                    Bypassed = !IsValid(exec, path)
+                    IsIgnored = !IsValid(exec, path)
                 };
 
             // update main window handle
@@ -194,32 +208,32 @@ namespace HandheldCompanion.Managers
             ForegroundChanged?.Invoke(foregroundProcess, backgroundProcess);
         }
 
-        private void MonitorHelper(object? sender, EventArgs e)
+        private static void MonitorHelper(object? sender, EventArgs e)
         {
             lock (updateLock)
             {
                 foreach (ProcessEx proc in Processes.Values)
-                    proc.Timer_Tick(sender, e);
+                    proc.Refresh();
             }
         }
 
-        void ProcessHalted(object sender, EventArrivedEventArgs e)
+        private static void ProcessHalted(object sender, EventArrivedEventArgs e)
         {
             try
             {
-                uint processId = (uint)e.NewEvent.Properties["ProcessID"].Value;
+                int processId = int.Parse(e.NewEvent.Properties["ProcessID"].Value.ToString());
                 ProcessHalted(processId);
             }
             catch (Exception) { }
         }
 
-        void ProcessHalted(uint processId)
+        private static void ProcessHalted(int processId)
         {
             if (Processes.ContainsKey(processId))
             {
                 ProcessEx processEx = Processes[processId];
 
-                Processes.TryRemove(new KeyValuePair<uint, ProcessEx>(processId, processEx));
+                Processes.TryRemove(new KeyValuePair<int, ProcessEx>(processId, processEx));
 
                 ProcessStopped?.Invoke(processEx);
 
@@ -230,7 +244,7 @@ namespace HandheldCompanion.Managers
                 foregroundProcess = null;
         }
 
-        private void ProcessCreated(Process proc, int NativeWindowHandle = 0, bool startup = false)
+        private static void ProcessCreated(Process proc, int NativeWindowHandle = 0, bool startup = false)
         {
             try
             {
@@ -241,7 +255,7 @@ namespace HandheldCompanion.Managers
                 string path = ProcessUtils.GetPathToApp(proc);
                 string exec = System.IO.Path.GetFileName(path);
 
-                if (!Processes.ContainsKey((uint)proc.Id))
+                if (!Processes.ContainsKey(proc.Id))
                 {
                     ProcessEx processEx = new ProcessEx(proc)
                     {
@@ -249,12 +263,14 @@ namespace HandheldCompanion.Managers
                         Executable = exec,
                         Path = path,
                         MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle,
-                        Bypassed = !IsValid(exec, path)
+                        IsIgnored = !IsValid(exec, path)
                     };
+
+                    processEx.ChildProcessCreated += ChildProcessCreated;
 
                     Processes.TryAdd(processEx.Id, processEx);
 
-                    if (processEx.Bypassed)
+                    if (processEx.IsIgnored)
                         return;
 
                     // raise event
@@ -270,7 +286,12 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private bool IsValid(string exec, string path)
+        private static void ChildProcessCreated(ProcessEx parent, int Id)
+        {
+            EnergyManager.ToggleEfficiencyMode(Id, parent.EcoQoS, parent);
+        }
+
+        private static bool IsValid(string exec, string path)
         {
             if (string.IsNullOrEmpty(path))
                 return false;
@@ -326,9 +347,35 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private bool IsSelf(string exec, string path)
+        private static bool IsSelf(string exec, string path)
         {
             return exec.ToLower().Equals("handheldcompanion.exe");
+        }
+
+        public static void ResumeProcess(ProcessEx processEx)
+        {
+            ProcessUtils.NtResumeProcess(processEx.Process.Handle);
+            foreach (int pId in processEx.Children)
+            {
+                Process process = Process.GetProcessById(pId);
+                ProcessUtils.NtResumeProcess(process.Handle);
+            }
+
+            Task.Delay(500);
+            ProcessUtils.ShowWindow(processEx.MainWindowHandle, ProcessUtils.SW_RESTORE);
+        }
+
+        public static void SuspendProcess(ProcessEx processEx)
+        {
+            ProcessUtils.ShowWindow(processEx.MainWindowHandle, ProcessUtils.SW_MINIMIZE);
+            Task.Delay(500);
+
+            ProcessUtils.NtSuspendProcess(processEx.Process.Handle);
+            foreach (int pId in processEx.Children)
+            {
+                Process process = Process.GetProcessById(pId);
+                ProcessUtils.NtSuspendProcess(process.Handle);
+            }
         }
     }
 }

@@ -382,7 +382,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Decrease Thermal Power (TDP) Limit.
+        ///   Looks up a localized string similar to Decrease thermal power limit (TDP).
         /// </summary>
         public static string InputsHotkey_decreaseTDP {
             get {
@@ -391,7 +391,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Decrease system or currently applied profile TDP by 1 watt.
+        ///   Looks up a localized string similar to Decrease system or currently applied profile TDP by one watt.
         /// </summary>
         public static string InputsHotkey_decreaseTDPDesc {
             get {
@@ -418,7 +418,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Increase Thermal Power (TDP) Limit.
+        ///   Looks up a localized string similar to Increase thermal power limit (TDP).
         /// </summary>
         public static string InputsHotkey_increaseTDP {
             get {
@@ -427,7 +427,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Increase system or currently applied profile TDP by 1 watt.
+        ///   Looks up a localized string similar to Increase system or currently applied profile TDP by one watt.
         /// </summary>
         public static string InputsHotkey_increaseTDPDesc {
             get {
@@ -517,7 +517,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Windows logo key  + D.
+        ///   Looks up a localized string similar to Press this key: Windows + D.
         /// </summary>
         public static string InputsHotkey_shortcutDesktopDesc {
             get {
@@ -535,7 +535,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Escape.
+        ///   Looks up a localized string similar to Press this key: Escape.
         /// </summary>
         public static string InputsHotkey_shortcutESCDesc {
             get {
@@ -553,7 +553,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Alt + Enter.
+        ///   Looks up a localized string similar to Press this key: Alt + Enter.
         /// </summary>
         public static string InputsHotkey_shortcutExpandDesc {
             get {
@@ -616,6 +616,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Task Manager.
+        /// </summary>
+        public static string InputsHotkey_shortcutTaskManager {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutTaskManager", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press this key: Ctrl + Shift + Esc.
+        /// </summary>
+        public static string InputsHotkey_shortcutTaskManagerDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutTaskManagerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Task view.
         /// </summary>
         public static string InputsHotkey_shortcutTaskview {
@@ -625,7 +643,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Windows logo key  + Tab.
+        ///   Looks up a localized string similar to Press this key: Windows + Tab.
         /// </summary>
         public static string InputsHotkey_shortcutTaskviewDesc {
             get {

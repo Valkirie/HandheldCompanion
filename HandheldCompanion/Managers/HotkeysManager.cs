@@ -7,6 +7,7 @@ using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Windows;
@@ -27,7 +28,7 @@ namespace HandheldCompanion.Managers
         public static event CommandExecutedEventHandler CommandExecuted;
         public delegate void CommandExecutedEventHandler(string listener);
 
-        public static Dictionary<string, Hotkey> Hotkeys = new();
+        public static SortedDictionary<ushort, Hotkey> Hotkeys = new();
 
         static HotkeysManager()
         {
@@ -59,6 +60,9 @@ namespace HandheldCompanion.Managers
             string[] fileEntries = Directory.GetFiles(Path, "*.json", SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
                 ProcessHotkey(fileName);
+
+            foreach (Hotkey hotkey in Hotkeys.Values)
+                HotkeyCreated?.Invoke(hotkey);
         }
 
         private static void ProcessHotkey(string fileName)
@@ -84,15 +88,13 @@ namespace HandheldCompanion.Managers
             if (!InputsHotkey.Hotkeys.ContainsKey(hotkey.hotkeyId))
             {
                 LogManager.LogError("Error while parsing {0}. InputsHotkey is outdated.", fileName);
-                hotkey.hotkeyId = 0;
+                return;
             }
 
             hotkey.inputsHotkey = InputsHotkey.Hotkeys[hotkey.hotkeyId];
             hotkey.DrawControl();
 
-            string listener = hotkey.inputsHotkey.Listener;
-            Hotkeys.Add(listener, hotkey);
-            HotkeyCreated?.Invoke(hotkey);
+            Hotkeys.Add(hotkey.hotkeyId, hotkey);
         }
 
         public static void SerializeHotkey(Hotkey hotkey, bool overwrite = false)
@@ -110,7 +112,7 @@ namespace HandheldCompanion.Managers
 
         public static void TriggerRaised(string listener, InputsChord input)
         {
-            var foregroundProcess = MainWindow.processManager.GetForegroundProcess();
+            var fProcess = ProcessManager.GetForegroundProcess();
 
             try
             {
@@ -126,27 +128,40 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
                         break;
                     case "shortcutESC":
-                        if (foregroundProcess != null)
+                        if (fProcess != null)
                         {
-                            ProcessUtils.SetForegroundWindow(foregroundProcess.MainWindowHandle);
+                            ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
                             InputsManager.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
-                        if (foregroundProcess != null)
+                        if (fProcess != null)
                         {
-                            ProcessUtils.SetForegroundWindow(foregroundProcess.MainWindowHandle);
+                            ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
                             InputsManager.KeyStroke(VirtualKeyCode.LMENU, VirtualKeyCode.RETURN);
                         }
                         break;
                     case "shortcutTaskview":
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.TAB });
                         break;
+                    case "shortcutTaskManager":
+                        InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
+                        break;
                     case "shortcutMainwindow":
                         MainWindow.GetCurrent().SwapWindowState();
                         break;
                     case "shortcutGuide":
                         MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)0x0400 });
+                        break;
+                    case "suspendResumeTask":
+                        {
+                            var sProcess = ProcessManager.GetSuspendedProcess();
+
+                            if (sProcess != null)
+                                ProcessManager.ResumeProcess(sProcess);
+                            else if (!fProcess.IsIgnored)
+                                ProcessManager.SuspendProcess(fProcess);
+                        }
                         break;
                     default:
                         InputsManager.KeyPress(input.OutputKeys);
@@ -169,9 +184,8 @@ namespace HandheldCompanion.Managers
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                Hotkey hotkey = Hotkeys[listener];
+                Hotkey hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
                 hotkey.inputsChord = inputs;
-
                 hotkey.UpdateHotkey(true);
 
                 SerializeHotkey(hotkey, true);

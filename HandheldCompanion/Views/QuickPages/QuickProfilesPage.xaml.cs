@@ -24,7 +24,7 @@ namespace HandheldCompanion.Views.QuickPages
         {
             InitializeComponent();
 
-            MainWindow.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
             MainWindow.profileManager.Updated += ProfileUpdated;
             MainWindow.profileManager.Deleted += ProfileDeleted;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
@@ -200,7 +200,7 @@ namespace HandheldCompanion.Views.QuickPages
                 ProcessPath.Text = currentProcess.Path;
 
                 // disable create button if process is bypassed
-                b_CreateProfile.IsEnabled = !processEx.Bypassed;
+                b_CreateProfile.IsEnabled = !processEx.IsIgnored;
 
                 if (currentProfile is null)
                 {

@@ -80,6 +80,8 @@ namespace ControllerService.Sensors
                     ((SerialUSBIMU)sensor).ReadingChanged -= ReadingChanged;
                     break;
             }
+
+            sensor = null;
         }
 
         private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)

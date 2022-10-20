@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Management;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -190,6 +191,24 @@ namespace ControllerCommon.Utils
             }
 
             return "";
+        }
+
+        public static List<Process> GetChildProcesses(Process process)
+        {
+            return new ManagementObjectSearcher($"Select * From Win32_Process Where ParentProcessID={process.Id}")
+                .Get()
+                .Cast<ManagementObject>()
+                .Select(mo => Process.GetProcessById(Convert.ToInt32(mo["ProcessID"])))
+                .ToList();
+        }
+
+        public static List<int> GetChildIds(Process process)
+        {
+            return new ManagementObjectSearcher($"Select * From Win32_Process Where ParentProcessID={process.Id}")
+                .Get()
+                .Cast<ManagementObject>()
+                .Select(mo => Convert.ToInt32(mo["ProcessID"]))
+                .ToList();
         }
     }
 

@@ -223,10 +223,10 @@
     <value>..\Resources\icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="InputsHotkey_decreaseTDP" xml:space="preserve">
-    <value>Decrease Thermal Power (TDP) Limit</value>
+    <value>Decrease thermal power limit (TDP)</value>
   </data>
   <data name="InputsHotkey_decreaseTDPDesc" xml:space="preserve">
-    <value>Decrease system or currently applied profile TDP by 1 watt</value>
+    <value>Decrease system or currently applied profile TDP by one watt</value>
   </data>
   <data name="InputsHotkey_fallbackInput" xml:space="preserve">
     <value>Press to define hotkey input</value>
@@ -235,10 +235,10 @@
     <value>Press to define keyboard output</value>
   </data>
   <data name="InputsHotkey_increaseTDP" xml:space="preserve">
-    <value>Increase Thermal Power (TDP) Limit</value>
+    <value>Increase thermal power limit (TDP)</value>
   </data>
   <data name="InputsHotkey_increaseTDPDesc" xml:space="preserve">
-    <value>Increase system or currently applied profile TDP by 1 watt</value>
+    <value>Increase system or currently applied profile TDP by one watt</value>
   </data>
   <data name="InputsHotkey_overlayGamepad" xml:space="preserve">
     <value>Display 3D controller</value>
@@ -268,19 +268,19 @@
     <value>Display and hide the desktop</value>
   </data>
   <data name="InputsHotkey_shortcutDesktopDesc" xml:space="preserve">
-    <value>Windows logo key  + D</value>
+    <value>Press this key: Windows + D</value>
   </data>
   <data name="InputsHotkey_shortcutESC" xml:space="preserve">
     <value>Exit</value>
   </data>
   <data name="InputsHotkey_shortcutESCDesc" xml:space="preserve">
-    <value>Escape</value>
+    <value>Press this key: Escape</value>
   </data>
   <data name="InputsHotkey_shortcutExpand" xml:space="preserve">
     <value>Switches between window and full screen</value>
   </data>
   <data name="InputsHotkey_shortcutExpandDesc" xml:space="preserve">
-    <value>Alt + Enter</value>
+    <value>Press this key: Alt + Enter</value>
   </data>
   <data name="InputsHotkey_shortcutGuide" xml:space="preserve">
     <value>Guide or PS button</value>
@@ -300,11 +300,23 @@
   <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
     <value>Change hotkey by pressing a button or a special key</value>
   </data>
+  <data name="InputsHotkey_shortcutTaskManager" xml:space="preserve">
+    <value>Open Task Manager</value>
+  </data>
+  <data name="InputsHotkey_shortcutTaskManagerDesc" xml:space="preserve">
+    <value>Press this key: Ctrl + Shift + Esc</value>
+  </data>
   <data name="InputsHotkey_shortcutTaskview" xml:space="preserve">
     <value>Open Task view</value>
   </data>
   <data name="InputsHotkey_shortcutTaskviewDesc" xml:space="preserve">
-    <value>Windows logo key  + Tab</value>
+    <value>Press this key: Windows + Tab</value>
+  </data>
+  <data name="InputsHotkey_suspendResumeTask" xml:space="preserve">
+    <value>Toggle Suspender</value>
+  </data>
+  <data name="InputsHotkey_suspendResumeTaskDesc" xml:space="preserve">
+    <value>Suspend or resume the foreground application</value>
   </data>
   <data name="JoyXOff.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\JoyXOff.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
