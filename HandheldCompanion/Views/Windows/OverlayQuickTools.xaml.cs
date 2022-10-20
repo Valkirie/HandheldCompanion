@@ -93,8 +93,6 @@ namespace HandheldCompanion.Views.Windows
                 NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
                 string navItemTag = (string)navItem.Tag;
 
-                var foregroundProcess = ProcessManager.GetForegroundProcess();
-
                 switch (navItemTag)
                 {
                     default:

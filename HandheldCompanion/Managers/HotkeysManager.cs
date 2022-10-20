@@ -168,9 +168,6 @@ namespace HandheldCompanion.Managers
                         break;
                 }
 
-                // play a tune to notify a command was executed
-                SystemManager.PlayWindowsMedia("Windows Navigation Start.wav");
-
                 // raise an event
                 CommandExecuted?.Invoke(listener);
             }
