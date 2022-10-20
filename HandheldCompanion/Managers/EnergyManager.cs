@@ -6,6 +6,7 @@ using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using static ControllerCommon.WinAPI;
@@ -86,8 +87,8 @@ namespace HandheldCompanion.Managers
             if (!IsEnabled)
                 return;
 
-            // set efficiency mode if event pId is different from foreground pId
-            if (backgroundEx != null && !backgroundEx.Bypassed)
+            // set efficiency mode to Eco on background(ed) process
+            if (backgroundEx != null && !backgroundEx.IsIgnored && !backgroundEx.IsSuspended())
             {
                 ToggleEfficiencyMode(backgroundEx.Id, QualityOfServiceLevel.Eco);
 
@@ -96,8 +97,8 @@ namespace HandheldCompanion.Managers
 
             }
 
-            // set efficency mode
-            if (processEx != null && !processEx.Bypassed)
+            // set efficency mode to High on foreground(ed) process
+            if (processEx != null && !processEx.IsIgnored && !processEx.IsSuspended())
             {
                 ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
 
@@ -131,7 +132,7 @@ namespace HandheldCompanion.Managers
                         if (!IsEnabled)
                         {
                             // restore default behavior when disabled
-                            foreach (ProcessEx processEx in ProcessManager.GetProcesses())
+                            foreach (ProcessEx processEx in ProcessManager.GetProcesses().Where(item => !item.IsIgnored && !item.IsSuspended()))
                                 ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
                             return;
                         }
@@ -142,8 +143,8 @@ namespace HandheldCompanion.Managers
                         {
                             if (processEx == foregroundProcess)
                                 ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
-
-                            ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.Eco);
+                            else if (!processEx.IsIgnored && !processEx.IsSuspended())
+                                ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.Eco);
                         }
                     }
                     break;

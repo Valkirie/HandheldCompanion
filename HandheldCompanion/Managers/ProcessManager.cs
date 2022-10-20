@@ -120,7 +120,7 @@ namespace HandheldCompanion.Managers
 
         public static ProcessEx GetSuspendedProcess()
         {
-            return Processes.Values.Where(item => !item.Bypassed && item.threadWaitReason == ThreadWaitReason.Suspended).FirstOrDefault();
+            return Processes.Values.Where(item => !item.IsIgnored && item.IsSuspended()).FirstOrDefault();
         }
 
         public static List<ProcessEx> GetProcesses()
@@ -197,7 +197,7 @@ namespace HandheldCompanion.Managers
                     Name = exec,
                     Executable = exec,
                     Path = path,
-                    Bypassed = !IsValid(exec, path)
+                    IsIgnored = !IsValid(exec, path)
                 };
 
             // update main window handle
@@ -263,14 +263,14 @@ namespace HandheldCompanion.Managers
                         Executable = exec,
                         Path = path,
                         MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle,
-                        Bypassed = !IsValid(exec, path)
+                        IsIgnored = !IsValid(exec, path)
                     };
 
                     processEx.ChildProcessCreated += ChildProcessCreated;
 
                     Processes.TryAdd(processEx.Id, processEx);
 
-                    if (processEx.Bypassed)
+                    if (processEx.IsIgnored)
                         return;
 
                     // raise event

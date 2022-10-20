@@ -32,9 +32,9 @@ namespace HandheldCompanion.Managers.Classes
         public string Name;
         public string Executable;
         public string Path;
-        public bool Bypassed;
+        public bool IsIgnored;
 
-        public ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
+        private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
 
         // UI vars
         public Expander processExpander;
@@ -139,6 +139,11 @@ namespace HandheldCompanion.Managers.Classes
         public Expander GetControl()
         {
             return processExpander;
+        }
+
+        public bool IsSuspended()
+        {
+            return threadWaitReason == ThreadWaitReason.Suspended;
         }
 
         public void DrawControl()
