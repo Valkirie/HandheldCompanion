@@ -159,7 +159,7 @@ namespace HandheldCompanion.Managers
 
                             if (sProcess != null)
                                 ProcessManager.ResumeProcess(sProcess);
-                            else
+                            else if (!fProcess.IsIgnored)
                                 ProcessManager.SuspendProcess(fProcess);
                         }
                         break;
