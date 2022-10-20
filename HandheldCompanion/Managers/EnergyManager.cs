@@ -1,7 +1,9 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views;
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static ControllerCommon.WinAPI;
 using static PInvoke.Kernel32;
@@ -137,17 +139,30 @@ namespace HandheldCompanion.Managers
         private static void ToggleEfficiencyMode(ProcessEx processEx, QualityOfServiceLevel level)
         {
             bool result = false;
-            switch (level)
+
+            processEx.hProcesses.Clear();
+
+            processEx.hProcesses.Add(OpenProcess((uint)(ProcessAccessFlags.QueryLimitedInformation | ProcessAccessFlags.SetInformation), false, (uint)processEx.Id));
+
+            foreach (Process proc in ProcessEx.GetChildProcesses(processEx.Process))
+                processEx.hProcesses.Add(OpenProcess((uint)ProcessAccessFlags.SetInformation, false, (uint)proc.Id));
+
+            foreach (IntPtr hProcess in processEx.hProcesses)
             {
-                case QualityOfServiceLevel.High:
-                    result = SwitchToHighQoS(processEx.Process.Handle);
-                    break;
-                case QualityOfServiceLevel.Eco:
-                    result = SwitchToEcoQoS(processEx.Process.Handle);
-                    break;
-                case QualityOfServiceLevel.Default:
-                    result = SwitchToDefaultQoS(processEx.Process.Handle);
-                    break;
+                switch (level)
+                {
+                    case QualityOfServiceLevel.High:
+                        result = SwitchToHighQoS(hProcess);
+                        break;
+                    case QualityOfServiceLevel.Eco:
+                        result = SwitchToEcoQoS(hProcess);
+                        break;
+                    case QualityOfServiceLevel.Default:
+                        result = SwitchToDefaultQoS(hProcess);
+                        break;
+                }
+
+                CloseHandle(hProcess);
             }
 
             if (!result)
@@ -226,6 +241,7 @@ namespace HandheldCompanion.Managers
                 StateMask = 0
             };
 
+            SetPriorityClass(Handle, (int)PriorityClass.NORMAL_PRIORITY_CLASS);
             return SetProcessInfo(Handle, PROCESS_INFORMATION_CLASS.ProcessPowerThrottling, pi);
         }
 
@@ -240,6 +256,7 @@ namespace HandheldCompanion.Managers
                 StateMask = ProcessorPowerThrottlingFlags.PROCESS_POWER_THROTTLING_EXECUTION_SPEED
             };
 
+            SetPriorityClass(Handle, (int)PriorityClass.IDLE_PRIORITY_CLASS);
             return SetProcessInfo(Handle, PROCESS_INFORMATION_CLASS.ProcessPowerThrottling, pi);
         }
 
@@ -254,6 +271,7 @@ namespace HandheldCompanion.Managers
                 StateMask = 0
             };
 
+            SetPriorityClass(Handle, (int)PriorityClass.HIGH_PRIORITY_CLASS);
             return SetProcessInfo(Handle, PROCESS_INFORMATION_CLASS.ProcessPowerThrottling, pi);
         }
     }

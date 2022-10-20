@@ -1,8 +1,12 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon;
+using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
+using System.Management;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,11 +20,13 @@ namespace HandheldCompanion.Managers.Classes
     public class ProcessEx
     {
         public Process Process;
+        public List<IntPtr> hProcesses = new();
+
         public IntPtr MainWindowHandle;
         public object processInfo;
         public QualityOfServiceLevel QoL;
 
-        public uint Id;
+        public int Id;
         public string Name;
         public string Executable;
         public string Path;
@@ -45,8 +51,17 @@ namespace HandheldCompanion.Managers.Classes
         public ProcessEx(Process process)
         {
             this.Process = process;
-            this.Id = (uint)process.Id;
+            this.Id = process.Id;
         }
+
+        public static List<Process> GetChildProcesses(Process process)
+        => new ManagementObjectSearcher(
+                $"Select * From Win32_Process Where ParentProcessID={process.Id}")
+            .Get()
+            .Cast<ManagementObject>()
+            .Select(mo =>
+                Process.GetProcessById(Convert.ToInt32(mo["ProcessID"])))
+            .ToList();
 
         public void Timer_Tick(object? sender, EventArgs e)
         {

@@ -43,7 +43,7 @@ namespace HandheldCompanion.Managers
         private Timer MonitorTimer;
         private ManagementEventWatcher stopWatch;
 
-        private ConcurrentDictionary<uint, ProcessEx> Processes = new();
+        private ConcurrentDictionary<int, ProcessEx> Processes = new();
         private ProcessEx foregroundProcess;
         private ProcessEx backgroundProcess;
 
@@ -161,7 +161,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             Process proc = Process.GetProcessById((int)processInfo.ProcessId);
-            uint procId = (uint)proc.Id;
+            int procId = proc.Id;
 
             string path = ProcessUtils.GetPathToApp(proc);
             string exec = System.IO.Path.GetFileName(path);
@@ -207,19 +207,19 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                uint processId = (uint)e.NewEvent.Properties["ProcessID"].Value;
+                int processId = (int)e.NewEvent.Properties["ProcessID"].Value;
                 ProcessHalted(processId);
             }
             catch (Exception) { }
         }
 
-        void ProcessHalted(uint processId)
+        void ProcessHalted(int processId)
         {
             if (Processes.ContainsKey(processId))
             {
                 ProcessEx processEx = Processes[processId];
 
-                Processes.TryRemove(new KeyValuePair<uint, ProcessEx>(processId, processEx));
+                Processes.TryRemove(new KeyValuePair<int, ProcessEx>(processId, processEx));
 
                 ProcessStopped?.Invoke(processEx);
 
@@ -241,7 +241,7 @@ namespace HandheldCompanion.Managers
                 string path = ProcessUtils.GetPathToApp(proc);
                 string exec = System.IO.Path.GetFileName(path);
 
-                if (!Processes.ContainsKey((uint)proc.Id))
+                if (!Processes.ContainsKey(proc.Id))
                 {
                     ProcessEx processEx = new ProcessEx(proc)
                     {
