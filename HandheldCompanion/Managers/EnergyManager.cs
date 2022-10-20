@@ -178,6 +178,10 @@ namespace HandheldCompanion.Managers
                 return;
 
             ProcessEx processEx = ProcessManager.GetProcesses(pId);
+
+            if (processEx is null)
+                return;
+
             processEx.EcoQos = level;
 
             LogManager.LogDebug("Process {0} has efficiency mode set to: {1}", processEx.Name, level);
