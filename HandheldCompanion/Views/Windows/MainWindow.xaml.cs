@@ -63,7 +63,6 @@ namespace HandheldCompanion.Views
         // manager(s) vars
         private static List<Manager> _managers = new();
         public static ToastManager toastManager;
-        public static ProcessManager processManager;
         public static ServiceManager serviceManager;
         public static ProfileManager profileManager;
         public static TaskManager taskManager;
@@ -176,6 +175,7 @@ namespace HandheldCompanion.Views
             SettingsManager.Start();
             HotkeysManager.Start();
             SystemManager.Start();
+            ProcessManager.Start();
 
             // start manager(s) asynchroneously
             foreach (Manager manager in _managers)
@@ -273,7 +273,6 @@ namespace HandheldCompanion.Views
             toastManager = new ToastManager("HandheldCompanion");
             toastManager.Enabled = SettingsManager.GetBoolean("ToastEnable");
 
-            processManager = new();
             profileManager = new();
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
             taskManager = new TaskManager("HandheldCompanion", CurrentExe);
@@ -282,7 +281,6 @@ namespace HandheldCompanion.Views
 
             // store managers
             _managers.Add(toastManager);
-            _managers.Add(processManager);
             _managers.Add(profileManager);
             _managers.Add(serviceManager);
             _managers.Add(taskManager);
@@ -589,7 +587,6 @@ namespace HandheldCompanion.Views
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            processManager.Stop();
             serviceManager.Stop();
             profileManager.Stop();
             powerManager.Stop();
@@ -607,6 +604,7 @@ namespace HandheldCompanion.Views
 
             InputsManager.Stop();
             SystemManager.Stop();
+            ProcessManager.Stop();
 
             // stop listening to system events
             SystemManager.SystemStatusChanged -= OnSystemStatusChanged;

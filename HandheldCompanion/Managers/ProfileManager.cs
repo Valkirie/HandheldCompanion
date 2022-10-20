@@ -51,9 +51,9 @@ namespace HandheldCompanion.Managers
             if (!Directory.Exists(Path))
                 Directory.CreateDirectory(Path);
 
-            MainWindow.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-            MainWindow.processManager.ProcessStarted += ProcessManager_ProcessStarted;
-            MainWindow.processManager.ProcessStopped += ProcessManager_ProcessStopped;
+            ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
+            ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
         }
 
         public override void Start()

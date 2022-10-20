@@ -75,8 +75,8 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            MainWindow.processManager.ProcessStarted += ProcessManager_ProcessStarted;
-            MainWindow.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
+            ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
@@ -131,14 +131,14 @@ namespace HandheldCompanion.Managers
                         if (!IsEnabled)
                         {
                             // restore default behavior when disabled
-                            foreach (ProcessEx processEx in MainWindow.processManager.GetProcesses())
+                            foreach (ProcessEx processEx in ProcessManager.GetProcesses())
                                 ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
                             return;
                         }
 
                         // apply QoS when enabled
-                        ProcessEx foregroundProcess = MainWindow.processManager.GetForegroundProcess();
-                        foreach (ProcessEx processEx in MainWindow.processManager.GetProcesses())
+                        ProcessEx foregroundProcess = ProcessManager.GetForegroundProcess();
+                        foreach (ProcessEx processEx in ProcessManager.GetProcesses())
                         {
                             if (processEx == foregroundProcess)
                                 ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
@@ -177,7 +177,7 @@ namespace HandheldCompanion.Managers
             if (!result || isChild)
                 return;
 
-            ProcessEx processEx = MainWindow.processManager.Processes[pId];
+            ProcessEx processEx = ProcessManager.GetProcesses(pId);
             processEx.EcoQos = level;
 
             LogManager.LogDebug("Process {0} has efficiency mode set to: {1}", processEx.Name, level);

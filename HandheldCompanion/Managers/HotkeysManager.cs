@@ -110,7 +110,7 @@ namespace HandheldCompanion.Managers
 
         public static void TriggerRaised(string listener, InputsChord input)
         {
-            var foregroundProcess = MainWindow.processManager.GetForegroundProcess();
+            var fProcess = ProcessManager.GetForegroundProcess();
 
             try
             {
@@ -126,16 +126,16 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
                         break;
                     case "shortcutESC":
-                        if (foregroundProcess != null)
+                        if (fProcess != null)
                         {
-                            ProcessUtils.SetForegroundWindow(foregroundProcess.MainWindowHandle);
+                            ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
                             InputsManager.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
-                        if (foregroundProcess != null)
+                        if (fProcess != null)
                         {
-                            ProcessUtils.SetForegroundWindow(foregroundProcess.MainWindowHandle);
+                            ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
                             InputsManager.KeyStroke(VirtualKeyCode.LMENU, VirtualKeyCode.RETURN);
                         }
                         break;

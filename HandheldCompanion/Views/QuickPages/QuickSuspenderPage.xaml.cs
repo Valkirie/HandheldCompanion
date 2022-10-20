@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers.Classes;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Classes;
 using System;
 using System.Windows.Controls;
 
@@ -13,8 +14,8 @@ namespace HandheldCompanion.Views.QuickPages
         {
             InitializeComponent();
 
-            MainWindow.processManager.ProcessStarted += ProcessStarted;
-            MainWindow.processManager.ProcessStopped += ProcessStopped;
+            ProcessManager.ProcessStarted += ProcessStarted;
+            ProcessManager.ProcessStopped += ProcessStopped;
         }
 
         private void ProcessStopped(ProcessEx processEx)

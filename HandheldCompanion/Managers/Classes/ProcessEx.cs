@@ -34,7 +34,7 @@ namespace HandheldCompanion.Managers.Classes
         public string Path;
         public bool Bypassed;
 
-        private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
+        public ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
 
         // UI vars
         public Expander processExpander;
@@ -290,16 +290,7 @@ namespace HandheldCompanion.Managers.Classes
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 processResume.IsEnabled = false;
-
-                ProcessUtils.NtResumeProcess(Process.Handle);
-                foreach (int pId in Children)
-                {
-                    Process process = Process.GetProcessById(pId);
-                    ProcessUtils.NtResumeProcess(process.Handle);
-                }
-                
-                Task.Delay(500);
-                ProcessUtils.ShowWindow(MainWindowHandle, ProcessUtils.SW_RESTORE);
+                ProcessManager.ResumeProcess(this);
             }));
         }
 
@@ -308,16 +299,7 @@ namespace HandheldCompanion.Managers.Classes
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 processSuspend.IsEnabled = false;
-
-                ProcessUtils.ShowWindow(MainWindowHandle, ProcessUtils.SW_MINIMIZE);
-                Task.Delay(500);
-
-                ProcessUtils.NtSuspendProcess(Process.Handle);
-                foreach (int pId in Children)
-                {
-                    Process process = Process.GetProcessById(pId);
-                    ProcessUtils.NtSuspendProcess(process.Handle);
-                }
+                ProcessManager.SuspendProcess(this);
             }));
         }
     }
