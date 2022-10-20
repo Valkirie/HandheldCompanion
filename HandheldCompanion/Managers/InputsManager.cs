@@ -133,6 +133,9 @@ namespace HandheldCompanion.Managers
             // triggered when key is pressed for a long time
             inputsChord.InputsType = InputsChordType.Hold;
 
+            // we're no-longer expecting a KeyUp call
+            prevKeyDown = false;
+
             ExecuteSequence();
         }
 

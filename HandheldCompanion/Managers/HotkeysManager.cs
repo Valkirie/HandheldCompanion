@@ -147,9 +147,6 @@ namespace HandheldCompanion.Managers
                     case "shortcutTaskManager":
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
                         break;
-                    case "shortcutMainwindow":
-                        MainWindow.GetCurrent().SwapWindowState();
-                        break;
                     case "shortcutGuide":
                         MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)0x0400 });
                         break;
@@ -167,6 +164,9 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(input.OutputKeys);
                         break;
                 }
+
+                // play a tune to notify a command was executed
+                SystemManager.PlayWindowsMedia("Windows Navigation Start.wav");
 
                 // raise an event
                 CommandExecuted?.Invoke(listener);

@@ -329,6 +329,16 @@ namespace HandheldCompanion.Views
                 }
             };
 
+            InputsManager.TriggerRaised += (listener, input) =>
+            {
+                switch(listener)
+                {
+                    case "shortcutMainwindow":
+                        SwapWindowState();
+                        break;
+                }
+            };
+
             stopwatch.Stop();
             LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
         }
