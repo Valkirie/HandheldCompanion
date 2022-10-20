@@ -69,19 +69,17 @@ namespace HandheldCompanion.Views.Windows
         {
             this.Dispatcher.Invoke(() =>
             {
-                Visibility visibility = Visibility.Visible;
                 switch (Visibility)
                 {
                     case Visibility.Visible:
-                        visibility = Visibility.Collapsed;
+                        this.Hide();
                         break;
                     case Visibility.Collapsed:
                     case Visibility.Hidden:
-                        WindowState = WindowState.Normal;
-                        visibility = Visibility.Visible;
+                        this.Show();
+                        this.Activate();
                         break;
                 }
-                Visibility = visibility;
             });
         }
 
