@@ -169,7 +169,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2022-03-16")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2022-10-20")]
         public global::System.DateTime UpdateLastChecked {
             get {
                 return ((global::System.DateTime)(this["UpdateLastChecked"]));
@@ -337,18 +337,6 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool OverlayControllerFisherPrice {
-            get {
-                return ((bool)(this["OverlayControllerFisherPrice"]));
-            }
-            set {
-                this["OverlayControllerFisherPrice"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("30")]
         public double OverlayRenderInterval {
             get {
@@ -445,18 +433,6 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("500")]
-        public double QuickToolsPerformanceGPUValue {
-            get {
-                return ((double)(this["QuickToolsPerformanceGPUValue"]));
-            }
-            set {
-                this["QuickToolsPerformanceGPUValue"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool QuickToolsPerformanceTDPEnabled {
             get {
@@ -541,7 +517,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.8")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public double OverlayControllerOpacity {
             get {
                 return ((double)(this["OverlayControllerOpacity"]));
@@ -620,6 +596,18 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["UseEnergyStar"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("500")]
+        public double QuickToolsPerformanceGPUValue {
+            get {
+                return ((double)(this["QuickToolsPerformanceGPUValue"]));
+            }
+            set {
+                this["QuickToolsPerformanceGPUValue"] = value;
             }
         }
     }

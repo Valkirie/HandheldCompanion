@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="HandheldCompanion.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="ToastEnable" Type="System.Boolean" Scope="User">
@@ -39,7 +39,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="UpdateLastChecked" Type="System.DateTime" Scope="User">
-      <Value Profile="(Default)">2022-03-16</Value>
+      <Value Profile="(Default)">2022-10-20</Value>
     </Setting>
     <Setting Name="OverlayModel" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -80,9 +80,6 @@
     <Setting Name="SensorPlacement" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="OverlayControllerFisherPrice" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="OverlayRenderInterval" Type="System.Double" Scope="User">
       <Value Profile="(Default)">30</Value>
     </Setting>
@@ -107,9 +104,6 @@
     <Setting Name="QuickToolsPerformanceTDPSustainedValue" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="QuickToolsPerformanceGPUValue" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">500</Value>
-    </Setting>
     <Setting Name="QuickToolsPerformanceTDPEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
@@ -132,7 +126,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="OverlayControllerOpacity" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">0.8</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="OverlayControllerBackgroundColor" Type="System.String" Scope="User">
       <Value Profile="(Default)">#00000000</Value>
@@ -151,6 +145,9 @@
     </Setting>
     <Setting Name="UseEnergyStar" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="QuickToolsPerformanceGPUValue" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">500</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -32,9 +32,6 @@ namespace HandheldCompanion.Views.Pages
             {
                 switch (name)
                 {
-                    case "OverlayControllerFisherPrice":
-                        ToyControllerRadio.IsEnabled = Convert.ToBoolean(value);
-                        break;
                     case "OverlayModel":
                         OverlayModel.SelectedIndex = Convert.ToInt32(value);
                         OverlayModel_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
