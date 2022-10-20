@@ -1,7 +1,12 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using static ControllerCommon.WinAPI;
 using static PInvoke.Kernel32;
@@ -70,8 +75,8 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            MainWindow.processManager.ProcessStarted += ProcessManager_ProcessStarted;
-            MainWindow.processManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
+            ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
@@ -83,11 +88,22 @@ namespace HandheldCompanion.Managers
 
             // set efficiency mode if event pId is different from foreground pId
             if (backgroundEx != null && !backgroundEx.Bypassed)
-                ToggleEfficiencyMode(backgroundEx, QualityOfServiceLevel.Eco);
+            {
+                ToggleEfficiencyMode(backgroundEx.Id, QualityOfServiceLevel.Eco);
+
+                foreach(int pId in backgroundEx.Children)
+                    ToggleEfficiencyMode(pId, QualityOfServiceLevel.Eco, true);
+
+            }
 
             // set efficency mode
             if (processEx != null && !processEx.Bypassed)
-                ToggleEfficiencyMode(processEx, QualityOfServiceLevel.High);
+            {
+                ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
+
+                foreach (int pId in processEx.Children)
+                    ToggleEfficiencyMode(pId, QualityOfServiceLevel.High, true);
+            }
         }
 
         private static void ProcessManager_ProcessStarted(ProcessEx processEx, bool startup)
@@ -98,7 +114,7 @@ namespace HandheldCompanion.Managers
             if (!IsEnabled)
                 return;
 
-            ToggleEfficiencyMode(processEx, QualityOfServiceLevel.Eco);
+            ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.Eco);
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -115,45 +131,55 @@ namespace HandheldCompanion.Managers
                         if (!IsEnabled)
                         {
                             // restore default behavior when disabled
-                            foreach (ProcessEx processEx in MainWindow.processManager.GetProcesses())
-                                ToggleEfficiencyMode(processEx, QualityOfServiceLevel.High);
+                            foreach (ProcessEx processEx in ProcessManager.GetProcesses())
+                                ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
                             return;
                         }
 
                         // apply QoS when enabled
-                        ProcessEx foregroundProcess = MainWindow.processManager.GetForegroundProcess();
-                        foreach (ProcessEx processEx in MainWindow.processManager.GetProcesses())
+                        ProcessEx foregroundProcess = ProcessManager.GetForegroundProcess();
+                        foreach (ProcessEx processEx in ProcessManager.GetProcesses())
                         {
                             if (processEx == foregroundProcess)
-                                ToggleEfficiencyMode(processEx, QualityOfServiceLevel.High);
+                                ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
 
-                            ToggleEfficiencyMode(processEx, QualityOfServiceLevel.Eco);
+                            ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.Eco);
                         }
                     }
                     break;
             }
         }
 
-        private static void ToggleEfficiencyMode(ProcessEx processEx, QualityOfServiceLevel level)
+        public static void ToggleEfficiencyMode(int pId, QualityOfServiceLevel level, bool isChild = false)
         {
             bool result = false;
+            IntPtr hProcess = OpenProcess((uint)(ProcessAccessFlags.QueryLimitedInformation | ProcessAccessFlags.SetInformation), false, (uint)pId);
+
             switch (level)
             {
                 case QualityOfServiceLevel.High:
-                    result = SwitchToHighQoS(processEx.Process.Handle);
+                    result = SwitchToHighQoS(hProcess);
                     break;
                 case QualityOfServiceLevel.Eco:
-                    result = SwitchToEcoQoS(processEx.Process.Handle);
+                    result = SwitchToEcoQoS(hProcess);
                     break;
                 case QualityOfServiceLevel.Default:
-                    result = SwitchToDefaultQoS(processEx.Process.Handle);
+                    result = SwitchToDefaultQoS(hProcess);
                     break;
             }
 
-            if (!result)
+            try
+            {
+                CloseHandle(hProcess);
+            }
+            catch (Exception) { }
+
+            if (!result || isChild)
                 return;
 
-            processEx.QoL = level;
+            ProcessEx processEx = ProcessManager.GetProcesses(pId);
+            processEx.EcoQos = level;
+
             LogManager.LogDebug("Process {0} has efficiency mode set to: {1}", processEx.Name, level);
         }
 
@@ -217,7 +243,7 @@ namespace HandheldCompanion.Managers
 
         // Let system manage all power throttling. ControlMask is set to 0 as we don’t want 
         // to control any mechanisms.
-        public static bool SwitchToDefaultQoS(IntPtr Handle)
+        private static bool SwitchToDefaultQoS(IntPtr Handle)
         {
             PROCESS_POWER_THROTTLING_STATE pi = new PROCESS_POWER_THROTTLING_STATE
             {
@@ -226,12 +252,13 @@ namespace HandheldCompanion.Managers
                 StateMask = 0
             };
 
+            SetPriorityClass(Handle, (int)PriorityClass.NORMAL_PRIORITY_CLASS);
             return SetProcessInfo(Handle, PROCESS_INFORMATION_CLASS.ProcessPowerThrottling, pi);
         }
 
         // Turn EXECUTION_SPEED throttling on. 
         // ControlMask selects the mechanism and StateMask declares which mechanism should be on or off.
-        public static bool SwitchToEcoQoS(IntPtr Handle)
+        private static bool SwitchToEcoQoS(IntPtr Handle)
         {
             PROCESS_POWER_THROTTLING_STATE pi = new PROCESS_POWER_THROTTLING_STATE
             {
@@ -240,12 +267,13 @@ namespace HandheldCompanion.Managers
                 StateMask = ProcessorPowerThrottlingFlags.PROCESS_POWER_THROTTLING_EXECUTION_SPEED
             };
 
+            SetPriorityClass(Handle, (int)PriorityClass.IDLE_PRIORITY_CLASS);
             return SetProcessInfo(Handle, PROCESS_INFORMATION_CLASS.ProcessPowerThrottling, pi);
         }
 
         // Turn EXECUTION_SPEED throttling off. 
         // ControlMask selects the mechanism and StateMask is set to zero as mechanisms should be turned off.
-        public static bool SwitchToHighQoS(IntPtr Handle)
+        private static bool SwitchToHighQoS(IntPtr Handle)
         {
             PROCESS_POWER_THROTTLING_STATE pi = new PROCESS_POWER_THROTTLING_STATE
             {
@@ -254,6 +282,7 @@ namespace HandheldCompanion.Managers
                 StateMask = 0
             };
 
+            SetPriorityClass(Handle, (int)PriorityClass.HIGH_PRIORITY_CLASS);
             return SetProcessInfo(Handle, PROCESS_INFORMATION_CLASS.ProcessPowerThrottling, pi);
         }
     }

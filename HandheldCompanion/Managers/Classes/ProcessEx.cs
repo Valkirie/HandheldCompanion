@@ -1,13 +1,19 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon;
+using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
+using System.Management;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Threading;
 using static HandheldCompanion.Managers.EnergyManager;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 using Brush = System.Windows.Media.Brush;
 using Image = System.Windows.Controls.Image;
 
@@ -16,17 +22,19 @@ namespace HandheldCompanion.Managers.Classes
     public class ProcessEx
     {
         public Process Process;
+        public List<int> Children = new();
+
         public IntPtr MainWindowHandle;
         public object processInfo;
-        public QualityOfServiceLevel QoL;
+        public QualityOfServiceLevel EcoQos;
 
-        public uint Id;
+        public int Id;
         public string Name;
         public string Executable;
         public string Path;
         public bool Bypassed;
 
-        private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
+        public ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
 
         // UI vars
         public Expander processExpander;
@@ -42,13 +50,16 @@ namespace HandheldCompanion.Managers.Classes
         public SimpleStackPanel processStackPanel;
         public TextBlock processQoS;
 
+        public event ChildProcessCreatedEventHandler ChildProcessCreated;
+        public delegate void ChildProcessCreatedEventHandler(ProcessEx parent, int Id);
+
         public ProcessEx(Process process)
         {
             this.Process = process;
-            this.Id = (uint)process.Id;
+            this.Id = process.Id;
         }
 
-        public void Timer_Tick(object? sender, EventArgs e)
+        public void Refresh()
         {
             try
             {
@@ -56,6 +67,19 @@ namespace HandheldCompanion.Managers.Classes
 
                 if (Process.HasExited)
                     return;
+
+                // refresh all child processes
+                List<int> childs = ProcessUtils.GetChildIds(this.Process);
+
+                // remove exited children
+                Children.RemoveAll(item => !childs.Contains(item));
+
+                // raise event on new children
+                foreach (int child in childs.Where(item => !Children.Contains(item)))
+                {
+                    Children.Add(child);
+                    ChildProcessCreated?.Invoke(this, child);
+                }
 
                 var processThread = Process.Threads[0];
 
@@ -106,7 +130,7 @@ namespace HandheldCompanion.Managers.Classes
                     }
 
                     // manage process throttling
-                    processQoS.Text = EnumUtils.GetDescriptionFromEnumValue(QoL);
+                    processQoS.Text = EnumUtils.GetDescriptionFromEnumValue(EcoQos);
                 }), DispatcherPriority.ContextIdle);
             }
             catch (Exception) { }
@@ -178,7 +202,7 @@ namespace HandheldCompanion.Managers.Classes
             {
                 FontSize = 14,
                 Text = Executable,
-                TextWrapping = TextWrapping.Wrap,
+                TextWrapping = TextWrapping.NoWrap,
                 VerticalAlignment = VerticalAlignment.Center
             };
 
@@ -266,9 +290,7 @@ namespace HandheldCompanion.Managers.Classes
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 processResume.IsEnabled = false;
-                ProcessUtils.NtResumeProcess(Process.Handle);
-                Task.Delay(500);
-                ProcessUtils.ShowWindow(MainWindowHandle, ProcessUtils.SW_RESTORE);
+                ProcessManager.ResumeProcess(this);
             }));
         }
 
@@ -277,10 +299,7 @@ namespace HandheldCompanion.Managers.Classes
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 processSuspend.IsEnabled = false;
-
-                ProcessUtils.ShowWindow(MainWindowHandle, ProcessUtils.SW_MINIMIZE);
-                Task.Delay(500);
-                ProcessUtils.NtSuspendProcess(Process.Handle);
+                ProcessManager.SuspendProcess(this);
             }));
         }
     }
