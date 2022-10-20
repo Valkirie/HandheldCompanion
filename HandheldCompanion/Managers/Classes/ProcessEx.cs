@@ -290,7 +290,14 @@ namespace HandheldCompanion.Managers.Classes
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 processResume.IsEnabled = false;
+
                 ProcessUtils.NtResumeProcess(Process.Handle);
+                foreach (int pId in Children)
+                {
+                    Process process = Process.GetProcessById(pId);
+                    ProcessUtils.NtResumeProcess(process.Handle);
+                }
+                
                 Task.Delay(500);
                 ProcessUtils.ShowWindow(MainWindowHandle, ProcessUtils.SW_RESTORE);
             }));
@@ -304,7 +311,13 @@ namespace HandheldCompanion.Managers.Classes
 
                 ProcessUtils.ShowWindow(MainWindowHandle, ProcessUtils.SW_MINIMIZE);
                 Task.Delay(500);
+
                 ProcessUtils.NtSuspendProcess(Process.Handle);
+                foreach (int pId in Children)
+                {
+                    Process process = Process.GetProcessById(pId);
+                    ProcessUtils.NtSuspendProcess(process.Handle);
+                }
             }));
         }
     }
