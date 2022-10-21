@@ -294,7 +294,7 @@ namespace HandheldCompanion.Managers
 
                         // leave if inputs are too close
                         if (unexpected)
-                            break;
+                            return;
 
                         LogManager.LogDebug("KeyEvent: {0} at {1}, down: {2}, up: {3}", pair.name, args.Timestamp, args.IsKeyDown, args.IsKeyUp);
 
@@ -306,12 +306,9 @@ namespace HandheldCompanion.Managers
                             // update vars
                             inputsChord.SpecialKey = pair.name;
                             inputsChord.InputsType = InputsChordType.Click;
-
-                            return;
                         }
-
                         // Sequence was intercepted already
-                        if (InputsChordHoldTimer.IsRunning())
+                        else if (InputsChordHoldTimer.IsRunning())
                             ExecuteSequence();
 
                         return; // prevent multiple shortcuts from being triggered
