@@ -375,6 +375,12 @@
   <data name="OverlayPage_AlignmentTrackpadDesc" xml:space="preserve">
     <value>Change the trackpads overlay alignment</value>
   </data>
+  <data name="OverlayPage_AlwaysOnTop" xml:space="preserve">
+    <value>Always on top</value>
+  </data>
+  <data name="OverlayPage_AlwaysOnTopDesc" xml:space="preserve">
+    <value>3D overlay controller window will stay on top of other windows</value>
+  </data>
   <data name="OverlayPage_BackButton" xml:space="preserve">
     <value>Back</value>
   </data>
@@ -394,7 +400,7 @@
     <value>Background Color</value>
   </data>
   <data name="OverlayPage_ColorDesc" xml:space="preserve">
-    <value />
+    <value>Change 3D overlay controller background color</value>
   </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
     <value>Controller options</value>

@@ -69,6 +69,9 @@ namespace HandheldCompanion.Views.Pages
                     case "OverlayControllerBackgroundColor":
                         ColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(value));
                         break;
+                    case "OverlayControllerAlwaysOnTop":
+                        Toggle_AlwaysOnTop.IsOn = Convert.ToBoolean(value);
+                        break;
                 }
             });
         }
@@ -300,6 +303,16 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("OverlayControllerBackgroundColor", ColorPicker.SelectedColor);
+        }
+
+        private void Toggle_AlwaysOnTop_Toggled(object sender, RoutedEventArgs e)
+        {
+            MainWindow.overlayModel.Topmost = Toggle_AlwaysOnTop.IsOn;
+
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("OverlayControllerAlwaysOnTop", Toggle_AlwaysOnTop.IsOn);
         }
     }
 }
