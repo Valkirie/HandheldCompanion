@@ -838,7 +838,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the 3D overlay controller alignment.
+        ///   Looks up a localized string similar to Change 3D controller overlay alignment.
         /// </summary>
         public static string OverlayPage_AlignmentDesc {
             get {
@@ -847,7 +847,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the trackpads overlay alignment.
+        ///   Looks up a localized string similar to Change trackpads overlay alignment.
         /// </summary>
         public static string OverlayPage_AlignmentTrackpadDesc {
             get {
@@ -865,7 +865,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 3D overlay controller window will stay on top of other windows.
+        ///   Looks up a localized string similar to When toggled, 3D controller overlay will stay on top of other windows.
         /// </summary>
         public static string OverlayPage_AlwaysOnTopDesc {
             get {
@@ -892,7 +892,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change 3D overlay controller model behaviour for facing the camera.
+        ///   Looks up a localized string similar to Change 3D controller overlay model behaviour for facing the camera.
         /// </summary>
         public static string OverlayPage_CameraAngleDesc {
             get {
@@ -928,7 +928,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change 3D overlay controller background color.
+        ///   Looks up a localized string similar to Change 3D controller overlay background color.
         /// </summary>
         public static string OverlayPage_ColorDesc {
             get {
@@ -1000,7 +1000,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the overlay main trigger.
+        ///   Looks up a localized string similar to Change 3D controller overlay main trigger.
         /// </summary>
         public static string OverlayPage_MainTriggerDesc {
             get {
@@ -1027,7 +1027,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the overlay controller opacity.
+        ///   Looks up a localized string similar to Change 3D controller overlay opacity.
         /// </summary>
         public static string OverlayPage_OpacityControllerDesc {
             get {
@@ -1036,7 +1036,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the overlay trackpads opacity.
+        ///   Looks up a localized string similar to Change trackpads overlay opacity.
         /// </summary>
         public static string OverlayPage_OpacityTrackpadDesc {
             get {
@@ -1063,7 +1063,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the overlay controller model.
+        ///   Looks up a localized string similar to Change 3D controller overlay model.
         /// </summary>
         public static string OverlayPage_OverlayModelDesc {
             get {
@@ -1144,7 +1144,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the 3D overlay controller size.
+        ///   Looks up a localized string similar to Change 3D controller overlay size.
         /// </summary>
         public static string OverlayPage_SizeDesc {
             get {
@@ -1153,7 +1153,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the overlay trackpads size.
+        ///   Looks up a localized string similar to Change trackpads overlay size.
         /// </summary>
         public static string OverlayPage_SizeOverlayDesc {
             get {

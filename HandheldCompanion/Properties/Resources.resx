@@ -370,16 +370,16 @@
     <value>Alignment</value>
   </data>
   <data name="OverlayPage_AlignmentDesc" xml:space="preserve">
-    <value>Change the 3D overlay controller alignment</value>
+    <value>Change 3D controller overlay alignment</value>
   </data>
   <data name="OverlayPage_AlignmentTrackpadDesc" xml:space="preserve">
-    <value>Change the trackpads overlay alignment</value>
+    <value>Change trackpads overlay alignment</value>
   </data>
   <data name="OverlayPage_AlwaysOnTop" xml:space="preserve">
     <value>Always on top</value>
   </data>
   <data name="OverlayPage_AlwaysOnTopDesc" xml:space="preserve">
-    <value>3D overlay controller window will stay on top of other windows</value>
+    <value>When toggled, 3D controller overlay will stay on top of other windows</value>
   </data>
   <data name="OverlayPage_BackButton" xml:space="preserve">
     <value>Back</value>
@@ -388,7 +388,7 @@
     <value>Face camera</value>
   </data>
   <data name="OverlayPage_CameraAngleDesc" xml:space="preserve">
-    <value>Change 3D overlay controller model behaviour for facing the camera</value>
+    <value>Change 3D controller overlay model behaviour for facing the camera</value>
   </data>
   <data name="OverlayPage_CameraAnglePitch" xml:space="preserve">
     <value>Stationary pitch</value>
@@ -400,7 +400,7 @@
     <value>Background Color</value>
   </data>
   <data name="OverlayPage_ColorDesc" xml:space="preserve">
-    <value>Change 3D overlay controller background color</value>
+    <value>Change 3D controller overlay background color</value>
   </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
     <value>Controller options</value>
@@ -424,7 +424,7 @@
     <value>Main trigger</value>
   </data>
   <data name="OverlayPage_MainTriggerDesc" xml:space="preserve">
-    <value>Change the overlay main trigger</value>
+    <value>Change 3D controller overlay main trigger</value>
   </data>
   <data name="OverlayPage_OEMController" xml:space="preserve">
     <value>OEM controller</value>
@@ -433,10 +433,10 @@
     <value>Opacity</value>
   </data>
   <data name="OverlayPage_OpacityControllerDesc" xml:space="preserve">
-    <value>Change the overlay controller opacity</value>
+    <value>Change 3D controller overlay opacity</value>
   </data>
   <data name="OverlayPage_OpacityTrackpadDesc" xml:space="preserve">
-    <value>Change the overlay trackpads opacity</value>
+    <value>Change trackpads overlay opacity</value>
   </data>
   <data name="OverlayPage_Overlay" xml:space="preserve">
     <value>Overlay</value>
@@ -445,7 +445,7 @@
     <value>Overlay model</value>
   </data>
   <data name="OverlayPage_OverlayModelDesc" xml:space="preserve">
-    <value>Change the overlay controller model</value>
+    <value>Change 3D controller overlay model</value>
   </data>
   <data name="OverlayPage_OverlayPreview" xml:space="preserve">
     <value>Overlay preview</value>
@@ -478,10 +478,10 @@
     <value>Size</value>
   </data>
   <data name="OverlayPage_SizeDesc" xml:space="preserve">
-    <value>Change the 3D overlay controller size</value>
+    <value>Change 3D controller overlay size</value>
   </data>
   <data name="OverlayPage_SizeOverlayDesc" xml:space="preserve">
-    <value>Change the overlay trackpads size</value>
+    <value>Change trackpads overlay size</value>
   </data>
   <data name="OverlayPage_StartButton" xml:space="preserve">
     <value>Start</value>
