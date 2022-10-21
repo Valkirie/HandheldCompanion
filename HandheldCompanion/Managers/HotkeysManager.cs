@@ -10,6 +10,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using static HandheldCompanion.Managers.Classes.InputsHotkey;
 
@@ -119,10 +121,12 @@ namespace HandheldCompanion.Managers
                 switch (listener)
                 {
                     case "shortcutKeyboard":
-                        var uiHostNoLaunch = new ProcessUtils.UIHostNoLaunch();
-                        var tipInvocation = (ProcessUtils.ITipInvocation)uiHostNoLaunch;
-                        tipInvocation.Toggle(ProcessUtils.GetDesktopWindow());
-                        Marshal.ReleaseComObject(uiHostNoLaunch);
+                        new Thread(() => {
+                            var uiHostNoLaunch = new ProcessUtils.UIHostNoLaunch();
+                            var tipInvocation = (ProcessUtils.ITipInvocation)uiHostNoLaunch;
+                            tipInvocation.Toggle(ProcessUtils.GetDesktopWindow());
+                            Marshal.ReleaseComObject(uiHostNoLaunch);
+                        }).Start();
                         break;
                     case "shortcutDesktop":
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
@@ -171,9 +175,9 @@ namespace HandheldCompanion.Managers
                 // raise an event
                 CommandExecuted?.Invoke(listener);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                LogManager.LogError("Failed to parse trigger {0}", listener);
+                LogManager.LogError("Failed to parse trigger {0}, {1}", listener, ex.Message);
             }
         }
 
