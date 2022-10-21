@@ -149,5 +149,8 @@
     <Setting Name="QuickToolsPerformanceGPUValue" Type="System.Double" Scope="User">
       <Value Profile="(Default)">500</Value>
     </Setting>
+    <Setting Name="UpdateUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://api.github.com/repos/Valkirie/ControllerService</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

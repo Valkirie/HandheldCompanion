@@ -23,6 +23,7 @@ namespace HandheldCompanion.Managers
 
         private UpdateStatus status;
         private string path;
+        private string url;
 
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(UpdateStatus status, UpdateFile? update, object? value);
@@ -60,6 +61,18 @@ namespace HandheldCompanion.Managers
             webClient.DownloadStringCompleted += WebClient_DownloadStringCompleted;
             webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
             webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
+
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            switch (name)
+            {
+                case "UpdateUrl":
+                    url = Convert.ToString(value);
+                    break;
+            }
         }
 
         private int GetFileSize(Uri uriPath)
@@ -267,7 +280,7 @@ namespace HandheldCompanion.Managers
             Updated?.Invoke(status, null, null);
 
             // download github
-            webClient.DownloadStringAsync(new Uri("https://api.github.com/repos/Valkirie/ControllerService/releases/latest"));
+            webClient.DownloadStringAsync(new Uri($"{url}/releases/latest"));
         }
 
         public void InstallUpdate(UpdateFile updateFile)
