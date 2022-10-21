@@ -133,7 +133,7 @@
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
                                     <TextBlock Name="VersionValue" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                     <TextBlock Text="BenjaminLSR" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock Text="Nefarius, CasperH20, B-Core, Frank东" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Text="Nefarius, CasperH20, B-Core, Frank东, Toomy" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                     <TextBlock TextWrapping="Wrap" Text="{x:Static resx:Resources.AboutPage_AboutDescription}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -143,8 +143,8 @@
 
                             <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                                 <TextBlock Text="{x:Static resx:Resources.AboutPage_RelatedLinks}"/>
-                                <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/ControllerService" RequestNavigate="Hyperlink_RequestNavigate">SourceCode</Hyperlink></TextBlock>
-                                <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/ControllerService/wiki" RequestNavigate="Hyperlink_RequestNavigate">Wiki</Hyperlink></TextBlock>
+                                <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion" RequestNavigate="Hyperlink_RequestNavigate">SourceCode</Hyperlink></TextBlock>
+                                <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion/wiki" RequestNavigate="Hyperlink_RequestNavigate">Wiki</Hyperlink></TextBlock>
                                 <TextBlock><Hyperlink NavigateUri="https://www.paypal.com/paypalme/BenjaminLSR" RequestNavigate="Hyperlink_RequestNavigate">Donate</Hyperlink></TextBlock>
                             </ui:SimpleStackPanel>
 
