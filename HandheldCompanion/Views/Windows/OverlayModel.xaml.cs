@@ -162,7 +162,7 @@ namespace HandheldCompanion.Views.Windows
             }
         }
 
-        public void UpdateVisibility()
+        public override void UpdateVisibility()
         {
             this.Dispatcher.Invoke(() =>
             {

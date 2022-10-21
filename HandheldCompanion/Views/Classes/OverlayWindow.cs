@@ -122,5 +122,22 @@ namespace HandheldCompanion.Views.Classes
                     break;
             }
         }
+
+        public virtual void UpdateVisibility()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                switch (Visibility)
+                {
+                    case Visibility.Visible:
+                        this.Hide();
+                        break;
+                    case Visibility.Collapsed:
+                    case Visibility.Hidden:
+                        this.Show();
+                        break;
+                }
+            });
+        }
     }
 }

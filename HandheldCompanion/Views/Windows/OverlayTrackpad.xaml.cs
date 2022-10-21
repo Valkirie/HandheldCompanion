@@ -161,22 +161,5 @@ namespace HandheldCompanion.Views.Windows
 
             e.Handled = true;
         }
-
-        public void UpdateVisibility()
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                switch (Visibility)
-                {
-                    case Visibility.Visible:
-                        this.Hide();
-                        break;
-                    case Visibility.Collapsed:
-                    case Visibility.Hidden:
-                        this.Show();
-                        break;
-                }
-            });
-        }
     }
 }
