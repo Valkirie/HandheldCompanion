@@ -42,7 +42,7 @@
             </Grid>
 
             <!-- Changelog -->
-            <TextBox Name="CurrentChangelog" Visibility="Collapsed" />
+            <TextBox Name="CurrentChangelog" Visibility="Collapsed" ScrollViewer.HorizontalScrollBarVisibility="Auto" IsReadOnly="True" />
 
             <!-- Update(s) -->
             <ui:SimpleStackPanel Name="CurrentUpdates" Spacing="6"/>
