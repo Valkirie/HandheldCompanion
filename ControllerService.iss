@@ -386,7 +386,7 @@ end;
 #define MyConfiguration "Release"
 
 ; #define ClearProfiles
-#define ClearHotkeys
+; #define ClearHotkeys
 
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
