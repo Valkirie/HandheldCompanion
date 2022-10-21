@@ -228,6 +228,31 @@
                     </Grid>
                 </Border>
 
+                <!-- AlwaysOnTop -->
+                <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE11C;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_AlwaysOnTop}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_AlwaysOnTopDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch Name="Toggle_AlwaysOnTop" Grid.Column="1" Toggled="Toggle_AlwaysOnTop_Toggled"/>
+                    </Grid>
+                </Border>
+
                 <!-- Model settings -->
                 <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
                     <Expander.Header>

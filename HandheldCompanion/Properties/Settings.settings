@@ -152,5 +152,8 @@
     <Setting Name="UpdateUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">https://api.github.com/repos/Valkirie/ControllerService</Value>
     </Setting>
+    <Setting Name="OverlayControllerAlwaysOnTop" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

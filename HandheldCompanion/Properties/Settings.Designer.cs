@@ -622,5 +622,17 @@ namespace HandheldCompanion.Properties {
                 this["UpdateUrl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool OverlayControllerAlwaysOnTop {
+            get {
+                return ((bool)(this["OverlayControllerAlwaysOnTop"]));
+            }
+            set {
+                this["OverlayControllerAlwaysOnTop"] = value;
+            }
+        }
     }
 }

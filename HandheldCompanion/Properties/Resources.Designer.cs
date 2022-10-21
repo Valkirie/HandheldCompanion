@@ -856,6 +856,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Always on top.
+        /// </summary>
+        public static string OverlayPage_AlwaysOnTop {
+            get {
+                return ResourceManager.GetString("OverlayPage_AlwaysOnTop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 3D overlay controller window will stay on top of other windows.
+        /// </summary>
+        public static string OverlayPage_AlwaysOnTopDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_AlwaysOnTopDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Back.
         /// </summary>
         public static string OverlayPage_BackButton {
@@ -910,7 +928,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Change 3D overlay controller background color.
         /// </summary>
         public static string OverlayPage_ColorDesc {
             get {
