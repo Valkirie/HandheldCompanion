@@ -613,7 +613,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://api.github.com/repos/Valkirie/ControllerService")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://api.github.com/repos/Valkirie/HandheldCompanion")]
         public string UpdateUrl {
             get {
                 return ((string)(this["UpdateUrl"]));

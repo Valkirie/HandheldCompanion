@@ -377,10 +377,10 @@ end;
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
-#define MyAppVersion '0.12.1.2'
+#define MyAppVersion '0.12.2.0'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
-#define MyAppURL 'https://github.com/Valkirie/ControllerService'
+#define MyAppURL 'https://github.com/Valkirie/HandheldCompanion'
 #define MyAppExeName "HandheldCompanion.exe"
 #define MySerExeName "ControllerService.exe"
 #define MyConfiguration "Release"

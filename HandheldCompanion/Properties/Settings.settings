@@ -150,7 +150,7 @@
       <Value Profile="(Default)">500</Value>
     </Setting>
     <Setting Name="UpdateUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">https://api.github.com/repos/Valkirie/ControllerService</Value>
+      <Value Profile="(Default)">https://api.github.com/repos/Valkirie/HandheldCompanion</Value>
     </Setting>
     <Setting Name="OverlayControllerAlwaysOnTop" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
