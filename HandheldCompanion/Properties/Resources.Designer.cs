@@ -1189,6 +1189,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Xbox One.
+        /// </summary>
+        public static string OverlayPage_XboxOneController {
+            get {
+                return ResourceManager.GetString("OverlayPage_XboxOneController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ZD O+.
         /// </summary>
         public static string OverlayPage_ZDOPlusController {

@@ -82,6 +82,7 @@
                         <ComboBox Name="OverlayModel" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" SelectionChanged="OverlayModel_SelectionChanged">
                             <Label Content="{x:Static resx:Resources.OverlayPage_OEMController}" Name="OEMControllerRadio" IsEnabled="False"/>
                             <Label Content="{x:Static resx:Resources.OverlayPage_EmulatedController}"/>
+                            <Label Content="{x:Static resx:Resources.OverlayPage_XboxOneController}"/>
                             <Label Content="{x:Static resx:Resources.OverlayPage_ZDOPlusController}"/>
                             <Label Content="{x:Static resx:Resources.OverlayPage_8BitDoLite2Controller}"/>
                             <Label Content="{x:Static resx:Resources.OverlayPage_MachenikeHG510Controller}"/>

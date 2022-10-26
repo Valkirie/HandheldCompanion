@@ -493,6 +493,9 @@
   <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
     <value>Trackpads options</value>
   </data>
+  <data name="OverlayPage_XboxOneController" xml:space="preserve">
+    <value>Xbox One</value>
+  </data>
   <data name="OverlayPage_ZDOPlusController" xml:space="preserve">
     <value>ZD O+</value>
   </data>

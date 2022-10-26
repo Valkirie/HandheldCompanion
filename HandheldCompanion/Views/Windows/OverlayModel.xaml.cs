@@ -131,6 +131,11 @@ namespace HandheldCompanion.Views.Windows
                         }
                     }
                     break;
+                case OverlayModelMode.XboxOne:
+                    {
+                        newModel = new ModelXBOXOne();
+                    }
+                    break;
                 case OverlayModelMode.ZDOPlus:
                     {
                         newModel = new ModelZDOPlus();

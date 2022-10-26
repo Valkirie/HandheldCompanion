@@ -59,10 +59,11 @@ namespace ControllerCommon.Utils
     {
         OEM = 0,
         Virtual = 1,
-        ZDOPlus = 2,
-        EightBitDoLite2 = 3,
-        MachenikeHG510 = 4,
-        Toy = 5
+        XboxOne = 2,
+        ZDOPlus = 3,
+        EightBitDoLite2 = 4,
+        MachenikeHG510 = 5,
+        Toy = 6
     }
 
     public static class InputUtils
