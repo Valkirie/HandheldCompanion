@@ -162,6 +162,9 @@ namespace HandheldCompanion.Managers
 
         private void cpuWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
         {
+            if (processor == null || processor.IsInitialized)
+                return;
+
             lock (cpuLock)
             {
                 bool TDPdone = false;
@@ -228,6 +231,9 @@ namespace HandheldCompanion.Managers
 
         private void gfxWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
         {
+            if (processor == null || processor.IsInitialized)
+                return;
+
             lock (gfxLock)
             {
                 bool GPUdone = false;
