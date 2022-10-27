@@ -23,7 +23,13 @@ namespace HandheldCompanion.Views.QuickPages
             OverlayQuickTools.brightnessControl.BrightnessChanged += BrightnessControl_BrightnessChanged;
 
             // get current system brightness
-            SliderBrightness.Value = OverlayQuickTools.brightnessControl.GetBrightness();
+            switch(OverlayQuickTools.brightnessControl.IsSupported)
+            {
+                case true:
+                    SliderBrightness.IsEnabled = true;
+                    SliderBrightness.Value = OverlayQuickTools.brightnessControl.GetBrightness();
+                    break;
+            }
 
             // get current system volume
             DevEnum = new MMDeviceEnumerator();
