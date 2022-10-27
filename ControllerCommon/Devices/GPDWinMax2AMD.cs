@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System.Collections.Generic;
+using System.Numerics;
+using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
@@ -31,6 +33,10 @@ namespace ControllerCommon.Devices
                 { 'Y', 'Z' },
                 { 'Z', 'Y' },
             };
+
+            listeners.Add(new DeviceChord("Menu", new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 }));
+            listeners.Add(new DeviceChord("Bottom button left", new List<KeyCode>() { KeyCode.D9 }));
+            listeners.Add(new DeviceChord("Bottom button right", new List<KeyCode>() { KeyCode.D0 }));
         }
     }
 }
