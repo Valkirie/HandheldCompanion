@@ -54,7 +54,7 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Dispatcher.Invoke(() =>
             {
-                Border hotkeyBorder = hotkey.GetBorder();
+                Border hotkeyBorder = hotkey.GetHotkey();
 
                 ushort idx = (ushort)hotkey.inputsHotkey.hotkeyType;
                 SimpleStackPanel stackPanel = (SimpleStackPanel)HotkeysPanel.Children[idx];
