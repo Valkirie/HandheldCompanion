@@ -6,6 +6,7 @@ using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -64,7 +65,10 @@ namespace HandheldCompanion.Managers
                 ProcessHotkey(fileName);
 
             foreach (Hotkey hotkey in Hotkeys.Values)
+            {
                 HotkeyCreated?.Invoke(hotkey);
+                hotkey.Updated += Hotkey_Updated;
+            }
         }
 
         private static void ProcessHotkey(string fileName)
@@ -188,9 +192,12 @@ namespace HandheldCompanion.Managers
                 Hotkey hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
                 hotkey.inputsChord = inputs;
                 hotkey.UpdateHotkey(true);
-
-                SerializeHotkey(hotkey, true);
             }));
+        }
+
+        private static void Hotkey_Updated(Hotkey hotkey)
+        {
+            SerializeHotkey(hotkey, true);
         }
     }
 }

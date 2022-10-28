@@ -13,15 +13,41 @@
       Margin="0,0,0,12"
       Title="Settings">
 
-    <ui:SimpleStackPanel Spacing="6">
-        
-        <!-- Brightness -->
-        <Grid>
-            <!-- Header -->
+    <Grid Margin="12,0,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Shortcuts -->
+        <UniformGrid Columns="3" VerticalAlignment="Top">
+            <UniformGrid.Resources>
+                <Style TargetType="{x:Type ui:SimpleStackPanel}">
+                    <Setter Property="Margin" Value="6"/>
+                </Style>
+            </UniformGrid.Resources>
+
+            <ui:SimpleStackPanel Spacing="6">
+                <Button Height="48" FontFamily="Segoe Fluent Icons" Content="&#xEDE3;" HorizontalAlignment="Stretch" FontSize="20"/>
+                <TextBlock HorizontalAlignment="Center" Text="Display 3D controller" TextWrapping="Wrap" TextAlignment="Center" FontSize="12"/>
+            </ui:SimpleStackPanel>
+
+            <ui:SimpleStackPanel Spacing="6">
+                <Button Height="48" FontFamily="Segoe Fluent Icons" Content="&#xEC7A;" HorizontalAlignment="Stretch" FontSize="20"/>
+                <TextBlock HorizontalAlignment="Center" Text="Summon quick tools window" TextWrapping="Wrap" TextAlignment="Center" FontSize="12"/>
+            </ui:SimpleStackPanel>
+
+            <ui:SimpleStackPanel Spacing="6">
+                <Button Height="48" FontFamily="Segoe Fluent Icons" Content="&#xE769;" HorizontalAlignment="Stretch" FontSize="20"/>
+                <TextBlock HorizontalAlignment="Center" Text="Toggle Suspender" TextWrapping="Wrap" TextAlignment="Center" FontSize="12"/>
+            </ui:SimpleStackPanel>
+        </UniformGrid>
+
+        <ui:SimpleStackPanel VerticalAlignment="Top" Margin="0,28,0,0" Grid.Row="1">
+            <!-- Brightness -->
             <Border
-                Padding="15,12,15,12"
-                CornerRadius="{DynamicResource ControlCornerRadius}"                
-                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
+                    Padding="15,12,15,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
                     <DockPanel>
@@ -29,21 +55,17 @@
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <Slider Name="SliderBrightness" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="0" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-							ValueChanged="SliderBrightness_ValueChanged"
-							SmallChange="1" LargeChange="10"/>
+							    ValueChanged="SliderBrightness_ValueChanged"
+							    SmallChange="1" LargeChange="10"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
             </Border>
-        </Grid>
 
-        <!-- Sounds -->
-        <Grid>
-            <!-- Header -->
+            <!-- Sounds -->
             <Border
-                Padding="15,12,15,12"
-                CornerRadius="{DynamicResource ControlCornerRadius}"                
-                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
+                    Padding="15,12,15,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
                     <DockPanel>
@@ -51,13 +73,12 @@
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <Slider Name="SliderVolume" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="0" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-							ValueChanged="SliderVolume_ValueChanged"
-							SmallChange="1" LargeChange="10"/>
+							    ValueChanged="SliderVolume_ValueChanged"
+							    SmallChange="1" LargeChange="10"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
             </Border>
-        </Grid>
-
-    </ui:SimpleStackPanel>
+        </ui:SimpleStackPanel>
+    </Grid>
 </Page>

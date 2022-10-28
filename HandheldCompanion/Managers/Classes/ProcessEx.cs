@@ -180,7 +180,7 @@ namespace HandheldCompanion.Managers.Classes
             ColumnDefinition colDef2 = new ColumnDefinition()
             {
                 Width = new GridLength(2, GridUnitType.Star),
-                MinWidth = 120
+                MinWidth = 84
             };
             processGrid.ColumnDefinitions.Add(colDef2);
 
@@ -234,7 +234,7 @@ namespace HandheldCompanion.Managers.Classes
                 FontSize = 14,
                 Content = Properties.Resources.ResourceManager.GetString("ProcessEx_processSuspend"),
                 VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Right
+                HorizontalAlignment = HorizontalAlignment.Right,
             };
             processSuspend.Click += ProcessSuspend_Click;
 

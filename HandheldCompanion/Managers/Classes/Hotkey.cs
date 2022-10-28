@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using Application = System.Windows.Application;
@@ -16,6 +17,7 @@ namespace HandheldCompanion.Managers.Classes
         // serialized
         public ushort hotkeyId { get; set; }
         public InputsChord inputsChord { get; set; }
+        public bool IsPinned { get; set; }
 
         // UI vars
         public Border mainBorder;
@@ -28,8 +30,12 @@ namespace HandheldCompanion.Managers.Classes
         public SimpleStackPanel buttonPanel;
 
         public Button mainButton;
-        public Button deleteButton;
+        public Button clearButton;
+        public Button pinButton;
         public Button comboButton;
+
+        public event UpdatedEventHandler Updated;
+        public delegate void UpdatedEventHandler(Hotkey hotkey);
 
         public Hotkey()
         {
@@ -83,9 +89,15 @@ namespace HandheldCompanion.Managers.Classes
 
             ColumnDefinition colDef2 = new ColumnDefinition()
             {
-                Width = new GridLength(60, GridUnitType.Pixel)
+                Width = new GridLength(50, GridUnitType.Pixel)
             };
             mainGrid.ColumnDefinitions.Add(colDef2);
+
+            ColumnDefinition colDef3 = new ColumnDefinition()
+            {
+                Width = new GridLength(50, GridUnitType.Pixel)
+            };
+            mainGrid.ColumnDefinitions.Add(colDef3);
 
             // main panel content
             currentIcon = new FontIcon()
@@ -139,8 +151,9 @@ namespace HandheldCompanion.Managers.Classes
                 HorizontalAlignment = HorizontalAlignment.Stretch,
             };
             mainButton.Click += (sender, e) => ButtonButton_Click((Button)sender);
-
-            deleteButton = new Button()
+            
+            // todo: add localized tooltip text
+            clearButton = new Button()
             {
                 Height = 30,
                 Content = new FontIcon() { Glyph = "\uE75C", FontSize = 14 },
@@ -148,8 +161,18 @@ namespace HandheldCompanion.Managers.Classes
                 VerticalAlignment = VerticalAlignment.Center,
                 Style = Application.Current.FindResource("AccentButtonStyle") as Style
             };
-            deleteButton.Click += (sender, e) => DeleteButton_Click();
-            Grid.SetColumn(deleteButton, 2);
+            clearButton.Click += (sender, e) => ClearButton_Click();
+            Grid.SetColumn(clearButton, 2);
+
+            // todo: add localized tooltip text
+            pinButton = new Button()
+            {
+                Height = 30,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            pinButton.Click += (sender, e) => PinButton_Click();
+            Grid.SetColumn(pinButton, 3);
 
             // add elements to main panel
             buttonPanel.Children.Add(mainButton);
@@ -180,18 +203,26 @@ namespace HandheldCompanion.Managers.Classes
             // add elements to grid
             mainGrid.Children.Add(mainPanel);
             mainGrid.Children.Add(buttonPanel);
-            mainGrid.Children.Add(deleteButton);
+            mainGrid.Children.Add(clearButton);
+            mainGrid.Children.Add(pinButton);
 
             // add elements to border
             mainBorder.Child = mainGrid;
 
             // update buttons name and states
             UpdateHotkey();
+            UpdateHotkeyPin();
         }
 
-        private void DeleteButton_Click()
+        private void ClearButton_Click()
         {
             InputsManager.ClearListening(this);
+        }
+
+        private void PinButton_Click()
+        {
+            IsPinned = !IsPinned;
+            UpdateHotkeyPin();
         }
 
         private void ButtonButton_Click(Button sender)
@@ -228,7 +259,25 @@ namespace HandheldCompanion.Managers.Classes
 
         public Button GetDeleteButton()
         {
-            return deleteButton;
+            return clearButton;
+        }
+
+        public void UpdateHotkeyPin()
+        {
+            switch (IsPinned)
+            {
+                case true:
+                    pinButton.Content = new FontIcon() { Glyph = "\uE77A", FontSize = 14 };
+                    pinButton.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
+                    break;
+                case false:
+                    pinButton.Content = new FontIcon() { Glyph = "\uE840", FontSize = 14 };
+                    pinButton.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+                    break;
+            }
+
+            // raise event
+            Updated?.Invoke(this);
         }
 
         public void UpdateHotkey(bool StopListening = false)
@@ -343,7 +392,10 @@ namespace HandheldCompanion.Managers.Classes
             mainButton.Content = mainContent;
 
             // update delete button status
-            deleteButton.IsEnabled = haskey || hasbuttons || hascombo;
+            clearButton.IsEnabled = haskey || hasbuttons || hascombo;
+
+            // raise event
+            Updated?.Invoke(this);
         }
     }
 }
