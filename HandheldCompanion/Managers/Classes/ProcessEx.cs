@@ -22,6 +22,8 @@ namespace HandheldCompanion.Managers.Classes
     public class ProcessEx
     {
         public Process Process;
+        public ProcessThread MainThread;
+
         public List<int> Children = new();
 
         public IntPtr MainWindowHandle;
@@ -68,6 +70,9 @@ namespace HandheldCompanion.Managers.Classes
                 if (Process.HasExited)
                     return;
 
+                if (MainThread is null)
+                    return;
+
                 // refresh all child processes
                 List<int> childs = ProcessUtils.GetChildIds(this.Process);
 
@@ -80,8 +85,6 @@ namespace HandheldCompanion.Managers.Classes
                     Children.Add(child);
                     ChildProcessCreated?.Invoke(this, child);
                 }
-
-                var processThread = Process.Threads[0];
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
@@ -99,13 +102,13 @@ namespace HandheldCompanion.Managers.Classes
                         processExpander.Visibility = Visibility.Collapsed;
 
                     // manage process state
-                    switch (processThread.ThreadState)
+                    switch (MainThread.ThreadState)
                     {
                         case ThreadState.Wait:
 
-                            if (processThread.WaitReason != threadWaitReason)
+                            if (MainThread.WaitReason != threadWaitReason)
                             {
-                                switch (processThread.WaitReason)
+                                switch (MainThread.WaitReason)
                                 {
                                     case ThreadWaitReason.Suspended:
                                         processSuspend.Visibility = Visibility.Collapsed;
@@ -122,7 +125,7 @@ namespace HandheldCompanion.Managers.Classes
                                 }
                             }
 
-                            threadWaitReason = processThread.WaitReason;
+                            threadWaitReason = MainThread.WaitReason;
                             break;
                         default:
                             threadWaitReason = ThreadWaitReason.UserRequest;
@@ -131,7 +134,7 @@ namespace HandheldCompanion.Managers.Classes
 
                     // manage process throttling
                     processQoS.Text = EnumUtils.GetDescriptionFromEnumValue(EcoQoS);
-                }), DispatcherPriority.ContextIdle);
+                }));
             }
             catch (Exception) { }
         }
@@ -180,7 +183,7 @@ namespace HandheldCompanion.Managers.Classes
             ColumnDefinition colDef2 = new ColumnDefinition()
             {
                 Width = new GridLength(2, GridUnitType.Star),
-                MinWidth = 120
+                MinWidth = 84
             };
             processGrid.ColumnDefinitions.Add(colDef2);
 
@@ -234,7 +237,7 @@ namespace HandheldCompanion.Managers.Classes
                 FontSize = 14,
                 Content = Properties.Resources.ResourceManager.GetString("ProcessEx_processSuspend"),
                 VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Right
+                HorizontalAlignment = HorizontalAlignment.Right,
             };
             processSuspend.Click += ProcessSuspend_Click;
 

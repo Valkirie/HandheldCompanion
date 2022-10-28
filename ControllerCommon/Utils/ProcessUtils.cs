@@ -195,7 +195,7 @@ namespace ControllerCommon.Utils
 
         public static List<Process> GetChildProcesses(Process process)
         {
-            return new ManagementObjectSearcher($"Select * From Win32_Process Where ParentProcessID={process.Id}")
+            return new ManagementObjectSearcher($"select processid from win32_process Where parentprocessid=={process.Id}")
                 .Get()
                 .Cast<ManagementObject>()
                 .Select(mo => Process.GetProcessById(Convert.ToInt32(mo["ProcessID"])))
@@ -204,7 +204,7 @@ namespace ControllerCommon.Utils
 
         public static List<int> GetChildIds(Process process)
         {
-            return new ManagementObjectSearcher($"Select * From Win32_Process Where ParentProcessID={process.Id}")
+            return new ManagementObjectSearcher($"select processid from win32_process Where parentprocessid={process.Id}")
                 .Get()
                 .Cast<ManagementObject>()
                 .Select(mo => Convert.ToInt32(mo["ProcessID"]))

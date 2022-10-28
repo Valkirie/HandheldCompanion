@@ -13,14 +13,13 @@
       Margin="0,0,0,12"
       Title="Profiles">
 
-    <ui:SimpleStackPanel Spacing="6">
+    <ui:SimpleStackPanel Spacing="6" Margin="12,0,0,0">
 
         <Grid>
             <!-- Header -->
             <Border
                 Padding="15,12,15,12"
-                CornerRadius="{DynamicResource ControlCornerRadius}"
-                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
+                CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
                     <DockPanel>
@@ -41,10 +40,9 @@
         <ui:SimpleStackPanel Spacing="6" Name="GridProfile" Visibility="Collapsed">
             <Grid Name="StackProfileToggle">
                 <!-- Header -->
-                <Border                      
-                            Padding="15,12,15,12"
-                            CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
+                <Border
+                    Padding="15,12,15,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -71,7 +69,6 @@
                 <Border
                     Padding="15,12,15,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                     IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
 
                     <ui:SimpleStackPanel Spacing="10">
@@ -101,7 +98,6 @@
                 <Border
                     Padding="15,12,15,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                     Visibility="{Binding ElementName=UMCToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <Border.IsEnabled>
@@ -203,8 +199,7 @@
                 <!-- Header -->
                 <Border
                     Padding="15,12,15,12"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -229,7 +224,6 @@
                 <Border
                     Padding="15,12,15,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
@@ -245,7 +239,6 @@
                 <Border
                     Padding="15,12,15,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
