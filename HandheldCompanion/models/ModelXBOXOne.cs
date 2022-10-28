@@ -1,7 +1,5 @@
 using SharpDX.XInput;
 using System;
-using System.IO;
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -80,11 +78,11 @@ namespace HandheldCompanion.Models
             BackSymbol = modelImporter.Load($"models/{ModelName}/BackSymbol.obj");
             BatteryDoor = modelImporter.Load($"models/{ModelName}/BatteryDoor.obj");
             BatteryDoorInner = modelImporter.Load($"models/{ModelName}/BatteryDoorInner.obj");
-            LogoInner= modelImporter.Load($"models/{ModelName}/LogoInner.obj");
-            LogoOuter= modelImporter.Load($"models/{ModelName}/LogoOuter.obj");
-            MainBodyBack= modelImporter.Load($"models/{ModelName}/MainBodyBack.obj");
-            MainBodyTop= modelImporter.Load($"models/{ModelName}/MainBodyTop.obj");
-            MainBodySide= modelImporter.Load($"models/{ModelName}/MainBodySide.obj");
+            LogoInner = modelImporter.Load($"models/{ModelName}/LogoInner.obj");
+            LogoOuter = modelImporter.Load($"models/{ModelName}/LogoOuter.obj");
+            MainBodyBack = modelImporter.Load($"models/{ModelName}/MainBodyBack.obj");
+            MainBodyTop = modelImporter.Load($"models/{ModelName}/MainBodyTop.obj");
+            MainBodySide = modelImporter.Load($"models/{ModelName}/MainBodySide.obj");
             ShareButton = modelImporter.Load($"models/{ModelName}/ShareButton.obj");
             ShareButtonSymbol = modelImporter.Load($"models/{ModelName}/ShareButtonSymbol.obj");
             StartSymbol = modelImporter.Load($"models/{ModelName}/StartSymbol.obj");

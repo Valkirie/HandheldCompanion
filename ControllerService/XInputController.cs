@@ -3,13 +3,13 @@ using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using ControllerService.Targets;
+using PrecisionTiming;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Threading.Tasks;
-using PrecisionTiming;
 using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerService

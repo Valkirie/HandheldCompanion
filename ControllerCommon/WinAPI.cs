@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Security;
 using static PInvoke.Kernel32;
 using BOOL = System.Int32;
 using DWORD = System.Int32;

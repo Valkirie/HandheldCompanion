@@ -331,7 +331,7 @@ namespace HandheldCompanion.Views
 
             InputsManager.TriggerRaised += (listener, input) =>
             {
-                switch(listener)
+                switch (listener)
                 {
                     case "shortcutMainwindow":
                         SwapWindowState();

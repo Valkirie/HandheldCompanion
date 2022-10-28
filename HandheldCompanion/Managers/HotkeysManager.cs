@@ -7,13 +7,11 @@ using HandheldCompanion.Views;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using static HandheldCompanion.Managers.Classes.InputsHotkey;
 
@@ -96,7 +94,7 @@ namespace HandheldCompanion.Managers
 
         private static void PinOrUnpinHotkey(Hotkey hotkey)
         {
-            switch(hotkey.IsPinned)
+            switch (hotkey.IsPinned)
             {
                 case false:
                     {
@@ -197,7 +195,8 @@ namespace HandheldCompanion.Managers
                 switch (listener)
                 {
                     case "shortcutKeyboard":
-                        new Thread(() => {
+                        new Thread(() =>
+                        {
                             var uiHostNoLaunch = new ProcessUtils.UIHostNoLaunch();
                             var tipInvocation = (ProcessUtils.ITipInvocation)uiHostNoLaunch;
                             tipInvocation.Toggle(ProcessUtils.GetDesktopWindow());

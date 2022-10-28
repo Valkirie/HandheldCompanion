@@ -28,7 +28,7 @@ namespace HandheldCompanion.Views.QuickPages
             HotkeysManager.HotkeyUpdated += HotkeysManager_HotkeyUpdated;
 
             // get current system brightness
-            switch(OverlayQuickTools.brightnessControl.IsSupported)
+            switch (OverlayQuickTools.brightnessControl.IsSupported)
             {
                 case true:
                     SliderBrightness.IsEnabled = true;

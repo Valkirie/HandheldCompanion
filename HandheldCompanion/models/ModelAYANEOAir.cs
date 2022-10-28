@@ -1,6 +1,5 @@
 using SharpDX.XInput;
 using System;
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -189,7 +188,7 @@ namespace HandheldCompanion.Models
                 }
 
                 // yellow
-                if (model3D == DPadTriangle 
+                if (model3D == DPadTriangle
                     || model3D == ALetter || model3D == BLetter || model3D == XLetter || model3D == YLetter)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticYellow;

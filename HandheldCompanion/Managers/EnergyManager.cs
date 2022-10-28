@@ -1,18 +1,10 @@
-﻿using ControllerCommon;
-using ControllerCommon.Managers;
-using ControllerCommon.Processor;
-using ControllerCommon.Utils;
+﻿using ControllerCommon.Managers;
 using HandheldCompanion.Managers.Classes;
-using HandheldCompanion.Views;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using static ControllerCommon.WinAPI;
 using static PInvoke.Kernel32;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 
 namespace HandheldCompanion.Managers
 {
@@ -157,7 +149,7 @@ namespace HandheldCompanion.Managers
 
                 if (processEx.IsIgnored || processEx.IsSuspended())
                     continue;
-                
+
                 ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.Eco);
             }
         }

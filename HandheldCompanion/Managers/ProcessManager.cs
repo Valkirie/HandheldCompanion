@@ -69,7 +69,7 @@ namespace HandheldCompanion.Managers
             // hook: on process halt
             stopWatch = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
             stopWatch.EventArrived += new EventArrivedEventHandler(ProcessHalted);
-            
+
             // hook: on window foregroud
             listener = new WinEventProc(EventCallback);
             winHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, listener, 0, 0, WINEVENT_OUTOFCONTEXT);
@@ -335,7 +335,7 @@ namespace HandheldCompanion.Managers
                 // Other
                 case "bdagent.exe":             // Bitdefender Agent
                 case "radeonsoftware.exe":
-                case "monotificationux.exe": 
+                case "monotificationux.exe":
 
                 // handheld companion
                 case "handheldcompanion.exe":

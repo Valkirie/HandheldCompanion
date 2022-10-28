@@ -1,19 +1,13 @@
-﻿using ControllerCommon;
-using ControllerCommon.Utils;
+﻿using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Management;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Threading;
 using static HandheldCompanion.Managers.EnergyManager;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 using Brush = System.Windows.Media.Brush;
 using Image = System.Windows.Controls.Image;
 

@@ -1,8 +1,6 @@
 ﻿using ControllerCommon.Utils;
 using ModernWpf.Controls;
-using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using Application = System.Windows.Application;
@@ -152,7 +150,7 @@ namespace HandheldCompanion.Managers.Classes
                 Height = 30,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
             };
-            
+
             // todo: add localized tooltip text
             eraseButton = new Button()
             {
@@ -246,7 +244,7 @@ namespace HandheldCompanion.Managers.Classes
         public void StartListening(bool IsCombo)
         {
             // update button
-            switch(IsCombo)
+            switch (IsCombo)
             {
                 case true:
                     outputButton.Content = Properties.Resources.OverlayPage_Listening;

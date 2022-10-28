@@ -3,7 +3,6 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
 using HandheldCompanion.Views.Classes;
-using Microsoft.VisualBasic;
 using PrecisionTiming;
 using SharpDX.XInput;
 using System;
