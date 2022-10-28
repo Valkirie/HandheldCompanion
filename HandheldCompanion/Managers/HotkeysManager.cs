@@ -36,6 +36,7 @@ namespace HandheldCompanion.Managers
         public delegate void CommandExecutedEventHandler(string listener);
 
         public static SortedDictionary<ushort, Hotkey> Hotkeys = new();
+        private const short PIN_LIMIT = 9;
 
         static HotkeysManager()
         {
@@ -44,29 +45,37 @@ namespace HandheldCompanion.Managers
             if (!Directory.Exists(Path))
                 Directory.CreateDirectory(Path);
 
-            foreach (var pair in InputsHotkey.Hotkeys)
-            {
-                ushort Id = pair.Key;
-                InputsHotkey inputsHotkey = pair.Value;
-
-                Hotkey hotkey = new Hotkey(Id, inputsHotkey);
-                SerializeHotkey(hotkey);
-            }
-
             InputsManager.TriggerUpdated += TriggerUpdated;
             InputsManager.TriggerRaised += TriggerRaised;
         }
 
         public static void Start()
         {
-            // process existing hotkeys types
+            // process hotkeys
+            foreach (var pair in InputsHotkey.Hotkeys)
+            {
+                ushort Id = pair.Key;
+                InputsHotkey inputsHotkey = pair.Value;
+
+                Hotkey hotkey = null;
+
+                string fileName = System.IO.Path.Combine(Path, $"{inputsHotkey.Listener}.json");
+
+                if (File.Exists(fileName))
+                    hotkey = ProcessHotkey(fileName);
+
+                if (hotkey is null)
+                    hotkey = new Hotkey(Id, inputsHotkey);
+
+                hotkey.inputsHotkey = InputsHotkey.Hotkeys[hotkey.hotkeyId];
+                hotkey.DrawControl();
+
+                Hotkeys.Add(hotkey.hotkeyId, hotkey);
+            }
+
+            // process hotkeys types
             foreach (InputsHotkeyType type in (InputsHotkeyType[])Enum.GetValues(typeof(InputsHotkeyType)))
                 HotkeyTypeCreated?.Invoke(type);
-
-            // process existing hotkeys
-            string[] fileEntries = Directory.GetFiles(Path, "*.json", SearchOption.AllDirectories);
-            foreach (string fileName in fileEntries)
-                ProcessHotkey(fileName);
 
             foreach (Hotkey hotkey in Hotkeys.Values)
             {
@@ -93,10 +102,10 @@ namespace HandheldCompanion.Managers
                     {
                         var count = CountPinned();
 
-                        if (count >= 9)
+                        if (count >= PIN_LIMIT)
                         {
                             _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
-                                "You can't pin more than 9 hotkeys",
+                                $"You can't pin more than {PIN_LIMIT} hotkeys",
                                 ContentDialogButton.Primary, string.Empty, $"{Properties.Resources.ProfilesPage_OK}");
 
                             return;
@@ -139,9 +148,9 @@ namespace HandheldCompanion.Managers
             }));
         }
 
-        private static void ProcessHotkey(string fileName)
+        private static Hotkey ProcessHotkey(string fileName)
         {
-            Hotkey hotkey;
+            Hotkey hotkey = null;
             try
             {
                 string outputraw = File.ReadAllText(fileName);
@@ -150,7 +159,6 @@ namespace HandheldCompanion.Managers
             catch (Exception ex)
             {
                 LogManager.LogError("Could not parse hotkey {0}. {1}", fileName, ex.Message);
-                return;
             }
 
             // failed to parse
@@ -162,13 +170,9 @@ namespace HandheldCompanion.Managers
             if (!InputsHotkey.Hotkeys.ContainsKey(hotkey.hotkeyId))
             {
                 LogManager.LogError("Error while parsing {0}. InputsHotkey is outdated.", fileName);
-                return;
             }
 
-            hotkey.inputsHotkey = InputsHotkey.Hotkeys[hotkey.hotkeyId];
-            hotkey.DrawControl();
-
-            Hotkeys.Add(hotkey.hotkeyId, hotkey);
+            return hotkey;
         }
 
         public static void SerializeHotkey(Hotkey hotkey, bool overwrite = false)
