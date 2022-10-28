@@ -134,7 +134,7 @@ namespace HandheldCompanion.Managers.Classes
 
                     // manage process throttling
                     processQoS.Text = EnumUtils.GetDescriptionFromEnumValue(EcoQoS);
-                }), DispatcherPriority.ContextIdle);
+                }));
             }
             catch (Exception) { }
         }
