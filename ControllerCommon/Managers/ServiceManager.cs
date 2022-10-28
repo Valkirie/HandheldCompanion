@@ -47,7 +47,7 @@ namespace ControllerCommon.Managers
         public delegate void UpdatedEventHandler(ServiceControllerStatus status, int mode);
 
         public event StartFailedEventHandler StartFailed;
-        public delegate void StartFailedEventHandler(ServiceControllerStatus status);
+        public delegate void StartFailedEventHandler(ServiceControllerStatus status, string message);
 
         public event StopFailedEventHandler StopFailed;
         public delegate void StopFailedEventHandler(ServiceControllerStatus status);
@@ -247,7 +247,7 @@ namespace ControllerCommon.Managers
                     if (StartTentative == 3)
                     {
                         nextStatus = ServiceControllerStatus.Failed;
-                        StartFailed?.Invoke(status);
+                        StartFailed?.Invoke(status, ex.Message);
                         break;
                     }
                 }

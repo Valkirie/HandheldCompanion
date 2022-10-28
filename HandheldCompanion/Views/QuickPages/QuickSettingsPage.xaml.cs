@@ -1,6 +1,9 @@
 ﻿using CoreAudio;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views.Windows;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -21,6 +24,8 @@ namespace HandheldCompanion.Views.QuickPages
             InitializeComponent();
 
             OverlayQuickTools.brightnessControl.BrightnessChanged += BrightnessControl_BrightnessChanged;
+            HotkeysManager.HotkeyCreated += HotkeysManager_HotkeyCreated;
+            HotkeysManager.HotkeyUpdated += HotkeysManager_HotkeyUpdated;
 
             // get current system brightness
             switch(OverlayQuickTools.brightnessControl.IsSupported)
@@ -40,6 +45,24 @@ namespace HandheldCompanion.Views.QuickPages
                 multimediaDevice.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
                 SliderVolume.Value = multimediaDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100.0d;
             }
+        }
+
+        private void HotkeysManager_HotkeyUpdated(Hotkey hotkey)
+        {
+            UpdatePins();
+        }
+
+        private void HotkeysManager_HotkeyCreated(Hotkey hotkey)
+        {
+            UpdatePins();
+        }
+
+        private void UpdatePins()
+        {
+            QuickHotkeys.Children.Clear();
+
+            foreach (Hotkey hotkey in HotkeysManager.Hotkeys.Values.Where(item => item.IsPinned))
+                QuickHotkeys.Children.Add(hotkey.GetPin());
         }
 
         private void BrightnessControl_BrightnessChanged(int brightness)
