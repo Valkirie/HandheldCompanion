@@ -34,7 +34,9 @@ namespace HandheldCompanion.Managers
         private static PrecisionTimer InputsChordHoldTimer;
         private static PrecisionTimer InputsChordInputTimer;
 
-        private static bool prevKeyDown = false;
+        private static bool ExpectKeyDown = true;
+        private static bool ExpectKeyUp = false;
+        private static Dictionary<KeyValuePair<KeyCode, bool>, int> prevKeys = new();
 
         // Global variables
         private static PrecisionTimer ListenerTimer;
@@ -134,7 +136,7 @@ namespace HandheldCompanion.Managers
             currentChord.InputsType = InputsChordType.Hold;
 
             // we're no-longer expecting a KeyUp call
-            prevKeyDown = false;
+            ExpectKeyUp = false;
 
             ExecuteSequence();
         }
@@ -177,6 +179,9 @@ namespace HandheldCompanion.Managers
 
             // reset chord
             currentChord = new();
+
+            // reset index
+            KeyIndex = 0;
         }
 
         private static List<KeyEventArgsExt> InjectModifiers(KeyEventArgsExt args)
@@ -208,6 +213,10 @@ namespace HandheldCompanion.Managers
 
             KeyEventArgsExt args = (KeyEventArgsExt)e;
             KeyCode hookKey = (KeyCode)args.KeyValue;
+
+#if DEBUG
+            LogManager.LogDebug("{1}\tKeyEvent: {0}, IsKeyDown: {2}, IsKeyUp: {3}", hookKey, args.Timestamp, args.IsKeyDown, args.IsKeyUp);
+#endif
 
             // are we listening for keyboards inputs as part of a custom hotkey ?
             if (IsCombo)
@@ -263,40 +272,57 @@ namespace HandheldCompanion.Managers
                 // search for matching triggers
                 List<KeyCode> buffer_keys = GetBufferKeys().OrderBy(key => key).ToList();
 
-                foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
+                foreach (DeviceChord chord in MainWindow.handheldDevice.listeners)
                 {
                     // compare ordered enumerable
-                    List<KeyCode> chord_keys = pair.chords[args.IsKeyDown].OrderBy(key => key).ToList();
+                    List<KeyCode> chord_keys = chord.chords[args.IsKeyDown].OrderBy(key => key).ToList();
 
                     if (chord_keys.SequenceEqual(buffer_keys))
                     {
                         // check if inputs timestamp are too close from one to another
-                        bool unexpected = false;
+                        bool IsKeyUnexpected = false;
 
                         if (args.IsKeyDown)
                         {
-                            prevKeyDown = true;
+                            if (!ExpectKeyUp)
+                            {
+                                ExpectKeyDown = false;
+                                ExpectKeyUp = true;
+                            }
+                            else
+                                IsKeyUnexpected = true;
                         }
                         else if (args.IsKeyUp)
                         {
-                            if (!prevKeyDown)
-                                unexpected = true;
+                            if (!ExpectKeyUp)
+                                IsKeyUnexpected = true;
                             else
-                                prevKeyDown = false;
+                            {
+                                ExpectKeyDown = true;
+                                ExpectKeyUp = false;
+                            }
                         }
 
+                        var pair = new KeyValuePair<KeyCode, bool>(hookKey, args.IsKeyDown);
+                        var prevTimestamp = prevKeys.ContainsKey(pair) ? prevKeys[pair] : TIME_FLUSH_EXT;
+                        prevKeys[pair] = args.Timestamp;
+
+                        // spamming
+                        if (args.Timestamp - prevTimestamp < TIME_FLUSH_EXT)
+                            IsKeyUnexpected = true;
+
                         // only intercept inputs if not too close
-                        if (!unexpected)
+                        if (!IsKeyUnexpected)
                             CapturedKeys.AddRange(ReleasedKeys);
 
                         // clear buffer
                         ReleasedKeys.Clear();
 
                         // leave if inputs are too close
-                        if (unexpected)
+                        if (IsKeyUnexpected)
                             return;
 
-                        LogManager.LogDebug("KeyEvent: {0} at {1}, down: {2}, up: {3}", pair.name, args.Timestamp, args.IsKeyDown, args.IsKeyUp);
+                        LogManager.LogDebug("{1}\tKeyEvent: {0}, IsKeyDown: {2}, IsKeyUp: {3}", chord.name, args.Timestamp, args.IsKeyDown, args.IsKeyUp);
 
                         if (args.IsKeyDown)
                         {
@@ -304,12 +330,15 @@ namespace HandheldCompanion.Managers
                             InputsChordHoldTimer.Start();
 
                             // update vars
-                            currentChord.SpecialKey = pair.name;
+                            currentChord.SpecialKey = chord.name;
                             currentChord.InputsType = InputsChordType.Click;
                         }
                         // Sequence was intercepted already
-                        else if (InputsChordHoldTimer.IsRunning())
-                            ExecuteSequence();
+                        else if (args.IsKeyUp)
+                        {
+                            if (InputsChordHoldTimer.IsRunning())
+                                ExecuteSequence();
+                        }
 
                         return; // prevent multiple shortcuts from being triggered
                     }
