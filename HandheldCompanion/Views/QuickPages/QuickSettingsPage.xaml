@@ -40,8 +40,8 @@
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <Slider Name="SliderBrightness" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="0" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-							    ValueChanged="SliderBrightness_ValueChanged"
-							    SmallChange="1" LargeChange="10" IsEnabled="False"/>
+                            ValueChanged="SliderBrightness_ValueChanged"
+                            SmallChange="1" LargeChange="10" IsEnabled="False"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
