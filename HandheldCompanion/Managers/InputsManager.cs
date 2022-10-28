@@ -43,6 +43,7 @@ namespace HandheldCompanion.Managers
 
         private const short TIME_RELEASE = 10;      // default interval between gamepad updates
         private const short TIME_FLUSH = 20;        // default interval between buffer flush
+        private const short TIME_SPAM = 50;         // default interval between two allowed inputs
         private const short TIME_FLUSH_EXT = 100;   // extended buffer flush interval when expecting another chord key
 
         private const short TIME_NEXT = 500;        // default interval before submitting output keys used in combo
@@ -179,9 +180,6 @@ namespace HandheldCompanion.Managers
 
             // reset chord
             currentChord = new();
-
-            // reset index
-            KeyIndex = 0;
         }
 
         private static List<KeyEventArgsExt> InjectModifiers(KeyEventArgsExt args)
@@ -213,10 +211,6 @@ namespace HandheldCompanion.Managers
 
             KeyEventArgsExt args = (KeyEventArgsExt)e;
             KeyCode hookKey = (KeyCode)args.KeyValue;
-
-#if DEBUG
-            LogManager.LogDebug("{1}\tKeyEvent: {0}, IsKeyDown: {2}, IsKeyUp: {3}", hookKey, args.Timestamp, args.IsKeyDown, args.IsKeyUp);
-#endif
 
             // are we listening for keyboards inputs as part of a custom hotkey ?
             if (IsCombo)
@@ -253,6 +247,8 @@ namespace HandheldCompanion.Managers
                 }
                 else
                 {
+                    KeyIndex = 0;
+
                     // restore default interval
                     ResetTimer.SetInterval(TIME_FLUSH);
                 }
@@ -304,11 +300,11 @@ namespace HandheldCompanion.Managers
                         }
 
                         var pair = new KeyValuePair<KeyCode, bool>(hookKey, args.IsKeyDown);
-                        var prevTimestamp = prevKeys.ContainsKey(pair) ? prevKeys[pair] : TIME_FLUSH_EXT;
+                        var prevTimestamp = prevKeys.ContainsKey(pair) ? prevKeys[pair] : TIME_SPAM;
                         prevKeys[pair] = args.Timestamp;
 
                         // spamming
-                        if (args.Timestamp - prevTimestamp < TIME_FLUSH_EXT)
+                        if (args.Timestamp - prevTimestamp < TIME_SPAM)
                             IsKeyUnexpected = true;
 
                         // only intercept inputs if not too close
@@ -414,9 +410,6 @@ namespace HandheldCompanion.Managers
         {
             if (ReleasedKeys.Count == 0)
                 return;
-
-            // reset index
-            KeyIndex = 0;
 
             try
             {
