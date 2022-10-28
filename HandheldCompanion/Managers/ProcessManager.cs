@@ -146,6 +146,9 @@ namespace HandheldCompanion.Managers
                     IntPtr hWnd = (IntPtr)element.Current.NativeWindowHandle;
                     ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd).Process;
 
+                    if (processInfo == null)
+                        return;
+
                     Process proc = Process.GetProcessById((int)processInfo.ProcessId);
                     ProcessCreated(proc, element.Current.NativeWindowHandle);
                 }
