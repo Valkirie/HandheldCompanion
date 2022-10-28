@@ -1,12 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
   <PropertyGroup>
-    <ProjectGuid>{6B7B570E-8C8B-4189-9C98-B3BBFE630615}</ProjectGuid>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetFrameworks>net6.0-windows10.0.19041.0;net7.0-windows10.0.19041.0</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <DisableWinExeOutputInference>true</DisableWinExeOutputInference>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
     <AssemblyTitle>ControllerService</AssemblyTitle>
     <Product>ControllerService</Product>
     <Copyright>Copyright ©  2021</Copyright>
