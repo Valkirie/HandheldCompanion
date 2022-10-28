@@ -303,9 +303,9 @@ namespace HandheldCompanion.Views
                     _ = serviceManager.StartServiceAsync();
                 }
             };
-            serviceManager.StartFailed += (status, message) =>
+            serviceManager.StartFailed += (status) =>
             {
-                _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStartIssue}\n\n{message}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
+                _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStartIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
             };
             serviceManager.StopFailed += (status) =>
             {

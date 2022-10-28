@@ -13,26 +13,15 @@
       Margin="0,0,0,12"
       Title="Settings">
 
-    <Grid Margin="12,0,0,0">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="9*"/>
-            <RowDefinition Height="1*"/>
-        </Grid.RowDefinitions>
-
-        <!-- Shortcuts -->
-        <UniformGrid Columns="3" VerticalAlignment="Top" Name="QuickHotkeys">
-            <UniformGrid.Resources>
-                <Style TargetType="{x:Type ui:SimpleStackPanel}">
-                    <Setter Property="Margin" Value="6"/>
-                </Style>
-            </UniformGrid.Resources>
-        </UniformGrid>
-
-        <ui:SimpleStackPanel VerticalAlignment="Top" Margin="0,28,0,0" Grid.Row="1">
-            <!-- Brightness -->
+    <ui:SimpleStackPanel Spacing="6">
+        
+        <!-- Brightness -->
+        <Grid>
+            <!-- Header -->
             <Border
-                    Padding="15,12,15,12"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                Padding="15,12,15,12"
+                CornerRadius="{DynamicResource ControlCornerRadius}"                
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
                 <Grid>
                     <DockPanel>
@@ -40,17 +29,21 @@
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <Slider Name="SliderBrightness" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="0" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-                            ValueChanged="SliderBrightness_ValueChanged"
-                            SmallChange="1" LargeChange="10" IsEnabled="False"/>
+							ValueChanged="SliderBrightness_ValueChanged"
+							SmallChange="1" LargeChange="10" IsEnabled="False"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
             </Border>
+        </Grid>
 
-            <!-- Sounds -->
+        <!-- Sounds -->
+        <Grid>
+            <!-- Header -->
             <Border
-                    Padding="15,12,15,12"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                Padding="15,12,15,12"
+                CornerRadius="{DynamicResource ControlCornerRadius}"                
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
                 <Grid>
                     <DockPanel>
@@ -58,12 +51,13 @@
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <Slider Name="SliderVolume" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="0" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-							    ValueChanged="SliderVolume_ValueChanged"
-							    SmallChange="1" LargeChange="10"/>
+							ValueChanged="SliderVolume_ValueChanged"
+							SmallChange="1" LargeChange="10"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
             </Border>
-        </ui:SimpleStackPanel>
-    </Grid>
+        </Grid>
+
+    </ui:SimpleStackPanel>
 </Page>

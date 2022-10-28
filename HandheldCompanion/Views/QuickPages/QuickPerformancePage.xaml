@@ -13,14 +13,15 @@
       Margin="0,0,0,12"
       Title="Performance">
 
-    <ui:SimpleStackPanel Spacing="6" Margin="12,0,0,0">
+    <ui:SimpleStackPanel Spacing="6">
 
         <!-- Thermal Power (TDP) Limit -->
         <ui:SimpleStackPanel Spacing="2">
             <!-- Header -->
             <Border                      
                         Padding="15,12,15,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -45,6 +46,7 @@
             <Border
                 Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                 Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                 <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
@@ -60,6 +62,7 @@
             <Border
                 Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                 Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                 <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
@@ -99,7 +102,8 @@
         <!-- Manual GPU Clock Control -->
         <Border
             Padding="15,12,15,12"
-            CornerRadius="{DynamicResource ControlCornerRadius}">
+            CornerRadius="{DynamicResource ControlCornerRadius}"
+            Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -124,6 +128,7 @@
         <Border
                 Padding="15,12,15,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                 Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
             <DockPanel Grid.Column="1" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
@@ -140,7 +145,8 @@
             <!-- Header -->
             <Border
                 Padding="15,12,15,12"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -162,7 +168,8 @@
             <!-- Content -->
             <Border
                 Padding="15,12,15,12"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorDefaultBrush}">
 
                 <DockPanel Grid.Column="1">
                     <ui:SimpleStackPanel VerticalAlignment="Center" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">

@@ -4,10 +4,8 @@ using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views;
-using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -28,9 +26,6 @@ namespace HandheldCompanion.Managers
 
         public static event HotkeyCreatedEventHandler HotkeyCreated;
         public delegate void HotkeyCreatedEventHandler(Hotkey hotkey);
-
-        public static event HotkeyUpdatedEventHandler HotkeyUpdated;
-        public delegate void HotkeyUpdatedEventHandler(Hotkey hotkey);
 
         public static event CommandExecutedEventHandler CommandExecuted;
         public delegate void CommandExecutedEventHandler(string listener);
@@ -69,74 +64,7 @@ namespace HandheldCompanion.Managers
                 ProcessHotkey(fileName);
 
             foreach (Hotkey hotkey in Hotkeys.Values)
-            {
                 HotkeyCreated?.Invoke(hotkey);
-
-                hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, false);
-                hotkey.outputButton.Click += (sender, e) => StartListening(hotkey, true);
-                hotkey.pinButton.Click += (sender, e) => PinOrUnpinHotkey(hotkey);
-                hotkey.quickButton.Click += (sender, e) => { InputsManager.InvokeTrigger(hotkey); };
-            }
-        }
-
-        private static void StartListening(Hotkey hotkey, bool IsCombo)
-        {
-            InputsManager.StartListening(hotkey, IsCombo);
-            hotkey.StartListening(IsCombo);
-        }
-
-        private static void PinOrUnpinHotkey(Hotkey hotkey)
-        {
-            switch(hotkey.IsPinned)
-            {
-                case false:
-                    {
-                        var count = CountPinned();
-
-                        if (count >= 9)
-                        {
-                            _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
-                                "You can't pin more than 9 hotkeys",
-                                ContentDialogButton.Primary, string.Empty, $"{Properties.Resources.ProfilesPage_OK}");
-
-                            return;
-                        }
-
-                        hotkey.StartPinning();
-                    }
-                    break;
-                case true:
-                    {
-                        hotkey.StopPinning();
-                    }
-                    break;
-            }
-
-            // overwrite current file
-            SerializeHotkey(hotkey, true);
-            HotkeyUpdated?.Invoke(hotkey);
-        }
-
-        private static int CountPinned()
-        {
-            return Hotkeys.Values.Where(item => item.IsPinned).Count();
-        }
-
-        private static void TriggerUpdated(string listener, InputsChord inputs, bool IsCombo)
-        {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                Hotkey hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
-
-                if (hotkey is null)
-                    return;
-
-                hotkey.StopListening(inputs, IsCombo);
-
-                // overwrite current file
-                SerializeHotkey(hotkey, true);
-                HotkeyUpdated?.Invoke(hotkey);
-            }));
         }
 
         private static void ProcessHotkey(string fileName)
@@ -251,6 +179,18 @@ namespace HandheldCompanion.Managers
             {
                 LogManager.LogError("Failed to parse trigger {0}, {1}", listener, ex.Message);
             }
+        }
+
+        private static void TriggerUpdated(string listener, InputsChord inputs)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                Hotkey hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
+                hotkey.inputsChord = inputs;
+                hotkey.UpdateHotkey(true);
+
+                SerializeHotkey(hotkey, true);
+            }));
         }
     }
 }

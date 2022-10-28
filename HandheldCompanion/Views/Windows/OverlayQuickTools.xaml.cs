@@ -140,7 +140,7 @@ namespace HandheldCompanion.Views.Windows
             // If navigation occurs on SelectionChanged, this isn't needed.
             // Because we use ItemInvoked to navigate, we need to call Navigate
             // here to load the home page.
-            preNavItemTag = "QuickSettingsPage";
+            preNavItemTag = "QuickPerformancePage";
             NavView_Navigate(preNavItemTag);
         }
 

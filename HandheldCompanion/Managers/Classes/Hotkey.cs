@@ -1,8 +1,6 @@
 ﻿using ControllerCommon.Utils;
 using ModernWpf.Controls;
-using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using Application = System.Windows.Application;
@@ -13,13 +11,13 @@ namespace HandheldCompanion.Managers.Classes
     {
         // not serialized
         public InputsHotkey inputsHotkey;
+        public bool IsCombo;
 
         // serialized
         public ushort hotkeyId { get; set; }
         public InputsChord inputsChord { get; set; }
-        public bool IsPinned { get; set; }
 
-        // HotkeysPage UI
+        // UI vars
         public Border mainBorder;
         public Grid mainGrid = new();
         public DockPanel mainPanel = new();
@@ -28,16 +26,10 @@ namespace HandheldCompanion.Managers.Classes
         public TextBlock contentName;
         public TextBlock contentDesc;
         public SimpleStackPanel buttonPanel;
-        public Button inputButton;
-        public Button outputButton;
-        public Button eraseButton;
-        public Button pinButton;
 
-        // QuickSettingsPage UI
-        public SimpleStackPanel quickPanel;
-        public Button quickButton;
-        public FontIcon quickIcon;
-        public TextBlock quickName;
+        public Button mainButton;
+        public Button deleteButton;
+        public Button comboButton;
 
         public Hotkey()
         {
@@ -91,15 +83,9 @@ namespace HandheldCompanion.Managers.Classes
 
             ColumnDefinition colDef2 = new ColumnDefinition()
             {
-                Width = new GridLength(50, GridUnitType.Pixel)
+                Width = new GridLength(60, GridUnitType.Pixel)
             };
             mainGrid.ColumnDefinitions.Add(colDef2);
-
-            ColumnDefinition colDef3 = new ColumnDefinition()
-            {
-                Width = new GridLength(50, GridUnitType.Pixel)
-            };
-            mainGrid.ColumnDefinitions.Add(colDef3);
 
             // main panel content
             currentIcon = new FontIcon()
@@ -144,7 +130,7 @@ namespace HandheldCompanion.Managers.Classes
             };
             Grid.SetColumn(buttonPanel, 1);
 
-            inputButton = new Button()
+            mainButton = new Button()
             {
                 Tag = "Chord",
                 MinWidth = 200,
@@ -152,9 +138,9 @@ namespace HandheldCompanion.Managers.Classes
                 Height = 30,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
             };
-            
-            // todo: add localized tooltip text
-            eraseButton = new Button()
+            mainButton.Click += (sender, e) => ButtonButton_Click((Button)sender);
+
+            deleteButton = new Button()
             {
                 Height = 30,
                 Content = new FontIcon() { Glyph = "\uE75C", FontSize = 14 },
@@ -162,34 +148,28 @@ namespace HandheldCompanion.Managers.Classes
                 VerticalAlignment = VerticalAlignment.Center,
                 Style = Application.Current.FindResource("AccentButtonStyle") as Style
             };
-            eraseButton.Click += (sender, e) => ClearButton_Click();
-            Grid.SetColumn(eraseButton, 2);
-
-            // todo: add localized tooltip text
-            pinButton = new Button()
-            {
-                Height = 30,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-            Grid.SetColumn(pinButton, 3);
+            deleteButton.Click += (sender, e) => DeleteButton_Click();
+            Grid.SetColumn(deleteButton, 2);
 
             // add elements to main panel
-            buttonPanel.Children.Add(inputButton);
-
-            outputButton = new Button()
-            {
-                Tag = "Combo",
-                MinWidth = 200,
-                FontSize = 12,
-                Height = 30,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-            };
+            buttonPanel.Children.Add(mainButton);
 
             switch (inputsHotkey.hotkeyType)
             {
                 case InputsHotkey.InputsHotkeyType.Custom:
-                    buttonPanel.Children.Add(outputButton);
+                    {
+                        comboButton = new Button()
+                        {
+                            Tag = "Combo",
+                            MinWidth = 200,
+                            FontSize = 12,
+                            Height = 30,
+                            HorizontalAlignment = HorizontalAlignment.Stretch,
+                        };
+                        comboButton.Click += (sender, e) => ButtonButton_Click((Button)sender);
+
+                        buttonPanel.Children.Add(comboButton);
+                    }
                     break;
             }
 
@@ -200,109 +180,74 @@ namespace HandheldCompanion.Managers.Classes
             // add elements to grid
             mainGrid.Children.Add(mainPanel);
             mainGrid.Children.Add(buttonPanel);
-            mainGrid.Children.Add(eraseButton);
-            mainGrid.Children.Add(pinButton);
+            mainGrid.Children.Add(deleteButton);
 
             // add elements to border
             mainBorder.Child = mainGrid;
-
-            // draw quick buttons
-            quickPanel = new SimpleStackPanel() { Spacing = 6 };
-
-            quickIcon = new FontIcon()
-            {
-                Height = 40,
-                FontFamily = inputsHotkey.fontFamily,
-                FontSize = inputsHotkey.fontSize,
-                Glyph = inputsHotkey.Glyph
-            };
-
-            quickButton = new Button()
-            {
-                Content = quickIcon,
-                HorizontalAlignment = HorizontalAlignment.Stretch
-            };
-
-            quickName = new TextBlock()
-            {
-                Text = inputsHotkey.GetName(),
-                TextAlignment = TextAlignment.Center,
-                TextWrapping = TextWrapping.Wrap,
-                FontSize = 12
-            };
-
-            quickPanel.Children.Add(quickButton);
-            quickPanel.Children.Add(quickName);
 
             // update buttons name and states
             UpdateHotkey();
         }
 
-        private void ClearButton_Click()
+        private void DeleteButton_Click()
         {
             InputsManager.ClearListening(this);
         }
 
-        public void StartListening(bool IsCombo)
+        private void ButtonButton_Click(Button sender)
         {
-            // update button
-            switch(IsCombo)
+            switch (sender.Tag)
             {
-                case true:
-                    outputButton.Content = Properties.Resources.OverlayPage_Listening;
-                    outputButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                case "Combo":
+                    IsCombo = true;
                     break;
-                case false:
-                    inputButton.Content = Properties.Resources.OverlayPage_Listening;
-                    inputButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
-                    break;
-            }
-        }
-
-        public void StopListening(InputsChord inputsChord, bool IsCombo)
-        {
-            this.inputsChord = inputsChord;
-
-            // update button
-            switch (IsCombo)
-            {
-                case true:
-                    outputButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
-                    break;
-                case false:
-                    inputButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                default:
+                case "Chord":
+                    IsCombo = false;
                     break;
             }
 
-            UpdateHotkey();
+            InputsManager.StartListening(this);
+
+            // update button text
+            sender.Content = Properties.Resources.OverlayPage_Listening;
+
+            // update buton style
+            sender.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
         }
 
-        public void StartPinning()
-        {
-            IsPinned = true;
-
-            UpdateHotkey();
-        }
-
-        public void StopPinning()
-        {
-            IsPinned = false;
-
-            UpdateHotkey();
-        }
-
-        public Border GetHotkey()
+        public Border GetBorder()
         {
             return mainBorder;
         }
 
-        public SimpleStackPanel GetPin()
+        public Button GetMainButton()
         {
-            return quickPanel;
+            return mainButton;
         }
 
-        private void UpdateHotkey()
+        public Button GetDeleteButton()
         {
+            return deleteButton;
+        }
+
+        public void UpdateHotkey(bool StopListening = false)
+        {
+            if (StopListening)
+            {
+                // restore default style
+                switch (IsCombo)
+                {
+                    case true:
+                        comboButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                        break;
+                    default:
+                    case false:
+                        mainButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                        break;
+                }
+            }
+
             bool haskey = !string.IsNullOrEmpty(inputsChord.SpecialKey);
             bool hasbuttons = (inputsChord.GamepadButtons != SharpDX.XInput.GamepadButtonFlags.None);
             bool hascombo = inputsChord.OutputKeys.Count != 0;
@@ -310,7 +255,7 @@ namespace HandheldCompanion.Managers.Classes
             string buttons = EnumUtils.GetDescriptionFromEnumValue(inputsChord.GamepadButtons);
             string combo = string.Join(", ", inputsChord.OutputKeys.Where(key => key.IsKeyDown));
 
-            if (outputButton != null)
+            if (comboButton != null)
             {
                 // comboContent content
                 SimpleStackPanel comboContent = new()
@@ -339,7 +284,7 @@ namespace HandheldCompanion.Managers.Classes
                 }
 
                 // update button content
-                outputButton.Content = comboContent;
+                comboButton.Content = comboContent;
             }
 
             // mainButton content
@@ -394,24 +339,11 @@ namespace HandheldCompanion.Managers.Classes
                 mainContent.Children.Add(fallback);
             }
 
-            // update main button content
-            inputButton.Content = mainContent;
+            // update button content
+            mainButton.Content = mainContent;
 
             // update delete button status
-            eraseButton.IsEnabled = haskey || hasbuttons || hascombo;
-
-            // update pin button
-            switch (IsPinned)
-            {
-                case true:
-                    pinButton.Content = new FontIcon() { Glyph = "\uE77A", FontSize = 14 };
-                    pinButton.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
-                    break;
-                case false:
-                    pinButton.Content = new FontIcon() { Glyph = "\uE840", FontSize = 14 };
-                    pinButton.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
-                    break;
-            }
+            deleteButton.IsEnabled = haskey || hasbuttons || hascombo;
         }
     }
 }

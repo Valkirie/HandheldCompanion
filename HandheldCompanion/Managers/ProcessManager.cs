@@ -263,8 +263,7 @@ namespace HandheldCompanion.Managers
                         Executable = exec,
                         Path = path,
                         MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle,
-                        IsIgnored = !IsValid(exec, path),
-                        MainThread = proc.Threads[0]
+                        IsIgnored = !IsValid(exec, path)
                     };
 
                     processEx.ChildProcessCreated += ChildProcessCreated;
