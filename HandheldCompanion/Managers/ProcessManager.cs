@@ -358,6 +358,10 @@ namespace HandheldCompanion.Managers
 
         public static void ResumeProcess(ProcessEx processEx)
         {
+            // process has exited
+            if (processEx.Process.HasExited)
+                return;
+
             ProcessUtils.NtResumeProcess(processEx.Process.Handle);
             foreach (int pId in processEx.Children)
             {
@@ -371,6 +375,10 @@ namespace HandheldCompanion.Managers
 
         public static void SuspendProcess(ProcessEx processEx)
         {
+            // process has exited
+            if (processEx.Process.HasExited)
+                return;
+
             ProcessUtils.ShowWindow(processEx.MainWindowHandle, ProcessUtils.SW_MINIMIZE);
             Task.Delay(500);
 
