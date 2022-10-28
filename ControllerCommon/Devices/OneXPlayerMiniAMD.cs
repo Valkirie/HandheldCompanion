@@ -34,17 +34,29 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add(new DeviceChord("Keyboard key", new List<KeyCode>() { KeyCode.LWin, KeyCode.RControlKey, KeyCode.O }));
+            listeners.Add(new DeviceChord("Keyboard key",
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.RControlKey, KeyCode.O },
+                new List<KeyCode>() { KeyCode.O, KeyCode.RControlKey, KeyCode.LWin }
+                ));
 
-            listeners.Add(new DeviceChord("Function key", new List<KeyCode>() { KeyCode.LWin, KeyCode.D }));
+            listeners.Add(new DeviceChord("Function key",
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
+                new List<KeyCode>() { KeyCode.D, KeyCode.LWin }
+                ));
+
             listeners.Add(new DeviceChord("Function + Volume Up",
                 new List<KeyCode>() { KeyCode.F1 },
                 new List<KeyCode>() { KeyCode.F1, KeyCode.F1 }
                 ));
 
+            // dirty implementation from OneX...
             listeners.Add(new DeviceChord("Function + Fan",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot },
-                new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot, KeyCode.Snapshot }
+                new List<KeyCode>() { KeyCode.Snapshot, KeyCode.LWin }
+                ));
+            listeners.Add(new DeviceChord("Function + Fan",
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot },
+                new List<KeyCode>() { KeyCode.Snapshot, KeyCode.Snapshot, KeyCode.LWin }
                 ));
         }
     }

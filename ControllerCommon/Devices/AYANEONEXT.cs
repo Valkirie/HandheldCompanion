@@ -33,8 +33,15 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add(new DeviceChord("Custom key BIG", new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 }));
-            listeners.Add(new DeviceChord("Custom key Small", new List<KeyCode>() { KeyCode.LWin, KeyCode.D }));
+            listeners.Add(new DeviceChord("Custom key BIG",
+                new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 },
+                new List<KeyCode>() { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey }
+                ));
+
+            listeners.Add(new DeviceChord("Custom key Small",
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.D }
+                ));
         }
     }
 }

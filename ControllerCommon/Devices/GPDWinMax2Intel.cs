@@ -33,9 +33,20 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add(new DeviceChord("Menu", new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 }));
-            listeners.Add(new DeviceChord("Bottom button left", new List<KeyCode>() { KeyCode.D9 }));
-            listeners.Add(new DeviceChord("Bottom button right", new List<KeyCode>() { KeyCode.D0 }));
+            listeners.Add(new DeviceChord("Menu",
+                new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
+                new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 }
+                ));
+
+            listeners.Add(new DeviceChord("Bottom button left",
+                new List<KeyCode>() { KeyCode.D9 },
+                new List<KeyCode>() { KeyCode.D9 }
+                ));
+
+            listeners.Add(new DeviceChord("Bottom button right",
+                new List<KeyCode>() { KeyCode.D0 },
+                new List<KeyCode>() { KeyCode.D0 }
+                ));
         }
     }
 }

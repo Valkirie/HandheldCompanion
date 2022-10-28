@@ -180,6 +180,9 @@ namespace HandheldCompanion.Managers
 
             // reset chord
             currentChord = new();
+
+            // reset index
+            KeyIndex = 0;
         }
 
         private static List<KeyEventArgsExt> InjectModifiers(KeyEventArgsExt args)
@@ -247,8 +250,6 @@ namespace HandheldCompanion.Managers
                 }
                 else
                 {
-                    KeyIndex = 0;
-
                     // restore default interval
                     ResetTimer.SetInterval(TIME_FLUSH);
                 }
@@ -275,6 +276,9 @@ namespace HandheldCompanion.Managers
 
                     if (chord_keys.SequenceEqual(buffer_keys))
                     {
+                        // reset index
+                        KeyIndex = 0;
+
                         // check if inputs timestamp are too close from one to another
                         bool IsKeyUnexpected = false;
 
@@ -414,6 +418,9 @@ namespace HandheldCompanion.Managers
         {
             if (ReleasedKeys.Count == 0)
                 return;
+
+            // reset index
+            KeyIndex = 0;
 
             try
             {

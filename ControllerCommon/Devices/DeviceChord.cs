@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
@@ -16,16 +17,8 @@ namespace ControllerCommon.Devices
         {
             this.name = name;
 
-            this.chords[true] = chordDown;
-            this.chords[false] = chordUP;
-        }
-
-        public DeviceChord(string name, List<KeyCode> chordDown)
-        {
-            this.name = name;
-
-            this.chords[true] = chordDown;
-            this.chords[false] = chordDown;
+            this.chords[true].AddRange(chordDown);
+            this.chords[false].AddRange(chordUP);
         }
     }
 }

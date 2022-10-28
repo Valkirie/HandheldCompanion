@@ -32,10 +32,24 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add(new DeviceChord("WIN key", new List<KeyCode>() { KeyCode.LWin }));
-            //listeners.Add("TM key", new ChordClick(KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete)); // Conflicts with OS
-            listeners.Add(new DeviceChord("ESC key", new List<KeyCode>() { KeyCode.Escape }));
-            listeners.Add(new DeviceChord("KB key", new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O })); // Conflicts with Ayaspace when installed
+            listeners.Add(new DeviceChord("WIN key",
+                new List<KeyCode>() { KeyCode.LWin },
+                new List<KeyCode>() { KeyCode.LWin }
+                ));
+
+            // Conflicts with OS
+            //listeners.Add("TM key", new ChordClick(KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete));
+
+            listeners.Add(new DeviceChord("ESC key",
+                new List<KeyCode>() { KeyCode.Escape },
+                new List<KeyCode>() { KeyCode.Escape }
+                ));
+
+            // Conflicts with Ayaspace when installed
+            listeners.Add(new DeviceChord("KB key",
+                new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O },
+                new List<KeyCode>() { KeyCode.O, KeyCode.LWin, KeyCode.RControlKey }
+                ));
         }
     }
 }
