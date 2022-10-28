@@ -299,13 +299,17 @@ namespace HandheldCompanion.Managers
                             }
                         }
 
-                        var pair = new KeyValuePair<KeyCode, bool>(hookKey, args.IsKeyDown);
-                        var prevTimestamp = prevKeys.ContainsKey(pair) ? prevKeys[pair] : TIME_SPAM;
-                        prevKeys[pair] = args.Timestamp;
+                        // do not bother checking timing if key is already unexpected
+                        if (!IsKeyUnexpected)
+                        {
+                            var pair = new KeyValuePair<KeyCode, bool>(hookKey, args.IsKeyDown);
+                            var prevTimestamp = prevKeys.ContainsKey(pair) ? prevKeys[pair] : TIME_SPAM;
+                            prevKeys[pair] = args.Timestamp;
 
-                        // spamming
-                        if (args.Timestamp - prevTimestamp < TIME_SPAM)
-                            IsKeyUnexpected = true;
+                            // spamming
+                            if (args.Timestamp - prevTimestamp < TIME_SPAM)
+                                IsKeyUnexpected = true;
+                        }
 
                         // only intercept inputs if not too close
                         if (!IsKeyUnexpected)
