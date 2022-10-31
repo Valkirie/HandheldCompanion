@@ -63,7 +63,8 @@ namespace ControllerCommon.Utils
         ZDOPlus = 3,
         EightBitDoLite2 = 4,
         MachenikeHG510 = 5,
-        Toy = 6
+        Toy = 6,
+        N64 = 7
     }
 
     public static class InputUtils

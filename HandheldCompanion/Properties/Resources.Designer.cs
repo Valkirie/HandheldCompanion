@@ -1009,6 +1009,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to N64.
+        /// </summary>
+        public static string OverlayPage_N64Controller {
+            get {
+                return ResourceManager.GetString("OverlayPage_N64Controller", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to OEM controller.
         /// </summary>
         public static string OverlayPage_OEMController {

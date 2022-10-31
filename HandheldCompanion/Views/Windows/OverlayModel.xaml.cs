@@ -155,6 +155,11 @@ namespace HandheldCompanion.Views.Windows
                         newModel = new ModelToyController();
                     }
                     break;
+                case OverlayModelMode.N64:
+                    {
+                        newModel = new ModelN64();
+                    }
+                    break;					
             }
 
             if (newModel != CurrentModel)
