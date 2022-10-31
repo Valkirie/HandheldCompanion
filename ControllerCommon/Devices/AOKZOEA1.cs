@@ -35,7 +35,7 @@ namespace ControllerCommon.Devices
             };
 
             // Desktop
-            listeners.Add(new DeviceChord("Desktop key",
+            listeners.Add(new DeviceChord("Home key",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D},
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D }
                 ));
@@ -50,6 +50,18 @@ namespace ControllerCommon.Devices
             listeners.Add(new DeviceChord("Turbo key",
                 new List<KeyCode>() { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
                 new List<KeyCode>() { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu }
+                ));
+                
+            // Home + Keyboard
+            listeners.Add(new DeviceChord("Home + Keyboard",
+                new List<KeyCode>() { KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete },
+                new List<KeyCode>() { KeyCode.Delete, KeyCode.RControlKey, KeyCode.RAlt }
+                ));
+                
+            // Home + Turbo
+            listeners.Add(new DeviceChord("Home + Turbo",
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot },
+                new List<KeyCode>() { KeyCode.Snapshot, KeyCode.LWin }
                 ));
         }
     }
