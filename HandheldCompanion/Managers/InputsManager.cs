@@ -657,7 +657,17 @@ namespace HandheldCompanion.Managers
 
         internal static void InvokeTrigger(Hotkey hotkey)
         {
-            TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, false);
+            switch(hotkey.inputsChord.InputsType)
+            {
+                case InputsChordType.Click:
+                case InputsChordType.Long:
+                    TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, false);
+                    break;
+                case InputsChordType.Hold:
+                    TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, true);
+                    TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, false);
+                    break;
+            }
         }
     }
 }
