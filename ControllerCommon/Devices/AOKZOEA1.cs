@@ -34,18 +34,6 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            // Select
-            listeners.Add(new DeviceChord("Select key",
-                new List<KeyCode>() { KeyCode.Tab },
-                new List<KeyCode>() { KeyCode.Tab }
-                ));
-
-            // Start
-            listeners.Add(new DeviceChord("Start key",
-                new List<KeyCode>() { KeyCode.Escape },
-                new List<KeyCode>() { KeyCode.Escape }
-                ));
-
             // Desktop
             listeners.Add(new DeviceChord("Desktop key",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D},
