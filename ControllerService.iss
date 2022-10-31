@@ -230,7 +230,8 @@ begin
     Dependency_Add('dotnet50' + Dependency_ArchSuffix + '.exe',
       '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
       '.NET Runtime 6.0.6' + Dependency_ArchTitle,
-      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/60c4767e-c0df-491b-970c-cf69d0c2c581/524ccc6ff8aa96120753ab387bf22d5d/dotnet-runtime-6.0.6-win-x86.exe', 'https://download.visualstudio.microsoft.com/download/pr/7989338b-8ae9-4a5d-8425-020148016812/c26361fde7f706279265a505b4d1d93a/dotnet-runtime-6.0.6-win-x64.exe'),
+      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/60c4767e-c0df-491b-970c-cf69d0c2c581/524ccc6ff8aa96120753ab387bf22d5d/dotnet-runtime-6.0.6-win-x86.exe',
+	  'https://download.visualstudio.microsoft.com/download/pr/7989338b-8ae9-4a5d-8425-020148016812/c26361fde7f706279265a505b4d1d93a/dotnet-runtime-6.0.6-win-x64.exe'),
       '', False, False);
   end;
 end;
@@ -242,7 +243,34 @@ begin
     Dependency_Add('dotnet60desktop' + Dependency_ArchSuffix + '.exe',
       '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
       '.NET Desktop Runtime 6.0.6' + Dependency_ArchTitle,
-      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/cc04076c-d188-4c20-9b4f-89be06f1a39c/32da746ef46fbeedb4f609b67cb451c3/windowsdesktop-runtime-6.0.6-win-x86.exe', 'https://download.visualstudio.microsoft.com/download/pr/9d6b6b34-44b5-4cf4-b924-79a00deb9795/2f17c30bdf42b6a8950a8552438cf8c1/windowsdesktop-runtime-6.0.6-win-x64.exe'),
+      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/cc04076c-d188-4c20-9b4f-89be06f1a39c/32da746ef46fbeedb4f609b67cb451c3/windowsdesktop-runtime-6.0.6-win-x86.exe',
+	  'https://download.visualstudio.microsoft.com/download/pr/9d6b6b34-44b5-4cf4-b924-79a00deb9795/2f17c30bdf42b6a8950a8552438cf8c1/windowsdesktop-runtime-6.0.6-win-x64.exe'),
+      '', False, False);
+  end;
+end;
+
+procedure Dependency_AddDotNet70;
+begin
+  // https://dotnet.microsoft.com/download/dotnet/7.0
+  if not Dependency_IsNetCoreInstalled('Microsoft.NETCore.App 7.0.0') then begin
+    Dependency_Add('dotnet50' + Dependency_ArchSuffix + '.exe',
+      '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
+      '.NET Runtime 7.0.0-rc.2' + Dependency_ArchTitle,
+      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/e6fbeee4-9023-4276-8418-cc28050f4e56/2193f6783d7e03b09b5c0c912d2cff8e/dotnet-runtime-7.0.0-rc.2.22472.3-win-x86.exe',
+	  'https://download.visualstudio.microsoft.com/download/pr/2f425d93-c8e9-4ad5-9996-771cb48d720a/f13436591e1719ff17d3e3e95be8c29f/dotnet-runtime-7.0.0-rc.2.22472.3-win-x64.exe'),
+      '', False, False);
+  end;
+end;
+
+procedure Dependency_AddDotNet70Desktop;
+begin
+  // https://dotnet.microsoft.com/download/dotnet/7.0
+  if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 7.0.0') then begin
+    Dependency_Add('dotnet60desktop' + Dependency_ArchSuffix + '.exe',
+      '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
+      '.NET Desktop Runtime 7.0.0-rc.2' + Dependency_ArchTitle,
+      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/9d37bfa6-73f1-491c-8c36-e443da3a6c15/2cd00958fe50c8d131f75ac6bc1dc93e/windowsdesktop-runtime-7.0.0-rc.2.22472.13-win-x86.exe',
+	  'https://download.visualstudio.microsoft.com/download/pr/21f395ec-4dcc-463e-aebe-be7290272558/1f05f6b2b8fd7b992947fae43ba45e00/windowsdesktop-runtime-7.0.0-rc.2.22472.13-win-x64.exe'),
       '', False, False);
   end;
 end;
@@ -361,6 +389,9 @@ end;
 #ifdef UseNetCoreCheck
   #define UseDotNet60
   #define UseDotNet60Desktop
+  
+  ;#define UseDotNet70
+  ;#define UseDotNet70Desktop
 #endif
 
 #define UseVC2005
@@ -385,6 +416,14 @@ end;
 #define MySerExeName "ControllerService.exe"
 #define MyConfiguration "Release"
 
+#ifdef UseDotNet60
+	#define MyConfigurationExt "net6.0"
+#endif
+
+#ifdef UseDotNet70
+	#define MyConfigurationExt "net7.0"
+#endif
+
 ; #define ClearProfiles
 ; #define ClearHotkeys
 
@@ -398,7 +437,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-OutputBaseFilename={#MyAppSetupName}-{#MyConfiguration}-{#MyAppVersion}
+OutputBaseFilename={#MyAppSetupName}-{#MyConfiguration}-{#MyConfigurationExt}-{#MyAppVersion}
 DefaultGroupName={#MyAppSetupName}
 DefaultDirName={autopf}\{#MyAppSetupName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
@@ -428,9 +467,9 @@ Source: "netcorecheck.exe"; Flags: dontcopy noencryption
 Source: "netcorecheck_x64.exe"; Flags: dontcopy noencryption
 #endif
 
-Source: "{#SourcePath}\bin\{#MyConfiguration}\WinRing0x64.dll"; DestDir: "{app}"; Flags: onlyifdoesntexist
-Source: "{#SourcePath}\bin\{#MyConfiguration}\WinRing0x64.sys"; DestDir: "{app}"; Flags: onlyifdoesntexist
-Source: "{#SourcePath}\bin\{#MyConfiguration}\*"; Excludes: "*WinRing0x64.*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows10.0.19041.0\WinRing0x64.dll"; DestDir: "{app}"; Flags: onlyifdoesntexist
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows10.0.19041.0\WinRing0x64.sys"; DestDir: "{app}"; Flags: onlyifdoesntexist
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows10.0.19041.0\*"; Excludes: "*WinRing0x64.*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 Source: "{#SourcePath}\redist\ViGEmBus_1.21.442_x64_x86_arm64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#SourcePath}\redist\HidHide_1.2.98_x64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -517,6 +556,13 @@ begin
 #endif
 #ifdef UseDotNet60Desktop
   Dependency_AddDotNet60Desktop;
+#endif
+
+#ifdef UseDotNet70
+  Dependency_AddDotNet70;
+#endif
+#ifdef UseDotNet70Desktop
+  Dependency_AddDotNet70Desktop;
 #endif
 
 #ifdef UseVC2005

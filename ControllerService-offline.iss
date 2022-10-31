@@ -228,6 +228,9 @@ end;
 #define UseDotNet60
 #define UseDotNet60Desktop
 
+;#define UseDotNet70
+;#define UseDotNet70Desktop
+
 #define UseVC2005
 #define UseVC2008
 #define UseVC2010
@@ -249,6 +252,14 @@ end;
 #define MySerExeName "ControllerService.exe"
 #define MyConfiguration "Release"
 
+#ifdef UseDotNet60
+	#define MyConfigurationExt "net6.0"
+#endif
+
+#ifdef UseDotNet70
+	#define MyConfigurationExt "net7.0"
+#endif
+
 ; #define ClearProfiles
 ; #define ClearHotkeys
 
@@ -262,7 +273,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-OutputBaseFilename={#MyAppSetupName}-{#MyConfiguration}-{#MyAppVersion}-offline
+OutputBaseFilename={#MyAppSetupName}-{#MyConfiguration}-{#MyConfigurationExt}-{#MyAppVersion}-offline
 DefaultGroupName={#MyAppSetupName}
 DefaultDirName={autopf}\{#MyAppSetupName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
@@ -301,13 +312,24 @@ Source: "vcredist2012_x64.exe"; Flags: dontcopy noencryption
 Source: "vcredist2013_x64.exe"; Flags: dontcopy noencryption
 Source: "vcredist2019_x64.exe"; Flags: dontcopy noencryption
 
-Source: "dotnet-runtime-6.0.6-win-x64.exe"; Flags: dontcopy noencryption
-Source: "windowsdesktop-runtime-6.0.6-win-x64.exe"; Flags: dontcopy noencryption
+	#ifdef UseDotNet60
+		Source: "dotnet-runtime-6.0.6-win-x64.exe"; Flags: dontcopy noencryption
+	#endif
+	#ifdef UseDotNet60Desktop
+		Source: "windowsdesktop-runtime-6.0.6-win-x64.exe"; Flags: dontcopy noencryption
+	#endif
+	
+	#ifdef UseDotNet70
+		Source: "dotnet-runtime-7.0.0-rc.2.22472.3-win-x64.exe"; Flags: dontcopy noencryption
+	#endif
+	#ifdef UseDotNet70Desktop
+		Source: "windowsdesktop-runtime-7.0.0-rc.2.22472.13-win-x64.exe"; Flags: dontcopy noencryption
+	#endif
 #endif
 
-Source: "{#SourcePath}\bin\{#MyConfiguration}\WinRing0x64.dll"; DestDir: "{app}"; Flags: onlyifdoesntexist
-Source: "{#SourcePath}\bin\{#MyConfiguration}\WinRing0x64.sys"; DestDir: "{app}"; Flags: onlyifdoesntexist
-Source: "{#SourcePath}\bin\{#MyConfiguration}\*"; Excludes: "*WinRing0x64.*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows10.0.19041.0\WinRing0x64.dll"; DestDir: "{app}"; Flags: onlyifdoesntexist
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows10.0.19041.0\WinRing0x64.sys"; DestDir: "{app}"; Flags: onlyifdoesntexist
+Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows10.0.19041.0\*"; Excludes: "*WinRing0x64.*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 Source: "{#SourcePath}\redist\ViGEmBus_1.21.442_x64_x86_arm64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#SourcePath}\redist\HidHide_1.2.98_x64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -407,6 +429,13 @@ begin
 #endif
 #ifdef UseDotNet60Desktop
   ExtractTemporaryFile('windowsdesktop-runtime-6.0.6-win-x64.exe');
+#endif
+
+#ifdef UseDotNet70
+  ExtractTemporaryFile('dotnet-runtime-7.0.0-rc.2.22472.3-win-x64.exe');
+#endif
+#ifdef UseDotNet70Desktop
+  ExtractTemporaryFile('windowsdesktop-runtime-7.0.0-rc.2.22472.13-win-x64.exe');
 #endif
 
 #ifdef UseVC2005
