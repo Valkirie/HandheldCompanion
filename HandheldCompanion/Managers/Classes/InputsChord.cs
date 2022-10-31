@@ -11,7 +11,8 @@ namespace HandheldCompanion.Managers.Classes
     {
         None = 0,
         Click = 1,
-        Hold = 2,
+        Long = 2,
+        Hold = 3
     }
 
     [Serializable]

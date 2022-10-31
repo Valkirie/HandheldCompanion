@@ -246,8 +246,10 @@ namespace ControllerService.Targets
 
         internal void SubmitReport()
         {
-            ButtonsInjector = 0;
-            sStateInjector.wButtons = 0;
+            /*
+             * ButtonsInjector = 0;
+             * sStateInjector.wButtons = 0;
+             */
         }
 
         public virtual void Dispose()
