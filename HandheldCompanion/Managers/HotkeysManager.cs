@@ -186,7 +186,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        public static void TriggerRaised(string listener, InputsChord input)
+        public static void TriggerRaised(string listener, InputsChord input, bool IsKeyDown)
         {
             var fProcess = ProcessManager.GetForegroundProcess();
 

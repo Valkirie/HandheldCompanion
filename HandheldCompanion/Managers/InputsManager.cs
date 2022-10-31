@@ -69,7 +69,7 @@ namespace HandheldCompanion.Managers
         public delegate void UpdatedEventHandler(Gamepad gamepad);
 
         public static event TriggerRaisedEventHandler TriggerRaised;
-        public delegate void TriggerRaisedEventHandler(string listener, InputsChord inputs);
+        public delegate void TriggerRaisedEventHandler(string listener, InputsChord inputs, bool IsKeyDown);
 
         public static event TriggerUpdatedEventHandler TriggerUpdated;
         public delegate void TriggerUpdatedEventHandler(string listener, InputsChord inputs, bool IsCombo);
@@ -116,7 +116,7 @@ namespace HandheldCompanion.Managers
             InputsChordInputTimer.SetInterval(TIME_NEXT);
             InputsChordInputTimer.SetAutoResetMode(false);
 
-            InputsChordInputTimer.Tick += (sender, e) => { ExecuteSequence(); };
+            InputsChordInputTimer.Tick += (sender, e) => { CheckForSequence(); };
 
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();
@@ -135,14 +135,9 @@ namespace HandheldCompanion.Managers
         {
             // triggered when key is pressed for a long time
             currentChord.InputsType = InputsChordType.Hold;
-
-            // we're no-longer expecting a KeyUp call
-            ExpectKeyUp = false;
-
-            ExecuteSequence();
         }
 
-        private static void ExecuteSequence()
+        private static void CheckForSequence(bool IsKeyDown = false)
         {
             InputsChordHoldTimer.Stop();
             InputsChordInputTimer.Stop();
@@ -163,7 +158,7 @@ namespace HandheldCompanion.Managers
                     ReleasedKeys.Clear();
 
                     InputsChord chord = Triggers[key];
-                    TriggerRaised?.Invoke(key, chord);
+                    TriggerRaised?.Invoke(key, chord, IsKeyDown);
                 }
                 else
                 {
@@ -330,21 +325,23 @@ namespace HandheldCompanion.Managers
 
                         if (args.IsKeyDown)
                         {
+                            // reset hold timer
                             InputsChordHoldTimer.Stop();
                             InputsChordHoldTimer.Start();
 
                             // update vars
                             currentChord.SpecialKey = chord.name;
                             currentChord.InputsType = InputsChordType.Click;
+
+                            CheckForSequence(true);
                         }
                         // Sequence was intercepted already
                         else if (args.IsKeyUp)
                         {
-                            if (InputsChordHoldTimer.IsRunning())
-                                ExecuteSequence();
+                            CheckForSequence(false);
                         }
 
-                        return; // prevent multiple shortcuts from being triggered
+                        return;
                     }
                 }
             }
@@ -527,6 +524,10 @@ namespace HandheldCompanion.Managers
             // IsKeyDown
             if (Gamepad.Buttons != 0)
             {
+                // reset hold timer
+                InputsChordHoldTimer.Stop();
+                InputsChordHoldTimer.Start();
+
                 if (GamepadClearPending)
                 {
                     currentChord.GamepadButtons = Gamepad.Buttons;
@@ -535,17 +536,13 @@ namespace HandheldCompanion.Managers
                 else
                     currentChord.GamepadButtons |= Gamepad.Buttons;
 
-                InputsChordHoldTimer.Stop();
-                InputsChordHoldTimer.Start();
+                CheckForSequence(true);
             }
             // IsKeyUp
             else if (Gamepad.Buttons == 0 && currentChord.GamepadButtons != GamepadButtonFlags.None)
             {
                 GamepadClearPending = true;
-
-                // Sequence was intercepted already
-                if (InputsChordHoldTimer.IsRunning())
-                    ExecuteSequence();
+                CheckForSequence(false);
             }
 
             Updated?.Invoke(Gamepad);
@@ -621,7 +618,7 @@ namespace HandheldCompanion.Managers
 
         internal static void InvokeTrigger(Hotkey hotkey)
         {
-            TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord);
+            TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, false);
         }
     }
 }
