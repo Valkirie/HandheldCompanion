@@ -67,6 +67,16 @@ namespace ControllerCommon.Devices
 
             switch (ManufacturerName)
             {
+                case "AOKZOE":
+                    { 
+                        switch (ProductName)
+                        {
+                            case "AOKZOE A1 AR07":
+                                device = new AOKZOEA1();
+                                break;
+                        }
+                    }
+                    break;
                 case "AYADEVICE":
                 case "AYANEO":
                     {
