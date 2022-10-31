@@ -576,7 +576,8 @@ namespace HandheldCompanion.Managers
                 IsKeyUp = true;
             }
 
-            CheckForSequence(IsKeyDown, IsKeyUp);
+            if (currentChord.GamepadButtons != GamepadButtonFlags.None)
+                CheckForSequence(IsKeyDown, IsKeyUp);
 
             if (IsKeyUp)
             {
