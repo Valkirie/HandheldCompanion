@@ -34,7 +34,7 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            // Desktop
+            // Home
             listeners.Add(new DeviceChord("Home key",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D},
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D }
