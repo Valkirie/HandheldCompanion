@@ -73,10 +73,12 @@ PS Remote Play, The Last of Us Part 2
 Display a 3D virtual controller, showcasing the motion of the device and all button interaction, individual button presses, joystick and trigger positions. The following 3D models are availible.
   - OEM controller (Ayaneo Pro, Ayaneo Next, OneXPlayer Mini)
   - Emulated controller (DualShock 4, Xbox 360)
+  - Xbox One controller
   - ZDO+ controller
   - Fisher-Price controller
   - Machenike HG510 
   - 8BitDo Lite 2
+  - Nintendo 64
 
 ![image](https://thumbs.gfycat.com/BlackandwhiteRareBorderterrier-size_restricted.gif)
 
