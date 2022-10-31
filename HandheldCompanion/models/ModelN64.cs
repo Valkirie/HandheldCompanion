@@ -11,7 +11,6 @@ namespace HandheldCompanion.Models
     {
         // Specific groups (move me)
         Model3DGroup JoystickShield;
-        Model3DGroup Z;
         Model3DGroup CDown;
 
         public ModelN64() : base("N64")
@@ -41,7 +40,7 @@ namespace HandheldCompanion.Models
 
             ShoulderTriggerRotationPointCenterLeftMillimeter = new Vector3D(0.0f, 0.0f, 0.0f);
             ShoulderTriggerRotationPointCenterRightMillimeter = new Vector3D(0.0f, 0.0f, 0.0f);
-            TriggerMaxAngleDeg = 16.0f;
+            TriggerMaxAngleDeg = 5.0f;
 
             UpwardVisibilityRotationAxisLeft = new Vector3D(1, 0, 0);
             UpwardVisibilityRotationAxisRight = new Vector3D(1, 0, 0);
@@ -50,12 +49,10 @@ namespace HandheldCompanion.Models
 
             // load model(s)
             JoystickShield = modelImporter.Load($"models/{ModelName}/JoystickShield.obj");
-            Z = modelImporter.Load($"models/{ModelName}/Z.obj");
             CDown = modelImporter.Load($"models/{ModelName}/CDown.obj");
 
             // pull model(s)
             model3DGroup.Children.Add(JoystickShield);
-            model3DGroup.Children.Add(Z);
             model3DGroup.Children.Add(CDown);
 
             // specific button material(s)
