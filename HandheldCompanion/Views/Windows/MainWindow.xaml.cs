@@ -329,7 +329,7 @@ namespace HandheldCompanion.Views
                 }
             };
 
-            InputsManager.TriggerRaised += (listener, input) =>
+            InputsManager.TriggerRaised += (listener, input, iskeydown) =>
             {
                 switch (listener)
                 {
@@ -351,7 +351,7 @@ namespace HandheldCompanion.Views
             settingsPage.UpdateDevice(device);
         }
 
-        private void InputsManager_TriggerRaised(string listener, InputsChord input)
+        private void InputsManager_TriggerRaised(string listener, InputsChord input, bool IsKeyDown)
         {
             switch (listener)
             {

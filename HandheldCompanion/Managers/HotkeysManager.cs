@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
@@ -50,7 +51,7 @@ namespace HandheldCompanion.Managers
         public static void Start()
         {
             // process hotkeys
-            foreach (var pair in InputsHotkey.Hotkeys)
+            foreach (var pair in InputsHotkey.InputsHotkeys)
             {
                 ushort Id = pair.Key;
                 InputsHotkey inputsHotkey = pair.Value;
@@ -65,7 +66,7 @@ namespace HandheldCompanion.Managers
                 if (hotkey is null)
                     hotkey = new Hotkey(Id, inputsHotkey);
 
-                hotkey.inputsHotkey = InputsHotkey.Hotkeys[hotkey.hotkeyId];
+                hotkey.inputsHotkey = InputsHotkey.InputsHotkeys[hotkey.hotkeyId];
                 hotkey.DrawControl();
 
                 Hotkeys.Add(hotkey.hotkeyId, hotkey);
@@ -165,7 +166,7 @@ namespace HandheldCompanion.Managers
                 LogManager.LogError("Error while parsing hotkey {0}. Object is null.", fileName);
             }
 
-            if (!InputsHotkey.Hotkeys.ContainsKey(hotkey.hotkeyId))
+            if (!InputsHotkey.InputsHotkeys.ContainsKey(hotkey.hotkeyId))
             {
                 LogManager.LogError("Error while parsing {0}. InputsHotkey is outdated.", fileName);
             }
@@ -186,9 +187,19 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        public static void TriggerRaised(string listener, InputsChord input)
+        public static void TriggerRaised(string listener, InputsChord input, bool IsKeyDown)
         {
             var fProcess = ProcessManager.GetForegroundProcess();
+
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                Hotkey hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
+
+                if (hotkey is null)
+                    return;
+
+                hotkey.Highlight();
+            }));
 
             try
             {
@@ -227,7 +238,15 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
                         break;
                     case "shortcutGuide":
-                        MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)0x0400 });
+                        switch(IsKeyDown)
+                        {
+                            case true:
+                                MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)0x0400 });
+                                break;
+                            case false:
+                                MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)0x000 });
+                                break;
+                        }
                         break;
                     case "suspendResumeTask":
                         {
@@ -243,6 +262,8 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(input.OutputKeys);
                         break;
                 }
+
+                LogManager.LogDebug("Executed Hotkey: {0}", listener);
 
                 // play a tune to notify a command was executed
                 SystemManager.PlayWindowsMedia("Windows Navigation Start.wav");

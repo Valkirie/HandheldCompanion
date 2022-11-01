@@ -1,8 +1,10 @@
 ﻿using ControllerCommon.Utils;
 using ModernWpf.Controls;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using Application = System.Windows.Application;
 
 namespace HandheldCompanion.Managers.Classes
@@ -53,7 +55,7 @@ namespace HandheldCompanion.Managers.Classes
         {
             hotkeyId = id;
 
-            inputsHotkey = InputsHotkey.Hotkeys[id];
+            inputsHotkey = InputsHotkey.InputsHotkeys[id];
             inputsChord = new();
         }
 
@@ -403,13 +405,33 @@ namespace HandheldCompanion.Managers.Classes
             {
                 case true:
                     pinButton.Content = new FontIcon() { Glyph = "\uE77A", FontSize = 14 };
-                    pinButton.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
+                    pinButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
                     break;
                 case false:
                     pinButton.Content = new FontIcon() { Glyph = "\uE840", FontSize = 14 };
-                    pinButton.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+                    pinButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
                     break;
             }
+        }
+
+        public void Highlight()
+        {
+            DoubleAnimation opacityAnimation = new DoubleAnimation()
+            {
+                From = 1.0,
+                To = 0.0,
+                Duration = new Duration(TimeSpan.FromMilliseconds(100)),
+                AutoReverse = true,
+                RepeatBehavior = new RepeatBehavior(1)
+            };
+
+            Storyboard storyboard = new Storyboard();
+            storyboard.Children.Add(opacityAnimation);
+            
+            Storyboard.SetTarget(opacityAnimation, inputButton);
+            Storyboard.SetTargetProperty(opacityAnimation, new PropertyPath("Opacity"));
+
+            storyboard.Begin(inputButton);
         }
     }
 }

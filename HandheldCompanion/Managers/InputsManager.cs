@@ -2,6 +2,7 @@ using ControllerCommon;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using Gma.System.MouseKeyHook;
+using Gma.System.MouseKeyHook.HotKeys;
 using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Managers.Classes;
@@ -69,7 +70,7 @@ namespace HandheldCompanion.Managers
         public delegate void UpdatedEventHandler(Gamepad gamepad);
 
         public static event TriggerRaisedEventHandler TriggerRaised;
-        public delegate void TriggerRaisedEventHandler(string listener, InputsChord inputs);
+        public delegate void TriggerRaisedEventHandler(string listener, InputsChord inputs, bool IsKeyDown);
 
         public static event TriggerUpdatedEventHandler TriggerUpdated;
         public delegate void TriggerUpdatedEventHandler(string listener, InputsChord inputs, bool IsCombo);
@@ -116,7 +117,7 @@ namespace HandheldCompanion.Managers
             InputsChordInputTimer.SetInterval(TIME_NEXT);
             InputsChordInputTimer.SetAutoResetMode(false);
 
-            InputsChordInputTimer.Tick += (sender, e) => { ExecuteSequence(); };
+            InputsChordInputTimer.Tick += (sender, e) => { CheckForSequence(false, true); };
 
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();
@@ -134,52 +135,70 @@ namespace HandheldCompanion.Managers
         private static void InputsChordHold_Elapsed()
         {
             // triggered when key is pressed for a long time
-            currentChord.InputsType = InputsChordType.Hold;
-
-            // we're no-longer expecting a KeyUp call
-            ExpectKeyUp = false;
-
-            ExecuteSequence();
+            currentChord.InputsType = InputsChordType.Long;
         }
 
-        private static void ExecuteSequence()
+        private static void CheckForSequence(bool IsKeyDown, bool IsKeyUp)
         {
-            InputsChordHoldTimer.Stop();
-            InputsChordInputTimer.Stop();
-
             if (string.IsNullOrEmpty(currentChord.SpecialKey) &&
                 currentChord.GamepadButtons == GamepadButtonFlags.None &&
                 currentChord.OutputKeys.Count == 0)
                 return;
 
+            // stop timers on KeyUp
+            if (IsKeyUp)
+            {
+                InputsChordHoldTimer.Stop();
+                InputsChordInputTimer.Stop();
+            }
+
             if (string.IsNullOrEmpty(currentHotkey.Listener))
             {
-                string key = GetTriggerFromChord(currentChord);
+                var keys = GetTriggersFromChord(currentChord);
 
-                if (!string.IsNullOrEmpty(key))
+                if (keys.Count == 0)
                 {
-                    LogManager.LogDebug("Captured: KeyDown: {0}, ButtonFlags: {1}, Type: {2}", currentChord.SpecialKey, currentChord.GamepadButtons, currentChord.InputsType);
-
-                    ReleasedKeys.Clear();
-
-                    InputsChord chord = Triggers[key];
-                    TriggerRaised?.Invoke(key, chord);
-                }
-                else
-                {
-                    LogManager.LogDebug("Released: KeyDown: {0}, ButtonFlags: {1}, Type: {2}", currentChord.SpecialKey, currentChord.GamepadButtons, currentChord.InputsType);
+                    LogManager.LogDebug("Released: SpecialKey: {0}, ButtonFlags: {1}, Type: {2}, IsKeyDown: {3}", currentChord.SpecialKey, currentChord.GamepadButtons, currentChord.InputsType, IsKeyDown);
 
                     ReleasedKeys.AddRange(CapturedKeys);
                     ResetTimer.Start();
+                }
+                else
+                {
+                    LogManager.LogDebug("Captured: SpecialKey: {0}, ButtonFlags: {1}, Type: {2}, IsKeyDown: {3}", currentChord.SpecialKey, currentChord.GamepadButtons, currentChord.InputsType, IsKeyDown);
+
+                    foreach (string key in keys)
+                    {
+                        InputsHotkey hotkey = InputsHotkey.InputsHotkeys.Values.Where(item => item.Listener == key).FirstOrDefault();
+
+                        if (!hotkey.OnKeyDown && IsKeyDown)
+                            continue;
+
+                        ReleasedKeys.Clear();
+
+                        InputsChord chord = Triggers[key];
+                        TriggerRaised?.Invoke(key, chord, IsKeyDown);
+                    }
                 }
 
                 CapturedKeys.Clear();
             }
             else
-                StopListening(currentChord);
+            {
+                if (IsKeyUp)
+                {
+                    InputsHotkey hotkey = InputsHotkey.InputsHotkeys.Values.Where(item => item.Listener == currentHotkey.Listener).FirstOrDefault();
 
-            // reset chord
-            currentChord = new();
+                    switch (hotkey.OnKeyDown)
+                    {
+                        case true:
+                            currentChord.InputsType = InputsChordType.Hold;
+                            break;
+                    }
+
+                    StopListening(currentChord);
+                }
+            }
 
             // reset index
             KeyIndex = 0;
@@ -330,6 +349,7 @@ namespace HandheldCompanion.Managers
 
                         if (args.IsKeyDown)
                         {
+                            // reset hold timer
                             InputsChordHoldTimer.Stop();
                             InputsChordHoldTimer.Start();
 
@@ -337,14 +357,16 @@ namespace HandheldCompanion.Managers
                             currentChord.SpecialKey = chord.name;
                             currentChord.InputsType = InputsChordType.Click;
                         }
-                        // Sequence was intercepted already
-                        else if (args.IsKeyUp)
+
+                        CheckForSequence(args.IsKeyDown, args.IsKeyUp);
+
+                        if (args.IsKeyUp)
                         {
-                            if (InputsChordHoldTimer.IsRunning())
-                                ExecuteSequence();
+                            // update vars
+                            currentChord.SpecialKey = string.Empty;
                         }
 
-                        return; // prevent multiple shortcuts from being triggered
+                        return;
                     }
                 }
             }
@@ -352,24 +374,26 @@ namespace HandheldCompanion.Managers
             ResetTimer.Start();
         }
 
-        private static string GetTriggerFromName(string KeyDownListener)
+        private static List<string> GetTriggersFromChord(InputsChord lookup)
         {
+            List<string> keys = new();
+
             foreach (var pair in Triggers)
-                if (pair.Value.SpecialKey == KeyDownListener)
-                    return pair.Key;
+            {
+                string key = pair.Key;
+                InputsChord chord = pair.Value;
 
-            return string.Empty;
-        }
+                string SpecialKey = chord.SpecialKey;
+                InputsChordType InputsType = chord.InputsType;
+                GamepadButtonFlags GamepadButtons = chord.GamepadButtons;
 
-        private static string GetTriggerFromChord(InputsChord chord)
-        {
-            foreach (var pair in Triggers)
-                if (pair.Value.SpecialKey == chord.SpecialKey &&
-                    pair.Value.InputsType == chord.InputsType &&
-                    pair.Value.GamepadButtons == chord.GamepadButtons)
-                    return pair.Key;
+                if (SpecialKey == lookup.SpecialKey &&
+                    InputsType.HasFlag(lookup.InputsType) &&
+                    GamepadButtons == lookup.GamepadButtons)
+                    keys.Add(key);
+            }
 
-            return string.Empty;
+            return keys;
         }
 
         public static void KeyPress(VirtualKeyCode key)
@@ -524,9 +548,16 @@ namespace HandheldCompanion.Managers
             if (prevGamepad.GetHashCode() == Gamepad.GetHashCode())
                 return;
 
+            bool IsKeyDown = false;
+            bool IsKeyUp = false;
+
             // IsKeyDown
             if (Gamepad.Buttons != 0)
             {
+                // reset hold timer
+                InputsChordHoldTimer.Stop();
+                InputsChordHoldTimer.Start();
+
                 if (GamepadClearPending)
                 {
                     currentChord.GamepadButtons = Gamepad.Buttons;
@@ -535,17 +566,22 @@ namespace HandheldCompanion.Managers
                 else
                     currentChord.GamepadButtons |= Gamepad.Buttons;
 
-                InputsChordHoldTimer.Stop();
-                InputsChordHoldTimer.Start();
+                IsKeyDown = true;
             }
             // IsKeyUp
             else if (Gamepad.Buttons == 0 && currentChord.GamepadButtons != GamepadButtonFlags.None)
             {
                 GamepadClearPending = true;
 
-                // Sequence was intercepted already
-                if (InputsChordHoldTimer.IsRunning())
-                    ExecuteSequence();
+                IsKeyUp = true;
+            }
+
+            if (currentChord.GamepadButtons != GamepadButtonFlags.None)
+                CheckForSequence(IsKeyDown, IsKeyUp);
+
+            if (IsKeyUp)
+            {
+                currentChord.GamepadButtons = GamepadButtonFlags.None;
             }
 
             Updated?.Invoke(Gamepad);
@@ -621,7 +657,17 @@ namespace HandheldCompanion.Managers
 
         internal static void InvokeTrigger(Hotkey hotkey)
         {
-            TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord);
+            switch(hotkey.inputsChord.InputsType)
+            {
+                case InputsChordType.Click:
+                case InputsChordType.Long:
+                    TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, false);
+                    break;
+                case InputsChordType.Hold:
+                    TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, true);
+                    TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, false);
+                    break;
+            }
         }
     }
 }
