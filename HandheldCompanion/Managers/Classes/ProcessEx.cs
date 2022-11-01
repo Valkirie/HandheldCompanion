@@ -64,6 +64,8 @@ namespace HandheldCompanion.Managers.Classes
                 if (Process.HasExited)
                     return;
 
+                // refresh main thread
+                MainThread = Process.Threads[0];
                 if (MainThread is null)
                     return;
 
