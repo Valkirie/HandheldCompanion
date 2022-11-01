@@ -426,6 +426,9 @@
   <data name="OverlayPage_MainTriggerDesc" xml:space="preserve">
     <value>Change 3D controller overlay main trigger</value>
   </data>
+  <data name="OverlayPage_N64Controller" xml:space="preserve">
+    <value>N64</value>
+  </data>
   <data name="OverlayPage_OEMController" xml:space="preserve">
     <value>OEM controller</value>
   </data>
