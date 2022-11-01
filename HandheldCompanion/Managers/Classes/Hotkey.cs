@@ -405,11 +405,11 @@ namespace HandheldCompanion.Managers.Classes
             {
                 case true:
                     pinButton.Content = new FontIcon() { Glyph = "\uE77A", FontSize = 14 };
-                    pinButton.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
+                    pinButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
                     break;
                 case false:
                     pinButton.Content = new FontIcon() { Glyph = "\uE840", FontSize = 14 };
-                    pinButton.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+                    pinButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
                     break;
             }
         }
@@ -422,7 +422,7 @@ namespace HandheldCompanion.Managers.Classes
                 To = 0.0,
                 Duration = new Duration(TimeSpan.FromMilliseconds(100)),
                 AutoReverse = true,
-                RepeatBehavior = new RepeatBehavior(3)
+                RepeatBehavior = new RepeatBehavior(1)
             };
 
             Storyboard storyboard = new Storyboard();
