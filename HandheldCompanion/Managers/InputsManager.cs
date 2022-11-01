@@ -117,7 +117,7 @@ namespace HandheldCompanion.Managers
             InputsChordInputTimer.SetInterval(TIME_NEXT);
             InputsChordInputTimer.SetAutoResetMode(false);
 
-            InputsChordInputTimer.Tick += (sender, e) => { CheckForSequence(true, false); };
+            InputsChordInputTimer.Tick += (sender, e) => { CheckForSequence(false, true); };
 
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();
