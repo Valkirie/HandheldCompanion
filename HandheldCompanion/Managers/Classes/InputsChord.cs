@@ -12,7 +12,7 @@ namespace HandheldCompanion.Managers.Classes
         None = 0,
         Click = 1,
         Long = 2,
-        Hold = 3
+        Hold = 3,
     }
 
     [Serializable]

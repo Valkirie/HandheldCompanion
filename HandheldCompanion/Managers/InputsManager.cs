@@ -48,7 +48,7 @@ namespace HandheldCompanion.Managers
         private const short TIME_FLUSH_EXT = 100;   // extended buffer flush interval when expecting another chord key
 
         private const short TIME_NEXT = 500;        // default interval before submitting output keys used in combo
-        private const short TIME_LONG = 800;        // default interval between two inputs from a chord
+        private const short TIME_LONG = 600;        // default interval between two inputs from a chord
                                                     // default interval before considering a chord as hold
 
         private const short TIME_EXPIRED = 3000;    // default interval before considering a chord as expired if no input is detected
@@ -136,6 +136,7 @@ namespace HandheldCompanion.Managers
         {
             // triggered when key is pressed for a long time
             currentChord.InputsType = InputsChordType.Long;
+            CheckForSequence(true, false);
         }
 
         private static void CheckForSequence(bool IsKeyDown, bool IsKeyUp)
@@ -159,45 +160,77 @@ namespace HandheldCompanion.Managers
                 if (keys.Count == 0)
                 {
                     LogManager.LogDebug("Released: SpecialKey: {0}, ButtonFlags: {1}, Type: {2}, IsKeyDown: {3}", currentChord.SpecialKey, currentChord.GamepadButtons, currentChord.InputsType, IsKeyDown);
-
                     ReleasedKeys.AddRange(CapturedKeys);
+
                     ResetTimer.Start();
                 }
                 else
                 {
                     LogManager.LogDebug("Captured: SpecialKey: {0}, ButtonFlags: {1}, Type: {2}, IsKeyDown: {3}", currentChord.SpecialKey, currentChord.GamepadButtons, currentChord.InputsType, IsKeyDown);
+                    ReleasedKeys.Clear();
+                    CapturedKeys.Clear();
 
                     foreach (string key in keys)
                     {
-                        InputsHotkey hotkey = InputsHotkey.InputsHotkeys.Values.Where(item => item.Listener == key).FirstOrDefault();
-
-                        if (!hotkey.OnKeyDown && IsKeyDown)
-                            continue;
-
-                        ReleasedKeys.Clear();
-
                         InputsChord chord = Triggers[key];
+
+                        switch (chord.InputsType)
+                        {
+                            case InputsChordType.Click:
+                                {
+                                    InputsHotkey hotkey = InputsHotkey.InputsHotkeys.Values.Where(item => item.Listener == key).FirstOrDefault();
+
+                                    if (!hotkey.OnKeyDown && IsKeyDown)
+                                        continue;
+
+                                    if (!hotkey.OnKeyUp && IsKeyUp)
+                                        continue;
+                                }
+                                break;
+
+                            case InputsChordType.Long:
+                                {
+                                    // skip as we've already executed it
+                                    if (IsKeyUp)
+                                        continue;
+                                }
+                                break;
+
+                            case InputsChordType.Hold:
+                                {
+                                    // skip as we've already executed it
+                                    if (IsKeyDown && currentChord.InputsType == InputsChordType.Long)
+                                        continue;
+                                }
+                                break;
+                        }
+
                         TriggerRaised?.Invoke(key, chord, IsKeyDown);
                     }
                 }
-
-                CapturedKeys.Clear();
             }
             else
             {
-                if (IsKeyUp)
+                if (IsKeyDown)
                 {
-                    InputsHotkey hotkey = InputsHotkey.InputsHotkeys.Values.Where(item => item.Listener == currentHotkey.Listener).FirstOrDefault();
-
-                    switch (hotkey.OnKeyDown)
+                    switch(currentChord.InputsType)
                     {
-                        case true:
-                            currentChord.InputsType = InputsChordType.Hold;
-                            break;
+                        case InputsChordType.Click:
+                        case InputsChordType.Hold:
+                            return;
                     }
-
-                    StopListening(currentChord);
                 }
+
+                InputsHotkey hotkey = InputsHotkey.InputsHotkeys.Values.Where(item => item.Listener == currentHotkey.Listener).FirstOrDefault();
+
+                switch (hotkey.OnKeyDown)
+                {
+                    case true:
+                        currentChord.InputsType = InputsChordType.Hold;
+                        break;
+                }
+
+                StopListening(currentChord);
             }
 
             // reset index
@@ -657,17 +690,11 @@ namespace HandheldCompanion.Managers
 
         internal static void InvokeTrigger(Hotkey hotkey)
         {
-            switch(hotkey.inputsChord.InputsType)
-            {
-                case InputsChordType.Click:
-                case InputsChordType.Long:
-                    TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, false);
-                    break;
-                case InputsChordType.Hold:
-                    TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, true);
-                    TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, false);
-                    break;
-            }
+            if (hotkey.inputsHotkey.OnKeyDown)
+                TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, true);
+
+            if (hotkey.inputsHotkey.OnKeyUp)
+                TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, false);
         }
     }
 }
