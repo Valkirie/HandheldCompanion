@@ -307,15 +307,6 @@
   <data name="OverlayPage_OverlayPreview" xml:space="preserve">
     <value>展示预览</value>
   </data>
-  <data name="OverlayPage_SecondaryTrigger" xml:space="preserve">
-    <value>副开关</value>
-  </data>
-  <data name="OverlayPage_SecondaryTriggerDesc" xml:space="preserve">
-    <value>修改3D姿态展示开关</value>
-  </data>
-  <data name="OverlayPage_SecondaryTriggerOverlayDesc" xml:space="preserve">
-    <value>修改触摸板展示开关</value>
-  </data>
   <data name="OverlayPage_Size" xml:space="preserve">
     <value>大小</value>
   </data>
@@ -374,7 +365,7 @@
     <value>指向性摇杆（实验性）</value>
   </data>
   <data name="ProfileSettingsMode0_FlickStickDesc" xml:space="preserve">
-    <value>将视角指向（右）摇杆倾斜的方向，只对相机进行水平旋转。</value>
+    <value>将视角指向（右）摇杆倾斜的方向，只对相机进行水平旋转</value>
   </data>
   <data name="ProfileSettingsMode0_FlickStickEnable" xml:space="preserve">
     <value>开启指向性瞄准</value>
@@ -398,7 +389,7 @@
     <value>死区</value>
   </data>
   <data name="ProfileSettingsMode1_DeadzoneDesc" xml:space="preserve">
-    <value>改变转向死区角度。提升直线。</value>
+    <value>改变转向死区角度。提升直线</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickGameInput" xml:space="preserve">
     <value>摇杆游戏输入</value>
@@ -422,7 +413,7 @@
     <value>转向线性度</value>
   </data>
   <data name="ProfileSettingsMode1_SteeringLinearityDesc" xml:space="preserve">
-    <value>输入和转向之间的映射。较低的值在大小末端提供更高的精度，但在中心附近的精度较低。数值越高，在中心附近的精度越高，在两端的精度越低。1.0是一个线性映射。</value>
+    <value>输入和转向之间的映射。较低的值在大小末端提供更高的精度，但在中心附近的精度较低。数值越高，在中心附近的精度越高，在两端的精度越低。1.0是一个线性映射</value>
   </data>
   <data name="ProfilesPage_AccelerometerMultiplier" xml:space="preserve">
     <value>加速度计灵敏度</value>
@@ -612,7 +603,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>程序将会被最小化，而不是关闭</value>
   </data>
   <data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
-    <value>下载中 -</value>
+    <value>下载中 - </value>
   </data>
   <data name="SettingsPage_GeneralOptions" xml:space="preserve">
     <value>通用设置</value>

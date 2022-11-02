@@ -232,12 +232,12 @@
     <value>手動</value>
   </data>
   <data name="JoystickCameraDesc" xml:space="preserve">
-    <value>這個輸入將作為一個簡單的搖桿操作，適用於傳統的搖桿應用。</value>
+    <value>這個輸入將作為一個簡單的搖桿操作，適用於傳統的搖桿應用</value>
   </data>
   <data name="JoystickSteeringDesc" xml:space="preserve">
-    <value>這個輸入將作為一個為賽車遊戲優化的駕駛搖桿。</value>
+    <value>這個輸入將作為一個為賽車遊戲優化的駕駛搖桿</value>
   </data>
   <data name="PlayerSpaceDesc" xml:space="preserve">
-    <value>這個輸入將作為一個為第一或第三人稱視角優化的搖桿。</value>
+    <value>這個輸入將作為一個為第一或第三人稱視角優化的搖桿</value>
   </data>
 </root>

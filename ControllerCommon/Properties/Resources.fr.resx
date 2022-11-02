@@ -236,9 +236,9 @@
     <value>Cette entrée fonctionnera comme un simple joystick. Elle est destinée aux applications traditionnelles de joystick</value>
   </data>
   <data name="JoystickSteeringDesc" xml:space="preserve">
-    <value>Cette entrée fonctionnera comme un joystick optimisé pour le contrôle d'un volant ou d'un jeu de course.</value>
+    <value>Cette entrée fonctionnera comme un joystick optimisé pour le contrôle d'un volant ou d'un jeu de course</value>
   </data>
   <data name="PlayerSpaceDesc" xml:space="preserve">
-    <value>Cette entrée fonctionnera comme un joystick optimisé pour le contrôle d'une caméra à la première ou à la troisième personne.</value>
+    <value>Cette entrée fonctionnera comme un joystick optimisé pour le contrôle d'une caméra à la première ou à la troisième personne</value>
   </data>
 </root>

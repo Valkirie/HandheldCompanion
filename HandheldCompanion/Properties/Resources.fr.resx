@@ -121,9 +121,7 @@
     <value>À propos</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>Handheld Companion fournit une prise en charge du gyroscope et de l'accéléromètre aux modèles AYA NEO 2020 et 2021 par le biais d'un contrôleur DualShock 4 virtuel. Si le service est activé, le contrôleur intégré sera masqué pour les applications en dehors de la liste blanche. Si le service est désactivé, le contrôleur intégré ne sera pas masqué et le contrôleur DualShock 4 virtuel sera désactivé. Handheld Companion s'appuie sur le pilote ViGEmBus et les bibliothèques ViGEmClient ainsi que sur le pilote de filtre en mode noyau HidHide. Les algorithmes de contrôle de mouvement sont basés sur le travail de Jibbsmart et les informations disponibles sur le GyroWiki.
-
-</value>
+    <value>Handheld Companion fournit une prise en charge du gyroscope et de l'accéléromètre aux modèles AYA NEO 2020 et 2021 par le biais d'un contrôleur DualShock 4 virtuel. Si le service est activé, le contrôleur intégré sera masqué pour les applications en dehors de la liste blanche. Si le service est désactivé, le contrôleur intégré ne sera pas masqué et le contrôleur DualShock 4 virtuel sera désactivé. Handheld Companion s'appuie sur le pilote ViGEmBus et les bibliothèques ViGEmClient ainsi que sur le pilote de filtre en mode noyau HidHide. Les algorithmes de contrôle de mouvement sont basés sur le travail de Jibbsmart et les informations disponibles sur le GyroWiki.</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>Accéléromètre</value>
@@ -305,15 +303,6 @@
   <data name="OverlayPage_OverlayPreview" xml:space="preserve">
     <value>Aperçu de l'overlay</value>
   </data>
-  <data name="OverlayPage_SecondaryTrigger" xml:space="preserve">
-    <value>Déclencheur secondaire</value>
-  </data>
-  <data name="OverlayPage_SecondaryTriggerDesc" xml:space="preserve">
-    <value>Modifier le déclencheur d'affichage du contrôleur</value>
-  </data>
-  <data name="OverlayPage_SecondaryTriggerOverlayDesc" xml:space="preserve">
-    <value>Modifier le déclencheur d'affichage des trackpads</value>
-  </data>
   <data name="OverlayPage_Size" xml:space="preserve">
     <value>Taille</value>
   </data>
@@ -439,13 +428,13 @@
     <value>Modifier l'anti-zone morte, en pourcentage</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
-    <value>Êtes-vous sûr de vouloir supprimer</value>
+    <value>Êtes-vous sûr de vouloir supprimer?</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
     <value>Cet élément sera supprimé immédiatement. Vous ne pouvez pas annuler cette action.</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwrite1" xml:space="preserve">
-    <value>Etes-vous sûr de vouloir écraser</value>
+    <value>Etes-vous sûr de vouloir écraser?</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
     <value>Cet élément sera écrasé. Vous ne pouvez pas annuler cette action.</value>
@@ -584,7 +573,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Oui</value>
   </data>
   <data name="ServiceDescription" xml:space="preserve">
-    <value>Fournit une prise en charge du gyroscope et de l'accéléromètre aux ordinateurs de jeu portables Windows par le biais d'un contrôleur virtuel. Si le service est activé, le contrôleur intégré sera masqué pour les applications en dehors de la liste blanche. Si le service est désactivé, le contrôleur embarqué ne sera plus caché et le contrôleur virtuel sera désactivé</value>
+    <value>Fournit une prise en charge du gyroscope et de l'accéléromètre aux ordinateurs de jeu portables Windows par le biais d'un contrôleur virtuel. Si le service est activé, le contrôleur intégré sera masqué pour les applications en dehors de la liste blanche. Si le service est désactivé, le contrôleur embarqué ne sera plus caché et le contrôleur virtuel sera désactivé.</value>
   </data>
   <data name="ServiceName" xml:space="preserve">
     <value>Controller Service</value>

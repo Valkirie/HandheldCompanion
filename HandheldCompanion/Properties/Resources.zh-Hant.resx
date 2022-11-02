@@ -306,15 +306,6 @@
   <data name="OverlayPage_OverlayPreview" xml:space="preserve">
     <value>展示預覽</value>
   </data>
-  <data name="OverlayPage_SecondaryTrigger" xml:space="preserve">
-    <value>副開關</value>
-  </data>
-  <data name="OverlayPage_SecondaryTriggerDesc" xml:space="preserve">
-    <value>修改3D姿態展示開關</value>
-  </data>
-  <data name="OverlayPage_SecondaryTriggerOverlayDesc" xml:space="preserve">
-    <value>修改觸摸板展示開關</value>
-  </data>
   <data name="OverlayPage_Size" xml:space="preserve">
     <value>大小</value>
   </data>
@@ -373,7 +364,7 @@
     <value>指向性搖桿（實驗性）</value>
   </data>
   <data name="ProfileSettingsMode0_FlickStickDesc" xml:space="preserve">
-    <value>將視角指向（右）搖桿傾斜的方向，只對相機進行水平旋轉。</value>
+    <value>將視角指向（右）搖桿傾斜的方向，只對相機進行水平旋轉</value>
   </data>
   <data name="ProfileSettingsMode0_FlickStickEnable" xml:space="preserve">
     <value>開啟指向性瞄準</value>
@@ -397,7 +388,7 @@
     <value>死區</value>
   </data>
   <data name="ProfileSettingsMode1_DeadzoneDesc" xml:space="preserve">
-    <value>改變轉向死區角度。提升直線。</value>
+    <value>改變轉向死區角度。提升直線</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickGameInput" xml:space="preserve">
     <value>搖桿遊戲輸入</value>
@@ -421,7 +412,7 @@
     <value>轉向線性度</value>
   </data>
   <data name="ProfileSettingsMode1_SteeringLinearityDesc" xml:space="preserve">
-    <value>輸入和轉向之間的映射。較低的值在大小末端提供更高的精度，但在中心附近的精度較低。數值越高，在中心附近的精度越高，在兩端的精度越低。1.0是一個線性映射。</value>
+    <value>輸入和轉向之間的映射。較低的值在大小末端提供更高的精度，但在中心附近的精度較低。數值越高，在中心附近的精度越高，在兩端的精度越低。1.0是一個線性映射</value>
   </data>
   <data name="ProfilesPage_AccelerometerMultiplier" xml:space="preserve">
     <value>加速度計靈敏度</value>
@@ -611,7 +602,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>程序將會被最小化，而不是關閉</value>
   </data>
   <data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
-    <value>下載中 - 100%</value>
+    <value>下載中 - 100% </value>
   </data>
   <data name="SettingsPage_GeneralOptions" xml:space="preserve">
     <value>通用設置</value>
@@ -627,9 +618,6 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_LastChecked" xml:space="preserve">
     <value>最後一次檢查：今天</value>
-  </data>
-  <data name="SettingsPage_LastChecked1" xml:space="preserve">
-    <value>最後一次檢查：</value>
   </data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
     <value>通知設置</value>
@@ -699,9 +687,6 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_UpToDate" xml:space="preserve">
     <value>版本以是最新</value>
-  </data>
-  <data name="SettingsPage_Version" xml:space="preserve">
-    <value>掌機伴侶 (V0.9.2.0)</value>
   </data>
   <data name="ToastNewControllerEx" xml:space="preserve">
     <value>物理手柄已被隱藏，輸入被映射到虛擬手柄</value>
