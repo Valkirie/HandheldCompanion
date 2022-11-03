@@ -70,7 +70,7 @@ namespace HandheldCompanion.Managers
         public delegate void UpdatedEventHandler(Gamepad gamepad);
 
         public static event TriggerRaisedEventHandler TriggerRaised;
-        public delegate void TriggerRaisedEventHandler(string listener, InputsChord inputs, bool IsKeyDown);
+        public delegate void TriggerRaisedEventHandler(string listener, InputsChord inputs, bool IsKeyDown, bool IsKeyUp);
 
         public static event TriggerUpdatedEventHandler TriggerUpdated;
         public delegate void TriggerUpdatedEventHandler(string listener, InputsChord inputs, bool IsCombo);
@@ -211,7 +211,7 @@ namespace HandheldCompanion.Managers
                                 break;
                         }
 
-                        TriggerRaised?.Invoke(key, chord, IsKeyDown);
+                        TriggerRaised?.Invoke(key, chord, IsKeyDown, IsKeyUp);
                     }
                 }
             }
@@ -697,10 +697,10 @@ namespace HandheldCompanion.Managers
         internal static void InvokeTrigger(Hotkey hotkey)
         {
             if (hotkey.inputsHotkey.OnKeyDown)
-                TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, true);
+                TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, true, false);
 
             if (hotkey.inputsHotkey.OnKeyUp)
-                TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, false);
+                TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, false, true);
         }
     }
 }

@@ -187,7 +187,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        public static void TriggerRaised(string listener, InputsChord input, bool IsKeyDown)
+        public static void TriggerRaised(string listener, InputsChord input, bool IsKeyDown, bool IsKeyUp)
         {
             var fProcess = ProcessManager.GetForegroundProcess();
 
@@ -238,15 +238,7 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
                         break;
                     case "shortcutGuide":
-                        switch(IsKeyDown)
-                        {
-                            case true:
-                                MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)0x0400 });
-                                break;
-                            case false:
-                                MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)0x000 });
-                                break;
-                        }
+                        MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)(IsKeyDown ? 0x0400 : 0x000) });
                         break;
                     case "suspendResumeTask":
                         {

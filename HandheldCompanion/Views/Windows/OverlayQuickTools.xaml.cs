@@ -100,7 +100,7 @@ namespace HandheldCompanion.Views.Windows
                     case "shortcutDesktop":
                     case "shortcutESC":
                     case "shortcutExpand":
-                        HotkeysManager.TriggerRaised(navItemTag, null, false);
+                        HotkeysManager.TriggerRaised(navItemTag, null, false, true);
                         break;
                 }
 

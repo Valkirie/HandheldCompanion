@@ -329,16 +329,6 @@ namespace HandheldCompanion.Views
                 }
             };
 
-            InputsManager.TriggerRaised += (listener, input, iskeydown) =>
-            {
-                switch (listener)
-                {
-                    case "shortcutMainwindow":
-                        SwapWindowState();
-                        break;
-                }
-            };
-
             stopwatch.Stop();
             LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
         }
@@ -351,7 +341,7 @@ namespace HandheldCompanion.Views
             settingsPage.UpdateDevice(device);
         }
 
-        private void InputsManager_TriggerRaised(string listener, InputsChord input, bool IsKeyDown)
+        private void InputsManager_TriggerRaised(string listener, InputsChord input, bool IsKeyDown, bool IsKeyUp)
         {
             switch (listener)
             {
@@ -363,6 +353,9 @@ namespace HandheldCompanion.Views
                     break;
                 case "overlayTrackpads":
                     overlayTrackpad.UpdateVisibility();
+                    break;
+                case "shortcutMainwindow":
+                    SwapWindowState();
                     break;
             }
         }
