@@ -336,7 +336,7 @@ namespace HandheldCompanion.Managers
 
                         if (args.IsKeyDown)
                         {
-                            if (!ExpectKeyUp)
+                            if (ExpectKeyDown)
                             {
                                 ExpectKeyDown = false;
                                 ExpectKeyUp = true;
@@ -346,13 +346,13 @@ namespace HandheldCompanion.Managers
                         }
                         else if (args.IsKeyUp)
                         {
-                            if (!ExpectKeyUp)
-                                IsKeyUnexpected = true;
-                            else
+                            if (ExpectKeyUp)
                             {
                                 ExpectKeyDown = true;
                                 ExpectKeyUp = false;
                             }
+                            else
+                                IsKeyUnexpected = true;
                         }
 
                         // do not bother checking timing if key is already unexpected
