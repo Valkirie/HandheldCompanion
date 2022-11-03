@@ -605,6 +605,8 @@ namespace HandheldCompanion.Managers
                 else
                     currentChord.GamepadButtons |= Gamepad.Buttons;
 
+                currentChord.InputsType = InputsChordType.Click;
+
                 IsKeyDown = true;
             }
             // IsKeyUp
