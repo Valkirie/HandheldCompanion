@@ -124,7 +124,7 @@
     <value>A</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
-    <value>持續啟動</value>
+    <value>持续启动</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
     <value>B</value>
@@ -145,22 +145,22 @@
     <value>上</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.LeftShoulder" xml:space="preserve">
-    <value>左肩鍵</value>
+    <value>左肩键</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
-    <value>左搖桿下壓</value>
+    <value>左摇杆下压</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
-    <value>左板機</value>
+    <value>左板机</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.RightShoulder" xml:space="preserve">
-    <value>右肩鍵</value>
+    <value>右肩键</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
-    <value>右搖桿下壓</value>
+    <value>右摇杆下压</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
-    <value>右板機</value>
+    <value>右板机</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
     <value>Start</value>
@@ -172,72 +172,93 @@
     <value>Y</value>
   </data>
   <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
-    <value>模擬DS4手柄</value>
+    <value>模拟DS4手柄</value>
   </data>
   <data name="Enum.HIDmode.NoController" xml:space="preserve">
-    <value>無模擬手柄</value>
+    <value>无模拟手柄</value>
   </data>
   <data name="Enum.HIDmode.Xbox360Controller" xml:space="preserve">
-    <value>模擬360手柄</value>
+    <value>模拟360手柄</value>
   </data>
   <data name="Enum.HIDstatus.Connected" xml:space="preserve">
-    <value>已連接</value>
+    <value>已连接</value>
   </data>
   <data name="Enum.HIDstatus.Disconnected" xml:space="preserve">
-    <value>未連接</value>
+    <value>未连接</value>
   </data>
   <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
     <value>Auto Roll Yaw Swap</value>
   </data>
   <data name="Enum.Input.JoystickCamera" xml:space="preserve">
-    <value>體感視角</value>
+    <value>体感视角</value>
   </data>
   <data name="Enum.Input.JoystickSteering" xml:space="preserve">
-    <value>體感駕駛</value>
+    <value>体感驾驶</value>
   </data>
   <data name="Enum.Input.PlayerSpace" xml:space="preserve">
-    <value>玩家空間</value>
+    <value>玩家空间</value>
   </data>
   <data name="Enum.Output.LeftStick" xml:space="preserve">
-    <value>左搖桿</value>
+    <value>左摇杆</value>
   </data>
   <data name="Enum.Output.RightStick" xml:space="preserve">
-    <value>右搖桿</value>
+    <value>右摇杆</value>
   </data>
   <data name="Enum.ProfileErrorCode.IsDefault" xml:space="preserve">
-    <value>這是默認的手柄配置。此配置將應用於沒有特定配置的所有應用程序。一些需要指定程序的選項可能被禁用。</value>
+    <value>这是默认的手柄配置。此配置将应用于没有特定配置的所有应用程序。一些需要指定程序的选项可能被禁用。</value>
   </data>
   <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
-    <value>啊這。看來這個配置正在運行。一些需要指定程序的選項可能被禁用。</value>
+    <value>啊这。看来这个配置正在运行。一些需要指定程序的选项可能被禁用。</value>
   </data>
   <data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
-    <value>啊這。這個配置似乎沒有可執行文件。這怎麼可能?</value>
+    <value>啊这。这个配置似乎没有可执行文件。这怎么可能?</value>
   </data>
   <data name="Enum.ProfileErrorCode.MissingPath" xml:space="preserve">
-    <value>啊這。這個配置似乎沒有指定應用程序的路徑。一些需要指定程序的選項可能被禁用。</value>
+    <value>啊这。这个配置似乎没有指定应用程序的路径。一些需要指定程序的选项可能被禁用。</value>
   </data>
   <data name="Enum.ProfileErrorCode.MissingPermission" xml:space="preserve">
-    <value>阿這。你似乎沒有修改此應用程序內容的必要權限。確保在管理員模式下啟動此程序。</value>
+    <value>阿这。你似乎没有修改此应用程序内容的必要权限。确保在管理员模式下启动此程序。</value>
   </data>
   <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
-    <value>這裏沒什麼好看的。</value>
+    <value>这里没什么好看的。</value>
   </data>
   <data name="Enum.ServiceStartMode.Automatic" xml:space="preserve">
-    <value>自動</value>
+    <value>自动</value>
   </data>
   <data name="Enum.ServiceStartMode.Disabled" xml:space="preserve">
-    <value>關閉</value>
+    <value>关闭</value>
   </data>
   <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
-    <value>手動</value>
+    <value>手动</value>
   </data>
   <data name="JoystickCameraDesc" xml:space="preserve">
-    <value>這個輸入將作為一個簡單的搖桿操作，適用於傳統的搖桿應用。</value>
+    <value>这个输入将作为一个简单的摇杆操作，适用于传统的摇杆应用</value>
   </data>
   <data name="JoystickSteeringDesc" xml:space="preserve">
-    <value>這個輸入將作為一個為賽車遊戲優化的駕駛搖桿。</value>
+    <value>这个输入将作为一个为赛车游戏优化的驾驶摇杆</value>
   </data>
   <data name="PlayerSpaceDesc" xml:space="preserve">
-    <value>這個輸入將作為一個為第一或第三人稱視角優化的搖桿。</value>
+    <value>这个输入将作为一个为第一或第三人称视角优化的摇杆</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">
+    <value>Overlay</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Quicktools" xml:space="preserve">
+    <value>Quick tools</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Windows" xml:space="preserve">
+    <value>Windows</value>
+  </data>
+  <data name="Enum.QualityOfServiceLevel.Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Enum.QualityOfServiceLevel.Eco" xml:space="preserve">
+    <value>Eco</value>
+  </data>
+  <data name="Enum.QualityOfServiceLevel.High" xml:space="preserve">
+    <value>High</value>
   </data>
 </root>

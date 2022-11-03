@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -152,11 +152,11 @@
   </data>
   <data name="AboutPage_SensorExternal" xml:space="preserve">
     <value>External</value>
-    <comment>added on 21/05/2022</comment>
+    
   </data>
   <data name="AboutPage_SensorInternal" xml:space="preserve">
     <value>Internal</value>
-    <comment>added on 21/05/2022</comment>
+    
   </data>
   <data name="AboutPage_SensorName" xml:space="preserve">
     <value>Sensor name</value>
@@ -455,27 +455,27 @@
   </data>
   <data name="OverlayPage_RenderSettings" xml:space="preserve">
     <value>Render settings</value>
-    <comment>added on 03/06/2022</comment>
+    
   </data>
   <data name="OverlayPage_RenderSettingsAntialiasing" xml:space="preserve">
     <value>Anti-Aliasing</value>
-    <comment>added on 03/06/2022</comment>
+    
   </data>
   <data name="OverlayPage_RenderSettingsAntialiasingDesc" xml:space="preserve">
     <value>Change the render anti-aliasing status</value>
-    <comment>added on 03/06/2022</comment>
+    
   </data>
   <data name="OverlayPage_RenderSettingsDesc" xml:space="preserve">
     <value>Change the render settings of your stationary 3D overlay controller model</value>
-    <comment>added on 03/06/2022</comment>
+    
   </data>
   <data name="OverlayPage_RenderSettingsFramerate" xml:space="preserve">
     <value>Update rate</value>
-    <comment>added on 03/06/2022</comment>
+    
   </data>
   <data name="OverlayPage_RenderSettingsFramerateDesc" xml:space="preserve">
     <value>Change the render update rate, in update per second</value>
-    <comment>added on 03/06/2022</comment>
+    
   </data>
   <data name="OverlayPage_Size" xml:space="preserve">
     <value>Size</value>
@@ -491,7 +491,7 @@
   </data>
   <data name="OverlayPage_ToyController" xml:space="preserve">
     <value>Fisher-Price controller</value>
-    <comment>added on 27/05/2022</comment>
+    
   </data>
   <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
     <value>Trackpads options</value>
@@ -590,7 +590,7 @@
     <value>Deadzone</value>
   </data>
   <data name="ProfileSettingsMode1_DeadzoneDesc" xml:space="preserve">
-    <value>Change the steering deadzone, in degree. Improves steering straight.</value>
+    <value>Change the steering deadzone, in degree. Improves steering straight</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickGameInput" xml:space="preserve">
     <value>Joystick game Input</value>
@@ -614,7 +614,7 @@
     <value>Steering linearity</value>
   </data>
   <data name="ProfileSettingsMode1_SteeringLinearityDesc" xml:space="preserve">
-    <value>Mapping between input and steering. Lower values provide more accuracy near full lock but less accuracy near the center. Higher values provide more accuracy near the center but less accuracy near full lock. 1.0 is a linear mapping.</value>
+    <value>Mapping between input and steering. Lower values provide more accuracy near full lock but less accuracy near the center. Higher values provide more accuracy near the center but less accuracy near full lock. 1.0 is a linear mapping</value>
   </data>
   <data name="ProfilesPage_AccelerometerMultiplier" xml:space="preserve">
     <value>Accelerometer multiplier</value>
@@ -632,13 +632,13 @@
     <value>Change the in-game anti-deadzone, in percentage</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
-    <value>Are you sure you want to delete</value>
+    <value>Are you sure you want to delete?</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
     <value>This item will be deleted immediatly. You can't undo this action.</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwrite1" xml:space="preserve">
-    <value>Are you sure you want to overwrite</value>
+    <value>Are you sure you want to overwrite?</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
     <value>This item will be overwriten. You can't undo this action.</value>
@@ -904,7 +904,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_Download" xml:space="preserve">
     <value>Download</value>
-    <comment>added on 15/05/2022</comment>
+    
   </data>
   <data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
     <value>Downloading - </value>
@@ -941,11 +941,11 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_SensorExternal" xml:space="preserve">
     <value>External</value>
-    <comment>added on 21/05/2022</comment>
+    
   </data>
   <data name="SettingsPage_SensorInternal" xml:space="preserve">
     <value>Internal</value>
-    <comment>added on 21/05/2022</comment>
+    
   </data>
   <data name="SettingsPage_SensorOptions" xml:space="preserve">
     <value>Sensor options</value>
@@ -1024,19 +1024,19 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_UpdateFailedDownload" xml:space="preserve">
     <value>We couldn't download the update file.</value>
-    <comment>added on 02/06/2022</comment>
+    
   </data>
   <data name="SettingsPage_UpdateFailedGithub" xml:space="preserve">
     <value>We couldn't reach github.</value>
-    <comment>added on 02/06/2022</comment>
+    
   </data>
   <data name="SettingsPage_UpdateFailedInstall" xml:space="preserve">
     <value>We couldn't locate the update file.</value>
-    <comment>added on 02/06/2022</comment>
+    
   </data>
   <data name="SettingsPage_UpdateWarning" xml:space="preserve">
     <value>Oups. There was an issue.</value>
-    <comment>added on 02/06/2022</comment>
+    
   </data>
   <data name="SettingsPage_UpToDate" xml:space="preserve">
     <value>You're up to date</value>
@@ -1048,7 +1048,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>User</value>
   </data>
   <data name="WarningElevated" xml:space="preserve">
-    <value>Run this tool as Administrator to unlock these settings.</value>
+    <value>Run this tool as Administrator to unlock these settings</value>
   </data>
   <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\xinput1_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

@@ -1481,7 +1481,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the steering deadzone, in degree. Improves steering straight..
+        ///   Looks up a localized string similar to Change the steering deadzone, in degree. Improves steering straight.
         /// </summary>
         public static string ProfileSettingsMode1_DeadzoneDesc {
             get {
@@ -1553,7 +1553,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mapping between input and steering. Lower values provide more accuracy near full lock but less accuracy near the center. Higher values provide more accuracy near the center but less accuracy near full lock. 1.0 is a linear mapping..
+        ///   Looks up a localized string similar to Mapping between input and steering. Lower values provide more accuracy near full lock but less accuracy near the center. Higher values provide more accuracy near the center but less accuracy near full lock. 1.0 is a linear mapping.
         /// </summary>
         public static string ProfileSettingsMode1_SteeringLinearityDesc {
             get {
@@ -1607,7 +1607,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete.
+        ///   Looks up a localized string similar to Are you sure you want to delete?.
         /// </summary>
         public static string ProfilesPage_AreYouSureDelete1 {
             get {
@@ -1625,7 +1625,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to overwrite.
+        ///   Looks up a localized string similar to Are you sure you want to overwrite?.
         /// </summary>
         public static string ProfilesPage_AreYouSureOverwrite1 {
             get {
@@ -2832,7 +2832,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Run this tool as Administrator to unlock these settings..
+        ///   Looks up a localized string similar to Run this tool as Administrator to unlock these settings.
         /// </summary>
         public static string WarningElevated {
             get {
