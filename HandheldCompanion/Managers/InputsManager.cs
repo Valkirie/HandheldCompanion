@@ -117,7 +117,7 @@ namespace HandheldCompanion.Managers
             InputsChordInputTimer.SetInterval(TIME_NEXT);
             InputsChordInputTimer.SetAutoResetMode(false);
 
-            InputsChordInputTimer.Tick += (sender, e) => { CheckForSequence(false, true); };
+            InputsChordInputTimer.Tick += (sender, e) => InputsChordInput_Elapsed();
 
             m_GlobalHook = Hook.GlobalEvents();
             m_InputSimulator = new InputSimulator();
@@ -137,6 +137,12 @@ namespace HandheldCompanion.Managers
             // triggered when key is pressed for a long time
             currentChord.InputsType = InputsChordType.Long;
             CheckForSequence(true, false);
+        }
+
+        private static void InputsChordInput_Elapsed()
+        {
+            // triggered after a key has been pressed (used by combo exclusively)
+            CheckForSequence(false, true);
         }
 
         private static void CheckForSequence(bool IsKeyDown, bool IsKeyUp)
