@@ -35,7 +35,6 @@ namespace HandheldCompanion.Managers
         private static PrecisionTimer InputsChordHoldTimer;
         private static PrecisionTimer InputsChordInputTimer;
 
-        private static bool ExpectKeyDown = true;
         private static bool ExpectKeyUp = false;
         private static Dictionary<KeyValuePair<KeyCode, bool>, int> prevKeys = new();
 
@@ -342,21 +341,12 @@ namespace HandheldCompanion.Managers
 
                         if (args.IsKeyDown)
                         {
-                            if (ExpectKeyDown)
-                            {
-                                ExpectKeyDown = false;
-                                ExpectKeyUp = true;
-                            }
-                            else
-                                IsKeyUnexpected = true;
+                            ExpectKeyUp = true;
                         }
                         else if (args.IsKeyUp)
                         {
                             if (ExpectKeyUp)
-                            {
-                                ExpectKeyDown = true;
                                 ExpectKeyUp = false;
-                            }
                             else
                                 IsKeyUnexpected = true;
                         }
