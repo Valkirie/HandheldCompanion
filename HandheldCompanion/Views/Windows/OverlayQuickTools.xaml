@@ -58,32 +58,6 @@
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
 
-        <ui:NavigationView.FooterMenuItems>
-            <ui:NavigationViewItem Name="shortcutKeyboard" Tag="shortcutKeyboard" Content="Touch keyboard">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE765;"></ui:FontIcon>
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
-
-            <ui:NavigationViewItem Name="shortcutDesktop" Tag="shortcutDesktop" Content="Start">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="HoloLens MDL2 Assets" Glyph="&#xE782;"></ui:FontIcon>
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
-
-            <ui:NavigationViewItem Name="shortcutExpand" Tag="shortcutExpand" Content="Expand">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEE49;"></ui:FontIcon>
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
-
-            <ui:NavigationViewItem Name="shortcutESC" Tag="shortcutESC" Content="Escape">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="SegoeUI" Glyph="ESC"></ui:FontIcon>
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
-        </ui:NavigationView.FooterMenuItems>
-
         <common:TouchScrollViewer x:Name="scrollViewer" PanningMode="VerticalOnly">
             <ui:Frame Name="ContentFrame"/>
         </common:TouchScrollViewer>
