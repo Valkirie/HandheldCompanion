@@ -110,7 +110,7 @@ namespace ControllerService.Targets
                 virtualController.SetButtonState(button, Buttons.HasFlag(value));
             }
 
-            virtualController.SetButtonState(Xbox360Button.Guide, (sState.wButtons & 0x0400) == 0x0400);
+            virtualController.SetButtonState(Xbox360Button.Guide, sState.wButtons.HasFlag(XInputStateButtons.Xbox));
 
             virtualController.SetSliderValue(Xbox360Slider.LeftTrigger, Gamepad.LeftTrigger);
             virtualController.SetSliderValue(Xbox360Slider.RightTrigger, Gamepad.RightTrigger);

@@ -14,11 +14,17 @@ namespace ControllerService.Targets
     public abstract class ViGEmTarget : IDisposable
     {
         #region imports
+        protected enum XInputStateButtons : ushort
+        {
+            None = 0,
+            Xbox = 1024
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         protected struct XInputStateSecret
         {
             public uint eventCount;
-            public ushort wButtons;
+            public XInputStateButtons wButtons;
             public byte bLeftTrigger;
             public byte bRightTrigger;
             public short sThumbLX;
@@ -108,13 +114,13 @@ namespace ControllerService.Targets
         {
             if(IsKeyDown)
             {
-                ButtonsInjector |= Buttons;
-                sStateInjector.wButtons += sButtons;
+                ButtonsInjector |= buttons;
+                sStateInjector.wButtons |= (XInputStateButtons)sButtons;
             }
             else if (IsKeyUp)
             {
-                ButtonsInjector &= Buttons;
-                sStateInjector.wButtons -= sButtons;
+                ButtonsInjector &= ~buttons;
+                sStateInjector.wButtons &= ~(XInputStateButtons)sButtons;
             }
         }
 

@@ -47,15 +47,5 @@ namespace ControllerCommon.Utils
                                 .Description == description).SingleOrDefault();
             return field == null ? default(T) : (T)field.Field.GetRawConstantValue();
         }
-
-        public static void AddFlag(byte main, byte flag)
-        {
-            main |= flag;
-        }
-
-        public static void RemoveFlag(byte main, byte flag)
-        {
-            main &= flag;
-        }
     }
 }

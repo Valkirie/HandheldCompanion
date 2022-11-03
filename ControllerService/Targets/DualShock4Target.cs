@@ -183,7 +183,7 @@ namespace ControllerService.Targets
                 else if (Buttons.HasFlag(GamepadButtonFlagsExt.DPadLeft))
                     tempDPad = DualShock4DPadDirection.West;
 
-                if ((sState.wButtons & 0x0400) == 0x0400)
+                if (sState.wButtons.HasFlag(XInputStateButtons.Xbox))
                     tempSpecial |= DualShock4SpecialButton.Ps.Value;
                 if (Touch.OutputClickButton)
                     tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
