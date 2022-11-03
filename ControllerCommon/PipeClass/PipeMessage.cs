@@ -135,6 +135,9 @@ namespace ControllerCommon
         public uint Buttons;
         public ushort sButtons;
 
+        public bool IsKeyDown;
+        public bool IsKeyUp;
+
         public PipeClientInput()
         {
             code = PipeCode.CLIENT_INPUT;

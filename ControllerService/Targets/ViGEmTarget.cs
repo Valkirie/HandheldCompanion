@@ -104,10 +104,18 @@ namespace ControllerService.Targets
             LogManager.LogInformation("{0} disconnected", ToString());
         }
 
-        public void InjectReport(GamepadButtonFlagsExt buttons, ushort sButtons)
+        public void InjectReport(GamepadButtonFlagsExt buttons, ushort sButtons, bool IsKeyDown, bool IsKeyUp)
         {
-            ButtonsInjector |= Buttons;
-            sStateInjector.wButtons |= sButtons;
+            if(IsKeyDown)
+            {
+                ButtonsInjector |= Buttons;
+                sStateInjector.wButtons += sButtons;
+            }
+            else if (IsKeyUp)
+            {
+                ButtonsInjector &= Buttons;
+                sStateInjector.wButtons -= sButtons;
+            }
         }
 
         public virtual unsafe void UpdateReport(Gamepad Gamepad)

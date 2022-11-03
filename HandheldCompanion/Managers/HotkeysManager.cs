@@ -238,7 +238,7 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
                         break;
                     case "shortcutGuide":
-                        MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)(IsKeyDown ? 0x0400 : 0x000) });
+                        MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)0x0400, IsKeyDown = IsKeyDown, IsKeyUp = IsKeyUp });
                         break;
                     case "suspendResumeTask":
                         {

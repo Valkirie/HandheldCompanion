@@ -404,7 +404,7 @@ namespace ControllerService
 
                 case PipeCode.CLIENT_INPUT:
                     PipeClientInput input = (PipeClientInput)message;
-                    VirtualTarget?.InjectReport((GamepadButtonFlagsExt)input.Buttons, input.sButtons);
+                    VirtualTarget?.InjectReport((GamepadButtonFlagsExt)input.Buttons, input.sButtons, input.IsKeyDown, input.IsKeyUp);
                     break;
             }
         }
