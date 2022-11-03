@@ -387,11 +387,8 @@ end;
 ; requires netcorecheck.exe and netcorecheck_x64.exe (see download link below)
 #define UseNetCoreCheck
 #ifdef UseNetCoreCheck
-  #define UseDotNet60
-  #define UseDotNet60Desktop
-  
+  #define UseDotNet60  
   ;#define UseDotNet70
-  ;#define UseDotNet70Desktop
 #endif
 
 #define UseVC2005
@@ -408,7 +405,7 @@ end;
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
-#define MyAppVersion '0.12.2.1'
+#define MyAppVersion '0.12.3.0'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/HandheldCompanion'
@@ -553,15 +550,11 @@ function InitializeSetup: Boolean;
 begin
 #ifdef UseDotNet60
   Dependency_AddDotNet60;
-#endif
-#ifdef UseDotNet60Desktop
   Dependency_AddDotNet60Desktop;
 #endif
 
 #ifdef UseDotNet70
   Dependency_AddDotNet70;
-#endif
-#ifdef UseDotNet70Desktop
   Dependency_AddDotNet70Desktop;
 #endif
 

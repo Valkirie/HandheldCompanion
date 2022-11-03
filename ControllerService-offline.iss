@@ -226,10 +226,7 @@ end;
 #endif
 
 #define UseDotNet60
-#define UseDotNet60Desktop
-
 ;#define UseDotNet70
-;#define UseDotNet70Desktop
 
 #define UseVC2005
 #define UseVC2008
@@ -244,7 +241,7 @@ end;
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
-#define MyAppVersion '0.12.2.1'
+#define MyAppVersion '0.12.3.0'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/HandheldCompanion'
@@ -314,15 +311,11 @@ Source: "vcredist2019_x64.exe"; Flags: dontcopy noencryption
 
 	#ifdef UseDotNet60
 		Source: "dotnet-runtime-6.0.6-win-x64.exe"; Flags: dontcopy noencryption
-	#endif
-	#ifdef UseDotNet60Desktop
 		Source: "windowsdesktop-runtime-6.0.6-win-x64.exe"; Flags: dontcopy noencryption
 	#endif
 	
 	#ifdef UseDotNet70
 		Source: "dotnet-runtime-7.0.0-rc.2.22472.3-win-x64.exe"; Flags: dontcopy noencryption
-	#endif
-	#ifdef UseDotNet70Desktop
 		Source: "windowsdesktop-runtime-7.0.0-rc.2.22472.13-win-x64.exe"; Flags: dontcopy noencryption
 	#endif
 #endif
@@ -426,15 +419,11 @@ function InitializeSetup: Boolean;
 begin
 #ifdef UseDotNet60
   ExtractTemporaryFile('dotnet-runtime-6.0.6-win-x64.exe');
-#endif
-#ifdef UseDotNet60Desktop
   ExtractTemporaryFile('windowsdesktop-runtime-6.0.6-win-x64.exe');
 #endif
 
 #ifdef UseDotNet70
   ExtractTemporaryFile('dotnet-runtime-7.0.0-rc.2.22472.3-win-x64.exe');
-#endif
-#ifdef UseDotNet70Desktop
   ExtractTemporaryFile('windowsdesktop-runtime-7.0.0-rc.2.22472.13-win-x64.exe');
 #endif
 
