@@ -686,12 +686,12 @@ namespace HandheldCompanion.Managers
             Triggers.Add(listener, hotkey.inputsChord);
         }
 
-        internal static void InvokeTrigger(Hotkey hotkey)
+        internal static void InvokeTrigger(Hotkey hotkey, bool IsKeyDown, bool IsKeyUp)
         {
-            if (hotkey.inputsHotkey.OnKeyDown)
+            if (IsKeyDown && hotkey.inputsHotkey.OnKeyDown)
                 TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, true, false);
 
-            if (hotkey.inputsHotkey.OnKeyUp)
+            if (IsKeyUp && hotkey.inputsHotkey.OnKeyUp)
                 TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, false, true);
         }
     }
