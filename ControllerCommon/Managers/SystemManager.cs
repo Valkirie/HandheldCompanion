@@ -290,6 +290,9 @@ namespace ControllerCommon.Managers
                 case PowerModes.Suspend:
                     IsPowerSuspended = true;
                     break;
+                default:
+                case PowerModes.StatusChange:
+                    return;
             }
 
             SystemRoutine();
@@ -307,6 +310,8 @@ namespace ControllerCommon.Managers
                 case SessionSwitchReason.SessionLock:
                     IsSessionLocked = true;
                     break;
+                default:
+                    return;
             }
 
             SystemRoutine();
