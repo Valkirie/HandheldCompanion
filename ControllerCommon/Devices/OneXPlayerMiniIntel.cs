@@ -35,6 +35,11 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
+            listeners.Add(new DeviceChord("Menu",
+                new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
+                new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 }
+                ));
+
             listeners.Add(new DeviceChord("Keyboard key",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.RControlKey, KeyCode.O },
                 new List<KeyCode>() { KeyCode.O, KeyCode.RControlKey, KeyCode.LWin }
