@@ -83,7 +83,14 @@ namespace HandheldCompanion.Managers
                 hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, false);
                 hotkey.outputButton.Click += (sender, e) => StartListening(hotkey, true);
                 hotkey.pinButton.Click += (sender, e) => PinOrUnpinHotkey(hotkey);
-                hotkey.quickButton.Click += (sender, e) => { InputsManager.InvokeTrigger(hotkey); };
+                hotkey.quickButton.PreviewMouseDown += (sender, e) =>
+                {
+                    InputsManager.InvokeTrigger(hotkey, true, false);
+                };
+                hotkey.quickButton.PreviewMouseUp += (sender, e) =>
+                {
+                    InputsManager.InvokeTrigger(hotkey, false, true);
+                };
             }
         }
 
