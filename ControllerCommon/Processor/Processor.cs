@@ -1,10 +1,16 @@
 ﻿using ControllerCommon.Managers;
 using ControllerCommon.Processor.AMD;
 using ControllerCommon.Processor.Intel;
+using PInvoke;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Management;
+using System.ServiceProcess;
+using System.Threading;
 using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace ControllerCommon.Processor
 {
@@ -233,7 +239,7 @@ namespace ControllerCommon.Processor
 
         protected override void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            lock (base.IsBusy)
+            if (Monitor.TryEnter(base.IsBusy))
             {
                 // read limit(s)
                 int limit_short = (int)platform.get_short_limit(false);
@@ -275,12 +281,14 @@ namespace ControllerCommon.Processor
                     base.m_Misc["gfx_clk"] = gfx_clk;
 
                 base.UpdateTimer_Elapsed(sender, e);
+
+                Monitor.Exit(base.IsBusy);
             }
         }
 
         public override void SetTDPLimit(PowerType type, double limit, int result)
         {
-            lock (base.IsBusy)
+            if (Monitor.TryEnter(base.IsBusy))
             {
                 var error = 0;
 
@@ -295,6 +303,8 @@ namespace ControllerCommon.Processor
                 }
 
                 base.SetTDPLimit(type, limit, error);
+
+                Monitor.Exit(base.IsBusy);
             }
         }
 
@@ -305,11 +315,13 @@ namespace ControllerCommon.Processor
 
         public override void SetGPUClock(double clock, int result)
         {
-            lock (base.IsBusy)
+            if (Monitor.TryEnter(base.IsBusy))
             {
                 var error = platform.set_gfx_clk((int)clock);
 
                 base.SetGPUClock(clock, error);
+
+                Monitor.Exit(base.IsBusy);
             }
         }
     }
@@ -392,7 +404,7 @@ namespace ControllerCommon.Processor
 
         protected override void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            lock (base.IsBusy)
+            if (Monitor.TryEnter(base.IsBusy))
             {
                 RyzenAdj.get_table_values(ry);
                 RyzenAdj.refresh_table(ry);
@@ -433,6 +445,8 @@ namespace ControllerCommon.Processor
                     base.m_Misc["gfx_clk"] = gfx_clk;
 
                 base.UpdateTimer_Elapsed(sender, e);
+
+                Monitor.Exit(base.IsBusy);
             }
         }
 
@@ -441,7 +455,7 @@ namespace ControllerCommon.Processor
             if (ry == IntPtr.Zero)
                 return;
 
-            lock (base.IsBusy)
+            if (Monitor.TryEnter(base.IsBusy))
             {
                 // 15W : 15000
                 limit *= 1000;
@@ -462,12 +476,14 @@ namespace ControllerCommon.Processor
                 }
 
                 base.SetTDPLimit(type, limit, error);
+
+                Monitor.Exit(base.IsBusy);
             }
         }
 
         public override void SetGPUClock(double clock, int result)
         {
-            lock (base.IsBusy)
+            if (Monitor.TryEnter(base.IsBusy))
             {
                 // reset default var
                 if (clock == 12750)
@@ -476,6 +492,8 @@ namespace ControllerCommon.Processor
                 var error = RyzenAdj.set_gfx_clk(ry, (uint)clock);
 
                 base.SetGPUClock(clock, error);
+
+                Monitor.Exit(base.IsBusy);
             }
         }
     }

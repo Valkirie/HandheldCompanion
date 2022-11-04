@@ -5,7 +5,9 @@ using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
 {
@@ -165,7 +167,7 @@ namespace HandheldCompanion.Managers
             if (processor == null || !processor.IsInitialized)
                 return;
 
-            lock (cpuLock)
+            if (Monitor.TryEnter(cpuLock))
             {
                 bool TDPdone = false;
                 bool MSRdone = false;
@@ -226,6 +228,8 @@ namespace HandheldCompanion.Managers
                 // user requested to halt cpu watchdog
                 if (TDPdone && MSRdone && cpuWatchdogPendingStop)
                     cpuWatchdog.Stop();
+
+                Monitor.Exit(cpuLock);
             }
         }
 
@@ -234,7 +238,7 @@ namespace HandheldCompanion.Managers
             if (processor == null || !processor.IsInitialized)
                 return;
 
-            lock (gfxLock)
+            if (Monitor.TryEnter(gfxLock))
             {
                 bool GPUdone = false;
 
@@ -264,6 +268,8 @@ namespace HandheldCompanion.Managers
                 // user requested to halt gpu watchdog
                 if (GPUdone && gfxWatchdogPendingStop)
                     gfxWatchdog.Stop();
+
+                Monitor.Exit(gfxLock);
             }
         }
 

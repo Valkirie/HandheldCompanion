@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
 using static ControllerCommon.Utils.DeviceUtils;
 
@@ -122,14 +123,14 @@ namespace ControllerService
 
         private void UpdateTimer_Ticked(object sender, EventArgs e)
         {
-            // update timestamp
-            CurrentMicroseconds = stopwatch.ElapsedMilliseconds * 1000L;
-            TotalMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
-            DeltaSeconds = (TotalMilliseconds - UpdateTimePreviousMilliseconds) / 1000L;
-            UpdateTimePreviousMilliseconds = TotalMilliseconds;
-
-            lock (updateLock)
+            if (Monitor.TryEnter(updateLock))
             {
+                // update timestamp
+                CurrentMicroseconds = stopwatch.ElapsedMilliseconds * 1000L;
+                TotalMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
+                DeltaSeconds = (TotalMilliseconds - UpdateTimePreviousMilliseconds) / 1000L;
+                UpdateTimePreviousMilliseconds = TotalMilliseconds;
+
                 // update reading(s)
                 foreach (XInputSensorFlags flags in (XInputSensorFlags[])Enum.GetValues(typeof(XInputSensorFlags)))
                 {
@@ -235,6 +236,8 @@ namespace ControllerService
                 }
 
                 Updated?.Invoke(this);
+
+                Monitor.Exit(updateLock);
             }
         }
 

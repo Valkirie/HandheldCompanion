@@ -2,6 +2,7 @@ using ControllerCommon.Utils;
 using System;
 using System.Diagnostics;
 using System.ServiceProcess;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -123,7 +124,7 @@ namespace ControllerCommon.Managers
 
         private void MonitorHelper(object sender, ElapsedEventArgs e)
         {
-            lock (updateLock)
+            if (Monitor.TryEnter(updateLock))
             {
                 try
                 {
@@ -166,6 +167,8 @@ namespace ControllerCommon.Managers
                     Ready?.Invoke();
                     Initialized = true;
                 }
+
+                Monitor.Exit(updateLock);
             }
         }
 

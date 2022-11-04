@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation;
 using Windows.System.Diagnostics;
@@ -213,10 +214,12 @@ namespace HandheldCompanion.Managers
 
         private static void MonitorHelper(object? sender, EventArgs e)
         {
-            lock (updateLock)
+            if (Monitor.TryEnter(updateLock))
             {
                 foreach (ProcessEx proc in Processes.Values)
                     proc.Refresh();
+
+                Monitor.Exit(updateLock);
             }
         }
 
