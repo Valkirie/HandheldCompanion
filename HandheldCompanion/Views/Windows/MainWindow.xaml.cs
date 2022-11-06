@@ -323,9 +323,6 @@ namespace HandheldCompanion.Views
                     case "ToastEnable":
                         toastManager.Enabled = Convert.ToBoolean(value);
                         break;
-                    case "ServiceStartMode":
-                        serviceManager.SetStartType((ServiceStartMode)value);
-                        break;
                 }
             };
 
@@ -456,55 +453,10 @@ namespace HandheldCompanion.Views
         {
             this.Dispatcher.Invoke(() =>
             {
-                switch (status)
+
+                switch ((ServiceStartMode)mode)
                 {
-                    case ServiceControllerStatus.Paused:
-                    case ServiceControllerStatus.Stopped:
-                        b_ServiceStop.IsEnabled = false;
-                        b_ServiceStart.IsEnabled = true;
-                        b_ServiceInstall.IsEnabled = false;
-                        b_ServiceDelete.IsEnabled = true;
-
-                        if (notifyIcon.ContextMenuStrip != null)
-                        {
-                            notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
-                            notifyIcon.ContextMenuStrip.Items[1].Enabled = true;
-                            notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
-                            notifyIcon.ContextMenuStrip.Items[3].Enabled = true;
-                        }
-                        break;
-                    case ServiceControllerStatus.Running:
-                        b_ServiceStop.IsEnabled = true;
-                        b_ServiceStart.IsEnabled = false;
-                        b_ServiceInstall.IsEnabled = false;
-                        b_ServiceDelete.IsEnabled = false;
-
-                        if (notifyIcon.ContextMenuStrip != null)
-                        {
-                            notifyIcon.ContextMenuStrip.Items[0].Enabled = true;
-                            notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
-                            notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
-                            notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
-                        }
-                        break;
-                    case ServiceControllerStatus.ContinuePending:
-                    case ServiceControllerStatus.PausePending:
-                    case ServiceControllerStatus.StartPending:
-                    case ServiceControllerStatus.StopPending:
-                        b_ServiceStop.IsEnabled = false;
-                        b_ServiceStart.IsEnabled = false;
-                        b_ServiceInstall.IsEnabled = false;
-                        b_ServiceDelete.IsEnabled = false;
-
-                        if (notifyIcon.ContextMenuStrip != null)
-                        {
-                            notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
-                            notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
-                            notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
-                            notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
-                        }
-                        break;
-                    default:
+                    case ServiceStartMode.Disabled:
                         b_ServiceStop.IsEnabled = false;
                         b_ServiceStart.IsEnabled = false;
                         b_ServiceInstall.IsEnabled = true;
@@ -518,12 +470,73 @@ namespace HandheldCompanion.Views
                             notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
                         }
                         break;
-                }
 
-                switch ((ServiceStartMode)mode)
-                {
-                    case ServiceStartMode.Disabled:
-                        b_ServiceStart.IsEnabled = false;
+                    default:
+                        {
+                            switch (status)
+                            {
+                                case ServiceControllerStatus.Paused:
+                                case ServiceControllerStatus.Stopped:
+                                    b_ServiceStop.IsEnabled = false;
+                                    b_ServiceStart.IsEnabled = true;
+                                    b_ServiceInstall.IsEnabled = false;
+                                    b_ServiceDelete.IsEnabled = true;
+
+                                    if (notifyIcon.ContextMenuStrip != null)
+                                    {
+                                        notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[1].Enabled = true;
+                                        notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[3].Enabled = true;
+                                    }
+                                    break;
+                                case ServiceControllerStatus.Running:
+                                    b_ServiceStop.IsEnabled = true;
+                                    b_ServiceStart.IsEnabled = false;
+                                    b_ServiceInstall.IsEnabled = false;
+                                    b_ServiceDelete.IsEnabled = false;
+
+                                    if (notifyIcon.ContextMenuStrip != null)
+                                    {
+                                        notifyIcon.ContextMenuStrip.Items[0].Enabled = true;
+                                        notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                                    }
+                                    break;
+                                case ServiceControllerStatus.ContinuePending:
+                                case ServiceControllerStatus.PausePending:
+                                case ServiceControllerStatus.StartPending:
+                                case ServiceControllerStatus.StopPending:
+                                    b_ServiceStop.IsEnabled = false;
+                                    b_ServiceStart.IsEnabled = false;
+                                    b_ServiceInstall.IsEnabled = false;
+                                    b_ServiceDelete.IsEnabled = false;
+
+                                    if (notifyIcon.ContextMenuStrip != null)
+                                    {
+                                        notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                                    }
+                                    break;
+                                default:
+                                    b_ServiceStop.IsEnabled = false;
+                                    b_ServiceStart.IsEnabled = false;
+                                    b_ServiceInstall.IsEnabled = true;
+                                    b_ServiceDelete.IsEnabled = false;
+
+                                    if (notifyIcon.ContextMenuStrip != null)
+                                    {
+                                        notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[2].Enabled = true;
+                                        notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                                    }
+                                    break;
+                            }
+                        }
                         break;
                 }
             });
