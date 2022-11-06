@@ -157,6 +157,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_StartupType_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
         {
+            if (cB_StartupType.SelectedIndex == -1)
+                return;
+
             ServiceStartMode mode;
             switch (cB_StartupType.SelectedIndex)
             {
@@ -172,9 +175,7 @@ namespace HandheldCompanion.Views.Pages
                     break;
             }
 
-            // only allow users to set those options when service mode is set to Manual
-            Toggle_ServiceStartup.IsEnabled = (mode != ServiceStartMode.Automatic);
-            Toggle_ServiceShutdown.IsEnabled = (mode != ServiceStartMode.Automatic);
+            MainWindow.serviceManager.SetStartType(mode);
 
             // service was not found
             if (!cB_StartupType.IsEnabled)
@@ -486,6 +487,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_SensorSelection_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
         {
+            if (cB_SensorSelection.SelectedIndex == -1)
+                return;
+
             // update dependencies
             Toggle_SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == 1 ? true : false;
             SensorPlacementVisualisation.IsEnabled = cB_SensorSelection.SelectedIndex == 1 ? true : false;
@@ -580,6 +584,10 @@ namespace HandheldCompanion.Views.Pages
                             cB_StartupType.SelectedIndex = 2;
                             break;
                     }
+
+                    // only allow users to set those options when service mode is set to Manual
+                    Toggle_ServiceStartup.IsEnabled = (serviceMode != ServiceStartMode.Automatic);
+                    Toggle_ServiceShutdown.IsEnabled = (serviceMode != ServiceStartMode.Automatic);
                 }
             });
         }
