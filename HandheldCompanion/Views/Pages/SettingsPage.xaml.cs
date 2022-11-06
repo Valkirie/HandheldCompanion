@@ -33,7 +33,18 @@ namespace HandheldCompanion.Views.Pages
 
             // initialize components
             foreach (ServiceStartMode mode in ((ServiceStartMode[])Enum.GetValues(typeof(ServiceStartMode))).Where(mode => mode >= ServiceStartMode.Automatic))
-                cB_StartupType.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
+            {
+                RadioButton radio = new() { Content = EnumUtils.GetDescriptionFromEnumValue(mode) };
+                switch(mode)
+                {
+                    case ServiceStartMode.Disabled:
+                        radio.IsEnabled = false;
+                        break;
+                }
+
+                cB_StartupType.Items.Add(radio);
+            }
+
 
             cB_Language.Items.Add(new CultureInfo("en-US"));
             cB_Language.Items.Add(new CultureInfo("fr-FR"));
