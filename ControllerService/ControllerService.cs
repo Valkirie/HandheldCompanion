@@ -73,7 +73,7 @@ namespace ControllerService
 
             // settings
             // todo: move me to a specific class
-            configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            configuration = ConfigurationManager.OpenExeConfiguration("ControllerService.exe");
 
             HIDcloaked = bool.Parse(configuration.AppSettings.Settings["HIDcloaked"].Value);
             HIDuncloakonclose = bool.Parse(configuration.AppSettings.Settings["HIDuncloakonclose"].Value);
