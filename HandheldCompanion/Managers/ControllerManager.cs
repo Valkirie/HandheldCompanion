@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using SharpDX.XInput;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace HandheldCompanion.Managers
     public class ControllerManager : Manager
     {
         private Dictionary<string, ControllerEx> controllers;
-        private List<PnPDeviceEx> devices = new();
+        private List<PnPDetails> devices = new();
 
         public event ControllerPluggedEventHandler ControllerPlugged;
         public delegate void ControllerPluggedEventHandler(ControllerEx controller);
@@ -20,37 +21,12 @@ namespace HandheldCompanion.Managers
         public ControllerManager() : base()
         {
             controllers = new();
-
-            SystemManager.XInputArrived += SystemManager_XInputUpdated;
-            SystemManager.XInputRemoved += SystemManager_XInputUpdated;
         }
 
         public override void Start()
         {
-            lock (devices)
-            {
-                devices = SystemManager.GetDeviceExs();
-
-                // rely on device Last arrival date
-                devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();
-
-                for (int idx = 0; idx < 4; idx++)
-                {
-                    UserIndex userIndex = (UserIndex)idx;
-                    ControllerEx controllerEx = new ControllerEx(userIndex, ref devices);
-
-                    controllers[controllerEx.baseContainerDeviceInstancePath] = controllerEx;
-
-                    if (controllerEx.isVirtual)
-                        continue;
-
-                    if (!controllerEx.IsConnected())
-                        continue;
-
-                    // raise event
-                    ControllerPlugged?.Invoke(controllerEx);
-                }
-            }
+            SystemManager.XInputArrived += SystemManager_XInputUpdated;
+            SystemManager.XInputRemoved += SystemManager_XInputUpdated;
 
             base.Start();
         }
@@ -66,17 +42,17 @@ namespace HandheldCompanion.Managers
             base.Stop();
         }
 
-        private void SystemManager_XInputRemoved(PnPDeviceEx device)
+        private void SystemManager_XInputRemoved(PnPDetails device)
         {
             // todo: implement me
         }
 
-        private void SystemManager_XInputArrived(PnPDeviceEx device)
+        private void SystemManager_XInputArrived(PnPDetails device)
         {
             // todo: implement me
         }
 
-        private void SystemManager_XInputUpdated(PnPDeviceEx device)
+        private void SystemManager_XInputUpdated(PnPDetails device)
         {
             lock (devices)
             {
@@ -93,7 +69,7 @@ namespace HandheldCompanion.Managers
                     controllers[controllerEx.baseContainerDeviceInstancePath] = controllerEx;
 
                     if (controllerEx.isVirtual)
-                        continue;
+                        controllerEx.DeviceDesc += " (Virtual)";
 
                     if (!controllerEx.IsConnected())
                         continue;
