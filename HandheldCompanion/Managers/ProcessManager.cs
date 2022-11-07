@@ -178,7 +178,18 @@ namespace HandheldCompanion.Managers
             if (processInfo == null)
                 return;
 
-            Process proc = Process.GetProcessById((int)processInfo.ProcessId);
+            Process proc;
+
+            try
+            {
+                proc = Process.GetProcessById((int)processInfo.ProcessId);
+            }
+            catch
+            {
+                // return if process has exited
+                return;
+            }
+
             int procId = proc.Id;
 
             string path = ProcessUtils.GetPathToApp(proc);
