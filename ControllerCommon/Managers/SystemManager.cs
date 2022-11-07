@@ -130,6 +130,9 @@ namespace ControllerCommon.Managers
                 if (attributes is null || capabilities is null)
                     continue;
 
+                var ProductID = ((Attributes)attributes).ProductID.ToString("X4");
+                var VendorID = ((Attributes)attributes).VendorID.ToString("X4");
+
                 while (parent is not null)
                 {
                     var parentId = parent.GetProperty<string>(DevicePropertyKey.Device_Parent);
@@ -146,10 +149,10 @@ namespace ControllerCommon.Managers
                     if (parentId.Contains(@"HID\", StringComparison.InvariantCultureIgnoreCase))
                         break;
 
-                    if (!parentId.Contains(((Attributes)attributes).ProductID.ToString("X4"), StringComparison.InvariantCultureIgnoreCase))
+                    if (!parentId.Contains(ProductID, StringComparison.InvariantCultureIgnoreCase))
                         break;
 
-                    if (!parentId.Contains(((Attributes)attributes).VendorID.ToString("X4"), StringComparison.InvariantCultureIgnoreCase))
+                    if (!parentId.Contains(VendorID, StringComparison.InvariantCultureIgnoreCase))
                         break;
 
                     parent = PnPDevice.GetDeviceByInstanceId(parentId, DeviceLocationFlags.Normal);
