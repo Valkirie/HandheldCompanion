@@ -1427,20 +1427,20 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sensivity.
+        ///   Looks up a localized string similar to Sensitivity.
         /// </summary>
-        public static string ProfileSettingsMode0_Sensivity {
+        public static string ProfileSettingsMode0_Sensitivity {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_Sensivity", resourceCulture);
+                return ResourceManager.GetString("ProfileSettingsMode0_Sensitivity", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Change the motion sensivity of the vertical and horizontal axis.
         /// </summary>
-        public static string ProfileSettingsMode0_SensivityDesc {
+        public static string ProfileSettingsMode0_SensitivityDesc {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_SensivityDesc", resourceCulture);
+                return ResourceManager.GetString("ProfileSettingsMode0_SensitivityDesc", resourceCulture);
             }
         }
         

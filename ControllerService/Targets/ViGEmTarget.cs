@@ -179,8 +179,8 @@ namespace ControllerService.Targets
 
                                 // apply sensivity
                                 Vector2 GamepadThumb = new Vector2(
-                                    Angular.X * ControllerService.currentProfile.GetSensiviy(),
-                                    Angular.Y * ControllerService.currentProfile.GetSensiviy());
+                                    Angular.X * ControllerService.currentProfile.GetSensitivityX(),
+                                    Angular.Y * ControllerService.currentProfile.GetSensitivityY());
 
                                 switch (ControllerService.currentProfile.umc_output)
                                 {

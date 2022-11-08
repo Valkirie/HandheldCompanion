@@ -571,10 +571,10 @@
   <data name="ProfileSettingsMode0_FlickStickEnable" xml:space="preserve">
     <value>Enable flick stick</value>
   </data>
-  <data name="ProfileSettingsMode0_Sensivity" xml:space="preserve">
-    <value>Sensivity</value>
+  <data name="ProfileSettingsMode0_Sensitivity" xml:space="preserve">
+    <value>Sensitivity</value>
   </data>
-  <data name="ProfileSettingsMode0_SensivityDesc" xml:space="preserve">
+  <data name="ProfileSettingsMode0_SensitivityDesc" xml:space="preserve">
     <value>Change the motion sensivity of the vertical and horizontal axis</value>
   </data>
   <data name="ProfileSettingsMode0_StickSensitivtity" xml:space="preserve">

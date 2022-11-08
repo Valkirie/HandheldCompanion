@@ -64,7 +64,8 @@ namespace ControllerCommon
         public UMC_Motion_Default umc_motion_defaultoffon { get; set; } = UMC_Motion_Default.On;
 
         // aiming
-        public float aiming_sensivity { get; set; } = 2.0f;
+        public float aiming_sensitivity_x { get; set; } = 1.0f;
+        public float aiming_sensitivity_y { get; set; } = 1.0f;
 
         public List<ProfileVector> aiming_array { get; set; } = new();
 
@@ -127,9 +128,14 @@ namespace ControllerCommon
             this.umc_enabled = true;
         }
 
-        public float GetSensiviy()
+        public float GetSensitivityX()
         {
-            return aiming_sensivity * 500.0f;
+            return aiming_sensitivity_x * 500.0f;
+        }
+
+        public float GetSensitivityY()
+        {
+            return aiming_sensitivity_y * 500.0f;
         }
 
         public override string ToString()
