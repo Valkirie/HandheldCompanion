@@ -512,7 +512,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:NumberBox Name="NumberBox_TDPMin" Grid.Column="1" VerticalAlignment="Center" Minimum="5" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TDPMin_ValueChanged"></ui:NumberBox>
+                        <ui:NumberBox Name="NumberBox_TDPMin" Grid.Column="1" VerticalAlignment="Center" Minimum="3" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TDPMin_ValueChanged"></ui:NumberBox>
                     </Grid>
                 </Border>
 
