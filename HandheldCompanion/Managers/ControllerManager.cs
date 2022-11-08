@@ -63,6 +63,9 @@ namespace HandheldCompanion.Managers
 
                 for (int idx = 0; idx < 4; idx++)
                 {
+                    XInputController test = new XInputController(idx);
+
+                    /*
                     UserIndex userIndex = (UserIndex)idx;
                     ControllerEx controllerEx = new ControllerEx(userIndex, ref devices);
 
@@ -76,6 +79,7 @@ namespace HandheldCompanion.Managers
 
                     // raise event
                     ControllerPlugged?.Invoke(controllerEx);
+                    */
                 }
 
                 string[] keys = controllers.Keys.ToArray();

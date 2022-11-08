@@ -189,6 +189,13 @@ namespace ControllerCommon.Managers
             return devices.Values.OrderBy(a => a.arrivalDate).ToList();
         }
 
+        public static List<PnPDetails> GetDetails(ushort VendorId = 0, ushort ProductId = 0)
+        {
+            List<PnPDetails> temp = devices.Values.OrderBy(a => a.arrivalDate).Where(a => a.attributes.VendorID == VendorId && a.attributes.ProductID == ProductId).ToList();
+
+            return temp;
+        }
+
         private static Attributes? GetHidAttributes(string path)
         {
             using var handle = Kernel32.CreateFile(path,

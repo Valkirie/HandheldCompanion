@@ -1,4 +1,5 @@
-﻿using SharpDX.DirectInput;
+﻿using ControllerCommon.Managers;
+using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -115,6 +116,8 @@ namespace ControllerCommon.Controllers
                 ProductId = CapabilitiesEx.ProductId.ToString("X4");
                 VendorId = CapabilitiesEx.VendorId.ToString("X4");
             }
+
+            base.Details = SystemManager.GetDetails(CapabilitiesEx.ProductId, CapabilitiesEx.VendorId)[index];
         }
 
         public override bool IsConnected()

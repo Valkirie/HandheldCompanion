@@ -1,4 +1,5 @@
 ﻿using Nefarius.Utilities.DeviceManagement.PnP;
+using PrecisionTiming;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -72,6 +73,18 @@ namespace ControllerCommon.Controllers
 
         public int UserIndex;
 
+        protected PrecisionTimer UpdateTimer;
+
+        protected IController()
+        {
+            UpdateTimer = new PrecisionTimer();
+            UpdateTimer.SetInterval(10);
+            UpdateTimer.SetAutoResetMode(true);
+        }
+
+        protected virtual void UpdateReport()
+        { }
+
         public bool IsVirtual()
         {
             return Details.isVirtual;
@@ -82,8 +95,10 @@ namespace ControllerCommon.Controllers
             return false;
         }
 
+        public virtual void Identify()
+        { }
+
         public virtual void Dispose()
-        {
-        }
+        { }
     }
 }
