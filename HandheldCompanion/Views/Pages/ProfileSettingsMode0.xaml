@@ -41,8 +41,8 @@
                         </DockPanel>
 
                         <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderSensitivityX, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderSensitivityX" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderSensitivityX_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityX, Mode=OneWay}" />
+                            <Slider Margin="6,0,0,0" Name="SliderSensitivityX" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3.0" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" SmallChange="0.1" ValueChanged="SliderSensitivityX_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" AutoToolTipPrecision="1"/>
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -69,8 +69,8 @@
                         </DockPanel>
 
                         <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderSensitivityY, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderSensitivityY" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderSensitivityY_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityY, Mode=OneWay}" />
+                            <Slider Margin="6,0,0,0" Name="SliderSensitivityY" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3.0" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" SmallChange="0.1" ValueChanged="SliderSensitivityY_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" AutoToolTipPrecision="1"/>
                         </DockPanel>
                     </Grid>
                 </Border>                

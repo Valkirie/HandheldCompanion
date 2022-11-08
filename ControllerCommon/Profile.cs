@@ -130,12 +130,12 @@ namespace ControllerCommon
 
         public float GetSensitivityX()
         {
-            return aiming_sensitivity_x * 500.0f;
+            return aiming_sensitivity_x * 1000.0f;
         }
 
         public float GetSensitivityY()
         {
-            return aiming_sensitivity_y * 500.0f;
+            return aiming_sensitivity_y * 1000.0f;
         }
 
         public override string ToString()
