@@ -35,8 +35,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_Sensitivity}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensitivityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensitivityX}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensitivityXDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -63,8 +63,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_Sensitivity}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensitivityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensitivityY}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensitivityYDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 

@@ -1436,11 +1436,47 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the motion sensivity of the vertical and horizontal axis.
+        ///   Looks up a localized string similar to Change the motion sensitivity of the horizontal and vertical axis.
         /// </summary>
         public static string ProfileSettingsMode0_SensitivityDesc {
             get {
                 return ResourceManager.GetString("ProfileSettingsMode0_SensitivityDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensitivity X.
+        /// </summary>
+        public static string ProfileSettingsMode0_SensitivityX {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_SensitivityX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the motion sensitivity of the horizontal axis.
+        /// </summary>
+        public static string ProfileSettingsMode0_SensitivityXDesc {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_SensitivityXDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensitivity Y.
+        /// </summary>
+        public static string ProfileSettingsMode0_SensitivityY {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_SensitivityY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the motion sensitivity of the vertical axis.
+        /// </summary>
+        public static string ProfileSettingsMode0_SensitivityYDesc {
+            get {
+                return ResourceManager.GetString("ProfileSettingsMode0_SensitivityYDesc", resourceCulture);
             }
         }
         
@@ -1603,6 +1639,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_AntiDeadzoneDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_AntiDeadzoneDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  %.
+        /// </summary>
+        public static string ProfilesPage_AntiDeadzoneUnitPercentage {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AntiDeadzoneUnitPercentage", resourceCulture);
             }
         }
         
