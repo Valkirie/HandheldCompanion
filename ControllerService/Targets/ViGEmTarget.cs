@@ -171,9 +171,6 @@ namespace ControllerService.Targets
                                 Angular.X *= InputUtils.ApplyCustomSensitivity(Angular.X, XInputGirometer.sensorSpec.maxIn, ControllerService.currentProfile.aiming_array);
                                 Angular.Y *= InputUtils.ApplyCustomSensitivity(Angular.Y, XInputGirometer.sensorSpec.maxIn, ControllerService.currentProfile.aiming_array);
 
-                                // apply device width ratio
-                                Angular.X *= ControllerService.handheldDevice.WidthHeightRatio;
-
                                 // apply aiming down scopes multiplier if activated
                                 if ((ControllerService.currentProfile.aiming_down_sights_activation & Buttons) != 0)
                                 {
