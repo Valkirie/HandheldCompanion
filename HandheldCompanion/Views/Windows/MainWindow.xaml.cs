@@ -169,6 +169,7 @@ namespace HandheldCompanion.Views
             loadPages();
 
             // start manager(s) synchroneously
+            ControllerManager.Start();
             InputsManager.Start();
             EnergyManager.Start();
             SettingsManager.Start();
@@ -239,10 +240,6 @@ namespace HandheldCompanion.Views
             controllerPage.HIDchanged += (HID) =>
             {
                 overlayModel.UpdateHIDMode(HID);
-            };
-            controllerPage.ControllerChanged += (Controller) =>
-            {
-                InputsManager.UpdateController(Controller);
             };
 
             stopwatch.Stop();
@@ -617,6 +614,7 @@ namespace HandheldCompanion.Views
             if (pipeClient.connected)
                 pipeClient.Close();
 
+            ControllerManager.Stop();
             InputsManager.Stop();
             SystemManager.Stop();
             ProcessManager.Stop();

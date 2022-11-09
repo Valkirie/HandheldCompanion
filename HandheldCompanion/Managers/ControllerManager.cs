@@ -2,101 +2,104 @@
 using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace HandheldCompanion.Managers
 {
-    public class ControllerManager : Manager
+    public static class ControllerManager
     {
-        private Dictionary<string, ControllerEx> controllers;
-        private List<PnPDetails> devices = new();
+        private static Dictionary<string, IController> controllers = new();
+        private static IController targetController;
 
-        public event ControllerPluggedEventHandler ControllerPlugged;
-        public delegate void ControllerPluggedEventHandler(ControllerEx controller);
+        public static event ControllerPluggedEventHandler ControllerPlugged;
+        public delegate void ControllerPluggedEventHandler(IController Controller);
 
-        public event ControllerUnpluggedEventHandler ControllerUnplugged;
-        public delegate void ControllerUnpluggedEventHandler(ControllerEx controller);
+        public static event ControllerUnpluggedEventHandler ControllerUnplugged;
+        public delegate void ControllerUnpluggedEventHandler(IController Controller);
 
-        public ControllerManager() : base()
-        {
-            controllers = new();
-        }
+        private static bool IsInitialized;
 
-        public override void Start()
+        public static void Start()
         {
             SystemManager.XInputArrived += SystemManager_XInputUpdated;
             SystemManager.XInputRemoved += SystemManager_XInputUpdated;
-
-            base.Start();
         }
 
-        public override void Stop()
+        public static void Stop()
         {
             if (!IsInitialized)
                 return;
 
             SystemManager.XInputArrived -= SystemManager_XInputUpdated;
             SystemManager.XInputRemoved -= SystemManager_XInputUpdated;
-
-            base.Stop();
         }
 
-        private void SystemManager_XInputRemoved(PnPDetails device)
+        private static void SystemManager_XInputRemoved(PnPDetails device)
         {
             // todo: implement me
         }
 
-        private void SystemManager_XInputArrived(PnPDetails device)
+        private static void SystemManager_XInputArrived(PnPDetails device)
         {
             // todo: implement me
         }
 
-        private void SystemManager_XInputUpdated(PnPDetails device)
+        private static void SystemManager_XInputUpdated(PnPDetails device)
         {
-            lock (devices)
+            for (int idx = 0; idx < 4; idx++)
             {
-                devices = SystemManager.GetDeviceExs();
+                XInputController controller = new XInputController(idx);
 
-                // rely on device Last arrival date
-                devices = devices.OrderBy(a => a.arrivalDate).ThenBy(a => a.isVirtual).ToList();
+                if (!controller.IsConnected())
+                    continue;
 
-                for (int idx = 0; idx < 4; idx++)
+                // update or create controller
+                controllers[controller.GetContainerInstancePath()] = controller;
+
+                // raise event
+                ControllerPlugged?.Invoke(controller);
+            }
+
+            string[] keys = controllers.Keys.ToArray();
+
+            foreach (string key in keys)
+            {
+                IController controllerEx = controllers[key];
+                if (!controllerEx.IsConnected())
                 {
-                    XInputController test = new XInputController(idx);
-
-                    /*
-                    UserIndex userIndex = (UserIndex)idx;
-                    ControllerEx controllerEx = new ControllerEx(userIndex, ref devices);
-
-                    controllers[controllerEx.baseContainerDeviceInstancePath] = controllerEx;
-
-                    if (controllerEx.isVirtual)
-                        controllerEx.DeviceDesc += " (Virtual)";
-
-                    if (!controllerEx.IsConnected())
-                        continue;
+                    // controller was unplugged
+                    controllers.Remove(key);
 
                     // raise event
-                    ControllerPlugged?.Invoke(controllerEx);
-                    */
-                }
-
-                string[] keys = controllers.Keys.ToArray();
-
-                foreach (string key in keys)
-                {
-                    ControllerEx controllerEx = controllers[key];
-                    if (!controllerEx.IsConnected())
-                    {
-                        // controller was unplugged
-                        controllers.Remove(key);
-
-                        // raise event
-                        ControllerUnplugged?.Invoke(controllerEx);
-                    }
+                    ControllerUnplugged?.Invoke(controllerEx);
                 }
             }
+        }
+
+        public static void SetTargetController(string baseContainerDeviceInstancePath)
+        {
+            // dispose from previous controller
+            if (targetController != null)
+                targetController.Dispose();
+            
+            // update target controller
+            targetController = controllers[baseContainerDeviceInstancePath];
+            targetController.Updated += UpdateReport;
+
+            // rumble current controller
+            targetController.Rumble();
+        }
+
+        private static void UpdateReport(ControllerInput Inputs)
+        {
+            // pass inputs to InputsManager
+            InputsManager.UpdateReport(Inputs.Buttons);
+
+            // is part of a hotkey
+            if (Inputs.Buttons.HasFlag(ControllerButtonFlags.Special))
+                return;
         }
     }
 }

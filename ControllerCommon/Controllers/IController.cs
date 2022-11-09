@@ -11,8 +11,11 @@ using System.Threading.Tasks;
 
 namespace ControllerCommon.Controllers
 {
+    [Flags]
     public enum ControllerButtonFlags : uint
     {
+        None = 0,
+
         DPadUp = 1,
         DPadDown = 2,
         DPadLeft = 4,
@@ -44,10 +47,12 @@ namespace ControllerCommon.Controllers
         LStickLeft = 4194304,
         LStickRight = 8388608,
 
-        RLStickUp = 16777216,
+        RStickUp = 16777216,
         RStickDown = 33554432,
         RStickLeft = 67108864,
-        RStickRight = 134217728
+        RStickRight = 134217728,
+
+        Special = 268435456
     }
 
     public struct ControllerInput
@@ -55,39 +60,55 @@ namespace ControllerCommon.Controllers
         public ControllerButtonFlags Buttons;
         public Vector2 LeftThumb;
         public Vector2 RightThumb;
-        public DateTime Timestamp;
+        public long Timestamp;
     }
 
     public abstract class IController : IDisposable
     {
         public ControllerInput Inputs;
-        public PnPDetails Details;
-
-        public string deviceInstancePath;
-        public string baseContainerDeviceInstancePath;
-
-        public string ProductId;
-        public string VendorId;
-        public string ProductName;
-        public string Description;
-
         public int UserIndex;
 
+        protected PnPDetails Details;
         protected PrecisionTimer UpdateTimer;
+
+        public event UpdatedEventHandler Updated;
+        public delegate void UpdatedEventHandler(ControllerInput Inputs);
 
         protected IController()
         {
             UpdateTimer = new PrecisionTimer();
-            UpdateTimer.SetInterval(10);
+            UpdateTimer.SetInterval(5);
             UpdateTimer.SetAutoResetMode(true);
         }
 
         protected virtual void UpdateReport()
-        { }
+        {
+            Updated?.Invoke(Inputs);
+        }
 
         public bool IsVirtual()
         {
             return Details.isVirtual;
+        }
+
+        public bool IsGaming()
+        {
+            return Details.isGaming;
+        }
+
+        public string GetInstancePath()
+        {
+            return Details.deviceInstancePath;
+        }
+
+        public string GetContainerInstancePath()
+        {
+            return Details.baseContainerDeviceInstancePath;
+        }
+
+        public override string ToString()
+        {
+            return Details.DeviceDesc;
         }
 
         public virtual bool IsConnected()
@@ -95,10 +116,13 @@ namespace ControllerCommon.Controllers
             return false;
         }
 
-        public virtual void Identify()
+        public virtual void Rumble()
         { }
 
         public virtual void Dispose()
-        { }
+        {
+            UpdateTimer.Stop();
+            UpdateTimer.Dispose();
+        }
     }
 }

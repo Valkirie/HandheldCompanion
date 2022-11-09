@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon.Controllers;
+using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System;
 using System.Linq;
@@ -304,7 +305,7 @@ namespace HandheldCompanion.Managers.Classes
         private void UpdateHotkey()
         {
             bool haskey = !string.IsNullOrEmpty(inputsChord.SpecialKey);
-            bool hasbuttons = (inputsChord.GamepadButtons != SharpDX.XInput.GamepadButtonFlags.None);
+            bool hasbuttons = (inputsChord.GamepadButtons != ControllerButtonFlags.None);
             bool hascombo = inputsChord.OutputKeys.Count != 0;
 
             string buttons = EnumUtils.GetDescriptionFromEnumValue(inputsChord.GamepadButtons);

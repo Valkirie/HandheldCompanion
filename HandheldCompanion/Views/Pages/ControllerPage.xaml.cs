@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using System;
@@ -29,13 +30,8 @@ namespace HandheldCompanion.Views.Pages
         private HIDmode controllerMode = HIDmode.NoController;
         private HIDstatus controllerStatus = HIDstatus.Disconnected;
 
-        private ControllerManager controllerManager;
-
         public event HIDchangedEventHandler HIDchanged;
         public delegate void HIDchangedEventHandler(HIDmode HID);
-
-        public event ControllerChangedEventHandler ControllerChanged;
-        public delegate void ControllerChangedEventHandler(ControllerEx Controller);
 
         public ControllerPage()
         {
@@ -49,11 +45,8 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.serviceManager.Updated += OnServiceUpdate;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-            // initialize controller manager
-            controllerManager = new ControllerManager();
-            controllerManager.ControllerPlugged += ControllerPlugged;
-            controllerManager.ControllerUnplugged += ControllerUnplugged;
-            controllerManager.Start();
+            ControllerManager.ControllerPlugged += ControllerPlugged;
+            ControllerManager.ControllerUnplugged += ControllerUnplugged;
         }
 
         public ControllerPage(string Tag) : this()
@@ -83,7 +76,6 @@ namespace HandheldCompanion.Views.Pages
         {
             MainWindow.pipeClient.ServerMessage -= OnServerMessage;
             MainWindow.serviceManager.Updated -= OnServiceUpdate;
-            controllerManager.Stop();
         }
 
         private async void OnServiceUpdate(ServiceControllerStatus status, int mode)
@@ -119,57 +111,37 @@ namespace HandheldCompanion.Views.Pages
             UpdateMainGrid();
         }
 
-        private void ControllerUnplugged(ControllerEx controller)
+        private void ControllerUnplugged(IController Controller)
         {
             this.Dispatcher.Invoke(() =>
             {
-                foreach (ControllerEx ctrl in RadioControllers.Items)
+                foreach (IController ctrl in RadioControllers.Items)
                 {
-                    if (ctrl.deviceInstancePath == controller.deviceInstancePath)
+                    if (ctrl.GetInstancePath() == Controller.GetInstancePath())
                     {
                         RadioControllers.Items.Remove(ctrl);
                         break;
                     }
                 }
-
-                if (RadioControllers.Items.Count == 0)
-                {
-                    currentController = null;
-                    InputDevices.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    // current controller was unplugged, pick another one from the list
-                    if (currentController is not null && currentController.deviceInstancePath == controller.deviceInstancePath)
-                        RadioControllers.SelectedIndex = 0;
-                }
             });
         }
 
-        private void ControllerPlugged(ControllerEx controller)
+        private void ControllerPlugged(IController Controller)
         {
             this.Dispatcher.Invoke(() =>
             {
-                foreach (ControllerEx ctrl in RadioControllers.Items)
+                foreach (IController ctrl in RadioControllers.Items)
                 {
-                    if (ctrl.deviceInstancePath == controller.deviceInstancePath)
+                    if (ctrl.GetInstancePath() == Controller.GetInstancePath())
                     {
                         int idx = RadioControllers.Items.IndexOf(ctrl);
-                        RadioControllers.Items[idx] = controller;
-
-                        // current controller was updated, make sure we (re)send updated values
-                        if (currentController is not null && currentController.deviceInstancePath == controller.deviceInstancePath)
-                            RaiseEvents();
+                        RadioControllers.Items[idx] = Controller;
 
                         return;
                     }
                 }
 
-                RadioControllers.Items.Add(controller);
-
-                // no controller is currently selected, pick the first one
-                if (currentController is null)
-                    RadioControllers.SelectedIndex = 0;
+                RadioControllers.Items.Add(Controller);
 
                 InputDevices.Visibility = Visibility.Visible;
             });
@@ -325,37 +297,13 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.pipeClient?.SendMessage(settings);
         }
 
-        private ControllerEx currentController;
         private void RadioControllers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (RadioControllers.SelectedIndex == -1)
                 return;
 
-            currentController = (ControllerEx)RadioControllers.SelectedItem;
-
-            if (currentController is null)
-                return;
-
-            if (!currentController.IsConnected())
-                return;
-
-            // push toast if service is connected
-            if (isConnected)
-                MainWindow.toastManager.SendToast(currentController.ToString(), Properties.Resources.ToastNewControllerEx);
-
-            // rumble current controller
-            currentController.Identify();
-
-            // raise events
-            RaiseEvents();
-        }
-
-        private void RaiseEvents()
-        {
-            ControllerChanged?.Invoke(currentController);
-
-            PipeControllerIndex settings = new PipeControllerIndex((int)currentController.UserIndex, currentController.deviceInstancePath, currentController.baseContainerDeviceInstancePath);
-            MainWindow.pipeClient?.SendMessage(settings);
+            IController Controller = (IController)RadioControllers.SelectedItem;
+            ControllerManager.SetTargetController(Controller.GetContainerInstancePath());
         }
     }
 }

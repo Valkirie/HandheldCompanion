@@ -1,4 +1,5 @@
-﻿using Gma.System.MouseKeyHook;
+﻿using ControllerCommon.Controllers;
+using Gma.System.MouseKeyHook;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -34,13 +35,13 @@ namespace HandheldCompanion.Managers.Classes
     [Serializable]
     public class InputsChord
     {
-        public GamepadButtonFlags GamepadButtons { get; set; } = GamepadButtonFlags.None;
+        public ControllerButtonFlags GamepadButtons { get; set; } = ControllerButtonFlags.None;
         public string SpecialKey { get; set; } = string.Empty;
         public List<OutputKey> OutputKeys { get; set; } = new();
 
         public InputsChordType InputsType { get; set; } = InputsChordType.Click;
 
-        public InputsChord(GamepadButtonFlags GamepadButtons, string SpecialKey, List<OutputKey> OutputKeys, InputsChordType InputsType)
+        public InputsChord(ControllerButtonFlags GamepadButtons, string SpecialKey, List<OutputKey> OutputKeys, InputsChordType InputsType)
         {
             this.GamepadButtons = GamepadButtons;
             this.SpecialKey = SpecialKey;
