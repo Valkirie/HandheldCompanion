@@ -1,3 +1,4 @@
+using ControllerCommon.Controllers;
 using SharpDX.XInput;
 using System;
 using System.IO;
@@ -11,15 +12,14 @@ namespace HandheldCompanion.Models
     {
         // Specific groups (move me)
         Model3DGroup MainBodyCharger;
-        Model3DGroup XBoxButton;
-        Model3DGroup XboxButtonRing;
+        Model3DGroup SpecialRing;
         Model3DGroup LeftShoulderBottom;
         Model3DGroup RightShoulderBottom;
 
-        Model3DGroup AButton;
-        Model3DGroup BButton;
-        Model3DGroup XButton;
-        Model3DGroup YButton;
+        Model3DGroup B1Button;
+        Model3DGroup B2Button;
+        Model3DGroup B3Button;
+        Model3DGroup B4Button;
 
         public ModelXBOX360() : base("XBOX360")
         {
@@ -72,30 +72,28 @@ namespace HandheldCompanion.Models
 
             // load model(s)
             MainBodyCharger = modelImporter.Load($"models/{ModelName}/MainBody-Charger.obj");
-            XBoxButton = modelImporter.Load($"models/{ModelName}/XBoxButton.obj");
-            XboxButtonRing = modelImporter.Load($"models/{ModelName}/XboxButtonRing.obj");
+            SpecialRing = modelImporter.Load($"models/{ModelName}/SpecialRing.obj");
             LeftShoulderBottom = modelImporter.Load($"models/{ModelName}/LeftShoulderBottom.obj");
             RightShoulderBottom = modelImporter.Load($"models/{ModelName}/RightShoulderBottom.obj");
 
-            AButton = modelImporter.Load($"models/{ModelName}/AButton.obj");
-            BButton = modelImporter.Load($"models/{ModelName}/BButton.obj");
-            XButton = modelImporter.Load($"models/{ModelName}/XButton.obj");
-            YButton = modelImporter.Load($"models/{ModelName}/YButton.obj");
+            B1Button = modelImporter.Load($"models/{ModelName}/B1Button.obj");
+            B2Button = modelImporter.Load($"models/{ModelName}/B2Button.obj");
+            B3Button = modelImporter.Load($"models/{ModelName}/B3Button.obj");
+            B4Button = modelImporter.Load($"models/{ModelName}/B4Button.obj");
 
             // pull model(s)
             model3DGroup.Children.Add(MainBodyCharger);
-            model3DGroup.Children.Add(XBoxButton);
-            model3DGroup.Children.Add(XboxButtonRing);
+            model3DGroup.Children.Add(SpecialRing);
             model3DGroup.Children.Add(LeftShoulderBottom);
             model3DGroup.Children.Add(RightShoulderBottom);
 
-            model3DGroup.Children.Add(AButton);
-            model3DGroup.Children.Add(BButton);
-            model3DGroup.Children.Add(XButton);
-            model3DGroup.Children.Add(YButton);
+            model3DGroup.Children.Add(B1Button);
+            model3DGroup.Children.Add(B2Button);
+            model3DGroup.Children.Add(B3Button);
+            model3DGroup.Children.Add(B4Button);
 
             // specific button material(s)
-            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
             {
                 Material buttonMaterial = null;
 
@@ -104,16 +102,16 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            case GamepadButtonFlags.A:
+                            case ControllerButtonFlags.B1:
                                 buttonMaterial = MaterialPlasticGreen;
                                 break;
-                            case GamepadButtonFlags.B:
+                            case ControllerButtonFlags.B2:
                                 buttonMaterial = MaterialPlasticRed;
                                 break;
-                            case GamepadButtonFlags.X:
+                            case ControllerButtonFlags.B3:
                                 buttonMaterial = MaterialPlasticBlue;
                                 break;
-                            case GamepadButtonFlags.Y:
+                            case ControllerButtonFlags.B4:
                                 buttonMaterial = MaterialPlasticYellow;
                                 break;
                             default:
