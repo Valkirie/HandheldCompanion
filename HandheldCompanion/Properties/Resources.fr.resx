@@ -366,11 +366,11 @@
   <data name="ProfileSettingsMode0_FlickStickEnable" xml:space="preserve">
     <value>Activer flick stick</value>
   </data>
-  <data name="ProfileSettingsMode0_Sensivity" xml:space="preserve">
+  <data name="ProfileSettingsMode0_Sensitivity" xml:space="preserve">
     <value>Sensibilité</value>
   </data>
-  <data name="ProfileSettingsMode0_SensivityDesc" xml:space="preserve">
-    <value>Modifier la sensibilité au mouvement de l'axe vertical et horizontal</value>
+  <data name="ProfileSettingsMode0_SensitivityDesc" xml:space="preserve">
+    <value>Modifier la sensibilité au mouvement de l'axe horizontal et vertical</value>
   </data>
   <data name="ProfileSettingsMode0_StickSensitivtity" xml:space="preserve">
     <value>Sensibilité du joystick</value>
@@ -1022,5 +1022,8 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_UpdateWarning" xml:space="preserve">
     <value>Oups. There was an issue.</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzoneUnitPercentage" xml:space="preserve">
+    <value> %</value>
   </data>
 </root>

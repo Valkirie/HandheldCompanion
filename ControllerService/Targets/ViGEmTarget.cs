@@ -171,9 +171,6 @@ namespace ControllerService.Targets
                                 Angular.X *= InputUtils.ApplyCustomSensitivity(Angular.X, XInputGirometer.sensorSpec.maxIn, ControllerService.currentProfile.aiming_array);
                                 Angular.Y *= InputUtils.ApplyCustomSensitivity(Angular.Y, XInputGirometer.sensorSpec.maxIn, ControllerService.currentProfile.aiming_array);
 
-                                // apply device width ratio
-                                Angular.X *= ControllerService.handheldDevice.WidthHeightRatio;
-
                                 // apply aiming down scopes multiplier if activated
                                 if ((ControllerService.currentProfile.aiming_down_sights_activation & Buttons) != 0)
                                 {
@@ -182,8 +179,8 @@ namespace ControllerService.Targets
 
                                 // apply sensivity
                                 Vector2 GamepadThumb = new Vector2(
-                                    Angular.X * ControllerService.currentProfile.GetSensiviy(),
-                                    Angular.Y * ControllerService.currentProfile.GetSensiviy());
+                                    Angular.X * ControllerService.currentProfile.GetSensitivityX(),
+                                    Angular.Y * ControllerService.currentProfile.GetSensitivityY());
 
                                 switch (ControllerService.currentProfile.umc_output)
                                 {

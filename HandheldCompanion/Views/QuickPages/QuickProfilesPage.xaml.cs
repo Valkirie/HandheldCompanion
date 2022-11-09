@@ -175,7 +175,8 @@ namespace HandheldCompanion.Views.QuickPages
                 TDPToggle.IsOn = profile.TDP_override;
 
                 // Slider settings
-                SliderSensivity.Value = profile.aiming_sensivity;
+                SliderSensitivityX.Value = profile.aiming_sensitivity_x;
+                SliderSensitivityY.Value = profile.aiming_sensitivity_y;
                 SliderAntiDeadzone.Value = profile.antideadzone;
 
                 if (backgroundtask)
@@ -353,7 +354,7 @@ namespace HandheldCompanion.Views.QuickPages
             UpdateProfile();
         }
 
-        private void SliderSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void SliderSensitivityX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (currentProfile is null)
                 return;
@@ -362,7 +363,20 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             // Sensivity settings
-            currentProfile.aiming_sensivity = (float)SliderSensivity.Value;
+            currentProfile.aiming_sensitivity_x = (float)SliderSensitivityX.Value;
+            UpdateProfile();
+        }
+
+        private void SliderSensitivityY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (currentProfile is null)
+                return;
+
+            if (!IsReady)
+                return;
+
+            // Sensivity settings
+            currentProfile.aiming_sensitivity_y = (float)SliderSensitivityY.Value;
             UpdateProfile();
         }
 

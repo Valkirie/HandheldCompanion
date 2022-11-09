@@ -19,7 +19,7 @@
             <ui:SimpleStackPanel Spacing="6">
                 <Label Content="{x:Static resx:Resources.ProfileSettingsMode0_CameraOptions}" FontWeight="SemiBold"></Label>
 
-                <!-- Sensivity -->
+                <!-- Sensivity X -->
                 <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
@@ -35,18 +35,46 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_Sensivity}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensivityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensitivityX}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensitivityXDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
                         <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderSensivity, Mode=OneWay}" />
-                            <Slider Margin="6,0,0,0" Name="SliderSensivity" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" ValueChanged="SliderSensivity_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityX, Mode=OneWay}" />
+                            <Slider Margin="6,0,0,0" Name="SliderSensitivityX" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3.0" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" SmallChange="0.1" ValueChanged="SliderSensitivityX_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" AutoToolTipPrecision="1"/>
                         </DockPanel>
                     </Grid>
                 </Border>
 
+                <!-- Sensivity Y -->
+                <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensitivityY}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensitivityYDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityY, Mode=OneWay}" />
+                            <Slider Margin="6,0,0,0" Name="SliderSensitivityY" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3.0" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" SmallChange="0.1" ValueChanged="SliderSensitivityY_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" AutoToolTipPrecision="1"/>
+                        </DockPanel>
+                    </Grid>
+                </Border>                
+                
                 <!-- Aiming down sights/scope multiplier settings -->
                 <Expander Name="Expander_AimingDownSights" Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
                     <Expander.Header>

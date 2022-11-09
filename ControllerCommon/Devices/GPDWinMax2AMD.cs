@@ -11,7 +11,6 @@ namespace ControllerCommon.Devices
             this.ProductSupported = true;
 
             // device specific settings
-            this.WidthHeightRatio = 2.4f;
             this.ProductIllustration = "device_gpd_winmax2";
 
             // https://www.amd.com/fr/products/apu/amd-ryzen-7-6800u

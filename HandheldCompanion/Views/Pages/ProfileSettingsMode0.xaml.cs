@@ -35,7 +35,8 @@ namespace HandheldCompanion.Views.Pages
             this.profileCurrent = profileCurrent;
             MainWindow.pipeClient.ServerMessage += OnServerMessage;
 
-            SliderSensivity.Value = profileCurrent.aiming_sensivity;
+            SliderSensitivityX.Value = profileCurrent.aiming_sensitivity_x;
+            SliderSensitivityY.Value = profileCurrent.aiming_sensitivity_y;
             tb_ProfileAimingDownSightsMultiplier.Value = profileCurrent.aiming_down_sights_multiplier;
             Toggle_FlickStick.IsOn = profileCurrent.flickstick_enabled;
             tb_ProfileFlickDuration.Value = profileCurrent.flick_duration * 1000;
@@ -127,12 +128,20 @@ namespace HandheldCompanion.Views.Pages
             }
         }
 
-        private void SliderSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void SliderSensitivityX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (profileCurrent is null)
                 return;
 
-            profileCurrent.aiming_sensivity = (float)SliderSensivity.Value;
+            profileCurrent.aiming_sensitivity_x = (float)SliderSensitivityX.Value;
+        }
+
+        private void SliderSensitivityY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (profileCurrent is null)
+                return;
+
+            profileCurrent.aiming_sensitivity_y = (float)SliderSensitivityY.Value;
         }
 
         private void Highlight_Thumb(float value)
