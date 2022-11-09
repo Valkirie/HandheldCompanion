@@ -134,16 +134,16 @@
     <None Update="libryzenadj.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="models\8BitDoLite2\A-Symbol.obj">
+    <None Update="Models\8BitDoLite2\B1-Symbol.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\8BitDoLite2\A.obj">
+    <None Update="Models\8BitDoLite2\B1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\8BitDoLite2\B-Symbol.obj">
+    <None Update="Models\8BitDoLite2\B2-Symbol.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\8BitDoLite2\B.obj">
+    <None Update="Models\8BitDoLite2\B2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\8BitDoLite2\Back.obj">
@@ -248,16 +248,16 @@
     <None Update="models\8BitDoLite2\Start.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\8BitDoLite2\X-Symbol.obj">
+    <None Update="Models\8BitDoLite2\B3-Symbol.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\8BitDoLite2\X.obj">
+    <None Update="Models\8BitDoLite2\B3.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\8BitDoLite2\Y-Symbol.obj">
+    <None Update="Models\8BitDoLite2\B4-Symbol.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\8BitDoLite2\Y.obj">
+    <None Update="Models\8BitDoLite2\B4.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO 2021\DPadDown.obj">

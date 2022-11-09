@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
@@ -20,6 +21,8 @@ namespace HandheldCompanion.Views.Windows
     public partial class OverlayModel : OverlayWindow
     {
         private PrecisionTimer UpdateTimer;
+
+        private ControllerInput Inputs;
 
         private Model CurrentModel;
         private OverlayModelMode Modelmode;
@@ -46,7 +49,6 @@ namespace HandheldCompanion.Views.Windows
             InitializeComponent();
 
             MainWindow.pipeClient.ServerMessage += OnServerMessage;
-            InputsManager.Updated += UpdateReport;
 
             // initialize timers
             UpdateTimer = new PrecisionTimer();
@@ -237,7 +239,7 @@ namespace HandheldCompanion.Views.Windows
             this.Dispatcher.Invoke(() =>
             {
                 GeometryModel3D model = null;
-                foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+                foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
                 {
                     if (!CurrentModel.ButtonMap.ContainsKey(button))
                         continue;
@@ -249,7 +251,7 @@ namespace HandheldCompanion.Views.Windows
                         if (model.Material.GetType() != typeof(DiffuseMaterial))
                             continue;
 
-                        model.Material = gamepad.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
+                        model.Material = Inputs.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
                     }
                 }
             });
@@ -276,9 +278,9 @@ namespace HandheldCompanion.Views.Windows
 
                 // ShoulderLeftTrigger
                 model = CurrentModel.LeftShoulderTrigger.Children[0] as GeometryModel3D;
-                if (gamepad.LeftTrigger > 0)
+                if (Inputs.LeftTrigger > 0)
                 {
-                    GradientFactor = 1 * (float)gamepad.LeftTrigger / (float)byte.MaxValue;
+                    GradientFactor = 1 * (float)Inputs.LeftTrigger / (float)byte.MaxValue;
                     model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.LeftShoulderTrigger],
                                                        CurrentModel.HighlightMaterials[CurrentModel.LeftShoulderTrigger],
                                                        GradientFactor);
@@ -288,14 +290,14 @@ namespace HandheldCompanion.Views.Windows
                     model.Material = CurrentModel.DefaultMaterials[CurrentModel.LeftShoulderTrigger];
                 }
 
-                TriggerAngleShoulderLeft = -1 * CurrentModel.TriggerMaxAngleDeg * (float)gamepad.LeftTrigger / (float)byte.MaxValue;
+                TriggerAngleShoulderLeft = -1 * CurrentModel.TriggerMaxAngleDeg * (float)Inputs.LeftTrigger / (float)byte.MaxValue;
 
                 // ShoulderRightTrigger
                 model = CurrentModel.RightShoulderTrigger.Children[0] as GeometryModel3D;
 
-                if (gamepad.RightTrigger > 0)
+                if (Inputs.RightTrigger > 0)
                 {
-                    GradientFactor = 1 * (float)gamepad.RightTrigger / (float)byte.MaxValue;
+                    GradientFactor = 1 * (float)Inputs.RightTrigger / (float)byte.MaxValue;
                     model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.RightShoulderTrigger],
                                                        CurrentModel.HighlightMaterials[CurrentModel.RightShoulderTrigger],
                                                        GradientFactor);
@@ -305,15 +307,15 @@ namespace HandheldCompanion.Views.Windows
                     model.Material = CurrentModel.DefaultMaterials[CurrentModel.RightShoulderTrigger];
                 }
 
-                TriggerAngleShoulderRight = -1 * CurrentModel.TriggerMaxAngleDeg * (float)gamepad.RightTrigger / (float)byte.MaxValue;
+                TriggerAngleShoulderRight = -1 * CurrentModel.TriggerMaxAngleDeg * (float)Inputs.RightTrigger / (float)byte.MaxValue;
 
                 // JoystickLeftRing
                 model = CurrentModel.LeftThumbRing.Children[0] as GeometryModel3D;
-                if (gamepad.LeftThumbX != 0 || gamepad.LeftThumbY != 0)
+                if (Inputs.LeftThumb.X != 0 || Inputs.LeftThumb.Y != 0)
                 {
                     // Adjust color
-                    GradientFactor = Math.Max(Math.Abs(1 * (float)gamepad.LeftThumbX / (float)short.MaxValue),
-                                              Math.Abs(1 * (float)gamepad.LeftThumbY / (float)short.MaxValue));
+                    GradientFactor = Math.Max(Math.Abs(1 * (float)Inputs.LeftThumb.X / (float)short.MaxValue),
+                                              Math.Abs(1 * (float)Inputs.LeftThumb.Y / (float)short.MaxValue));
 
                     model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.LeftThumbRing],
                                                        CurrentModel.HighlightMaterials[CurrentModel.LeftThumbRing],
@@ -321,8 +323,8 @@ namespace HandheldCompanion.Views.Windows
 
                     // Define and compute
                     Transform3DGroup Transform3DGroupJoystickLeft = new Transform3DGroup();
-                    float x = CurrentModel.JoystickMaxAngleDeg * (float)gamepad.LeftThumbX / (float)short.MaxValue;
-                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)gamepad.LeftThumbY / (float)short.MaxValue;
+                    float x = CurrentModel.JoystickMaxAngleDeg * (float)Inputs.LeftThumb.X / (float)short.MaxValue;
+                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)Inputs.LeftThumb.Y / (float)short.MaxValue;
 
                     // Rotation X
                     var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
@@ -369,11 +371,11 @@ namespace HandheldCompanion.Views.Windows
 
                 // JoystickRightRing
                 model = CurrentModel.RightThumbRing.Children[0] as GeometryModel3D;
-                if (gamepad.RightThumbX != 0 || gamepad.RightThumbY != 0)
+                if (Inputs.RightThumb.X != 0 || Inputs.RightThumb.Y != 0)
                 {
                     // Adjust color
-                    GradientFactor = Math.Max(Math.Abs(1 * (float)gamepad.RightThumbX / (float)short.MaxValue),
-                                              Math.Abs(1 * (float)gamepad.RightThumbY / (float)short.MaxValue));
+                    GradientFactor = Math.Max(Math.Abs(1 * (float)Inputs.RightThumb.X / (float)short.MaxValue),
+                                              Math.Abs(1 * (float)Inputs.RightThumb.Y / (float)short.MaxValue));
 
                     model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.RightThumbRing],
                                                        CurrentModel.HighlightMaterials[CurrentModel.RightThumbRing],
@@ -381,8 +383,8 @@ namespace HandheldCompanion.Views.Windows
 
                     // Define and compute
                     Transform3DGroup Transform3DGroupJoystickRight = new Transform3DGroup();
-                    float x = CurrentModel.JoystickMaxAngleDeg * (float)gamepad.RightThumbX / (float)short.MaxValue;
-                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)gamepad.RightThumbY / (float)short.MaxValue;
+                    float x = CurrentModel.JoystickMaxAngleDeg * (float)Inputs.RightThumb.X / (float)short.MaxValue;
+                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)Inputs.RightThumb.Y / (float)short.MaxValue;
 
                     // Rotation X
                     var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
@@ -429,10 +431,9 @@ namespace HandheldCompanion.Views.Windows
             });
         }
 
-        private Gamepad gamepad;
-        private void UpdateReport(Gamepad gamepad)
+        public void UpdateReport(ControllerInput Inputs)
         {
-            this.gamepad = gamepad;
+            this.Inputs = Inputs;
         }
 
         private Material GradientHighlight(Material DefaultMaterial, Material HighlightMaterial, float Factor)
@@ -582,7 +583,7 @@ namespace HandheldCompanion.Views.Windows
                 }
 
                 // Left shoulder buttons visibility rotation and trigger button angle
-                Model3DGroup Placeholder = CurrentModel.ButtonMap[GamepadButtonFlags.LeftShoulder][0];
+                Model3DGroup Placeholder = CurrentModel.ButtonMap[ControllerButtonFlags.LeftShoulder][0];
 
                 UpwardVisibilityRotationShoulderButtons(ShoulderButtonsAngleDeg,
                                                         CurrentModel.UpwardVisibilityRotationAxisLeft,
@@ -593,10 +594,10 @@ namespace HandheldCompanion.Views.Windows
                                                         ref Placeholder
                                                         );
 
-                CurrentModel.ButtonMap[GamepadButtonFlags.LeftShoulder][0] = Placeholder;
+                CurrentModel.ButtonMap[ControllerButtonFlags.LeftShoulder][0] = Placeholder;
 
                 // Right shoulder buttons visibility rotation and trigger button angle
-                Placeholder = CurrentModel.ButtonMap[GamepadButtonFlags.RightShoulder][0];
+                Placeholder = CurrentModel.ButtonMap[ControllerButtonFlags.RightShoulder][0];
 
                 UpwardVisibilityRotationShoulderButtons(ShoulderButtonsAngleDeg,
                                                         CurrentModel.UpwardVisibilityRotationAxisRight,
@@ -607,7 +608,7 @@ namespace HandheldCompanion.Views.Windows
                                                         ref Placeholder
                                                         );
 
-                CurrentModel.ButtonMap[GamepadButtonFlags.RightShoulder][0] = Placeholder;
+                CurrentModel.ButtonMap[ControllerButtonFlags.RightShoulder][0] = Placeholder;
             });
         }
         #endregion

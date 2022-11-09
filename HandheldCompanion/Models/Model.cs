@@ -1,3 +1,4 @@
+using ControllerCommon.Controllers;
 using HelixToolkit.Wpf;
 using SharpDX.XInput;
 using System;
@@ -25,7 +26,7 @@ namespace HandheldCompanion
         public Model3DGroup LeftMotor;
         public Model3DGroup RightMotor;
 
-        public Dictionary<GamepadButtonFlags, List<Model3DGroup>> ButtonMap = new();
+        public Dictionary<ControllerButtonFlags, List<Model3DGroup>> ButtonMap = new();
 
         // Rotation Points
         public Vector3D JoystickRotationPointCenterLeftMillimeter;
@@ -59,7 +60,7 @@ namespace HandheldCompanion
             RightShoulderTrigger = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Trigger.obj");
 
             // map model(s)
-            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
             {
                 string filename = $"models/{ModelName}/{button}.obj";
                 if (File.Exists(filename))
@@ -70,10 +71,10 @@ namespace HandheldCompanion
                     switch (button)
                     {
                         // specific case, being both a button and a trigger
-                        case GamepadButtonFlags.LeftThumb:
+                        case ControllerButtonFlags.LeftThumb:
                             LeftThumb = model;
                             break;
-                        case GamepadButtonFlags.RightThumb:
+                        case ControllerButtonFlags.RightThumb:
                             RightThumb = model;
                             break;
                     }

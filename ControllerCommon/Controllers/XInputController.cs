@@ -152,7 +152,6 @@ namespace ControllerCommon.Controllers
             }
 
             UpdateTimer.Tick += (sender, e) => UpdateReport();
-            UpdateTimer.Start();
         }
 
         protected override void UpdateReport()
@@ -186,6 +185,25 @@ namespace ControllerCommon.Controllers
             if (Gamepad.RightTrigger > 0)
                 Inputs.Buttons |= ControllerButtonFlags.RightTrigger;
 
+            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb))
+                Inputs.Buttons |= ControllerButtonFlags.LeftThumb;
+            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb))
+                Inputs.Buttons |= ControllerButtonFlags.RightThumb;
+
+            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder))
+                Inputs.Buttons |= ControllerButtonFlags.LeftShoulder;
+            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder))
+                Inputs.Buttons |= ControllerButtonFlags.RightShoulder;
+
+            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp))
+                Inputs.Buttons |= ControllerButtonFlags.DPadUp;
+            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
+                Inputs.Buttons |= ControllerButtonFlags.DPadDown;
+            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
+                Inputs.Buttons |= ControllerButtonFlags.DPadLeft;
+            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
+                Inputs.Buttons |= ControllerButtonFlags.DPadRight;
+
             // Left Stick
             if (Gamepad.LeftThumbX < -Gamepad.LeftThumbDeadZone)
                 Inputs.Buttons |= ControllerButtonFlags.LStickLeft;
@@ -197,6 +215,9 @@ namespace ControllerCommon.Controllers
             else if (Gamepad.LeftThumbY > Gamepad.LeftThumbDeadZone)
                 Inputs.Buttons |= ControllerButtonFlags.LStickUp;
 
+            Inputs.LeftThumb.X = Gamepad.LeftThumbX;
+            Inputs.LeftThumb.Y = Gamepad.LeftThumbY;
+
             // Right Stick
             if (Gamepad.RightThumbX < -Gamepad.RightThumbDeadZone)
                 Inputs.Buttons |= ControllerButtonFlags.RStickLeft;
@@ -207,6 +228,9 @@ namespace ControllerCommon.Controllers
                 Inputs.Buttons |= ControllerButtonFlags.RStickDown;
             else if (Gamepad.RightThumbY > Gamepad.RightThumbDeadZone)
                 Inputs.Buttons |= ControllerButtonFlags.RStickUp;
+
+            Inputs.RightThumb.X = Gamepad.RightThumbX;
+            Inputs.RightThumb.Y = Gamepad.RightThumbY;
 
             if (State.wButtons.HasFlag(XInputStateButtons.Xbox))
                 Inputs.Buttons |= ControllerButtonFlags.Special;

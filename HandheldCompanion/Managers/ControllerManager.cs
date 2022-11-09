@@ -1,6 +1,7 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
+using HandheldCompanion.Views;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -87,6 +88,7 @@ namespace HandheldCompanion.Managers
             // update target controller
             targetController = controllers[baseContainerDeviceInstancePath];
             targetController.Updated += UpdateReport;
+            targetController.Hook();
 
             // rumble current controller
             targetController.Rumble();
@@ -96,6 +98,7 @@ namespace HandheldCompanion.Managers
         {
             // pass inputs to InputsManager
             InputsManager.UpdateReport(Inputs.Buttons);
+            MainWindow.overlayModel.UpdateReport(Inputs);
 
             // is part of a hotkey
             if (Inputs.Buttons.HasFlag(ControllerButtonFlags.Special))

@@ -62,9 +62,6 @@ namespace HandheldCompanion.Managers
         private static IKeyboardMouseEvents m_GlobalHook;
         private static InputSimulator m_InputSimulator;
 
-        public static event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(Gamepad gamepad);
-
         public static event TriggerRaisedEventHandler TriggerRaised;
         public delegate void TriggerRaisedEventHandler(string listener, InputsChord inputs, bool IsKeyDown, bool IsKeyUp);
 

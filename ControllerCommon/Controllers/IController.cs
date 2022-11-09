@@ -60,6 +60,8 @@ namespace ControllerCommon.Controllers
         public ControllerButtonFlags Buttons;
         public Vector2 LeftThumb;
         public Vector2 RightThumb;
+        public float LeftTrigger;
+        public float RightTrigger;
         public long Timestamp;
     }
 
@@ -118,6 +120,11 @@ namespace ControllerCommon.Controllers
 
         public virtual void Rumble()
         { }
+
+        public virtual void Hook()
+        {
+            UpdateTimer.Start();
+        }
 
         public virtual void Dispose()
         {
