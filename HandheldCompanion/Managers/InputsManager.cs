@@ -475,10 +475,10 @@ namespace HandheldCompanion.Managers
             // reset index
             KeyIndex = 0;
 
+            IsLocked = true;
+
             try
             {
-                IsLocked = true;
-
                 List<KeyEventArgsExt> keys = ReleasedKeys.OrderBy(a => a.Timestamp).ToList();
                 for (int i = 0; i < keys.Count; i++)
                 {
@@ -516,16 +516,14 @@ namespace HandheldCompanion.Managers
                     int d_Timestamp = n_Timestamp - Timestamp;
                     m_InputSimulator.Keyboard.Sleep(d_Timestamp);
                 }
+
+                // clear buffer
+                ReleasedKeys.Clear();
             }
-            catch (Exception)
-            {
-            }
+            catch { }
 
             // release lock
             IsLocked = false;
-
-            // clear buffer
-            ReleasedKeys.Clear();
         }
 
         private static List<KeyCode> GetBufferKeys()
