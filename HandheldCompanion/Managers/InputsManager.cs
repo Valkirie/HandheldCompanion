@@ -552,15 +552,20 @@ namespace HandheldCompanion.Managers
         }
 
         private static bool GamepadClearPending;
-        public static void UpdateReport(ControllerButtonFlags buttons)
+        private static ControllerButtonFlags prevButtons;
+
+        public static void UpdateReport(ControllerButtonFlags Buttons)
         {
             GamepadResetTimer.Stop();
 
             bool IsKeyDown = false;
             bool IsKeyUp = false;
 
-            // IsKeyDown
-            if (buttons != ControllerButtonFlags.None)
+            if (prevButtons == Buttons)
+                return;
+
+            // IsKeyDown (filter on "fake" keys)
+            if (Buttons != ControllerButtonFlags.None && Buttons < ControllerButtonFlags.Special2)
             {
                 // reset hold timer
                 InputsChordHoldTimer.Stop();
@@ -568,18 +573,18 @@ namespace HandheldCompanion.Managers
 
                 if (GamepadClearPending)
                 {
-                    currentChord.GamepadButtons = buttons;
+                    currentChord.GamepadButtons = Buttons;
                     GamepadClearPending = false;
                 }
                 else
-                    currentChord.GamepadButtons |= buttons;
+                    currentChord.GamepadButtons |= Buttons;
 
                 currentChord.InputsType = InputsChordType.Click;
 
                 IsKeyDown = true;
             }
             // IsKeyUp
-            else if (buttons == ControllerButtonFlags.None && currentChord.GamepadButtons != ControllerButtonFlags.None)
+            else if (Buttons == ControllerButtonFlags.None && currentChord.GamepadButtons != ControllerButtonFlags.None)
             {
                 GamepadClearPending = true;
 
@@ -593,6 +598,8 @@ namespace HandheldCompanion.Managers
             {
                 currentChord.GamepadButtons = ControllerButtonFlags.None;
             }
+
+            prevButtons = Buttons;
 
             GamepadResetTimer.Start();
         }
