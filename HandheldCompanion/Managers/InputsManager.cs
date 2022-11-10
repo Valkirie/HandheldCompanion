@@ -33,7 +33,6 @@ namespace HandheldCompanion.Managers
         private static PrecisionTimer InputsChordHoldTimer;
         private static PrecisionTimer InputsChordInputTimer;
 
-        private static bool ExpectKeyUp = false;
         private static Dictionary<KeyValuePair<KeyCode, bool>, int> prevKeys = new();
 
         // Global variables
@@ -152,6 +151,7 @@ namespace HandheldCompanion.Managers
                     
                     foreach(KeyEventArgsExt args in CapturedKeys)
                         ReleasedKeys.Add(args);
+                    CapturedKeys.Clear();
 
                     KeyboardResetTimer.Start();
                 }
@@ -329,19 +329,7 @@ namespace HandheldCompanion.Managers
                         KeyIndex = 0;
 
                         // check if inputs timestamp are too close from one to another
-                        bool IsKeyUnexpected = false;
-
-                        if (args.IsKeyDown)
-                        {
-                            ExpectKeyUp = true;
-                        }
-                        else if (args.IsKeyUp)
-                        {
-                            if (ExpectKeyUp)
-                                ExpectKeyUp = false;
-                            else
-                                IsKeyUnexpected = true;
-                        }
+                        bool IsKeyUnexpected = args.IsKeyUp && string.IsNullOrEmpty(currentChord.SpecialKey);
 
                         // do not bother checking timing if key is already unexpected
                         if (!IsKeyUnexpected)
