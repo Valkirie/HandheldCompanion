@@ -94,8 +94,6 @@ namespace HandheldCompanion.Models
             // pull model(s
             model3DGroup.Children.Add(AudioJack);
             model3DGroup.Children.Add(DPadTriangle);
-            model3DGroup.Children.Add(FunctionKeyBig);
-            model3DGroup.Children.Add(FunctionKeySmall);
             model3DGroup.Children.Add(JoystickCoverLeft);
             model3DGroup.Children.Add(JoystickCoverRight);
             model3DGroup.Children.Add(JoystickLEDLeft);

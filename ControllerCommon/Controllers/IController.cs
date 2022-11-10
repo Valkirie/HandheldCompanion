@@ -93,6 +93,7 @@ namespace ControllerCommon.Controllers
 
         protected virtual void UpdateReport()
         {
+            // update states
             prevInjectedButtons = InjectedButtons;
 
             Updated?.Invoke(Inputs);
