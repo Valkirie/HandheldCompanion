@@ -21,6 +21,7 @@ namespace ControllerCommon.Devices
         {
             this.name = name;
             this.silenced = silenced;
+            this.button = button;
 
             this.chords[true].AddRange(chordDown);
             this.chords[false].AddRange(chordUP);

@@ -42,12 +42,14 @@ namespace ControllerCommon.Devices
 
             listeners.Add(new DeviceChord("Bottom button left",
                 new List<KeyCode>() { KeyCode.D9 },
-                new List<KeyCode>() { KeyCode.D9 }
+                new List<KeyCode>() { KeyCode.D9 },
+                false, Controllers.ControllerButtonFlags.Special2
                 ));
 
             listeners.Add(new DeviceChord("Bottom button right",
                 new List<KeyCode>() { KeyCode.D0 },
-                new List<KeyCode>() { KeyCode.D0 }
+                new List<KeyCode>() { KeyCode.D0 },
+                false, Controllers.ControllerButtonFlags.Special2
                 ));
         }
     }
