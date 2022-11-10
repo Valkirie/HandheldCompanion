@@ -67,8 +67,8 @@ namespace HandheldCompanion.Models
             // load model(s)
             AudioJack = modelImporter.Load($"models/{ModelName}/AudioJack.obj");
             DPadTriangle = modelImporter.Load($"models/{ModelName}/DPadTriangle.obj");
-            FunctionKeyBig = modelImporter.Load($"models/{ModelName}/FunctionKeyBig.obj");
-            FunctionKeySmall = modelImporter.Load($"models/{ModelName}/FunctionKeySmall.obj");
+            FunctionKeyBig = modelImporter.Load($"models/{ModelName}/Special.obj");
+            FunctionKeySmall = modelImporter.Load($"models/{ModelName}/Special2.obj");
             JoystickCoverLeft = modelImporter.Load($"models/{ModelName}/JoystickCoverLeft.obj");
             JoystickCoverRight = modelImporter.Load($"models/{ModelName}/JoystickCoverRight.obj");
             JoystickLEDLeft = modelImporter.Load($"models/{ModelName}/JoystickLeftLED.obj");

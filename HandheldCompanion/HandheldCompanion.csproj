@@ -461,10 +461,10 @@
     <None Update="models\AYANEO Air\DPadUp.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO Air\FunctionKeyBig.obj">
+    <None Update="Models\AYANEO Air\Special.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO Air\FunctionKeySmall.obj">
+    <None Update="Models\AYANEO Air\Special2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\AYANEO Air\Joystick-Left-Ring.obj">
