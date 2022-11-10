@@ -1436,10 +1436,10 @@
     <None Update="models\XBOXOne\LeftThumb.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\LogoInner.obj">
+    <None Update="Models\XBOXOne\Special.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\LogoOuter.obj">
+    <None Update="Models\XBOXOne\SpecialOuter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\XBOXOne\MainBody.obj">

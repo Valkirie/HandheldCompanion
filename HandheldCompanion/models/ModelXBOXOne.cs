@@ -12,8 +12,7 @@ namespace HandheldCompanion.Models
         Model3DGroup BackSymbol;
         Model3DGroup BatteryDoor;
         Model3DGroup BatteryDoorInner;
-        Model3DGroup LogoInner;
-        Model3DGroup LogoOuter;
+        Model3DGroup SpecialOuter;
         Model3DGroup MainBodyBack;
         Model3DGroup MainBodyTop;
         Model3DGroup MainBodySide;
@@ -79,8 +78,7 @@ namespace HandheldCompanion.Models
             BackSymbol = modelImporter.Load($"models/{ModelName}/BackSymbol.obj");
             BatteryDoor = modelImporter.Load($"models/{ModelName}/BatteryDoor.obj");
             BatteryDoorInner = modelImporter.Load($"models/{ModelName}/BatteryDoorInner.obj");
-            LogoInner = modelImporter.Load($"models/{ModelName}/LogoInner.obj");
-            LogoOuter = modelImporter.Load($"models/{ModelName}/LogoOuter.obj");
+            SpecialOuter = modelImporter.Load($"models/{ModelName}/SpecialOuter.obj");
             MainBodyBack = modelImporter.Load($"models/{ModelName}/MainBodyBack.obj");
             MainBodyTop = modelImporter.Load($"models/{ModelName}/MainBodyTop.obj");
             MainBodySide = modelImporter.Load($"models/{ModelName}/MainBodySide.obj");
@@ -115,8 +113,7 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(BackSymbol);
             model3DGroup.Children.Add(BatteryDoor);
             model3DGroup.Children.Add(BatteryDoorInner);
-            model3DGroup.Children.Add(LogoInner);
-            model3DGroup.Children.Add(LogoOuter);
+            model3DGroup.Children.Add(SpecialOuter);
             model3DGroup.Children.Add(MainBodyBack);
             model3DGroup.Children.Add(MainBodyTop);
             model3DGroup.Children.Add(MainBodySide);
@@ -138,6 +135,8 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(B4Interior);
             model3DGroup.Children.Add(B4Interior2);
             model3DGroup.Children.Add(B4Button);
+
+            ButtonMap[ControllerButtonFlags.Special].Add(SpecialOuter);
 
             // specific button material(s)
             foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
@@ -191,7 +190,7 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticWhite;
 
                 // specific material(s)
-                if (model3D == USBPortOuter || model3D == LogoOuter
+                if (model3D == USBPortOuter || model3D == SpecialOuter
                     || model3D == B1Interior || model3D == B1Interior2
                     || model3D == B2Interior || model3D == B2Interior2
                     || model3D == B3Interior || model3D == B3Interior2
