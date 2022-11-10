@@ -167,7 +167,7 @@ namespace ControllerCommon.Controllers
             if (prevGamepad.GetHashCode() == Gamepad.GetHashCode() && State.wButtons == prevState.wButtons)
                 return;
 
-            Inputs.Buttons = ControllerButtonFlags.None;
+            Inputs.Buttons = Inputs.InjectedButtons;
             Inputs.Timestamp = DateTime.Now.Ticks;
 
             if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.A))

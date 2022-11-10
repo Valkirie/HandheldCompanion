@@ -62,6 +62,7 @@ namespace ControllerCommon.Controllers
     public struct ControllerInput
     {
         public ControllerButtonFlags Buttons;
+        public ControllerButtonFlags InjectedButtons;
         public Vector2 LeftThumb;
         public Vector2 RightThumb;
         public float LeftTrigger;
@@ -72,7 +73,6 @@ namespace ControllerCommon.Controllers
     public abstract class IController : IDisposable
     {
         public ControllerInput Inputs;
-        private ControllerButtonFlags InjectedButtons;
 
         public int UserIndex;
 
@@ -130,9 +130,9 @@ namespace ControllerCommon.Controllers
                 return;
 
             if (IsKeyDown)
-                InjectedButtons |= button;
+                Inputs.InjectedButtons |= button;
             else if (IsKeyUp)
-                InjectedButtons &= ~button;
+                Inputs.InjectedButtons &= ~button;
         }
 
         public virtual void Rumble()
