@@ -34,10 +34,11 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add(new DeviceChord("Menu",
+            // Disabled this one as Win Max 2 also sends an Xbox guide input when Menu key is pressed.
+            /* listeners.Add(new DeviceChord("Menu",
                 new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
                 new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 }
-                ));
+                )); */
 
             listeners.Add(new DeviceChord("Bottom button left",
                 new List<KeyCode>() { KeyCode.D9 },
