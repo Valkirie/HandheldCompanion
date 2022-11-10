@@ -1160,7 +1160,7 @@
     <None Update="Models\ToyController\Back.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\BLetter.obj">
+    <None Update="Models\ToyController\B2Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\ToyController\DPadDown.obj">
