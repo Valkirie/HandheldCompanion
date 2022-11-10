@@ -11,6 +11,7 @@ using HandheldCompanion.Views;
 using PrecisionTiming;
 using SharpDX.XInput;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -53,8 +54,8 @@ namespace HandheldCompanion.Managers
         private static bool IsCombo;
         private static InputsHotkey currentHotkey = new();
 
-        private static List<KeyEventArgsExt> ReleasedKeys = new();
-        private static List<KeyEventArgsExt> CapturedKeys = new();
+        private static ConcurrentBag<KeyEventArgsExt> ReleasedKeys = new();
+        private static ConcurrentBag<KeyEventArgsExt> CapturedKeys = new();
 
         private static Dictionary<string, InputsChord> Triggers = new();
 
@@ -148,7 +149,9 @@ namespace HandheldCompanion.Managers
                 if (keys.Count == 0)
                 {
                     LogManager.LogDebug("Released: SpecialKey: {0}, ButtonFlags: {1}, Type: {2}, IsKeyDown: {3}", currentChord.SpecialKey, currentChord.GamepadButtons, currentChord.InputsType, IsKeyDown);
-                    ReleasedKeys.AddRange(CapturedKeys);
+                    
+                    foreach(KeyEventArgsExt args in CapturedKeys)
+                        ReleasedKeys.Add(args);
 
                     KeyboardResetTimer.Start();
                 }
@@ -260,7 +263,10 @@ namespace HandheldCompanion.Managers
             {
                 args.SuppressKeyPress = true;
                 if (args.IsKeyUp && args.IsExtendedKey)
-                    CapturedKeys.AddRange(InjectModifiers(args));
+                {
+                    foreach (KeyEventArgsExt args2 in InjectModifiers(args))
+                        CapturedKeys.Add(args2);
+                }
 
                 // add key to InputsChord
                 currentChord.AddKey(args);
@@ -304,7 +310,10 @@ namespace HandheldCompanion.Managers
                 ReleasedKeys.Add(args);
 
                 if (args.IsKeyUp && args.IsExtendedKey)
-                    ReleasedKeys.AddRange(InjectModifiers(args));
+                {
+                    foreach (KeyEventArgsExt args2 in InjectModifiers(args))
+                        ReleasedKeys.Add(args2);
+                }
 
                 // search for matching triggers
                 List<KeyCode> buffer_keys = GetBufferKeys().OrderBy(key => key).ToList();
@@ -348,7 +357,10 @@ namespace HandheldCompanion.Managers
 
                         // only intercept inputs if not too close
                         if (!IsKeyUnexpected)
-                            CapturedKeys.AddRange(ReleasedKeys);
+                        {
+                            foreach (KeyEventArgsExt args2 in ReleasedKeys)
+                                CapturedKeys.Add(args2);
+                        }
 
                         // clear buffer
                         ReleasedKeys.Clear();
@@ -467,9 +479,10 @@ namespace HandheldCompanion.Managers
             {
                 IsLocked = true;
 
-                for (int i = 0; i < ReleasedKeys.Count; i++)
+                List<KeyEventArgsExt> keys = ReleasedKeys.OrderBy(a => a.Timestamp).ToList();
+                for (int i = 0; i < keys.Count; i++)
                 {
-                    KeyEventArgsExt args = ReleasedKeys[i];
+                    KeyEventArgsExt args = keys[i];
 
                     // improve me
                     VirtualKeyCode key = (VirtualKeyCode)args.KeyValue;
@@ -494,11 +507,11 @@ namespace HandheldCompanion.Managers
                     }
 
                     // send after initial delay
-                    int Timestamp = ReleasedKeys[i].Timestamp;
+                    int Timestamp = keys[i].Timestamp;
                     int n_Timestamp = Timestamp;
 
-                    if (i + 1 < ReleasedKeys.Count)
-                        n_Timestamp = ReleasedKeys[i + 1].Timestamp;
+                    if (i + 1 < keys.Count)
+                        n_Timestamp = keys[i + 1].Timestamp;
 
                     int d_Timestamp = n_Timestamp - Timestamp;
                     m_InputSimulator.Keyboard.Sleep(d_Timestamp);
