@@ -126,6 +126,9 @@ namespace ControllerCommon.Controllers
 
         public void InjectButton(ControllerButtonFlags button, bool IsKeyDown, bool IsKeyUp)
         {
+            if (button == ControllerButtonFlags.None)
+                return;
+
             if (IsKeyDown)
                 InjectedButtons |= button;
             else if (IsKeyUp)
