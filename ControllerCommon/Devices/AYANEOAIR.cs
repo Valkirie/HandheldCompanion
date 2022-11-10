@@ -46,12 +46,14 @@ namespace ControllerCommon.Devices
 
             listeners.Add(new DeviceChord("Custom Key Big",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 },
-                new List<KeyCode>() { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey }
+                new List<KeyCode>() { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey },
+                false, Controllers.ControllerButtonFlags.Special
                 ));
 
             listeners.Add(new DeviceChord("Custom Key Small",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                new List<KeyCode>() { KeyCode.LWin, KeyCode.D }
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
+                false, Controllers.ControllerButtonFlags.Special2
                 ));
         }
     }
