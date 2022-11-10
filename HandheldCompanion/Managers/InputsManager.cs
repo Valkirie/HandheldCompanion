@@ -359,6 +359,10 @@ namespace HandheldCompanion.Managers
 
                         LogManager.LogDebug("{1}\tKeyEvent: {0}, IsKeyDown: {2}, IsKeyUp: {3}", chord.name, args.Timestamp, args.IsKeyDown, args.IsKeyUp);
 
+                        // calls current controller
+                        var controller = ControllerManager.GetTargetController();
+                        controller.InjectButton(chord.button, args.IsKeyDown, args.IsKeyUp);
+
                         if (args.IsKeyDown)
                         {
                             // reset hold timer

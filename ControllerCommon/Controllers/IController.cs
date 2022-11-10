@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace ControllerCommon.Controllers
 {
     [Flags]
-    public enum ControllerButtonFlags : uint
+    public enum ControllerButtonFlags : ulong
     {
         None = 0,
 
@@ -52,7 +52,11 @@ namespace ControllerCommon.Controllers
         RStickLeft = 67108864,
         RStickRight = 134217728,
 
-        Special = 268435456
+        Special = 268435456,
+        Special2 = 536870912,
+        Special3 = 1073741824,
+        Special4 = 2147483648,
+        Special5 = 4294967296
     }
 
     public struct ControllerInput
@@ -68,6 +72,8 @@ namespace ControllerCommon.Controllers
     public abstract class IController : IDisposable
     {
         public ControllerInput Inputs;
+        private ControllerButtonFlags InjectedButtons;
+
         public int UserIndex;
 
         protected PnPDetails Details;
@@ -116,6 +122,14 @@ namespace ControllerCommon.Controllers
         public virtual bool IsConnected()
         {
             return false;
+        }
+
+        public void InjectButton(ControllerButtonFlags button, bool IsKeyDown, bool IsKeyUp)
+        {
+            if (IsKeyDown)
+                InjectedButtons |= button;
+            else if (IsKeyUp)
+                InjectedButtons &= ~button;
         }
 
         public virtual void Rumble()

@@ -94,6 +94,11 @@ namespace HandheldCompanion.Managers
             targetController.Rumble();
         }
 
+        public static IController GetTargetController()
+        {
+            return targetController;
+        }
+
         private static void UpdateReport(ControllerInput Inputs)
         {
             // pass inputs to InputsManager
