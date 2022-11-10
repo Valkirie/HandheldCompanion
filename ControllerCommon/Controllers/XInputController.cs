@@ -164,10 +164,10 @@ namespace ControllerCommon.Controllers
             // update secret state
             XInputGetStateSecret13(UserIndex, out State);
 
-            if (prevGamepad.GetHashCode() == Gamepad.GetHashCode() && State.wButtons == prevState.wButtons && Inputs.InjectedButtons == ControllerButtonFlags.None)
+            if (prevGamepad.GetHashCode() == Gamepad.GetHashCode() && State.wButtons == prevState.wButtons && prevInjectedButtons == InjectedButtons)
                 return;
 
-            Inputs.Buttons = Inputs.InjectedButtons;
+            Inputs.Buttons = InjectedButtons;
             Inputs.Timestamp = DateTime.Now.Ticks;
 
             if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.A))
