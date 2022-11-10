@@ -428,19 +428,19 @@
     <None Update="Models\AYANEO 2021\WFB-Win.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO Air\A-Letter.obj">
+    <None Update="Models\AYANEO Air\B1-Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO Air\A.obj">
+    <None Update="Models\AYANEO Air\B1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\AYANEO Air\AudioJack.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO Air\B-Letter.obj">
+    <None Update="Models\AYANEO Air\B2-Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO Air\B.obj">
+    <None Update="Models\AYANEO Air\B2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\AYANEO Air\Back.obj">
@@ -551,16 +551,16 @@
     <None Update="models\AYANEO Air\VolumeButton.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO Air\X-Letter.obj">
+    <None Update="Models\AYANEO Air\B3-Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO Air\X.obj">
+    <None Update="Models\AYANEO Air\B3.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO Air\Y-Letter.obj">
+    <None Update="Models\AYANEO Air\B4-Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO Air\Y.obj">
+    <None Update="Models\AYANEO Air\B4.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO NEXT\A.obj">
@@ -914,19 +914,19 @@
     <None Update="models\MachenikeHG510\Y.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\N64\A.obj">
+    <None Update="Models\N64\B1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\N64\ArrowDown.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\N64\B.obj">
+    <None Update="Models\N64\B2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\N64\Back.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\N64\CDown.obj">
+    <None Update="Models\N64\RStickDown.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\N64\DPadDown.obj">
@@ -980,10 +980,10 @@
     <None Update="models\N64\Start.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\N64\X.obj">
+    <None Update="Models\N64\B3.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\N64\Y.obj">
+    <None Update="Models\N64\B4.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\N64\Z.obj">
@@ -1145,16 +1145,16 @@
     <None Update="Models\OneXPlayerMini\YLetter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\A.obj">
+    <None Update="Models\ToyController\B1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\ALetter.obj">
+    <None Update="Models\ToyController\B1Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\ALetterInside.obj">
+    <None Update="Models\ToyController\B1LetterInside.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\B.obj">
+    <None Update="Models\ToyController\B2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\ToyController\Back.obj">
@@ -1253,46 +1253,46 @@
     <None Update="Models\ToyController\Start.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\X.obj">
+    <None Update="Models\ToyController\B3.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\XLetter.obj">
+    <None Update="Models\ToyController\B3Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\XLetterInside.obj">
+    <None Update="Models\ToyController\B3LetterInside.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\Y.obj">
+    <None Update="Models\ToyController\B4.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\YLetter.obj">
+    <None Update="Models\ToyController\B4Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\YLetterInside1.obj">
+    <None Update="Models\ToyController\B4LetterInside1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\YLetterInside2.obj">
+    <None Update="Models\ToyController\B4LetterInside2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\XBOX360\A-Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\XBOX360\A.obj">
+    <None Update="Models\XBOX360\B1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\AButton.obj">
+    <None Update="Models\XBOX360\B1Button.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\XBOX360\B-Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\XBOX360\B.obj">
+    <None Update="Models\XBOX360\B2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\XBOX360\Back.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\BButton.obj">
+    <None Update="Models\XBOX360\B2Button.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\XBOX360\DPadDown.obj">
@@ -1355,49 +1355,49 @@
     <None Update="Models\XBOX360\X-Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\XBOX360\X.obj">
+    <None Update="Models\XBOX360\B3.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\XBOX360\XboxButton.obj">
+    <None Update="Models\XBOX360\Special.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\XBOX360\XboxButtonRing.obj">
+    <None Update="Models\XBOX360\SpecialRing.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\XButton.obj">
+    <None Update="Models\XBOX360\B3Button.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\XBOX360\Y-Letter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\XBOX360\Y.obj">
+    <None Update="Models\XBOX360\B4.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOX360\YButton.obj">
+    <None Update="Models\XBOX360\B4Button.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\A-Button.obj">
+    <None Update="Models\XBOXOne\B1-Button.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\A-Interior.obj">
+    <None Update="Models\XBOXOne\B1-Interior.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\A-Interior2.obj">
+    <None Update="Models\XBOXOne\B1-Interior2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\A.obj">
+    <None Update="Models\XBOXOne\B1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\B-Button.obj">
+    <None Update="Models\XBOXOne\B2-Button.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\B-Interior.obj">
+    <None Update="Models\XBOXOne\B2-Interior.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\B-Interior2.obj">
+    <None Update="Models\XBOXOne\B2-Interior2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\B.obj">
+    <None Update="Models\XBOXOne\B2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\XBOXOne\Back.obj">
@@ -1490,28 +1490,28 @@
     <None Update="models\XBOXOne\USBPortOuter.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\X-Button.obj">
+    <None Update="Models\XBOXOne\B3-Button.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\X-Interior.obj">
+    <None Update="Models\XBOXOne\B3-Interior.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\X-Interior2.obj">
+    <None Update="Models\XBOXOne\B3-Interior2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\X.obj">
+    <None Update="Models\XBOXOne\B3.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\Y-Button.obj">
+    <None Update="Models\XBOXOne\B4-Button.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\Y-Interior.obj">
+    <None Update="Models\XBOXOne\B4-Interior.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\Y-Interior2.obj">
+    <None Update="Models\XBOXOne\B4-Interior2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\Y.obj">
+    <None Update="Models\XBOXOne\B4.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\ZDOPlus\A.obj">
