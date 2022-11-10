@@ -917,13 +917,13 @@
     <None Update="Models\N64\B1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\N64\ArrowDown.obj">
+    <None Update="Models\N64\RStickRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\N64\B2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\N64\Back.obj">
+    <None Update="Models\N64\RStickRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\N64\RStickDown.obj">
@@ -980,10 +980,10 @@
     <None Update="models\N64\Start.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\N64\B3.obj">
+    <None Update="Models\N64\RStickLeft.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\N64\B4.obj">
+    <None Update="Models\N64\RStickUp.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\N64\Z.obj">

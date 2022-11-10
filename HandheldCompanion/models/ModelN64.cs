@@ -12,7 +12,6 @@ namespace HandheldCompanion.Models
     {
         // Specific groups (move me)
         Model3DGroup JoystickShield;
-        Model3DGroup CDown;
 
         public ModelN64() : base("N64")
         {
@@ -54,7 +53,6 @@ namespace HandheldCompanion.Models
 
             // pull model(s)
             model3DGroup.Children.Add(JoystickShield);
-            model3DGroup.Children.Add(CDown);
 
             // specific button material(s)
             foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
