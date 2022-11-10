@@ -50,7 +50,7 @@ namespace ControllerCommon.Devices
             listeners.Add(new DeviceChord("Bottom button right",
                 new List<KeyCode>() { KeyCode.D0 },
                 new List<KeyCode>() { KeyCode.D0 },
-                false, Controllers.ControllerButtonFlags.Special2
+                false, Controllers.ControllerButtonFlags.Special3
                 ));
         }
     }
