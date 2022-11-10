@@ -1,3 +1,4 @@
+using ControllerCommon.Controllers;
 using SharpDX.XInput;
 using System;
 using System.Windows.Media;
@@ -22,18 +23,18 @@ namespace HandheldCompanion.Models
         Model3DGroup USBPortInner;
         Model3DGroup USBPortOuter;
 
-        Model3DGroup AInterior;
-        Model3DGroup AInterior2;
-        Model3DGroup AButton;
-        Model3DGroup BInterior;
-        Model3DGroup BInterior2;
-        Model3DGroup BButton;
-        Model3DGroup XInterior;
-        Model3DGroup XInterior2;
-        Model3DGroup XButton;
-        Model3DGroup YInterior;
-        Model3DGroup YInterior2;
-        Model3DGroup YButton;
+        Model3DGroup B1Interior;
+        Model3DGroup B1Interior2;
+        Model3DGroup B1Button;
+        Model3DGroup B2Interior;
+        Model3DGroup B2Interior2;
+        Model3DGroup B2Button;
+        Model3DGroup B3Interior;
+        Model3DGroup B3Interior2;
+        Model3DGroup B3Button;
+        Model3DGroup B4Interior;
+        Model3DGroup B4Interior2;
+        Model3DGroup B4Button;
 
         public ModelXBOXOne() : base("XBOXOne")
         {
@@ -89,18 +90,26 @@ namespace HandheldCompanion.Models
             USBPortInner = modelImporter.Load($"models/{ModelName}/USBPortInner.obj");
             USBPortOuter = modelImporter.Load($"models/{ModelName}/USBPortOuter.obj");
 
-            AInterior = modelImporter.Load($"models/{ModelName}/A-Interior.obj");
-            AInterior2 = modelImporter.Load($"models/{ModelName}/A-Interior2.obj");
-            AButton = modelImporter.Load($"models/{ModelName}/A-Button.obj");
-            BInterior = modelImporter.Load($"models/{ModelName}/B-Interior.obj");
-            BInterior2 = modelImporter.Load($"models/{ModelName}/B-Interior2.obj");
-            BButton = modelImporter.Load($"models/{ModelName}/B-Button.obj");
-            XInterior = modelImporter.Load($"models/{ModelName}/X-Interior.obj");
-            XInterior2 = modelImporter.Load($"models/{ModelName}/X-Interior2.obj");
-            XButton = modelImporter.Load($"models/{ModelName}/X-Button.obj");
-            YInterior = modelImporter.Load($"models/{ModelName}/Y-Interior.obj");
-            YInterior2 = modelImporter.Load($"models/{ModelName}/Y-Interior2.obj");
-            YButton = modelImporter.Load($"models/{ModelName}/Y-Button.obj");
+            B1Interior = modelImporter.Load($"models/{ModelName}/B1-Interior.obj");
+            B1Interior2 = modelImporter.Load($"models/{ModelName}/B1-Interior2.obj");
+            B1Button = modelImporter.Load($"models/{ModelName}/B1-Button.obj");
+
+            B2Interior = modelImporter.Load($"models/{ModelName}/B2-Interior.obj");
+            B2Interior2 = modelImporter.Load($"models/{ModelName}/B2-Interior2.obj");
+            B2Button = modelImporter.Load($"models/{ModelName}/B2-Button.obj");
+
+            B3Interior = modelImporter.Load($"models/{ModelName}/B3-Interior.obj");
+            B3Interior2 = modelImporter.Load($"models/{ModelName}/B3-Interior2.obj");
+            B3Button = modelImporter.Load($"models/{ModelName}/B3-Button.obj");
+
+            B4Interior = modelImporter.Load($"models/{ModelName}/B4-Interior.obj");
+            B4Interior2 = modelImporter.Load($"models/{ModelName}/B4-Interior2.obj");
+            B4Button = modelImporter.Load($"models/{ModelName}/B4-Button.obj");
+
+            /*
+             * TODO: @CasperH can you please help me figure out which object is the xbox button and rename it to Special.obj
+             * See XBOX360 changes I made, I believe they're fine
+             */
 
             // pull models
             model3DGroup.Children.Add(BackSymbol);
@@ -117,21 +126,21 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(USBPortInner);
             model3DGroup.Children.Add(USBPortOuter);
 
-            model3DGroup.Children.Add(AInterior);
-            model3DGroup.Children.Add(AInterior2);
-            model3DGroup.Children.Add(AButton);
-            model3DGroup.Children.Add(BInterior);
-            model3DGroup.Children.Add(BInterior2);
-            model3DGroup.Children.Add(BButton);
-            model3DGroup.Children.Add(XInterior);
-            model3DGroup.Children.Add(XInterior2);
-            model3DGroup.Children.Add(XButton);
-            model3DGroup.Children.Add(YInterior);
-            model3DGroup.Children.Add(YInterior2);
-            model3DGroup.Children.Add(YButton);
+            model3DGroup.Children.Add(B1Interior);
+            model3DGroup.Children.Add(B1Interior2);
+            model3DGroup.Children.Add(B1Button);
+            model3DGroup.Children.Add(B2Interior);
+            model3DGroup.Children.Add(B2Interior2);
+            model3DGroup.Children.Add(B2Button);
+            model3DGroup.Children.Add(B3Interior);
+            model3DGroup.Children.Add(B3Interior2);
+            model3DGroup.Children.Add(B3Button);
+            model3DGroup.Children.Add(B4Interior);
+            model3DGroup.Children.Add(B4Interior2);
+            model3DGroup.Children.Add(B4Button);
 
             // specific button material(s)
-            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
             {
                 Material buttonMaterial = null;
 
@@ -140,22 +149,22 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            case GamepadButtonFlags.Back:
-                            case GamepadButtonFlags.Start:
-                            case GamepadButtonFlags.LeftShoulder:
-                            case GamepadButtonFlags.RightShoulder:
+                            case ControllerButtonFlags.Back:
+                            case ControllerButtonFlags.Start:
+                            case ControllerButtonFlags.LeftShoulder:
+                            case ControllerButtonFlags.RightShoulder:
                                 buttonMaterial = MaterialPlasticWhite;
                                 break;
-                            case GamepadButtonFlags.A:
+                            case ControllerButtonFlags.B1:
                                 buttonMaterial = MaterialPlasticGreen;
                                 break;
-                            case GamepadButtonFlags.B:
+                            case ControllerButtonFlags.B2:
                                 buttonMaterial = MaterialPlasticRed;
                                 break;
-                            case GamepadButtonFlags.X:
+                            case ControllerButtonFlags.B3:
                                 buttonMaterial = MaterialPlasticBlue;
                                 break;
-                            case GamepadButtonFlags.Y:
+                            case ControllerButtonFlags.B4:
                                 buttonMaterial = MaterialPlasticYellow;
                                 break;
                             default:
@@ -183,10 +192,10 @@ namespace HandheldCompanion.Models
 
                 // specific material(s)
                 if (model3D == USBPortOuter || model3D == LogoOuter
-                    || model3D == AInterior || model3D == AInterior2
-                    || model3D == BInterior || model3D == BInterior2
-                    || model3D == XInterior || model3D == XInterior2
-                    || model3D == YInterior || model3D == YInterior2
+                    || model3D == B1Interior || model3D == B1Interior2
+                    || model3D == B2Interior || model3D == B2Interior2
+                    || model3D == B3Interior || model3D == B3Interior2
+                    || model3D == B4Interior || model3D == B4Interior2
                     || model3D == RightThumbRing || model3D == LeftThumbRing
                     || model3D == ShareButtonSymbol || model3D == StartSymbol || model3D == BackSymbol)
                 {
@@ -197,7 +206,7 @@ namespace HandheldCompanion.Models
                 }
 
                 // specific face button material
-                if (model3D == AButton || model3D == BButton || model3D == XButton || model3D == YButton)
+                if (model3D == B1Button || model3D == B2Button || model3D == B3Button || model3D == B4Button)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticTransparent;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticTransparent;
