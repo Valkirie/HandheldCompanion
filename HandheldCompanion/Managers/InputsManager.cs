@@ -277,7 +277,7 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
-            foreach (DeviceChord pair in MainWindow.handheldDevice.listeners)
+            foreach (DeviceChord pair in MainWindow.handheldDevice.listeners.Where(a => !a.silenced))
             {
                 List<KeyCode> chord = pair.chords[args.IsKeyDown];
                 if (KeyIndex >= chord.Count)
