@@ -145,28 +145,28 @@ namespace HandheldCompanion.Models
                 }
 
                 // specific face button material
-                if (model3D == AButton)
+                if (model3D == B1Button)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticGreenTransparent;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticGreenTransparent;
                     continue;
                 }
 
-                if (model3D == BButton)
+                if (model3D == B2Button)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticRedTransparent;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticRedTransparent;
                     continue;
                 }
 
-                if (model3D == XButton)
+                if (model3D == B3Button)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlueTransparent;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticBlueTransparent;
                     continue;
                 }
 
-                if (model3D == YButton)
+                if (model3D == B4Button)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticYellowTransparent;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticYellowTransparent;
