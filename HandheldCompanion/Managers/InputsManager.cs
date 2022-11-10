@@ -564,8 +564,11 @@ namespace HandheldCompanion.Managers
             if (prevButtons == Buttons)
                 return;
 
+            if (Buttons >= ControllerButtonFlags.Special2)
+                return;
+
             // IsKeyDown (filter on "fake" keys)
-            if (Buttons != ControllerButtonFlags.None && Buttons < ControllerButtonFlags.Special2)
+            if (Buttons != ControllerButtonFlags.None)
             {
                 // reset hold timer
                 InputsChordHoldTimer.Stop();
