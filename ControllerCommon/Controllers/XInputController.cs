@@ -130,7 +130,9 @@ namespace ControllerCommon.Controllers
         private Controller Controller;
         private Gamepad Gamepad;
         private Gamepad prevGamepad;
+
         private XInputStateSecret State;
+        private XInputStateSecret prevState;
 
         public XInputController(int index)
         {
@@ -156,11 +158,13 @@ namespace ControllerCommon.Controllers
 
         protected override void UpdateReport()
         {
+            // update gamepad state
             Gamepad = this.Controller.GetState().Gamepad;
 
+            // update secret state
             XInputGetStateSecret13(UserIndex, out State);
 
-            if (prevGamepad.GetHashCode() == Gamepad.GetHashCode())
+            if (prevGamepad.GetHashCode() == Gamepad.GetHashCode() && State.wButtons == prevState.wButtons)
                 return;
 
             Inputs.Buttons = ControllerButtonFlags.None;
@@ -235,9 +239,12 @@ namespace ControllerCommon.Controllers
             if (State.wButtons.HasFlag(XInputStateButtons.Xbox))
                 Inputs.Buttons |= ControllerButtonFlags.Special;
 
-            Debug.WriteLineIf(Inputs.Buttons != ControllerButtonFlags.None, string.Join(",", Inputs.Buttons));
+            Inputs.LeftTrigger = Gamepad.LeftTrigger;
+            Inputs.RightTrigger = Gamepad.RightTrigger;
 
+            // update states
             prevGamepad = Gamepad;
+            prevState = State;
 
             base.UpdateReport();
         }
