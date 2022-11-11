@@ -350,8 +350,7 @@ namespace HandheldCompanion.Managers
                             CapturedKeys.AddRange(BufferKeys);
 
                         // clear buffer
-                        foreach(var key in CapturedKeys)
-                            BufferKeys.Remove(key);
+                        BufferKeys.Clear();
 
                         // leave if inputs are too close
                         if (IsKeyUnexpected)
