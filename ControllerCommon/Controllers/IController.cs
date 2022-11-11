@@ -53,10 +53,10 @@ namespace ControllerCommon.Controllers
         RStickRight = 134217728,
 
         Special = 268435456,
-        Special2 = 536870912,
-        Special3 = 1073741824,
-        Special4 = 2147483648,
-        Special5 = 4294967296
+        OEM1 = 536870912,
+        OEM2 = 1073741824,
+        OEM3 = 2147483648,
+        OEM4 = 4294967296
     }
 
     public struct ControllerInput

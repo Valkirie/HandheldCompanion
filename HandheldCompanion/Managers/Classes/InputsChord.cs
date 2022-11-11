@@ -36,17 +36,14 @@ namespace HandheldCompanion.Managers.Classes
     public class InputsChord
     {
         public ControllerButtonFlags GamepadButtons { get; set; } = ControllerButtonFlags.None;
-        public string SpecialKey { get; set; } = string.Empty;
         public List<OutputKey> OutputKeys { get; set; } = new();
 
         public InputsChordType InputsType { get; set; } = InputsChordType.Click;
 
-        public InputsChord(ControllerButtonFlags GamepadButtons, string SpecialKey, List<OutputKey> OutputKeys, InputsChordType InputsType)
+        public InputsChord(ControllerButtonFlags GamepadButtons, List<OutputKey> OutputKeys, InputsChordType InputsType)
         {
             this.GamepadButtons = GamepadButtons;
-            this.SpecialKey = SpecialKey;
             this.OutputKeys = OutputKeys;
-
             this.InputsType = InputsType;
         }
 

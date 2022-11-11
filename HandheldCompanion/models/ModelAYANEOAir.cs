@@ -11,8 +11,6 @@ namespace HandheldCompanion.Models
         // Specific groups (move me)
         Model3DGroup AudioJack;
         Model3DGroup DPadTriangle;
-        Model3DGroup FunctionKeyBig;
-        Model3DGroup FunctionKeySmall;
         Model3DGroup JoystickCoverLeft;
         Model3DGroup JoystickCoverRight;
         Model3DGroup JoystickLEDLeft;
@@ -67,8 +65,6 @@ namespace HandheldCompanion.Models
             // load model(s)
             AudioJack = modelImporter.Load($"models/{ModelName}/AudioJack.obj");
             DPadTriangle = modelImporter.Load($"models/{ModelName}/DPadTriangle.obj");
-            FunctionKeyBig = modelImporter.Load($"models/{ModelName}/Special.obj");
-            FunctionKeySmall = modelImporter.Load($"models/{ModelName}/Special2.obj");
             JoystickCoverLeft = modelImporter.Load($"models/{ModelName}/JoystickCoverLeft.obj");
             JoystickCoverRight = modelImporter.Load($"models/{ModelName}/JoystickCoverRight.obj");
             JoystickLEDLeft = modelImporter.Load($"models/{ModelName}/JoystickLeftLED.obj");

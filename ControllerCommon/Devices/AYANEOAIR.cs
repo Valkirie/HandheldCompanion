@@ -36,12 +36,14 @@ namespace ControllerCommon.Devices
 
             listeners.Add(new DeviceChord("Custom Key Top Right",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F10 },
-                new List<KeyCode>() { KeyCode.F10, KeyCode.LWin, KeyCode.RControlKey }
+                new List<KeyCode>() { KeyCode.F10, KeyCode.LWin, KeyCode.RControlKey },
+                false, Controllers.ControllerButtonFlags.OEM2
                 ));
 
             listeners.Add(new DeviceChord("Custom Key Top Left",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F11 },
-                new List<KeyCode>() { KeyCode.F11, KeyCode.LWin, KeyCode.RControlKey }
+                new List<KeyCode>() { KeyCode.F11, KeyCode.LWin, KeyCode.RControlKey },
+                false, Controllers.ControllerButtonFlags.OEM3
                 ));
 
             listeners.Add(new DeviceChord("Custom Key Big",
@@ -53,7 +55,7 @@ namespace ControllerCommon.Devices
             listeners.Add(new DeviceChord("Custom Key Small",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                false, Controllers.ControllerButtonFlags.Special2
+                false, Controllers.ControllerButtonFlags.OEM1
                 ));
         }
     }

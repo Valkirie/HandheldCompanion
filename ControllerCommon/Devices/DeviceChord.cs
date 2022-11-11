@@ -26,5 +26,10 @@ namespace ControllerCommon.Devices
             this.chords[true].AddRange(chordDown);
             this.chords[false].AddRange(chordUP);
         }
+
+        public string GetChord(bool IsKeyDown)
+        {
+            return string.Join(" | ", chords[IsKeyDown].OrderBy(key => key).ToList());
+        }
     }
 }

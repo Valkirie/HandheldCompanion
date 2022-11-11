@@ -304,7 +304,6 @@ namespace HandheldCompanion.Managers.Classes
 
         private void UpdateHotkey()
         {
-            bool haskey = !string.IsNullOrEmpty(inputsChord.SpecialKey);
             bool hasbuttons = (inputsChord.GamepadButtons != ControllerButtonFlags.None);
             bool hascombo = inputsChord.OutputKeys.Count != 0;
 
@@ -350,21 +349,7 @@ namespace HandheldCompanion.Managers.Classes
                 Spacing = 6,
             };
 
-            if (haskey && hasbuttons)
-            {
-                mainContent.Children.Add(new TextBlock()
-                {
-                    Text = string.Join(" + ", inputsChord.SpecialKey, buttons)
-                });
-            }
-            else if (haskey)
-            {
-                mainContent.Children.Add(new TextBlock()
-                {
-                    Text = inputsChord.SpecialKey
-                });
-            }
-            else if (hasbuttons)
+            if (hasbuttons)
             {
                 mainContent.Children.Add(new TextBlock()
                 {
@@ -399,7 +384,7 @@ namespace HandheldCompanion.Managers.Classes
             inputButton.Content = mainContent;
 
             // update delete button status
-            eraseButton.IsEnabled = haskey || hasbuttons || hascombo;
+            eraseButton.IsEnabled = hasbuttons || hascombo;
 
             // update pin button
             switch (IsPinned)
