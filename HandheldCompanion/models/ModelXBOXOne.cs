@@ -38,7 +38,7 @@ namespace HandheldCompanion.Models
         public ModelXBOXOne() : base("XBOXOne")
         {
             // colors
-            var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#1C1D21");
+            var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#26272C");
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#D8D7DC");
 
             var ColorPlasticYellow = (Color)ColorConverter.ConvertFromString("#E4D70E");
