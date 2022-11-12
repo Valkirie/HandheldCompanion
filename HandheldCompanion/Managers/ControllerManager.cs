@@ -82,16 +82,24 @@ namespace HandheldCompanion.Managers
         public static void SetTargetController(string baseContainerDeviceInstancePath)
         {
             // dispose from previous controller
-            if (targetController != null)
-                targetController.Dispose();
+            ClearTargetController();
             
             // update target controller
             targetController = controllers[baseContainerDeviceInstancePath];
             targetController.Updated += UpdateReport;
-            targetController.Hook();
+            targetController.Plug();
 
             // rumble current controller
             targetController.Rumble();
+        }
+
+        public static void ClearTargetController()
+        {
+            if (targetController is null)
+                return;
+            
+            targetController.Unplug();
+            targetController = null;
         }
 
         public static IController GetTargetController()
@@ -108,6 +116,10 @@ namespace HandheldCompanion.Managers
             // is part of a hotkey
             if (Inputs.Buttons.HasFlag(ControllerButtonFlags.Special))
                 return;
+
+            // todo: pass inputs to (re)mapper
+
+            // todo: pass inputs to service
         }
     }
 }

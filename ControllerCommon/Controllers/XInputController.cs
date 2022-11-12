@@ -134,6 +134,8 @@ namespace ControllerCommon.Controllers
         private XInputStateSecret State;
         private XInputStateSecret prevState;
 
+        private Vibration Vibration = new Vibration() { LeftMotorSpeed = ushort.MaxValue, RightMotorSpeed = ushort.MaxValue };
+
         public XInputController(int index)
         {
             this.Controller = new Controller((UserIndex)index);
@@ -254,9 +256,21 @@ namespace ControllerCommon.Controllers
             return (bool)(Controller?.IsConnected);
         }
 
-        public override void Dispose()
+        public override async void Rumble()
         {
-            base.Dispose();
+            for (int i = 0; i < 2; i++)
+            {
+                Controller.SetVibration(Vibration);
+                await Task.Delay(100);
+                Controller.SetVibration(new Vibration());
+                await Task.Delay(100);
+            }
+            base.Rumble();
+        }
+
+        public override void Unplug()
+        {
+            base.Unplug();
         }
     }
 }

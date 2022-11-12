@@ -115,6 +115,7 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Dispatcher.Invoke(() =>
             {
+                // Search for an existing controller, remove it
                 foreach (IController ctrl in RadioControllers.Items)
                 {
                     if (ctrl.GetInstancePath() == Controller.GetInstancePath())
@@ -123,6 +124,8 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     }
                 }
+
+                ControllerRefresh();
             });
         }
 
@@ -130,20 +133,41 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Dispatcher.Invoke(() =>
             {
+                // Search for an existing controller, update it
+                var found = false;
                 foreach (IController ctrl in RadioControllers.Items)
                 {
-                    if (ctrl.GetInstancePath() == Controller.GetInstancePath())
+                    found = ctrl.GetInstancePath() == Controller.GetInstancePath();
+                    if (found)
                     {
                         int idx = RadioControllers.Items.IndexOf(ctrl);
                         RadioControllers.Items[idx] = Controller;
-
-                        return;
+                        break;
                     }
                 }
 
-                RadioControllers.Items.Add(Controller);
+                // Add new controller to list if no existing controller was found
+                if (!found)
+                    RadioControllers.Items.Add(Controller);
 
-                InputDevices.Visibility = Visibility.Visible;
+                ControllerRefresh();
+            });
+        }
+
+        private void ControllerRefresh()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                NoDevices.Visibility = RadioControllers.Items.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+                InputDevices.Visibility = RadioControllers.Items.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
+
+                // check if we already have a targeted controller, if not, pick one
+                IController target = ControllerManager.GetTargetController();
+
+                if (target is null)
+                {
+                    RadioControllers.SelectedIndex = 0;
+                }
             });
         }
 
@@ -300,7 +324,10 @@ namespace HandheldCompanion.Views.Pages
         private void RadioControllers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (RadioControllers.SelectedIndex == -1)
+            {
+                ControllerManager.ClearTargetController();
                 return;
+            }
 
             IController Controller = (IController)RadioControllers.SelectedItem;
             ControllerManager.SetTargetController(Controller.GetContainerInstancePath());

@@ -69,7 +69,7 @@ namespace ControllerCommon.Controllers
         public long Timestamp;
     }
 
-    public abstract class IController : IDisposable
+    public abstract class IController
     {
         public ControllerInput Inputs;
 
@@ -140,18 +140,18 @@ namespace ControllerCommon.Controllers
                 InjectedButtons &= ~button;
         }
 
-        public virtual void Rumble()
+        public virtual async void Rumble()
         { }
 
-        public virtual void Hook()
+        public virtual void Plug()
         {
+            InjectedButtons = ControllerButtonFlags.None;
             UpdateTimer.Start();
         }
 
-        public virtual void Dispose()
+        public virtual void Unplug()
         {
             UpdateTimer.Stop();
-            UpdateTimer.Dispose();
         }
     }
 }
