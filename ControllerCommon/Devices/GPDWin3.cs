@@ -17,6 +17,7 @@ namespace ControllerCommon.Devices
             this.nTDP = new double[] { 20, 20, 25 };
             this.cTDP = new double[] { 7, 25 };
 
+            // note, need to manually configured as 0 and 9 in GPD app
             listeners.Add(new DeviceChord("Bottom button left",
                 new List<KeyCode>() { KeyCode.D9 },
                 new List<KeyCode>() { KeyCode.D9 }
