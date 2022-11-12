@@ -245,8 +245,6 @@ namespace HandheldCompanion.Managers
                 timer.Stop();
 
             timer.SetPeriod(interval);
-
-            LogManager.LogDebug("Timer {0} interval set to {1}", timer, interval);
         }
 
         private static void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
@@ -347,7 +345,10 @@ namespace HandheldCompanion.Managers
 
                         // only intercept inputs if not too close
                         if (!IsKeyUnexpected)
+                        {
                             CapturedKeys.AddRange(BufferKeys);
+                            CapturedKeys.Clear(); // todo: remove me later
+                        }
 
                         // clear buffer
                         BufferKeys.Clear();
@@ -358,7 +359,11 @@ namespace HandheldCompanion.Managers
 
                         // calls current controller (if connected)
                         var controller = ControllerManager.GetTargetController();
-                        controller?.InjectButton(chord.button, args.IsKeyDown, args.IsKeyUp);
+                        if (controller != null)
+                        {
+                            controller?.InjectButton(chord.button, args.IsKeyDown, args.IsKeyUp);
+                            LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) to {2}", chord.button, args.IsKeyDown, controller);
+                        }
 
                         if (args.IsKeyDown)
                             SpecialKey = chord.name;
