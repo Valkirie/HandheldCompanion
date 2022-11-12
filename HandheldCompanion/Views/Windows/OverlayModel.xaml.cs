@@ -48,7 +48,7 @@ namespace HandheldCompanion.Views.Windows
         {
             InitializeComponent();
 
-            MainWindow.pipeClient.ServerMessage += OnServerMessage;
+            PipeClient.ServerMessage += OnServerMessage;
 
             // initialize timers
             UpdateTimer = new PrecisionTimer();
@@ -189,7 +189,7 @@ namespace HandheldCompanion.Views.Windows
                 }
             });
 
-            MainWindow.pipeClient.SendMessage(new PipeOverlay((int)Visibility));
+            PipeClient.SendMessage(new PipeOverlay((int)Visibility));
         }
 
         #region ModelVisual3D
@@ -202,7 +202,7 @@ namespace HandheldCompanion.Views.Windows
         private RotateTransform3D TransformTriggerPositionLeft;
         private RotateTransform3D TransformTriggerPositionRight;
 
-        private void OnServerMessage(object sender, PipeMessage message)
+        private void OnServerMessage(PipeMessage message)
         {
             switch (message.code)
             {
@@ -311,11 +311,11 @@ namespace HandheldCompanion.Views.Windows
 
                 // JoystickLeftRing
                 model = CurrentModel.LeftThumbRing.Children[0] as GeometryModel3D;
-                if (Inputs.LeftThumb.X != 0 || Inputs.LeftThumb.Y != 0)
+                if (Inputs.LeftThumbX != 0 || Inputs.LeftThumbY != 0)
                 {
                     // Adjust color
-                    GradientFactor = Math.Max(Math.Abs(1 * (float)Inputs.LeftThumb.X / (float)short.MaxValue),
-                                              Math.Abs(1 * (float)Inputs.LeftThumb.Y / (float)short.MaxValue));
+                    GradientFactor = Math.Max(Math.Abs(1 * (float)Inputs.LeftThumbX / (float)short.MaxValue),
+                                              Math.Abs(1 * (float)Inputs.LeftThumbY / (float)short.MaxValue));
 
                     model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.LeftThumbRing],
                                                        CurrentModel.HighlightMaterials[CurrentModel.LeftThumbRing],
@@ -323,8 +323,8 @@ namespace HandheldCompanion.Views.Windows
 
                     // Define and compute
                     Transform3DGroup Transform3DGroupJoystickLeft = new Transform3DGroup();
-                    float x = CurrentModel.JoystickMaxAngleDeg * (float)Inputs.LeftThumb.X / (float)short.MaxValue;
-                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)Inputs.LeftThumb.Y / (float)short.MaxValue;
+                    float x = CurrentModel.JoystickMaxAngleDeg * (float)Inputs.LeftThumbX / (float)short.MaxValue;
+                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)Inputs.LeftThumbY / (float)short.MaxValue;
 
                     // Rotation X
                     var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
@@ -371,11 +371,11 @@ namespace HandheldCompanion.Views.Windows
 
                 // JoystickRightRing
                 model = CurrentModel.RightThumbRing.Children[0] as GeometryModel3D;
-                if (Inputs.RightThumb.X != 0 || Inputs.RightThumb.Y != 0)
+                if (Inputs.RightThumbX != 0 || Inputs.RightThumbY != 0)
                 {
                     // Adjust color
-                    GradientFactor = Math.Max(Math.Abs(1 * (float)Inputs.RightThumb.X / (float)short.MaxValue),
-                                              Math.Abs(1 * (float)Inputs.RightThumb.Y / (float)short.MaxValue));
+                    GradientFactor = Math.Max(Math.Abs(1 * (float)Inputs.RightThumbX / (float)short.MaxValue),
+                                              Math.Abs(1 * (float)Inputs.RightThumbY / (float)short.MaxValue));
 
                     model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.RightThumbRing],
                                                        CurrentModel.HighlightMaterials[CurrentModel.RightThumbRing],
@@ -383,8 +383,8 @@ namespace HandheldCompanion.Views.Windows
 
                     // Define and compute
                     Transform3DGroup Transform3DGroupJoystickRight = new Transform3DGroup();
-                    float x = CurrentModel.JoystickMaxAngleDeg * (float)Inputs.RightThumb.X / (float)short.MaxValue;
-                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)Inputs.RightThumb.Y / (float)short.MaxValue;
+                    float x = CurrentModel.JoystickMaxAngleDeg * (float)Inputs.RightThumbX / (float)short.MaxValue;
+                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)Inputs.RightThumbY / (float)short.MaxValue;
 
                     // Rotation X
                     var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);

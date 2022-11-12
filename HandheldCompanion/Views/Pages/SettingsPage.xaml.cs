@@ -507,7 +507,7 @@ namespace HandheldCompanion.Views.Pages
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
-            MainWindow.pipeClient.SendMessage(settings);
+            PipeClient.SendMessage(settings);
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -523,7 +523,7 @@ namespace HandheldCompanion.Views.Pages
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorPlacement", Tag);
-            MainWindow.pipeClient.SendMessage(settings);
+            PipeClient.SendMessage(settings);
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -550,7 +550,7 @@ namespace HandheldCompanion.Views.Pages
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorPlacementUpsideDown", isUpsideDown);
-            MainWindow.pipeClient?.SendMessage(settings);
+            PipeClient.SendMessage(settings);
 
             if (!SettingsManager.IsInitialized)
                 return;

@@ -221,8 +221,8 @@ namespace ControllerCommon.Controllers
             else if (Gamepad.LeftThumbY > Gamepad.LeftThumbDeadZone)
                 Inputs.Buttons |= ControllerButtonFlags.LStickUp;
 
-            Inputs.LeftThumb.X = Gamepad.LeftThumbX;
-            Inputs.LeftThumb.Y = Gamepad.LeftThumbY;
+            Inputs.LeftThumbX = Gamepad.LeftThumbX;
+            Inputs.LeftThumbY = Gamepad.LeftThumbY;
 
             // Right Stick
             if (Gamepad.RightThumbX < -Gamepad.RightThumbDeadZone)
@@ -235,8 +235,8 @@ namespace ControllerCommon.Controllers
             else if (Gamepad.RightThumbY > Gamepad.RightThumbDeadZone)
                 Inputs.Buttons |= ControllerButtonFlags.RStickUp;
 
-            Inputs.RightThumb.X = Gamepad.RightThumbX;
-            Inputs.RightThumb.Y = Gamepad.RightThumbY;
+            Inputs.RightThumbX = Gamepad.RightThumbX;
+            Inputs.RightThumbY = Gamepad.RightThumbY;
 
             if (State.wButtons.HasFlag(XInputStateButtons.Xbox))
                 Inputs.Buttons |= ControllerButtonFlags.Special;
@@ -268,9 +268,31 @@ namespace ControllerCommon.Controllers
             base.Rumble();
         }
 
+        public override void Plug()
+        {
+            PipeClient.ServerMessage += OnServerMessage;
+            base.Plug();
+        }
+
         public override void Unplug()
         {
+            PipeClient.ServerMessage -= OnServerMessage;
             base.Unplug();
+        }
+
+        private void OnServerMessage(PipeMessage message)
+        {
+            switch (message.code)
+            {
+                case PipeCode.SERVER_VIBRATION:
+                    {
+                        PipeClientVibration PipeVibration = (PipeClientVibration)message;
+
+                        Vibration vibration = new Vibration() { LeftMotorSpeed = PipeVibration.LargeMotor, RightMotorSpeed = PipeVibration.SmallMotor };
+                        Controller.SetVibration(vibration);
+                    }
+                    break;
+            }
         }
     }
 }

@@ -1,8 +1,11 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Controllers;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
+using Nefarius.ViGEm.Client.Targets.DualShock4;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using SharpDX.XInput;
 using System.Collections.Generic;
@@ -11,49 +14,18 @@ namespace ControllerService.Targets
 {
     internal partial class Xbox360Target : ViGEmTarget
     {
-        private static readonly List<Xbox360Button> ButtonMap = new List<Xbox360Button>
-        {
-            Xbox360Button.Up,
-            Xbox360Button.Down,
-            Xbox360Button.Left,
-            Xbox360Button.Right,
-            Xbox360Button.Start,
-            Xbox360Button.Back,
-            Xbox360Button.LeftThumb,
-            Xbox360Button.RightThumb,
-            Xbox360Button.LeftShoulder,
-            Xbox360Button.RightShoulder,
-            Xbox360Button.Guide,
-            Xbox360Button.A,
-            Xbox360Button.B,
-            Xbox360Button.X,
-            Xbox360Button.Y
-        };
-
-        private static readonly List<Xbox360Axis> AxisMap = new List<Xbox360Axis>
-        {
-            Xbox360Axis.LeftThumbX,
-            Xbox360Axis.LeftThumbY,
-            Xbox360Axis.RightThumbX,
-            Xbox360Axis.RightThumbY
-        };
-
-        private static readonly List<Xbox360Slider> SliderMap = new List<Xbox360Slider>
-        {
-            Xbox360Slider.LeftTrigger,
-            Xbox360Slider.RightTrigger
-        };
-
         private new IXbox360Controller virtualController;
 
-        public Xbox360Target(XInputController xinput, ViGEmClient client) : base(xinput, client)
+        public Xbox360Target() : base()
         {
             // initialize controller
             HID = HIDmode.Xbox360Controller;
 
-            virtualController = client.CreateXbox360Controller();
+            virtualController = ControllerService.vClient.CreateXbox360Controller();
             virtualController.AutoSubmitReport = false;
             virtualController.FeedbackReceived += FeedbackReceived;
+
+            UpdateTimer.Tick += (sender, e) => UpdateReport();
 
             LogManager.LogInformation("{0} initialized, {1}", ToString(), virtualController);
         }
@@ -64,6 +36,8 @@ namespace ControllerService.Targets
                 return;
 
             virtualController.Connect();
+            UpdateTimer.Start();
+
             base.Connect();
         }
 
@@ -73,23 +47,20 @@ namespace ControllerService.Targets
                 return;
 
             virtualController.Disconnect();
+            UpdateTimer.Stop();
+
             base.Disconnect();
         }
 
         public void FeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)
         {
-            if (!physicalController.IsConnected)
-                return;
-
-            Vibration inputMotor = new()
-            {
-                LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * vibrationStrength),
-                RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * vibrationStrength),
-            };
-            physicalController.SetVibration(inputMotor);
+            // pass vibration to client
+            ushort LeftMotorSpeed = (ushort)(e.LargeMotor * ushort.MaxValue / byte.MaxValue);
+            ushort RightMotorSpeed = (ushort)(e.SmallMotor * ushort.MaxValue / byte.MaxValue);
+            PipeServer.SendMessage(new PipeClientVibration() { LargeMotor = LeftMotorSpeed, SmallMotor = RightMotorSpeed });
         }
 
-        public override unsafe void UpdateReport(Gamepad Gamepad)
+        public override unsafe void UpdateReport()
         {
             if (!IsConnected)
                 return;
@@ -97,23 +68,36 @@ namespace ControllerService.Targets
             if (ControllerService.currentProfile.whitelisted)
                 return;
 
-            base.UpdateReport(Gamepad);
+            base.UpdateReport();
 
-            virtualController.SetAxisValue(Xbox360Axis.LeftThumbX, (short)LeftThumb.X);
-            virtualController.SetAxisValue(Xbox360Axis.LeftThumbY, (short)LeftThumb.Y);
-            virtualController.SetAxisValue(Xbox360Axis.RightThumbX, (short)RightThumb.X);
-            virtualController.SetAxisValue(Xbox360Axis.RightThumbY, (short)RightThumb.Y);
+            virtualController.SetAxisValue(Xbox360Axis.LeftThumbX, (short)Inputs.LeftThumbX);
+            virtualController.SetAxisValue(Xbox360Axis.LeftThumbY, (short)Inputs.LeftThumbY);
+            virtualController.SetAxisValue(Xbox360Axis.RightThumbX, (short)Inputs.RightThumbX);
+            virtualController.SetAxisValue(Xbox360Axis.RightThumbY, (short)Inputs.RightThumbY);
 
-            foreach (Xbox360Button button in ButtonMap)
-            {
-                GamepadButtonFlagsExt value = (GamepadButtonFlagsExt)button.Value;
-                virtualController.SetButtonState(button, Buttons.HasFlag(value));
-            }
+            virtualController.SetSliderValue(Xbox360Slider.LeftTrigger, (byte)Inputs.LeftTrigger);
+            virtualController.SetSliderValue(Xbox360Slider.RightTrigger, (byte)Inputs.RightTrigger);
 
-            virtualController.SetButtonState(Xbox360Button.Guide, sState.wButtons.HasFlag(XInputStateButtons.Xbox));
+            virtualController.SetButtonState(Xbox360Button.A, Inputs.Buttons.HasFlag(ControllerButtonFlags.B1));
+            virtualController.SetButtonState(Xbox360Button.B, Inputs.Buttons.HasFlag(ControllerButtonFlags.B2));
+            virtualController.SetButtonState(Xbox360Button.X, Inputs.Buttons.HasFlag(ControllerButtonFlags.B3));
+            virtualController.SetButtonState(Xbox360Button.Y, Inputs.Buttons.HasFlag(ControllerButtonFlags.B4));
 
-            virtualController.SetSliderValue(Xbox360Slider.LeftTrigger, Gamepad.LeftTrigger);
-            virtualController.SetSliderValue(Xbox360Slider.RightTrigger, Gamepad.RightTrigger);
+            virtualController.SetButtonState(Xbox360Button.Left, Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadLeft));
+            virtualController.SetButtonState(Xbox360Button.Right, Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadRight));
+            virtualController.SetButtonState(Xbox360Button.Down, Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadDown));
+            virtualController.SetButtonState(Xbox360Button.Up, Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadUp));
+
+            virtualController.SetButtonState(Xbox360Button.Back, Inputs.Buttons.HasFlag(ControllerButtonFlags.Back));
+            virtualController.SetButtonState(Xbox360Button.Start, Inputs.Buttons.HasFlag(ControllerButtonFlags.Start));
+
+            virtualController.SetButtonState(Xbox360Button.LeftShoulder, Inputs.Buttons.HasFlag(ControllerButtonFlags.LeftShoulder));
+            virtualController.SetButtonState(Xbox360Button.RightShoulder, Inputs.Buttons.HasFlag(ControllerButtonFlags.RightShoulder));
+
+            virtualController.SetButtonState(Xbox360Button.LeftThumb, Inputs.Buttons.HasFlag(ControllerButtonFlags.LeftThumb));
+            virtualController.SetButtonState(Xbox360Button.RightThumb, Inputs.Buttons.HasFlag(ControllerButtonFlags.RightThumb));
+
+            virtualController.SetButtonState(Xbox360Button.Guide, Inputs.Buttons.HasFlag(ControllerButtonFlags.Special));
 
             try
             {

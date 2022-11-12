@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using ModernWpf.Controls;
@@ -9,7 +10,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using GamepadButtonFlagsExt = ControllerCommon.Utils.GamepadButtonFlagsExt;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
@@ -21,7 +21,7 @@ namespace HandheldCompanion.Views.Pages
     {
         private Profile profileCurrent;
 
-        private Dictionary<GamepadButtonFlagsExt, CheckBox> AimingDownSightsActivators = new();
+        private Dictionary<ControllerButtonFlags, CheckBox> AimingDownSightsActivators = new();
 
         public ProfileSettingsMode0()
         {
@@ -33,7 +33,7 @@ namespace HandheldCompanion.Views.Pages
             this.Tag = Tag;
 
             this.profileCurrent = profileCurrent;
-            MainWindow.pipeClient.ServerMessage += OnServerMessage;
+            PipeClient.ServerMessage += OnServerMessage;
 
             SliderSensivity.Value = profileCurrent.aiming_sensivity;
             tb_ProfileAimingDownSightsMultiplier.Value = profileCurrent.aiming_down_sights_multiplier;
@@ -67,7 +67,7 @@ namespace HandheldCompanion.Views.Pages
             }
 
             // draw aiming down sight activators
-            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+            foreach (ControllerButtonFlags button in (ControllerButtonFlags[])Enum.GetValues(typeof(ControllerButtonFlags)))
             {
                 // create panel
                 SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
@@ -94,7 +94,7 @@ namespace HandheldCompanion.Views.Pages
             }
 
             // Fill activators based on profile
-            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+            foreach (ControllerButtonFlags button in (ControllerButtonFlags[])Enum.GetValues(typeof(ControllerButtonFlags)))
                 if (profileCurrent.aiming_down_sights_activation.HasFlag(button))
                     AimingDownSightsActivators[button].IsChecked = true;
                 else
@@ -107,10 +107,10 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
-            MainWindow.pipeClient.ServerMessage -= OnServerMessage;
+            PipeClient.ServerMessage -= OnServerMessage;
         }
 
-        private void OnServerMessage(object sender, PipeMessage message)
+        private void OnServerMessage(PipeMessage message)
         {
             switch (message.code)
             {
@@ -139,7 +139,7 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Dispatcher.Invoke(() =>
             {
-                double dist_x = value / XInputGirometer.sensorSpec.maxIn;
+                double dist_x = value / IMUGyrometer.sensorSpec.maxIn;
 
                 foreach (Control control in StackCurve.Children)
                 {
@@ -246,7 +246,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void AimingDownSightsActivatorsTickedEvent(object sender, RoutedEventArgs e)
         {
-            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+            foreach (ControllerButtonFlags button in (ControllerButtonFlags[])Enum.GetValues(typeof(ControllerButtonFlags)))
             {
                 if ((bool)AimingDownSightsActivators[button].IsChecked)
                 {
@@ -257,7 +257,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void AimingDownSightsActivatorsUntickedEvent(object sender, RoutedEventArgs e)
         {
-            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+            foreach (ControllerButtonFlags button in (ControllerButtonFlags[])Enum.GetValues(typeof(ControllerButtonFlags)))
             {
                 if (!(bool)AimingDownSightsActivators[button].IsChecked)
                 {

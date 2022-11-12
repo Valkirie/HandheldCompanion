@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ControllerCommon.Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -35,26 +36,6 @@ namespace ControllerCommon.Utils
         Mouse = 2 */
     }
 
-    public enum GamepadButtonFlagsExt : uint
-    {
-        DPadUp = 1,
-        DPadDown = 2,
-        DPadLeft = 4,
-        DPadRight = 8,
-        Start = 16,
-        Back = 32,
-        LeftThumb = 64,
-        RightThumb = 128,
-        LeftShoulder = 256,
-        RightShoulder = 512,
-        LeftTrigger = 1024,
-        RightTrigger = 2048,
-        A = 4096,
-        B = 8192,
-        X = 16384,
-        Y = 32768
-    }
-
     public enum OverlayModelMode
     {
         OEM = 0,
@@ -69,38 +50,38 @@ namespace ControllerCommon.Utils
 
     public static class InputUtils
     {
-        public static string GamepadButtonToGlyph(GamepadButtonFlagsExt button)
+        public static string GamepadButtonToGlyph(ControllerButtonFlags button)
         {
             switch (button)
             {
-                case GamepadButtonFlagsExt.A:
-                    return "\uF093";
-                case GamepadButtonFlagsExt.B:
-                    return "\uF094";
-                case GamepadButtonFlagsExt.Y:
-                    return "\uF095";
-                case GamepadButtonFlagsExt.X:
-                    return "\uF096";
-                case GamepadButtonFlagsExt.DPadRight:
-                case GamepadButtonFlagsExt.DPadDown:
-                case GamepadButtonFlagsExt.DPadUp:
-                case GamepadButtonFlagsExt.DPadLeft:
+                case ControllerButtonFlags.B1:
+                    return "\uF093";            // A
+                case ControllerButtonFlags.B2:
+                    return "\uF094";            // B
+                case ControllerButtonFlags.B3:
+                    return "\uF095";            // X
+                case ControllerButtonFlags.B4:
+                    return "\uF096";            // Y
+                case ControllerButtonFlags.DPadRight:
+                case ControllerButtonFlags.DPadDown:
+                case ControllerButtonFlags.DPadUp:
+                case ControllerButtonFlags.DPadLeft:
                     return "\uF10E";
-                case GamepadButtonFlagsExt.LeftTrigger:
+                case ControllerButtonFlags.LeftTrigger:
                     return "\uF10A";
-                case GamepadButtonFlagsExt.RightTrigger:
+                case ControllerButtonFlags.RightTrigger:
                     return "\uF10B";
-                case GamepadButtonFlagsExt.LeftShoulder:
+                case ControllerButtonFlags.LeftShoulder:
                     return "\uF10C";
-                case GamepadButtonFlagsExt.RightShoulder:
+                case ControllerButtonFlags.RightShoulder:
                     return "\uF10D";
-                case GamepadButtonFlagsExt.LeftThumb:
+                case ControllerButtonFlags.LeftThumb:
                     return "\uF108";
-                case GamepadButtonFlagsExt.RightThumb:
+                case ControllerButtonFlags.RightThumb:
                     return "\uF109";
-                case GamepadButtonFlagsExt.Start:
+                case ControllerButtonFlags.Start:
                     return "\uEDE3";
-                case GamepadButtonFlagsExt.Back:
+                case ControllerButtonFlags.Back:
                     return "\uEECA";
                 default:
                     return "\uE783";

@@ -41,7 +41,7 @@ namespace HandheldCompanion.Views.Pages
             foreach (HIDmode mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.NoController))
                 cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
 
-            MainWindow.pipeClient.ServerMessage += OnServerMessage;
+            PipeClient.ServerMessage += OnServerMessage;
             MainWindow.serviceManager.Updated += OnServiceUpdate;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -74,7 +74,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
-            MainWindow.pipeClient.ServerMessage -= OnServerMessage;
+            PipeClient.ServerMessage -= OnServerMessage;
             MainWindow.serviceManager.Updated -= OnServiceUpdate;
         }
 
@@ -162,6 +162,7 @@ namespace HandheldCompanion.Views.Pages
                 InputDevices.Visibility = RadioControllers.Items.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
 
                 // check if we already have a targeted controller, if not, pick one
+                // todo: pick the latest known from settings
                 IController target = ControllerManager.GetTargetController();
 
                 if (target is null)
@@ -194,7 +195,7 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
-        private void OnServerMessage(object sender, PipeMessage message)
+        private void OnServerMessage(PipeMessage message)
         {
             switch (message.code)
             {
@@ -283,7 +284,7 @@ namespace HandheldCompanion.Views.Pages
             HIDchanged?.Invoke(controllerMode);
 
             PipeClientSettings settings = new PipeClientSettings("HIDmode", controllerMode);
-            MainWindow.pipeClient?.SendMessage(settings);
+            PipeClient.SendMessage(settings);
 
             UpdateController();
 
@@ -298,7 +299,7 @@ namespace HandheldCompanion.Views.Pages
             controllerStatus = controllerStatus == HIDstatus.Connected ? HIDstatus.Disconnected : HIDstatus.Connected;
 
             PipeClientSettings settings = new PipeClientSettings("HIDstatus", controllerStatus);
-            MainWindow.pipeClient?.SendMessage(settings);
+            PipeClient.SendMessage(settings);
 
             UpdateController();
         }
@@ -306,19 +307,19 @@ namespace HandheldCompanion.Views.Pages
         private void Toggle_Cloaked_Toggled(object sender, RoutedEventArgs e)
         {
             PipeClientSettings settings = new PipeClientSettings("HIDcloaked", Toggle_Cloaked.IsOn);
-            MainWindow.pipeClient?.SendMessage(settings);
+            PipeClient.SendMessage(settings);
         }
 
         private void Toggle_Uncloak_Toggled(object sender, RoutedEventArgs e)
         {
             PipeClientSettings settings = new PipeClientSettings("HIDuncloakonclose", Toggle_Uncloak.IsOn);
-            MainWindow.pipeClient?.SendMessage(settings);
+            PipeClient.SendMessage(settings);
         }
 
         private void SliderStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             PipeClientSettings settings = new PipeClientSettings("HIDstrength", SliderStrength.Value);
-            MainWindow.pipeClient?.SendMessage(settings);
+            PipeClient.SendMessage(settings);
         }
 
         private void RadioControllers_SelectionChanged(object sender, SelectionChangedEventArgs e)

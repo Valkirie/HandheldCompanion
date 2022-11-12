@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
@@ -12,7 +13,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
-using GamepadButtonFlagsExt = ControllerCommon.Utils.GamepadButtonFlagsExt;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
@@ -24,7 +24,7 @@ namespace HandheldCompanion.Views.Pages
     {
         private Profile currentProfile;
 
-        private Dictionary<GamepadButtonFlagsExt, CheckBox> activators = new();
+        private Dictionary<ControllerButtonFlags, CheckBox> activators = new();
 
         public ProfilesPage()
         {
@@ -35,7 +35,7 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Tag = Tag;
 
-            MainWindow.pipeClient.ServerMessage += OnServerMessage;
+            PipeClient.ServerMessage += OnServerMessage;
 
             MainWindow.profileManager.Deleted += ProfileDeleted;
             MainWindow.profileManager.Updated += ProfileUpdated;
@@ -43,7 +43,7 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // draw gamepad activators
-            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+            foreach (ControllerButtonFlags button in (ControllerButtonFlags[])Enum.GetValues(typeof(ControllerButtonFlags)))
             {
                 // create panel
                 SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
@@ -151,7 +151,7 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
-        private void OnServerMessage(object sender, PipeMessage e)
+        private void OnServerMessage(PipeMessage e)
         {
         }
 
@@ -161,7 +161,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
-            MainWindow.pipeClient.ServerMessage -= OnServerMessage;
+            PipeClient.ServerMessage -= OnServerMessage;
         }
 
         #region UI
@@ -405,7 +405,7 @@ namespace HandheldCompanion.Views.Pages
                 tb_ProfileAntiDeadzone.Value = currentProfile.antideadzone;
                 cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.umc_motion_defaultoffon;
 
-                foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+                foreach (ControllerButtonFlags button in (ControllerButtonFlags[])Enum.GetValues(typeof(ControllerButtonFlags)))
                     if (currentProfile.umc_trigger.HasFlag(button))
                         activators[button].IsChecked = true;
                     else
@@ -492,7 +492,7 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.umc_motion_defaultoffon = (UMC_Motion_Default)cB_UMC_MotionDefaultOffOn.SelectedIndex;
             currentProfile.umc_trigger = 0;
 
-            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
+            foreach (ControllerButtonFlags button in (ControllerButtonFlags[])Enum.GetValues(typeof(ControllerButtonFlags)))
                 if ((bool)activators[button].IsChecked)
                     currentProfile.umc_trigger |= button;
 

@@ -73,7 +73,7 @@ namespace HandheldCompanion.Views.Windows
 
             normalizedX += button == CursorButton.TouchRight ? 0.5d : 0.0d;
 
-            MainWindow.pipeClient.SendMessage(new PipeClientCursor
+            PipeClient.SendMessage(new PipeClientCursor
             {
                 action = action,
                 x = normalizedX,

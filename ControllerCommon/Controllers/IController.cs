@@ -59,11 +59,12 @@ namespace ControllerCommon.Controllers
         OEM4 = 4294967296
     }
 
+    [Serializable]
     public struct ControllerInput
     {
         public ControllerButtonFlags Buttons;
-        public Vector2 LeftThumb;
-        public Vector2 RightThumb;
+        public float LeftThumbX, LeftThumbY;
+        public float RightThumbX, RightThumbY;
         public float LeftTrigger;
         public float RightTrigger;
         public long Timestamp;

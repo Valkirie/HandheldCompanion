@@ -205,7 +205,7 @@ namespace HandheldCompanion.Managers
                 if (profile.isDefault)
                 {
                     // inform service
-                    MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = profile, backgroundTask = true });
+                    PipeClient.SendMessage(new PipeClientProfile { profile = profile, backgroundTask = true });
 
                     // do not update default profile path
                     return;
@@ -356,7 +356,7 @@ namespace HandheldCompanion.Managers
 
             // inform service
             if (isCurrent)
-                MainWindow.pipeClient.SendMessage(new PipeClientProfile { profile = currentProfile, backgroundTask = backgroundtask });
+                PipeClient.SendMessage(new PipeClientProfile { profile = currentProfile, backgroundTask = backgroundtask });
 
             if (profile.error != ProfileErrorCode.None && !profile.isDefault)
             {
@@ -495,7 +495,7 @@ namespace HandheldCompanion.Managers
 
         public void UnregisterApplication(Profile profile)
         {
-            MainWindow.pipeClient?.SendMessage(new PipeClientHidder
+            PipeClient.SendMessage(new PipeClientHidder
             {
                 action = HidderAction.Unregister,
                 path = profile.fullpath
@@ -504,7 +504,7 @@ namespace HandheldCompanion.Managers
 
         public void RegisterApplication(Profile profile)
         {
-            MainWindow.pipeClient?.SendMessage(new PipeClientHidder
+            PipeClient.SendMessage(new PipeClientHidder
             {
                 action = HidderAction.Register,
                 path = profile.fullpath

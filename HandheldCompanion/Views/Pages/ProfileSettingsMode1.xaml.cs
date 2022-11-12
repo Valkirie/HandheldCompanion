@@ -36,7 +36,7 @@ namespace HandheldCompanion.Views.Pages
             this.Tag = Tag;
 
             this.profileCurrent = profileCurrent;
-            MainWindow.pipeClient.ServerMessage += OnServerMessage;
+            PipeClient.ServerMessage += OnServerMessage;
 
             SliderDeadzoneAngle.Value = profileCurrent.steering_deadzone;
             SliderPower.Value = profileCurrent.steering_power;
@@ -51,10 +51,10 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
-            MainWindow.pipeClient.ServerMessage -= OnServerMessage;
+            PipeClient.ServerMessage -= OnServerMessage;
         }
 
-        private void OnServerMessage(object sender, PipeMessage message)
+        private void OnServerMessage(PipeMessage message)
         {
             switch (message.code)
             {

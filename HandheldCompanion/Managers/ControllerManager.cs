@@ -113,13 +113,13 @@ namespace HandheldCompanion.Managers
             InputsManager.UpdateReport(Inputs.Buttons);
             MainWindow.overlayModel.UpdateReport(Inputs);
 
-            // is part of a hotkey
-            if (Inputs.Buttons.HasFlag(ControllerButtonFlags.Special))
-                return;
+            // todo: filter buttons that are part of a combo
 
             // todo: pass inputs to (re)mapper
 
             // todo: pass inputs to service
+            PipeClientInput PipeInputs = new PipeClientInput() { Inputs = Inputs };
+            PipeClient.SendMessage(PipeInputs);
         }
     }
 }

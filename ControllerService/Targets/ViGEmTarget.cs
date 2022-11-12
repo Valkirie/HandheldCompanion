@@ -1,60 +1,26 @@
 using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using Nefarius.ViGEm.Client;
+using PrecisionTiming;
 using SharpDX.XInput;
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using GamepadButtonFlagsExt = ControllerCommon.Utils.GamepadButtonFlagsExt;
 
 namespace ControllerService.Targets
 {
     public abstract class ViGEmTarget : IDisposable
     {
-        #region imports
-        protected enum XInputStateButtons : ushort
-        {
-            None = 0,
-            Xbox = 1024
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        protected struct XInputStateSecret
-        {
-            public uint eventCount;
-            public XInputStateButtons wButtons;
-            public byte bLeftTrigger;
-            public byte bRightTrigger;
-            public short sThumbLX;
-            public short sThumbLY;
-            public short sThumbRX;
-            public short sThumbRY;
-        }
-
-        [DllImport("xinput1_3.dll", EntryPoint = "#100")]
-        protected static extern int XInputGetStateSecret13(int playerIndex, out XInputStateSecret struc);
-        [DllImport("xinput1_4.dll", EntryPoint = "#100")]
-        protected static extern int XInputGetStateSecret14(int playerIndex, out XInputStateSecret struc);
-        #endregion
-
-        public Controller physicalController;
-        public XInputController xinputController;
         public FlickStick flickStick;
+        protected ControllerInput Inputs;
+        protected PrecisionTimer UpdateTimer;
 
         public HIDmode HID = HIDmode.NoController;
 
-        protected ViGEmClient client { get; }
         protected IVirtualGamepad virtualController;
-
-        protected XInputStateSecret sState;
-        protected XInputStateSecret sStateInjector;
-
-        protected GamepadButtonFlagsExt Buttons;            // used to read/write buttons
-        protected GamepadButtonFlagsExt ButtonsInjector;    // used to store injected buttons
-
-        protected double vibrationStrength;
 
         protected Vector2 LeftThumb;
         protected Vector2 RightThumb;
@@ -67,28 +33,18 @@ namespace ControllerService.Targets
 
         public bool IsConnected = false;
 
-        protected ViGEmTarget(XInputController xinput, ViGEmClient client)
+        protected ViGEmTarget()
         {
             // initialize flick stick
             flickStick = new FlickStick();
 
-            // initialize secret state
-            sState = new();
-
-            // initialize controller
-            this.client = client;
-            this.xinputController = xinput;
-            this.physicalController = xinput.controllerEx.Controller;
+            UpdateTimer = new PrecisionTimer();
+            UpdateTimer.SetInterval(5);
+            UpdateTimer.SetAutoResetMode(true);
         }
 
         protected void FeedbackReceived(object sender, EventArgs e)
         {
-        }
-
-        public void SetVibrationStrength(double strength)
-        {
-            vibrationStrength = strength / 100.0f;
-            LogManager.LogInformation("{0} vibration strength set to {1}%", ToString(), strength);
         }
 
         public override string ToString()
@@ -110,40 +66,21 @@ namespace ControllerService.Targets
             LogManager.LogInformation("{0} disconnected", ToString());
         }
 
-        public void InjectReport(GamepadButtonFlagsExt buttons, ushort sButtons, bool IsKeyDown, bool IsKeyUp)
+        public void UpdateInputs(ControllerInput inputs)
         {
-            if(IsKeyDown)
-            {
-                ButtonsInjector |= buttons;
-                sStateInjector.wButtons |= (XInputStateButtons)sButtons;
-            }
-            else if (IsKeyUp)
-            {
-                ButtonsInjector &= ~buttons;
-                sStateInjector.wButtons &= ~(XInputStateButtons)sButtons;
-            }
+            Inputs = inputs;
         }
 
-        public virtual unsafe void UpdateReport(Gamepad Gamepad)
+        public virtual unsafe void UpdateReport()
         {
-            // get current gamepad state
-            XInputGetStateSecret13((int)physicalController.UserIndex, out sState);
-            sState.wButtons |= sStateInjector.wButtons;
-
-            // get buttons values
-            Buttons = (GamepadButtonFlagsExt)Gamepad.Buttons;
-            Buttons |= (Gamepad.LeftTrigger > 0 ? GamepadButtonFlagsExt.LeftTrigger : 0);
-            Buttons |= (Gamepad.RightTrigger > 0 ? GamepadButtonFlagsExt.RightTrigger : 0);
-            Buttons |= ButtonsInjector;
-
             // get sticks values
-            LeftThumb = new Vector2(Gamepad.LeftThumbX, Gamepad.LeftThumbY);
-            RightThumb = new Vector2(Gamepad.RightThumbX, Gamepad.RightThumbY);
+            LeftThumb = new Vector2(Inputs.LeftThumbX, Inputs.LeftThumbY);
+            RightThumb = new Vector2(Inputs.RightThumbX, Inputs.RightThumbY);
 
             if (ControllerService.currentProfile.umc_enabled)
             {
-                if (((ControllerService.currentProfile.umc_motion_defaultoffon == UMC_Motion_Default.Off) && (ControllerService.currentProfile.umc_trigger & Buttons) != 0) ||
-                    ((ControllerService.currentProfile.umc_motion_defaultoffon == UMC_Motion_Default.On) && (ControllerService.currentProfile.umc_trigger & Buttons) == 0))
+                if ((ControllerService.currentProfile.umc_motion_defaultoffon == UMC_Motion_Default.Off && (ControllerService.currentProfile.umc_trigger & Inputs.Buttons) != 0) ||
+                    (ControllerService.currentProfile.umc_motion_defaultoffon == UMC_Motion_Default.On && (ControllerService.currentProfile.umc_trigger & Inputs.Buttons) == 0))
                 {
                     switch (ControllerService.currentProfile.umc_input)
                     {
@@ -156,26 +93,26 @@ namespace ControllerService.Targets
                                 switch (ControllerService.currentProfile.umc_input)
                                 {
                                     case Input.PlayerSpace:
-                                        Angular = new Vector2((float)xinputController.sensorFusion.CameraYawDelta, (float)xinputController.sensorFusion.CameraPitchDelta);
+                                        Angular = new Vector2((float)IMU.sensorFusion.CameraYawDelta, (float)IMU.sensorFusion.CameraPitchDelta);
                                         break;
                                     case Input.AutoRollYawSwap:
-                                        Angular = InputUtils.AutoRollYawSwap(xinputController.sensorFusion.GravityVectorSimple, xinputController.AngularVelocities[XInputSensorFlags.Centered]);
+                                        Angular = InputUtils.AutoRollYawSwap(IMU.sensorFusion.GravityVectorSimple, IMU.AngularVelocity[XInputSensorFlags.Centered]);
                                         break;
                                     default:
                                     case Input.JoystickCamera:
-                                        Angular = new Vector2(-xinputController.AngularVelocities[XInputSensorFlags.Centered].Z, xinputController.AngularVelocities[XInputSensorFlags.Centered].X);
+                                        Angular = new Vector2(-IMU.AngularVelocity[XInputSensorFlags.Centered].Z, IMU.AngularVelocity[XInputSensorFlags.Centered].X);
                                         break;
                                 }
 
                                 // apply sensivity curve
-                                Angular.X *= InputUtils.ApplyCustomSensitivity(Angular.X, XInputGirometer.sensorSpec.maxIn, ControllerService.currentProfile.aiming_array);
-                                Angular.Y *= InputUtils.ApplyCustomSensitivity(Angular.Y, XInputGirometer.sensorSpec.maxIn, ControllerService.currentProfile.aiming_array);
+                                Angular.X *= InputUtils.ApplyCustomSensitivity(Angular.X, IMUGyrometer.sensorSpec.maxIn, ControllerService.currentProfile.aiming_array);
+                                Angular.Y *= InputUtils.ApplyCustomSensitivity(Angular.Y, IMUGyrometer.sensorSpec.maxIn, ControllerService.currentProfile.aiming_array);
 
                                 // apply device width ratio
                                 Angular.X *= ControllerService.handheldDevice.WidthHeightRatio;
 
                                 // apply aiming down scopes multiplier if activated
-                                if ((ControllerService.currentProfile.aiming_down_sights_activation & Buttons) != 0)
+                                if ((ControllerService.currentProfile.aiming_down_sights_activation & Inputs.Buttons) != 0)
                                 {
                                     Angular *= ControllerService.currentProfile.aiming_down_sights_multiplier;
                                 }
@@ -199,7 +136,7 @@ namespace ControllerService.Targets
                                             float FlickStickX = flickStick.Handle(RightThumb,
                                                                                   ControllerService.currentProfile.flick_duration,
                                                                                   ControllerService.currentProfile.stick_sensivity,
-                                                                                  XInputController.TotalMilliseconds);
+                                                                                  IMU.TotalMilliseconds);
 
                                             // X input combines motion controls plus flick stick result
                                             // Y input only from motion controls
@@ -224,7 +161,7 @@ namespace ControllerService.Targets
                         case Input.JoystickSteering:
                             {
                                 float GamepadThumbX = InputUtils.Steering(
-                                    xinputController.sensorFusion.DeviceAngle.Y,
+                                    IMU.sensorFusion.DeviceAngle.Y,
                                     ControllerService.currentProfile.steering_max_angle,
                                     ControllerService.currentProfile.steering_power,
                                     ControllerService.currentProfile.steering_deadzone);

@@ -1,3 +1,4 @@
+using ControllerCommon.Controllers;
 using ControllerCommon.Utils;
 using System;
 using System.Collections.Generic;
@@ -75,7 +76,7 @@ namespace ControllerCommon
 
         // Aiming down sights
         public float aiming_down_sights_multiplier { get; set; } = 1.0f;
-        public GamepadButtonFlagsExt aiming_down_sights_activation { get; set; }
+        public ControllerButtonFlags aiming_down_sights_activation { get; set; }
 
         // flickstick
         public bool flickstick_enabled { get; set; }
@@ -86,7 +87,7 @@ namespace ControllerCommon
         public bool TDP_override { get; set; }
         public double[] TDP_value { get; set; } = new double[3];
 
-        public GamepadButtonFlagsExt umc_trigger { get; set; }
+        public ControllerButtonFlags umc_trigger { get; set; }
 
         // hidden settings
         [JsonIgnore] public ProfileErrorCode error;

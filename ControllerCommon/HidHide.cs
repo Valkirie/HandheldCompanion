@@ -137,14 +137,14 @@ namespace ControllerCommon
             devices = root.devices;
         } */
 
-        public void SetCloaking(bool status, string ProductName)
+        public void SetCloaking(bool status)
         {
             process.StartInfo.Arguments = status ? $"--cloak-on" : $"--cloak-off";
             process.Start();
             process.WaitForExit();
             process.StandardOutput.ReadToEnd();
 
-            LogManager.LogInformation("{0} cloak status set to {1}", ProductName, status);
+            LogManager.LogInformation("Cloak status set to {0}", status);
         }
 
         public void UnregisterController(string deviceInstancePath)

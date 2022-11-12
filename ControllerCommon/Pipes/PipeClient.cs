@@ -1,5 +1,8 @@
 ﻿using ControllerCommon.Managers;
+using Microsoft.Extensions.Configuration;
 using NamedPipeWrapper;
+using Serilog.Extensions.Logging;
+using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Timers;
@@ -7,28 +10,26 @@ using Timer = System.Timers.Timer;
 
 namespace ControllerCommon
 {
-    public class PipeClient
+    public static class PipeClient
     {
-        public NamedPipeClient<PipeMessage> client;
+        public static NamedPipeClient<PipeMessage> client;
 
-        public event ConnectedEventHandler Connected;
-        public delegate void ConnectedEventHandler(Object sender);
+        public static event ConnectedEventHandler Connected;
+        public delegate void ConnectedEventHandler();
 
-        public event DisconnectedEventHandler Disconnected;
-        public delegate void DisconnectedEventHandler(Object sender);
+        public static event DisconnectedEventHandler Disconnected;
+        public delegate void DisconnectedEventHandler();
 
-        public event ServerMessageEventHandler ServerMessage;
-        public delegate void ServerMessageEventHandler(Object sender, PipeMessage e);
+        public static event ServerMessageEventHandler ServerMessage;
+        public delegate void ServerMessageEventHandler(PipeMessage e);
 
-        private ConcurrentQueue<PipeMessage> m_queue;
-        private Timer m_timer;
+        private static ConcurrentQueue<PipeMessage> m_queue = new();
+        private static Timer m_timer;
 
-        public bool connected;
+        public static bool IsConnected;
 
-        public PipeClient(string pipeName)
+        public static void Initialize(string pipeName)
         {
-            m_queue = new ConcurrentQueue<PipeMessage>();
-
             // monitors processes and settings
             m_timer = new Timer(1000) { Enabled = false, AutoReset = true };
             m_timer.Elapsed += SendMessageQueue;
@@ -41,55 +42,50 @@ namespace ControllerCommon
             client.Error += OnError;
         }
 
-        public override string ToString()
-        {
-            return this.GetType().Name;
-        }
-
-        private void OnClientDisconnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
+        private static void OnClientDisconnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
         {
             LogManager.LogInformation("Client {0} disconnected", connection.Id);
-            Disconnected?.Invoke(this);
+            Disconnected?.Invoke();
 
-            connected = false;
+            IsConnected = false;
         }
 
-        public void Open()
+        public static void Open()
         {
             client?.Start();
-            LogManager.LogInformation("{0} has started", this.ToString());
+            LogManager.LogInformation("{0} has started", "PipeClient");
         }
 
-        public void Close()
+        public static void Close()
         {
             client?.Stop();
-            LogManager.LogInformation("{0} has stopped", this.ToString());
+            LogManager.LogInformation("{0} has stopped", "PipeClient");
             client = null;
         }
 
-        private void OnServerMessage(NamedPipeConnection<PipeMessage, PipeMessage> connection, PipeMessage message)
+        private static void OnServerMessage(NamedPipeConnection<PipeMessage, PipeMessage> connection, PipeMessage message)
         {
             LogManager.LogDebug("Client {0} opcode: {1} says: {2}", connection.Id, message.code, string.Join(" ", message.ToString()));
-            ServerMessage?.Invoke(this, message);
+            ServerMessage?.Invoke(message);
 
             switch (message.code)
             {
                 case PipeCode.SERVER_PING:
-                    connected = true;
-                    Connected?.Invoke(this);
+                    IsConnected = true;
+                    Connected?.Invoke();
                     LogManager.LogInformation("Client {0} is now connected!", connection.Id);
                     break;
             }
         }
 
-        private void OnError(Exception exception)
+        private static void OnError(Exception exception)
         {
-            LogManager.LogError("{0} failed. {1}", this.ToString(), exception.Message);
+            LogManager.LogError("{0} failed. {1}", "PipeClient", exception.Message);
         }
 
-        public void SendMessage(PipeMessage message)
+        public static void SendMessage(PipeMessage message)
         {
-            if (!connected)
+            if (!IsConnected)
             {
                 Type nodeType = message.GetType();
                 if (nodeType == typeof(PipeClientCursor))
@@ -103,9 +99,9 @@ namespace ControllerCommon
             client?.PushMessage(message);
         }
 
-        private void SendMessageQueue(object sender, ElapsedEventArgs e)
+        private static void SendMessageQueue(object sender, ElapsedEventArgs e)
         {
-            if (!connected)
+            if (!IsConnected)
                 return;
 
             foreach (PipeMessage m in m_queue)

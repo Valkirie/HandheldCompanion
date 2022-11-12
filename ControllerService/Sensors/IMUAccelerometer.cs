@@ -7,21 +7,19 @@ using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerService.Sensors
 {
-    public class XInputGirometer : XInputSensor
+    public class IMUAccelerometer : IMUSensor
     {
         public static SensorSpec sensorSpec = new SensorSpec()
         {
-            minIn = -128.0f,
-            maxIn = 128.0f,
-            minOut = -2048.0f,
-            maxOut = 2048.0f,
+            minIn = -2.0f,
+            maxIn = 2.0f,
+            minOut = short.MinValue,
+            maxOut = short.MaxValue,
         };
 
-        public XInputGirometer(SensorFamily sensorFamily, int updateInterval) : base()
+        public IMUAccelerometer(SensorFamily sensorFamily, int updateInterval) : base()
         {
             this.updateInterval = updateInterval;
-            centerTimer.Interval = updateInterval * 6;
-
             UpdateSensor(sensorFamily);
         }
 
@@ -30,7 +28,7 @@ namespace ControllerService.Sensors
             switch (sensorFamily)
             {
                 case SensorFamily.WindowsDevicesSensors:
-                    sensor = Gyrometer.GetDefault();
+                    sensor = Accelerometer.GetDefault();
                     break;
                 case SensorFamily.SerialUSBIMU:
                     sensor = SerialUSBIMU.GetDefault();
@@ -46,11 +44,16 @@ namespace ControllerService.Sensors
             switch (sensorFamily)
             {
                 case SensorFamily.WindowsDevicesSensors:
-                    ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
+                    ((Accelerometer)sensor).ReportInterval = (uint)updateInterval;
+                    ((Accelerometer)sensor).ReadingChanged += ReadingChanged;
+                    filter.SetFilterAttrs(ControllerService.handheldDevice.oneEuroSettings.minCutoff, ControllerService.handheldDevice.oneEuroSettings.beta);
 
                     LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
                     break;
                 case SensorFamily.SerialUSBIMU:
+                    ((SerialUSBIMU)sensor).ReadingChanged += ReadingChanged;
+                    filter.SetFilterAttrs(((SerialUSBIMU)sensor).GetFilterCutoff(), ((SerialUSBIMU)sensor).GetFilterBeta());
+
                     LogManager.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
                     break;
             }
@@ -63,7 +66,7 @@ namespace ControllerService.Sensors
             switch (sensorFamily)
             {
                 case SensorFamily.WindowsDevicesSensors:
-                    ((Gyrometer)sensor).ReadingChanged += ReadingChanged;
+                    ((Accelerometer)sensor).ReadingChanged += ReadingChanged;
                     break;
                 case SensorFamily.SerialUSBIMU:
                     ((SerialUSBIMU)sensor).ReadingChanged += ReadingChanged;
@@ -79,7 +82,7 @@ namespace ControllerService.Sensors
             switch (sensorFamily)
             {
                 case SensorFamily.WindowsDevicesSensors:
-                    ((Gyrometer)sensor).ReadingChanged -= ReadingChanged;
+                    ((Accelerometer)sensor).ReadingChanged -= ReadingChanged;
                     break;
                 case SensorFamily.SerialUSBIMU:
                     ((SerialUSBIMU)sensor).ReadingChanged -= ReadingChanged;
@@ -91,37 +94,42 @@ namespace ControllerService.Sensors
 
         private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
         {
-            this.reading.X = this.reading_fixed.X = (float)AngularVelocityDeg.X;
-            this.reading.Y = this.reading_fixed.Y = (float)AngularVelocityDeg.Y;
-            this.reading.Z = this.reading_fixed.Z = (float)AngularVelocityDeg.Z;
+            this.reading.X = this.reading_fixed.X = (float)filter.axis1Filter.Filter(AccelerationG.X, IMU.DeltaSeconds);
+            this.reading.Y = this.reading_fixed.Y = (float)filter.axis2Filter.Filter(AccelerationG.Y, IMU.DeltaSeconds);
+            this.reading.Z = this.reading_fixed.Z = (float)filter.axis3Filter.Filter(AccelerationG.Z, IMU.DeltaSeconds);
 
             base.ReadingChanged();
         }
 
-        private void ReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
+        private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
             foreach (char axis in reading_axis.Keys)
             {
-                switch (ControllerService.handheldDevice.AngularVelocityAxisSwap[axis])
+                switch (ControllerService.handheldDevice.AccelerationAxisSwap[axis])
                 {
                     default:
                     case 'X':
-                        reading_axis[axis] = args.Reading.AngularVelocityX;
+                        reading_axis[axis] = args.Reading.AccelerationX;
                         break;
                     case 'Y':
-                        reading_axis[axis] = args.Reading.AngularVelocityY;
+                        reading_axis[axis] = args.Reading.AccelerationY;
                         break;
                     case 'Z':
-                        reading_axis[axis] = args.Reading.AngularVelocityZ;
+                        reading_axis[axis] = args.Reading.AccelerationZ;
                         break;
                 }
             }
 
-            this.reading.X = this.reading_fixed.X = (float)reading_axis['X'] * ControllerService.handheldDevice.AngularVelocityAxis.X;
-            this.reading.Y = this.reading_fixed.Y = (float)reading_axis['Y'] * ControllerService.handheldDevice.AngularVelocityAxis.Y;
-            this.reading.Z = this.reading_fixed.Z = (float)reading_axis['Z'] * ControllerService.handheldDevice.AngularVelocityAxis.Z;
+            this.reading.X = this.reading_fixed.X = (float)reading_axis['X'] * ControllerService.handheldDevice.AccelerationAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)reading_axis['Y'] * ControllerService.handheldDevice.AccelerationAxis.Y;
+            this.reading.Z = this.reading_fixed.Z = (float)reading_axis['Z'] * ControllerService.handheldDevice.AccelerationAxis.Z;
 
             base.ReadingChanged();
+        }
+
+        private void Shaken(Accelerometer sender, AccelerometerShakenEventArgs args)
+        {
+            // throw new NotImplementedException();
         }
 
         public new Vector3 GetCurrentReading(bool center = false, bool ratio = false)
@@ -133,10 +141,10 @@ namespace ControllerService.Sensors
                 Z = center ? this.reading_fixed.Z : this.reading.Z
             };
 
-            reading *= ControllerService.currentProfile.gyrometer;
+            reading *= ControllerService.currentProfile.accelerometer;
 
             var readingZ = ControllerService.currentProfile.steering == 0 ? reading.Z : reading.Y;
-            var readingY = ControllerService.currentProfile.steering == 0 ? reading.Y : reading.Z;
+            var readingY = ControllerService.currentProfile.steering == 0 ? reading.Y : -reading.Z;
             var readingX = ControllerService.currentProfile.steering == 0 ? reading.X : reading.X;
 
             if (ControllerService.currentProfile.inverthorizontal)

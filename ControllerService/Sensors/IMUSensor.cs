@@ -30,7 +30,7 @@ namespace ControllerService.Sensors
         Busy = 2
     }
 
-    public abstract class XInputSensor
+    public abstract class IMUSensor
     {
         protected Vector3 reading = new();
         protected Vector3 reading_fixed = new();
@@ -50,7 +50,7 @@ namespace ControllerService.Sensors
             { 'Z', 0.0d },
         };
 
-        protected XInputSensor()
+        protected IMUSensor()
         {
             this.centerTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 100 };
             this.centerTimer.Elapsed += Timer_Elapsed;

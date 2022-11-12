@@ -53,9 +53,6 @@ namespace HandheldCompanion.Views
         public static OverlayTrackpad overlayTrackpad;
         public static OverlayQuickTools overlayquickTools;
 
-        // connectivity vars
-        public static PipeClient pipeClient;
-
         // Hidder vars
         public static HidHide Hidder;
 
@@ -153,11 +150,11 @@ namespace HandheldCompanion.Views
             handheldDevice.PullSensors();
 
             // initialize pipe client
-            pipeClient = new PipeClient("ControllerService");
-            pipeClient.ServerMessage += OnServerMessage;
-            pipeClient.Connected += OnClientConnected;
-            pipeClient.Disconnected += OnClientDisconnected;
-            pipeClient.Open();
+            PipeClient.Initialize("ControllerService");
+            PipeClient.ServerMessage += OnServerMessage;
+            PipeClient.Connected += OnClientConnected;
+            PipeClient.Disconnected += OnClientDisconnected;
+            PipeClient.Open();
 
             // load manager(s)
             loadManagers();
@@ -377,7 +374,7 @@ namespace HandheldCompanion.Views
             }
         }
 
-        private void OnClientConnected(object sender)
+        private void OnClientConnected()
         {
             // lazy: send all local settings to server ?
             PipeClientSettings settings = new PipeClientSettings();
@@ -385,10 +382,10 @@ namespace HandheldCompanion.Views
             foreach (KeyValuePair<string, object> values in SettingsManager.GetProperties())
                 settings.settings.Add(values.Key, values.Value);
 
-            pipeClient?.SendMessage(settings);
+            PipeClient.SendMessage(settings);
         }
 
-        private void OnClientDisconnected(object sender)
+        private void OnClientDisconnected()
         {
             // do something
         }
@@ -419,8 +416,8 @@ namespace HandheldCompanion.Views
             }
         }
 
-        #region pipeClient
-        private void OnServerMessage(object sender, PipeMessage message)
+        #region PipeServer
+        private void OnServerMessage(PipeMessage message)
         {
             switch (message.code)
             {
@@ -611,8 +608,8 @@ namespace HandheldCompanion.Views
             overlayTrackpad.Close();
             overlayquickTools.Close(true);
 
-            if (pipeClient.connected)
-                pipeClient.Close();
+            if (PipeClient.IsConnected)
+                PipeClient.Close();
 
             ControllerManager.Stop();
             InputsManager.Stop();
@@ -727,7 +724,7 @@ namespace HandheldCompanion.Views
             {
                 var preNavPageType = ContentFrame.CurrentSourcePageType;
                 var preNavPageName = preNavPageType.Name;
-                pipeClient.SendMessage(new PipeNavigation((string)preNavPageName));
+                PipeClient.SendMessage(new PipeNavigation((string)preNavPageName));
 
                 var NavViewItem = navView.MenuItems
                     .OfType<NavigationViewItem>()
