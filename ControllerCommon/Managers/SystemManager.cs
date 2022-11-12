@@ -178,9 +178,14 @@ namespace ControllerCommon.Managers
                 
                 // add or update device
                 devices[parent.InstanceId] = details;
+            }
 
+            foreach (PnPDetails details in GetDeviceExs())
+            {
                 if (details.isGaming && !IsInitialized)
+                {
                     XInputArrived?.Invoke(details);
+                }
             }
         }
 
