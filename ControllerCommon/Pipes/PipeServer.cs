@@ -92,21 +92,27 @@ namespace ControllerCommon
             ps.AddAccessRule(par);
 
             server = new NamedPipeServer<PipeMessage>(pipeName, ps);
-            server.ClientConnected += OnClientConnected;
-            server.ClientDisconnected += OnClientDisconnected;
-            server.ClientMessage += OnClientMessage;
-            server.Error += OnError;
         }
 
         public static void Open()
         {
+            server.ClientConnected += OnClientConnected;
+            server.ClientDisconnected += OnClientDisconnected;
+            server.ClientMessage += OnClientMessage;
+            server.Error += OnError;
             server?.Start();
+
             LogManager.LogInformation("{0} has started", "PipeServer");
         }
 
         public static void Close()
         {
+            server.ClientConnected -= OnClientConnected;
+            server.ClientDisconnected -= OnClientDisconnected;
+            server.ClientMessage -= OnClientMessage;
+            server.Error -= OnError;
             server?.Stop();
+
             LogManager.LogInformation("{0} has stopped", "PipeServer");
             server = null;
         }

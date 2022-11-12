@@ -36,10 +36,6 @@ namespace ControllerCommon
 
             client = new NamedPipeClient<PipeMessage>(pipeName);
             client.AutoReconnect = true;
-
-            client.Disconnected += OnClientDisconnected;
-            client.ServerMessage += OnServerMessage;
-            client.Error += OnError;
         }
 
         private static void OnClientDisconnected(NamedPipeConnection<PipeMessage, PipeMessage> connection)
@@ -52,12 +48,20 @@ namespace ControllerCommon
 
         public static void Open()
         {
+            client.Disconnected += OnClientDisconnected;
+            client.ServerMessage += OnServerMessage;
+            client.Error += OnError;
+
             client?.Start();
             LogManager.LogInformation("{0} has started", "PipeClient");
         }
 
         public static void Close()
         {
+            client.Disconnected -= OnClientDisconnected;
+            client.ServerMessage -= OnServerMessage;
+            client.Error -= OnError;
+
             client?.Stop();
             LogManager.LogInformation("{0} has stopped", "PipeClient");
             client = null;
