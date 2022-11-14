@@ -17,7 +17,7 @@ namespace ControllerCommon
 
         public bool isVirtual;
         public bool isGaming;
-        public bool isAttributed;
+        public bool isHooked;
         public DateTimeOffset arrivalDate;
 
         public string deviceInstancePath;

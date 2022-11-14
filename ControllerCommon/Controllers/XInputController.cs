@@ -138,8 +138,8 @@ namespace ControllerCommon.Controllers
 
         public XInputController(int index)
         {
-            this.Controller = new Controller((UserIndex)index);
-            this.UserIndex = index;
+            Controller = new Controller((UserIndex)index);
+            UserIndex = index;
 
             if (!IsConnected())
                 return;
@@ -152,7 +152,8 @@ namespace ControllerCommon.Controllers
                 var ProductId = CapabilitiesEx.ProductId.ToString("X4");
                 var VendorId = CapabilitiesEx.VendorId.ToString("X4");
 
-                this.Details = SystemManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId)[index];
+                Details = SystemManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId).FirstOrDefault();
+                Details.isHooked = true;
             }
 
             UpdateTimer.Tick += (sender, e) => UpdateReport();
@@ -160,8 +161,12 @@ namespace ControllerCommon.Controllers
 
         protected override void UpdateReport()
         {
+            // skip if controller isn't connected
+            if (!IsConnected())
+                return;
+
             // update gamepad state
-            Gamepad = this.Controller.GetState().Gamepad;
+            Gamepad = Controller.GetState().Gamepad;
 
             // update secret state
             XInputGetStateSecret13(UserIndex, out State);
