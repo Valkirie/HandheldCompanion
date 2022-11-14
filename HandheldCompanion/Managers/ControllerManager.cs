@@ -113,13 +113,14 @@ namespace HandheldCompanion.Managers
             InputsManager.UpdateReport(Inputs.Buttons);
             MainWindow.overlayModel.UpdateReport(Inputs);
 
-            // todo: filter buttons that are part of a combo
-
             // todo: pass inputs to (re)mapper
 
-            // todo: pass inputs to service
-            PipeClientInput PipeInputs = new PipeClientInput() { Inputs = Inputs };
-            PipeClient.SendMessage(PipeInputs);
+            // filter inputs if part of shortcut (send None ?)
+            if (Inputs.IsShortcut())
+                Inputs.Buttons = ControllerButtonFlags.None;
+
+            // pass inputs to service
+            PipeClient.SendMessage(new PipeClientInput(Inputs));
         }
     }
 }

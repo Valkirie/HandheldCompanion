@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
@@ -240,7 +241,9 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
                         break;
                     case "shortcutGuide":
-                        // todo: implement me
+                        // comments: should be handled by a mapper, not hotkeys
+                        var controller = ControllerManager.GetTargetController();
+                        controller?.InjectButton(ControllerButtonFlags.Special, IsKeyDown, IsKeyUp);
                         break;
                     case "suspendResumeTask":
                         {

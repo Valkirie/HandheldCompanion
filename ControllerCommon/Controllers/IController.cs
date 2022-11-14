@@ -1,4 +1,6 @@
-﻿using Nefarius.Utilities.DeviceManagement.PnP;
+﻿using ControllerCommon.Managers;
+using Nefarius.Utilities.DeviceManagement.PnP;
+using PInvoke;
 using PrecisionTiming;
 using SharpDX.XInput;
 using System;
@@ -60,7 +62,7 @@ namespace ControllerCommon.Controllers
     }
 
     [Serializable]
-    public struct ControllerInput
+    public class ControllerInput
     {
         public ControllerButtonFlags Buttons;
         public float LeftThumbX, LeftThumbY;
@@ -68,6 +70,11 @@ namespace ControllerCommon.Controllers
         public float LeftTrigger;
         public float RightTrigger;
         public long Timestamp;
+
+        public bool IsShortcut()
+        {
+            return Buttons.HasFlag(ControllerButtonFlags.Special) && Buttons != ControllerButtonFlags.Special;
+        }
     }
 
     public abstract class IController
@@ -139,6 +146,8 @@ namespace ControllerCommon.Controllers
                 InjectedButtons |= button;
             else if (IsKeyUp)
                 InjectedButtons &= ~button;
+
+            LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", button, IsKeyDown, IsKeyUp, ToString());
         }
 
         public virtual async void Rumble()

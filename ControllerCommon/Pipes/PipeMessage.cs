@@ -139,6 +139,11 @@ namespace ControllerCommon
         {
             code = PipeCode.CLIENT_INPUT;
         }
+
+        public PipeClientInput(ControllerInput inputs) : this()
+        {
+            Inputs = inputs;
+        }
     }
 
     [Serializable]
