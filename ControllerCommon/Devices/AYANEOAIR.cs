@@ -37,25 +37,25 @@ namespace ControllerCommon.Devices
             listeners.Add(new DeviceChord("Custom Key Top Right",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F10 },
                 new List<KeyCode>() { KeyCode.F10, KeyCode.LWin, KeyCode.RControlKey },
-                false, Controllers.ControllerButtonFlags.OEM2
+                false, Controllers.ControllerButtonFlags.OEM3
                 ));
 
             listeners.Add(new DeviceChord("Custom Key Top Left",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F11 },
                 new List<KeyCode>() { KeyCode.F11, KeyCode.LWin, KeyCode.RControlKey },
-                false, Controllers.ControllerButtonFlags.OEM3
+                false, Controllers.ControllerButtonFlags.OEM4
                 ));
 
             listeners.Add(new DeviceChord("Custom Key Big",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 },
                 new List<KeyCode>() { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey },
-                false, Controllers.ControllerButtonFlags.Special
+                false, Controllers.ControllerButtonFlags.OEM1
                 ));
 
             listeners.Add(new DeviceChord("Custom Key Small",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                false, Controllers.ControllerButtonFlags.OEM1
+                false, Controllers.ControllerButtonFlags.OEM2
                 ));
         }
     }
