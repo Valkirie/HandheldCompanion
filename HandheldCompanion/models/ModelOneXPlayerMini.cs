@@ -6,10 +6,12 @@ namespace HandheldCompanion.Models
     internal class ModelOneXPlayerMini : Model
     {
         // Specific groups (move me)
-        Model3DGroup ALetter;
+        Model3DGroup B1Letter;
+        Model3DGroup B2Letter;
+        Model3DGroup B3Letter;
+        Model3DGroup B4Letter;
         Model3DGroup BackGrillShadow;
         Model3DGroup BackIcon;
-        Model3DGroup BLetter;
         Model3DGroup BodyInternal;
         Model3DGroup Screen;
         Model3DGroup Home;
@@ -24,8 +26,6 @@ namespace HandheldCompanion.Models
         Model3DGroup TopGrill;
         Model3DGroup Turbo;
         Model3DGroup TurboIcon;
-        Model3DGroup XLetter;
-        Model3DGroup YLetter;
 
         public ModelOneXPlayerMini() : base("OneXPlayerMini")
         {
@@ -53,10 +53,12 @@ namespace HandheldCompanion.Models
             UpwardVisibilityRotationPointRight = new Vector3D(93.32, -10.5f, 54.05f);
 
             // load model(s)
-            ALetter = modelImporter.Load($"models/{ModelName}/ALetter.obj");
+            B1Letter = modelImporter.Load($"models/{ModelName}/B1Letter.obj");
+            B2Letter = modelImporter.Load($"models/{ModelName}/B2Letter.obj");
+            B3Letter = modelImporter.Load($"models/{ModelName}/B3Letter.obj");
+            B4Letter = modelImporter.Load($"models/{ModelName}/B4Letter.obj");
             BackGrillShadow = modelImporter.Load($"models/{ModelName}/BackGrillShadow.obj");
             BackIcon = modelImporter.Load($"models/{ModelName}/BackIcon.obj");
-            BLetter = modelImporter.Load($"models/{ModelName}/BLetter.obj");
             BodyInternal = modelImporter.Load($"models/{ModelName}/BodyInternal.obj");
             Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
             Home = modelImporter.Load($"models/{ModelName}/Home.obj");
@@ -71,14 +73,14 @@ namespace HandheldCompanion.Models
             TopGrill = modelImporter.Load($"models/{ModelName}/TopGrill.obj");
             Turbo = modelImporter.Load($"models/{ModelName}/Turbo.obj");
             TurboIcon = modelImporter.Load($"models/{ModelName}/TurboIcon.obj");
-            XLetter = modelImporter.Load($"models/{ModelName}/XLetter.obj");
-            YLetter = modelImporter.Load($"models/{ModelName}/YLetter.obj");
-            // pull model(s)
 
-            model3DGroup.Children.Add(ALetter);
+            // pull model(s)
+            model3DGroup.Children.Add(B1Letter);
+            model3DGroup.Children.Add(B2Letter);
+            model3DGroup.Children.Add(B3Letter);
+            model3DGroup.Children.Add(B4Letter);
             model3DGroup.Children.Add(BackGrillShadow);
             model3DGroup.Children.Add(BackIcon);
-            model3DGroup.Children.Add(BLetter);
             model3DGroup.Children.Add(BodyInternal);
             model3DGroup.Children.Add(Screen);
             model3DGroup.Children.Add(Home);
@@ -93,8 +95,6 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(TopGrill);
             model3DGroup.Children.Add(Turbo);
             model3DGroup.Children.Add(TurboIcon);
-            model3DGroup.Children.Add(XLetter);
-            model3DGroup.Children.Add(YLetter);
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
             {
@@ -120,7 +120,7 @@ namespace HandheldCompanion.Models
                     || model3D == LeftBaseRing || model3D == RightBaseRing
                     || model3D == StartIcon || model3D == BackIcon
                     || model3D == Home
-                    || model3D == ALetter || model3D == BLetter || model3D == XLetter || model3D == YLetter
+                    || model3D == B1Letter || model3D == B2Letter || model3D == B3Letter || model3D == B4Letter
                     )
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticOrange;

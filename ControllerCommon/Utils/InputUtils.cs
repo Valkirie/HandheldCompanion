@@ -45,7 +45,8 @@ namespace ControllerCommon.Utils
         EightBitDoLite2 = 4,
         MachenikeHG510 = 5,
         Toy = 6,
-        N64 = 7
+        N64 = 7,
+        DualSense = 8,
     }
 
     public static class InputUtils

@@ -946,6 +946,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Playstation DualSense.
+        /// </summary>
+        public static string OverlayPage_DualSenseController {
+            get {
+                return ResourceManager.GetString("OverlayPage_DualSenseController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emulated controller.
         /// </summary>
         public static string OverlayPage_EmulatedController {
