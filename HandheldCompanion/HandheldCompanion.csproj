@@ -965,7 +965,7 @@
     <None Update="models\MachenikeHG510\Home-Machenike.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\MachenikeHG510\Home.obj">
+    <None Update="Models\MachenikeHG510\Special.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\MachenikeHG510\Joystick-Left-Ring.obj">
