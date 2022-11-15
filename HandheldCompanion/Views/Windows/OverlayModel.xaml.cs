@@ -252,6 +252,7 @@ namespace HandheldCompanion.Views.Windows
                             continue;
 
                         model.Material = Inputs.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
+                        model.BackMaterial = Inputs.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
                     }
                 }
             });

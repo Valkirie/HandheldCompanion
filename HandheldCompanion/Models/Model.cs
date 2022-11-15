@@ -102,16 +102,16 @@ namespace HandheldCompanion
                 if (material.GetType() != typeof(DiffuseMaterial))
                     continue;
 
-                // Determine colors from brush from materials
+                // determine colors from brush from materials
                 Brush DefaultMaterialBrush = ((DiffuseMaterial)material).Brush;
                 Color StartColor = ((SolidColorBrush)DefaultMaterialBrush).Color;
 
                 // generic material(s)
                 var drawingColor = System.Windows.Forms.ControlPaint.LightLight(System.Drawing.Color.FromArgb(StartColor.A, StartColor.R, StartColor.G, StartColor.B));
                 var outColor = Color.FromArgb(drawingColor.A, drawingColor.R, drawingColor.G, drawingColor.B);
-                var solidColod = new SolidColorBrush(outColor);
+                var solidColor = new SolidColorBrush(outColor);
 
-                HighlightMaterials[model3D] = new DiffuseMaterial(solidColod);
+                HighlightMaterials[model3D] = new DiffuseMaterial(solidColor);
             }
         }
     }
