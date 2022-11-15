@@ -15,7 +15,7 @@ namespace ControllerService.Targets
     public abstract class ViGEmTarget : IDisposable
     {
         public FlickStick flickStick;
-        protected ControllerInput Inputs;
+        protected ControllerInput Inputs = new();
         protected PrecisionTimer UpdateTimer;
 
         public HIDmode HID = HIDmode.NoController;

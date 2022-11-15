@@ -79,7 +79,7 @@ namespace ControllerCommon.Controllers
 
     public abstract class IController
     {
-        public ControllerInput Inputs;
+        public ControllerInput Inputs = new();
 
         public ControllerButtonFlags InjectedButtons;
         public ControllerButtonFlags prevInjectedButtons;

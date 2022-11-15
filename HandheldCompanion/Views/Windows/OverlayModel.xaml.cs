@@ -22,7 +22,7 @@ namespace HandheldCompanion.Views.Windows
     {
         private PrecisionTimer UpdateTimer;
 
-        private ControllerInput Inputs;
+        private ControllerInput Inputs = new();
 
         private Model CurrentModel;
         private OverlayModelMode Modelmode;
