@@ -761,7 +761,7 @@
     <None Update="Models\DS4\MotorRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\DS4\Playstation-Button.obj">
+    <None Update="Models\DS4\Special.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\DS4\RightShoulder.obj">

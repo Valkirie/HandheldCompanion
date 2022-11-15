@@ -91,7 +91,6 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(LED3);
             model3DGroup.Children.Add(MainBodyBack);
             model3DGroup.Children.Add(MainBodyFront);
-            model3DGroup.Children.Add(Special);
             model3DGroup.Children.Add(USBPort);
 
             model3DGroup.Children.Add(DPadDownCover);

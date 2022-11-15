@@ -15,7 +15,6 @@ namespace HandheldCompanion.Models
         Model3DGroup RightShoulderMiddle;
         Model3DGroup Screen;
         Model3DGroup MainBodyBack;
-        Model3DGroup PlaystationButton;
         Model3DGroup AuxPort;
         Model3DGroup Triangle;
         Model3DGroup DPadDownArrow;
@@ -61,7 +60,6 @@ namespace HandheldCompanion.Models
             RightShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Middle.obj");
             Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
             MainBodyBack = modelImporter.Load($"models/{ModelName}/MainBodyBack.obj");
-            PlaystationButton = modelImporter.Load($"models/{ModelName}/Playstation-Button.obj");
             AuxPort = modelImporter.Load($"models/{ModelName}/Aux-Port.obj");
             Triangle = modelImporter.Load($"models/{ModelName}/Triangle.obj");
             DPadDownArrow = modelImporter.Load($"models/{ModelName}/DPadDownArrow.obj");
@@ -98,7 +96,6 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(RightShoulderMiddle);
             model3DGroup.Children.Add(Screen);
             model3DGroup.Children.Add(MainBodyBack);
-            model3DGroup.Children.Add(PlaystationButton);
             model3DGroup.Children.Add(AuxPort);
             model3DGroup.Children.Add(Triangle);
             model3DGroup.Children.Add(DPadDownArrow);
