@@ -152,11 +152,9 @@
   </data>
   <data name="AboutPage_SensorExternal" xml:space="preserve">
     <value>External</value>
-    
   </data>
   <data name="AboutPage_SensorInternal" xml:space="preserve">
     <value>Internal</value>
-    
   </data>
   <data name="AboutPage_SensorName" xml:space="preserve">
     <value>Sensor name</value>
@@ -405,6 +403,9 @@
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
     <value>Controller options</value>
   </data>
+  <data name="OverlayPage_DualSenseController" xml:space="preserve">
+    <value>Playstation DualSense</value>
+  </data>
   <data name="OverlayPage_EmulatedController" xml:space="preserve">
     <value>Emulated controller</value>
   </data>
@@ -455,27 +456,21 @@
   </data>
   <data name="OverlayPage_RenderSettings" xml:space="preserve">
     <value>Render settings</value>
-    
   </data>
   <data name="OverlayPage_RenderSettingsAntialiasing" xml:space="preserve">
     <value>Anti-Aliasing</value>
-    
   </data>
   <data name="OverlayPage_RenderSettingsAntialiasingDesc" xml:space="preserve">
     <value>Change the render anti-aliasing status</value>
-    
   </data>
   <data name="OverlayPage_RenderSettingsDesc" xml:space="preserve">
     <value>Change the render settings of your stationary 3D overlay controller model</value>
-    
   </data>
   <data name="OverlayPage_RenderSettingsFramerate" xml:space="preserve">
     <value>Update rate</value>
-    
   </data>
   <data name="OverlayPage_RenderSettingsFramerateDesc" xml:space="preserve">
     <value>Change the render update rate, in update per second</value>
-    
   </data>
   <data name="OverlayPage_Size" xml:space="preserve">
     <value>Size</value>
@@ -491,7 +486,6 @@
   </data>
   <data name="OverlayPage_ToyController" xml:space="preserve">
     <value>Fisher-Price controller</value>
-    
   </data>
   <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
     <value>Trackpads options</value>
@@ -904,7 +898,6 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_Download" xml:space="preserve">
     <value>Download</value>
-    
   </data>
   <data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
     <value>Downloading - </value>
@@ -941,11 +934,9 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_SensorExternal" xml:space="preserve">
     <value>External</value>
-    
   </data>
   <data name="SettingsPage_SensorInternal" xml:space="preserve">
     <value>Internal</value>
-    
   </data>
   <data name="SettingsPage_SensorOptions" xml:space="preserve">
     <value>Sensor options</value>
@@ -1024,19 +1015,15 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_UpdateFailedDownload" xml:space="preserve">
     <value>We couldn't download the update file.</value>
-    
   </data>
   <data name="SettingsPage_UpdateFailedGithub" xml:space="preserve">
     <value>We couldn't reach github.</value>
-    
   </data>
   <data name="SettingsPage_UpdateFailedInstall" xml:space="preserve">
     <value>We couldn't locate the update file.</value>
-    
   </data>
   <data name="SettingsPage_UpdateWarning" xml:space="preserve">
     <value>Oups. There was an issue.</value>
-    
   </data>
   <data name="SettingsPage_UpToDate" xml:space="preserve">
     <value>You're up to date</value>

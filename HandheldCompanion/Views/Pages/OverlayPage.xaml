@@ -88,6 +88,7 @@
                             <Label Content="{x:Static resx:Resources.OverlayPage_MachenikeHG510Controller}"/>
                             <Label Content="{x:Static resx:Resources.OverlayPage_ToyController}"/>
 							<Label Content="{x:Static resx:Resources.OverlayPage_N64Controller}"/>
+                            <Label Content="{x:Static resx:Resources.OverlayPage_DualSenseController}"/>
                         </ComboBox>
                     </Grid>
                 </Border>

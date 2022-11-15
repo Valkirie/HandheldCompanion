@@ -161,7 +161,12 @@ namespace HandheldCompanion.Views.Windows
                     {
                         newModel = new ModelN64();
                     }
-                    break;					
+                    break;
+                case OverlayModelMode.DualSense:
+                    {
+                        newModel = new ModelDualSense();
+                    }
+                    break;
             }
 
             if (newModel != CurrentModel)
