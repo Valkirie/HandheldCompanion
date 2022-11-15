@@ -32,8 +32,7 @@ namespace ControllerCommon
         CLIENT_SETTINGS = 8,                // Sent to server to update settings
                                             // args: ...
 
-        CLIENT_HIDDER = 9,                  // Sent to server to register applications
-                                            // args: ...
+        OBSOLETE_0 = 9,                     // OBSOLETE, REUSEME
 
         OBSOLETE_1 = 11,                    // OBSOLETE, REUSEME
 
@@ -55,8 +54,7 @@ namespace ControllerCommon
         SERVER_VIBRATION = 17,              // Sent to client to notify a vibration feedback arrived
                                             // args: ...
 
-        OBSOLETE_2 = 18,                    // Sent to server to share details on controller
-                                            // args: ...
+        OBSOLETE_2 = 18,                    // OBSOLETE, REUSEME
 
         CLIENT_CLEARINDEX = 19,             // Sent to server to clear all hidden controllers
                                             // args: ...

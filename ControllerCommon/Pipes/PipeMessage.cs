@@ -112,25 +112,6 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public enum HidderAction
-    {
-        Register = 0,
-        Unregister = 1
-    }
-
-    [Serializable]
-    public partial class PipeClientHidder : PipeMessage
-    {
-        public HidderAction action;
-        public string path;
-
-        public PipeClientHidder()
-        {
-            code = PipeCode.CLIENT_HIDDER;
-        }
-    }
-
-    [Serializable]
     public partial class PipeClientInput : PipeMessage
     {
         public ControllerInput Inputs;

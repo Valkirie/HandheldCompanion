@@ -37,9 +37,9 @@ namespace HandheldCompanion.Views.Pages
 
             PipeClient.ServerMessage += OnServerMessage;
 
-            MainWindow.profileManager.Deleted += ProfileDeleted;
-            MainWindow.profileManager.Updated += ProfileUpdated;
-            MainWindow.profileManager.Ready += ProfileLoaded;
+            ProfileManager.Deleted += ProfileDeleted;
+            ProfileManager.Updated += ProfileUpdated;
+            ProfileManager.Ready += ProfileManagerLoaded;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // draw gamepad activators
@@ -211,11 +211,11 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
-        private void ProfileLoaded()
+        private void ProfileManagerLoaded()
         {
             this.Dispatcher.Invoke(() =>
             {
-                cB_Profiles.SelectedItem = MainWindow.profileManager.GetDefault();
+                cB_Profiles.SelectedItem = ProfileManager.GetDefault();
             });
         }
         #endregion
@@ -283,7 +283,7 @@ namespace HandheldCompanion.Views.Pages
 
                     bool exists = false;
 
-                    if (MainWindow.profileManager.Contains(profile))
+                    if (ProfileManager.Contains(profile))
                     {
                         Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureOverwrite1} \"{profile.name}\"?",
                                                                             $"{Properties.Resources.ProfilesPage_AreYouSureOverwrite2}",
@@ -305,8 +305,8 @@ namespace HandheldCompanion.Views.Pages
 
                     if (!exists)
                     {
-                        MainWindow.profileManager.UpdateOrCreateProfile(profile, false);
-                        MainWindow.profileManager.SerializeProfile(profile);
+                        ProfileManager.UpdateOrCreateProfile(profile, false);
+                        ProfileManager.SerializeProfile(profile);
                     }
                 }
                 catch (Exception ex)
@@ -358,8 +358,8 @@ namespace HandheldCompanion.Views.Pages
                 MotionSettings.IsEnabled = true;
                 UniversalSettings.IsEnabled = true;
 
-                // disable button if is default profile
-                b_DeleteProfile.IsEnabled = !currentProfile.isDefault;
+                // disable button if is default profile or application is running
+                b_DeleteProfile.IsEnabled = !currentProfile.isDefault && currentProfile.error != ProfileErrorCode.IsRunning;
                 // prevent user from renaming default profile
                 tB_ProfileName.IsEnabled = !currentProfile.isDefault;
                 // prevent user from setting power settings on default profile
@@ -454,7 +454,7 @@ namespace HandheldCompanion.Views.Pages
             switch (result.Result)
             {
                 case ContentDialogResult.Primary:
-                    MainWindow.profileManager.DeleteProfile(currentProfile);
+                    ProfileManager.DeleteProfile(currentProfile);
                     cB_Profiles.SelectedIndex = 0;
                     break;
                 default:
@@ -502,8 +502,8 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
             currentProfile.TDP_override = (bool)TDPToggle.IsOn;
 
-            MainWindow.profileManager.UpdateOrCreateProfile(currentProfile, false);
-            MainWindow.profileManager.SerializeProfile(currentProfile);
+            ProfileManager.UpdateOrCreateProfile(currentProfile, false);
+            ProfileManager.SerializeProfile(currentProfile);
         }
 
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)

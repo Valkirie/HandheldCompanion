@@ -10,41 +10,44 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Printing;
 using System.Resources;
 using System.Text.Json;
 using static ControllerCommon.Utils.ProcessUtils;
 
 namespace HandheldCompanion.Managers
 {
-    public class ProfileManager : Manager
+    public static class ProfileManager
     {
-        private Dictionary<bool, uint> CRCs = new Dictionary<bool, uint>()
+        private static Dictionary<bool, uint> CRCs = new Dictionary<bool, uint>()
         {
             { false, 0xcd4906cc },
             { true, 0x1e9df650 },
         };
 
-        public Dictionary<string, Profile> profiles = new Dictionary<string, Profile>(StringComparer.InvariantCultureIgnoreCase);
-        public FileSystemWatcher profileWatcher { get; set; }
+        public static Dictionary<string, Profile> profiles = new Dictionary<string, Profile>(StringComparer.InvariantCultureIgnoreCase);
+        public static FileSystemWatcher profileWatcher { get; set; }
 
         #region events
-        public event DeletedEventHandler Deleted;
+        public static event DeletedEventHandler Deleted;
         public delegate void DeletedEventHandler(Profile profile);
-        public event UpdatedEventHandler Updated;
+        public static event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(Profile profile, bool backgroundtask, bool isCurrent);
-        public event LoadedEventHandler Ready;
+        public static event LoadedEventHandler Ready;
         public delegate void LoadedEventHandler();
 
-        public event AppliedEventHandler Applied;
+        public static event AppliedEventHandler Applied;
         public delegate void AppliedEventHandler(Profile profile);
 
-        public event DiscardedEventHandler Discarded;
+        public static event DiscardedEventHandler Discarded;
         public delegate void DiscardedEventHandler(Profile profile, bool isCurrent);
         #endregion
 
-        public Profile currentProfile = new();
+        public static Profile currentProfile = new();
+        private static string Path;
+        private static bool IsInitialized;
 
-        public ProfileManager() : base()
+        static ProfileManager()
         {
             // initialiaze path
             Path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "profiles");
@@ -56,7 +59,7 @@ namespace HandheldCompanion.Managers
             ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
         }
 
-        public override void Start()
+        public static void Start()
         {
             // initialize profile files
             ResourceSet resourceSet = Properties.Resources.ResourceManager.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
@@ -92,21 +95,19 @@ namespace HandheldCompanion.Managers
             // warn owner
             Ready?.Invoke();
 
-            base.Start();
+            IsInitialized = true;
         }
 
-        public override void Stop()
+        public static void Stop()
         {
             if (!IsInitialized)
                 return;
 
             profileWatcher.Deleted -= ProfileDeleted;
             profileWatcher.Dispose();
-
-            base.Stop();
         }
 
-        public bool Contains(Profile profile)
+        public static bool Contains(Profile profile)
         {
             foreach (Profile pr in profiles.Values)
                 if (pr.executable == profile.executable)
@@ -115,7 +116,7 @@ namespace HandheldCompanion.Managers
             return false;
         }
 
-        public int GetProfileIndex(Profile profile)
+        public static int GetProfileIndex(Profile profile)
         {
             int idx = -1;
 
@@ -129,7 +130,7 @@ namespace HandheldCompanion.Managers
             return idx;
         }
 
-        private void ProcessManager_ProcessStopped(ProcessEx processEx)
+        private static void ProcessManager_ProcessStopped(ProcessEx processEx)
         {
             try
             {
@@ -159,7 +160,7 @@ namespace HandheldCompanion.Managers
             catch (Exception) { }
         }
 
-        private void ProcessManager_ProcessStarted(ProcessEx processEx, bool startup)
+        private static void ProcessManager_ProcessStarted(ProcessEx processEx, bool startup)
         {
             try
             {
@@ -177,7 +178,7 @@ namespace HandheldCompanion.Managers
             catch (Exception) { }
         }
 
-        private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
+        private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
             try
             {
@@ -222,7 +223,7 @@ namespace HandheldCompanion.Managers
             catch (Exception) { }
         }
 
-        private void ProfileDeleted(object sender, FileSystemEventArgs e)
+        private static void ProfileDeleted(object sender, FileSystemEventArgs e)
         {
             string ProfileName = e.Name.Replace(".json", "");
 
@@ -242,14 +243,14 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        public Profile GetDefault()
+        public static Profile GetDefault()
         {
             if (profiles.ContainsKey("Default"))
                 return profiles["Default"];
             return new();
         }
 
-        private void ProcessProfile(string fileName)
+        private static void ProcessProfile(string fileName)
         {
             Profile profile = null;
             try
@@ -281,13 +282,15 @@ namespace HandheldCompanion.Managers
             UpdateOrCreateProfile(profile);
         }
 
-        public void DeleteProfile(Profile profile)
+        public static void DeleteProfile(Profile profile)
         {
             string settingsPath = System.IO.Path.Combine(Path, profile.json);
 
             if (profiles.ContainsKey(profile.name))
             {
-                UnregisterApplication(profile);
+                // Unregister application from HidHide
+                HidHide.UnregisterApplication(profile.fullpath);
+
                 profiles.Remove(profile.name);
 
                 // warn owner
@@ -311,7 +314,7 @@ namespace HandheldCompanion.Managers
             File.Delete(settingsPath);
         }
 
-        public void SerializeProfile(Profile profile)
+        public static void SerializeProfile(Profile profile)
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(profile, options);
@@ -320,7 +323,7 @@ namespace HandheldCompanion.Managers
             File.WriteAllText(settingsPath, jsonString);
         }
 
-        private ProfileErrorCode SanitizeProfile(Profile profile)
+        private static ProfileErrorCode SanitizeProfile(Profile profile)
         {
             string processpath = System.IO.Path.GetDirectoryName(profile.fullpath);
 
@@ -339,7 +342,7 @@ namespace HandheldCompanion.Managers
             return ProfileErrorCode.None;
         }
 
-        public void UpdateOrCreateProfile(Profile profile, bool backgroundtask = true, bool fullUpdate = true)
+        public static void UpdateOrCreateProfile(Profile profile, bool backgroundtask = true, bool fullUpdate = true)
         {
             // refresh error code
             profile.error = SanitizeProfile(profile);
@@ -375,18 +378,24 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        public void UpdateProfileCloaking(Profile profile)
+        public static void UpdateProfileCloaking(Profile profile)
         {
             if (profile.error == ProfileErrorCode.MissingExecutable || profile.error == ProfileErrorCode.MissingPath)
                 return;
 
             if (profile.whitelisted)
-                RegisterApplication(profile);
+            {
+                // Register application on HidHide
+                HidHide.RegisterApplication(profile.fullpath);
+            }
             else
-                UnregisterApplication(profile);
+            {
+                // Unregister application from HidHide
+                HidHide.UnregisterApplication(profile.fullpath);
+            }
         }
 
-        public void UpdateProfileWrapper(Profile profile)
+        public static void UpdateProfileWrapper(Profile profile)
         {
             // deploy xinput wrapper
             string XinputPlus = Properties.Resources.XInputPlus;
@@ -485,30 +494,12 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        public Profile GetProfileFromExec(string processExec)
+        public static Profile GetProfileFromExec(string processExec)
         {
             foreach (Profile pr in profiles.Values)
                 if (pr.executable.Equals(processExec, StringComparison.InvariantCultureIgnoreCase))
                     return pr;
             return null;
-        }
-
-        public void UnregisterApplication(Profile profile)
-        {
-            PipeClient.SendMessage(new PipeClientHidder
-            {
-                action = HidderAction.Unregister,
-                path = profile.fullpath
-            });
-        }
-
-        public void RegisterApplication(Profile profile)
-        {
-            PipeClient.SendMessage(new PipeClientHidder
-            {
-                action = HidderAction.Register,
-                path = profile.fullpath
-            });
         }
     }
 }

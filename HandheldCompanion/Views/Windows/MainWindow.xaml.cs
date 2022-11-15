@@ -57,7 +57,6 @@ namespace HandheldCompanion.Views
         private static List<Manager> _managers = new();
         public static ToastManager toastManager;
         public static ServiceManager serviceManager;
-        public static ProfileManager profileManager;
         public static TaskManager taskManager;
         public static PowerManager powerManager;
         public static UpdateManager updateManager;
@@ -168,6 +167,7 @@ namespace HandheldCompanion.Views
             SettingsManager.Start();
             HotkeysManager.Start();
             SystemManager.Start();
+            ProfileManager.Start();
             ProcessManager.Start();
 
             // start manager(s) asynchroneously
@@ -262,7 +262,6 @@ namespace HandheldCompanion.Views
             toastManager = new ToastManager("HandheldCompanion");
             toastManager.Enabled = SettingsManager.GetBoolean("ToastEnable");
 
-            profileManager = new();
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
             taskManager = new TaskManager("HandheldCompanion", CurrentExe);
             powerManager = new();
@@ -270,7 +269,6 @@ namespace HandheldCompanion.Views
 
             // store managers
             _managers.Add(toastManager);
-            _managers.Add(profileManager);
             _managers.Add(serviceManager);
             _managers.Add(taskManager);
             _managers.Add(powerManager);
@@ -593,7 +591,6 @@ namespace HandheldCompanion.Views
         private void Window_Closed(object sender, EventArgs e)
         {
             serviceManager.Stop();
-            profileManager.Stop();
             powerManager.Stop();
             toastManager.Stop();
 
@@ -610,6 +607,7 @@ namespace HandheldCompanion.Views
             ControllerManager.Stop();
             InputsManager.Stop();
             SystemManager.Stop();
+            ProfileManager.Stop();
             ProcessManager.Stop();
             EnergyManager.Stop();
 
