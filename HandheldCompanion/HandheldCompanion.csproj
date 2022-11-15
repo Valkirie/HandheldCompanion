@@ -1553,6 +1553,9 @@
     <None Update="Models\XBOX360\Shoulder-Right-Trigger.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="models\XBOX360\SpecialLED.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Models\XBOX360\Start.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

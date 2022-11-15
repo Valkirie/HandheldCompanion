@@ -13,6 +13,7 @@ namespace HandheldCompanion.Models
         // Specific groups (move me)
         Model3DGroup MainBodyCharger;
         Model3DGroup SpecialRing;
+        Model3DGroup SpecialLED;
         Model3DGroup LeftShoulderBottom;
         Model3DGroup RightShoulderBottom;
 
@@ -73,6 +74,7 @@ namespace HandheldCompanion.Models
             // load model(s)
             MainBodyCharger = modelImporter.Load($"models/{ModelName}/MainBody-Charger.obj");
             SpecialRing = modelImporter.Load($"models/{ModelName}/SpecialRing.obj");
+            SpecialLED = modelImporter.Load($"models/{ModelName}/SpecialLED.obj");
             LeftShoulderBottom = modelImporter.Load($"models/{ModelName}/LeftShoulderBottom.obj");
             RightShoulderBottom = modelImporter.Load($"models/{ModelName}/RightShoulderBottom.obj");
 
@@ -84,6 +86,7 @@ namespace HandheldCompanion.Models
             // pull model(s)
             model3DGroup.Children.Add(MainBodyCharger);
             model3DGroup.Children.Add(SpecialRing);
+            model3DGroup.Children.Add(SpecialLED);
             model3DGroup.Children.Add(LeftShoulderBottom);
             model3DGroup.Children.Add(RightShoulderBottom);
 
@@ -145,7 +148,7 @@ namespace HandheldCompanion.Models
                 }
 
                 // specific face button material
-                if (model3D == B1Button)
+                if (model3D == B1Button || model3D == SpecialLED || model3D == SpecialRing)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticGreenTransparent;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticGreenTransparent;
