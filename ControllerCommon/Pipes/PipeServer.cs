@@ -136,7 +136,6 @@ namespace ControllerCommon
 
         private static void OnClientMessage(NamedPipeConnection<PipeMessage, PipeMessage> connection, PipeMessage message)
         {
-            LogManager.LogDebug("Client {0} opcode: {1} says: {2}", connection.Id, message.code, string.Join(" ", message.ToString()));
             ClientMessage?.Invoke(message);
         }
 
