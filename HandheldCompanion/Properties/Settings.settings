@@ -161,7 +161,7 @@
     <Setting Name="HIDuncloakonclose" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="HIDstrength" Type="System.Decimal" Scope="User">
+    <Setting Name="HIDstrength" Type="System.Double" Scope="User">
       <Value Profile="(Default)">100</Value>
     </Setting>
   </Settings>

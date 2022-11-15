@@ -662,9 +662,9 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
-        public decimal HIDstrength {
+        public double HIDstrength {
             get {
-                return ((decimal)(this["HIDstrength"]));
+                return ((double)(this["HIDstrength"]));
             }
             set {
                 this["HIDstrength"] = value;
