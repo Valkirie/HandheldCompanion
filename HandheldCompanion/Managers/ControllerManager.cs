@@ -164,9 +164,7 @@ namespace HandheldCompanion.Managers
 
             // todo: pass inputs to (re)mapper
 
-            // filter inputs if part of shortcut (send None ?)
-            if (Inputs.IsShortcut())
-                Inputs.Buttons = ControllerButtonFlags.Special;
+            // todo: filter inputs if part of shortcut
 
             // pass inputs to service
             PipeClient.SendMessage(new PipeClientInput(Inputs));

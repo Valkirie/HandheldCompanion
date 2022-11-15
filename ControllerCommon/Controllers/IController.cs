@@ -70,11 +70,6 @@ namespace ControllerCommon.Controllers
         public float LeftTrigger;
         public float RightTrigger;
         public long Timestamp;
-
-        public bool IsShortcut()
-        {
-            return Buttons.HasFlag(ControllerButtonFlags.Special) && Buttons != ControllerButtonFlags.Special;
-        }
     }
 
     public abstract class IController
