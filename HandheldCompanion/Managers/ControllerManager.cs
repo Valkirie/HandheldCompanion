@@ -166,7 +166,7 @@ namespace HandheldCompanion.Managers
 
             // filter inputs if part of shortcut (send None ?)
             if (Inputs.IsShortcut())
-                Inputs.Buttons = ControllerButtonFlags.None;
+                Inputs.Buttons = ControllerButtonFlags.Special;
 
             // pass inputs to service
             PipeClient.SendMessage(new PipeClientInput(Inputs));
