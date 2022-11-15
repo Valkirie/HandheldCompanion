@@ -294,20 +294,6 @@ namespace ControllerService
                     UpdateSettings(settings.settings);
                     break;
 
-                case PipeCode.CLIENT_HIDDER:
-                    PipeClientHidder hidder = (PipeClientHidder)message;
-
-                    switch (hidder.action)
-                    {
-                        case HidderAction.Register:
-                            HidHide.RegisterApplication(hidder.path);
-                            break;
-                        case HidderAction.Unregister:
-                            HidHide.UnregisterApplication(hidder.path);
-                            break;
-                    }
-                    break;
-
                 case PipeCode.CLIENT_NAVIGATED:
                     PipeNavigation navigation = (PipeNavigation)message;
                     CurrentTag = navigation.Tag;

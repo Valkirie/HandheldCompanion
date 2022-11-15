@@ -99,9 +99,9 @@ namespace HandheldCompanion.Managers
             gfxWatchdog = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
             gfxWatchdog.Elapsed += gfxWatchdog_Elapsed;
 
-            MainWindow.profileManager.Applied += ProfileManager_Applied;
-            MainWindow.profileManager.Updated += ProfileManager_Updated;
-            MainWindow.profileManager.Discarded += ProfileManager_Discarded;
+            ProfileManager.Applied += ProfileManager_Applied;
+            ProfileManager.Updated += ProfileManager_Updated;
+            ProfileManager.Discarded += ProfileManager_Discarded;
 
             // initialize settings
             double TDPdown = SettingsManager.GetDouble("QuickToolsPerformanceTDPSustainedValue");
