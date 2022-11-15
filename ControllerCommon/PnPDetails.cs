@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ControllerCommon
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct PnPDetails
+    public class PnPDetails
     {
         public string Manufacturer;
         public string DeviceDesc;
