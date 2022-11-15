@@ -175,13 +175,16 @@ namespace ControllerCommon.Managers
                 devices[parent.InstanceId] = details;
             }
 
-            foreach (PnPDetails details in GetDeviceExs())
-            {
-                if (details.isGaming && !IsInitialized)
-                {
-                    XInputArrived?.Invoke(details);
-                }
-            }
+            if (IsInitialized)
+                return;
+
+            // do we even have a gaming device connected?
+            PnPDetails device = GetDeviceExs().Where(a => a.isGaming && !a.isHooked).FirstOrDefault();
+            if (device is null)
+                return;
+
+            // dirty, improve me
+            XInputArrived?.Invoke(device);
         }
 
         public static List<PnPDetails> GetDeviceExs()
