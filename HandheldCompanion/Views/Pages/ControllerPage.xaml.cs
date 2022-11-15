@@ -64,6 +64,15 @@ namespace HandheldCompanion.Views.Pages
                         cB_HidMode.SelectedIndex = Convert.ToInt32(value);
                         cB_HidMode_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
                         break;
+                    case "HIDcloaked":
+                        Toggle_Cloaked.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "HIDuncloakonclose":
+                        Toggle_Uncloak.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "HIDstrength":
+                        SliderStrength.Value = Convert.ToDouble(value);
+                        break;
                 }
             });
         }
@@ -164,11 +173,10 @@ namespace HandheldCompanion.Views.Pages
                 // check if we already have a targeted controller, if not, pick one
                 // todo: pick the latest known from settings
                 IController target = ControllerManager.GetTargetController();
-
-                if (target is null)
-                {
-                    RadioControllers.SelectedIndex = 0;
-                }
+                if (target != null)
+                    return;
+                
+                RadioControllers.SelectedIndex = 0;
             });
         }
 
@@ -214,7 +222,6 @@ namespace HandheldCompanion.Views.Pages
                 navLoad.Visibility = isLoading ? Visibility.Visible : Visibility.Hidden;
 
                 ControllerGrid.IsEnabled = isConnected && !isLoading;
-                DeviceCloakingStackPanel.IsEnabled = isConnected && !isLoading;
 
                 UpdateController();
             });
@@ -229,16 +236,6 @@ namespace HandheldCompanion.Views.Pages
 
                 switch (name)
                 {
-                    case "HIDidx":
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            int index = int.Parse(property);
-                            if (RadioControllers.Items.Count > index)
-                                RadioControllers.SelectedIndex = index;
-                            else if (RadioControllers.Items.Count >= 1)
-                                RadioControllers.SelectedIndex = 0;
-                        });
-                        break;
                     case "HIDmode":
                         controllerMode = (HIDmode)Enum.Parse(typeof(HIDmode), property);
                         UpdateController();
@@ -246,24 +243,6 @@ namespace HandheldCompanion.Views.Pages
                     case "HIDstatus":
                         controllerStatus = (HIDstatus)Enum.Parse(typeof(HIDstatus), property);
                         UpdateController();
-                        break;
-                    case "HIDcloaked":
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            Toggle_Cloaked.IsOn = bool.Parse(property);
-                        });
-                        break;
-                    case "HIDuncloakonclose":
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            Toggle_Uncloak.IsOn = bool.Parse(property);
-                        });
-                        break;
-                    case "HIDstrength":
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            SliderStrength.Value = double.Parse(property, CultureInfo.InvariantCulture);
-                        });
                         break;
                 }
             }
@@ -306,20 +285,33 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_Cloaked_Toggled(object sender, RoutedEventArgs e)
         {
-            PipeClientSettings settings = new PipeClientSettings("HIDcloaked", Toggle_Cloaked.IsOn);
-            PipeClient.SendMessage(settings);
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            HidHide.SetCloaking(Toggle_Cloaked.IsOn);
+            SettingsManager.SetProperty("HIDcloaked", Toggle_Cloaked.IsOn);
         }
 
         private void Toggle_Uncloak_Toggled(object sender, RoutedEventArgs e)
         {
-            PipeClientSettings settings = new PipeClientSettings("HIDuncloakonclose", Toggle_Uncloak.IsOn);
-            PipeClient.SendMessage(settings);
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("HIDuncloakonclose", Toggle_Uncloak.IsOn);
         }
 
         private void SliderStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            PipeClientSettings settings = new PipeClientSettings("HIDstrength", SliderStrength.Value);
-            PipeClient.SendMessage(settings);
+            double value = SliderStrength.Value;
+            if (double.IsNaN(value))
+                return;
+
+            SliderStrength.Value = value;
+
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("HIDstrength", value);
         }
 
         private void RadioControllers_SelectionChanged(object sender, SelectionChangedEventArgs e)

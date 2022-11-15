@@ -29,12 +29,9 @@ namespace ControllerService
         public static ViGEmTarget vTarget;
 
         private DSUServer DSUServer;
-        public HidHide Hidder;
 
         // devices vars
         public static Device handheldDevice;
-        private string deviceInstancePath;
-        private string baseContainerDeviceInstancePath;
 
         public static string CurrentExe, CurrentPath, CurrentPathDep;
         public static string CurrentTag;
@@ -43,7 +40,7 @@ namespace ControllerService
         // settings vars
         public Configuration configuration;
         private string DSUip;
-        private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
+        private bool DSUEnabled;
         private int DSUport;
         private HIDmode HIDmode = HIDmode.NoController;
         private HIDstatus HIDstatus = HIDstatus.Disconnected;
@@ -71,10 +68,9 @@ namespace ControllerService
             // todo: move me to a specific class
             configuration = ConfigurationManager.OpenExeConfiguration("ControllerService.exe");
 
-            HIDcloaked = bool.Parse(configuration.AppSettings.Settings["HIDcloaked"].Value);
-            HIDuncloakonclose = bool.Parse(configuration.AppSettings.Settings["HIDuncloakonclose"].Value);
             HIDmode = Enum.Parse<HIDmode>(configuration.AppSettings.Settings["HIDmode"].Value);
             HIDstatus = Enum.Parse<HIDstatus>(configuration.AppSettings.Settings["HIDstatus"].Value);
+
             DSUEnabled = bool.Parse(configuration.AppSettings.Settings["DSUEnabled"].Value);
             DSUip = configuration.AppSettings.Settings["DSUip"].Value;
             DSUport = int.Parse(configuration.AppSettings.Settings["DSUport"].Value);
@@ -82,9 +78,6 @@ namespace ControllerService
             SensorSelection = Enum.Parse<SensorFamily>(configuration.AppSettings.Settings["SensorSelection"].Value);
             SensorPlacement = int.Parse(configuration.AppSettings.Settings["SensorPlacement"].Value);
             SensorPlacementUpsideDown = bool.Parse(configuration.AppSettings.Settings["SensorPlacementUpsideDown"].Value);
-
-            deviceInstancePath = configuration.AppSettings.Settings["deviceInstancePath"].Value;
-            baseContainerDeviceInstancePath = configuration.AppSettings.Settings["baseContainerDeviceInstancePath"].Value;
 
             // verifying ViGEm is installed
             try
@@ -98,8 +91,7 @@ namespace ControllerService
             }
 
             // initialize HidHide
-            Hidder = new HidHide();
-            Hidder.RegisterApplication(CurrentExe);
+            HidHide.RegisterApplication(CurrentExe);
 
             // initialize PipeServer
             PipeServer.Initialize("ControllerService");
@@ -119,9 +111,6 @@ namespace ControllerService
             // XInputController settings
             IMU.Initialize(SensorSelection);
             IMU.Updated += OnTargetSubmited;
-
-            // prepare physical controller
-            SetControllerIdx(deviceInstancePath, baseContainerDeviceInstancePath);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport);
@@ -164,37 +153,6 @@ namespace ControllerService
                     }
                     break;
             }
-        }
-
-        // todo: rename me and move me !
-        private void SetControllerIdx(string deviceInstancePath, string baseContainerDeviceInstancePath)
-        {
-            if (this.deviceInstancePath == deviceInstancePath &&
-                this.baseContainerDeviceInstancePath == baseContainerDeviceInstancePath)
-                return;
-
-            // clear previous values
-            List<string> deviceInstancePaths = Hidder.GetRegisteredDevices();
-
-            // exclude controller
-            deviceInstancePaths.Remove(deviceInstancePath);
-            deviceInstancePaths.Remove(baseContainerDeviceInstancePath);
-
-            foreach (string instancePath in deviceInstancePaths)
-                Hidder.UnregisterController(instancePath);
-
-            // register controller
-            Hidder.RegisterController(deviceInstancePath);
-            Hidder.RegisterController(baseContainerDeviceInstancePath);
-
-            // update variables
-            this.deviceInstancePath = deviceInstancePath;
-            this.baseContainerDeviceInstancePath = baseContainerDeviceInstancePath;
-
-            // update settings
-            configuration.AppSettings.Settings["deviceInstancePath"].Value = deviceInstancePath;
-            configuration.AppSettings.Settings["baseContainerDeviceInstancePath"].Value = baseContainerDeviceInstancePath;
-            configuration.Save(ConfigurationSaveMode.Modified);
         }
 
         private void SetControllerMode(HIDmode mode)
@@ -305,13 +263,8 @@ namespace ControllerService
         {
             switch (message.code)
             {
-                case PipeCode.CLIENT_CONTROLLERINDEX:
-                    PipeControllerIndex pipeControllerIndex = (PipeControllerIndex)message;
-                    SetControllerIdx(pipeControllerIndex.deviceInstancePath, pipeControllerIndex.baseContainerDeviceInstancePath);
-                    break;
-
                 case PipeCode.FORCE_SHUTDOWN:
-                    Hidder?.SetCloaking(false);
+                    HidHide.SetCloaking(false);
                     break;
 
                 case PipeCode.CLIENT_PROFILE:
@@ -347,10 +300,10 @@ namespace ControllerService
                     switch (hidder.action)
                     {
                         case HidderAction.Register:
-                            Hidder.RegisterApplication(hidder.path);
+                            HidHide.RegisterApplication(hidder.path);
                             break;
                         case HidderAction.Unregister:
-                            Hidder.UnregisterApplication(hidder.path);
+                            HidHide.UnregisterApplication(hidder.path);
                             break;
                     }
                     break;
@@ -441,19 +394,6 @@ namespace ControllerService
         {
             switch (name)
             {
-                case "HIDcloaked":
-                    {
-                        bool value = bool.Parse(property);
-                        Hidder.SetCloaking(value);
-                        HIDcloaked = value;
-                    }
-                    break;
-                case "HIDuncloakonclose":
-                    {
-                        bool value = bool.Parse(property);
-                        HIDuncloakonclose = value;
-                    }
-                    break;
                 case "HIDmode":
                     {
                         HIDmode value = Enum.Parse<HIDmode>(property);
@@ -516,9 +456,6 @@ namespace ControllerService
             // start listening to controller
             IMU.StartListening();
 
-            // turn on cloaking
-            Hidder.SetCloaking(HIDcloaked);
-
             // start DSUClient
             if (DSUEnabled)
                 DSUServer.Start();
@@ -542,9 +479,6 @@ namespace ControllerService
         {
             // stop listening from controller
             IMU.StopListening();
-
-            // turn off cloaking
-            Hidder?.SetCloaking(!HIDuncloakonclose);
 
             // update virtual controller
             SetControllerMode(HIDmode.NoController);

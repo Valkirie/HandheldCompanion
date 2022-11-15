@@ -29,6 +29,12 @@ namespace HandheldCompanion.Managers
             IsInitialized = true;
         }
 
+        public static void Stop()
+        {
+            if (!IsInitialized)
+                return;
+        }
+
         public static void SetProperty(string name, object value)
         {
             // should not happen

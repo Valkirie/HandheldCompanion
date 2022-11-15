@@ -70,9 +70,6 @@ namespace ControllerCommon.Managers
 
         public static void Start()
         {
-            if (IsInitialized)
-                return;
-
             // listen to system events
             SystemEvents.PowerModeChanged += OnPowerChange;
             SystemEvents.SessionSwitch += OnSessionSwitch;
@@ -106,8 +103,6 @@ namespace ControllerCommon.Managers
             xinputListener.StopListen(DeviceInterfaceIds.XUsbDevice);
             xinputListener.DeviceArrived -= XinputListener_DeviceArrived;
             xinputListener.DeviceRemoved -= XinputListener_DeviceRemoved;
-
-            IsInitialized = false;
         }
 
         private static PnPDetails GetDeviceEx(PnPDevice parent)

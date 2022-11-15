@@ -6,6 +6,7 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace HandheldCompanion.Managers
 {
@@ -26,6 +27,18 @@ namespace HandheldCompanion.Managers
         {
             SystemManager.XInputArrived += SystemManager_XInputUpdated;
             SystemManager.XInputRemoved += SystemManager_XInputUpdated;
+
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // cloak on start, if requested
+            bool HIDcloaked = SettingsManager.GetBoolean("HIDcloaked");
+            HidHide.SetCloaking(HIDcloaked);
+
+            // apply vibration strength
+            double HIDstrength = SettingsManager.GetDouble("HIDstrength");
+            SetHIDStrength(HIDstrength);
+
+            IsInitialized = true;
         }
 
         public static void Stop()
@@ -35,6 +48,35 @@ namespace HandheldCompanion.Managers
 
             SystemManager.XInputArrived -= SystemManager_XInputUpdated;
             SystemManager.XInputRemoved -= SystemManager_XInputUpdated;
+
+            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+            // uncloak on close, if requested
+            bool HIDuncloakonclose = SettingsManager.GetBoolean("HIDuncloakonclose");
+            HidHide.SetCloaking(!HIDuncloakonclose);
+        }
+
+        private static void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                switch (name)
+                {
+                    case "HIDstrength":
+                        double HIDstrength = Convert.ToDouble(value);
+                        SetHIDStrength(HIDstrength);
+                        break;
+                }
+            }));
+        }
+
+        private static void SetHIDStrength(double value)
+        {
+            IController target = GetTargetController();
+            if (target is null)
+                return;
+
+            target.SetVibrationStrength(value);
         }
 
         private static void SystemManager_XInputRemoved(PnPDetails device)
@@ -87,7 +129,9 @@ namespace HandheldCompanion.Managers
             // update target controller
             targetController = controllers[baseContainerDeviceInstancePath];
             targetController.Updated += UpdateReport;
+
             targetController.Plug();
+            targetController.Hide();
 
             // rumble current controller
             targetController.Rumble();
@@ -99,6 +143,8 @@ namespace HandheldCompanion.Managers
                 return;
             
             targetController.Unplug();
+            targetController.Unhide();
+
             targetController = null;
         }
 

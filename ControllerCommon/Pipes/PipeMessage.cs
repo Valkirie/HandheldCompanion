@@ -253,20 +253,5 @@ namespace ControllerCommon
             this.Visibility = Visibility;
         }
     }
-
-    [Serializable]
-    public partial class PipeControllerIndex : PipeMessage
-    {
-        public string deviceInstancePath;
-        public string baseContainerDeviceInstancePath;
-
-        public PipeControllerIndex(string deviceInstancePath, string baseContainerDeviceInstancePath)
-        {
-            code = PipeCode.CLIENT_CONTROLLERINDEX;
-
-            this.deviceInstancePath = deviceInstancePath;
-            this.baseContainerDeviceInstancePath = baseContainerDeviceInstancePath;
-        }
-    }
     #endregion
 }

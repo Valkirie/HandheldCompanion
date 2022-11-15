@@ -38,6 +38,8 @@ namespace HandheldCompanion.Managers
         public static SortedDictionary<ushort, Hotkey> Hotkeys = new();
         private const short PIN_LIMIT = 9;
 
+        private static bool IsInitialized;
+
         static HotkeysManager()
         {
             // initialize path
@@ -88,6 +90,14 @@ namespace HandheldCompanion.Managers
                 hotkey.quickButton.PreviewMouseDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
                 hotkey.quickButton.PreviewMouseUp += (sender, e) => { InputsManager.InvokeTrigger(hotkey, false, true); };
             }
+
+            IsInitialized = true;
+        }
+
+        public static void Stop()
+        {
+            if (!IsInitialized)
+                return;
         }
 
         private static void StartListening(Hotkey hotkey, bool IsCombo)

@@ -84,7 +84,8 @@ namespace ControllerCommon.Controllers
         public ControllerButtonFlags InjectedButtons;
         public ControllerButtonFlags prevInjectedButtons;
 
-        public int UserIndex;
+        protected int UserIndex;
+        protected double VibrationStrength = 100.0d;
 
         protected PnPDetails Details;
         protected PrecisionTimer UpdateTimer;
@@ -132,11 +133,6 @@ namespace ControllerCommon.Controllers
             return Details.DeviceDesc;
         }
 
-        public virtual bool IsConnected()
-        {
-            return false;
-        }
-
         public void InjectButton(ControllerButtonFlags button, bool IsKeyDown, bool IsKeyUp)
         {
             if (button == ControllerButtonFlags.None)
@@ -148,6 +144,16 @@ namespace ControllerCommon.Controllers
                 InjectedButtons &= ~button;
 
             LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", button, IsKeyDown, IsKeyUp, ToString());
+        }
+
+        public void SetVibrationStrength(double value)
+        {
+            VibrationStrength = value;
+        }
+
+        public virtual bool IsConnected()
+        {
+            return false;
         }
 
         public virtual async void Rumble()
@@ -162,6 +168,18 @@ namespace ControllerCommon.Controllers
         public virtual void Unplug()
         {
             UpdateTimer.Stop();
+        }
+
+        public virtual void Hide()
+        {
+            HidHide.HidePath(Details.deviceInstancePath);
+            HidHide.HidePath(Details.baseContainerDeviceInstancePath);
+        }
+
+        public virtual void Unhide()
+        {
+            HidHide.UnhidePath(Details.deviceInstancePath);
+            HidHide.UnhidePath(Details.baseContainerDeviceInstancePath);
         }
     }
 }

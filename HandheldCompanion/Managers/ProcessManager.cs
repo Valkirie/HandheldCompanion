@@ -97,6 +97,8 @@ namespace HandheldCompanion.Managers
             // get current foreground process
             IntPtr hWnd = GetforegroundWindow();
             EventCallback((IntPtr)0, 0, hWnd, 0, 0, 0, 0);
+
+            IsInitialized = true;
         }
 
         public static void Stop()

@@ -493,9 +493,6 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            if (IsInitialized)
-                return;
-
             m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
 
@@ -510,8 +507,6 @@ namespace HandheldCompanion.Managers
             //It is recommened to dispose it
             m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
-
-            IsInitialized = false;
         }
 
         public static void UpdateReport(ControllerButtonFlags Buttons)

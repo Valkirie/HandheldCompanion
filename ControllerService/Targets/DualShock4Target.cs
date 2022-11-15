@@ -76,10 +76,8 @@ namespace ControllerService.Targets
 
         public void FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)
         {
-            // pass vibration to client
-            ushort LeftMotorSpeed = (ushort)(e.LargeMotor * ushort.MaxValue / byte.MaxValue);
-            ushort RightMotorSpeed = (ushort)(e.SmallMotor * ushort.MaxValue / byte.MaxValue);
-            PipeServer.SendMessage(new PipeClientVibration() { LargeMotor = LeftMotorSpeed, SmallMotor = RightMotorSpeed });
+            // pass raw vibration to client
+            PipeServer.SendMessage(new PipeClientVibration() { LargeMotor = e.LargeMotor, SmallMotor = e.SmallMotor });
         }
 
         public override unsafe void UpdateReport()

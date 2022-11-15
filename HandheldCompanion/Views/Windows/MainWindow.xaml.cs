@@ -53,9 +53,6 @@ namespace HandheldCompanion.Views
         public static OverlayTrackpad overlayTrackpad;
         public static OverlayQuickTools overlayquickTools;
 
-        // Hidder vars
-        public static HidHide Hidder;
-
         // manager(s) vars
         private static List<Manager> _managers = new();
         public static ToastManager toastManager;
@@ -139,8 +136,7 @@ namespace HandheldCompanion.Views
             }
 
             // initialize HidHide
-            Hidder = new HidHide();
-            Hidder.RegisterApplication(CurrentExe);
+            HidHide.RegisterApplication(CurrentExe);
 
             // initialize title
             this.Title += $" ({fileVersionInfo.FileVersion})";
@@ -626,9 +622,6 @@ namespace HandheldCompanion.Views
             settingsPage.Page_Closed();
             overlayPage.Page_Closed();
             hotkeysPage.Page_Closed();
-
-            // force kill application
-            Environment.Exit(0);
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)

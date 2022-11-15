@@ -12,6 +12,7 @@ namespace HandheldCompanion.Managers
     {
         private static bool IsEnabled;
         private static bool IsLoaded;
+        private static bool IsInitialized;
 
         public enum QualityOfServiceLevel
         {
@@ -74,10 +75,15 @@ namespace HandheldCompanion.Managers
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            IsInitialized = true;
         }
 
         public static void Stop()
         {
+            if (!IsInitialized)
+                return;
+
             RestoreDefaultEfficiency();
         }
 

@@ -102,7 +102,7 @@
                 </ui:SimpleStackPanel>
 
                 <!-- Device cloaking -->
-                <ui:SimpleStackPanel Name="DeviceCloakingStackPanel" Spacing="6" IsEnabled="False">
+                <ui:SimpleStackPanel Spacing="6">
                     <Label Content="{x:Static resx:Resources.ControllerPage_DeviceCloaking}" FontWeight="SemiBold"></Label>
 
                     <!-- Cloak device -->

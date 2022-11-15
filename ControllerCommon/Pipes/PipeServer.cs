@@ -55,7 +55,7 @@ namespace ControllerCommon
         SERVER_VIBRATION = 17,              // Sent to client to notify a vibration feedback arrived
                                             // args: ...
 
-        CLIENT_CONTROLLERINDEX = 18,        // Sent to server to share details on controller
+        OBSOLETE_2 = 18,                    // Sent to server to share details on controller
                                             // args: ...
 
         CLIENT_CLEARINDEX = 19,             // Sent to server to clear all hidden controllers

@@ -291,9 +291,12 @@ namespace ControllerCommon.Controllers
             {
                 case PipeCode.SERVER_VIBRATION:
                     {
-                        PipeClientVibration PipeVibration = (PipeClientVibration)message;
+                        PipeClientVibration e = (PipeClientVibration)message;
 
-                        Vibration vibration = new Vibration() { LeftMotorSpeed = PipeVibration.LargeMotor, RightMotorSpeed = PipeVibration.SmallMotor };
+                        ushort LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
+                        ushort RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
+
+                        Vibration vibration = new Vibration() { LeftMotorSpeed = LeftMotorSpeed, RightMotorSpeed = RightMotorSpeed };
                         Controller.SetVibration(vibration);
                     }
                     break;
