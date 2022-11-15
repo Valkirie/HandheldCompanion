@@ -112,9 +112,6 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(XLetter);
             model3DGroup.Children.Add(YLetter);
 
-            ButtonMap[ControllerButtonFlags.OEM3].Add(TopBar);
-            ButtonMap[ControllerButtonFlags.OEM4].Add(TopBar);
-
             // specific button material(s)
             foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
             {
