@@ -656,7 +656,11 @@ namespace HandheldCompanion.Views
 
             // stop service with companion
             if (SettingsManager.GetBoolean("HaltServiceWithCompanion"))
-                _ = serviceManager.StopServiceAsync();
+            {
+                // only halt process if start mode isn't set to "Automatic"
+                if (serviceManager.type != ServiceStartMode.Automatic)
+                    _ = serviceManager.StopServiceAsync();
+            }
         }
 
         private void Window_StateChanged(object sender, EventArgs e)

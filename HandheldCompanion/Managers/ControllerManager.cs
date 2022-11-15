@@ -98,6 +98,9 @@ namespace HandheldCompanion.Managers
                 if (!controller.IsConnected())
                     continue;
 
+                if (controller.IsVirtual())
+                    continue;
+
                 // update or create controller
                 controllers[controller.GetContainerInstancePath()] = controller;
 

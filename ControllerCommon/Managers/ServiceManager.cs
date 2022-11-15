@@ -34,7 +34,7 @@ namespace ControllerCommon.Managers
         public ServiceControllerStatus status = ServiceControllerStatus.None;
         private int prevStatus, prevType = -1;
         private ServiceControllerStatus nextStatus;
-        private ServiceStartMode type = ServiceStartMode.Disabled;
+        public ServiceStartMode type = ServiceStartMode.Disabled;
 
         private Process process;
 
@@ -218,6 +218,9 @@ namespace ControllerCommon.Managers
         public async Task StartServiceAsync()
         {
             if (type == ServiceStartMode.Disabled)
+                return;
+
+            if (status == ServiceControllerStatus.Running)
                 return;
 
             while (!Initialized)

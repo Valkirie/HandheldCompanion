@@ -196,6 +196,11 @@ namespace ControllerCommon.Managers
             return temp;
         }
 
+        public static void UpdateDetails(string InstanceId)
+        {
+            devices[InstanceId].isHooked = true;
+        }
+
         private static Attributes? GetHidAttributes(string path)
         {
             using var handle = Kernel32.CreateFile(path,
