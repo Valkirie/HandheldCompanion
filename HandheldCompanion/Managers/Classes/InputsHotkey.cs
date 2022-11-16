@@ -34,7 +34,7 @@ namespace HandheldCompanion.Managers.Classes
             { 25, new InputsHotkey(InputsHotkeyType.Windows,    "\uE71D",   "shortcutTaskManager",  "Segoe Fluent Icons",   20, false,  true) },
 
             { 30, new InputsHotkey(InputsHotkeyType.Handheld,   "\uE7C4",   "shortcutMainwindow",   "Segoe Fluent Icons",   20, false,  true) },
-            { 31, new InputsHotkey(InputsHotkeyType.Handheld,   "\uE2E8",   "shortcutGuide",        "Segoe UI Symbol",      20, true,   true) },
+            { 31, new InputsHotkey(InputsHotkeyType.Handheld,   "\uE2E8",   "shortcutGuide",        "Segoe UI Symbol",      20, false,  true) },
 
             { 40, new InputsHotkey(InputsHotkeyType.Custom,     "\u2780",   "shortcutCustom0",      "Segoe UI Symbol",      20, false,  true) },
             { 41, new InputsHotkey(InputsHotkeyType.Custom,     "\u2781",   "shortcutCustom1",      "Segoe UI Symbol",      20, false,  true) },
