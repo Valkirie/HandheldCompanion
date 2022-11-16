@@ -1265,7 +1265,7 @@
     <None Update="Models\OneXPlayerMini\DPadUp.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\OneXPlayerMini\Home.obj">
+    <None Update="Models\OneXPlayerMini\OEM3.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\OneXPlayerMini\Joystick-Left-Ring.obj">
@@ -1289,7 +1289,7 @@
     <None Update="Models\OneXPlayerMini\MainBody.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\OneXPlayerMini\MKB.obj">
+    <None Update="Models\OneXPlayerMini\OEM2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\OneXPlayerMini\MKBIcon.obj">
@@ -1331,7 +1331,7 @@
     <None Update="Models\OneXPlayerMini\TopGrill.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\OneXPlayerMini\Turbo.obj">
+    <None Update="Models\OneXPlayerMini\OEM1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\OneXPlayerMini\TurboIcon.obj">

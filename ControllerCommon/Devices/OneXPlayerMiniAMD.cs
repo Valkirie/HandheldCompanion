@@ -34,19 +34,23 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add(new DeviceChord("Menu",
+            // unused
+            listeners.Add(new DeviceChord("Fan",
                 new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
-                new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 }
+                new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
+                false, Controllers.ControllerButtonFlags.OEM1
                 ));
 
-            listeners.Add(new DeviceChord("Keyboard key",
+            listeners.Add(new DeviceChord("Keyboard",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.RControlKey, KeyCode.O },
-                new List<KeyCode>() { KeyCode.O, KeyCode.RControlKey, KeyCode.LWin }
+                new List<KeyCode>() { KeyCode.O, KeyCode.RControlKey, KeyCode.LWin },
+                false, Controllers.ControllerButtonFlags.OEM2
                 ));
 
-            listeners.Add(new DeviceChord("Function key",
+            listeners.Add(new DeviceChord("Function",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                new List<KeyCode>() { KeyCode.D, KeyCode.LWin }
+                new List<KeyCode>() { KeyCode.D, KeyCode.LWin },
+                false, Controllers.ControllerButtonFlags.OEM3
                 ));
 
             listeners.Add(new DeviceChord("Function + Volume Up",
@@ -57,11 +61,13 @@ namespace ControllerCommon.Devices
             // dirty implementation from OneX...
             listeners.Add(new DeviceChord("Function + Fan",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot },
-                new List<KeyCode>() { KeyCode.Snapshot, KeyCode.LWin }
+                new List<KeyCode>() { KeyCode.Snapshot, KeyCode.LWin },
+                false, Controllers.ControllerButtonFlags.OEM1
                 ));
             listeners.Add(new DeviceChord("Function + Fan",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot },
-                new List<KeyCode>() { KeyCode.Snapshot, KeyCode.Snapshot, KeyCode.LWin }
+                new List<KeyCode>() { KeyCode.Snapshot, KeyCode.Snapshot, KeyCode.LWin },
+                false, Controllers.ControllerButtonFlags.OEM1
                 ));
         }
     }
