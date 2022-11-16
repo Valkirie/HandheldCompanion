@@ -242,6 +242,7 @@ namespace HandheldCompanion.Managers.Classes
         private void ClearButton_Click()
         {
             InputsManager.ClearListening(this);
+            HotkeysManager.ClearHotkey(this);
         }
 
         public void StartListening(bool IsCombo)

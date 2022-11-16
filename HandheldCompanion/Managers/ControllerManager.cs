@@ -14,6 +14,8 @@ namespace HandheldCompanion.Managers
         private static Dictionary<string, IController> controllers = new();
         private static IController targetController;
 
+        public static Dictionary<ControllerButtonFlags, ControllerButtonFlags> buttonMaps = new();
+
         public static event ControllerPluggedEventHandler ControllerPlugged;
         public delegate void ControllerPluggedEventHandler(IController Controller);
 
@@ -159,9 +161,21 @@ namespace HandheldCompanion.Managers
         {
             // pass inputs to InputsManager
             InputsManager.UpdateReport(Inputs.Buttons);
-            MainWindow.overlayModel.UpdateReport(Inputs);
 
             // todo: pass inputs to (re)mapper
+            foreach (var pair in buttonMaps)
+            {
+                ControllerButtonFlags origin = pair.Key;
+                ControllerButtonFlags substitute = pair.Value;
+
+                if (!Inputs.Buttons.HasFlag(origin))
+                    continue;
+
+                Inputs.Buttons &= ~origin;
+                Inputs.Buttons |= substitute;
+            }
+
+            MainWindow.overlayModel.UpdateReport(Inputs);
 
             // todo: filter inputs if part of shortcut
 

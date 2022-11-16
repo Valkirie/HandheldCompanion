@@ -6,6 +6,7 @@ using HandheldCompanion.Managers.Classes;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -248,9 +249,7 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
                         break;
                     case "shortcutGuide":
-                        // comments: should be handled by a mapper, not hotkeys
-                        var controller = ControllerManager.GetTargetController();
-                        controller?.InjectButton(ControllerButtonFlags.Special, IsKeyDown, IsKeyUp);
+                        ControllerManager.buttonMaps.Add(input.GamepadButtons, ControllerButtonFlags.Special);
                         break;
                     case "suspendResumeTask":
                         {
@@ -278,6 +277,16 @@ namespace HandheldCompanion.Managers
             catch (Exception ex)
             {
                 LogManager.LogError("Failed to parse trigger {0}, {1}", listener, ex.Message);
+            }
+        }
+
+        internal static void ClearHotkey(Hotkey hotkey)
+        {
+            switch(hotkey.inputsHotkey.Listener)
+            {
+                case "shortcutGuide":
+                    ControllerManager.buttonMaps.Remove(hotkey.inputsChord.GamepadButtons);
+                    break;
             }
         }
     }
