@@ -22,7 +22,7 @@ namespace ControllerService
         public static PrecisionTimer UpdateTimer;
         public const int UpdateInterval = 10;
 
-        private static SensorFamily sensorFamily = SensorFamily.None;
+        private static SensorFamily SensorFamily = SensorFamily.None;
         public static IMUGyrometer Gyrometer;
         public static IMUAccelerometer Accelerometer;
         public static IMUInclinometer Inclinometer;
@@ -49,10 +49,10 @@ namespace ControllerService
             madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
 
             // initialize sensors
-            Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval);
-            Accelerometer = new IMUAccelerometer(sensorFamily, UpdateInterval);
-            Inclinometer = new IMUInclinometer(sensorFamily, UpdateInterval);
-            sensorFamily = sensorFamily;
+            SensorFamily = sensorFamily;
+            Gyrometer = new IMUGyrometer(SensorFamily, UpdateInterval);
+            Accelerometer = new IMUAccelerometer(SensorFamily, UpdateInterval);
+            Inclinometer = new IMUInclinometer(SensorFamily, UpdateInterval);
 
             // initialize stopwatch
             stopwatch = new Stopwatch();
@@ -73,9 +73,9 @@ namespace ControllerService
 
         public static void StopListening()
         {
-            Gyrometer.StopListening(sensorFamily);
-            Accelerometer.StopListening(sensorFamily);
-            Inclinometer.StopListening(sensorFamily);
+            Gyrometer.StopListening(SensorFamily);
+            Accelerometer.StopListening(SensorFamily);
+            Inclinometer.StopListening(SensorFamily);
 
             UpdateTimer.Tick -= ComputeMovements;
             UpdateTimer.Stop();
@@ -85,9 +85,9 @@ namespace ControllerService
 
         public static void UpdateSensors()
         {
-            Gyrometer.UpdateSensor(sensorFamily);
-            Accelerometer.UpdateSensor(sensorFamily);
-            Inclinometer.UpdateSensor(sensorFamily);
+            Gyrometer.UpdateSensor(SensorFamily);
+            Accelerometer.UpdateSensor(SensorFamily);
+            Inclinometer.UpdateSensor(SensorFamily);
         }
 
         private static void ComputeMovements(object sender, EventArgs e)
