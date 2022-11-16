@@ -127,7 +127,7 @@ namespace HandheldCompanion.Managers
         {
             // dispose from previous controller
             ClearTargetController();
-            
+
             // update target controller
             targetController = controllers[baseContainerDeviceInstancePath];
             targetController.Updated += UpdateReport;
@@ -143,7 +143,7 @@ namespace HandheldCompanion.Managers
         {
             if (targetController is null)
                 return;
-            
+
             targetController.Unplug();
             targetController.Unhide();
 

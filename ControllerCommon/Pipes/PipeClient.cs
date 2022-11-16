@@ -1,7 +1,7 @@
 ﻿using ControllerCommon.Managers;
 using NamedPipeWrapper;
-using Serilog.Extensions.Logging;
 using Serilog;
+using Serilog.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Timers;
