@@ -78,15 +78,10 @@ namespace HandheldCompanion.Views
             CurrentWindow = this;
 
             // initialize splash screen
-            if (SettingsManager.GetBoolean("FirstStart") || !SettingsManager.GetBoolean("StartMinimized"))
-            {
 #if !DEBUG
                 SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
                 splashScreen.Show(true, true);
 #endif
-
-                SettingsManager.SetProperty("FirstStart", false);
-            }
 
             // fix touch support
             var tablets = Tablet.TabletDevices;
@@ -184,6 +179,10 @@ namespace HandheldCompanion.Views
             // pull settings
             WindowState = SettingsManager.GetBoolean("StartMinimized") ? WindowState.Minimized : (WindowState)SettingsManager.GetInt("MainWindowState");
             prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
+
+            // update FirstStart
+            if (SettingsManager.GetBoolean("FirstStart"))
+                SettingsManager.SetProperty("FirstStart", false);
         }
 
         public void SwapWindowState()
