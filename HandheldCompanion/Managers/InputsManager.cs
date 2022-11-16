@@ -38,15 +38,15 @@ namespace HandheldCompanion.Managers
         // Global variables
         private static PrecisionTimer ListenerTimer;
 
-        private const short TIME_FLUSH = 5;         // default interval between buffer flush
-        private const short TIME_SPAM = 50;         // default interval between two allowed inputs
-        private const short TIME_FLUSH_EXTENDED = 100;   // extended buffer flush interval when expecting another chord key
+        private const short TIME_FLUSH = 5;             // default interval between buffer flush
+        private const short TIME_SPAM = 50;             // default interval between two allowed inputs
+        private const short TIME_FLUSH_EXTENDED = 150;  // extended buffer flush interval when expecting another chord key
 
-        private const short TIME_NEXT = 500;        // default interval before submitting output keys used in combo
-        private const short TIME_LONG = 600;        // default interval between two inputs from a chord
-                                                    // default interval before considering a chord as hold
+        private const short TIME_NEXT = 500;            // default interval before submitting output keys used in combo
+        private const short TIME_LONG = 600;            // default interval between two inputs from a chord
+                                                        // default interval before considering a chord as hold
 
-        private const short TIME_EXPIRED = 3000;    // default interval before considering a chord as expired if no input is detected
+        private const short TIME_EXPIRED = 3000;        // default interval before considering a chord as expired if no input is detected
 
         private static bool IsLocked;
         private static bool IsCombo;

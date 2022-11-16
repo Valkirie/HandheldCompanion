@@ -113,17 +113,6 @@ namespace ControllerCommon.Managers
             while (Devcon.Find(HidDevice, out var path, out var instanceId, deviceIndex++))
             {
                 var children = PnPDevice.GetDeviceByInterfaceId(path);
-
-                /* Unmerged change from project 'ControllerCommon (net7.0-windows10.0.19041.0)'
-                Before:
-                                var parent = children;
-
-                                // get attributes
-                After:
-                                var parent = children;
-
-                                // get attributes
-                */
                 var parent = children;
 
                 // get attributes
