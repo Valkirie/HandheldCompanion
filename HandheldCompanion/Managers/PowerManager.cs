@@ -211,7 +211,7 @@ namespace HandheldCompanion.Managers
                 {
                     // not ready yet
                     if (CurrentTDP[(int)PowerType.MsrSlow] == 0 || CurrentTDP[(int)PowerType.MsrFast] == 0)
-                        return;
+                        continue;
 
                     int TDPslow = (int)StoredTDP[(int)PowerType.Slow];
                     int TDPfast = (int)StoredTDP[(int)PowerType.Fast];
