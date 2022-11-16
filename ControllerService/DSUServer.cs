@@ -3,6 +3,7 @@ using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using Force.Crc32;
+using PrecisionTiming;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -92,9 +93,12 @@ namespace ControllerService
         public delegate void GetPadDetail(int padIdx, ref DualShockPadMeta meta);
 
         private GetPadDetail portInfoGet;
-        private Timer BatteryTimer;
+        private PrecisionTimer BatteryTimer;
 
-        private ControllerInput Inputs;
+        private ControllerInput Inputs = new();
+
+        public static PrecisionTimer UpdateTimer;
+        public const int UpdateInterval = 5;
 
         void GetPadDetailForIdx(int padIdx, ref DualShockPadMeta meta)
         {
@@ -143,8 +147,14 @@ namespace ControllerService
                 argsList[num] = args;
             }
 
-            BatteryTimer = new Timer(1000) { Enabled = false, AutoReset = true };
-            BatteryTimer.Elapsed += UpdateBattery;
+            BatteryTimer = new PrecisionTimer();
+            BatteryTimer.SetInterval(1000);
+            BatteryTimer.SetAutoResetMode(true);
+
+            // initialize timers
+            UpdateTimer = new PrecisionTimer();
+            UpdateTimer.SetInterval(UpdateInterval);
+            UpdateTimer.SetAutoResetMode(true);
         }
 
         public override string ToString()
@@ -152,7 +162,7 @@ namespace ControllerService
             return this.GetType().Name;
         }
 
-        private void UpdateBattery(object sender, ElapsedEventArgs e)
+        private void UpdateBattery(object sender, EventArgs e)
         {
             if (!running)
                 return;
@@ -524,8 +534,11 @@ namespace ControllerService
             running = true;
             StartReceive();
 
-            BatteryTimer.Enabled = true;
-            BatteryTimer.Start();
+            BatteryTimer.Tick -= UpdateBattery;
+            BatteryTimer.Stop();
+            
+            UpdateTimer.Tick -= SubmitReport;
+            UpdateTimer.Stop();
 
             LogManager.LogInformation("{0} has started. Listening to ip: {1} port: {2}", this.ToString(), ip, port);
             Started?.Invoke(this);
@@ -541,6 +554,12 @@ namespace ControllerService
                 udpSock = null;
             }
             running = false;
+
+            BatteryTimer.Tick += UpdateBattery;
+            BatteryTimer.Start();
+
+            UpdateTimer.Tick += SubmitReport;
+            UpdateTimer.Start();
 
             LogManager.LogInformation($"{0} has stopped", this.ToString());
             Stopped?.Invoke(this);
@@ -671,7 +690,7 @@ namespace ControllerService
             return true;
         }
 
-        public void SubmitReport()
+        public void SubmitReport(object sender, EventArgs e)
         {
             if (!running)
                 return;

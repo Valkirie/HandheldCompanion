@@ -109,7 +109,6 @@ namespace ControllerService
 
             // XInputController settings
             IMU.Initialize(SensorSelection);
-            IMU.Updated += OnTargetSubmited;
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport);
@@ -231,11 +230,6 @@ namespace ControllerService
                 content = Properties.Resources.ToastOnTargetConnected,
                 image = $"HIDmode{(uint)target.HID}"
             });
-        }
-
-        private void OnTargetSubmited()
-        {
-            DSUServer?.SubmitReport();
         }
 
         // deprecated

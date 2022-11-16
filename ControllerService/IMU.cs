@@ -3,8 +3,6 @@ using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using PrecisionTiming;
-using Serilog;
-using Serilog.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,8 +19,8 @@ namespace ControllerService
         public static Dictionary<XInputSensorFlags, Vector3> AngularVelocity = new();
         public static Vector3 IMU_Angle = new();
 
-        public static PrecisionTimer IMU_Timer;
-        public static int IMU_Interval = 10;
+        public static PrecisionTimer UpdateTimer;
+        public const int UpdateInterval = 10;
 
         private static SensorFamily sensorFamily = SensorFamily.None;
         public static IMUGyrometer Gyrometer;
@@ -51,26 +49,26 @@ namespace ControllerService
             madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
 
             // initialize sensors
-            Gyrometer = new IMUGyrometer(sensorFamily, IMU_Interval);
-            Accelerometer = new IMUAccelerometer(sensorFamily, IMU_Interval);
-            Inclinometer = new IMUInclinometer(sensorFamily, IMU_Interval);
+            Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval);
+            Accelerometer = new IMUAccelerometer(sensorFamily, UpdateInterval);
+            Inclinometer = new IMUInclinometer(sensorFamily, UpdateInterval);
             sensorFamily = sensorFamily;
 
             // initialize stopwatch
             stopwatch = new Stopwatch();
 
             // initialize timers
-            IMU_Timer = new PrecisionTimer();
-            IMU_Timer.SetInterval(IMU_Interval);
-            IMU_Timer.SetAutoResetMode(true);
+            UpdateTimer = new PrecisionTimer();
+            UpdateTimer.SetInterval(UpdateInterval);
+            UpdateTimer.SetAutoResetMode(true);
         }
 
         public static void StartListening()
         {
             stopwatch.Start();
 
-            IMU_Timer.Tick += ComputeMovements;
-            IMU_Timer.Start();
+            UpdateTimer.Tick += ComputeMovements;
+            UpdateTimer.Start();
         }
 
         public static void StopListening()
@@ -79,8 +77,8 @@ namespace ControllerService
             Accelerometer.StopListening(sensorFamily);
             Inclinometer.StopListening(sensorFamily);
 
-            IMU_Timer.Tick -= ComputeMovements;
-            IMU_Timer.Stop();
+            UpdateTimer.Tick -= ComputeMovements;
+            UpdateTimer.Stop();
 
             stopwatch.Stop();
         }
