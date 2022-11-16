@@ -61,10 +61,6 @@ namespace ControllerService.Sensors
             // reset reading after inactivity
             centerTimer.Stop();
             centerTimer.Start();
-
-#if DEBUG
-            LogManager.LogDebug("{0}.ReadingChanged({1:00.####}, {2:00.####}, {3:00.####})", this.GetType().Name, this.reading.X, this.reading.Y, this.reading.Z);
-#endif
         }
 
         public static XInputSensorStatus GetStatus(SensorFamily sensorFamily)

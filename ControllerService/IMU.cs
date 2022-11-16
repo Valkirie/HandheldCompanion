@@ -142,16 +142,6 @@ namespace ControllerService
                 // update sensorFusion (todo: call only when needed ?)
                 sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocity[XInputSensorFlags.Centered], Acceleration[XInputSensorFlags.Default]);
 
-#if DEBUG
-                LogManager.LogDebug("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Acceleration[XInputSensorFlags.RawValue].X);
-                LogManager.LogDebug("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Acceleration[XInputSensorFlags.RawValue].Y);
-                LogManager.LogDebug("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Acceleration[XInputSensorFlags.RawValue].Z);
-
-                LogManager.LogDebug("Plot AngRawX {0} {1}", TotalMilliseconds, AngularVelocity[XInputSensorFlags.RawValue].X);
-                LogManager.LogDebug("Plot AngRawY {0} {1}", TotalMilliseconds, AngularVelocity[XInputSensorFlags.RawValue].Y);
-                LogManager.LogDebug("Plot AngRawZ {0} {1}", TotalMilliseconds, AngularVelocity[XInputSensorFlags.RawValue].Z);
-#endif
-
                 // async update client(s)
                 Task.Run(() =>
                 {
@@ -179,20 +169,6 @@ namespace ControllerService
                             break;
                     }
                 });
-
-#if DEBUG
-                LogManager.LogDebug("Plot AccelerationRawX {0} {1}", TotalMilliseconds, Acceleration[XInputSensorFlags.RawValue].X);
-                LogManager.LogDebug("Plot AccelerationRawY {0} {1}", TotalMilliseconds, Acceleration[XInputSensorFlags.RawValue].Y);
-                LogManager.LogDebug("Plot AccelerationRawZ {0} {1}", TotalMilliseconds, Acceleration[XInputSensorFlags.RawValue].Z);
-
-                LogManager.LogDebug("Plot GyroRawCX {0} {1}", TotalMilliseconds, Acceleration[XInputSensorFlags.CenteredRaw].X);
-                LogManager.LogDebug("Plot GyroRawCY {0} {1}", TotalMilliseconds, Acceleration[XInputSensorFlags.CenteredRaw].Y);
-                LogManager.LogDebug("Plot GyroRawCZ {0} {1}", TotalMilliseconds, Acceleration[XInputSensorFlags.CenteredRaw].Z);
-
-                LogManager.LogDebug("Plot PoseX {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().X);
-                LogManager.LogDebug("Plot PoseY {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Y);
-                LogManager.LogDebug("Plot PoseZ {0} {1}", TotalMilliseconds, madgwickAHRS.GetEuler().Z);
-#endif
 
                 Updated?.Invoke();
 
