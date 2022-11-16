@@ -93,11 +93,12 @@ namespace ControllerService
         public delegate void GetPadDetail(int padIdx, ref DualShockPadMeta meta);
 
         private GetPadDetail portInfoGet;
+
+        public PrecisionTimer UpdateTimer;
         private PrecisionTimer BatteryTimer;
 
         private ControllerInput Inputs = new();
 
-        public static PrecisionTimer UpdateTimer;
         public const int UpdateInterval = 5;
 
         void GetPadDetailForIdx(int padIdx, ref DualShockPadMeta meta)
@@ -531,14 +532,14 @@ namespace ControllerService
             new Random().NextBytes(randomBuf);
             serverId = BitConverter.ToUInt32(randomBuf, 0);
 
-            running = true;
-            StartReceive();
+            UpdateTimer.Tick += SubmitReport;
+            BatteryTimer.Tick += UpdateBattery;
 
-            BatteryTimer.Tick -= UpdateBattery;
-            BatteryTimer.Stop();
-            
-            UpdateTimer.Tick -= SubmitReport;
-            UpdateTimer.Stop();
+            running = true;
+
+            UpdateTimer.Start();
+            BatteryTimer.Start();
+            StartReceive();
 
             LogManager.LogInformation("{0} has started. Listening to ip: {1} port: {2}", this.ToString(), ip, port);
             Started?.Invoke(this);
@@ -555,11 +556,11 @@ namespace ControllerService
             }
             running = false;
 
-            BatteryTimer.Tick += UpdateBattery;
-            BatteryTimer.Start();
+            UpdateTimer.Tick -= SubmitReport;
+            BatteryTimer.Tick -= UpdateBattery;
 
-            UpdateTimer.Tick += SubmitReport;
-            UpdateTimer.Start();
+            UpdateTimer.Stop();
+            BatteryTimer.Stop();
 
             LogManager.LogInformation($"{0} has stopped", this.ToString());
             Stopped?.Invoke(this);
@@ -598,8 +599,8 @@ namespace ControllerService
                 if (Inputs.RightTrigger == byte.MaxValue) outputData[outIdx] |= 0x02;
                 if (Inputs.LeftTrigger == byte.MaxValue) outputData[outIdx] |= 0x01;
 
-                outputData[++outIdx] = (byte)0; // (hidReport.PS) ? (byte)1 : 
-                outputData[++outIdx] = (byte)0; // (hidReport.TouchButton) ? (byte)1 : 
+                outputData[++outIdx] = Convert.ToByte(Inputs.Buttons.HasFlag(ControllerButtonFlags.Special)); // (hidReport.PS) ? (byte)1 : 
+                outputData[++outIdx] = Convert.ToByte(DS4Touch.OutputClickButton); // (hidReport.TouchButton) ? (byte)1 : 
 
                 //Left stick
                 outputData[++outIdx] = InputUtils.NormalizeXboxInput(Inputs.LeftThumbX);
