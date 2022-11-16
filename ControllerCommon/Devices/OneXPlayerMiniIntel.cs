@@ -39,7 +39,7 @@ namespace ControllerCommon.Devices
             listeners.Add(new DeviceChord("Fan",
                 new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
                 new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
-                false, Controllers.ControllerButtonFlags.OEM1
+                false, Controllers.ControllerButtonFlags.OEM5
                 ));
 
             listeners.Add(new DeviceChord("Keyboard",
