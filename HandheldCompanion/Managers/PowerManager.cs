@@ -211,7 +211,10 @@ namespace HandheldCompanion.Managers
                 {
                     // not ready yet
                     if (CurrentTDP[(int)PowerType.MsrSlow] == 0 || CurrentTDP[(int)PowerType.MsrFast] == 0)
-                        continue;
+                    {
+                        Monitor.Exit(cpuLock);
+                        return;
+                    }
 
                     int TDPslow = (int)StoredTDP[(int)PowerType.Slow];
                     int TDPfast = (int)StoredTDP[(int)PowerType.Fast];
@@ -245,18 +248,27 @@ namespace HandheldCompanion.Managers
                 {
                     // not ready yet
                     if (CurrentGfxClock == 0)
+                    {
+                        Monitor.Exit(cpuLock);
                         return;
+                    }
                 }
                 else if (processor.GetType() == typeof(IntelProcessor))
                 {
                     // not ready yet
                     if (CurrentGfxClock == 0)
+                    {
+                        Monitor.Exit(cpuLock);
                         return;
+                    }
                 }
 
                 // not ready yet
                 if (StoredGfxClock == 0)
+                {
+                    Monitor.Exit(cpuLock);
                     return;
+                }
 
                 // only request an update if current gfx clock is different than stored
                 if (CurrentGfxClock != StoredGfxClock)

@@ -483,7 +483,10 @@ namespace ControllerCommon.Processor
             {
                 // reset default var
                 if (clock == 12750)
+                {
+                    Monitor.Exit(cpuLock);
                     return;
+                }
 
                 var error = RyzenAdj.set_gfx_clk(ry, (uint)clock);
 
