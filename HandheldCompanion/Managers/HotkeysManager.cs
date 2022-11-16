@@ -249,7 +249,8 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
                         break;
                     case "shortcutGuide":
-                        ControllerManager.buttonMaps.Add(input.GamepadButtons, ControllerButtonFlags.Special);
+                        // temporary, move me to remapper !
+                        ControllerManager.buttonMaps[input.GamepadButtons] = ControllerButtonFlags.Special;
                         break;
                     case "suspendResumeTask":
                         {
@@ -285,7 +286,7 @@ namespace HandheldCompanion.Managers
             switch(hotkey.inputsHotkey.Listener)
             {
                 case "shortcutGuide":
-                    ControllerManager.buttonMaps.Remove(hotkey.inputsChord.GamepadButtons);
+                    ControllerManager.buttonMaps[hotkey.inputsChord.GamepadButtons] = ControllerButtonFlags.None;
                     break;
             }
         }

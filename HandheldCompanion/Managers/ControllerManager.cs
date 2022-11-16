@@ -161,26 +161,37 @@ namespace HandheldCompanion.Managers
         {
             // pass inputs to InputsManager
             InputsManager.UpdateReport(Inputs.Buttons);
+            MainWindow.overlayModel.UpdateReport(Inputs);
 
             // todo: pass inputs to (re)mapper
+            ControllerInput filtered = new()
+            {
+                Buttons = Inputs.Buttons,
+                Timestamp = Inputs.Timestamp,
+                LeftThumbX = Inputs.LeftThumbX,
+                LeftThumbY = Inputs.LeftThumbY,
+                RightThumbX = Inputs.RightThumbX,
+                RightThumbY = Inputs.RightThumbY,
+                RightTrigger = Inputs.RightTrigger,
+                LeftTrigger = Inputs.LeftTrigger,
+            };
+
             foreach (var pair in buttonMaps)
             {
                 ControllerButtonFlags origin = pair.Key;
                 ControllerButtonFlags substitute = pair.Value;
 
-                if (!Inputs.Buttons.HasFlag(origin))
+                if (!filtered.Buttons.HasFlag(origin))
                     continue;
 
-                Inputs.Buttons &= ~origin;
-                Inputs.Buttons |= substitute;
+                filtered.Buttons &= ~origin;
+                filtered.Buttons |= substitute;
             }
-
-            MainWindow.overlayModel.UpdateReport(Inputs);
 
             // todo: filter inputs if part of shortcut
 
             // pass inputs to service
-            PipeClient.SendMessage(new PipeClientInput(Inputs));
+            PipeClient.SendMessage(new PipeClientInput(filtered));
         }
     }
 }
