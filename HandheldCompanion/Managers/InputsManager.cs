@@ -1,17 +1,13 @@
-using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using Gma.System.MouseKeyHook;
-using Gma.System.MouseKeyHook.HotKeys;
 using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views;
 using PrecisionTiming;
-using SharpDX.XInput;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -197,7 +193,7 @@ namespace HandheldCompanion.Managers
             {
                 if (IsKeyDown)
                 {
-                    switch(currentChord.InputsType)
+                    switch (currentChord.InputsType)
                     {
                         case InputsChordType.Click:
                         case InputsChordType.Hold:

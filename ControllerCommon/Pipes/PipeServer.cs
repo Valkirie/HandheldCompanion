@@ -4,7 +4,6 @@ using System;
 using System.Collections.Concurrent;
 using System.IO.Pipes;
 using System.Timers;
-using Windows.Media.Protection.PlayReady;
 using Timer = System.Timers.Timer;
 
 namespace ControllerCommon

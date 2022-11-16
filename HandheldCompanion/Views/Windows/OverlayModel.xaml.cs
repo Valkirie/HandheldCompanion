@@ -1,17 +1,14 @@
 using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Utils;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
 using HandheldCompanion.Views.Classes;
 using PrecisionTiming;
-using SharpDX.XInput;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using GamepadButtonFlags = SharpDX.XInput.GamepadButtonFlags;
 
 namespace HandheldCompanion.Views.Windows
 {

@@ -1,13 +1,9 @@
 ﻿using ControllerCommon.Managers;
 using ControllerCommon.Processor.AMD;
 using ControllerCommon.Processor.Intel;
-using PInvoke;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.Management;
-using System.ServiceProcess;
 using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;

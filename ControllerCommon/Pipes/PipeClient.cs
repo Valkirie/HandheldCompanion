@@ -1,5 +1,4 @@
 ﻿using ControllerCommon.Managers;
-using Microsoft.Extensions.Configuration;
 using NamedPipeWrapper;
 using Serilog.Extensions.Logging;
 using Serilog;

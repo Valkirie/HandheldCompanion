@@ -2,7 +2,6 @@
 using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using HandheldCompanion.Views;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;

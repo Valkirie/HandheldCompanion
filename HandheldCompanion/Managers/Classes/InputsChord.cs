@@ -1,6 +1,5 @@
 ﻿using ControllerCommon.Controllers;
 using Gma.System.MouseKeyHook;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;

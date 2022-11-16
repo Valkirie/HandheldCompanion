@@ -11,9 +11,6 @@ using System.Linq;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
-using static WindowsInput.Native.SystemMetrics.Screen;
 
 namespace ControllerCommon.Managers
 {
@@ -116,8 +113,19 @@ namespace ControllerCommon.Managers
             while (Devcon.Find(HidDevice, out var path, out var instanceId, deviceIndex++))
             {
                 var children = PnPDevice.GetDeviceByInterfaceId(path);
+
+                /* Unmerged change from project 'ControllerCommon (net7.0-windows10.0.19041.0)'
+                Before:
+                                var parent = children;
+
+                                // get attributes
+                After:
+                                var parent = children;
+
+                                // get attributes
+                */
                 var parent = children;
-                
+
                 // get attributes
                 Attributes? attributes = GetHidAttributes(path);
                 Capabilities? capabilities = GetHidCapabilities(path);
@@ -170,7 +178,7 @@ namespace ControllerCommon.Managers
                     attributes = (Attributes)attributes,
                     capabilities = (Capabilities)capabilities,
                 };
-                
+
                 // add or update device
                 devices[parent.InstanceId] = details;
             }

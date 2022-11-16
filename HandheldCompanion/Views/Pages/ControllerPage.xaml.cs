@@ -4,7 +4,6 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -175,7 +174,7 @@ namespace HandheldCompanion.Views.Pages
                 IController target = ControllerManager.GetTargetController();
                 if (target != null)
                     return;
-                
+
                 RadioControllers.SelectedIndex = 0;
             });
         }

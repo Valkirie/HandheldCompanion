@@ -1,8 +1,5 @@
 using ControllerCommon.Controllers;
-using SharpDX.XInput;
 using System;
-using System.IO;
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 

@@ -413,7 +413,7 @@ namespace HandheldCompanion.Managers.Classes
 
             Storyboard storyboard = new Storyboard();
             storyboard.Children.Add(opacityAnimation);
-            
+
             Storyboard.SetTarget(opacityAnimation, inputButton);
             Storyboard.SetTargetProperty(opacityAnimation, new PropertyPath("Opacity"));
 

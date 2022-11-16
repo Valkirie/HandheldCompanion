@@ -1,6 +1,5 @@
 using ControllerCommon.Controllers;
 using HelixToolkit.Wpf;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.IO;

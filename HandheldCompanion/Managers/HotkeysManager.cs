@@ -1,16 +1,13 @@
-﻿using ControllerCommon;
-using ControllerCommon.Controllers;
+﻿using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Managers.Classes;
-using HandheldCompanion.Views;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;

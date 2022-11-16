@@ -6,7 +6,6 @@ using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using Nefarius.ViGEm.Client;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Configuration;

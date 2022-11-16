@@ -5,10 +5,8 @@ using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using Nefarius.ViGEm.Client;
 using PrecisionTiming;
-using SharpDX.XInput;
 using System;
 using System.Numerics;
-using System.Runtime.InteropServices;
 
 namespace ControllerService.Targets
 {

@@ -35,7 +35,7 @@ namespace HandheldCompanion.Views.Pages
             foreach (ServiceStartMode mode in ((ServiceStartMode[])Enum.GetValues(typeof(ServiceStartMode))).Where(mode => mode >= ServiceStartMode.Automatic))
             {
                 RadioButton radio = new() { Content = EnumUtils.GetDescriptionFromEnumValue(mode) };
-                switch(mode)
+                switch (mode)
                 {
                     case ServiceStartMode.Disabled:
                         radio.IsEnabled = false;

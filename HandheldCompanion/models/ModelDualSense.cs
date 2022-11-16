@@ -180,9 +180,9 @@ namespace HandheldCompanion.Models
                   || model3D == B1Button || model3D == B2Button || model3D == B3Button || model3D == B4Button
                     )
                 {
-                ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticTransparent;
-                ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticTransparent;
-                DefaultMaterials[model3D] = MaterialPlasticTransparent;
+                    ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticTransparent;
+                    ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticTransparent;
+                    DefaultMaterials[model3D] = MaterialPlasticTransparent;
                     continue;
                 }
 
