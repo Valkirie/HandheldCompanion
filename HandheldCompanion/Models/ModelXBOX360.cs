@@ -24,6 +24,7 @@ namespace HandheldCompanion.Models
             // colors
             var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#707477");
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#D4D4D4");
+            var ColorPlasticSilver = (Color)ColorConverter.ConvertFromString("#CEDAE1");
 
             var ColorPlasticYellow = (Color)ColorConverter.ConvertFromString("#faa51f");
             var ColorPlasticGreen = (Color)ColorConverter.ConvertFromString("#7cb63b");
@@ -43,6 +44,7 @@ namespace HandheldCompanion.Models
 
             var MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
             var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
+            var MaterialPlasticSilver = new DiffuseMaterial(new SolidColorBrush(ColorPlasticSilver));
 
             var MaterialPlasticYellow = new DiffuseMaterial(new SolidColorBrush(ColorPlasticYellow));
             var MaterialPlasticGreen = new DiffuseMaterial(new SolidColorBrush(ColorPlasticGreen));
@@ -114,6 +116,9 @@ namespace HandheldCompanion.Models
                             case ControllerButtonFlags.B4:
                                 buttonMaterial = MaterialPlasticYellow;
                                 break;
+                            case ControllerButtonFlags.Special:
+                                buttonMaterial = MaterialPlasticSilver;
+                                break;
                             default:
                                 buttonMaterial = MaterialPlasticBlack;
                                 break;
@@ -145,7 +150,7 @@ namespace HandheldCompanion.Models
                 }
 
                 // specific face button material
-                if (model3D == B1Button || model3D == SpecialLED || model3D == SpecialRing)
+                if (model3D == B1Button || model3D == SpecialLED)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticGreenTransparent;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticGreenTransparent;
