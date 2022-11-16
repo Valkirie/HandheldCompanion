@@ -484,7 +484,7 @@ namespace ControllerCommon.Processor
                 // reset default var
                 if (clock == 12750)
                 {
-                    Monitor.Exit(cpuLock);
+                    Monitor.Exit(base.IsBusy);
                     return;
                 }
 
