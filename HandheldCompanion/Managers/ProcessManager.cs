@@ -123,7 +123,7 @@ namespace HandheldCompanion.Managers
 
         public static ProcessEx GetSuspendedProcess()
         {
-            return Processes.Values.Where(item => !item.IsIgnored && item.IsSuspended()).FirstOrDefault();
+            return Processes.Values.Where(item => item.IsSuspended()).FirstOrDefault();
         }
 
         public static List<ProcessEx> GetProcesses()
@@ -385,7 +385,7 @@ namespace HandheldCompanion.Managers
             }
 
             Task.Delay(500);
-            ProcessUtils.ShowWindow(processEx.MainWindowHandle, ProcessUtils.SW_RESTORE);
+            ProcessUtils.ShowWindow(processEx.MainWindowHandle, (int)ProcessUtils.ShowWindowCommands.Restored);
         }
 
         public static void SuspendProcess(ProcessEx processEx)
@@ -394,7 +394,7 @@ namespace HandheldCompanion.Managers
             if (processEx.Process.HasExited)
                 return;
 
-            ProcessUtils.ShowWindow(processEx.MainWindowHandle, ProcessUtils.SW_MINIMIZE);
+            ProcessUtils.ShowWindow(processEx.MainWindowHandle, (int)ProcessUtils.ShowWindowCommands.Minimized);
             Task.Delay(500);
 
             ProcessUtils.NtSuspendProcess(processEx.Process.Handle);

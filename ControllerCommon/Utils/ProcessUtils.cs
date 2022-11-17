@@ -16,6 +16,8 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Windows.System.Diagnostics;
+using static PInvoke.User32;
+using Point = System.Windows.Point;
 
 namespace ControllerCommon.Utils
 {
@@ -55,6 +57,10 @@ namespace ControllerCommon.Utils
 
         [DllImport("User32.dll")]
         public static extern bool ShowWindow(IntPtr handle, int nCmdShow);
+        
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
 
         [DllImport("User32.dll")]
         public static extern bool IsIconic(IntPtr handle);
@@ -79,11 +85,28 @@ namespace ControllerCommon.Utils
 
         [DllImport("ntdll.dll", EntryPoint = "NtResumeProcess", SetLastError = true, ExactSpelling = false)]
         public static extern UIntPtr NtResumeProcess(IntPtr processHandle);
-
-        public const int SW_RESTORE = 9;
-        public const int SW_MAXIMIZE = 3;
-        public const int SW_MINIMIZE = 2;
         #endregion
+
+        [Serializable]
+        [StructLayout(LayoutKind.Sequential)]
+        public struct WINDOWPLACEMENT
+        {
+            public int length;
+            public int flags;
+            public ShowWindowCommands showCmd;
+            public Point ptMinPosition;
+            public Point ptMaxPosition;
+            public Rectangle rcNormalPosition;
+        }
+
+        public enum ShowWindowCommands : int
+        {
+            Hide = 0,
+            Normal = 1,
+            Minimized = 2,
+            Maximized = 3,
+            Restored = 9
+        }
 
         public class FindHostedProcess
         {
@@ -209,6 +232,14 @@ namespace ControllerCommon.Utils
                 .Cast<ManagementObject>()
                 .Select(mo => Convert.ToInt32(mo["ProcessID"]))
                 .ToList();
+        }
+
+        public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
+        {
+            WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
+            placement.length = Marshal.SizeOf(placement);
+            GetWindowPlacement(hwnd, ref placement);
+            return placement;
         }
     }
 

@@ -14,12 +14,16 @@ using System.Text.Json;
 using System.Threading;
 using System.Windows;
 using static HandheldCompanion.Managers.Classes.InputsHotkey;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
+using Shell32;
+using Shell = Shell32.Shell;
 
 namespace HandheldCompanion.Managers
 {
     public static class HotkeysManager
     {
-        static string Path;
+        private static string Path;
+        private static Shell Shell = new Shell();
 
         public static event HotkeyTypeCreatedEventHandler HotkeyTypeCreated;
         public delegate void HotkeyTypeCreatedEventHandler(InputsHotkeyType type);
@@ -200,7 +204,7 @@ namespace HandheldCompanion.Managers
 
         public static void TriggerRaised(string listener, InputsChord input, bool IsKeyDown, bool IsKeyUp)
         {
-            var fProcess = ProcessManager.GetForegroundProcess();
+            ProcessEx fProcess = ProcessManager.GetForegroundProcess();
 
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -226,20 +230,30 @@ namespace HandheldCompanion.Managers
                         }).Start();
                         break;
                     case "shortcutDesktop":
-                        InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
+                        Shell.ToggleDesktop();
                         break;
                     case "shortcutESC":
-                        if (fProcess != null)
+                        if (fProcess != null && !fProcess.IsIgnored)
                         {
                             ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
                             InputsManager.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
-                        if (fProcess != null)
+                        if (fProcess != null && !fProcess.IsIgnored)
                         {
-                            ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
-                            InputsManager.KeyStroke(VirtualKeyCode.LMENU, VirtualKeyCode.RETURN);
+                            var Placement = ProcessUtils.GetPlacement(fProcess.MainWindowHandle);
+
+                            switch(Placement.showCmd)
+                            {
+                                case ProcessUtils.ShowWindowCommands.Normal:
+                                case ProcessUtils.ShowWindowCommands.Minimized:
+                                    ProcessUtils.ShowWindow(fProcess.MainWindowHandle, (int)ProcessUtils.ShowWindowCommands.Maximized);
+                                    break;
+                                case ProcessUtils.ShowWindowCommands.Maximized:
+                                    ProcessUtils.ShowWindow(fProcess.MainWindowHandle, (int)ProcessUtils.ShowWindowCommands.Restored);
+                                    break;
+                            }
                         }
                         break;
                     case "shortcutTaskview":
@@ -256,9 +270,12 @@ namespace HandheldCompanion.Managers
                         {
                             var sProcess = ProcessManager.GetSuspendedProcess();
 
-                            if (sProcess != null)
+                            if (sProcess is null || sProcess.IsIgnored)
+                                break;
+
+                            if (sProcess.IsSuspended())
                                 ProcessManager.ResumeProcess(sProcess);
-                            else if (!fProcess.IsIgnored)
+                            else
                                 ProcessManager.SuspendProcess(fProcess);
                         }
                         break;
