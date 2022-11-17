@@ -298,8 +298,8 @@ namespace HandheldCompanion.Views
                 _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStopIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
             };
 
-            SystemManager.SerialArrived += SystemManager_Updated;
-            SystemManager.SerialRemoved += SystemManager_Updated;
+            SystemManager.GenericDeviceArrived += GenericDeviceUpdated;
+            SystemManager.GenericDeviceRemoved += GenericDeviceUpdated;
 
             // handle settings events and forward to common managers
             SettingsManager.SettingValueChanged += (name, value) =>
@@ -316,7 +316,7 @@ namespace HandheldCompanion.Views
             LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
         }
 
-        private void SystemManager_Updated(PnPDevice device)
+        private void GenericDeviceUpdated(PnPDevice device)
         {
             handheldDevice.PullSensors();
 

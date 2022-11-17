@@ -99,10 +99,10 @@ namespace ControllerService
             PipeServer.ClientMessage += OnClientMessage;
 
             // initialize manager(s)
-            SystemManager.SerialArrived += SystemManager_SerialArrived;
-            SystemManager.SerialRemoved += SystemManager_SerialRemoved;
+            SystemManager.GenericDeviceArrived += GenericDeviceArrived;
+            SystemManager.GenericDeviceRemoved += GenericDeviceRemoved;
             SystemManager.Start();
-            SystemManager_SerialArrived(null);
+            GenericDeviceArrived(null);
 
             // initialize device
             handheldDevice = Device.GetDefault();
@@ -117,7 +117,7 @@ namespace ControllerService
         }
 
         private SerialUSBIMU sensor;
-        private void SystemManager_SerialArrived(PnPDevice device)
+        private void GenericDeviceArrived(PnPDevice device)
         {
             switch (SensorSelection)
             {
@@ -137,7 +137,7 @@ namespace ControllerService
             }
         }
 
-        private void SystemManager_SerialRemoved(PnPDevice device)
+        private void GenericDeviceRemoved(PnPDevice device)
         {
             switch (SensorSelection)
             {

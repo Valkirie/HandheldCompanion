@@ -87,9 +87,10 @@ namespace ControllerCommon.Controllers
             UpdateTimer.SetAutoResetMode(true);
         }
 
-        protected virtual void UpdateReport()
+        public virtual void UpdateReport()
         {
             // update states
+            Inputs.Timestamp = DateTime.Now.Ticks;
             prevInjectedButtons = InjectedButtons;
 
             Updated?.Invoke(Inputs);

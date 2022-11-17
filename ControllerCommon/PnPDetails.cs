@@ -9,6 +9,7 @@ namespace ControllerCommon
     {
         public string Manufacturer;
         public string DeviceDesc;
+        public string SymLink;
 
         public bool isVirtual;
         public bool isGaming;

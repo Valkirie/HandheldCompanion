@@ -2,18 +2,23 @@
 using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using HandheldCompanion.Views;
+using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace HandheldCompanion.Managers
 {
     public static class ControllerManager
     {
-        private static Dictionary<string, IController> controllers = new();
+        private static Dictionary<string, IController> Controllers = new();
         private static IController targetController;
 
+        private static DirectInput directInput = new DirectInput();
+
+        // temporary, improve me
         public static Dictionary<ControllerButtonFlags, ControllerButtonFlags> buttonMaps = new();
 
         public static event ControllerPluggedEventHandler ControllerPlugged;
@@ -26,8 +31,11 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            SystemManager.XInputArrived += SystemManager_XInputUpdated;
-            SystemManager.XInputRemoved += SystemManager_XInputUpdated;
+            SystemManager.XInputDeviceArrived += XInputUpdated;
+            SystemManager.XInputDeviceRemoved += XInputUpdated;
+
+            SystemManager.DInputDeviceArrived += DInputUpdated;
+            SystemManager.DInputDeviceRemoved += DInputUpdated;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -47,8 +55,8 @@ namespace HandheldCompanion.Managers
             if (!IsInitialized)
                 return;
 
-            SystemManager.XInputArrived -= SystemManager_XInputUpdated;
-            SystemManager.XInputRemoved -= SystemManager_XInputUpdated;
+            SystemManager.XInputDeviceArrived -= XInputUpdated;
+            SystemManager.XInputDeviceRemoved -= XInputUpdated;
 
             SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
@@ -80,21 +88,21 @@ namespace HandheldCompanion.Managers
             target.SetVibrationStrength(value);
         }
 
-        private static void SystemManager_XInputRemoved(PnPDetails device)
+        private static void DInputUpdated(PnPDetails details)
         {
-            // todo: implement me
-        }
-
-        private static void SystemManager_XInputArrived(PnPDetails device)
-        {
-            // todo: implement me
-        }
-
-        private static void SystemManager_XInputUpdated(PnPDetails device)
-        {
-            for (int idx = 0; idx < 4; idx++)
+            foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
             {
-                XInputController controller = new XInputController(idx);
+                // Instantiate the joystick
+                var joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
+
+                if (!joystick.Properties.InterfacePath.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
+                    continue;
+
+                // is an XInput controller, handled elsewhere
+                if (joystick.Properties.InterfacePath.Contains("IG_", StringComparison.InvariantCultureIgnoreCase))
+                    continue;
+
+                DInputController controller = new(joystick, details);
 
                 if (!controller.IsConnected())
                     continue;
@@ -103,21 +111,43 @@ namespace HandheldCompanion.Managers
                     continue;
 
                 // update or create controller
-                controllers[controller.GetContainerInstancePath()] = controller;
+                string path = controller.GetContainerInstancePath();
+                Controllers[path] = controller;
+
+                // raise event
+                ControllerPlugged?.Invoke(controller);
+            }
+        }
+
+        private static void XInputUpdated(PnPDetails details)
+        {
+            for (int idx = 0; idx < 4; idx++)
+            {
+                XInputController controller = new(idx);
+
+                if (!controller.IsConnected())
+                    continue;
+
+                if (controller.IsVirtual())
+                    continue;
+
+                // update or create controller
+                string path = controller.GetContainerInstancePath();
+                Controllers[path] = controller;
 
                 // raise event
                 ControllerPlugged?.Invoke(controller);
             }
 
-            string[] keys = controllers.Keys.ToArray();
+            string[] keys = Controllers.Keys.ToArray();
 
             foreach (string key in keys)
             {
-                IController controllerEx = controllers[key];
+                IController controllerEx = Controllers[key];
                 if (!controllerEx.IsConnected())
                 {
                     // controller was unplugged
-                    controllers.Remove(key);
+                    Controllers.Remove(key);
 
                     // raise event
                     ControllerUnplugged?.Invoke(controllerEx);
@@ -131,7 +161,7 @@ namespace HandheldCompanion.Managers
             ClearTargetController();
 
             // update target controller
-            targetController = controllers[baseContainerDeviceInstancePath];
+            targetController = Controllers[baseContainerDeviceInstancePath];
             targetController.Updated += UpdateReport;
 
             targetController.Plug();

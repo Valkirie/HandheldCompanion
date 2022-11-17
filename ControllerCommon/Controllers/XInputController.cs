@@ -155,7 +155,12 @@ namespace ControllerCommon.Controllers
             UpdateTimer.Tick += (sender, e) => UpdateReport();
         }
 
-        protected override void UpdateReport()
+        public override string ToString()
+        {
+            return Details.DeviceDesc;
+        }
+
+        public override void UpdateReport()
         {
             // skip if controller isn't connected
             if (!IsConnected())
@@ -171,7 +176,6 @@ namespace ControllerCommon.Controllers
                 return;
 
             Inputs.Buttons = InjectedButtons;
-            Inputs.Timestamp = DateTime.Now.Ticks;
 
             if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.A))
                 Inputs.Buttons |= ControllerButtonFlags.B1;
