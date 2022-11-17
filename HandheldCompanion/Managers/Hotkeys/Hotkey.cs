@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using Application = System.Windows.Application;
 
-namespace HandheldCompanion.Managers.Classes
+namespace HandheldCompanion.Managers
 {
     public class Hotkey
     {

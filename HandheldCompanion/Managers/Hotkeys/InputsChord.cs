@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace HandheldCompanion.Managers.Classes
+namespace HandheldCompanion.Managers
 {
     [Flags]
     public enum InputsChordType : ushort

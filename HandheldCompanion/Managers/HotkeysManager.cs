@@ -2,21 +2,25 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Managers.Classes;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
 using System.Windows;
-using static HandheldCompanion.Managers.Classes.InputsHotkey;
-using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
+using static HandheldCompanion.Managers.InputsHotkey;
+using Shell
+/* Unmerged change from project 'HandheldCompanion (net6.0-windows10.0.19041.0)'
+Before:
 using Shell32;
 using Shell = Shell32.Shell;
+After:
+using Shell = Shell32.Shell;
+*/
+ = Shell32.Shell;
 
 namespace HandheldCompanion.Managers
 {
@@ -244,7 +248,7 @@ namespace HandheldCompanion.Managers
                         {
                             var Placement = ProcessUtils.GetPlacement(fProcess.MainWindowHandle);
 
-                            switch(Placement.showCmd)
+                            switch (Placement.showCmd)
                             {
                                 case ProcessUtils.ShowWindowCommands.Normal:
                                 case ProcessUtils.ShowWindowCommands.Minimized:
@@ -300,7 +304,7 @@ namespace HandheldCompanion.Managers
 
         internal static void ClearHotkey(Hotkey hotkey)
         {
-            switch(hotkey.inputsHotkey.Listener)
+            switch (hotkey.inputsHotkey.Listener)
             {
                 case "shortcutGuide":
                     ControllerManager.buttonMaps[hotkey.inputsChord.GamepadButtons] = ControllerButtonFlags.None;

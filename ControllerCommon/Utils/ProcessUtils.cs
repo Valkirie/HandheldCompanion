@@ -16,7 +16,6 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Windows.System.Diagnostics;
-using static PInvoke.User32;
 using Point = System.Windows.Point;
 
 namespace ControllerCommon.Utils
@@ -57,7 +56,7 @@ namespace ControllerCommon.Utils
 
         [DllImport("User32.dll")]
         public static extern bool ShowWindow(IntPtr handle, int nCmdShow);
-        
+
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);

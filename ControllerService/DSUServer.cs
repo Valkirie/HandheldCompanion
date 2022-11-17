@@ -12,9 +12,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Numerics;
 using System.Threading;
-using System.Timers;
 using System.Windows.Forms;
-using Timer = System.Timers.Timer;
 
 namespace ControllerService
 {

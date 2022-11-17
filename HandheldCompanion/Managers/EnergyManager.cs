@@ -1,5 +1,4 @@
 ﻿using ControllerCommon.Managers;
-using HandheldCompanion.Managers.Classes;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;

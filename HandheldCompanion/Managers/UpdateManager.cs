@@ -1,5 +1,4 @@
 ﻿using ControllerCommon.Managers;
-using HandheldCompanion.Managers.Classes;
 using ModernWpf.Controls;
 using Newtonsoft.Json;
 using System;

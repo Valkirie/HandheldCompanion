@@ -11,7 +11,7 @@ using static HandheldCompanion.Managers.EnergyManager;
 using Brush = System.Windows.Media.Brush;
 using Image = System.Windows.Controls.Image;
 
-namespace HandheldCompanion.Managers.Classes
+namespace HandheldCompanion.Managers
 {
     public class ProcessEx
     {

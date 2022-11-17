@@ -2,7 +2,6 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using Force.Crc32;
-using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views;
 using System;
 using System.Collections;

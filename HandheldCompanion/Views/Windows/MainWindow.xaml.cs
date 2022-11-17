@@ -2,7 +2,6 @@ using ControllerCommon;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using ModernWpf.Controls;

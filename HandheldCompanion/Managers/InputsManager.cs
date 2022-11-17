@@ -4,7 +4,6 @@ using ControllerCommon.Managers;
 using Gma.System.MouseKeyHook;
 using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views;
 using PrecisionTiming;
 using System;

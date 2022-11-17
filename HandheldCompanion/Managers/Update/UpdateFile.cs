@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace HandheldCompanion.Managers.Classes
+namespace HandheldCompanion.Managers
 {
     public class UpdateFile
     {

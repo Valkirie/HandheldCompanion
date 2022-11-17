@@ -1,6 +1,5 @@
 ﻿using CoreAudio;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views.Windows;
 using System;
 using System.Linq;

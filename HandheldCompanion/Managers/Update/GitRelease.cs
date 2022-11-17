@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HandheldCompanion.Managers.Classes
+namespace HandheldCompanion.Managers
 {
     public class Asset
     {

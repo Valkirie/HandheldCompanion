@@ -12,8 +12,8 @@ using System.Linq;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Capabilities = ControllerCommon.Managers.Hid.Capabilities;
 using Attributes = ControllerCommon.Managers.Hid.Attributes;
+using Capabilities = ControllerCommon.Managers.Hid.Capabilities;
 
 namespace ControllerCommon.Managers
 {

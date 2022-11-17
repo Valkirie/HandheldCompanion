@@ -1,6 +1,5 @@
 ﻿using ControllerCommon.Managers;
 using ControllerCommon.Utils;
-using HandheldCompanion.Managers.Classes;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

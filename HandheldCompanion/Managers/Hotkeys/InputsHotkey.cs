@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using FontFamily = System.Windows.Media.FontFamily;
 
-namespace HandheldCompanion.Managers.Classes
+namespace HandheldCompanion.Managers
 {
     public class InputsHotkey
     {
