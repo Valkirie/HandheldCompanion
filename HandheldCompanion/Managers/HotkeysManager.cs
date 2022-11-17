@@ -283,6 +283,12 @@ namespace HandheldCompanion.Managers
                                 ProcessManager.SuspendProcess(fProcess);
                         }
                         break;
+                    case "shortcutKillApp":
+                        if (fProcess != null)
+                        {
+                            fProcess.Process.Kill();
+                        }
+                        break;
                     default:
                         InputsManager.KeyPress(input.OutputKeys);
                         break;

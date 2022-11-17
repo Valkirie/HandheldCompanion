@@ -32,6 +32,7 @@ namespace HandheldCompanion.Managers
             { 23, new InputsHotkey(InputsHotkeyType.Windows,    "\uEE49",   "shortcutExpand",       "Segoe Fluent Icons",   20, false,  true) },
             { 24, new InputsHotkey(InputsHotkeyType.Windows,    "\uE7C4",   "shortcutTaskview",     "Segoe MDL2 Assets",    20, false,  true) },
             { 25, new InputsHotkey(InputsHotkeyType.Windows,    "\uE71D",   "shortcutTaskManager",  "Segoe Fluent Icons",   20, false,  true) },
+            { 26, new InputsHotkey(InputsHotkeyType.Windows,    "\uE8BB",   "shortcutKillApp",      "Segoe Fluent Icons",   20, false,  true) },
 
             { 30, new InputsHotkey(InputsHotkeyType.Handheld,   "\uE7C4",   "shortcutMainwindow",   "Segoe Fluent Icons",   20, false,  true) },
             { 31, new InputsHotkey(InputsHotkeyType.Handheld,   "\uE2E8",   "shortcutGuide",        "Segoe UI Symbol",      20, false,  true) },

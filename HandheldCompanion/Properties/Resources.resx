@@ -269,7 +269,7 @@
     <value>Press this key: Windows + D</value>
   </data>
   <data name="InputsHotkey_shortcutESC" xml:space="preserve">
-    <value>Exit</value>
+    <value>Escape</value>
   </data>
   <data name="InputsHotkey_shortcutESCDesc" xml:space="preserve">
     <value>Press this key: Escape</value>
@@ -290,6 +290,12 @@
     <value>Display touch keyboard</value>
   </data>
   <data name="InputsHotkey_shortcutKeyboardDesc" xml:space="preserve">
+    <value>Change hotkey by pressing a button or a special key</value>
+  </data>
+  <data name="InputsHotkey_shortcutKillApp" xml:space="preserve">
+    <value>Force application shutdown</value>
+  </data>
+  <data name="InputsHotkey_shortcutKillAppDesc" xml:space="preserve">
     <value>Change hotkey by pressing a button or a special key</value>
   </data>
   <data name="InputsHotkey_shortcutMainwindow" xml:space="preserve">
