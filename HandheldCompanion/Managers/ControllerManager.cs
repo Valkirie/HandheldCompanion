@@ -117,6 +117,21 @@ namespace HandheldCompanion.Managers
                 // raise event
                 ControllerPlugged?.Invoke(controller);
             }
+
+            string[] keys = Controllers.Keys.ToArray();
+
+            foreach (string key in keys)
+            {
+                IController controller = Controllers[key];
+                if (!controller.IsConnected())
+                {
+                    // controller was unplugged
+                    Controllers.Remove(key);
+
+                    // raise event
+                    ControllerUnplugged?.Invoke(controller);
+                }
+            }
         }
 
         private static void XInputUpdated(PnPDetails details)
@@ -143,14 +158,14 @@ namespace HandheldCompanion.Managers
 
             foreach (string key in keys)
             {
-                IController controllerEx = Controllers[key];
-                if (!controllerEx.IsConnected())
+                IController controller = Controllers[key];
+                if (!controller.IsConnected())
                 {
                     // controller was unplugged
                     Controllers.Remove(key);
 
                     // raise event
-                    ControllerUnplugged?.Invoke(controllerEx);
+                    ControllerUnplugged?.Invoke(controller);
                 }
             }
         }
