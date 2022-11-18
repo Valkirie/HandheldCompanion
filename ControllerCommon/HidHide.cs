@@ -17,7 +17,7 @@ namespace ControllerCommon
             // verifying HidHide is installed
             string path = RegistryUtils.GetHKLM(@"SOFTWARE\Nefarius Software Solutions e.U.\HidHide", "Path");
             if (!string.IsNullOrEmpty(path))
-                path = Path.Combine(key, "x64", "HidHideCLI.exe");
+                path = Path.Combine(path, "x64", "HidHideCLI.exe");
 
             if (!File.Exists(path))
             {
