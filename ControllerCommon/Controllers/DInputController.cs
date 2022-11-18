@@ -35,6 +35,9 @@ namespace ControllerCommon.Controllers
 
         public override void UpdateReport()
         {
+            // update states
+            prevState = State;
+
             base.UpdateReport();
         }
 
