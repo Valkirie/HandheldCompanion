@@ -27,6 +27,9 @@ namespace HandheldCompanion.Managers
         public static event ControllerUnpluggedEventHandler ControllerUnplugged;
         public delegate void ControllerUnpluggedEventHandler(IController Controller);
 
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
+
         private static bool IsInitialized;
 
         public static void Start()
@@ -48,12 +51,15 @@ namespace HandheldCompanion.Managers
             SetHIDStrength(HIDstrength);
 
             IsInitialized = true;
+            Initialized?.Invoke();
         }
 
         public static void Stop()
         {
             if (!IsInitialized)
                 return;
+
+            IsInitialized = false;
 
             SystemManager.XInputDeviceArrived -= XInputUpdated;
             SystemManager.XInputDeviceRemoved -= XInputUpdated;
@@ -130,7 +136,7 @@ namespace HandheldCompanion.Managers
                     continue;
 
                 // update or create controller
-                string path = controller.GetContainerInstancePath();
+                string path = controller.GetInstancePath();
                 Controllers[path] = controller;
 
                 // raise event
@@ -166,7 +172,7 @@ namespace HandheldCompanion.Managers
                     continue;
 
                 // update or create controller
-                string path = controller.GetContainerInstancePath();
+                string path = controller.GetInstancePath();
                 Controllers[path] = controller;
 
                 // raise event

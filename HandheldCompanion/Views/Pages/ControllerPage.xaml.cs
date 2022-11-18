@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Controllers;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using System;
@@ -46,6 +47,7 @@ namespace HandheldCompanion.Views.Pages
 
             ControllerManager.ControllerPlugged += ControllerPlugged;
             ControllerManager.ControllerUnplugged += ControllerUnplugged;
+            SystemManager.Initialized += SystemManager_Initialized;
         }
 
         public ControllerPage(string Tag) : this()
@@ -168,15 +170,24 @@ namespace HandheldCompanion.Views.Pages
             {
                 NoDevices.Visibility = RadioControllers.Items.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
                 InputDevices.Visibility = RadioControllers.Items.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
-
-                // check if we already have a targeted controller, if not, pick one
-                // todo: pick the latest known from settings
-                IController target = ControllerManager.GetTargetController();
-                if (target != null)
-                    return;
-
-                RadioControllers.SelectedIndex = 0;
             });
+        }
+
+        private void SystemManager_Initialized()
+        {
+            // get last picked controller
+            string path = SettingsManager.GetString("HIDInstancePath");
+
+            foreach (IController ctrl in RadioControllers.Items)
+            {
+                if (ctrl.GetInstancePath() == path)
+                {
+                    RadioControllers.SelectedItem = ctrl;
+                    return;
+                }
+            }
+
+            RadioControllers.SelectedIndex = 0;
         }
 
         private void UpdateController()
@@ -322,7 +333,11 @@ namespace HandheldCompanion.Views.Pages
             }
 
             IController Controller = (IController)RadioControllers.SelectedItem;
-            ControllerManager.SetTargetController(Controller.GetContainerInstancePath());
+
+            string path = Controller.GetInstancePath();
+            ControllerManager.SetTargetController(path);
+
+            SettingsManager.SetProperty("HIDInstancePath", path);
         }
     }
 }

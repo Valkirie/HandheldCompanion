@@ -31,8 +31,8 @@ namespace HandheldCompanion.Managers
         public delegate void DeletedEventHandler(Profile profile);
         public static event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(Profile profile, bool backgroundtask, bool isCurrent);
-        public static event LoadedEventHandler Ready;
-        public delegate void LoadedEventHandler();
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
 
         public static event AppliedEventHandler Applied;
         public delegate void AppliedEventHandler(Profile profile);
@@ -90,16 +90,16 @@ namespace HandheldCompanion.Managers
             foreach (string fileName in fileEntries)
                 ProcessProfile(fileName);
 
-            // warn owner
-            Ready?.Invoke();
-
             IsInitialized = true;
+            Initialized?.Invoke();
         }
 
         public static void Stop()
         {
             if (!IsInitialized)
                 return;
+
+            IsInitialized = false;
 
             profileWatcher.Deleted -= ProfileDeleted;
             profileWatcher.Dispose();

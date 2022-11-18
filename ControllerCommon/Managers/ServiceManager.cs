@@ -90,6 +90,8 @@ namespace ControllerCommon.Managers
             if (!IsInitialized)
                 return;
 
+            IsInitialized = false;
+
             MonitorTimer.Elapsed -= MonitorHelper;
             MonitorTimer = null;
 

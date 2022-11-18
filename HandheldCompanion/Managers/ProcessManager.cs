@@ -61,6 +61,9 @@ namespace HandheldCompanion.Managers
         public static event ProcessStoppedEventHandler ProcessStopped;
         public delegate void ProcessStoppedEventHandler(ProcessEx processEx);
 
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
+
         static ProcessManager()
         {
             MonitorTimer = new Timer(1000);
@@ -98,12 +101,15 @@ namespace HandheldCompanion.Managers
             EventCallback((IntPtr)0, 0, hWnd, 0, 0, 0, 0);
 
             IsInitialized = true;
+            Initialized?.Invoke();
         }
 
         public static void Stop()
         {
             if (!IsInitialized)
                 return;
+
+            IsInitialized = false;
 
             // stop processes monitor
             MonitorTimer.Elapsed -= MonitorHelper;

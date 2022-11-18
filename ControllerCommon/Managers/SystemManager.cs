@@ -43,6 +43,9 @@ namespace ControllerCommon.Managers
 
         public static event SystemStatusChangedEventHandler SystemStatusChanged;
         public delegate void SystemStatusChangedEventHandler(SystemStatus status);
+
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
         #endregion
 
         public static Guid HidDevice;
@@ -95,6 +98,7 @@ namespace ControllerCommon.Managers
             RefreshDInput();
 
             IsInitialized = true;
+            Initialized?.Invoke();
         }
 
         private static void RefreshXInput()
@@ -115,6 +119,8 @@ namespace ControllerCommon.Managers
         {
             if (!IsInitialized)
                 return;
+
+            IsInitialized = false;
 
             // stop listening to system events
             SystemEvents.PowerModeChanged -= OnPowerChange;

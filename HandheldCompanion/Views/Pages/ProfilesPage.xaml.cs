@@ -39,7 +39,7 @@ namespace HandheldCompanion.Views.Pages
 
             ProfileManager.Deleted += ProfileDeleted;
             ProfileManager.Updated += ProfileUpdated;
-            ProfileManager.Ready += ProfileManagerLoaded;
+            ProfileManager.Initialized += ProfileManagerLoaded;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // draw gamepad activators

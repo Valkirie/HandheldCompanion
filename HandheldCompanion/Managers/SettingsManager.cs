@@ -15,6 +15,9 @@ namespace HandheldCompanion.Managers
         public static event SettingValueChangedEventHandler SettingValueChanged;
         public delegate void SettingValueChangedEventHandler(string name, object value);
 
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
+
         public static void Start()
         {
             var properties = Properties.Settings
@@ -27,12 +30,15 @@ namespace HandheldCompanion.Managers
                 SettingValueChanged(property.Name, GetProperty(property.Name));
 
             IsInitialized = true;
+            Initialized?.Invoke();
         }
 
         public static void Stop()
         {
             if (!IsInitialized)
                 return;
+
+            IsInitialized = false;
         }
 
         public static void SetProperty(string name, object value)

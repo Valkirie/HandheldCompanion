@@ -10,8 +10,10 @@ namespace HandheldCompanion.Managers
     public static class EnergyManager
     {
         private static bool IsEnabled;
-        private static bool IsLoaded;
         private static bool IsInitialized;
+
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
 
         public enum QualityOfServiceLevel
         {
@@ -76,12 +78,15 @@ namespace HandheldCompanion.Managers
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             IsInitialized = true;
+            Initialized?.Invoke();
         }
 
         public static void Stop()
         {
             if (!IsInitialized)
                 return;
+
+            IsInitialized = false;
 
             RestoreDefaultEfficiency();
         }

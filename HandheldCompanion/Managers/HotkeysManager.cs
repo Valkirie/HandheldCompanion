@@ -41,6 +41,9 @@ namespace HandheldCompanion.Managers
         public static event CommandExecutedEventHandler CommandExecuted;
         public delegate void CommandExecutedEventHandler(string listener);
 
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
+
         public static SortedDictionary<ushort, Hotkey> Hotkeys = new();
         private const short PIN_LIMIT = 9;
 
@@ -98,12 +101,15 @@ namespace HandheldCompanion.Managers
             }
 
             IsInitialized = true;
+            Initialized?.Invoke();
         }
 
         public static void Stop()
         {
             if (!IsInitialized)
                 return;
+
+            IsInitialized = false;
         }
 
         private static void StartListening(Hotkey hotkey, bool IsCombo)

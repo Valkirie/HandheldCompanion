@@ -65,6 +65,9 @@ namespace HandheldCompanion.Managers
         public static event TriggerUpdatedEventHandler TriggerUpdated;
         public delegate void TriggerUpdatedEventHandler(string listener, InputsChord inputs, bool IsCombo);
 
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
+
         private static short KeyIndex;
         private static bool KeyUsed;
 
@@ -481,12 +484,15 @@ namespace HandheldCompanion.Managers
             m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
 
             IsInitialized = true;
+            Initialized?.Invoke();
         }
 
         public static void Stop()
         {
             if (!IsInitialized)
                 return;
+
+            IsInitialized = false;
 
             //It is recommened to dispose it
             m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;

@@ -58,6 +58,9 @@ namespace ControllerCommon.Processor
 
         public event StatusChangedHandler StatusChanged;
         public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
+
+        public event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
         #endregion
 
         public static Processor GetCurrent()
@@ -101,6 +104,7 @@ namespace ControllerCommon.Processor
         public virtual void Initialize()
         {
             StatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
+            Initialized?.Invoke();
 
             if (CanChangeTDP)
                 updateTimer.Start();

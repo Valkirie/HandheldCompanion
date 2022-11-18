@@ -670,5 +670,17 @@ namespace HandheldCompanion.Properties {
                 this["HIDstrength"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string HIDInstancePath {
+            get {
+                return ((string)(this["HIDInstancePath"]));
+            }
+            set {
+                this["HIDInstancePath"] = value;
+            }
+        }
     }
 }
