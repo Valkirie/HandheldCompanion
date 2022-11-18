@@ -47,7 +47,6 @@ namespace HandheldCompanion.Managers
 
         private const short TIME_EXPIRED = 3000;        // default interval before considering a chord as expired if no input is detected
 
-        private static bool IsLocked;
         private static bool IsCombo;
         private static InputsHotkey currentHotkey = new();
 
@@ -224,7 +223,7 @@ namespace HandheldCompanion.Managers
             {
                 if (args.Modifiers.HasFlag(mode))
                 {
-                    KeyEventArgsExt mod = new KeyEventArgsExt(mode, args.ScanCode, args.Timestamp, args.IsKeyDown, args.IsKeyUp, true);
+                    KeyEventArgsExt mod = new KeyEventArgsExt(mode, args.ScanCode, args.Timestamp, args.IsKeyDown, args.IsKeyUp, true, args.Flags);
                     mods.Add(mod);
                 }
             }
@@ -242,16 +241,23 @@ namespace HandheldCompanion.Managers
             timer.SetPeriod(interval);
         }
 
+        const uint LLKHF_INJECTED = 0x00000010;
+        const uint LLKHF_LOWER_IL_INJECTED = 0x00000002;
+
         private static void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
         {
-            if (IsLocked)
+            KeyEventArgsExt args = (KeyEventArgsExt)e;
+
+            var Injected = (args.Flags & LLKHF_INJECTED) > 0;
+            var InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
+
+            if (Injected || InjectedLL)
                 return;
+
+            KeyCode hookKey = (KeyCode)args.KeyValue;
 
             KeyboardResetTimer.Stop();
             KeyUsed = false;
-
-            KeyEventArgsExt args = (KeyEventArgsExt)e;
-            KeyCode hookKey = (KeyCode)args.KeyValue;
 
             // are we listening for keyboards inputs as part of a custom hotkey ?
             if (IsCombo)
@@ -391,30 +397,20 @@ namespace HandheldCompanion.Managers
 
         public static void KeyPress(VirtualKeyCode key)
         {
-            IsLocked = true;
-
             m_InputSimulator.Keyboard.KeyPress(key);
-
-            IsLocked = false;
         }
 
         public static void KeyPress(VirtualKeyCode[] keys)
         {
-            IsLocked = true;
-
             foreach (VirtualKeyCode key in keys)
                 m_InputSimulator.Keyboard.KeyDown(key);
 
             foreach (VirtualKeyCode key in keys)
                 m_InputSimulator.Keyboard.KeyUp(key);
-
-            IsLocked = false;
         }
 
         public static void KeyPress(List<OutputKey> keys)
         {
-            IsLocked = true;
-
             foreach (OutputKey key in keys)
             {
                 if (key.IsKeyDown)
@@ -422,8 +418,6 @@ namespace HandheldCompanion.Managers
                 else
                     m_InputSimulator.Keyboard.KeyUp((VirtualKeyCode)key.KeyValue);
             }
-
-            IsLocked = false;
         }
 
         public static void KeyStroke(VirtualKeyCode mod, VirtualKeyCode key)
@@ -440,8 +434,6 @@ namespace HandheldCompanion.Managers
         {
             if (BufferKeys.Count == 0)
                 return;
-
-            IsLocked = true;
 
             // reset index
             KeyIndex = 0;
@@ -476,9 +468,6 @@ namespace HandheldCompanion.Managers
 
             // clear buffer
             BufferKeys.Clear();
-
-            // release lock
-            IsLocked = false;
         }
 
         private static string GetChord(List<KeyEventArgsExt> args)
