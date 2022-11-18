@@ -287,7 +287,6 @@ namespace ControllerCommon.Managers
 
         private async static void XInputListener_DeviceArrived(DeviceEventArgs obj)
         {
-            // XInput device arrived
             try
             {
                 var device = PnPDevice.GetDeviceByInterfaceId(obj.SymLink);
@@ -306,8 +305,23 @@ namespace ControllerCommon.Managers
             catch (Exception) { }
         }
 
-        private static void HIDListener_DeviceRemoved(DeviceEventArgs obj)
+        private async static void HIDListener_DeviceRemoved(DeviceEventArgs obj)
         {
+            try
+            {
+                string InstanceId = obj.SymLink.Replace("#", @"\");
+                InstanceId = CommonUtils.Between(InstanceId, @"\\?\", @"\{");
+
+                var deviceEx = GetPnPDeviceEx(InstanceId);
+                PnPDevices.Remove(InstanceId);
+
+                DInputDeviceRemoved?.Invoke(deviceEx);
+            }
+            catch (Exception) { }
+
+            // give system at least one second to initialize device
+            await Task.Delay(1000);
+            RefreshHID();
         }
 
         private async static void HIDListener_DeviceArrived(DeviceEventArgs obj)
