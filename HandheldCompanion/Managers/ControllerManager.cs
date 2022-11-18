@@ -102,7 +102,26 @@ namespace HandheldCompanion.Managers
                 if (joystick.Properties.InterfacePath.Contains("IG_", StringComparison.InvariantCultureIgnoreCase))
                     continue;
 
-                DInputController controller = new(joystick, details);
+                IController controller = null;
+                switch (joystick.Properties.VendorId)
+                {
+                    // SONY
+                    case 1356:
+                        {
+                            switch (joystick.Properties.ProductId)
+                            {
+                                // DualShock4
+                                case 2508:
+                                    controller = new DS4Controller(joystick, details);
+                                    break;
+                            }
+                        }
+                        break;
+                }
+
+                // unsupported DInput controller
+                if (controller is null)
+                    continue;
 
                 if (!controller.IsConnected())
                     continue;

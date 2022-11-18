@@ -2,6 +2,7 @@
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -11,9 +12,9 @@ namespace ControllerCommon.Controllers
 {
     public class DInputController : IController
     {
-        private Joystick Controller;
-        private JoystickState State = new();
-        private JoystickState prevState = new();
+        protected Joystick Controller;
+        protected JoystickState State = new();
+        protected JoystickState prevState = new();
 
         public DInputController(Joystick joystick, PnPDetails details)
         {
@@ -25,11 +26,6 @@ namespace ControllerCommon.Controllers
 
             // Set BufferSize in order to use buffered data.
             joystick.Properties.BufferSize = 128;
-
-            if (!IsConnected())
-                return;
-
-            UpdateTimer.Tick += (sender, e) => UpdateReport();
         }
 
         public override string ToString()
@@ -39,39 +35,6 @@ namespace ControllerCommon.Controllers
 
         public override void UpdateReport()
         {
-            // skip if controller isn't connected
-            if (!IsConnected())
-                return;
-
-            // Poll events from joystick
-            Controller.Poll();
-
-            // update gamepad state
-            State = Controller.GetCurrentState();
-
-            if (prevState.GetHashCode() == State.GetHashCode() && prevInjectedButtons == InjectedButtons)
-                return;
-
-            Inputs.Buttons = InjectedButtons;
-
-            // todo: implement loop
-            if (State.Buttons[0])
-                Inputs.Buttons |= ControllerButtonFlags.B1;
-            if (State.Buttons[1])
-                Inputs.Buttons |= ControllerButtonFlags.B2;
-            if (State.Buttons[2])
-                Inputs.Buttons |= ControllerButtonFlags.B3;
-            if (State.Buttons[3])
-                Inputs.Buttons |= ControllerButtonFlags.B4;
-            if (State.Buttons[4])
-                Inputs.Buttons |= ControllerButtonFlags.B5;
-            if (State.Buttons[5])
-                Inputs.Buttons |= ControllerButtonFlags.B6;
-            if (State.Buttons[6])
-                Inputs.Buttons |= ControllerButtonFlags.B7;
-            if (State.Buttons[7])
-                Inputs.Buttons |= ControllerButtonFlags.B8;
-
             base.UpdateReport();
         }
 
