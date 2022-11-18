@@ -61,7 +61,7 @@ namespace ControllerCommon.Controllers
         public float RightThumbX, RightThumbY;
         public float LeftTrigger;
         public float RightTrigger;
-        public long Timestamp;
+        public int Timestamp;
     }
 
     public abstract class IController
@@ -90,7 +90,7 @@ namespace ControllerCommon.Controllers
         public virtual void UpdateReport()
         {
             // update states
-            Inputs.Timestamp = DateTime.Now.Ticks;
+            Inputs.Timestamp = Environment.TickCount;
             prevInjectedButtons = InjectedButtons;
 
             Updated?.Invoke(Inputs);
