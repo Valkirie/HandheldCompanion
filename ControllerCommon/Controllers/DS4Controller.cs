@@ -42,12 +42,6 @@ namespace ControllerCommon.Controllers
 
             Inputs.Buttons = InjectedButtons;
 
-            for (int i = 0; i < Controller.Capabilities.ButtonCount; i++)
-            {
-                if (State.Buttons[i])
-                    LogManager.LogDebug("Button {0} pressed", i);
-            }
-
             // todo: implement loop
             if (State.Buttons[0])
                 Inputs.Buttons |= ControllerButtonFlags.B3;
