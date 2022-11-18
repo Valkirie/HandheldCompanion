@@ -12,19 +12,11 @@ namespace ControllerCommon
     {
         private static Process process;
 
-        // The name of the key must include a valid root.
-        const string userRoot = @"HKEY_LOCAL_MACHINE";
-        const string subkey = @"SOFTWARE\Nefarius Software Solutions e.U.\HidHide";
-        const string keyName = userRoot + "\\" + subkey;
-
-        private static readonly string key = (string)Registry.GetValue(keyName, "Path", "");
-
         static HidHide()
         {
             // verifying HidHide is installed
-            string path = null;
-
-            if (key != null)
+            string path = RegistryUtils.GetHKLM(@"SOFTWARE\Nefarius Software Solutions e.U.\HidHide", "Path");
+            if (!string.IsNullOrEmpty(path))
                 path = Path.Combine(key, "x64", "HidHideCLI.exe");
 
             if (!File.Exists(path))
