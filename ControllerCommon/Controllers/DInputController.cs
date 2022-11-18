@@ -43,17 +43,11 @@ namespace ControllerCommon.Controllers
             return (bool)(!Controller?.IsDisposed);
         }
 
-        public override async void Rumble()
-        {
-            base.Rumble();
-        }
-
         public override void Plug()
         {
             // Acquire the joystick
             Controller.Acquire();
 
-            PipeClient.ServerMessage += OnServerMessage;
             base.Plug();
         }
 
@@ -62,23 +56,7 @@ namespace ControllerCommon.Controllers
             // Acquire the joystick
             Controller.Unacquire();
 
-            PipeClient.ServerMessage -= OnServerMessage;
             base.Unplug();
-        }
-
-        private void OnServerMessage(PipeMessage message)
-        {
-            switch (message.code)
-            {
-                case PipeCode.SERVER_VIBRATION:
-                    {
-                        PipeClientVibration e = (PipeClientVibration)message;
-
-                        ushort LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
-                        ushort RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
-                    }
-                    break;
-            }
         }
     }
 }
