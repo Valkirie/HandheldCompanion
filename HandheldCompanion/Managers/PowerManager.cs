@@ -64,6 +64,9 @@ namespace HandheldCompanion.Managers
         protected object gfxLock = new();
         private bool gfxWatchdogPendingStop;
 
+        private const short INTERVAL_DEFAULT = 3000;            // default interval between value scans
+        private const short INTERVAL_DEGRADED = 10000;          // degraded interval between value scans
+
         public event LimitChangedHandler PowerLimitChanged;
         public delegate void LimitChangedHandler(PowerType type, int limit);
 
@@ -89,13 +92,13 @@ namespace HandheldCompanion.Managers
         public PowerManager() : base()
         {
             // initialize timer(s)
-            powerWatchdog = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
+            powerWatchdog = new Timer() { Interval = INTERVAL_DEFAULT, AutoReset = true, Enabled = false };
             powerWatchdog.Elapsed += powerWatchdog_Elapsed;
 
-            cpuWatchdog = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
+            cpuWatchdog = new Timer() { Interval = INTERVAL_DEFAULT, AutoReset = true, Enabled = false };
             cpuWatchdog.Elapsed += cpuWatchdog_Elapsed;
 
-            gfxWatchdog = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
+            gfxWatchdog = new Timer() { Interval = INTERVAL_DEFAULT, AutoReset = true, Enabled = false };
             gfxWatchdog.Elapsed += gfxWatchdog_Elapsed;
 
             ProfileManager.Applied += ProfileManager_Applied;
@@ -198,6 +201,10 @@ namespace HandheldCompanion.Managers
                     // not ready yet
                     if (CurrentTDP[idx] == 0)
                         break;
+
+                    // we're in degraded condition
+                    if (CurrentTDP[idx] < 0)
+                        cpuWatchdog.Interval = INTERVAL_DEGRADED;
 
                     // only request an update if current limit is different than stored
                     if (CurrentTDP[idx] != TDP)
