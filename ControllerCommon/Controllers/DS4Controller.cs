@@ -124,8 +124,6 @@ namespace ControllerCommon.Controllers
             Inputs.RightThumbX = Math.Clamp(State.Z - short.MaxValue, short.MinValue, short.MaxValue);
             Inputs.RightThumbY = Math.Clamp(-State.RotationZ + short.MaxValue, short.MinValue, short.MaxValue);
 
-            LogManager.LogDebug("POV {0}", string.Join(',', State.PointOfViewControllers));
-
             base.UpdateReport();
         }
 
