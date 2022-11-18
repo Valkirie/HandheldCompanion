@@ -1,6 +1,7 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
+using ControllerCommon.Utils;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -65,6 +66,7 @@ namespace HandheldCompanion.Managers
         private bool gfxWatchdogPendingStop;
 
         private const short INTERVAL_DEFAULT = 3000;            // default interval between value scans
+        private const short INTERVAL_INTEL = 5000;              // intel interval between value scans
         private const short INTERVAL_DEGRADED = 10000;          // degraded interval between value scans
 
         public event LimitChangedHandler PowerLimitChanged;
@@ -391,6 +393,21 @@ namespace HandheldCompanion.Managers
 
             if (!processor.IsInitialized)
                 return;
+
+            // higher interval on Intel CPUs to avoid CPU overload
+            if (processor.GetType() == typeof(IntelProcessor))
+            {
+                cpuWatchdog.Interval = INTERVAL_INTEL;
+
+                int VulnerableDriverBlocklistEnable = Convert.ToInt32(RegistryUtils.GetHKLM(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable"));
+                if (VulnerableDriverBlocklistEnable == 1)
+                {
+                    cpuWatchdog.Stop();
+                    processor.Stop();
+
+                    LogManager.LogWarning("Core isolation, Memory integrity setting is turned on. TDP read/write is disabled.");
+                }
+            }
 
             processor.ValueChanged += Processor_ValueChanged;
             processor.StatusChanged += Processor_StatusChanged;
