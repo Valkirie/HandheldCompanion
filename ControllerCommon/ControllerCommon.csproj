@@ -47,6 +47,9 @@
     <Reference Include="Nefarius.Utilities.DeviceManagement">
       <HintPath>..\Resources\Nefarius.Utilities.DeviceManagement.dll</HintPath>
     </Reference>
+    <Reference Include="neptune-hidapi.net">
+      <HintPath>..\Resources\neptune-hidapi.net.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
@@ -65,6 +68,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="hidapi.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="hidapi.net.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="JoyShockLibrary.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

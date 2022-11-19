@@ -74,6 +74,8 @@ namespace ControllerCommon.Controllers
         protected int UserIndex;
         protected double VibrationStrength = 100.0d;
 
+        public const short UPDATE_INTERVAL = 5;
+
         protected PnPDetails Details;
         protected PrecisionTimer UpdateTimer;
 
@@ -83,7 +85,7 @@ namespace ControllerCommon.Controllers
         protected IController()
         {
             UpdateTimer = new PrecisionTimer();
-            UpdateTimer.SetInterval(5);
+            UpdateTimer.SetInterval(UPDATE_INTERVAL);
             UpdateTimer.SetAutoResetMode(true);
         }
 

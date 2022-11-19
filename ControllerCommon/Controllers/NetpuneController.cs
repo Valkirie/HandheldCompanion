@@ -1,34 +1,29 @@
 ﻿using ControllerCommon.Managers;
+using neptune_hidapi.net;
 using SharpDX.DirectInput;
-using SharpDX.XInput;
 using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace ControllerCommon.Controllers
 {
     public class NetpuneController : IController
     {
-        private Joystick Controller;
+        private NeptuneController Controller = new();
         private JoystickState State = new();
         private JoystickState prevState = new();
+
+        private bool isConnected = false;
 
         public NetpuneController(PnPDetails details)
         {
             Details = details;
             Details.isHooked = true;
-
-            if (!IsConnected())
-                return;
-
-            UpdateTimer.Tick += (sender, e) => UpdateReport();
         }
 
         public override string ToString()
         {
-            return Controller.Information.ProductName;
+            // localize me
+            return "Steam Deck Controller";
         }
 
         public override void UpdateReport()
@@ -42,7 +37,7 @@ namespace ControllerCommon.Controllers
 
         public override bool IsConnected()
         {
-            return (bool)(!Controller?.IsDisposed);
+            return isConnected;
         }
 
         public override async void Rumble()
@@ -52,17 +47,37 @@ namespace ControllerCommon.Controllers
 
         public override void Plug()
         {
-            // Acquire the joystick
-            Controller.Acquire();
+            try
+            {
+                Controller.Open();
+                isConnected = true;
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
+            Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
 
             PipeClient.ServerMessage += OnServerMessage;
             base.Plug();
         }
 
+        private void OnControllerInputReceived(NeptuneControllerInputEventArgs input)
+        {
+        }
+
         public override void Unplug()
         {
-            // Acquire the joystick
-            Controller.Unacquire();
+            try
+            {
+                Controller.Close();
+                isConnected = false;
+            }
+            catch (Exception)
+            {
+                return;
+            }
 
             PipeClient.ServerMessage -= OnServerMessage;
             base.Unplug();
