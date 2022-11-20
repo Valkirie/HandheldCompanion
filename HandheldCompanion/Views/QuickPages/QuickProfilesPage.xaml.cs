@@ -417,6 +417,9 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
         {
+            if (currentProfile is null)
+                return;
+
             switch (listener)
             {
                 case "shortcutProfilesPage1":
