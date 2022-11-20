@@ -49,9 +49,8 @@ namespace HandheldCompanion.Managers
             { 48, new InputsHotkey(InputsHotkeyType.Custom,     "\u2788",   "shortcutCustom8",                  "Segoe UI Symbol",      20, false,  true) },
             { 49, new InputsHotkey(InputsHotkeyType.Custom,     "\u2789",   "shortcutCustom9",                  "Segoe UI Symbol",      20, false,  true) },
 
-            // UI hotkeys shouldn't be listed on the hotkeys page
-            { 50, new InputsHotkey(InputsHotkeyType.UI,         "\uEDE3",   "shortcutProfilesPage",             "Segoe Fluent Icons",   20, false,  true) },
-            { 51, new InputsHotkey(InputsHotkeyType.UI,         "\uEDE3",   "shortcutProfilesSettingsMode0",    "Segoe Fluent Icons",   20, false,  true) },
+            { 50, new InputsHotkey(InputsHotkeyType.UI,         "\uEDE3",   "shortcutProfilesPage",             "Segoe Fluent Icons",   20, true,  true) },
+            { 51, new InputsHotkey(InputsHotkeyType.UI,         "\uEDE3",   "shortcutProfilesSettingsMode0",    "Segoe Fluent Icons",   20, true,  true) },
         };
 
         public string Glyph { get; set; }

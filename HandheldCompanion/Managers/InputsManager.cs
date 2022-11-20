@@ -598,6 +598,7 @@ namespace HandheldCompanion.Managers
             {
                 case ListenerType.Default:
                 case ListenerType.Output:
+                case ListenerType.UI:
                     Triggers[currentHotkey.Listener] = new InputsChord(inputsChord.GamepadButtons, inputsChord.OutputKeys, inputsChord.InputsType);
                     break;
             }

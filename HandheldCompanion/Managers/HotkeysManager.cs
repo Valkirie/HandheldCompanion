@@ -226,17 +226,20 @@ namespace HandheldCompanion.Managers
 
         public static void TriggerRaised(string listener, InputsChord input, bool IsKeyDown, bool IsKeyUp)
         {
-            ProcessEx fProcess = ProcessManager.GetForegroundProcess();
+            Hotkey hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
+            if (hotkey is null)
+                return;
 
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                Hotkey hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
-
-                if (hotkey is null)
-                    return;
-
                 hotkey.Highlight();
             }));
+
+            // These are special shortcut keys with no related events
+            if (hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.UI)
+                return;
+
+            ProcessEx fProcess = ProcessManager.GetForegroundProcess();
 
             try
             {

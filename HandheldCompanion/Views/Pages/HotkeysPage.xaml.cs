@@ -51,7 +51,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void HotkeysManager_HotkeyCreated(Hotkey hotkey)
         {
-            // UI types shouldn't be added
+            // These are special shortcut keys with no related events
             if (hotkey.inputsHotkey.hotkeyType == InputsHotkey.InputsHotkeyType.UI)
                 return;
 
