@@ -153,17 +153,24 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_Sensivity}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensivityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_Sensitivity}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensitivityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </StackPanel>
                             </Grid>
 
                             <!-- Content -->
                             <DockPanel Grid.Column="1" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBlock Width="30" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderSensivity, Mode=OneWay}" />
-                                <Slider Name="SliderSensivity" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="2" Maximum="20" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-								ValueChanged="SliderSensivity_ValueChanged" />
+                                <TextBlock Width="30" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityX, Mode=OneWay}" />
+                                <Slider Name="SliderSensitivityX" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3.0" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" SmallChange="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+								ValueChanged="SliderSensitivityX_ValueChanged" />
                             </DockPanel>
+                            
+                            <DockPanel Grid.Column="1" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                <TextBlock Width="30" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityY, Mode=OneWay}" />
+                                <Slider Name="SliderSensitivityY" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3.0" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" SmallChange="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+								ValueChanged="SliderSensitivityY_ValueChanged" />
+                            </DockPanel>
+                            
                         </ui:SimpleStackPanel>
 
                         <ui:SimpleStackPanel Spacing="10" Name="GridAntiDeadzone">
@@ -184,7 +191,8 @@
 
                             <!-- Content -->
                             <DockPanel Grid.Column="1" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBlock Width="30" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderAntiDeadzone, Mode=OneWay}" />
+                                <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderAntiDeadzone, Mode=OneWay}" />
+                                <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneUnitPercentage}" />
                                 <Slider Name="SliderAntiDeadzone" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="5" Maximum="40" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 								ValueChanged="SliderAntiDeadzone_ValueChanged" />
                             </DockPanel>

@@ -11,7 +11,6 @@ namespace ControllerCommon.Devices
             this.ProductSupported = true;
 
             // device specific settings
-            this.WidthHeightRatio = 2.3f;
             this.ProductIllustration = "device_aokzoe_a1";
             this.ProductModel = "AOKZOEA1";
 

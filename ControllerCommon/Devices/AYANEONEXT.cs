@@ -10,7 +10,6 @@ namespace ControllerCommon.Devices
             this.ProductSupported = true;
 
             // device specific settings
-            this.WidthHeightRatio = 2.4f;
             this.ProductIllustration = "device_aya_next";
             this.ProductModel = "AYANEONext";
 

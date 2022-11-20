@@ -369,11 +369,8 @@
   <data name="ProfileSettingsMode0_FlickStickEnable" xml:space="preserve">
     <value>開啟指向性瞄準</value>
   </data>
-  <data name="ProfileSettingsMode0_Sensivity" xml:space="preserve">
+  <data name="ProfileSettingsMode0_Sensitivity" xml:space="preserve">
     <value>靈明度</value>
-  </data>
-  <data name="ProfileSettingsMode0_SensivityDesc" xml:space="preserve">
-    <value>修改垂直軸和水平軸的體感靈敏度</value>
   </data>
   <data name="ProfileSettingsMode0_StickSensitivtity" xml:space="preserve">
     <value>搖桿靈敏度</value>

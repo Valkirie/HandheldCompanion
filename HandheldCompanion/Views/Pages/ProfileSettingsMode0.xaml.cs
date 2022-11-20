@@ -44,11 +44,12 @@ namespace HandheldCompanion.Views.Pages
         {
             this.currentProfile = currentProfile;
 
-            SliderSensivity.Value = currentProfile.aiming_sensivity;
-            tb_ProfileAimingDownSightsMultiplier.Value = currentProfile.aiming_down_sights_multiplier;
-            Toggle_FlickStick.IsOn = currentProfile.flickstick_enabled;
-            tb_ProfileFlickDuration.Value = currentProfile.flick_duration * 1000;
-            tb_ProfileStickSensitivity.Value = currentProfile.stick_sensivity;
+            SliderSensitivityX.Value = profileCurrent.aiming_sensitivity_x;
+            SliderSensitivityY.Value = profileCurrent.aiming_sensitivity_y;
+            tb_ProfileAimingDownSightsMultiplier.Value = profileCurrent.aiming_down_sights_multiplier;
+            Toggle_FlickStick.IsOn = profileCurrent.flickstick_enabled;
+            tb_ProfileFlickDuration.Value = profileCurrent.flick_duration * 1000;
+            tb_ProfileStickSensitivity.Value = profileCurrent.stick_sensivity;
 
             // todo: improve me ?
             ProfilesPageHotkey.inputsChord.GamepadButtons = currentProfile.aiming_down_sights_activation;
@@ -106,12 +107,20 @@ namespace HandheldCompanion.Views.Pages
             }
         }
 
-        private void SliderSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void SliderSensitivityX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (currentProfile is null)
                 return;
 
-            currentProfile.aiming_sensivity = (float)SliderSensivity.Value;
+            profileCurrent.aiming_sensitivity_x = (float)SliderSensitivityX.Value;
+        }
+
+        private void SliderSensitivityY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (profileCurrent is null)
+                return;
+
+            profileCurrent.aiming_sensitivity_y = (float)SliderSensitivityY.Value;
         }
 
         private void Highlight_Thumb(float value)

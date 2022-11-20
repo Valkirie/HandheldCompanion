@@ -17,7 +17,7 @@ namespace ControllerCommon
         // Player Space
         public double CameraYawDelta;
         public double CameraPitchDelta;
-        private double AdditionalFactor = 30.0; // Bring more on par with gyro only
+        private double AdditionalFactor = 60.0; // Bring more on par with gyro only
 
         // Device Angle
         public Vector2 DeviceAngle;

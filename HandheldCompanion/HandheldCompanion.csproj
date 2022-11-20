@@ -10,7 +10,7 @@
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Version>0.12.3.3</Version>
+    <Version>0.12.4.0</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
@@ -32,6 +32,7 @@
     <None Remove="Resources\controller_1_0.png" />
     <None Remove="Resources\controller_1_1.png" />
     <None Remove="Resources\controller_2_0.png" />
+    <None Remove="Resources\device_aokzoe_a1.png" />
     <None Remove="Resources\device_aya_2021.png" />
     <None Remove="Resources\device_aya_air.png" />
     <None Remove="Resources\device_aya_next.png" />
@@ -74,6 +75,7 @@
 
   <ItemGroup>
     <Resource Include="Resources\controller_2_0.png" />
+    <Resource Include="Resources\device_aokzoe_a1.png" />
     <Resource Include="Resources\device_aya_air.png" />
     <Resource Include="Resources\device_generic.png" />
   </ItemGroup>

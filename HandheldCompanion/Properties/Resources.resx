@@ -571,11 +571,23 @@
   <data name="ProfileSettingsMode0_FlickStickEnable" xml:space="preserve">
     <value>Enable flick stick</value>
   </data>
-  <data name="ProfileSettingsMode0_Sensivity" xml:space="preserve">
-    <value>Sensivity</value>
+  <data name="ProfileSettingsMode0_Sensitivity" xml:space="preserve">
+    <value>Sensitivity</value>
   </data>
-  <data name="ProfileSettingsMode0_SensivityDesc" xml:space="preserve">
-    <value>Change the motion sensivity of the vertical and horizontal axis</value>
+  <data name="ProfileSettingsMode0_SensitivityDesc" xml:space="preserve">
+    <value>Change the motion sensitivity of the horizontal and vertical axis</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensitivityX" xml:space="preserve">
+    <value>Sensitivity X</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensitivityXDesc" xml:space="preserve">
+    <value>Change the motion sensitivity of the horizontal axis</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensitivityY" xml:space="preserve">
+    <value>Sensitivity Y</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensitivityYDesc" xml:space="preserve">
+    <value>Change the motion sensitivity of the vertical axis</value>
   </data>
   <data name="ProfileSettingsMode0_StickSensitivtity" xml:space="preserve">
     <value>Stick sensitivtity</value>
@@ -630,6 +642,9 @@
   </data>
   <data name="ProfilesPage_AntiDeadzoneDesc" xml:space="preserve">
     <value>Change the in-game anti-deadzone, in percentage</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzoneUnitPercentage" xml:space="preserve">
+    <value> %</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
     <value>Are you sure you want to delete?</value>

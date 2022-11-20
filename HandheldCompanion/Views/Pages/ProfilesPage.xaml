@@ -449,6 +449,7 @@
 
                                     <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzone, Mode=OneWay}" />
+                                        <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneUnitPercentage}" />
                                         <Slider Margin="6,0,0,0" Name="tb_ProfileAntiDeadzone" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                                     </DockPanel>
                                 </Grid>
