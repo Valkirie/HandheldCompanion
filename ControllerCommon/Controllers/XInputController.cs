@@ -191,9 +191,9 @@ namespace ControllerCommon.Controllers
             if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back))
                 Inputs.Buttons |= ControllerButtonFlags.Back;
 
-            if (Gamepad.LeftTrigger > 0)
+            if (Gamepad.LeftTrigger > Gamepad.TriggerThreshold)
                 Inputs.Buttons |= ControllerButtonFlags.LeftTrigger;
-            if (Gamepad.RightTrigger > 0)
+            if (Gamepad.RightTrigger > Gamepad.TriggerThreshold)
                 Inputs.Buttons |= ControllerButtonFlags.RightTrigger;
 
             if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb))
