@@ -236,6 +236,10 @@ namespace HandheldCompanion.Managers
                 {
                     hotkey.Highlight();
                 }));
+
+                // These are special shortcut keys with no related events
+                if (hotkey == hotkeys.Last() && hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.UI)
+                    return;
             }
 
             ProcessEx fProcess = ProcessManager.GetForegroundProcess();
