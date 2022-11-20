@@ -1,5 +1,4 @@
-﻿using ControllerCommon.Managers;
-using neptune_hidapi.net;
+﻿using neptune_hidapi.net;
 using SharpDX.DirectInput;
 using System;
 using System.Threading.Tasks;

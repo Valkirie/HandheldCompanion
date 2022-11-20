@@ -1,24 +1,18 @@
 using ControllerCommon;
-using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
-using Gma.System.MouseKeyHook.HotKeys;
 using HandheldCompanion.Managers;
 using Microsoft.Win32;
 using ModernWpf.Controls;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
-using System.Xml.Linq;
-using System.Linq;
 using Page = System.Windows.Controls.Page;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace HandheldCompanion.Views.Pages
 {

@@ -1,19 +1,14 @@
 using ControllerCommon;
-using ControllerCommon.Managers;
-using ControllerCommon.Controllers;
-using ControllerCommon.Utils;
 using ControllerService.Sensors;
-using ModernWpf.Controls;
+using HandheldCompanion.Managers;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using Page = System.Windows.Controls.Page;
-using HandheldCompanion.Managers;
-using System.Linq;
 
 namespace HandheldCompanion.Views.Pages
 {

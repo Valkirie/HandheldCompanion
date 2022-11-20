@@ -1,18 +1,11 @@
-﻿using ControllerCommon.Managers;
-using SharpDX.DirectInput;
-using SharpDX.XInput;
+﻿using SharpDX.DirectInput;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 namespace ControllerCommon.Controllers
 {
     public class DS4Controller : DInputController
     {
-        public DS4Controller(Joystick joystick, PnPDetails details) : base (joystick, details)
+        public DS4Controller(Joystick joystick, PnPDetails details) : base(joystick, details)
         {
             if (!IsConnected())
                 return;
@@ -77,7 +70,7 @@ namespace ControllerCommon.Controllers
             if (State.Buttons[13])  // TouchpadClick
                 Inputs.Buttons |= ControllerButtonFlags.Special;
 
-            switch(State.PointOfViewControllers[0])
+            switch (State.PointOfViewControllers[0])
             {
                 case 0:
                     Inputs.Buttons |= ControllerButtonFlags.DPadUp;

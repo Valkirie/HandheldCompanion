@@ -1,12 +1,4 @@
-﻿using ControllerCommon.Managers;
-using SharpDX.DirectInput;
-using SharpDX.XInput;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+﻿using SharpDX.DirectInput;
 
 namespace ControllerCommon.Controllers
 {

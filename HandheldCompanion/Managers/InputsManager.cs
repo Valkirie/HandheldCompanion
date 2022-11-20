@@ -8,7 +8,6 @@ using HandheldCompanion.Views;
 using PrecisionTiming;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -594,7 +593,7 @@ namespace HandheldCompanion.Managers
             if (inputsChord == null)
                 inputsChord = new InputsChord();
 
-            switch(currentType)
+            switch (currentType)
             {
                 case ListenerType.Default:
                 case ListenerType.Output:

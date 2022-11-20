@@ -94,7 +94,7 @@ namespace HandheldCompanion.Managers
             {
                 HotkeyCreated?.Invoke(hotkey);
 
-                switch(hotkey.inputsHotkey.hotkeyType)
+                switch (hotkey.inputsHotkey.hotkeyType)
                 {
                     case InputsHotkeyType.UI:
                         hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.UI);
