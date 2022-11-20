@@ -253,9 +253,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void TriggerCreated(Hotkey hotkey)
         {
-            switch (hotkey.hotkeyId)
+            switch (hotkey.inputsHotkey.Listener)
             {
-                case 51:
+                case "shortcutProfilesSettingsMode0":
                     {
                         // pull hotkey
                         ProfilesPageHotkey = hotkey;
@@ -265,7 +265,8 @@ namespace HandheldCompanion.Views.Pages
                         if (hotkeyBorder is null || hotkeyBorder.Parent != null)
                             return;
 
-                        UMC_Activator.Children.Add(hotkeyBorder);
+                        if (UMC_Activator.Children.Count == 0)
+                            UMC_Activator.Children.Add(hotkeyBorder);
                     }
                     break;
             }
@@ -273,18 +274,10 @@ namespace HandheldCompanion.Views.Pages
 
         private void TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
         {
-            Hotkey hotkey = HotkeysManager.Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
-
-            if (hotkey is null)
-                return;
-
-            switch (hotkey.hotkeyId)
+            switch (listener)
             {
-                case 51:
-                    {
-                        // update profile
-                        currentProfile.aiming_down_sights_activation = inputs.GamepadButtons;
-                    }
+                case "shortcutProfilesSettingsMode0":
+                    currentProfile.umc_trigger = inputs.GamepadButtons;
                     break;
             }
         }

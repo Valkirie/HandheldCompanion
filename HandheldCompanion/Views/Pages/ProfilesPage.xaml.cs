@@ -571,19 +571,18 @@ namespace HandheldCompanion.Views.Pages
 
         private void TriggerCreated(Hotkey hotkey)
         {
-            switch (hotkey.hotkeyId)
+            switch (hotkey.inputsHotkey.Listener)
             {
-                case 50:
+                case "shortcutProfilesPage1":
                     {
-                        // pull hotkey
-                        ProfilesPageHotkey = hotkey;
-
-                        // add to UI
-                        Border hotkeyBorder = ProfilesPageHotkey.GetHotkey();
+                        Border hotkeyBorder = hotkey.GetHotkey();
                         if (hotkeyBorder is null || hotkeyBorder.Parent != null)
                             return;
 
-                        UMC_Activator.Children.Add(hotkeyBorder);
+                        // pull hotkey
+                        ProfilesPageHotkey = hotkey;
+
+                        this.UMC_Activator.Children.Add(hotkeyBorder);
                     }
                     break;
             }
@@ -591,18 +590,11 @@ namespace HandheldCompanion.Views.Pages
 
         private void TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
         {
-            Hotkey hotkey = HotkeysManager.Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
-
-            if (hotkey is null)
-                return;
-
-            switch (hotkey.hotkeyId)
+            switch(listener)
             {
-                case 50:
-                    {
-                        // update profile
-                        currentProfile.umc_trigger = inputs.GamepadButtons;
-                    }
+                case "shortcutProfilesPage1":
+                case "shortcutProfilesPage2":
+                    currentProfile.umc_trigger = inputs.GamepadButtons;
                     break;
             }
         }

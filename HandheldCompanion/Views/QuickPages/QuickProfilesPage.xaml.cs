@@ -17,6 +17,7 @@ namespace HandheldCompanion.Views.QuickPages
     {
         private ProcessEx currentProcess;
         private Profile currentProfile;
+        private Hotkey ProfilesPageHotkey;
         private bool IsReady;
 
         public QuickProfilesPage()
@@ -28,6 +29,9 @@ namespace HandheldCompanion.Views.QuickPages
             ProfileManager.Deleted += ProfileDeleted;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
+
+            HotkeysManager.HotkeyCreated += TriggerCreated;
+            InputsManager.TriggerUpdated += TriggerUpdated;
 
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
             {
@@ -390,6 +394,37 @@ namespace HandheldCompanion.Views.QuickPages
             // Antideadzone settings
             currentProfile.antideadzone = (float)SliderAntiDeadzone.Value;
             UpdateProfile();
+        }
+
+        private void TriggerCreated(Hotkey hotkey)
+        {
+            switch (hotkey.inputsHotkey.Listener)
+            {
+                case "shortcutProfilesPage2":
+                    {
+                        Border hotkeyBorder = hotkey.GetHotkey();
+                        if (hotkeyBorder is null || hotkeyBorder.Parent != null)
+                            return;
+
+                        // pull hotkey
+                        ProfilesPageHotkey = hotkey;
+
+                        this.UMC_Activator.Children.Add(hotkeyBorder);
+                    }
+                    break;
+            }
+        }
+
+        private void TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
+        {
+            switch (listener)
+            {
+                case "shortcutProfilesPage1":
+                case "shortcutProfilesPage2":
+                    currentProfile.umc_trigger = inputs.GamepadButtons;
+                    UpdateProfile();
+                    break;
+            }
         }
     }
 }

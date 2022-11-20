@@ -136,11 +136,28 @@
                                 <TextBlock Text="{x:Static resx:Resources.ProfilesPage_StyleofOutput}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" FontSize="14"/>
                                 <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCSelectionRightLeftDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </StackPanel>
-
                         </Grid>
 
                         <!-- Content -->
                         <ui:RadioButtons Margin="6,0,0,0" Name="cB_Output" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="3" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Output_SelectionChanged"/>
+
+                        <!-- Separator -->
+                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition MinWidth="420"></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOff}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOffDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Content -->
+                        <Grid Margin="6,0,0,0" Name="UMC_Activator" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Spacing="10" Name="GridSensivity">
                             <!-- Separator -->

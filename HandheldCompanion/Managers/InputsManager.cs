@@ -631,7 +631,8 @@ namespace HandheldCompanion.Managers
         {
             string listener = hotkey.inputsHotkey.Listener;
 
-            Triggers.Add(listener, hotkey.inputsChord);
+            if (!Triggers.ContainsKey(listener))
+                Triggers.Add(listener, hotkey.inputsChord);
         }
 
         internal static void InvokeTrigger(Hotkey hotkey, bool IsKeyDown, bool IsKeyUp)

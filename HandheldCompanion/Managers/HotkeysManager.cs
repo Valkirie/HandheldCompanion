@@ -83,7 +83,8 @@ namespace HandheldCompanion.Managers
                         break;
                 }
 
-                Hotkeys.Add(hotkey.hotkeyId, hotkey);
+                if (!Hotkeys.ContainsKey(hotkey.hotkeyId))
+                    Hotkeys.Add(hotkey.hotkeyId, hotkey);
             }
 
             // process hotkeys types
@@ -171,16 +172,16 @@ namespace HandheldCompanion.Managers
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                Hotkey hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
+                listener = listener.TrimEnd(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' });
+                var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener));
+                foreach (Hotkey hotkey in hotkeys)
+                {
+                    hotkey.StopListening(inputs, type);
 
-                if (hotkey is null)
-                    return;
-
-                hotkey.StopListening(inputs, type);
-
-                // overwrite current file
-                SerializeHotkey(hotkey, true);
-                HotkeyUpdated?.Invoke(hotkey);
+                    // overwrite current file
+                    SerializeHotkey(hotkey, true);
+                    HotkeyUpdated?.Invoke(hotkey);
+                }
             }));
         }
 
@@ -226,18 +227,16 @@ namespace HandheldCompanion.Managers
 
         public static void TriggerRaised(string listener, InputsChord input, bool IsKeyDown, bool IsKeyUp)
         {
-            Hotkey hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
-            if (hotkey is null)
-                return;
-
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            listener = listener.TrimEnd(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' });
+            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener));
+            
+            foreach(Hotkey hotkey in hotkeys)
             {
-                hotkey.Highlight();
-            }));
-
-            // These are special shortcut keys with no related events
-            if (hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.UI)
-                return;
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    hotkey.Highlight();
+                }));
+            }
 
             ProcessEx fProcess = ProcessManager.GetForegroundProcess();
 

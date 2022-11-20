@@ -42,7 +42,7 @@ namespace HandheldCompanion.Managers
         #endregion
 
         public static Profile currentProfile = new();
-        private static string Path;
+        public static string Path;
         private static bool IsInitialized;
 
         static ProfileManager()
