@@ -12,15 +12,8 @@ using System.Text.Json;
 using System.Threading;
 using System.Windows;
 using static HandheldCompanion.Managers.InputsHotkey;
-using Shell
-/* Unmerged change from project 'HandheldCompanion (net6.0-windows10.0.19041.0)'
-Before:
-using Shell32;
+using static HandheldCompanion.Managers.InputsManager;
 using Shell = Shell32.Shell;
-After:
-using Shell = Shell32.Shell;
-*/
- = Shell32.Shell;
 
 namespace HandheldCompanion.Managers
 {
@@ -79,7 +72,16 @@ namespace HandheldCompanion.Managers
                     hotkey = new Hotkey(Id, inputsHotkey);
 
                 hotkey.inputsHotkey = InputsHotkey.InputsHotkeys[hotkey.hotkeyId];
-                hotkey.DrawControl();
+
+                switch (hotkey.inputsHotkey.hotkeyType)
+                {
+                    case InputsHotkeyType.UI:
+                        hotkey.DrawControl(true);
+                        break;
+                    default:
+                        hotkey.DrawControl();
+                        break;
+                }
 
                 Hotkeys.Add(hotkey.hotkeyId, hotkey);
             }
@@ -92,9 +94,19 @@ namespace HandheldCompanion.Managers
             {
                 HotkeyCreated?.Invoke(hotkey);
 
-                hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, false);
-                hotkey.outputButton.Click += (sender, e) => StartListening(hotkey, true);
+                switch(hotkey.inputsHotkey.hotkeyType)
+                {
+                    case InputsHotkeyType.UI:
+                        hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.UI);
+                        break;
+                    default:
+                        hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.Default);
+                        break;
+                }
+
+                hotkey.outputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.Output);
                 hotkey.pinButton.Click += (sender, e) => PinOrUnpinHotkey(hotkey);
+
                 hotkey.quickButton.PreviewTouchDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
                 hotkey.quickButton.PreviewMouseDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
                 hotkey.quickButton.PreviewMouseUp += (sender, e) => { InputsManager.InvokeTrigger(hotkey, false, true); };
@@ -112,10 +124,10 @@ namespace HandheldCompanion.Managers
             IsInitialized = false;
         }
 
-        private static void StartListening(Hotkey hotkey, bool IsCombo)
+        private static void StartListening(Hotkey hotkey, ListenerType type)
         {
-            InputsManager.StartListening(hotkey, IsCombo);
-            hotkey.StartListening(IsCombo);
+            InputsManager.StartListening(hotkey, type);
+            hotkey.StartListening(type);
         }
 
         private static void PinOrUnpinHotkey(Hotkey hotkey)
@@ -155,7 +167,7 @@ namespace HandheldCompanion.Managers
             return Hotkeys.Values.Where(item => item.IsPinned).Count();
         }
 
-        private static void TriggerUpdated(string listener, InputsChord inputs, bool IsCombo)
+        private static void TriggerUpdated(string listener, InputsChord inputs, ListenerType type)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -164,7 +176,7 @@ namespace HandheldCompanion.Managers
                 if (hotkey is null)
                     return;
 
-                hotkey.StopListening(inputs, IsCombo);
+                hotkey.StopListening(inputs, type);
 
                 // overwrite current file
                 SerializeHotkey(hotkey, true);

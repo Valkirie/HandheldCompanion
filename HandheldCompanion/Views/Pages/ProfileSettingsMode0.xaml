@@ -91,14 +91,7 @@
                                     <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_AimingDownSightsActivation}" FontSize="14" VerticalAlignment="Center"/>
                                 </StackPanel>
 
-                            </Grid>
-
-                            <Grid>
-                                <ui:LayoutPanel Name="cB_AimingDownSightsActivationButtons" HorizontalAlignment="Center">
-                                    <ui:LayoutPanel.Layout>
-                                        <ui:UniformGridLayout/>
-                                    </ui:LayoutPanel.Layout>
-                                </ui:LayoutPanel>
+                                <ui:SimpleStackPanel Name="UMC_Activator" Grid.Column="1" Margin="12,0,0,0" Spacing="6"/>
                             </Grid>
                         </ui:SimpleStackPanel>
                     </Expander.Content>

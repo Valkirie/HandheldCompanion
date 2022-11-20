@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using static HandheldCompanion.Managers.InputsManager;
 using Application = System.Windows.Application;
 
 namespace HandheldCompanion.Managers
@@ -13,11 +14,11 @@ namespace HandheldCompanion.Managers
     public class Hotkey
     {
         // not serialized
-        public InputsHotkey inputsHotkey;
+        public InputsHotkey inputsHotkey = new();
 
         // serialized
         public ushort hotkeyId { get; set; }
-        public InputsChord inputsChord { get; set; }
+        public InputsChord inputsChord { get; set; } = new();
         public bool IsPinned { get; set; }
 
         // HotkeysPage UI
@@ -49,7 +50,6 @@ namespace HandheldCompanion.Managers
             hotkeyId = id;
 
             inputsHotkey = _inputsHotkey;
-            inputsChord = new();
         }
 
         public Hotkey(ushort id)
@@ -57,10 +57,9 @@ namespace HandheldCompanion.Managers
             hotkeyId = id;
 
             inputsHotkey = InputsHotkey.InputsHotkeys[id];
-            inputsChord = new();
         }
 
-        public void DrawControl()
+        public void DrawControl(bool embedded = false)
         {
             if (mainBorder != null)
                 return;
@@ -72,16 +71,21 @@ namespace HandheldCompanion.Managers
                 Visibility = Visibility.Visible,
                 Tag = hotkeyId
             };
-            mainBorder.SetResourceReference(Control.BackgroundProperty, "SystemControlBackgroundChromeMediumLowBrush");
+
+            if (!embedded)
+                mainBorder.SetResourceReference(Control.BackgroundProperty, "SystemControlBackgroundChromeMediumLowBrush");
 
             // main grid content
             // Define the Columns
-            ColumnDefinition colDef0 = new ColumnDefinition()
+            if (!embedded)
             {
-                Width = new GridLength(5, GridUnitType.Star),
-                MinWidth = 200
-            };
-            mainGrid.ColumnDefinitions.Add(colDef0);
+                ColumnDefinition colDef0 = new ColumnDefinition()
+                {
+                    Width = new GridLength(5, GridUnitType.Star),
+                    MinWidth = 200
+                };
+                mainGrid.ColumnDefinitions.Add(colDef0);
+            }
 
             ColumnDefinition colDef1 = new ColumnDefinition()
             {
@@ -96,11 +100,14 @@ namespace HandheldCompanion.Managers
             };
             mainGrid.ColumnDefinitions.Add(colDef2);
 
-            ColumnDefinition colDef3 = new ColumnDefinition()
+            if (!embedded)
             {
-                Width = new GridLength(50, GridUnitType.Pixel)
-            };
-            mainGrid.ColumnDefinitions.Add(colDef3);
+                ColumnDefinition colDef3 = new ColumnDefinition()
+                {
+                    Width = new GridLength(50, GridUnitType.Pixel)
+                };
+                mainGrid.ColumnDefinitions.Add(colDef3);
+            }
 
             // main panel content
             currentIcon = new FontIcon()
@@ -143,7 +150,11 @@ namespace HandheldCompanion.Managers
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Center,
             };
-            Grid.SetColumn(buttonPanel, 1);
+
+            if (!embedded)
+                Grid.SetColumn(buttonPanel, 1);
+            else
+                Grid.SetColumn(buttonPanel, 0);
 
             inputButton = new Button()
             {
@@ -173,7 +184,9 @@ namespace HandheldCompanion.Managers
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
             };
-            Grid.SetColumn(pinButton, 3);
+
+            if (!embedded)
+                Grid.SetColumn(pinButton, 3);
 
             // add elements to main panel
             buttonPanel.Children.Add(inputButton);
@@ -194,15 +207,21 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            // add elements to main panel
-            mainPanel.Children.Add(currentIcon);
-            mainPanel.Children.Add(contentPanel);
+            if (!embedded)
+            {
+                // add elements to main panel
+                mainPanel.Children.Add(currentIcon);
+                mainPanel.Children.Add(contentPanel);
 
-            // add elements to grid
-            mainGrid.Children.Add(mainPanel);
+                // add elements to grid
+                mainGrid.Children.Add(mainPanel);
+            }
+
             mainGrid.Children.Add(buttonPanel);
             mainGrid.Children.Add(eraseButton);
-            mainGrid.Children.Add(pinButton);
+
+            if (!embedded)
+                mainGrid.Children.Add(pinButton);
 
             // add elements to border
             mainBorder.Child = mainGrid;
@@ -236,7 +255,7 @@ namespace HandheldCompanion.Managers
             quickPanel.Children.Add(quickName);
 
             // update buttons name and states
-            UpdateHotkey();
+            Refresh();
         }
 
         private void ClearButton_Click()
@@ -245,52 +264,59 @@ namespace HandheldCompanion.Managers
             HotkeysManager.ClearHotkey(this);
         }
 
-        public void StartListening(bool IsCombo)
+        public void StartListening(ListenerType type)
         {
             // update button
-            switch (IsCombo)
+            switch (type)
             {
-                case true:
+                case ListenerType.Output:
                     outputButton.Content = Properties.Resources.OverlayPage_Listening;
                     outputButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
                     break;
-                case false:
+                case ListenerType.UI:
+                case ListenerType.Default:
                     inputButton.Content = Properties.Resources.OverlayPage_Listening;
                     inputButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
                     break;
             }
         }
 
-        public void StopListening(InputsChord inputsChord, bool IsCombo)
+        public void StopListening(InputsChord inputsChord, ListenerType type)
         {
             this.inputsChord = inputsChord;
 
             // update button
-            switch (IsCombo)
+            switch (type)
             {
-                case true:
+                case ListenerType.Output:
                     outputButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
                     break;
-                case false:
+                case ListenerType.UI:
+                case ListenerType.Default:
                     inputButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
                     break;
             }
 
-            UpdateHotkey();
+            Refresh();
         }
 
         public void StartPinning()
         {
             IsPinned = true;
 
-            UpdateHotkey();
+            Refresh();
         }
 
         public void StopPinning()
         {
             IsPinned = false;
 
-            UpdateHotkey();
+            Refresh();
+        }
+
+        public SimpleStackPanel GetButtonPanel()
+        {
+            return buttonPanel;
         }
 
         public Border GetHotkey()
@@ -303,7 +329,7 @@ namespace HandheldCompanion.Managers
             return quickPanel;
         }
 
-        private void UpdateHotkey()
+        public void Refresh()
         {
             bool hasbuttons = (inputsChord.GamepadButtons != ControllerButtonFlags.None);
             bool hascombo = inputsChord.OutputKeys.Count != 0;

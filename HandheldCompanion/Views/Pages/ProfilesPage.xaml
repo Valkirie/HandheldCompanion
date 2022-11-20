@@ -129,7 +129,7 @@
 
                             <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="2">
                                 <ui:AppBarButton Click="b_DeleteProfile_Click" Name="b_DeleteProfile" Label="{x:Static resx:Resources.ProfilesPage_DeleteProfile}" Icon="Delete" Width="Auto"/>
-                                <ui:AppBarButton Click="b_ApplyProfile_Click" Name="b_ApplyProfile" Label="{x:Static resx:Resources.ProfilesPage_UpdateProfile}" Icon="Save" Width="Auto" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100"/>
+                                <ui:AppBarButton Click="b_ApplyProfile_Click" Name="b_ApplyProfile" Label="{x:Static resx:Resources.ProfilesPage_UpdateProfile}" Foreground="{DynamicResource AccentButtonBackground}" Icon="Save" Width="Auto" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="100"/>
                             </ui:SimpleStackPanel>
                         </ui:SimpleStackPanel>
                     </Border>
@@ -458,47 +458,28 @@
 
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
-                                    
+
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOff}" FontSize="14" VerticalAlignment="Center"/>
                                         <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOffDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
-                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <ui:SimpleStackPanel Name="UMC_Activator" Grid.Column="1" Margin="12,0,0,0" Spacing="6">
                                         <ui:RadioButtons Name="cB_UMC_MotionDefaultOffOn" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1"  SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
-                                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                                <Label Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}"></Label>
-                                            </ui:SimpleStackPanel>
-                                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                                <Label Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}"></Label>
-                                            </ui:SimpleStackPanel>
+                                            <RadioButton Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}"></RadioButton>
+                                            <RadioButton Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}"></RadioButton>
                                         </ui:RadioButtons>
-                                    </DockPanel>
-
-                                </Grid>
-                                
-                                <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
-                                    <ui:LayoutPanel Name="cB_Buttons" HorizontalAlignment="Center">
-                                        <ui:LayoutPanel.Layout>
-                                            <ui:UniformGridLayout/>
-                                        </ui:LayoutPanel.Layout>
-                                    </ui:LayoutPanel>
+                                    </ui:SimpleStackPanel>
                                 </Grid>
 
                                 <!-- Separator -->
                                 <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
 
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="0.5*" ></ColumnDefinition>
-                                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Button Click="b_AdditionalSettings_Click" Grid.Column="2" HorizontalAlignment="Stretch" Content="{x:Static resx:Resources.ProfilesPage_AdditionalSettings}" />
+                                    <Button Click="b_AdditionalSettings_Click" HorizontalAlignment="Stretch" Content="{x:Static resx:Resources.ProfilesPage_AdditionalSettings}" />
                                 </Grid>
                             </ui:SimpleStackPanel>
                         </Expander.Content>

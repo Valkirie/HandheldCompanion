@@ -8,6 +8,7 @@ using HandheldCompanion.Views;
 using PrecisionTiming;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -17,6 +18,13 @@ namespace HandheldCompanion.Managers
 {
     public static class InputsManager
     {
+        public enum ListenerType
+        {
+            Default,
+            Output,
+            UI,
+        }
+
         // Gamepad variables
         private static PrecisionTimer KeyboardResetTimer;
         private static PrecisionTimer GamepadResetTimer;
@@ -47,7 +55,7 @@ namespace HandheldCompanion.Managers
 
         private const short TIME_EXPIRED = 3000;        // default interval before considering a chord as expired if no input is detected
 
-        private static bool IsCombo;
+        private static ListenerType currentType;
         private static InputsHotkey currentHotkey = new();
 
         private static List<KeyEventArgsExt> BufferKeys = new();
@@ -63,7 +71,7 @@ namespace HandheldCompanion.Managers
         public delegate void TriggerRaisedEventHandler(string listener, InputsChord inputs, bool IsKeyDown, bool IsKeyUp);
 
         public static event TriggerUpdatedEventHandler TriggerUpdated;
-        public delegate void TriggerUpdatedEventHandler(string listener, InputsChord inputs, bool IsCombo);
+        public delegate void TriggerUpdatedEventHandler(string listener, InputsChord inputs, ListenerType type);
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
@@ -203,12 +211,14 @@ namespace HandheldCompanion.Managers
                 }
 
                 InputsHotkey hotkey = InputsHotkey.InputsHotkeys.Values.Where(item => item.Listener == currentHotkey.Listener).FirstOrDefault();
-
-                switch (hotkey.OnKeyDown)
+                if (hotkey != null)
                 {
-                    case true:
-                        currentChord.InputsType = InputsChordType.Hold;
-                        break;
+                    switch (hotkey.OnKeyDown)
+                    {
+                        case true:
+                            currentChord.InputsType = InputsChordType.Hold;
+                            break;
+                    }
                 }
 
                 StopListening(currentChord);
@@ -263,7 +273,7 @@ namespace HandheldCompanion.Managers
             KeyUsed = false;
 
             // are we listening for keyboards inputs as part of a custom hotkey ?
-            if (IsCombo)
+            if (currentType == ListenerType.Output)
             {
                 args.SuppressKeyPress = true;
                 if (args.IsKeyUp && args.IsExtendedKey)
@@ -549,28 +559,30 @@ namespace HandheldCompanion.Managers
             GamepadResetTimer.Start();
         }
 
-        public static void StartListening(Hotkey hotkey, bool IsCombo)
+        public static void StartListening(Hotkey hotkey, ListenerType type)
         {
             // force expiration on previous listener, if any
             if (!string.IsNullOrEmpty(currentHotkey.Listener))
                 ListenerExpired();
 
+            // store current hotkey values
+            prevChord = new InputsChord(hotkey.inputsChord.GamepadButtons, hotkey.inputsChord.OutputKeys, hotkey.inputsChord.InputsType);
+
             currentHotkey = hotkey.inputsHotkey;
             currentChord = hotkey.inputsChord;
-            prevChord = new InputsChord(currentChord.GamepadButtons, currentChord.OutputKeys, currentChord.InputsType);
+            currentType = type;
 
-            switch (IsCombo)
+            switch (type)
             {
-                case true:
+                case ListenerType.Output:
                     currentChord.OutputKeys.Clear();
                     break;
                 default:
-                case false:
+                case ListenerType.UI:
+                case ListenerType.Default:
                     currentChord.GamepadButtons = ControllerButtonFlags.None;
                     break;
             }
-
-            InputsManager.IsCombo = IsCombo;
 
             BufferKeys.Clear();
 
@@ -582,14 +594,21 @@ namespace HandheldCompanion.Managers
             if (inputsChord == null)
                 inputsChord = new InputsChord();
 
-            Triggers[currentHotkey.Listener] = new InputsChord(inputsChord.GamepadButtons, inputsChord.OutputKeys, inputsChord.InputsType);
-            TriggerUpdated?.Invoke(currentHotkey.Listener, inputsChord, IsCombo);
+            switch(currentType)
+            {
+                case ListenerType.Default:
+                case ListenerType.Output:
+                    Triggers[currentHotkey.Listener] = new InputsChord(inputsChord.GamepadButtons, inputsChord.OutputKeys, inputsChord.InputsType);
+                    break;
+            }
+
+            TriggerUpdated?.Invoke(currentHotkey.Listener, inputsChord, currentType);
 
             LogManager.LogDebug("Trigger: {0} updated. buttons: {1}, type: {2}", currentHotkey.Listener, inputsChord.GamepadButtons, inputsChord.InputsType);
 
             currentHotkey = new();
             currentChord = new();
-            IsCombo = false;
+            currentType = ListenerType.Default;
 
             ListenerTimer.Stop();
             InputsChordHoldTimer.Stop();

@@ -51,44 +51,6 @@ namespace ControllerCommon.Utils
 
     public static class InputUtils
     {
-        public static string GamepadButtonToGlyph(ControllerButtonFlags button)
-        {
-            switch (button)
-            {
-                case ControllerButtonFlags.B1:
-                    return "\uF093";            // A
-                case ControllerButtonFlags.B2:
-                    return "\uF094";            // B
-                case ControllerButtonFlags.B3:
-                    return "\uF095";            // X
-                case ControllerButtonFlags.B4:
-                    return "\uF096";            // Y
-                case ControllerButtonFlags.DPadRight:
-                case ControllerButtonFlags.DPadDown:
-                case ControllerButtonFlags.DPadUp:
-                case ControllerButtonFlags.DPadLeft:
-                    return "\uF10E";
-                case ControllerButtonFlags.LeftTrigger:
-                    return "\uF10A";
-                case ControllerButtonFlags.RightTrigger:
-                    return "\uF10B";
-                case ControllerButtonFlags.LeftShoulder:
-                    return "\uF10C";
-                case ControllerButtonFlags.RightShoulder:
-                    return "\uF10D";
-                case ControllerButtonFlags.LeftThumb:
-                    return "\uF108";
-                case ControllerButtonFlags.RightThumb:
-                    return "\uF109";
-                case ControllerButtonFlags.Start:
-                    return "\uEDE3";
-                case ControllerButtonFlags.Back:
-                    return "\uEECA";
-                default:
-                    return "\uE783";
-            }
-        }
-
         public static float Clamp(float value, float min, float max)
         {
             return Math.Min(max, Math.Max(min, value));

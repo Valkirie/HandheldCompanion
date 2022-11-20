@@ -3,17 +3,22 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
+using Gma.System.MouseKeyHook.HotKeys;
 using HandheldCompanion.Managers;
 using Microsoft.Win32;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
+using System.Xml.Linq;
+using System.Linq;
 using Page = System.Windows.Controls.Page;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -23,8 +28,10 @@ namespace HandheldCompanion.Views.Pages
     public partial class ProfilesPage : Page
     {
         private Profile currentProfile;
+        private Hotkey ProfilesPageHotkey;
 
-        private Dictionary<ControllerButtonFlags, CheckBox> activators = new();
+        ProfileSettingsMode0 page0 = new ProfileSettingsMode0("ProfileSettingsMode0");
+        ProfileSettingsMode0 page1 = new ProfileSettingsMode0("ProfileSettingsMode1");
 
         public ProfilesPage()
         {
@@ -42,29 +49,8 @@ namespace HandheldCompanion.Views.Pages
             ProfileManager.Initialized += ProfileManagerLoaded;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-            // draw gamepad activators
-            foreach (ControllerButtonFlags button in (ControllerButtonFlags[])Enum.GetValues(typeof(ControllerButtonFlags)))
-            {
-                // create panel
-                SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
-
-                // create icon
-                FontIcon icon = new FontIcon() { Glyph = "" };
-                icon.Glyph = InputUtils.GamepadButtonToGlyph(button);
-
-                if (icon.Glyph != "")
-                    panel.Children.Add(icon);
-
-                // create textblock
-                string description = EnumUtils.GetDescriptionFromEnumValue(button);
-                TextBlock text = new TextBlock() { Text = description };
-                panel.Children.Add(text);
-
-                // create checkbox
-                CheckBox checkbox = new CheckBox() { Tag = button, Content = panel, Width = 170 };
-                cB_Buttons.Children.Add(checkbox);
-                activators.Add(button, checkbox);
-            }
+            HotkeysManager.HotkeyCreated += TriggerCreated;
+            InputsManager.TriggerUpdated += TriggerUpdated;
 
             // draw input modes
             foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
@@ -321,19 +307,20 @@ namespace HandheldCompanion.Views.Pages
             if (currentProfile == null)
                 return;
 
-            Page page;
             switch ((Input)cB_Input.SelectedIndex)
             {
                 default:
                 case Input.JoystickCamera:
                 case Input.PlayerSpace:
-                    page = new ProfileSettingsMode0("ProfileSettingsMode0", currentProfile);
+                    page0.Update(currentProfile);
+                    MainWindow.NavView_Navigate(page0);
+                    page1.Update(currentProfile);
                     break;
                 case Input.JoystickSteering:
-                    page = new ProfileSettingsMode1("ProfileSettingsMode1", currentProfile);
+                    page1.Update(currentProfile);
+                    MainWindow.NavView_Navigate(page1);
                     break;
             }
-            MainWindow.NavView_Navigate(page);
         }
 
         private void cB_Profiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -405,11 +392,9 @@ namespace HandheldCompanion.Views.Pages
                 tb_ProfileAntiDeadzone.Value = currentProfile.antideadzone;
                 cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.umc_motion_defaultoffon;
 
-                foreach (ControllerButtonFlags button in (ControllerButtonFlags[])Enum.GetValues(typeof(ControllerButtonFlags)))
-                    if (currentProfile.umc_trigger.HasFlag(button))
-                        activators[button].IsChecked = true;
-                    else
-                        activators[button].IsChecked = false;
+                // todo: improve me ?
+                ProfilesPageHotkey.inputsChord.GamepadButtons = currentProfile.umc_trigger;
+                ProfilesPageHotkey.Refresh();
 
                 // display warnings
                 ProfileErrorCode currentError = currentProfile.error;
@@ -490,11 +475,6 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
             currentProfile.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
             currentProfile.umc_motion_defaultoffon = (UMC_Motion_Default)cB_UMC_MotionDefaultOffOn.SelectedIndex;
-            currentProfile.umc_trigger = 0;
-
-            foreach (ControllerButtonFlags button in (ControllerButtonFlags[])Enum.GetValues(typeof(ControllerButtonFlags)))
-                if ((bool)activators[button].IsChecked)
-                    currentProfile.umc_trigger |= button;
 
             // Power settings
             currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
@@ -593,6 +573,44 @@ namespace HandheldCompanion.Views.Pages
         private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
         {
             // do something
+        }
+
+        private void TriggerCreated(Hotkey hotkey)
+        {
+            switch (hotkey.hotkeyId)
+            {
+                case 50:
+                    {
+                        // pull hotkey
+                        ProfilesPageHotkey = hotkey;
+
+                        // add to UI
+                        Border hotkeyBorder = ProfilesPageHotkey.GetHotkey();
+                        if (hotkeyBorder is null || hotkeyBorder.Parent != null)
+                            return;
+
+                        UMC_Activator.Children.Add(hotkeyBorder);
+                    }
+                    break;
+            }
+        }
+
+        private void TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
+        {
+            Hotkey hotkey = HotkeysManager.Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
+
+            if (hotkey is null)
+                return;
+
+            switch (hotkey.hotkeyId)
+            {
+                case 50:
+                    {
+                        // update profile
+                        currentProfile.umc_trigger = inputs.GamepadButtons;
+                    }
+                    break;
+            }
         }
     }
 }
