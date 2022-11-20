@@ -2,7 +2,6 @@ using ControllerCommon;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Classes;
 using ModernWpf.Controls;
 using System;
 using System.Windows;
@@ -25,8 +24,8 @@ namespace HandheldCompanion.Views.QuickPages
             InitializeComponent();
 
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-            MainWindow.profileManager.Updated += ProfileUpdated;
-            MainWindow.profileManager.Deleted += ProfileDeleted;
+            ProfileManager.Updated += ProfileUpdated;
+            ProfileManager.Deleted += ProfileDeleted;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
@@ -193,7 +192,7 @@ namespace HandheldCompanion.Views.QuickPages
         private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
             currentProcess = processEx;
-            currentProfile = MainWindow.profileManager.GetProfileFromExec(currentProcess.Name);
+            currentProfile = ProfileManager.GetProfileFromExec(currentProcess.Name);
 
             this.Dispatcher.Invoke(() =>
             {
@@ -217,8 +216,8 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void UpdateProfile()
         {
-            MainWindow.profileManager.UpdateOrCreateProfile(currentProfile, true);
-            MainWindow.profileManager.SerializeProfile(currentProfile);
+            ProfileManager.UpdateOrCreateProfile(currentProfile, true);
+            ProfileManager.SerializeProfile(currentProfile);
         }
 
         private void ProfileToggle_Toggled(object sender, RoutedEventArgs e)
@@ -303,7 +302,7 @@ namespace HandheldCompanion.Views.QuickPages
             currentProfile.TDP_value = MainWindow.handheldDevice.nTDP;
 
             // update current profile
-            MainWindow.profileManager.currentProfile = currentProfile;
+            ProfileManager.currentProfile = currentProfile;
 
             UpdateProfile();
         }

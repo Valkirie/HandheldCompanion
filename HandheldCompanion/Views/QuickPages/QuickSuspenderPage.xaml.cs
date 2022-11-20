@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Classes;
 using System;
 using System.Windows.Controls;
 

@@ -2,7 +2,7 @@
 
 namespace ControllerService
 {
-    public class DS4Touch
+    public static class DS4Touch
     {
         private const int TOUCHPAD_WIDTH = 1920;
         private const int TOUCHPAD_HEIGHT = 943;
@@ -11,32 +11,31 @@ namespace ControllerService
         private const int TOUCH1_ID = 2;
         private const int TOUCH_DISABLE = 128;
 
-        public struct TrackPadTouch
+        public class TrackPadTouch
         {
             public bool IsActive;
             public byte Id;
             public short X;
             public short Y;
             public int RawTrackingNum;
+
+            public TrackPadTouch(byte _Id)
+            {
+                this.Id = _Id;
+                this.RawTrackingNum |= _Id + TOUCH_DISABLE;
+            }
         }
 
-        public TrackPadTouch TrackPadTouch1;
-        public TrackPadTouch TrackPadTouch2;
-        public byte TouchPacketCounter = 0;
+        public static TrackPadTouch TrackPadTouch1 = new(TOUCH0_ID);
+        public static TrackPadTouch TrackPadTouch2 = new(TOUCH1_ID);
+        public static byte TouchPacketCounter = 0;
 
-        private short TouchX, TouchY;
-        public bool OutputClickButton;
+        private static short TouchX, TouchY;
+        public static bool OutputClickButton;
 
-        private float BoundsWidth, BoundsHeight;
+        private static float BoundsWidth, BoundsHeight;
 
-        public DS4Touch()
-        {
-            // default values
-            TrackPadTouch1.RawTrackingNum |= TOUCH0_ID + TOUCH_DISABLE;
-            TrackPadTouch2.RawTrackingNum |= TOUCH1_ID + TOUCH_DISABLE;
-        }
-
-        public void OnMouseUp(double X, double Y, CursorButton Button, int flags = 20)
+        public static void OnMouseUp(double X, double Y, CursorButton Button, int flags = 20)
         {
             TouchX = (short)(X * TOUCHPAD_WIDTH);
             TouchY = (short)(Y * TOUCHPAD_HEIGHT);
@@ -58,7 +57,7 @@ namespace ControllerService
             OutputClickButton = false;
         }
 
-        public void OnMouseDown(double X, double Y, CursorButton Button, int flags = 20)
+        public static void OnMouseDown(double X, double Y, CursorButton Button, int flags = 20)
         {
             TouchX = (short)(X * TOUCHPAD_WIDTH);
             TouchY = (short)(Y * TOUCHPAD_HEIGHT);
@@ -83,7 +82,7 @@ namespace ControllerService
             TouchPacketCounter++;
         }
 
-        public void OnMouseMove(double X, double Y, CursorButton Button, int flags = 20)
+        public static void OnMouseMove(double X, double Y, CursorButton Button, int flags = 20)
         {
             TouchX = (short)(X * TOUCHPAD_WIDTH);
             TouchY = (short)(Y * TOUCHPAD_HEIGHT);

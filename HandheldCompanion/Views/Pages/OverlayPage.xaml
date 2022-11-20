@@ -88,6 +88,7 @@
                             <Label Content="{x:Static resx:Resources.OverlayPage_MachenikeHG510Controller}"/>
                             <Label Content="{x:Static resx:Resources.OverlayPage_ToyController}"/>
 							<Label Content="{x:Static resx:Resources.OverlayPage_N64Controller}"/>
+                            <Label Content="{x:Static resx:Resources.OverlayPage_DualSenseController}"/>
                         </ComboBox>
                     </Grid>
                 </Border>
@@ -349,7 +350,7 @@
 
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=Slider_RestingPitch, Mode=OneWay}" />
-                                    <Slider Margin="6,0,0,0" Name="Slider_RestingPitch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="90" TickFrequency="5" TickPlacement="BottomRight" Minimum="0" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+                                    <Slider Margin="6,0,0,0" Name="Slider_RestingPitch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="90" TickFrequency="5" TickPlacement="BottomRight" Minimum="-90" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 									 LargeChange="10" SmallChange="5" ValueChanged="Slider_RestingPitch_ValueChanged" IsEnabled="False"/>
                                 </DockPanel>
                             </Grid>

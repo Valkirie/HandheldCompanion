@@ -8,26 +8,16 @@ using System.IO;
 
 namespace ControllerCommon
 {
-    public class HidHide
+    public static class HidHide
     {
-        private Process process;
+        private static Process process;
 
-        // The name of the key must include a valid root.
-        const string userRoot = @"HKEY_LOCAL_MACHINE";
-        const string subkey = @"SOFTWARE\Nefarius Software Solutions e.U.\HidHide";
-        const string keyName = userRoot + "\\" + subkey;
-
-        private readonly string key = (string)Registry.GetValue(keyName,
-            "Path",
-            "");
-
-        public HidHide()
+        static HidHide()
         {
             // verifying HidHide is installed
-            string path = null;
-
-            if (key != null)
-                path = Path.Combine(key, "x64", "HidHideCLI.exe");
+            string path = RegistryUtils.GetHKLM(@"SOFTWARE\Nefarius Software Solutions e.U.\HidHide", "Path");
+            if (!string.IsNullOrEmpty(path))
+                path = Path.Combine(path, "x64", "HidHideCLI.exe");
 
             if (!File.Exists(path))
             {
@@ -49,7 +39,7 @@ namespace ControllerCommon
             };
         }
 
-        public List<string> GetRegisteredApplications()
+        public static List<string> GetRegisteredApplications()
         {
             process.StartInfo.Arguments = $"--app-list";
             process.Start();
@@ -69,7 +59,7 @@ namespace ControllerCommon
             return whitelist;
         }
 
-        public List<string> GetRegisteredDevices()
+        public static List<string> GetRegisteredDevices()
         {
             process.StartInfo.Arguments = $"--dev-list";
             process.Start();
@@ -89,7 +79,7 @@ namespace ControllerCommon
             return devices;
         }
 
-        public void UnregisterApplication(string path)
+        public static void UnregisterApplication(string path)
         {
             process.StartInfo.Arguments = $"--app-unreg \"{path}\"";
             process.Start();
@@ -97,7 +87,7 @@ namespace ControllerCommon
             process.StandardOutput.ReadToEnd();
         }
 
-        public void RegisterApplication(string path)
+        public static void RegisterApplication(string path)
         {
             process.StartInfo.Arguments = $"--app-reg \"{path}\"";
             process.Start();
@@ -105,49 +95,17 @@ namespace ControllerCommon
             process.StandardOutput.ReadToEnd();
         }
 
-        /* private void ListDevices()
-        {
-            process.StartInfo.Arguments = $"--dev-gaming";
-            process.Start();
-            process.WaitForExit();
-
-            string jsonString = process.StandardOutput.ReadToEnd();
-
-            if (jsonString == "" || jsonString == " [ ] \r\n\r\n")
-                return;
-
-            try
-            {
-                jsonString = jsonString.Replace("\"friendlyName\" : ", "\"friendlyName\" : \"");
-                jsonString = jsonString.Replace("[ {", "{");
-                jsonString = jsonString.Replace(" } ] } ] ", " } ] }");
-                jsonString = jsonString.Replace(@"\", @"\\");
-                root = JsonSerializer.Deserialize<RootDevice>(jsonString);
-            }
-            catch (Exception)
-            {
-                string tempString = CommonUtils.Between(jsonString, "symbolicLink", ",");
-                root = new RootDevice
-                {
-                    friendlyName = "Unknown",
-                    devices = new List<Device>() { new Device() { gamingDevice = true, deviceInstancePath = tempString } }
-                };
-            }
-
-            devices = root.devices;
-        } */
-
-        public void SetCloaking(bool status, string ProductName)
+        public static void SetCloaking(bool status)
         {
             process.StartInfo.Arguments = status ? $"--cloak-on" : $"--cloak-off";
             process.Start();
             process.WaitForExit();
             process.StandardOutput.ReadToEnd();
 
-            LogManager.LogInformation("{0} cloak status set to {1}", ProductName, status);
+            LogManager.LogInformation("Cloak status set to {0}", status);
         }
 
-        public void UnregisterController(string deviceInstancePath)
+        public static void UnhidePath(string deviceInstancePath)
         {
             LogManager.LogInformation("HideDevice unhiding DeviceID: {0}", deviceInstancePath);
             process.StartInfo.Arguments = $"--dev-unhide \"{deviceInstancePath}\"";
@@ -156,18 +114,10 @@ namespace ControllerCommon
             process.StandardOutput.ReadToEnd();
         }
 
-        public void RegisterController(string deviceInstancePath)
+        public static void HidePath(string deviceInstancePath)
         {
             LogManager.LogInformation("HideDevice hiding DeviceID: {0}", deviceInstancePath);
             process.StartInfo.Arguments = $"--dev-hide \"{deviceInstancePath}\"";
-            process.Start();
-            process.WaitForExit();
-            process.StandardOutput.ReadToEnd();
-        }
-
-        public void UnHideDevice(string deviceInstancePath)
-        {
-            process.StartInfo.Arguments = $"--dev-unhide \"{deviceInstancePath}\"";
             process.Start();
             process.WaitForExit();
             process.StandardOutput.ReadToEnd();

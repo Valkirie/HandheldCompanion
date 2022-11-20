@@ -1,26 +1,26 @@
-﻿using ControllerCommon;
+﻿using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Managers.Classes;
-using HandheldCompanion.Views;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
 using System.Windows;
-using static HandheldCompanion.Managers.Classes.InputsHotkey;
+using static HandheldCompanion.Managers.InputsHotkey;
+using static HandheldCompanion.Managers.InputsManager;
+using Shell = Shell32.Shell;
 
 namespace HandheldCompanion.Managers
 {
     public static class HotkeysManager
     {
-        static string Path;
+        private static string Path;
+        private static Shell Shell = new Shell();
 
         public static event HotkeyTypeCreatedEventHandler HotkeyTypeCreated;
         public delegate void HotkeyTypeCreatedEventHandler(InputsHotkeyType type);
@@ -34,8 +34,13 @@ namespace HandheldCompanion.Managers
         public static event CommandExecutedEventHandler CommandExecuted;
         public delegate void CommandExecutedEventHandler(string listener);
 
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
+
         public static SortedDictionary<ushort, Hotkey> Hotkeys = new();
         private const short PIN_LIMIT = 9;
+
+        private static bool IsInitialized;
 
         static HotkeysManager()
         {
@@ -67,7 +72,16 @@ namespace HandheldCompanion.Managers
                     hotkey = new Hotkey(Id, inputsHotkey);
 
                 hotkey.inputsHotkey = InputsHotkey.InputsHotkeys[hotkey.hotkeyId];
-                hotkey.DrawControl();
+
+                switch (hotkey.inputsHotkey.hotkeyType)
+                {
+                    case InputsHotkeyType.UI:
+                        hotkey.DrawControl(true);
+                        break;
+                    default:
+                        hotkey.DrawControl();
+                        break;
+                }
 
                 Hotkeys.Add(hotkey.hotkeyId, hotkey);
             }
@@ -80,19 +94,40 @@ namespace HandheldCompanion.Managers
             {
                 HotkeyCreated?.Invoke(hotkey);
 
-                hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, false);
-                hotkey.outputButton.Click += (sender, e) => StartListening(hotkey, true);
+                switch(hotkey.inputsHotkey.hotkeyType)
+                {
+                    case InputsHotkeyType.UI:
+                        hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.UI);
+                        break;
+                    default:
+                        hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.Default);
+                        break;
+                }
+
+                hotkey.outputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.Output);
                 hotkey.pinButton.Click += (sender, e) => PinOrUnpinHotkey(hotkey);
+
                 hotkey.quickButton.PreviewTouchDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
                 hotkey.quickButton.PreviewMouseDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
                 hotkey.quickButton.PreviewMouseUp += (sender, e) => { InputsManager.InvokeTrigger(hotkey, false, true); };
             }
+
+            IsInitialized = true;
+            Initialized?.Invoke();
         }
 
-        private static void StartListening(Hotkey hotkey, bool IsCombo)
+        public static void Stop()
         {
-            InputsManager.StartListening(hotkey, IsCombo);
-            hotkey.StartListening(IsCombo);
+            if (!IsInitialized)
+                return;
+
+            IsInitialized = false;
+        }
+
+        private static void StartListening(Hotkey hotkey, ListenerType type)
+        {
+            InputsManager.StartListening(hotkey, type);
+            hotkey.StartListening(type);
         }
 
         private static void PinOrUnpinHotkey(Hotkey hotkey)
@@ -132,7 +167,7 @@ namespace HandheldCompanion.Managers
             return Hotkeys.Values.Where(item => item.IsPinned).Count();
         }
 
-        private static void TriggerUpdated(string listener, InputsChord inputs, bool IsCombo)
+        private static void TriggerUpdated(string listener, InputsChord inputs, ListenerType type)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -141,7 +176,7 @@ namespace HandheldCompanion.Managers
                 if (hotkey is null)
                     return;
 
-                hotkey.StopListening(inputs, IsCombo);
+                hotkey.StopListening(inputs, type);
 
                 // overwrite current file
                 SerializeHotkey(hotkey, true);
@@ -191,7 +226,7 @@ namespace HandheldCompanion.Managers
 
         public static void TriggerRaised(string listener, InputsChord input, bool IsKeyDown, bool IsKeyUp)
         {
-            var fProcess = ProcessManager.GetForegroundProcess();
+            ProcessEx fProcess = ProcessManager.GetForegroundProcess();
 
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -217,20 +252,30 @@ namespace HandheldCompanion.Managers
                         }).Start();
                         break;
                     case "shortcutDesktop":
-                        InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
+                        Shell.ToggleDesktop();
                         break;
                     case "shortcutESC":
-                        if (fProcess != null)
+                        if (fProcess != null && !fProcess.IsIgnored)
                         {
                             ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
                             InputsManager.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
-                        if (fProcess != null)
+                        if (fProcess != null && !fProcess.IsIgnored)
                         {
-                            ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
-                            InputsManager.KeyStroke(VirtualKeyCode.LMENU, VirtualKeyCode.RETURN);
+                            var Placement = ProcessUtils.GetPlacement(fProcess.MainWindowHandle);
+
+                            switch (Placement.showCmd)
+                            {
+                                case ProcessUtils.ShowWindowCommands.Normal:
+                                case ProcessUtils.ShowWindowCommands.Minimized:
+                                    ProcessUtils.ShowWindow(fProcess.MainWindowHandle, (int)ProcessUtils.ShowWindowCommands.Maximized);
+                                    break;
+                                case ProcessUtils.ShowWindowCommands.Maximized:
+                                    ProcessUtils.ShowWindow(fProcess.MainWindowHandle, (int)ProcessUtils.ShowWindowCommands.Restored);
+                                    break;
+                            }
                         }
                         break;
                     case "shortcutTaskview":
@@ -240,16 +285,26 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
                         break;
                     case "shortcutGuide":
-                        MainWindow.pipeClient.SendMessage(new PipeClientInput() { sButtons = (ushort)0x0400, IsKeyDown = IsKeyDown, IsKeyUp = IsKeyUp });
+                        // temporary, move me to remapper !
+                        ControllerManager.buttonMaps[input.GamepadButtons] = ControllerButtonFlags.Special;
                         break;
                     case "suspendResumeTask":
                         {
                             var sProcess = ProcessManager.GetSuspendedProcess();
 
-                            if (sProcess != null)
+                            if (sProcess is null || sProcess.IsIgnored)
+                                break;
+
+                            if (sProcess.IsSuspended())
                                 ProcessManager.ResumeProcess(sProcess);
-                            else if (!fProcess.IsIgnored)
+                            else
                                 ProcessManager.SuspendProcess(fProcess);
+                        }
+                        break;
+                    case "shortcutKillApp":
+                        if (fProcess != null)
+                        {
+                            fProcess.Process.Kill();
                         }
                         break;
                     default:
@@ -268,6 +323,16 @@ namespace HandheldCompanion.Managers
             catch (Exception ex)
             {
                 LogManager.LogError("Failed to parse trigger {0}, {1}", listener, ex.Message);
+            }
+        }
+
+        internal static void ClearHotkey(Hotkey hotkey)
+        {
+            switch (hotkey.inputsHotkey.Listener)
+            {
+                case "shortcutGuide":
+                    ControllerManager.buttonMaps[hotkey.inputsChord.GamepadButtons] = ControllerButtonFlags.None;
+                    break;
             }
         }
     }

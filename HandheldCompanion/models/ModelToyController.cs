@@ -1,4 +1,4 @@
-using SharpDX.XInput;
+using ControllerCommon.Controllers;
 using System;
 using System.IO;
 using System.Windows;
@@ -21,14 +21,14 @@ namespace HandheldCompanion.Models
         Model3DGroup Smile5;
         Model3DGroup Smile6;
 
-        Model3DGroup ALetter;
-        Model3DGroup ALetterInside;
-        Model3DGroup BLetter;
-        Model3DGroup XLetter;
-        Model3DGroup XLetterInside;
-        Model3DGroup YLetter;
-        Model3DGroup YLetterInside1;
-        Model3DGroup YLetterInside2;
+        Model3DGroup B1Letter;
+        Model3DGroup B1LetterInside;
+        Model3DGroup B2Letter;
+        Model3DGroup B3Letter;
+        Model3DGroup B3LetterInside;
+        Model3DGroup B4Letter;
+        Model3DGroup B4LetterInside1;
+        Model3DGroup B4LetterInside2;
 
         Model3DGroup DPadLeft1;
         Model3DGroup DPadUp2;
@@ -88,14 +88,14 @@ namespace HandheldCompanion.Models
             Smile5 = modelImporter.Load($"models/{ModelName}/Smile5.obj");
             Smile6 = modelImporter.Load($"models/{ModelName}/Smile6.obj");
 
-            ALetter = modelImporter.Load($"models/{ModelName}/ALetter.obj");
-            ALetterInside = modelImporter.Load($"models/{ModelName}/ALetterInside.obj");
-            BLetter = modelImporter.Load($"models/{ModelName}/BLetter.obj");
-            XLetter = modelImporter.Load($"models/{ModelName}/XLetter.obj");
-            XLetterInside = modelImporter.Load($"models/{ModelName}/XLetterInside.obj");
-            YLetter = modelImporter.Load($"models/{ModelName}/YLetter.obj");
-            YLetterInside1 = modelImporter.Load($"models/{ModelName}/YLetterInside1.obj");
-            YLetterInside2 = modelImporter.Load($"models/{ModelName}/YLetterInside2.obj");
+            B1Letter = modelImporter.Load($"models/{ModelName}/B1Letter.obj");
+            B1LetterInside = modelImporter.Load($"models/{ModelName}/B1LetterInside.obj");
+            B2Letter = modelImporter.Load($"models/{ModelName}/B2Letter.obj");
+            B3Letter = modelImporter.Load($"models/{ModelName}/B3Letter.obj");
+            B3LetterInside = modelImporter.Load($"models/{ModelName}/B3LetterInside.obj");
+            B4Letter = modelImporter.Load($"models/{ModelName}/B4Letter.obj");
+            B4LetterInside1 = modelImporter.Load($"models/{ModelName}/B4LetterInside1.obj");
+            B4LetterInside2 = modelImporter.Load($"models/{ModelName}/B4LetterInside2.obj");
 
             DPadLeft1 = modelImporter.Load($"models/{ModelName}/DPadLeft1.obj");
             DPadUp2 = modelImporter.Load($"models/{ModelName}/DPadUp2.obj");
@@ -103,14 +103,14 @@ namespace HandheldCompanion.Models
             DPadDown4 = modelImporter.Load($"models/{ModelName}/DPadDown4.obj");
 
             // map model(s)
-            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
             {
                 switch (button)
                 {
-                    case GamepadButtonFlags.A:
-                    case GamepadButtonFlags.B:
-                    case GamepadButtonFlags.X:
-                    case GamepadButtonFlags.Y:
+                    case ControllerButtonFlags.B1:
+                    case ControllerButtonFlags.B2:
+                    case ControllerButtonFlags.B3:
+                    case ControllerButtonFlags.B4:
 
                         string filename = $"models/{ModelName}/{button}-Letter.obj";
                         if (File.Exists(filename))
@@ -138,14 +138,14 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(Smile5);
             model3DGroup.Children.Add(Smile6);
 
-            model3DGroup.Children.Add(ALetter);
-            model3DGroup.Children.Add(ALetterInside);
-            model3DGroup.Children.Add(BLetter);
-            model3DGroup.Children.Add(XLetter);
-            model3DGroup.Children.Add(XLetterInside);
-            model3DGroup.Children.Add(YLetter);
-            model3DGroup.Children.Add(YLetterInside1);
-            model3DGroup.Children.Add(YLetterInside2);
+            model3DGroup.Children.Add(B1Letter);
+            model3DGroup.Children.Add(B1LetterInside);
+            model3DGroup.Children.Add(B2Letter);
+            model3DGroup.Children.Add(B3Letter);
+            model3DGroup.Children.Add(B3LetterInside);
+            model3DGroup.Children.Add(B4Letter);
+            model3DGroup.Children.Add(B4LetterInside1);
+            model3DGroup.Children.Add(B4LetterInside2);
 
             model3DGroup.Children.Add(DPadLeft1);
             model3DGroup.Children.Add(DPadUp2);
@@ -153,7 +153,7 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(DPadDown4);
 
             // specific button material(s)
-            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
             {
                 int i = 0;
                 Material buttonMaterial = null;
@@ -163,36 +163,36 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            case GamepadButtonFlags.X:
+                            case ControllerButtonFlags.B1:
+                                buttonMaterial = MaterialPlasticOrange;
+                                break;
+                            case ControllerButtonFlags.B2:
+                                buttonMaterial = MaterialPlasticRed;
+                                break;
+                            case ControllerButtonFlags.B3:
                                 buttonMaterial = MaterialPlasticGreen;
                                 break;
-                            case GamepadButtonFlags.Y:
+                            case ControllerButtonFlags.B4:
                                 buttonMaterial = MaterialPlasticBlue;
                                 break;
-                            case GamepadButtonFlags.A:
-                                buttonMaterial = MaterialPlasticOrange;
-                                break;
-                            case GamepadButtonFlags.B:
+                            case ControllerButtonFlags.DPadDown:
+                            case ControllerButtonFlags.DPadUp:
+                            case ControllerButtonFlags.DPadLeft:
+                            case ControllerButtonFlags.DPadRight:
                                 buttonMaterial = MaterialPlasticRed;
                                 break;
-                            case GamepadButtonFlags.DPadDown:
-                            case GamepadButtonFlags.DPadUp:
-                            case GamepadButtonFlags.DPadLeft:
-                            case GamepadButtonFlags.DPadRight:
-                                buttonMaterial = MaterialPlasticRed;
-                                break;
-                            case GamepadButtonFlags.LeftShoulder:
+                            case ControllerButtonFlags.LeftShoulder:
                                 buttonMaterial = MaterialPlasticOrange;
                                 break;
-                            case GamepadButtonFlags.RightShoulder:
+                            case ControllerButtonFlags.RightShoulder:
                                 buttonMaterial = MaterialPlasticPurple;
                                 break;
-                            case GamepadButtonFlags.Start:
-                            case GamepadButtonFlags.Back:
+                            case ControllerButtonFlags.Start:
+                            case ControllerButtonFlags.Back:
                                 buttonMaterial = MaterialPlasticYellow;
                                 break;
-                            case GamepadButtonFlags.LeftThumb:
-                            case GamepadButtonFlags.RightThumb:
+                            case ControllerButtonFlags.LeftThumb:
+                            case ControllerButtonFlags.RightThumb:
                                 buttonMaterial = MaterialPlasticBlue;
                                 break;
                             default:
@@ -219,7 +219,7 @@ namespace HandheldCompanion.Models
                 // specific material(s)
                 if (model3D == MainBody || model3D == Smile1 || model3D == Smile2
                     || model3D == DPadLeft1 || model3D == DPadUp2 || model3D == DPadRight3 || model3D == DPadDown4
-                    || model3D == ALetter || model3D == BLetter || model3D == XLetter || model3D == YLetter
+                    || model3D == B1Letter || model3D == B2Letter || model3D == B3Letter || model3D == B4Letter
                     )
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
@@ -242,7 +242,7 @@ namespace HandheldCompanion.Models
 
                 if (model3D == JoystickLeftCover || model3D == JoystickRightCover
                     || model3D == LeftThumbRing || model3D == RightThumbRing
-                    || model3D == YLetterInside1 || model3D == YLetterInside2)
+                    || model3D == B4LetterInside1 || model3D == B4LetterInside2)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlue;
                     DefaultMaterials[model3D] = MaterialPlasticBlue;
@@ -254,13 +254,13 @@ namespace HandheldCompanion.Models
                     DefaultMaterials[model3D] = MaterialPlasticPurple;
                 }
 
-                if (model3D == LeftShoulderTrigger || model3D == ALetterInside)
+                if (model3D == LeftShoulderTrigger || model3D == B1LetterInside)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticOrange;
                     DefaultMaterials[model3D] = MaterialPlasticOrange;
                 }
 
-                if (model3D == XLetterInside)
+                if (model3D == B3LetterInside)
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticGreen;
                     DefaultMaterials[model3D] = MaterialPlasticGreen;

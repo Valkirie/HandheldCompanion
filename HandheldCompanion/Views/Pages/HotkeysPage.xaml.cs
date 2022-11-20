@@ -1,6 +1,5 @@
 ﻿using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Classes;
 using ModernWpf.Controls;
 using System.Windows;
 using System.Windows.Controls;
@@ -52,9 +51,15 @@ namespace HandheldCompanion.Views.Pages
 
         private void HotkeysManager_HotkeyCreated(Hotkey hotkey)
         {
+            // UI types shouldn't be added
+            if (hotkey.inputsHotkey.hotkeyType == InputsHotkey.InputsHotkeyType.UI)
+                return;
+
             this.Dispatcher.Invoke(() =>
             {
                 Border hotkeyBorder = hotkey.GetHotkey();
+                if (hotkeyBorder is null || hotkeyBorder.Parent != null)
+                    return;
 
                 ushort idx = (ushort)hotkey.inputsHotkey.hotkeyType;
                 SimpleStackPanel stackPanel = (SimpleStackPanel)HotkeysPanel.Children[idx];

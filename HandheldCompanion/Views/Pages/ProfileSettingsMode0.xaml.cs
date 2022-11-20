@@ -1,4 +1,6 @@
 using ControllerCommon;
+using ControllerCommon.Managers;
+using ControllerCommon.Controllers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using ModernWpf.Controls;
@@ -9,8 +11,9 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using GamepadButtonFlagsExt = ControllerCommon.Utils.GamepadButtonFlagsExt;
 using Page = System.Windows.Controls.Page;
+using HandheldCompanion.Managers;
+using System.Linq;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -19,21 +22,27 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class ProfileSettingsMode0 : Page
     {
-        private Profile profileCurrent;
-
-        private Dictionary<GamepadButtonFlagsExt, CheckBox> AimingDownSightsActivators = new();
+        private Profile currentProfile;
+        private Hotkey ProfilesPageHotkey;
 
         public ProfileSettingsMode0()
         {
             InitializeComponent();
         }
 
-        public ProfileSettingsMode0(string Tag, Profile profileCurrent) : this()
+        public ProfileSettingsMode0(string Tag) : this()
         {
             this.Tag = Tag;
 
-            this.profileCurrent = profileCurrent;
-            MainWindow.pipeClient.ServerMessage += OnServerMessage;
+            PipeClient.ServerMessage += OnServerMessage;
+
+            HotkeysManager.HotkeyCreated += TriggerCreated;
+            InputsManager.TriggerUpdated += TriggerUpdated;
+        }
+
+        public void Update(Profile currentProfile)
+        {
+            this.currentProfile = currentProfile;
 
             SliderSensitivityX.Value = profileCurrent.aiming_sensitivity_x;
             SliderSensitivityY.Value = profileCurrent.aiming_sensitivity_y;
@@ -41,6 +50,10 @@ namespace HandheldCompanion.Views.Pages
             Toggle_FlickStick.IsOn = profileCurrent.flickstick_enabled;
             tb_ProfileFlickDuration.Value = profileCurrent.flick_duration * 1000;
             tb_ProfileStickSensitivity.Value = profileCurrent.stick_sensivity;
+
+            // todo: improve me ?
+            ProfilesPageHotkey.inputsChord.GamepadButtons = currentProfile.aiming_down_sights_activation;
+            ProfilesPageHotkey.Refresh();
 
             // temp
             StackCurve.Children.Clear();
@@ -50,7 +63,7 @@ namespace HandheldCompanion.Views.Pages
                 if (i == 1)
                     continue;
 
-                double height = profileCurrent.aiming_array[i - 1].y * StackCurve.Height;
+                double height = currentProfile.aiming_array[i - 1].y * StackCurve.Height;
                 Thumb thumb = new Thumb()
                 {
                     Tag = i - 1,
@@ -66,40 +79,6 @@ namespace HandheldCompanion.Views.Pages
 
                 StackCurve.Children.Add(thumb);
             }
-
-            // draw aiming down sight activators
-            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
-            {
-                // create panel
-                SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
-
-                // create icon
-                FontIcon icon = new FontIcon() { Glyph = "" };
-                icon.Glyph = InputUtils.GamepadButtonToGlyph(button);
-
-                if (icon.Glyph != "")
-                    panel.Children.Add(icon);
-
-                // create textblock
-                string description = EnumUtils.GetDescriptionFromEnumValue(button);
-                TextBlock text = new TextBlock() { Text = description };
-                panel.Children.Add(text);
-
-                // create checkbox
-                CheckBox checkbox = new CheckBox() { Tag = button, Content = panel, Width = 170 };
-                checkbox.Checked += AimingDownSightsActivatorsTickedEvent;
-                checkbox.Unchecked += AimingDownSightsActivatorsUntickedEvent;
-
-                cB_AimingDownSightsActivationButtons.Children.Add(checkbox);
-                AimingDownSightsActivators.Add(button, checkbox);
-            }
-
-            // Fill activators based on profile
-            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
-                if (profileCurrent.aiming_down_sights_activation.HasFlag(button))
-                    AimingDownSightsActivators[button].IsChecked = true;
-                else
-                    AimingDownSightsActivators[button].IsChecked = false;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -108,10 +87,10 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
-            MainWindow.pipeClient.ServerMessage -= OnServerMessage;
+            PipeClient.ServerMessage -= OnServerMessage;
         }
 
-        private void OnServerMessage(object sender, PipeMessage message)
+        private void OnServerMessage(PipeMessage message)
         {
             switch (message.code)
             {
@@ -130,7 +109,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void SliderSensitivityX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (profileCurrent is null)
+            if (currentProfile is null)
                 return;
 
             profileCurrent.aiming_sensitivity_x = (float)SliderSensitivityX.Value;
@@ -148,12 +127,12 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Dispatcher.Invoke(() =>
             {
-                double dist_x = value / XInputGirometer.sensorSpec.maxIn;
+                double dist_x = value / IMUGyrometer.sensorSpec.maxIn;
 
                 foreach (Control control in StackCurve.Children)
                 {
                     int idx = (int)control.Tag;
-                    ProfileVector vector = profileCurrent.aiming_array[idx];
+                    ProfileVector vector = currentProfile.aiming_array[idx];
 
                     if (dist_x > vector.x)
                         control.BorderThickness = new Thickness(0, 0, 0, 20);
@@ -170,7 +149,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void StackCurve_MouseMove(object sender, MouseEventArgs e)
         {
-            if (profileCurrent is null)
+            if (currentProfile is null)
                 return;
 
             Control Thumb = null;
@@ -196,7 +175,7 @@ namespace HandheldCompanion.Views.Pages
 
                 int idx = (int)Thumb.Tag;
                 Thumb.Height = StackCurve.ActualHeight - e.GetPosition(StackCurve).Y;
-                profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
+                currentProfile.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
             }
         }
 
@@ -208,7 +187,7 @@ namespace HandheldCompanion.Views.Pages
                 int idx = (int)Thumb.Tag;
 
                 Thumb.Height = StackCurve.Height / 2.0f;
-                profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
+                currentProfile.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
             }
         }
 
@@ -222,7 +201,7 @@ namespace HandheldCompanion.Views.Pages
                 float value = (float)(-Math.Sqrt(idx * tempx) + 0.85f);
 
                 Thumb.Height = StackCurve.Height * value;
-                profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
+                currentProfile.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
             }
         }
 
@@ -236,7 +215,7 @@ namespace HandheldCompanion.Views.Pages
                 float value = (float)(Math.Sqrt(idx * tempx) + 0.25f - (tempx * idx));
 
                 Thumb.Height = StackCurve.Height * value;
-                profileCurrent.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
+                currentProfile.aiming_array[idx].y = Thumb.Height / StackCurve.Height;
             }
         }
 
@@ -247,58 +226,72 @@ namespace HandheldCompanion.Views.Pages
 
         private void SliderAimingDownSightsMultiplier_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (profileCurrent is null)
+            if (currentProfile is null)
                 return;
 
-            profileCurrent.aiming_down_sights_multiplier = (float)tb_ProfileAimingDownSightsMultiplier.Value;
-        }
-
-        private void AimingDownSightsActivatorsTickedEvent(object sender, RoutedEventArgs e)
-        {
-            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
-            {
-                if ((bool)AimingDownSightsActivators[button].IsChecked)
-                {
-                    profileCurrent.aiming_down_sights_activation |= button;
-                }
-            }
-        }
-
-        private void AimingDownSightsActivatorsUntickedEvent(object sender, RoutedEventArgs e)
-        {
-            foreach (GamepadButtonFlagsExt button in (GamepadButtonFlagsExt[])Enum.GetValues(typeof(GamepadButtonFlagsExt)))
-            {
-                if (!(bool)AimingDownSightsActivators[button].IsChecked)
-                {
-                    // Perform a bitwise "AND" mask with every bit set
-                    // except the ones already ticked, use complement.
-                    profileCurrent.aiming_down_sights_activation &= ~button;
-                }
-            }
+            currentProfile.aiming_down_sights_multiplier = (float)tb_ProfileAimingDownSightsMultiplier.Value;
         }
 
         private void Toggle_FlickStick_Toggled(object sender, RoutedEventArgs e)
         {
-            if (profileCurrent == null)
+            if (currentProfile == null)
                 return;
 
-            profileCurrent.flickstick_enabled = (bool)Toggle_FlickStick.IsOn;
+            currentProfile.flickstick_enabled = (bool)Toggle_FlickStick.IsOn;
         }
 
         private void SliderFlickDuration_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (profileCurrent is null)
+            if (currentProfile is null)
                 return;
 
-            profileCurrent.flick_duration = (float)tb_ProfileFlickDuration.Value / 1000;
+            currentProfile.flick_duration = (float)tb_ProfileFlickDuration.Value / 1000;
         }
 
         private void SliderStickSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (profileCurrent is null)
+            if (currentProfile is null)
                 return;
 
-            profileCurrent.stick_sensivity = (float)tb_ProfileStickSensitivity.Value;
+            currentProfile.stick_sensivity = (float)tb_ProfileStickSensitivity.Value;
+        }
+
+        private void TriggerCreated(Hotkey hotkey)
+        {
+            switch (hotkey.hotkeyId)
+            {
+                case 51:
+                    {
+                        // pull hotkey
+                        ProfilesPageHotkey = hotkey;
+
+                        // add to UI
+                        Border hotkeyBorder = ProfilesPageHotkey.GetHotkey();
+                        if (hotkeyBorder is null || hotkeyBorder.Parent != null)
+                            return;
+
+                        UMC_Activator.Children.Add(hotkeyBorder);
+                    }
+                    break;
+            }
+        }
+
+        private void TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
+        {
+            Hotkey hotkey = HotkeysManager.Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
+
+            if (hotkey is null)
+                return;
+
+            switch (hotkey.hotkeyId)
+            {
+                case 51:
+                    {
+                        // update profile
+                        currentProfile.aiming_down_sights_activation = inputs.GamepadButtons;
+                    }
+                    break;
+            }
         }
     }
 }

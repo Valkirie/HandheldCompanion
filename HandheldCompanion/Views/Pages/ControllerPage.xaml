@@ -32,41 +32,21 @@
                         <Grid.Background>
                             <ImageBrush ImageSource="/Resources/controller_2_0.png" Stretch="Uniform"/>
                         </Grid.Background>
+                        
                         <ui:ProgressRing Name="navLoad" IsActive="True" Width="50" Height="50" Visibility="Hidden"/>
-                        <ui:SimpleStackPanel Spacing="18" VerticalAlignment="Bottom">
-                            <ui:SimpleStackPanel Spacing="18" HorizontalAlignment="Right" Orientation="Horizontal">
-                                <Button Name="B_ServiceSwitch" Content="{x:Static resx:Resources.ControllerPage_Connect}" Width="Auto" Style="{DynamicResource AccentButtonStyle}" Click="B_ServiceSwitch_Click"/>
-                                <ComboBox Name="cB_HidMode" Width="Auto" SelectionChanged="cB_HidMode_SelectionChanged" BorderThickness="0"/>
-                            </ui:SimpleStackPanel>
-                            
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <DockPanel>
-                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE877;" Height="40" HorizontalAlignment="Center"/>
-
-                                    <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_VibrationStrength}" FontSize="14"/>
-                                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_VibrationStrengthExpl}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                    </ui:SimpleStackPanel>
-                                </DockPanel>
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderStrength, Mode=OneWay}" />
-                                    <Slider Margin="6,0,0,0" Name="SliderStrength" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" Minimum="0" SmallChange="5" TickFrequency="5" Value="50" TickPlacement="BottomRight" ValueChanged="SliderStrength_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
-                                </DockPanel>
-                                </Grid>
+                        
+                        <ui:SimpleStackPanel Spacing="18" VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
+                            <Button Name="B_ServiceSwitch" Content="{x:Static resx:Resources.ControllerPage_Connect}" Width="Auto" Style="{DynamicResource AccentButtonStyle}" Click="B_ServiceSwitch_Click"/>
+                            <ComboBox Name="cB_HidMode" Width="Auto" SelectionChanged="cB_HidMode_SelectionChanged" BorderThickness="0"/>
                         </ui:SimpleStackPanel>
                     </Grid>
                 </Border>
 
                 <!-- Input devices -->
-                <ui:SimpleStackPanel Spacing="6" Name="InputDevices" Visibility="Collapsed">
+                <ui:SimpleStackPanel Spacing="6">
                     <Label Content="{x:Static resx:Resources.ControllerPage_InputDevices}" FontWeight="SemiBold"></Label>
                     <Border
+                        Name="InputDevices" Visibility="Collapsed"
                         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
@@ -75,10 +55,67 @@
                         <ui:RadioButtons Name="RadioControllers" SelectionChanged="RadioControllers_SelectionChanged">
                         </ui:RadioButtons>
                     </Border>
+
+                    <Border                        
+                        Name="NoDevices" Visibility="Visible"
+                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                        Padding="12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition MinWidth="200"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE99A;" Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" Height="40" HorizontalAlignment="Center"/>
+
+                                <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <TextBlock Text="No controller detected" Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" FontSize="14"/>
+                                    <TextBlock Text="Please make sure you connected a compatible XInput or DIpunt device" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                        </Grid>
+                    </Border>
+                </ui:SimpleStackPanel>
+
+                <!-- Device settings -->
+                <ui:SimpleStackPanel Spacing="6">
+                    <Label Content="Device settings" FontWeight="SemiBold"></Label>
+
+                    <!-- Vibration Strength -->
+                    <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE877;" Height="40" HorizontalAlignment="Center"/>
+
+                                <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <TextBlock Text="{x:Static resx:Resources.ControllerPage_VibrationStrength}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.ControllerPage_VibrationStrengthExpl}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderStrength, Mode=OneWay}" />
+                                <Slider Margin="6,0,0,0" Name="SliderStrength" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" Minimum="0" SmallChange="5" TickFrequency="5" Value="100" TickPlacement="BottomRight" ValueChanged="SliderStrength_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                            </DockPanel>
+                        </Grid>
+
+                    </Border>
                 </ui:SimpleStackPanel>
 
                 <!-- Device cloaking -->
-                <ui:SimpleStackPanel Name="DeviceCloakingStackPanel" Spacing="6" IsEnabled="False">
+                <ui:SimpleStackPanel Spacing="6">
                     <Label Content="{x:Static resx:Resources.ControllerPage_DeviceCloaking}" FontWeight="SemiBold"></Label>
 
                     <!-- Cloak device -->

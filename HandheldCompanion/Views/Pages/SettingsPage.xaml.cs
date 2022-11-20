@@ -1,7 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Classes;
 using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
@@ -35,7 +34,7 @@ namespace HandheldCompanion.Views.Pages
             foreach (ServiceStartMode mode in ((ServiceStartMode[])Enum.GetValues(typeof(ServiceStartMode))).Where(mode => mode >= ServiceStartMode.Automatic))
             {
                 RadioButton radio = new() { Content = EnumUtils.GetDescriptionFromEnumValue(mode) };
-                switch(mode)
+                switch (mode)
                 {
                     case ServiceStartMode.Disabled:
                         radio.IsEnabled = false;
@@ -507,7 +506,7 @@ namespace HandheldCompanion.Views.Pages
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
-            MainWindow.pipeClient.SendMessage(settings);
+            PipeClient.SendMessage(settings);
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -523,7 +522,7 @@ namespace HandheldCompanion.Views.Pages
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorPlacement", Tag);
-            MainWindow.pipeClient.SendMessage(settings);
+            PipeClient.SendMessage(settings);
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -550,7 +549,7 @@ namespace HandheldCompanion.Views.Pages
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorPlacementUpsideDown", isUpsideDown);
-            MainWindow.pipeClient?.SendMessage(settings);
+            PipeClient.SendMessage(settings);
 
             if (!SettingsManager.IsInitialized)
                 return;

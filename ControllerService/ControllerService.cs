@@ -6,7 +6,6 @@ using ControllerService.Targets;
 using Microsoft.Extensions.Hosting;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using Nefarius.ViGEm.Client;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -25,30 +24,23 @@ namespace ControllerService
     public class ControllerService : IHostedService
     {
         // controllers vars
-        private ViGEmClient VirtualClient;
-        private ViGEmTarget VirtualTarget;
-        public XInputController XInputController;
+        public static ViGEmClient vClient;
+        public static ViGEmTarget vTarget;
 
-        private PipeServer pipeServer;
         private DSUServer DSUServer;
-        public HidHide Hidder;
 
         // devices vars
         public static Device handheldDevice;
-        private UserIndex HIDidx;
-        private string deviceInstancePath;
-        private string baseContainerDeviceInstancePath;
 
         public static string CurrentExe, CurrentPath, CurrentPathDep;
         public static string CurrentTag;
         public static int CurrentOverlayStatus = 2;
 
         // settings vars
-        Configuration configuration;
+        public Configuration configuration;
         private string DSUip;
-        private bool HIDcloaked, HIDuncloakonclose, DSUEnabled;
+        private bool DSUEnabled;
         private int DSUport;
-        private double HIDstrength;
         private HIDmode HIDmode = HIDmode.NoController;
         private HIDstatus HIDstatus = HIDstatus.Disconnected;
 
@@ -75,27 +67,21 @@ namespace ControllerService
             // todo: move me to a specific class
             configuration = ConfigurationManager.OpenExeConfiguration("ControllerService.exe");
 
-            HIDcloaked = bool.Parse(configuration.AppSettings.Settings["HIDcloaked"].Value);
-            HIDuncloakonclose = bool.Parse(configuration.AppSettings.Settings["HIDuncloakonclose"].Value);
             HIDmode = Enum.Parse<HIDmode>(configuration.AppSettings.Settings["HIDmode"].Value);
             HIDstatus = Enum.Parse<HIDstatus>(configuration.AppSettings.Settings["HIDstatus"].Value);
+
             DSUEnabled = bool.Parse(configuration.AppSettings.Settings["DSUEnabled"].Value);
             DSUip = configuration.AppSettings.Settings["DSUip"].Value;
             DSUport = int.Parse(configuration.AppSettings.Settings["DSUport"].Value);
-            HIDstrength = double.Parse(configuration.AppSettings.Settings["HIDstrength"].Value);
 
             SensorSelection = Enum.Parse<SensorFamily>(configuration.AppSettings.Settings["SensorSelection"].Value);
             SensorPlacement = int.Parse(configuration.AppSettings.Settings["SensorPlacement"].Value);
             SensorPlacementUpsideDown = bool.Parse(configuration.AppSettings.Settings["SensorPlacementUpsideDown"].Value);
 
-            HIDidx = Enum.Parse<UserIndex>(configuration.AppSettings.Settings["HIDidx"].Value);
-            deviceInstancePath = configuration.AppSettings.Settings["deviceInstancePath"].Value;
-            baseContainerDeviceInstancePath = configuration.AppSettings.Settings["baseContainerDeviceInstancePath"].Value;
-
             // verifying ViGEm is installed
             try
             {
-                VirtualClient = new ViGEmClient();
+                vClient = new ViGEmClient();
             }
             catch (Exception)
             {
@@ -104,31 +90,25 @@ namespace ControllerService
             }
 
             // initialize HidHide
-            Hidder = new HidHide();
-            Hidder.RegisterApplication(CurrentExe);
+            HidHide.RegisterApplication(CurrentExe);
 
             // initialize PipeServer
-            pipeServer = new PipeServer("ControllerService");
-            pipeServer.Connected += OnClientConnected;
-            pipeServer.Disconnected += OnClientDisconnected;
-            pipeServer.ClientMessage += OnClientMessage;
+            PipeServer.Initialize("ControllerService");
+            PipeServer.Connected += OnClientConnected;
+            PipeServer.Disconnected += OnClientDisconnected;
+            PipeServer.ClientMessage += OnClientMessage;
 
             // initialize manager(s)
-            SystemManager.SerialArrived += SystemManager_SerialArrived;
-            SystemManager.SerialRemoved += SystemManager_SerialRemoved;
+            SystemManager.GenericDeviceArrived += GenericDeviceArrived;
+            SystemManager.GenericDeviceRemoved += GenericDeviceRemoved;
             SystemManager.Start();
-            SystemManager_SerialArrived(null);
+            GenericDeviceArrived(null);
 
             // initialize device
             handheldDevice = Device.GetDefault();
 
             // XInputController settings
-            XInputController = new XInputController(SensorSelection, pipeServer);
-            XInputController.SetVibrationStrength(HIDstrength);
-            XInputController.Updated += OnTargetSubmited;
-
-            // prepare physical controller
-            SetControllerIdx(HIDidx, deviceInstancePath, baseContainerDeviceInstancePath);
+            IMU.Initialize(SensorSelection);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport);
@@ -137,7 +117,7 @@ namespace ControllerService
         }
 
         private SerialUSBIMU sensor;
-        private void SystemManager_SerialArrived(PnPDevice device)
+        private void GenericDeviceArrived(PnPDevice device)
         {
             switch (SensorSelection)
             {
@@ -151,13 +131,13 @@ namespace ControllerService
                         sensor.Open();
                         sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
 
-                        XInputController?.UpdateSensors();
+                        IMU.UpdateSensors();
                     }
                     break;
             }
         }
 
-        private void SystemManager_SerialRemoved(PnPDevice device)
+        private void GenericDeviceRemoved(PnPDevice device)
         {
             switch (SensorSelection)
             {
@@ -167,88 +147,40 @@ namespace ControllerService
                             break;
 
                         sensor.Close();
-                        XInputController?.UpdateSensors();
+                        IMU.UpdateSensors();
                     }
                     break;
             }
         }
 
-        private void SetControllerIdx(UserIndex idx, string deviceInstancePath, string baseContainerDeviceInstancePath)
-        {
-            ControllerEx controller = new ControllerEx(idx);
-            controller.deviceInstancePath = deviceInstancePath;
-            controller.baseContainerDeviceInstancePath = baseContainerDeviceInstancePath;
-
-            XInputController.SetController(controller);
-
-            if (!controller.IsConnected())
-            {
-                LogManager.LogWarning("No physical controller detected on UserIndex: {0}", idx);
-                return;
-            }
-
-            if (this.deviceInstancePath == deviceInstancePath &&
-                this.baseContainerDeviceInstancePath == baseContainerDeviceInstancePath)
-                return;
-
-            LogManager.LogInformation("Listening to physical controller on UserIndex: {0}", idx);
-
-            // clear previous values
-            List<string> deviceInstancePaths = Hidder.GetRegisteredDevices();
-
-            // exclude controller
-            deviceInstancePaths.Remove(deviceInstancePath);
-            deviceInstancePaths.Remove(baseContainerDeviceInstancePath);
-
-            foreach (string instancePath in deviceInstancePaths)
-                Hidder.UnregisterController(instancePath);
-
-            // register controller
-            Hidder.RegisterController(deviceInstancePath);
-            Hidder.RegisterController(baseContainerDeviceInstancePath);
-
-            // update variables
-            this.HIDidx = idx;
-            this.deviceInstancePath = deviceInstancePath;
-            this.baseContainerDeviceInstancePath = baseContainerDeviceInstancePath;
-
-            // update settings
-            configuration.AppSettings.Settings["HIDidx"].Value = ((int)idx).ToString();
-            configuration.AppSettings.Settings["deviceInstancePath"].Value = deviceInstancePath;
-            configuration.AppSettings.Settings["baseContainerDeviceInstancePath"].Value = baseContainerDeviceInstancePath;
-            configuration.Save(ConfigurationSaveMode.Modified);
-        }
-
         private void SetControllerMode(HIDmode mode)
         {
-            if (HIDmode == mode && VirtualTarget != null)
+            if (HIDmode == mode && vTarget != null)
                 return;
 
             // disconnect current virtual controller
             // todo: do not disconnect if similar to incoming mode
-            VirtualTarget?.Disconnect();
+            vTarget?.Disconnect();
 
             switch (mode)
             {
                 default:
                 case HIDmode.NoController:
-                    VirtualTarget.Dispose();
-                    VirtualTarget = null;
-                    XInputController.DetachTarget();
+                    vTarget.Dispose();
+                    vTarget = null;
                     break;
                 case HIDmode.DualShock4Controller:
-                    VirtualTarget = new DualShock4Target(XInputController, VirtualClient);
+                    vTarget = new DualShock4Target();
                     break;
                 case HIDmode.Xbox360Controller:
-                    VirtualTarget = new Xbox360Target(XInputController, VirtualClient);
+                    vTarget = new Xbox360Target();
                     break;
             }
 
-            if (VirtualTarget != null)
+            if (vTarget != null)
             {
-                VirtualTarget.Connected += OnTargetConnected;
-                VirtualTarget.Disconnected += OnTargetDisconnected;
-                XInputController.AttachTarget(VirtualTarget);
+                vTarget.Connected += OnTargetConnected;
+                vTarget.Disconnected += OnTargetDisconnected;
             }
 
             // update status
@@ -260,17 +192,17 @@ namespace ControllerService
 
         private void SetControllerStatus(HIDstatus status)
         {
-            if (VirtualTarget == null)
+            if (vTarget == null)
                 return;
 
             switch (status)
             {
                 default:
                 case HIDstatus.Connected:
-                    VirtualTarget.Connect();
+                    vTarget.Connect();
                     break;
                 case HIDstatus.Disconnected:
-                    VirtualTarget.Disconnect();
+                    vTarget.Disconnect();
                     break;
             }
 
@@ -281,7 +213,7 @@ namespace ControllerService
         private void OnTargetDisconnected(ViGEmTarget target)
         {
             // send notification
-            pipeServer?.SendMessage(new PipeServerToast
+            PipeServer.SendMessage(new PipeServerToast
             {
                 title = $"{target}",
                 content = Properties.Resources.ToastOnTargetDisconnected,
@@ -292,17 +224,12 @@ namespace ControllerService
         private void OnTargetConnected(ViGEmTarget target)
         {
             // send notification
-            pipeServer?.SendMessage(new PipeServerToast
+            PipeServer.SendMessage(new PipeServerToast
             {
                 title = $"{target}",
                 content = Properties.Resources.ToastOnTargetConnected,
                 image = $"HIDmode{(uint)target.HID}"
             });
-        }
-
-        private void OnTargetSubmited(XInputController controller)
-        {
-            DSUServer?.SubmitReport(controller);
         }
 
         // deprecated
@@ -325,17 +252,12 @@ namespace ControllerService
             pipeServer.SendMessage(settings); */
         }
 
-        private void OnClientMessage(object sender, PipeMessage message)
+        private void OnClientMessage(PipeMessage message)
         {
             switch (message.code)
             {
-                case PipeCode.CLIENT_CONTROLLERINDEX:
-                    PipeControllerIndex pipeControllerIndex = (PipeControllerIndex)message;
-                    SetControllerIdx((UserIndex)pipeControllerIndex.UserIndex, pipeControllerIndex.deviceInstancePath, pipeControllerIndex.baseContainerDeviceInstancePath);
-                    break;
-
                 case PipeCode.FORCE_SHUTDOWN:
-                    Hidder?.SetCloaking(false, XInputController.ProductName);
+                    HidHide.SetCloaking(false);
                     break;
 
                 case PipeCode.CLIENT_PROFILE:
@@ -349,13 +271,13 @@ namespace ControllerService
                     switch (cursor.action)
                     {
                         case CursorAction.CursorUp:
-                            XInputController.Touch.OnMouseUp(cursor.x, cursor.y, cursor.button, cursor.flags);
+                            DS4Touch.OnMouseUp(cursor.x, cursor.y, cursor.button, cursor.flags);
                             break;
                         case CursorAction.CursorDown:
-                            XInputController.Touch.OnMouseDown(cursor.x, cursor.y, cursor.button, cursor.flags);
+                            DS4Touch.OnMouseDown(cursor.x, cursor.y, cursor.button, cursor.flags);
                             break;
                         case CursorAction.CursorMove:
-                            XInputController.Touch.OnMouseMove(cursor.x, cursor.y, cursor.button, cursor.flags);
+                            DS4Touch.OnMouseMove(cursor.x, cursor.y, cursor.button, cursor.flags);
                             break;
                     }
                     break;
@@ -363,20 +285,6 @@ namespace ControllerService
                 case PipeCode.CLIENT_SETTINGS:
                     PipeClientSettings settings = (PipeClientSettings)message;
                     UpdateSettings(settings.settings);
-                    break;
-
-                case PipeCode.CLIENT_HIDDER:
-                    PipeClientHidder hidder = (PipeClientHidder)message;
-
-                    switch (hidder.action)
-                    {
-                        case HidderAction.Register:
-                            Hidder.RegisterApplication(hidder.path);
-                            break;
-                        case HidderAction.Unregister:
-                            Hidder.UnregisterApplication(hidder.path);
-                            break;
-                    }
                     break;
 
                 case PipeCode.CLIENT_NAVIGATED:
@@ -404,21 +312,23 @@ namespace ControllerService
 
                 case PipeCode.CLIENT_INPUT:
                     PipeClientInput input = (PipeClientInput)message;
-                    VirtualTarget?.InjectReport((GamepadButtonFlagsExt)input.Buttons, input.sButtons, input.IsKeyDown, input.IsKeyUp);
+
+                    vTarget?.UpdateInputs(input.Inputs);
+                    DSUServer.UpdateInputs(input.Inputs);
                     break;
             }
         }
 
-        private void OnClientDisconnected(object sender)
+        private void OnClientDisconnected()
         {
-            XInputController.Touch.OnMouseUp(0, 0, CursorButton.TouchLeft, 26);
-            XInputController.Touch.OnMouseUp(0, 0, CursorButton.TouchRight, 26);
+            DS4Touch.OnMouseUp(0, 0, CursorButton.TouchLeft, 26);
+            DS4Touch.OnMouseUp(0, 0, CursorButton.TouchRight, 26);
         }
 
-        private void OnClientConnected(object sender)
+        private void OnClientConnected()
         {
             // send server settings
-            pipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
+            PipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
         }
 
         internal void ProfileUpdated(Profile profile, bool backgroundtask)
@@ -463,19 +373,6 @@ namespace ControllerService
         {
             switch (name)
             {
-                case "HIDcloaked":
-                    {
-                        bool value = bool.Parse(property);
-                        Hidder.SetCloaking(value, XInputController.ProductName);
-                        HIDcloaked = value;
-                    }
-                    break;
-                case "HIDuncloakonclose":
-                    {
-                        bool value = bool.Parse(property);
-                        HIDuncloakonclose = value;
-                    }
-                    break;
                 case "HIDmode":
                     {
                         HIDmode value = Enum.Parse<HIDmode>(property);
@@ -486,12 +383,6 @@ namespace ControllerService
                     {
                         HIDstatus value = Enum.Parse<HIDstatus>(property);
                         SetControllerStatus(value);
-                    }
-                    break;
-                case "HIDstrength":
-                    {
-                        double value = double.Parse(property);
-                        XInputController.SetVibrationStrength(value);
                     }
                     break;
                 case "DSUEnabled":
@@ -542,19 +433,17 @@ namespace ControllerService
         public Task StartAsync(CancellationToken cancellationToken)
         {
             // start listening to controller
-            XInputController.StartListening();
-
-            // turn on cloaking
-            Hidder.SetCloaking(HIDcloaked, XInputController.ProductName);
+            IMU.StartListening();
 
             // start DSUClient
-            if (DSUEnabled) DSUServer.Start();
+            if (DSUEnabled)
+                DSUServer.Start();
 
             // update virtual controller
             SetControllerMode(HIDmode);
 
             // start Pipe Server
-            pipeServer.Open();
+            PipeServer.Open();
 
             // listen to system events
             SystemManager.SystemStatusChanged += OnSystemStatusChanged;
@@ -568,10 +457,7 @@ namespace ControllerService
         public Task StopAsync(CancellationToken cancellationToken)
         {
             // stop listening from controller
-            XInputController.StopListening();
-
-            // turn off cloaking
-            Hidder?.SetCloaking(!HIDuncloakonclose, XInputController.ProductName);
+            IMU.StopListening();
 
             // update virtual controller
             SetControllerMode(HIDmode.NoController);
@@ -583,7 +469,7 @@ namespace ControllerService
             DSUServer?.Stop();
 
             // stop Pipe Server
-            pipeServer?.Close();
+            PipeServer.Close();
 
             // stop System Manager
             SystemManager.Stop();
@@ -603,24 +489,21 @@ namespace ControllerService
                         await Task.Delay(4000);
 
                         // (re)initialize sensors
-                        XInputController?.UpdateSensors();
-                        XInputController?.StartListening();
+                        IMU.UpdateSensors();
 
                         // (re)initialize ViGEm
-                        VirtualClient = new ViGEmClient();
+                        vClient = new ViGEmClient();
 
                         SetControllerMode(HIDmode);
                     }
                     break;
                 case SystemStatus.Unready:
                     {
-                        XInputController?.StopListening();
+                        vTarget.Dispose();
+                        vTarget = null;
 
-                        VirtualTarget.Dispose();
-                        VirtualTarget = null;
-
-                        VirtualClient.Dispose();
-                        VirtualClient = null;
+                        vClient.Dispose();
+                        vClient = null;
                     }
                     break;
             }

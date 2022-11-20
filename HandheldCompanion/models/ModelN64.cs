@@ -1,7 +1,5 @@
-using SharpDX.XInput;
+using ControllerCommon.Controllers;
 using System;
-using System.IO;
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -11,7 +9,6 @@ namespace HandheldCompanion.Models
     {
         // Specific groups (move me)
         Model3DGroup JoystickShield;
-        Model3DGroup CDown;
 
         public ModelN64() : base("N64")
         {
@@ -49,14 +46,13 @@ namespace HandheldCompanion.Models
 
             // load model(s)
             JoystickShield = modelImporter.Load($"models/{ModelName}/JoystickShield.obj");
-            CDown = modelImporter.Load($"models/{ModelName}/CDown.obj");
+            // todo : add all four c-buttons
 
             // pull model(s)
             model3DGroup.Children.Add(JoystickShield);
-            model3DGroup.Children.Add(CDown);
 
             // specific button material(s)
-            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
             {
                 Material buttonMaterial = null;
 
@@ -65,30 +61,34 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            case GamepadButtonFlags.Start:
+                            case ControllerButtonFlags.Start:
                                 buttonMaterial = MaterialPlasticRed;
                                 break;
-                            case GamepadButtonFlags.X:
-                            case GamepadButtonFlags.Y:
-                            case GamepadButtonFlags.Back:
+                            case ControllerButtonFlags.B3:
+                            case ControllerButtonFlags.B4:
+                            case ControllerButtonFlags.Back:
+                            case ControllerButtonFlags.RStickDown:
+                            case ControllerButtonFlags.RStickLeft:
+                            case ControllerButtonFlags.RStickRight:
+                            case ControllerButtonFlags.RStickUp:
                                 buttonMaterial = MaterialPlasticYellow;
                                 break;
-                            case GamepadButtonFlags.A:
+                            case ControllerButtonFlags.B1:
                                 buttonMaterial = MaterialPlasticBlue;
                                 break;
-                            case GamepadButtonFlags.B:
+                            case ControllerButtonFlags.B2:
                                 buttonMaterial = MaterialPlasticGreen;
                                 break;
-                            case GamepadButtonFlags.DPadDown:
-                            case GamepadButtonFlags.DPadUp:
-                            case GamepadButtonFlags.DPadLeft:
-                            case GamepadButtonFlags.DPadRight:
-                            case GamepadButtonFlags.LeftShoulder:
-                            case GamepadButtonFlags.RightShoulder:
+                            case ControllerButtonFlags.DPadDown:
+                            case ControllerButtonFlags.DPadUp:
+                            case ControllerButtonFlags.DPadLeft:
+                            case ControllerButtonFlags.DPadRight:
+                            case ControllerButtonFlags.LeftShoulder:
+                            case ControllerButtonFlags.RightShoulder:
                                 buttonMaterial = MaterialPlasticDarkGrey;
                                 break;
-                            case GamepadButtonFlags.LeftThumb:
-                            case GamepadButtonFlags.RightThumb:
+                            case ControllerButtonFlags.LeftThumb:
+                            case ControllerButtonFlags.RightThumb:
                                 buttonMaterial = MaterialPlasticGrey;
                                 break;
                             default:
@@ -118,14 +118,6 @@ namespace HandheldCompanion.Models
                     DefaultMaterials[model3D] = MaterialPlasticGrey;
                     continue;
                 }
-
-                if (model3D == CDown)
-                {
-                    ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticYellow;
-                    DefaultMaterials[model3D] = MaterialPlasticYellow;
-                    continue;
-                }
-                
             }
 
             DrawHighligths();

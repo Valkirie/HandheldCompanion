@@ -526,7 +526,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exit.
+        ///   Looks up a localized string similar to Escape.
         /// </summary>
         public static string InputsHotkey_shortcutESC {
             get {
@@ -594,6 +594,24 @@ namespace HandheldCompanion.Properties {
         public static string InputsHotkey_shortcutKeyboardDesc {
             get {
                 return ResourceManager.GetString("InputsHotkey_shortcutKeyboardDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Force application shutdown.
+        /// </summary>
+        public static string InputsHotkey_shortcutKillApp {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutKillApp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
+        /// </summary>
+        public static string InputsHotkey_shortcutKillAppDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutKillAppDesc", resourceCulture);
             }
         }
         
@@ -942,6 +960,15 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_ControllerOptions {
             get {
                 return ResourceManager.GetString("OverlayPage_ControllerOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playstation DualSense.
+        /// </summary>
+        public static string OverlayPage_DualSenseController {
+            get {
+                return ResourceManager.GetString("OverlayPage_DualSenseController", resourceCulture);
             }
         }
         

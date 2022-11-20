@@ -49,7 +49,7 @@ namespace HandheldCompanion
 
                 IntPtr handle = process.MainWindowHandle;
                 if (ProcessUtils.IsIconic(handle))
-                    ProcessUtils.ShowWindow(handle, ProcessUtils.SW_RESTORE);
+                    ProcessUtils.ShowWindow(handle, (int)ProcessUtils.ShowWindowCommands.Restored);
 
                 ProcessUtils.SetForegroundWindow(handle);
 

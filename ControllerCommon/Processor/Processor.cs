@@ -1,13 +1,9 @@
 ﻿using ControllerCommon.Managers;
 using ControllerCommon.Processor.AMD;
 using ControllerCommon.Processor.Intel;
-using PInvoke;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.Management;
-using System.ServiceProcess;
 using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -62,6 +58,9 @@ namespace ControllerCommon.Processor
 
         public event StatusChangedHandler StatusChanged;
         public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
+
+        public event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
         #endregion
 
         public static Processor GetCurrent()
@@ -105,6 +104,7 @@ namespace ControllerCommon.Processor
         public virtual void Initialize()
         {
             StatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
+            Initialized?.Invoke();
 
             if (CanChangeTDP)
                 updateTimer.Start();
@@ -487,7 +487,10 @@ namespace ControllerCommon.Processor
             {
                 // reset default var
                 if (clock == 12750)
+                {
+                    Monitor.Exit(base.IsBusy);
                     return;
+                }
 
                 var error = RyzenAdj.set_gfx_clk(ry, (uint)clock);
 

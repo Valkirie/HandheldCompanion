@@ -2,7 +2,6 @@ using ControllerCommon;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using ModernWpf.Controls;
@@ -53,17 +52,10 @@ namespace HandheldCompanion.Views
         public static OverlayTrackpad overlayTrackpad;
         public static OverlayQuickTools overlayquickTools;
 
-        // connectivity vars
-        public static PipeClient pipeClient;
-
-        // Hidder vars
-        public static HidHide Hidder;
-
         // manager(s) vars
         private static List<Manager> _managers = new();
         public static ToastManager toastManager;
         public static ServiceManager serviceManager;
-        public static ProfileManager profileManager;
         public static TaskManager taskManager;
         public static PowerManager powerManager;
         public static UpdateManager updateManager;
@@ -85,15 +77,10 @@ namespace HandheldCompanion.Views
             CurrentWindow = this;
 
             // initialize splash screen
-            if (SettingsManager.GetBoolean("FirstStart") || !SettingsManager.GetBoolean("StartMinimized"))
-            {
 #if !DEBUG
                 SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
                 splashScreen.Show(true, true);
 #endif
-
-                SettingsManager.SetProperty("FirstStart", false);
-            }
 
             // fix touch support
             var tablets = Tablet.TabletDevices;
@@ -142,8 +129,7 @@ namespace HandheldCompanion.Views
             }
 
             // initialize HidHide
-            Hidder = new HidHide();
-            Hidder.RegisterApplication(CurrentExe);
+            HidHide.RegisterApplication(CurrentExe);
 
             // initialize title
             this.Title += $" ({fileVersionInfo.FileVersion})";
@@ -153,11 +139,11 @@ namespace HandheldCompanion.Views
             handheldDevice.PullSensors();
 
             // initialize pipe client
-            pipeClient = new PipeClient("ControllerService");
-            pipeClient.ServerMessage += OnServerMessage;
-            pipeClient.Connected += OnClientConnected;
-            pipeClient.Disconnected += OnClientDisconnected;
-            pipeClient.Open();
+            PipeClient.Initialize("ControllerService");
+            PipeClient.ServerMessage += OnServerMessage;
+            PipeClient.Connected += OnClientConnected;
+            PipeClient.Disconnected += OnClientDisconnected;
+            PipeClient.Open();
 
             // load manager(s)
             loadManagers();
@@ -169,11 +155,13 @@ namespace HandheldCompanion.Views
             loadPages();
 
             // start manager(s) synchroneously
+            ControllerManager.Start();
             InputsManager.Start();
             EnergyManager.Start();
             SettingsManager.Start();
             HotkeysManager.Start();
             SystemManager.Start();
+            ProfileManager.Start();
             ProcessManager.Start();
 
             // start manager(s) asynchroneously
@@ -190,6 +178,10 @@ namespace HandheldCompanion.Views
             // pull settings
             WindowState = SettingsManager.GetBoolean("StartMinimized") ? WindowState.Minimized : (WindowState)SettingsManager.GetInt("MainWindowState");
             prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
+
+            // update FirstStart
+            if (SettingsManager.GetBoolean("FirstStart"))
+                SettingsManager.SetProperty("FirstStart", false);
         }
 
         public void SwapWindowState()
@@ -240,10 +232,6 @@ namespace HandheldCompanion.Views
             {
                 overlayModel.UpdateHIDMode(HID);
             };
-            controllerPage.ControllerChanged += (Controller) =>
-            {
-                InputsManager.UpdateController(Controller);
-            };
 
             stopwatch.Stop();
             LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
@@ -272,7 +260,6 @@ namespace HandheldCompanion.Views
             toastManager = new ToastManager("HandheldCompanion");
             toastManager.Enabled = SettingsManager.GetBoolean("ToastEnable");
 
-            profileManager = new();
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
             taskManager = new TaskManager("HandheldCompanion", CurrentExe);
             powerManager = new();
@@ -280,7 +267,6 @@ namespace HandheldCompanion.Views
 
             // store managers
             _managers.Add(toastManager);
-            _managers.Add(profileManager);
             _managers.Add(serviceManager);
             _managers.Add(taskManager);
             _managers.Add(powerManager);
@@ -312,8 +298,8 @@ namespace HandheldCompanion.Views
                 _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStopIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
             };
 
-            SystemManager.SerialArrived += SystemManager_Updated;
-            SystemManager.SerialRemoved += SystemManager_Updated;
+            SystemManager.GenericDeviceArrived += GenericDeviceUpdated;
+            SystemManager.GenericDeviceRemoved += GenericDeviceUpdated;
 
             // handle settings events and forward to common managers
             SettingsManager.SettingValueChanged += (name, value) =>
@@ -330,7 +316,7 @@ namespace HandheldCompanion.Views
             LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
         }
 
-        private void SystemManager_Updated(PnPDevice device)
+        private void GenericDeviceUpdated(PnPDevice device)
         {
             handheldDevice.PullSensors();
 
@@ -380,7 +366,7 @@ namespace HandheldCompanion.Views
             }
         }
 
-        private void OnClientConnected(object sender)
+        private void OnClientConnected()
         {
             // lazy: send all local settings to server ?
             PipeClientSettings settings = new PipeClientSettings();
@@ -388,10 +374,10 @@ namespace HandheldCompanion.Views
             foreach (KeyValuePair<string, object> values in SettingsManager.GetProperties())
                 settings.settings.Add(values.Key, values.Value);
 
-            pipeClient?.SendMessage(settings);
+            PipeClient.SendMessage(settings);
         }
 
-        private void OnClientDisconnected(object sender)
+        private void OnClientDisconnected()
         {
             // do something
         }
@@ -422,8 +408,8 @@ namespace HandheldCompanion.Views
             }
         }
 
-        #region pipeClient
-        private void OnServerMessage(object sender, PipeMessage message)
+        #region PipeServer
+        private void OnServerMessage(PipeMessage message)
         {
             switch (message.code)
             {
@@ -603,7 +589,6 @@ namespace HandheldCompanion.Views
         private void Window_Closed(object sender, EventArgs e)
         {
             serviceManager.Stop();
-            profileManager.Stop();
             powerManager.Stop();
             toastManager.Stop();
 
@@ -614,11 +599,13 @@ namespace HandheldCompanion.Views
             overlayTrackpad.Close();
             overlayquickTools.Close(true);
 
-            if (pipeClient.connected)
-                pipeClient.Close();
+            if (PipeClient.IsConnected)
+                PipeClient.Close();
 
+            ControllerManager.Stop();
             InputsManager.Stop();
             SystemManager.Stop();
+            ProfileManager.Stop();
             ProcessManager.Stop();
             EnergyManager.Stop();
 
@@ -631,9 +618,6 @@ namespace HandheldCompanion.Views
             settingsPage.Page_Closed();
             overlayPage.Page_Closed();
             hotkeysPage.Page_Closed();
-
-            // force kill application
-            Environment.Exit(0);
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -668,7 +652,11 @@ namespace HandheldCompanion.Views
 
             // stop service with companion
             if (SettingsManager.GetBoolean("HaltServiceWithCompanion"))
-                _ = serviceManager.StopServiceAsync();
+            {
+                // only halt process if start mode isn't set to "Automatic"
+                if (serviceManager.type != ServiceStartMode.Automatic)
+                    _ = serviceManager.StopServiceAsync();
+            }
         }
 
         private void Window_StateChanged(object sender, EventArgs e)
@@ -729,7 +717,7 @@ namespace HandheldCompanion.Views
             {
                 var preNavPageType = ContentFrame.CurrentSourcePageType;
                 var preNavPageName = preNavPageType.Name;
-                pipeClient.SendMessage(new PipeNavigation((string)preNavPageName));
+                PipeClient.SendMessage(new PipeNavigation((string)preNavPageName));
 
                 var NavViewItem = navView.MenuItems
                     .OfType<NavigationViewItem>()

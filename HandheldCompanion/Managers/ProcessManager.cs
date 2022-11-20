@@ -1,6 +1,5 @@
 ﻿using ControllerCommon.Managers;
 using ControllerCommon.Utils;
-using HandheldCompanion.Managers.Classes;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -62,6 +61,9 @@ namespace HandheldCompanion.Managers
         public static event ProcessStoppedEventHandler ProcessStopped;
         public delegate void ProcessStoppedEventHandler(ProcessEx processEx);
 
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
+
         static ProcessManager()
         {
             MonitorTimer = new Timer(1000);
@@ -97,12 +99,17 @@ namespace HandheldCompanion.Managers
             // get current foreground process
             IntPtr hWnd = GetforegroundWindow();
             EventCallback((IntPtr)0, 0, hWnd, 0, 0, 0, 0);
+
+            IsInitialized = true;
+            Initialized?.Invoke();
         }
 
         public static void Stop()
         {
             if (!IsInitialized)
                 return;
+
+            IsInitialized = false;
 
             // stop processes monitor
             MonitorTimer.Elapsed -= MonitorHelper;
@@ -121,7 +128,7 @@ namespace HandheldCompanion.Managers
 
         public static ProcessEx GetSuspendedProcess()
         {
-            return Processes.Values.Where(item => !item.IsIgnored && item.IsSuspended()).FirstOrDefault();
+            return Processes.Values.Where(item => item.IsSuspended()).FirstOrDefault();
         }
 
         public static List<ProcessEx> GetProcesses()
@@ -383,7 +390,7 @@ namespace HandheldCompanion.Managers
             }
 
             Task.Delay(500);
-            ProcessUtils.ShowWindow(processEx.MainWindowHandle, ProcessUtils.SW_RESTORE);
+            ProcessUtils.ShowWindow(processEx.MainWindowHandle, (int)ProcessUtils.ShowWindowCommands.Restored);
         }
 
         public static void SuspendProcess(ProcessEx processEx)
@@ -392,7 +399,7 @@ namespace HandheldCompanion.Managers
             if (processEx.Process.HasExited)
                 return;
 
-            ProcessUtils.ShowWindow(processEx.MainWindowHandle, ProcessUtils.SW_MINIMIZE);
+            ProcessUtils.ShowWindow(processEx.MainWindowHandle, (int)ProcessUtils.ShowWindowCommands.Minimized);
             Task.Delay(500);
 
             ProcessUtils.NtSuspendProcess(processEx.Process.Handle);

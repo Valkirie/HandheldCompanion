@@ -1,7 +1,7 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
-using HandheldCompanion.Views;
+using ControllerCommon.Utils;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -65,6 +65,10 @@ namespace HandheldCompanion.Managers
         protected object gfxLock = new();
         private bool gfxWatchdogPendingStop;
 
+        private const short INTERVAL_DEFAULT = 3000;            // default interval between value scans
+        private const short INTERVAL_INTEL = 5000;              // intel interval between value scans
+        private const short INTERVAL_DEGRADED = 10000;          // degraded interval between value scans
+
         public event LimitChangedHandler PowerLimitChanged;
         public delegate void LimitChangedHandler(PowerType type, int limit);
 
@@ -90,18 +94,18 @@ namespace HandheldCompanion.Managers
         public PowerManager() : base()
         {
             // initialize timer(s)
-            powerWatchdog = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
+            powerWatchdog = new Timer() { Interval = INTERVAL_DEFAULT, AutoReset = true, Enabled = false };
             powerWatchdog.Elapsed += powerWatchdog_Elapsed;
 
-            cpuWatchdog = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
+            cpuWatchdog = new Timer() { Interval = INTERVAL_DEFAULT, AutoReset = true, Enabled = false };
             cpuWatchdog.Elapsed += cpuWatchdog_Elapsed;
 
-            gfxWatchdog = new Timer() { Interval = 3000, AutoReset = true, Enabled = false };
+            gfxWatchdog = new Timer() { Interval = INTERVAL_DEFAULT, AutoReset = true, Enabled = false };
             gfxWatchdog.Elapsed += gfxWatchdog_Elapsed;
 
-            MainWindow.profileManager.Applied += ProfileManager_Applied;
-            MainWindow.profileManager.Updated += ProfileManager_Updated;
-            MainWindow.profileManager.Discarded += ProfileManager_Discarded;
+            ProfileManager.Applied += ProfileManager_Applied;
+            ProfileManager.Updated += ProfileManager_Updated;
+            ProfileManager.Discarded += ProfileManager_Discarded;
 
             // initialize settings
             double TDPdown = SettingsManager.GetDouble("QuickToolsPerformanceTDPSustainedValue");
@@ -200,6 +204,10 @@ namespace HandheldCompanion.Managers
                     if (CurrentTDP[idx] == 0)
                         break;
 
+                    // we're in degraded condition
+                    if (CurrentTDP[idx] < 0)
+                        cpuWatchdog.Interval = INTERVAL_DEGRADED;
+
                     // only request an update if current limit is different than stored
                     if (CurrentTDP[idx] != TDP)
                         processor.SetTDPLimit(type, TDP);
@@ -212,7 +220,10 @@ namespace HandheldCompanion.Managers
                 {
                     // not ready yet
                     if (CurrentTDP[(int)PowerType.MsrSlow] == 0 || CurrentTDP[(int)PowerType.MsrFast] == 0)
+                    {
+                        Monitor.Exit(cpuLock);
                         return;
+                    }
 
                     int TDPslow = (int)StoredTDP[(int)PowerType.Slow];
                     int TDPfast = (int)StoredTDP[(int)PowerType.Fast];
@@ -246,18 +257,27 @@ namespace HandheldCompanion.Managers
                 {
                     // not ready yet
                     if (CurrentGfxClock == 0)
+                    {
+                        Monitor.Exit(cpuLock);
                         return;
+                    }
                 }
                 else if (processor.GetType() == typeof(IntelProcessor))
                 {
                     // not ready yet
                     if (CurrentGfxClock == 0)
+                    {
+                        Monitor.Exit(cpuLock);
                         return;
+                    }
                 }
 
                 // not ready yet
                 if (StoredGfxClock == 0)
+                {
+                    Monitor.Exit(cpuLock);
                     return;
+                }
 
                 // only request an update if current gfx clock is different than stored
                 if (CurrentGfxClock != StoredGfxClock)
@@ -373,6 +393,21 @@ namespace HandheldCompanion.Managers
 
             if (!processor.IsInitialized)
                 return;
+
+            // higher interval on Intel CPUs to avoid CPU overload
+            if (processor.GetType() == typeof(IntelProcessor))
+            {
+                cpuWatchdog.Interval = INTERVAL_INTEL;
+
+                int VulnerableDriverBlocklistEnable = Convert.ToInt32(RegistryUtils.GetHKLM(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable"));
+                if (VulnerableDriverBlocklistEnable == 1)
+                {
+                    cpuWatchdog.Stop();
+                    processor.Stop();
+
+                    LogManager.LogWarning("Core isolation, Memory integrity setting is turned on. TDP read/write is disabled.");
+                }
+            }
 
             processor.ValueChanged += Processor_ValueChanged;
             processor.StatusChanged += Processor_StatusChanged;

@@ -1,4 +1,4 @@
-using SharpDX.XInput;
+using ControllerCommon.Controllers;
 using System;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -10,8 +10,6 @@ namespace HandheldCompanion.Models
         // Specific groups (move me)
         Model3DGroup AudioJack;
         Model3DGroup DPadTriangle;
-        Model3DGroup FunctionKeyBig;
-        Model3DGroup FunctionKeySmall;
         Model3DGroup JoystickCoverLeft;
         Model3DGroup JoystickCoverRight;
         Model3DGroup JoystickLEDLeft;
@@ -66,8 +64,6 @@ namespace HandheldCompanion.Models
             // load model(s)
             AudioJack = modelImporter.Load($"models/{ModelName}/AudioJack.obj");
             DPadTriangle = modelImporter.Load($"models/{ModelName}/DPadTriangle.obj");
-            FunctionKeyBig = modelImporter.Load($"models/{ModelName}/FunctionKeyBig.obj");
-            FunctionKeySmall = modelImporter.Load($"models/{ModelName}/FunctionKeySmall.obj");
             JoystickCoverLeft = modelImporter.Load($"models/{ModelName}/JoystickCoverLeft.obj");
             JoystickCoverRight = modelImporter.Load($"models/{ModelName}/JoystickCoverRight.obj");
             JoystickLEDLeft = modelImporter.Load($"models/{ModelName}/JoystickLeftLED.obj");
@@ -85,16 +81,14 @@ namespace HandheldCompanion.Models
             TopBar = modelImporter.Load($"models/{ModelName}/TopBar.obj");
             VolumeButton = modelImporter.Load($"models/{ModelName}/VolumeButton.obj");
 
-            ALetter = modelImporter.Load($"models/{ModelName}/A-Letter.obj");
-            BLetter = modelImporter.Load($"models/{ModelName}/B-Letter.obj");
-            XLetter = modelImporter.Load($"models/{ModelName}/X-Letter.obj");
-            YLetter = modelImporter.Load($"models/{ModelName}/Y-Letter.obj");
+            ALetter = modelImporter.Load($"models/{ModelName}/B1-Letter.obj");
+            BLetter = modelImporter.Load($"models/{ModelName}/B2-Letter.obj");
+            XLetter = modelImporter.Load($"models/{ModelName}/B3-Letter.obj");
+            YLetter = modelImporter.Load($"models/{ModelName}/B4-Letter.obj");
 
             // pull model(s
             model3DGroup.Children.Add(AudioJack);
             model3DGroup.Children.Add(DPadTriangle);
-            model3DGroup.Children.Add(FunctionKeyBig);
-            model3DGroup.Children.Add(FunctionKeySmall);
             model3DGroup.Children.Add(JoystickCoverLeft);
             model3DGroup.Children.Add(JoystickCoverRight);
             model3DGroup.Children.Add(JoystickLEDLeft);
@@ -118,7 +112,7 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(YLetter);
 
             // specific button material(s)
-            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
             {
                 Material buttonMaterial = null;
 
@@ -127,18 +121,20 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            case GamepadButtonFlags.X:
-                            case GamepadButtonFlags.Y:
-                            case GamepadButtonFlags.A:
-                            case GamepadButtonFlags.B:
-                            case GamepadButtonFlags.DPadDown:
-                            case GamepadButtonFlags.DPadUp:
-                            case GamepadButtonFlags.DPadLeft:
-                            case GamepadButtonFlags.DPadRight:
-                            case GamepadButtonFlags.LeftShoulder:
-                            case GamepadButtonFlags.RightShoulder:
-                            case GamepadButtonFlags.LeftThumb:
-                            case GamepadButtonFlags.RightThumb:
+                            case ControllerButtonFlags.B1:
+                            case ControllerButtonFlags.B2:
+                            case ControllerButtonFlags.B3:
+                            case ControllerButtonFlags.B4:
+                            case ControllerButtonFlags.DPadDown:
+                            case ControllerButtonFlags.DPadUp:
+                            case ControllerButtonFlags.DPadLeft:
+                            case ControllerButtonFlags.DPadRight:
+                            case ControllerButtonFlags.LeftShoulder:
+                            case ControllerButtonFlags.RightShoulder:
+                            case ControllerButtonFlags.LeftThumb:
+                            case ControllerButtonFlags.RightThumb:
+                            case ControllerButtonFlags.OEM3:
+                            case ControllerButtonFlags.OEM4:
                                 buttonMaterial = MaterialPlasticGreyDark;
                                 break;
                             default:

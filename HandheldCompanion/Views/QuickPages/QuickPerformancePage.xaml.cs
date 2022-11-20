@@ -23,9 +23,9 @@ namespace HandheldCompanion.Views.QuickPages
             // MainWindow.powerManager.PowerLimitChanged += PowerManager_LimitChanged;
             // MainWindow.powerManager.PowerValueChanged += PowerManager_ValueChanged;
 
-            MainWindow.profileManager.Updated += ProfileManager_Updated;
-            MainWindow.profileManager.Applied += ProfileManager_Applied;
-            MainWindow.profileManager.Discarded += ProfileManager_Discarded;
+            ProfileManager.Updated += ProfileManager_Updated;
+            ProfileManager.Applied += ProfileManager_Applied;
+            ProfileManager.Discarded += ProfileManager_Discarded;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 

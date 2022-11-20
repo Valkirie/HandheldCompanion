@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ControllerCommon.Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -35,26 +36,6 @@ namespace ControllerCommon.Utils
         Mouse = 2 */
     }
 
-    public enum GamepadButtonFlagsExt : uint
-    {
-        DPadUp = 1,
-        DPadDown = 2,
-        DPadLeft = 4,
-        DPadRight = 8,
-        Start = 16,
-        Back = 32,
-        LeftThumb = 64,
-        RightThumb = 128,
-        LeftShoulder = 256,
-        RightShoulder = 512,
-        LeftTrigger = 1024,
-        RightTrigger = 2048,
-        A = 4096,
-        B = 8192,
-        X = 16384,
-        Y = 32768
-    }
-
     public enum OverlayModelMode
     {
         OEM = 0,
@@ -64,49 +45,12 @@ namespace ControllerCommon.Utils
         EightBitDoLite2 = 4,
         MachenikeHG510 = 5,
         Toy = 6,
-        N64 = 7
+        N64 = 7,
+        DualSense = 8,
     }
 
     public static class InputUtils
     {
-        public static string GamepadButtonToGlyph(GamepadButtonFlagsExt button)
-        {
-            switch (button)
-            {
-                case GamepadButtonFlagsExt.A:
-                    return "\uF093";
-                case GamepadButtonFlagsExt.B:
-                    return "\uF094";
-                case GamepadButtonFlagsExt.Y:
-                    return "\uF095";
-                case GamepadButtonFlagsExt.X:
-                    return "\uF096";
-                case GamepadButtonFlagsExt.DPadRight:
-                case GamepadButtonFlagsExt.DPadDown:
-                case GamepadButtonFlagsExt.DPadUp:
-                case GamepadButtonFlagsExt.DPadLeft:
-                    return "\uF10E";
-                case GamepadButtonFlagsExt.LeftTrigger:
-                    return "\uF10A";
-                case GamepadButtonFlagsExt.RightTrigger:
-                    return "\uF10B";
-                case GamepadButtonFlagsExt.LeftShoulder:
-                    return "\uF10C";
-                case GamepadButtonFlagsExt.RightShoulder:
-                    return "\uF10D";
-                case GamepadButtonFlagsExt.LeftThumb:
-                    return "\uF108";
-                case GamepadButtonFlagsExt.RightThumb:
-                    return "\uF109";
-                case GamepadButtonFlagsExt.Start:
-                    return "\uEDE3";
-                case GamepadButtonFlagsExt.Back:
-                    return "\uEECA";
-                default:
-                    return "\uE783";
-            }
-        }
-
         public static float Clamp(float value, float min, float max)
         {
             return Math.Min(max, Math.Max(min, value));

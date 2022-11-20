@@ -1,4 +1,4 @@
-using SharpDX.XInput;
+using ControllerCommon.Controllers;
 using System;
 using System.IO;
 using System.Windows;
@@ -14,7 +14,6 @@ namespace HandheldCompanion.Models
         Model3DGroup RightShoulderMiddle;
         Model3DGroup Screen;
         Model3DGroup MainBodyBack;
-        Model3DGroup PlaystationButton;
         Model3DGroup AuxPort;
         Model3DGroup Triangle;
         Model3DGroup DPadDownArrow;
@@ -60,7 +59,6 @@ namespace HandheldCompanion.Models
             RightShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Middle.obj");
             Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
             MainBodyBack = modelImporter.Load($"models/{ModelName}/MainBodyBack.obj");
-            PlaystationButton = modelImporter.Load($"models/{ModelName}/Playstation-Button.obj");
             AuxPort = modelImporter.Load($"models/{ModelName}/Aux-Port.obj");
             Triangle = modelImporter.Load($"models/{ModelName}/Triangle.obj");
             DPadDownArrow = modelImporter.Load($"models/{ModelName}/DPadDownArrow.obj");
@@ -69,14 +67,14 @@ namespace HandheldCompanion.Models
             DPadRightArrow = modelImporter.Load($"models/{ModelName}/DPadRightArrow.obj");
 
             // map model(s)
-            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
             {
                 switch (button)
                 {
-                    case GamepadButtonFlags.A:
-                    case GamepadButtonFlags.B:
-                    case GamepadButtonFlags.X:
-                    case GamepadButtonFlags.Y:
+                    case ControllerButtonFlags.B1:
+                    case ControllerButtonFlags.B2:
+                    case ControllerButtonFlags.B3:
+                    case ControllerButtonFlags.B4:
 
                         string filename = $"models/{ModelName}/{button}-Symbol.obj";
                         if (File.Exists(filename))
@@ -97,7 +95,6 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(RightShoulderMiddle);
             model3DGroup.Children.Add(Screen);
             model3DGroup.Children.Add(MainBodyBack);
-            model3DGroup.Children.Add(PlaystationButton);
             model3DGroup.Children.Add(AuxPort);
             model3DGroup.Children.Add(Triangle);
             model3DGroup.Children.Add(DPadDownArrow);
@@ -106,7 +103,7 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(DPadRightArrow);
 
             // specific button material(s)
-            foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
             {
                 int i = 0;
                 Material buttonMaterial = null;
@@ -116,17 +113,17 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            case GamepadButtonFlags.X:
-                                buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticSquare;
-                                break;
-                            case GamepadButtonFlags.Y:
-                                buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticTriangle;
-                                break;
-                            case GamepadButtonFlags.A:
+                            case ControllerButtonFlags.B1:
                                 buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticCross;
                                 break;
-                            case GamepadButtonFlags.B:
+                            case ControllerButtonFlags.B2:
                                 buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticCircle;
+                                break;
+                            case ControllerButtonFlags.B3:
+                                buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticSquare;
+                                break;
+                            case ControllerButtonFlags.B4:
+                                buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticTriangle;
                                 break;
                             default:
                                 buttonMaterial = MaterialPlasticBlack;

@@ -1,9 +1,10 @@
 using ControllerCommon;
+using ControllerCommon.Controllers;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,13 +30,8 @@ namespace HandheldCompanion.Views.Pages
         private HIDmode controllerMode = HIDmode.NoController;
         private HIDstatus controllerStatus = HIDstatus.Disconnected;
 
-        private ControllerManager controllerManager;
-
         public event HIDchangedEventHandler HIDchanged;
         public delegate void HIDchangedEventHandler(HIDmode HID);
-
-        public event ControllerChangedEventHandler ControllerChanged;
-        public delegate void ControllerChangedEventHandler(ControllerEx Controller);
 
         public ControllerPage()
         {
@@ -45,15 +41,13 @@ namespace HandheldCompanion.Views.Pages
             foreach (HIDmode mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.NoController))
                 cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
 
-            MainWindow.pipeClient.ServerMessage += OnServerMessage;
+            PipeClient.ServerMessage += OnServerMessage;
             MainWindow.serviceManager.Updated += OnServiceUpdate;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-            // initialize controller manager
-            controllerManager = new ControllerManager();
-            controllerManager.ControllerPlugged += ControllerPlugged;
-            controllerManager.ControllerUnplugged += ControllerUnplugged;
-            controllerManager.Start();
+            ControllerManager.ControllerPlugged += ControllerPlugged;
+            ControllerManager.ControllerUnplugged += ControllerUnplugged;
+            SystemManager.Initialized += SystemManager_Initialized;
         }
 
         public ControllerPage(string Tag) : this()
@@ -71,6 +65,15 @@ namespace HandheldCompanion.Views.Pages
                         cB_HidMode.SelectedIndex = Convert.ToInt32(value);
                         cB_HidMode_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
                         break;
+                    case "HIDcloaked":
+                        Toggle_Cloaked.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "HIDuncloakonclose":
+                        Toggle_Uncloak.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "HIDstrength":
+                        SliderStrength.Value = Convert.ToDouble(value);
+                        break;
                 }
             });
         }
@@ -81,9 +84,8 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
-            MainWindow.pipeClient.ServerMessage -= OnServerMessage;
+            PipeClient.ServerMessage -= OnServerMessage;
             MainWindow.serviceManager.Updated -= OnServiceUpdate;
-            controllerManager.Stop();
         }
 
         private async void OnServiceUpdate(ServiceControllerStatus status, int mode)
@@ -119,60 +121,73 @@ namespace HandheldCompanion.Views.Pages
             UpdateMainGrid();
         }
 
-        private void ControllerUnplugged(ControllerEx controller)
+        private void ControllerUnplugged(IController Controller)
         {
             this.Dispatcher.Invoke(() =>
             {
-                foreach (ControllerEx ctrl in RadioControllers.Items)
+                // Search for an existing controller, remove it
+                foreach (IController ctrl in RadioControllers.Items)
                 {
-                    if (ctrl.deviceInstancePath == controller.deviceInstancePath)
+                    if (ctrl.GetInstancePath() == Controller.GetInstancePath())
                     {
                         RadioControllers.Items.Remove(ctrl);
                         break;
                     }
                 }
 
-                if (RadioControllers.Items.Count == 0)
-                {
-                    currentController = null;
-                    InputDevices.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    // current controller was unplugged, pick another one from the list
-                    if (currentController is not null && currentController.deviceInstancePath == controller.deviceInstancePath)
-                        RadioControllers.SelectedIndex = 0;
-                }
+                ControllerRefresh();
             });
         }
 
-        private void ControllerPlugged(ControllerEx controller)
+        private void ControllerPlugged(IController Controller)
         {
             this.Dispatcher.Invoke(() =>
             {
-                foreach (ControllerEx ctrl in RadioControllers.Items)
+                // Search for an existing controller, update it
+                var found = false;
+                foreach (IController ctrl in RadioControllers.Items)
                 {
-                    if (ctrl.deviceInstancePath == controller.deviceInstancePath)
+                    found = ctrl.GetInstancePath() == Controller.GetInstancePath();
+                    if (found)
                     {
                         int idx = RadioControllers.Items.IndexOf(ctrl);
-                        RadioControllers.Items[idx] = controller;
-
-                        // current controller was updated, make sure we (re)send updated values
-                        if (currentController is not null && currentController.deviceInstancePath == controller.deviceInstancePath)
-                            RaiseEvents();
-
-                        return;
+                        RadioControllers.Items[idx] = Controller;
+                        break;
                     }
                 }
 
-                RadioControllers.Items.Add(controller);
+                // Add new controller to list if no existing controller was found
+                if (!found)
+                    RadioControllers.Items.Add(Controller);
 
-                // no controller is currently selected, pick the first one
-                if (currentController is null)
-                    RadioControllers.SelectedIndex = 0;
-
-                InputDevices.Visibility = Visibility.Visible;
+                ControllerRefresh();
             });
+        }
+
+        private void ControllerRefresh()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                NoDevices.Visibility = RadioControllers.Items.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+                InputDevices.Visibility = RadioControllers.Items.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
+            });
+        }
+
+        private void SystemManager_Initialized()
+        {
+            // get last picked controller
+            string path = SettingsManager.GetString("HIDInstancePath");
+
+            foreach (IController ctrl in RadioControllers.Items)
+            {
+                if (ctrl.GetInstancePath() == path)
+                {
+                    RadioControllers.SelectedItem = ctrl;
+                    return;
+                }
+            }
+
+            RadioControllers.SelectedIndex = 0;
         }
 
         private void UpdateController()
@@ -198,7 +213,7 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
-        private void OnServerMessage(object sender, PipeMessage message)
+        private void OnServerMessage(PipeMessage message)
         {
             switch (message.code)
             {
@@ -217,7 +232,6 @@ namespace HandheldCompanion.Views.Pages
                 navLoad.Visibility = isLoading ? Visibility.Visible : Visibility.Hidden;
 
                 ControllerGrid.IsEnabled = isConnected && !isLoading;
-                DeviceCloakingStackPanel.IsEnabled = isConnected && !isLoading;
 
                 UpdateController();
             });
@@ -232,16 +246,6 @@ namespace HandheldCompanion.Views.Pages
 
                 switch (name)
                 {
-                    case "HIDidx":
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            int index = int.Parse(property);
-                            if (RadioControllers.Items.Count > index)
-                                RadioControllers.SelectedIndex = index;
-                            else if (RadioControllers.Items.Count >= 1)
-                                RadioControllers.SelectedIndex = 0;
-                        });
-                        break;
                     case "HIDmode":
                         controllerMode = (HIDmode)Enum.Parse(typeof(HIDmode), property);
                         UpdateController();
@@ -249,24 +253,6 @@ namespace HandheldCompanion.Views.Pages
                     case "HIDstatus":
                         controllerStatus = (HIDstatus)Enum.Parse(typeof(HIDstatus), property);
                         UpdateController();
-                        break;
-                    case "HIDcloaked":
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            Toggle_Cloaked.IsOn = bool.Parse(property);
-                        });
-                        break;
-                    case "HIDuncloakonclose":
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            Toggle_Uncloak.IsOn = bool.Parse(property);
-                        });
-                        break;
-                    case "HIDstrength":
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            SliderStrength.Value = double.Parse(property, CultureInfo.InvariantCulture);
-                        });
                         break;
                 }
             }
@@ -287,7 +273,7 @@ namespace HandheldCompanion.Views.Pages
             HIDchanged?.Invoke(controllerMode);
 
             PipeClientSettings settings = new PipeClientSettings("HIDmode", controllerMode);
-            MainWindow.pipeClient?.SendMessage(settings);
+            PipeClient.SendMessage(settings);
 
             UpdateController();
 
@@ -302,60 +288,56 @@ namespace HandheldCompanion.Views.Pages
             controllerStatus = controllerStatus == HIDstatus.Connected ? HIDstatus.Disconnected : HIDstatus.Connected;
 
             PipeClientSettings settings = new PipeClientSettings("HIDstatus", controllerStatus);
-            MainWindow.pipeClient?.SendMessage(settings);
+            PipeClient.SendMessage(settings);
 
             UpdateController();
         }
 
         private void Toggle_Cloaked_Toggled(object sender, RoutedEventArgs e)
         {
-            PipeClientSettings settings = new PipeClientSettings("HIDcloaked", Toggle_Cloaked.IsOn);
-            MainWindow.pipeClient?.SendMessage(settings);
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            HidHide.SetCloaking(Toggle_Cloaked.IsOn);
+            SettingsManager.SetProperty("HIDcloaked", Toggle_Cloaked.IsOn);
         }
 
         private void Toggle_Uncloak_Toggled(object sender, RoutedEventArgs e)
         {
-            PipeClientSettings settings = new PipeClientSettings("HIDuncloakonclose", Toggle_Uncloak.IsOn);
-            MainWindow.pipeClient?.SendMessage(settings);
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("HIDuncloakonclose", Toggle_Uncloak.IsOn);
         }
 
         private void SliderStrength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            PipeClientSettings settings = new PipeClientSettings("HIDstrength", SliderStrength.Value);
-            MainWindow.pipeClient?.SendMessage(settings);
+            double value = SliderStrength.Value;
+            if (double.IsNaN(value))
+                return;
+
+            SliderStrength.Value = value;
+
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("HIDstrength", value);
         }
 
-        private ControllerEx currentController;
         private void RadioControllers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (RadioControllers.SelectedIndex == -1)
+            {
+                ControllerManager.ClearTargetController();
                 return;
+            }
 
-            currentController = (ControllerEx)RadioControllers.SelectedItem;
+            IController Controller = (IController)RadioControllers.SelectedItem;
 
-            if (currentController is null)
-                return;
+            string path = Controller.GetInstancePath();
+            ControllerManager.SetTargetController(path);
 
-            if (!currentController.IsConnected())
-                return;
-
-            // push toast if service is connected
-            if (isConnected)
-                MainWindow.toastManager.SendToast(currentController.ToString(), Properties.Resources.ToastNewControllerEx);
-
-            // rumble current controller
-            currentController.Identify();
-
-            // raise events
-            RaiseEvents();
-        }
-
-        private void RaiseEvents()
-        {
-            ControllerChanged?.Invoke(currentController);
-
-            PipeControllerIndex settings = new PipeControllerIndex((int)currentController.UserIndex, currentController.deviceInstancePath, currentController.baseContainerDeviceInstancePath);
-            MainWindow.pipeClient?.SendMessage(settings);
+            SettingsManager.SetProperty("HIDInstancePath", path);
         }
     }
 }

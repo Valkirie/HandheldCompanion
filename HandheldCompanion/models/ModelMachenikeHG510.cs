@@ -10,7 +10,6 @@ namespace HandheldCompanion.Models
         Model3DGroup BodyBack;
         Model3DGroup FrontAccent;
         Model3DGroup FN;
-        Model3DGroup Home;
         Model3DGroup JoystickBaseRingLeft;
         Model3DGroup JoystickBaseRingRight;
         Model3DGroup Machenike;
@@ -63,7 +62,6 @@ namespace HandheldCompanion.Models
             FN = modelImporter.Load($"models/{ModelName}/FN.obj");
             Turbo = modelImporter.Load($"models/{ModelName}/Turbo.obj");
             Machenike = modelImporter.Load($"models/{ModelName}/Machenike.obj");
-            Home = modelImporter.Load($"models/{ModelName}/Home.obj");
             JoystickBaseRingLeft = modelImporter.Load($"models/{ModelName}/JoystickBaseRingLeft.obj");
             JoystickBaseRingRight = modelImporter.Load($"models/{ModelName}/JoystickBaseRingRight.obj");
             LED1 = modelImporter.Load($"models/{ModelName}/LED1.obj");
@@ -86,7 +84,6 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(FrontAccent);
             model3DGroup.Children.Add(FN);
             model3DGroup.Children.Add(Turbo);
-            model3DGroup.Children.Add(Home);
             model3DGroup.Children.Add(Machenike);
             model3DGroup.Children.Add(JoystickBaseRingLeft);
             model3DGroup.Children.Add(JoystickBaseRingRight);

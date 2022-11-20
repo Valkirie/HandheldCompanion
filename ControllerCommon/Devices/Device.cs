@@ -66,7 +66,7 @@ namespace ControllerCommon.Devices
             switch (ManufacturerName)
             {
                 case "AOKZOE":
-                    { 
+                    {
                         switch (ProductName)
                         {
                             case "AOKZOE A1 AR07":
