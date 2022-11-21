@@ -25,7 +25,7 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            this.AccelerationAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+            this.AccelerationAxis = new Vector3(-1.0f, 1.0f, -1.0f);
             this.AccelerationAxisSwap = new()
             {
                 { 'X', 'X' },
@@ -34,33 +34,38 @@ namespace ControllerCommon.Devices
             };
 
             // Home
-            listeners.Add(new DeviceChord("Home key",
+            listeners.Add(new DeviceChord("Home",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                new List<KeyCode>() { KeyCode.LWin, KeyCode.D }
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
+                false, Controllers.ControllerButtonFlags.OEM1
                 ));
 
             // Keyboard
-            listeners.Add(new DeviceChord("Keyboard key",
+            listeners.Add(new DeviceChord("Keyboard",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O },
-                new List<KeyCode>() { KeyCode.O, KeyCode.LWin, KeyCode.RControlKey }
+                new List<KeyCode>() { KeyCode.O, KeyCode.LWin, KeyCode.RControlKey },
+                false, Controllers.ControllerButtonFlags.OEM2
                 ));
 
             // Turbo
-            listeners.Add(new DeviceChord("Turbo key",
+            listeners.Add(new DeviceChord("Turbo",
                 new List<KeyCode>() { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
-                new List<KeyCode>() { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu }
+                new List<KeyCode>() { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
+                false, Controllers.ControllerButtonFlags.OEM3
                 ));
 
             // Home + Keyboard
             listeners.Add(new DeviceChord("Home + Keyboard",
                 new List<KeyCode>() { KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete },
-                new List<KeyCode>() { KeyCode.Delete, KeyCode.RControlKey, KeyCode.RAlt }
+                new List<KeyCode>() { KeyCode.Delete, KeyCode.RControlKey, KeyCode.RAlt },
+                false, Controllers.ControllerButtonFlags.OEM4
                 ));
 
             // Home + Turbo
             listeners.Add(new DeviceChord("Home + Turbo",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot },
-                new List<KeyCode>() { KeyCode.Snapshot, KeyCode.LWin }
+                new List<KeyCode>() { KeyCode.Snapshot, KeyCode.LWin },
+                false, Controllers.ControllerButtonFlags.OEM5
                 ));
         }
     }
