@@ -135,8 +135,6 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(B4Interior2);
             model3DGroup.Children.Add(B4Button);
 
-            ButtonMap[ControllerButtonFlags.Special].Add(SpecialOuter);
-
             // specific button material(s)
             foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
             {
@@ -189,7 +187,7 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticWhite;
 
                 // specific material(s)
-                if (model3D == USBPortOuter || model3D == SpecialOuter
+                if (model3D == USBPortOuter
                     || model3D == B1Interior || model3D == B1Interior2
                     || model3D == B2Interior || model3D == B2Interior2
                     || model3D == B3Interior || model3D == B3Interior2

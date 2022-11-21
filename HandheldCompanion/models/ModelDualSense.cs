@@ -116,6 +116,7 @@ namespace HandheldCompanion.Models
                             case ControllerButtonFlags.RightThumb:
                             case ControllerButtonFlags.LeftShoulder:
                             case ControllerButtonFlags.RightShoulder:
+                            case ControllerButtonFlags.Special:
                                 buttonMaterial = MaterialPlasticBlack;
                                 break;
                             default:
