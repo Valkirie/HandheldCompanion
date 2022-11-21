@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Automation;
 using Windows.System.Diagnostics;
 using static ControllerCommon.WinAPI;
+using static HandheldCompanion.Managers.ProcessEx;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
@@ -203,8 +204,11 @@ namespace HandheldCompanion.Managers
             string exec = System.IO.Path.GetFileName(path);
 
             bool self = IsSelf(exec, path);
-
             if (self)
+                return;
+
+            ProcessFilter filter = GetFilter(exec, path);
+            if (filter == ProcessFilter.Silenced)
                 return;
 
             // save previous process (if exists)
@@ -219,7 +223,7 @@ namespace HandheldCompanion.Managers
                     Name = exec,
                     Executable = exec,
                     Path = path,
-                    IsIgnored = !IsValid(exec, path)
+                    Filter = filter,
                 };
 
             // update main window handle
@@ -287,14 +291,14 @@ namespace HandheldCompanion.Managers
                         Executable = exec,
                         Path = path,
                         MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle,
-                        IsIgnored = !IsValid(exec, path)
+                        Filter = GetFilter(exec, path)
                     };
 
                     processEx.ChildProcessCreated += ChildProcessCreated;
 
                     Processes.TryAdd(processEx.Id, processEx);
 
-                    if (processEx.IsIgnored)
+                    if (processEx.Filter != ProcessFilter.None)
                         return;
 
                     // raise event
@@ -312,16 +316,19 @@ namespace HandheldCompanion.Managers
 
         private static void ChildProcessCreated(ProcessEx parent, int Id)
         {
+            if (parent.EcoQoS == EnergyManager.QualityOfServiceLevel.Default)
+                return;
+
             EnergyManager.ToggleEfficiencyMode(Id, parent.EcoQoS, parent);
         }
 
-        private static bool IsValid(string exec, string path)
+        private static ProcessFilter GetFilter(string exec, string path)
         {
             if (string.IsNullOrEmpty(path))
-                return false;
+                return ProcessFilter.Bypassed;
 
             if (path.Contains(Environment.GetEnvironmentVariable("windir"), StringComparison.InvariantCultureIgnoreCase))
-                return false;
+                return ProcessFilter.Bypassed;
 
             // manual filtering
             switch (exec.ToLower())
@@ -357,17 +364,19 @@ namespace HandheldCompanion.Managers
 
                 // Other
                 case "bdagent.exe":             // Bitdefender Agent
-                case "radeonsoftware.exe":
                 case "monotificationux.exe":
 
                 // handheld companion
                 case "handheldcompanion.exe":
                 case "controllerservice.exe":
                 case "controllerservice.dll":
-                    return false;
+                    return ProcessFilter.Bypassed;
+
+                case "radeonsoftware.exe":
+                    return ProcessFilter.Silenced;
 
                 default:
-                    return true;
+                    return ProcessFilter.None;
             }
         }
 

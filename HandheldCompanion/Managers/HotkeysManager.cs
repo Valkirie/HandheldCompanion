@@ -261,14 +261,14 @@ namespace HandheldCompanion.Managers
                         Shell.ToggleDesktop();
                         break;
                     case "shortcutESC":
-                        if (fProcess != null && !fProcess.IsIgnored)
+                        if (fProcess != null && fProcess.Filter == ProcessEx.ProcessFilter.None)
                         {
                             ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
                             InputsManager.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
-                        if (fProcess != null && !fProcess.IsIgnored)
+                        if (fProcess != null && fProcess.Filter == ProcessEx.ProcessFilter.None)
                         {
                             var Placement = ProcessUtils.GetPlacement(fProcess.MainWindowHandle);
 
@@ -298,7 +298,7 @@ namespace HandheldCompanion.Managers
                         {
                             var sProcess = ProcessManager.GetSuspendedProcess();
 
-                            if (sProcess is null || sProcess.IsIgnored)
+                            if (sProcess is null || sProcess.Filter != ProcessEx.ProcessFilter.None)
                                 break;
 
                             if (sProcess.IsSuspended())

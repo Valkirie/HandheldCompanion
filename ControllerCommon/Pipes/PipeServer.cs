@@ -38,8 +38,7 @@ namespace ControllerCommon
         CLIENT_CONSOLE = 12,                // Sent from client to client to pass parameters
                                             // args: string[] parameters
 
-        FORCE_SHUTDOWN = 13,                // Sent to server or client to halt process
-                                            // args: ...
+        OBSOLETE_3 = 13,                    // OBSOLETE, REUSEME
 
         SERVER_SENSOR = 14,                 // Sent to client to share sensor values
                                             // args: ...

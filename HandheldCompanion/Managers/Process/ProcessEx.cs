@@ -15,6 +15,13 @@ namespace HandheldCompanion.Managers
 {
     public class ProcessEx
     {
+        public enum ProcessFilter
+        {
+            None = 0,
+            Bypassed = 1,
+            Silenced = 2,
+        }
+
         public Process Process;
         public ProcessThread MainThread;
 
@@ -28,7 +35,7 @@ namespace HandheldCompanion.Managers
         public string Name;
         public string Executable;
         public string Path;
-        public bool IsIgnored;
+        public ProcessFilter Filter;
 
         private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
 

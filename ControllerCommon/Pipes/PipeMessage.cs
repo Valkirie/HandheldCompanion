@@ -140,26 +140,6 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public partial class PipeConsoleArgs : PipeMessage
-    {
-        public string[] args;
-
-        public PipeConsoleArgs()
-        {
-            code = PipeCode.CLIENT_CONSOLE;
-        }
-    }
-
-    [Serializable]
-    public partial class PipeShutdown : PipeMessage
-    {
-        public PipeShutdown()
-        {
-            code = PipeCode.FORCE_SHUTDOWN;
-        }
-    }
-
-    [Serializable]
     public enum SensorType
     {
         Girometer = 0,
