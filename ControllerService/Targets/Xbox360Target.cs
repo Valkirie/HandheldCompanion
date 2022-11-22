@@ -64,10 +64,10 @@ namespace ControllerService.Targets
 
             base.UpdateReport();
 
-            virtualController.SetAxisValue(Xbox360Axis.LeftThumbX, (short)Inputs.LeftThumbX);
-            virtualController.SetAxisValue(Xbox360Axis.LeftThumbY, (short)Inputs.LeftThumbY);
-            virtualController.SetAxisValue(Xbox360Axis.RightThumbX, (short)Inputs.RightThumbX);
-            virtualController.SetAxisValue(Xbox360Axis.RightThumbY, (short)Inputs.RightThumbY);
+            virtualController.SetAxisValue(Xbox360Axis.LeftThumbX, (short)LeftThumb.X);
+            virtualController.SetAxisValue(Xbox360Axis.LeftThumbY, (short)LeftThumb.Y);
+            virtualController.SetAxisValue(Xbox360Axis.RightThumbX, (short)RightThumb.X);
+            virtualController.SetAxisValue(Xbox360Axis.RightThumbY, (short)RightThumb.Y);
 
             virtualController.SetSliderValue(Xbox360Slider.LeftTrigger, (byte)Inputs.LeftTrigger);
             virtualController.SetSliderValue(Xbox360Slider.RightTrigger, (byte)Inputs.RightTrigger);
