@@ -201,14 +201,12 @@ namespace HandheldCompanion.Managers
 
                 LogManager.LogDebug("Profile {0} applied", profile.name);
 
-                if (profile.isDefault)
-                {
-                    // inform service
-                    PipeClient.SendMessage(new PipeClientProfile { profile = profile, backgroundTask = true });
+                // inform service
+                PipeClient.SendMessage(new PipeClientProfile { profile = profile, backgroundTask = true });
 
-                    // do not update default profile path
+                // do not update default profile path
+                if (profile.isDefault)
                     return;
-                }
 
                 // send toast
                 // todo: localize me
