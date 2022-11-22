@@ -36,7 +36,7 @@
                         <ui:ProgressRing Name="navLoad" IsActive="True" Width="50" Height="50" Visibility="Hidden"/>
                         
                         <ui:SimpleStackPanel Spacing="18" VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
-                            <Button Name="B_ServiceSwitch" Content="{x:Static resx:Resources.ControllerPage_Connect}" Width="Auto" Style="{DynamicResource AccentButtonStyle}" Click="B_ServiceSwitch_Click"/>
+                            <ComboBox Name="cB_ServiceSwitch" Width="Auto" SelectionChanged="cB_ServiceSwitch_SelectionChanged"/>
                             <ComboBox Name="cB_HidMode" Width="Auto" SelectionChanged="cB_HidMode_SelectionChanged" BorderThickness="0"/>
                         </ui:SimpleStackPanel>
                     </Grid>
@@ -106,7 +106,8 @@
                             </DockPanel>
 
                             <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=SliderStrength, Mode=OneWay}" />
+                                <TextBlock Width="25" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Value, StringFormat=N0, ElementName=SliderStrength, Mode=OneWay}" />
+                                <TextBlock VerticalAlignment="Center" Text="%" />
                                 <Slider Margin="6,0,0,0" Name="SliderStrength" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="100" Minimum="0" SmallChange="5" TickFrequency="5" Value="100" TickPlacement="BottomRight" ValueChanged="SliderStrength_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                             </DockPanel>
                         </Grid>

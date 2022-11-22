@@ -210,7 +210,7 @@
                             <DockPanel Grid.Column="1" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                 <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderAntiDeadzone, Mode=OneWay}" />
                                 <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneUnitPercentage}" />
-                                <Slider Name="SliderAntiDeadzone" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="5" Maximum="40" Minimum="1" Value="1" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+                                <Slider Name="SliderAntiDeadzone" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 								ValueChanged="SliderAntiDeadzone_ValueChanged" />
                             </DockPanel>
                         </ui:SimpleStackPanel>
