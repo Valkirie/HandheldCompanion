@@ -338,7 +338,7 @@ namespace HandheldCompanion.Managers
             return ProfileErrorCode.None;
         }
 
-        public static void UpdateOrCreateProfile(Profile profile, bool backgroundtask = true, bool fullUpdate = true)
+        public static void UpdateOrCreateProfile(Profile profile, bool backgroundtask = true, bool fullUpdate = true, bool serialize = true)
         {
             // refresh error code
             profile.error = SanitizeProfile(profile);
@@ -372,6 +372,10 @@ namespace HandheldCompanion.Managers
                 // update cloaking
                 UpdateProfileCloaking(profile);
             }
+
+            // serialize
+            if (serialize)
+                SerializeProfile(profile);
         }
 
         public static void UpdateProfileCloaking(Profile profile)

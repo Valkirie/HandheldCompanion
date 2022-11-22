@@ -59,6 +59,7 @@ namespace HandheldCompanion.Views.Classes
             Topmost = true;
             Focusable = false;
             ResizeMode = ResizeMode.NoResize;
+            ShowActivated = false;
 
             SizeChanged += (o, e) =>
             {

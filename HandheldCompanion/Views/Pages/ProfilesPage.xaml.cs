@@ -284,10 +284,7 @@ namespace HandheldCompanion.Views.Pages
                     }
 
                     if (!exists)
-                    {
                         ProfileManager.UpdateOrCreateProfile(profile, false);
-                        ProfileManager.SerializeProfile(profile);
-                    }
                 }
                 catch (Exception ex)
                 {
@@ -477,7 +474,6 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.TDP_override = (bool)TDPToggle.IsOn;
 
             ProfileManager.UpdateOrCreateProfile(currentProfile, false);
-            ProfileManager.SerializeProfile(currentProfile);
         }
 
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)

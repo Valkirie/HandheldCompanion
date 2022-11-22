@@ -3,6 +3,7 @@ using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
+using PrecisionTiming;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -229,7 +230,6 @@ namespace HandheldCompanion.Views.QuickPages
         private void UpdateProfile()
         {
             ProfileManager.UpdateOrCreateProfile(currentProfile, true);
-            ProfileManager.SerializeProfile(currentProfile);
         }
 
         private void ProfileToggle_Toggled(object sender, RoutedEventArgs e)
