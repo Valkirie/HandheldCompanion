@@ -138,7 +138,7 @@ namespace ControllerCommon.Controllers
 
         public void SetVibrationStrength(double value)
         {
-            VibrationStrength = value;
+            VibrationStrength = value / 100;
         }
 
         public virtual bool IsConnected()
