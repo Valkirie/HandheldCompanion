@@ -4,6 +4,8 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
 using System;
+using System.Diagnostics;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -18,7 +20,8 @@ namespace HandheldCompanion.Views.QuickPages
         private ProcessEx currentProcess;
         private Profile currentProfile;
         private Hotkey ProfilesPageHotkey;
-        private bool IsReady;
+
+        private object updateLock = new();
 
         public QuickProfilesPage()
         {
@@ -157,44 +160,45 @@ namespace HandheldCompanion.Views.QuickPages
             if (!isCurrent || profile.isDefault)
                 return;
 
-            IsReady = false;
-
-            this.Dispatcher.Invoke(() =>
+            if (Monitor.TryEnter(updateLock))
             {
-                b_CreateProfile.Visibility = Visibility.Collapsed;
-                GridProfile.Visibility = Visibility.Visible;
+                this.Dispatcher.Invoke(() =>
+                {
+                    b_CreateProfile.Visibility = Visibility.Collapsed;
+                    GridProfile.Visibility = Visibility.Visible;
 
-                ProfileToggle.IsEnabled = true;
-                ProfileToggle.IsOn = profile.isEnabled;
-                UMCToggle.IsOn = profile.umc_enabled;
-                cB_Input.SelectedIndex = (int)profile.umc_input;
-                cB_Output.SelectedIndex = (int)profile.umc_output;
+                    ProfileToggle.IsEnabled = true;
+                    ProfileToggle.IsOn = profile.isEnabled;
+                    UMCToggle.IsOn = profile.umc_enabled;
+                    cB_Input.SelectedIndex = (int)profile.umc_input;
+                    cB_Output.SelectedIndex = (int)profile.umc_output;
 
-                // Sustained TDP settings (slow, stapm, long)
-                double[] TDP = profile.TDP_value != null ? profile.TDP_value : MainWindow.handheldDevice.nTDP;
-                TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
-                TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
+                    // Sustained TDP settings (slow, stapm, long)
+                    double[] TDP = profile.TDP_value != null ? profile.TDP_value : MainWindow.handheldDevice.nTDP;
+                    TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
+                    TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
 
-                TDPToggle.IsOn = profile.TDP_override;
+                    TDPToggle.IsOn = profile.TDP_override;
 
-                // Slider settings
-                SliderSensitivityX.Value = profile.aiming_sensitivity_x;
-                SliderSensitivityY.Value = profile.aiming_sensitivity_y;
-                SliderAntiDeadzone.Value = profile.antideadzone;
+                    // Slider settings
+                    SliderSensitivityX.Value = profile.aiming_sensitivity_x;
+                    SliderSensitivityY.Value = profile.aiming_sensitivity_y;
+                    SliderAntiDeadzone.Value = profile.antideadzone;
 
-                // todo: improve me ?
-                ProfilesPageHotkey.inputsChord.GamepadButtons = currentProfile.umc_trigger;
-                ProfilesPageHotkey.Refresh();
+                    // todo: improve me ?
+                    ProfilesPageHotkey.inputsChord.GamepadButtons = currentProfile.umc_trigger;
+                    ProfilesPageHotkey.Refresh();
 
-                if (backgroundtask)
-                    return;
+                    if (backgroundtask)
+                        return;
 
-                _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
-                                    $"{profile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
-                                    ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
-            });
+                    _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
+                                        $"{profile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
+                                        ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+                });
 
-            IsReady = true;
+                Monitor.Exit(updateLock);
+            }
         }
 
         private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
@@ -233,11 +237,13 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (!IsReady)
-                return;
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.isEnabled = ProfileToggle.IsOn;
+                UpdateProfile();
 
-            currentProfile.isEnabled = ProfileToggle.IsOn;
-            UpdateProfile();
+                Monitor.Exit(updateLock);
+            }
         }
 
         private void UMCToggle_Toggled(object sender, RoutedEventArgs e)
@@ -245,11 +251,13 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (!IsReady)
-                return;
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.umc_enabled = UMCToggle.IsOn;
+                UpdateProfile();
 
-            currentProfile.umc_enabled = UMCToggle.IsOn;
-            UpdateProfile();
+                Monitor.Exit(updateLock);
+            }
         }
 
         private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -281,11 +289,13 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (!IsReady)
-                return;
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.umc_input = (Input)cB_Input.SelectedIndex;
+                UpdateProfile();
 
-            currentProfile.umc_input = (Input)cB_Input.SelectedIndex;
-            UpdateProfile();
+                Monitor.Exit(updateLock);
+            }
         }
 
         private void cB_Output_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -293,11 +303,13 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (!IsReady)
-                return;
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
+                UpdateProfile();
 
-            currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
-            UpdateProfile();
+                Monitor.Exit(updateLock);
+            }
         }
 
         private void b_CreateProfile_Click(object sender, RoutedEventArgs e)
@@ -320,12 +332,13 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (!IsReady)
-                return;
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.TDP_override = (bool)TDPToggle.IsOn;
+                UpdateProfile();
 
-            // Power settings
-            currentProfile.TDP_override = (bool)TDPToggle.IsOn;
-            UpdateProfile();
+                Monitor.Exit(updateLock);
+            }
         }
 
         private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -333,16 +346,17 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (!IsReady)
-                return;
-
             if (!TDPToggle.IsOn)
                 return;
 
-            // Power settings
-            currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
-            currentProfile.TDP_value[1] = (int)TDPSustainedSlider.Value;
-            UpdateProfile();
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
+                currentProfile.TDP_value[1] = (int)TDPSustainedSlider.Value;
+                UpdateProfile();
+
+                Monitor.Exit(updateLock);
+            }
         }
 
         private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -350,15 +364,16 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (!IsReady)
-                return;
-
             if (!TDPToggle.IsOn)
                 return;
 
-            // Power settings
-            currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
-            UpdateProfile();
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
+                UpdateProfile();
+
+                Monitor.Exit(updateLock);
+            }
         }
 
         private void SliderSensitivityX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -366,12 +381,13 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (!IsReady)
-                return;
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.aiming_sensitivity_x = (float)SliderSensitivityX.Value;
+                UpdateProfile();
 
-            // Sensivity settings
-            currentProfile.aiming_sensitivity_x = (float)SliderSensitivityX.Value;
-            UpdateProfile();
+                Monitor.Exit(updateLock);
+            }
         }
 
         private void SliderSensitivityY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -379,12 +395,13 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (!IsReady)
-                return;
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.aiming_sensitivity_y = (float)SliderSensitivityY.Value;
+                UpdateProfile();
 
-            // Sensivity settings
-            currentProfile.aiming_sensitivity_y = (float)SliderSensitivityY.Value;
-            UpdateProfile();
+                Monitor.Exit(updateLock);
+            }
         }
 
         private void SliderAntiDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -392,12 +409,13 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (!IsReady)
-                return;
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.antideadzone = (float)SliderAntiDeadzone.Value;
+                UpdateProfile();
 
-            // Antideadzone settings
-            currentProfile.antideadzone = (float)SliderAntiDeadzone.Value;
-            UpdateProfile();
+                Monitor.Exit(updateLock);
+            }
         }
 
         private void TriggerCreated(Hotkey hotkey)
@@ -424,13 +442,18 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            switch (listener)
+            if (Monitor.TryEnter(updateLock))
             {
-                case "shortcutProfilesPage1":
-                case "shortcutProfilesPage2":
-                    currentProfile.umc_trigger = inputs.GamepadButtons;
-                    UpdateProfile();
-                    break;
+                switch (listener)
+                {
+                    case "shortcutProfilesPage1":
+                    case "shortcutProfilesPage2":
+                        currentProfile.umc_trigger = inputs.GamepadButtons;
+                        UpdateProfile();
+                        break;
+                }
+
+                Monitor.Exit(updateLock);
             }
         }
     }
