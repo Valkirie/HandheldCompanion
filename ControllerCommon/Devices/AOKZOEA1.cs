@@ -40,6 +40,13 @@ namespace ControllerCommon.Devices
                 false, Controllers.ControllerButtonFlags.OEM1
                 ));
 
+            // Home (long press 1.5s)
+            listeners.Add(new DeviceChord("Home, Long-press",
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.G },
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.G },
+                false, Controllers.ControllerButtonFlags.OEM6
+                ));
+
             // Keyboard
             listeners.Add(new DeviceChord("Keyboard",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O },

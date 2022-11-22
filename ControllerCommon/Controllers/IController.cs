@@ -50,7 +50,8 @@ namespace ControllerCommon.Controllers
         OEM2 = 1073741824,
         OEM3 = 2147483648,
         OEM4 = 4294967296,
-        OEM5 = 8589934592
+        OEM5 = 8589934592,
+        OEM6 = 17179869184
     }
 
     [Serializable]
