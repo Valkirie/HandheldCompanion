@@ -130,8 +130,6 @@ namespace ControllerCommon.Controllers
         private XInputStateSecret State;
         private XInputStateSecret prevState;
 
-        private Vibration Vibration = new Vibration() { LeftMotorSpeed = ushort.MaxValue, RightMotorSpeed = ushort.MaxValue };
-
         public XInputController(int index)
         {
             Controller = new Controller((UserIndex)index);
@@ -261,13 +259,23 @@ namespace ControllerCommon.Controllers
             return (bool)(Controller?.IsConnected);
         }
 
+        public override void SetVibration(ushort LargeMotor, ushort SmallMotor)
+        {
+            ushort LeftMotorSpeed = (ushort)((LargeMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
+            ushort RightMotorSpeed = (ushort)((SmallMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
+
+            Vibration vibration = new Vibration() { LeftMotorSpeed = LeftMotorSpeed, RightMotorSpeed = RightMotorSpeed };
+            Controller.SetVibration(vibration);
+        }
+
         public override async void Rumble()
         {
             for (int i = 0; i < 2; i++)
             {
-                Controller.SetVibration(Vibration);
+                SetVibration(ushort.MaxValue, ushort.MaxValue);
                 await Task.Delay(100);
-                Controller.SetVibration(new Vibration());
+
+                SetVibration(0, 0);
                 await Task.Delay(100);
             }
             base.Rumble();
@@ -292,12 +300,7 @@ namespace ControllerCommon.Controllers
                 case PipeCode.SERVER_VIBRATION:
                     {
                         PipeClientVibration e = (PipeClientVibration)message;
-
-                        ushort LeftMotorSpeed = (ushort)((e.LargeMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
-                        ushort RightMotorSpeed = (ushort)((e.SmallMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
-
-                        Vibration vibration = new Vibration() { LeftMotorSpeed = LeftMotorSpeed, RightMotorSpeed = RightMotorSpeed };
-                        Controller.SetVibration(vibration);
+                        SetVibration(e.LargeMotor, e.SmallMotor);
                     }
                     break;
             }

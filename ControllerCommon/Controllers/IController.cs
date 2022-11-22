@@ -73,7 +73,7 @@ namespace ControllerCommon.Controllers
         public ControllerButtonFlags prevInjectedButtons;
 
         protected int UserIndex;
-        protected double VibrationStrength = 100.0d;
+        protected double VibrationStrength = 1.0d;
 
         public const short UPDATE_INTERVAL = 5;
 
@@ -141,6 +141,9 @@ namespace ControllerCommon.Controllers
         {
             VibrationStrength = value / 100;
         }
+
+        public virtual void SetVibration(ushort LargeMotor, ushort SmallMotor)
+        { }
 
         public virtual bool IsConnected()
         {
