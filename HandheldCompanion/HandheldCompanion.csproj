@@ -430,13 +430,13 @@
     <None Update="Models\AYANEO 2021\ShoulderButtonRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO 2021\WFB-Esc.obj">
+    <None Update="models\AYANEO 2021\OEM2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO 2021\WFB-H.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO 2021\WFB-KB.obj">
+    <None Update="models\AYANEO 2021\OEM3.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO 2021\Start.obj">
@@ -451,7 +451,7 @@
     <None Update="Models\AYANEO 2021\Back.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO 2021\WFB-Win.obj">
+    <None Update="models\AYANEO 2021\OEM1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO Air\B1-Letter.obj">
