@@ -182,6 +182,10 @@ namespace HandheldCompanion.Views.QuickPages
                 SliderSensitivityY.Value = profile.aiming_sensitivity_y;
                 SliderAntiDeadzone.Value = profile.antideadzone;
 
+                // todo: improve me ?
+                ProfilesPageHotkey.inputsChord.GamepadButtons = currentProfile.umc_trigger;
+                ProfilesPageHotkey.Refresh();
+
                 if (backgroundtask)
                     return;
 
