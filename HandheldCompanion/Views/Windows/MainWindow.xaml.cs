@@ -405,8 +405,6 @@ namespace HandheldCompanion.Views
                         break;
                     case "DSUport":
                         break;
-                    case "HIDmode":
-                        break;
                 }
             }
         }
