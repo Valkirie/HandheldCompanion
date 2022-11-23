@@ -155,9 +155,15 @@
                                 <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOffDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                             </StackPanel>
                         </Grid>
+                        
+                        <!-- Content -->
+                        <ui:RadioButtons Margin="6,0,0,0" Name="cB_UMC_MotionDefaultOffOn" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="1"  SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
+                            <RadioButton Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}"></RadioButton>
+                            <RadioButton Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}"></RadioButton>
+                        </ui:RadioButtons>
 
                         <!-- Content -->
-                        <Grid Margin="6,0,0,0" Name="UMC_Activator" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <Grid Margin="6,0,0,0" Name="UMC_Activator" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Width="Auto"/>
 
                         <ui:SimpleStackPanel Spacing="10" Name="GridSensivity">
                             <!-- Separator -->

@@ -173,6 +173,7 @@ namespace HandheldCompanion.Views.QuickPages
                     UMCToggle.IsOn = profile.umc_enabled;
                     cB_Input.SelectedIndex = (int)profile.umc_input;
                     cB_Output.SelectedIndex = (int)profile.umc_output;
+                    cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)profile.umc_motion_defaultoffon;
 
                     // Sustained TDP settings (slow, stapm, long)
                     double[] TDP = profile.TDP_value != null ? profile.TDP_value : MainWindow.handheldDevice.nTDP;
@@ -452,6 +453,20 @@ namespace HandheldCompanion.Views.QuickPages
                         UpdateProfile();
                         break;
                 }
+
+                Monitor.Exit(updateLock);
+            }
+        }
+
+        private void cB_UMC_MotionDefaultOffOn_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if (cB_UMC_MotionDefaultOffOn.SelectedIndex == -1 || currentProfile is null)
+                return;
+
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.umc_motion_defaultoffon = (UMC_Motion_Default)cB_UMC_MotionDefaultOffOn.SelectedIndex;
+                UpdateProfile();
 
                 Monitor.Exit(updateLock);
             }
