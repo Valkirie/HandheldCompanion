@@ -29,6 +29,9 @@
         </UniformGrid>
 
         <ui:SimpleStackPanel VerticalAlignment="Top" Margin="0,28,0,0" Grid.Row="1">
+            <!-- Separator -->
+            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+            
             <!-- Brightness -->
             <Border
                     Padding="15,12,15,12"

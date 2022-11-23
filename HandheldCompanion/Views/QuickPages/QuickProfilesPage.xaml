@@ -33,6 +33,9 @@
                 </Grid>
             </Border>
         </Grid>
+        
+        <!-- Separator -->
+        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
         <!-- Buttons -->
         <Button Name="b_CreateProfile" Margin="12,2,15,2" Click="b_CreateProfile_Click" HorizontalAlignment="Stretch" Content="{x:Static resx:Resources.QuickProfilesPage_Create}" Style="{DynamicResource AccentButtonStyle}" Visibility="Collapsed" />
@@ -63,6 +66,9 @@
                     </Grid>
                 </Border>
             </Grid>
+            
+            <!-- Separator -->
+            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
             <Grid Name="StackProfileUMC">
                 <!-- Header -->
@@ -92,6 +98,9 @@
                     </ui:SimpleStackPanel>
                 </Border>
             </Grid>
+            
+            <!-- Separator -->
+            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
             <Grid Name="StackProfileUMCSettings">
                 <!-- Header -->
@@ -124,7 +133,7 @@
                         <ui:RadioButtons Margin="6,0,0,0" Name="cB_Input" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="3" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Input_SelectionChanged"/>
                     
                         <!-- Separator -->
-                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" />
+                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -142,7 +151,7 @@
                         <ui:RadioButtons Margin="6,0,0,0" Name="cB_Output" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="3" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Output_SelectionChanged"/>
 
                         <!-- Separator -->
-                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" />
+                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -165,10 +174,10 @@
                         <!-- Content -->
                         <Grid Margin="6,0,0,0" Name="UMC_Activator" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Width="Auto"/>
 
+                        <!-- Separator -->
+                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+                        
                         <ui:SimpleStackPanel Spacing="10" Name="GridSensivity">
-                            <!-- Separator -->
-                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" />
-
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition MinWidth="420"></ColumnDefinition>
@@ -188,20 +197,19 @@
                                 <Slider Name="SliderSensitivityX" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3.0" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" SmallChange="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 								ValueChanged="SliderSensitivityX_ValueChanged" />
                             </DockPanel>
-                            
+
                             <DockPanel Grid.Column="1" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                 <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_SensitivityY}" />
                                 <TextBlock Width="30" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityY, Mode=OneWay}" />
                                 <Slider Name="SliderSensitivityY" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3.0" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" SmallChange="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 								ValueChanged="SliderSensitivityY_ValueChanged" />
                             </DockPanel>
-                            
                         </ui:SimpleStackPanel>
+                        
+                        <!-- Separator -->
+                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
                         <ui:SimpleStackPanel Spacing="10" Name="GridAntiDeadzone">
-                            <!-- Separator -->
-                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" />
-
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition MinWidth="420"></ColumnDefinition>
@@ -226,6 +234,9 @@
                     </ui:SimpleStackPanel>
                 </Border>
             </Grid>
+            
+            <!-- Separator -->
+            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
             <!-- Thermal Power (TDP) Limit -->
             <ui:SimpleStackPanel Name="StackProfilePower" Spacing="2" IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
@@ -259,30 +270,36 @@
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                    <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                        <TextBlock Width="62" VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPSustained}" />
-                        <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" />
-                        <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                        <Slider Name="TDPSustainedSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" TickFrequency="1" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-						SmallChange="1" LargeChange="5"
-						ValueChanged="TDPSustainedSlider_ValueChanged"/>
-                    </DockPanel>
+                    <StackPanel>
+                        <TextBlock Width="62" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{x:Static resx:Resources.QuickPerformancePage_TDPSustained}" />
+                        
+                        <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" />
+                            <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
+                            <Slider Name="TDPSustainedSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" TickFrequency="1" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+						    SmallChange="1" LargeChange="5"
+						    ValueChanged="TDPSustainedSlider_ValueChanged"/>
+                        </DockPanel>
+                    </StackPanel>
                 </Border>
 
                 <!-- TDP Boost -->
                 <Border
-                    Padding="15,12,15,12"
+                    Padding="15,0,15,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                    <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                        <TextBlock Width="62" VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPBoost}" />
-                        <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
-                        <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                        <Slider Name="TDPBoostSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" TickFrequency="1" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-						SmallChange="1" LargeChange="5"
-						ValueChanged="TDPBoostSlider_ValueChanged"/>
-                    </DockPanel>
+                    <StackPanel>
+                        <TextBlock Width="62" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{x:Static resx:Resources.QuickPerformancePage_TDPBoost}" />
+                        
+                        <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
+                            <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
+                            <Slider Name="TDPBoostSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" TickFrequency="1" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+						    SmallChange="1" LargeChange="5"
+						    ValueChanged="TDPBoostSlider_ValueChanged"/>
+                        </DockPanel>
+                    </StackPanel>
                 </Border>
                 
             </ui:SimpleStackPanel>
