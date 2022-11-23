@@ -41,7 +41,7 @@
                         </DockPanel>
 
                         <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityX, Mode=OneWay}" />
+                            <TextBlock Width="25" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityX, Mode=OneWay}" />
                             <Slider Margin="6,0,0,0" Name="SliderSensitivityX" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3.0" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" SmallChange="0.1" ValueChanged="SliderSensitivityX_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" AutoToolTipPrecision="1"/>
                         </DockPanel>
                     </Grid>
@@ -69,7 +69,7 @@
                         </DockPanel>
 
                         <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityY, Mode=OneWay}" />
+                            <TextBlock Width="25" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityY, Mode=OneWay}" />
                             <Slider Margin="6,0,0,0" Name="SliderSensitivityY" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3.0" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" SmallChange="0.1" ValueChanged="SliderSensitivityY_ValueChanged" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" AutoToolTipPrecision="1"/>
                         </DockPanel>
                     </Grid>
@@ -101,7 +101,7 @@
                                 </StackPanel>
 
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAimingDownSightsMultiplier, Mode=OneWay}" />
+                                    <TextBlock Width="25" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAimingDownSightsMultiplier, Mode=OneWay}" />
                                     <Slider Margin="6,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="tb_ProfileAimingDownSightsMultiplier" AutoToolTipPlacement="TopLeft" LargeChange="0.5" Maximum="3.0" Minimum="0.5" TickFrequency="0.1" Value="1" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="SliderAimingDownSightsMultiplier_ValueChanged" />
                                 </DockPanel>
                             </Grid>
@@ -166,7 +166,7 @@
                                 </StackPanel>
 
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=tb_ProfileFlickDuration, Mode=OneWay}" />
+                                    <TextBlock Width="25" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Value, StringFormat=N0, ElementName=tb_ProfileFlickDuration, Mode=OneWay}" />
                                     <Slider Margin="6,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="tb_ProfileFlickDuration" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="800" Minimum="100" TickFrequency="10" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="SliderFlickDuration_ValueChanged" />
                                 </DockPanel>
                             </Grid>
@@ -186,7 +186,7 @@
                                 </StackPanel>
 
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileStickSensitivity, Mode=OneWay}" />
+                                    <TextBlock Width="25" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileStickSensitivity, Mode=OneWay}" />
                                     <Slider Margin="6,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="tb_ProfileStickSensitivity" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="10" Minimum="0.1" TickFrequency="0.1" Value="10" TickPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="SliderStickSensivity_ValueChanged" />
                                 </DockPanel>
                             </Grid>

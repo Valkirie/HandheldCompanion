@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
@@ -6,8 +7,10 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Threading;
 using System.Windows;
+using static ControllerCommon.WinAPI;
 
 namespace HandheldCompanion
 {
@@ -40,22 +43,27 @@ namespace HandheldCompanion
             LogManager.Initialize("HandheldCompanion");
             LogManager.LogInformation("{0} ({1})", CurrentAssembly.GetName(), fileVersionInfo.FileVersion);
 
-            string proc = Process.GetCurrentProcess().ProcessName;
-            Process[] processes = Process.GetProcessesByName(proc);
-
-            if (processes.Length > 1)
+            using (Process process = Process.GetCurrentProcess())
             {
-                Process process = processes[0];
+                // force high priority
+                SetPriorityClass(process.Handle, (int)PriorityClass.HIGH_PRIORITY_CLASS);
 
-                IntPtr handle = process.MainWindowHandle;
-                if (ProcessUtils.IsIconic(handle))
-                    ProcessUtils.ShowWindow(handle, (int)ProcessUtils.ShowWindowCommands.Restored);
+                Process[] processes = Process.GetProcessesByName(process.ProcessName);
+                if (processes.Length > 1)
+                {
+                    using (Process prevProcess = processes[0])
+                    {
+                        IntPtr handle = prevProcess.MainWindowHandle;
+                        if (ProcessUtils.IsIconic(handle))
+                            ProcessUtils.ShowWindow(handle, (int)ProcessUtils.ShowWindowCommands.Restored);
 
-                ProcessUtils.SetForegroundWindow(handle);
+                        ProcessUtils.SetForegroundWindow(handle);
 
-                // force close this iteration
-                Process.GetCurrentProcess().Kill();
-                return;
+                        // force close this iteration
+                        process.Kill();
+                        return;
+                    }
+                }
             }
 
             // define culture settings

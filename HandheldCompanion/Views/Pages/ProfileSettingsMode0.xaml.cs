@@ -1,19 +1,14 @@
 using ControllerCommon;
-using ControllerCommon.Managers;
-using ControllerCommon.Controllers;
-using ControllerCommon.Utils;
 using ControllerService.Sensors;
-using ModernWpf.Controls;
+using HandheldCompanion.Managers;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using Page = System.Windows.Controls.Page;
-using HandheldCompanion.Managers;
-using System.Linq;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -44,12 +39,12 @@ namespace HandheldCompanion.Views.Pages
         {
             this.currentProfile = currentProfile;
 
-            SliderSensitivityX.Value = profileCurrent.aiming_sensitivity_x;
-            SliderSensitivityY.Value = profileCurrent.aiming_sensitivity_y;
-            tb_ProfileAimingDownSightsMultiplier.Value = profileCurrent.aiming_down_sights_multiplier;
-            Toggle_FlickStick.IsOn = profileCurrent.flickstick_enabled;
-            tb_ProfileFlickDuration.Value = profileCurrent.flick_duration * 1000;
-            tb_ProfileStickSensitivity.Value = profileCurrent.stick_sensivity;
+            SliderSensitivityX.Value = currentProfile.aiming_sensitivity_x;
+            SliderSensitivityY.Value = currentProfile.aiming_sensitivity_y;
+            tb_ProfileAimingDownSightsMultiplier.Value = currentProfile.aiming_down_sights_multiplier;
+            Toggle_FlickStick.IsOn = currentProfile.flickstick_enabled;
+            tb_ProfileFlickDuration.Value = currentProfile.flick_duration * 1000;
+            tb_ProfileStickSensitivity.Value = currentProfile.stick_sensivity;
 
             // todo: improve me ?
             ProfilesPageHotkey.inputsChord.GamepadButtons = currentProfile.aiming_down_sights_activation;
@@ -112,15 +107,15 @@ namespace HandheldCompanion.Views.Pages
             if (currentProfile is null)
                 return;
 
-            profileCurrent.aiming_sensitivity_x = (float)SliderSensitivityX.Value;
+            currentProfile.aiming_sensitivity_x = (float)SliderSensitivityX.Value;
         }
 
         private void SliderSensitivityY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (profileCurrent is null)
+            if (currentProfile is null)
                 return;
 
-            profileCurrent.aiming_sensitivity_y = (float)SliderSensitivityY.Value;
+            currentProfile.aiming_sensitivity_y = (float)SliderSensitivityY.Value;
         }
 
         private void Highlight_Thumb(float value)
@@ -258,9 +253,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void TriggerCreated(Hotkey hotkey)
         {
-            switch (hotkey.hotkeyId)
+            switch (hotkey.inputsHotkey.Listener)
             {
-                case 51:
+                case "shortcutProfilesSettingsMode0":
                     {
                         // pull hotkey
                         ProfilesPageHotkey = hotkey;
@@ -270,7 +265,8 @@ namespace HandheldCompanion.Views.Pages
                         if (hotkeyBorder is null || hotkeyBorder.Parent != null)
                             return;
 
-                        UMC_Activator.Children.Add(hotkeyBorder);
+                        if (UMC_Activator.Children.Count == 0)
+                            UMC_Activator.Children.Add(hotkeyBorder);
                     }
                     break;
             }
@@ -278,18 +274,10 @@ namespace HandheldCompanion.Views.Pages
 
         private void TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
         {
-            Hotkey hotkey = HotkeysManager.Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
-
-            if (hotkey is null)
-                return;
-
-            switch (hotkey.hotkeyId)
+            switch (listener)
             {
-                case 51:
-                    {
-                        // update profile
-                        currentProfile.aiming_down_sights_activation = inputs.GamepadButtons;
-                    }
+                case "shortcutProfilesSettingsMode0":
+                    currentProfile.umc_trigger = inputs.GamepadButtons;
                     break;
             }
         }

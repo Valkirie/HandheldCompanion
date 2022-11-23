@@ -50,7 +50,8 @@ namespace ControllerCommon.Controllers
         OEM2 = 1073741824,
         OEM3 = 2147483648,
         OEM4 = 4294967296,
-        OEM5 = 8589934592
+        OEM5 = 8589934592,
+        OEM6 = 17179869184
     }
 
     [Serializable]
@@ -72,7 +73,7 @@ namespace ControllerCommon.Controllers
         public ControllerButtonFlags prevInjectedButtons;
 
         protected int UserIndex;
-        protected double VibrationStrength = 100.0d;
+        protected double VibrationStrength = 1.0d;
 
         public const short UPDATE_INTERVAL = 5;
 
@@ -138,8 +139,11 @@ namespace ControllerCommon.Controllers
 
         public void SetVibrationStrength(double value)
         {
-            VibrationStrength = value;
+            VibrationStrength = value / 100;
         }
+
+        public virtual void SetVibration(ushort LargeMotor, ushort SmallMotor)
+        { }
 
         public virtual bool IsConnected()
         {

@@ -93,24 +93,18 @@ namespace HandheldCompanion.Managers
 
         private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
-            if (!IsEnabled)
-                return;
-
             // set efficiency mode to Eco on background(ed) process
-            if (backgroundEx != null && !backgroundEx.IsIgnored && !backgroundEx.IsSuspended())
+            if (backgroundEx != null && backgroundEx.Filter == ProcessEx.ProcessFilter.None && !backgroundEx.IsSuspended())
                 ToggleEfficiencyMode(backgroundEx.Id, QualityOfServiceLevel.Eco);
 
             // set efficency mode to High on foreground(ed) process
-            if (processEx != null && !processEx.IsIgnored && !processEx.IsSuspended())
+            if (processEx != null && processEx.Filter == ProcessEx.ProcessFilter.None && !processEx.IsSuspended())
                 ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
         }
 
         private static void ProcessManager_ProcessStarted(ProcessEx processEx, bool startup)
         {
             if (!startup)
-                return;
-
-            if (!IsEnabled)
                 return;
 
             // do not set process QoS to Eco if is already in foreground
@@ -157,7 +151,7 @@ namespace HandheldCompanion.Managers
                 if (processEx == foregroundProcess)
                     continue;
 
-                if (processEx.IsIgnored || processEx.IsSuspended())
+                if (processEx.Filter != ProcessEx.ProcessFilter.None || processEx.IsSuspended())
                     continue;
 
                 ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.Eco);
@@ -166,12 +160,15 @@ namespace HandheldCompanion.Managers
 
         public static void RestoreDefaultEfficiency()
         {
-            foreach (ProcessEx processEx in ProcessManager.GetProcesses().Where(item => !item.IsIgnored && !item.IsSuspended()))
+            foreach (ProcessEx processEx in ProcessManager.GetProcesses().Where(item => item.Filter == ProcessEx.ProcessFilter.None && !item.IsSuspended()))
                 ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
         }
 
         public static void ToggleEfficiencyMode(int pId, QualityOfServiceLevel level, ProcessEx parent = null)
         {
+            if (!IsEnabled)
+                return;
+
             bool result = false;
             IntPtr hProcess = OpenProcess((uint)(ProcessAccessFlags.QueryLimitedInformation | ProcessAccessFlags.SetInformation), false, (uint)pId);
 

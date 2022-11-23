@@ -10,7 +10,7 @@
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Version>0.12.4.0</Version>
+    <Version>0.13.0.0</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
@@ -430,13 +430,13 @@
     <None Update="Models\AYANEO 2021\ShoulderButtonRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO 2021\WFB-Esc.obj">
+    <None Update="models\AYANEO 2021\OEM2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO 2021\WFB-H.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO 2021\WFB-KB.obj">
+    <None Update="models\AYANEO 2021\OEM3.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO 2021\Start.obj">
@@ -451,7 +451,7 @@
     <None Update="Models\AYANEO 2021\Back.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO 2021\WFB-Win.obj">
+    <None Update="models\AYANEO 2021\OEM1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO Air\B1-Letter.obj">
@@ -679,10 +679,10 @@
     <None Update="Models\AYANEO NEXT\Start.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO NEXT\WFB-1.obj">
+    <None Update="Models\AYANEO NEXT\OEM1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO NEXT\WFB-2.obj">
+    <None Update="Models\AYANEO NEXT\OEM2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO NEXT\X.obj">

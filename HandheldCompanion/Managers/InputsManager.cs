@@ -8,7 +8,6 @@ using HandheldCompanion.Views;
 using PrecisionTiming;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -594,10 +593,11 @@ namespace HandheldCompanion.Managers
             if (inputsChord == null)
                 inputsChord = new InputsChord();
 
-            switch(currentType)
+            switch (currentType)
             {
                 case ListenerType.Default:
                 case ListenerType.Output:
+                case ListenerType.UI:
                     Triggers[currentHotkey.Listener] = new InputsChord(inputsChord.GamepadButtons, inputsChord.OutputKeys, inputsChord.InputsType);
                     break;
             }
@@ -631,7 +631,8 @@ namespace HandheldCompanion.Managers
         {
             string listener = hotkey.inputsHotkey.Listener;
 
-            Triggers.Add(listener, hotkey.inputsChord);
+            if (!Triggers.ContainsKey(listener))
+                Triggers.Add(listener, hotkey.inputsChord);
         }
 
         internal static void InvokeTrigger(Hotkey hotkey, bool IsKeyDown, bool IsKeyUp)

@@ -30,6 +30,9 @@ namespace HandheldCompanion.Views.QuickPages
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
+
+            GPUSlider.Minimum = MainWindow.handheldDevice.GfxClock[0];
+            GPUSlider.Maximum = MainWindow.handheldDevice.GfxClock[1];
         }
 
         private void HotkeysManager_CommandExecuted(string listener)

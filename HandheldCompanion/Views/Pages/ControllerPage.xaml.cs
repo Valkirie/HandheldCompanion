@@ -41,6 +41,9 @@ namespace HandheldCompanion.Views.Pages
             foreach (HIDmode mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.NoController))
                 cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
 
+            foreach (HIDstatus status in ((HIDstatus[])Enum.GetValues(typeof(HIDstatus))))
+                cB_ServiceSwitch.Items.Add(EnumUtils.GetDescriptionFromEnumValue(status));
+
             PipeClient.ServerMessage += OnServerMessage;
             MainWindow.serviceManager.Updated += OnServiceUpdate;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
@@ -61,10 +64,6 @@ namespace HandheldCompanion.Views.Pages
             {
                 switch (name)
                 {
-                    case "HIDmode":
-                        cB_HidMode.SelectedIndex = Convert.ToInt32(value);
-                        cB_HidMode_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
-                        break;
                     case "HIDcloaked":
                         Toggle_Cloaked.IsOn = Convert.ToBoolean(value);
                         break;
@@ -102,7 +101,6 @@ namespace HandheldCompanion.Views.Pages
                     isLoading = false;
                     break;
                 case ServiceControllerStatus.Stopped:
-                    controllerStatus = HIDstatus.Disconnected;
                     isLoading = false;
                     isConnected = false;
                     break;
@@ -118,7 +116,12 @@ namespace HandheldCompanion.Views.Pages
                     isLoading = false;
                     break;
             }
-            UpdateMainGrid();
+
+            this.Dispatcher.Invoke(() =>
+            {
+                navLoad.Visibility = isLoading ? Visibility.Visible : Visibility.Hidden;
+                ControllerGrid.IsEnabled = isConnected && !isLoading;
+            });
         }
 
         private void ControllerUnplugged(IController Controller)
@@ -207,9 +210,9 @@ namespace HandheldCompanion.Views.Pages
             this.Dispatcher.Invoke(() =>
             {
                 cB_HidMode.SelectedIndex = (int)controllerMode;
-                ControllerGrid.Background = uniformToFillBrush;
+                cB_ServiceSwitch.SelectedIndex = (int)controllerStatus;
 
-                B_ServiceSwitch.Content = controllerStatus == HIDstatus.Connected ? Properties.Resources.ControllerPage_Disconnect : Properties.Resources.ControllerPage_Connect;
+                ControllerGrid.Background = uniformToFillBrush;
             });
         }
 
@@ -224,42 +227,28 @@ namespace HandheldCompanion.Views.Pages
             }
         }
 
-        private void UpdateMainGrid()
-        {
-            // threaded call to update UI
-            this.Dispatcher.Invoke(() =>
-            {
-                navLoad.Visibility = isLoading ? Visibility.Visible : Visibility.Hidden;
-
-                ControllerGrid.IsEnabled = isConnected && !isLoading;
-
-                UpdateController();
-            });
-        }
-
         public void UpdateSettings(Dictionary<string, string> args)
         {
-            foreach (KeyValuePair<string, string> pair in args)
+            this.Dispatcher.Invoke(() =>
             {
-                string name = pair.Key;
-                string property = pair.Value;
-
-                switch (name)
+                foreach (KeyValuePair<string, string> pair in args)
                 {
-                    case "HIDmode":
-                        controllerMode = (HIDmode)Enum.Parse(typeof(HIDmode), property);
-                        UpdateController();
-                        break;
-                    case "HIDstatus":
-                        controllerStatus = (HIDstatus)Enum.Parse(typeof(HIDstatus), property);
-                        UpdateController();
-                        break;
+                    string name = pair.Key;
+                    string property = pair.Value;
+
+                    switch (name)
+                    {
+                        case "HIDmode":
+                            cB_HidMode.SelectedIndex = (int)Enum.Parse(typeof(HIDmode), property);
+                            break;
+                        case "HIDstatus":
+                            cB_ServiceSwitch.SelectedIndex = (int)Enum.Parse(typeof(HIDstatus), property);
+                            break;
+                    }
                 }
-            }
+            });
 
             hasSettings = true;
-
-            UpdateMainGrid();
         }
 
         private void cB_HidMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -276,16 +265,14 @@ namespace HandheldCompanion.Views.Pages
             PipeClient.SendMessage(settings);
 
             UpdateController();
-
-            if (!SettingsManager.IsInitialized)
-                return;
-
-            SettingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
         }
 
-        private void B_ServiceSwitch_Click(object sender, RoutedEventArgs e)
+        private void cB_ServiceSwitch_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            controllerStatus = controllerStatus == HIDstatus.Connected ? HIDstatus.Disconnected : HIDstatus.Connected;
+            if (cB_HidMode.SelectedIndex == -1)
+                return;
+
+            controllerStatus = (HIDstatus)cB_ServiceSwitch.SelectedIndex;
 
             PipeClientSettings settings = new PipeClientSettings("HIDstatus", controllerStatus);
             PipeClient.SendMessage(settings);

@@ -42,7 +42,7 @@ namespace HandheldCompanion.Managers
         #endregion
 
         public static Profile currentProfile = new();
-        private static string Path;
+        public static string Path;
         private static bool IsInitialized;
 
         static ProfileManager()
@@ -201,14 +201,12 @@ namespace HandheldCompanion.Managers
 
                 LogManager.LogDebug("Profile {0} applied", profile.name);
 
-                if (profile.isDefault)
-                {
-                    // inform service
-                    PipeClient.SendMessage(new PipeClientProfile { profile = profile, backgroundTask = true });
+                // inform service
+                PipeClient.SendMessage(new PipeClientProfile { profile = profile, backgroundTask = true });
 
-                    // do not update default profile path
+                // do not update default profile path
+                if (profile.isDefault)
                     return;
-                }
 
                 // send toast
                 // todo: localize me
@@ -340,7 +338,7 @@ namespace HandheldCompanion.Managers
             return ProfileErrorCode.None;
         }
 
-        public static void UpdateOrCreateProfile(Profile profile, bool backgroundtask = true, bool fullUpdate = true)
+        public static void UpdateOrCreateProfile(Profile profile, bool backgroundtask = true, bool fullUpdate = true, bool serialize = true)
         {
             // refresh error code
             profile.error = SanitizeProfile(profile);
@@ -374,6 +372,10 @@ namespace HandheldCompanion.Managers
                 // update cloaking
                 UpdateProfileCloaking(profile);
             }
+
+            // serialize
+            if (serialize)
+                SerializeProfile(profile);
         }
 
         public static void UpdateProfileCloaking(Profile profile)

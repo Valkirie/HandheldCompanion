@@ -32,7 +32,7 @@ namespace ControllerService
         // devices vars
         public static Device handheldDevice;
 
-        public static string CurrentExe, CurrentPath, CurrentPathDep;
+        public static string CurrentPath, CurrentPathDep;
         public static string CurrentTag;
         public static int CurrentOverlayStatus = 2;
 
@@ -59,7 +59,6 @@ namespace ControllerService
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
 
             // paths
-            CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
             CurrentPathDep = Path.Combine(CurrentPath, "dependencies");
 
@@ -88,9 +87,6 @@ namespace ControllerService
                 LogManager.LogCritical("ViGEm is missing. Please get it from: {0}", "https://github.com/ViGEm/ViGEmBus/releases");
                 throw new InvalidOperationException();
             }
-
-            // initialize HidHide
-            HidHide.RegisterApplication(CurrentExe);
 
             // initialize PipeServer
             PipeServer.Initialize("ControllerService");
@@ -256,10 +252,6 @@ namespace ControllerService
         {
             switch (message.code)
             {
-                case PipeCode.FORCE_SHUTDOWN:
-                    HidHide.SetCloaking(false);
-                    break;
-
                 case PipeCode.CLIENT_PROFILE:
                     PipeClientProfile profile = (PipeClientProfile)message;
                     ProfileUpdated(profile.profile, profile.backgroundTask);

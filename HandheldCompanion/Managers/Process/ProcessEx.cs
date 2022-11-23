@@ -15,6 +15,13 @@ namespace HandheldCompanion.Managers
 {
     public class ProcessEx
     {
+        public enum ProcessFilter
+        {
+            None = 0,
+            Bypassed = 1,
+            Silenced = 2,
+        }
+
         public Process Process;
         public ProcessThread MainThread;
 
@@ -28,7 +35,7 @@ namespace HandheldCompanion.Managers
         public string Name;
         public string Executable;
         public string Path;
-        public bool IsIgnored;
+        public ProcessFilter Filter;
 
         private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
 
@@ -277,7 +284,8 @@ namespace HandheldCompanion.Managers
             processStackPanel.Children.Add(new Separator()
             {
                 Margin = new Thickness(-50, 0, -20, 0),
-                Background = Application.Current.FindResource("SystemControlBackgroundChromeMediumBrush") as Brush
+                Background = Application.Current.FindResource("SystemControlBackgroundChromeMediumBrush") as Brush,
+                Opacity = 0.25
             });
 
             Grid row2 = new Grid();

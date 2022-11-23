@@ -83,7 +83,8 @@ namespace HandheldCompanion.Managers
                         break;
                 }
 
-                Hotkeys.Add(hotkey.hotkeyId, hotkey);
+                if (!Hotkeys.ContainsKey(hotkey.hotkeyId))
+                    Hotkeys.Add(hotkey.hotkeyId, hotkey);
             }
 
             // process hotkeys types
@@ -94,7 +95,7 @@ namespace HandheldCompanion.Managers
             {
                 HotkeyCreated?.Invoke(hotkey);
 
-                switch(hotkey.inputsHotkey.hotkeyType)
+                switch (hotkey.inputsHotkey.hotkeyType)
                 {
                     case InputsHotkeyType.UI:
                         hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.UI);
@@ -171,16 +172,16 @@ namespace HandheldCompanion.Managers
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                Hotkey hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
+                listener = listener.TrimEnd(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' });
+                var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener));
+                foreach (Hotkey hotkey in hotkeys)
+                {
+                    hotkey.StopListening(inputs, type);
 
-                if (hotkey is null)
-                    return;
-
-                hotkey.StopListening(inputs, type);
-
-                // overwrite current file
-                SerializeHotkey(hotkey, true);
-                HotkeyUpdated?.Invoke(hotkey);
+                    // overwrite current file
+                    SerializeHotkey(hotkey, true);
+                    HotkeyUpdated?.Invoke(hotkey);
+                }
             }));
         }
 
@@ -226,17 +227,22 @@ namespace HandheldCompanion.Managers
 
         public static void TriggerRaised(string listener, InputsChord input, bool IsKeyDown, bool IsKeyUp)
         {
-            ProcessEx fProcess = ProcessManager.GetForegroundProcess();
-
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            listener = listener.TrimEnd(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' });
+            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener));
+            
+            foreach(Hotkey hotkey in hotkeys)
             {
-                Hotkey hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    hotkey.Highlight();
+                }));
 
-                if (hotkey is null)
+                // These are special shortcut keys with no related events
+                if (hotkey == hotkeys.Last() && hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.UI)
                     return;
+            }
 
-                hotkey.Highlight();
-            }));
+            ProcessEx fProcess = ProcessManager.GetForegroundProcess();
 
             try
             {
@@ -255,14 +261,14 @@ namespace HandheldCompanion.Managers
                         Shell.ToggleDesktop();
                         break;
                     case "shortcutESC":
-                        if (fProcess != null && !fProcess.IsIgnored)
+                        if (fProcess != null && fProcess.Filter == ProcessEx.ProcessFilter.None)
                         {
                             ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
                             InputsManager.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
-                        if (fProcess != null && !fProcess.IsIgnored)
+                        if (fProcess != null && fProcess.Filter == ProcessEx.ProcessFilter.None)
                         {
                             var Placement = ProcessUtils.GetPlacement(fProcess.MainWindowHandle);
 
@@ -292,7 +298,7 @@ namespace HandheldCompanion.Managers
                         {
                             var sProcess = ProcessManager.GetSuspendedProcess();
 
-                            if (sProcess is null || sProcess.IsIgnored)
+                            if (sProcess is null || sProcess.Filter != ProcessEx.ProcessFilter.None)
                                 break;
 
                             if (sProcess.IsSuspended())

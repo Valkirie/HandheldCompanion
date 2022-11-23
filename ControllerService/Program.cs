@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -6,6 +7,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using static ControllerCommon.WinAPI;
 
 namespace ControllerService
 {
@@ -13,6 +15,10 @@ namespace ControllerService
     {
         public static void Main(string[] args)
         {
+            // force high priority
+            using (Process process = Process.GetCurrentProcess())
+                SetPriorityClass(process.Handle, (int)PriorityClass.HIGH_PRIORITY_CLASS);
+
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();

@@ -19,7 +19,7 @@
         <ui:SimpleStackPanel Spacing="2">
             <!-- Header -->
             <Border                      
-                        Padding="15,12,15,12"
+                        Padding="15,6,15,6"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
@@ -43,40 +43,47 @@
 
             <!-- TDP Sustained -->
             <Border
-                Padding="15,12,15,12"
+                Padding="15,6,15,6"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                    <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" IsManipulationEnabled="True" />
-                    <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                    <Slider Name="TDPSustainedSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-					ValueChanged="TDPSustainedSlider_ValueChanged"
-					SmallChange="1" LargeChange="5"/>
-                </DockPanel>
+                <StackPanel>
+                    <TextBlock Width="62" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{x:Static resx:Resources.QuickPerformancePage_TDPSustained}" />
+
+                    <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                        <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" IsManipulationEnabled="True" />
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
+                        <Slider Name="TDPSustainedSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+					    ValueChanged="TDPSustainedSlider_ValueChanged"
+					    SmallChange="1" LargeChange="5"/>
+                    </DockPanel>
+                </StackPanel>
             </Border>
 
             <!-- TDP Boost -->
             <Border
-                Padding="15,12,15,12"
+                Padding="15,6,15,6"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                    <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
-                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                    <Slider Name="TDPBoostSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-					ValueChanged="TDPBoostSlider_ValueChanged"
-					SmallChange="1" LargeChange="5" 
-                    />
-                </DockPanel>
+                <StackPanel>
+                    <TextBlock Width="62" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{x:Static resx:Resources.QuickPerformancePage_TDPBoost}" />
+                    
+                    <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                        <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
+                        <Slider Name="TDPBoostSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+					    ValueChanged="TDPBoostSlider_ValueChanged"
+					    SmallChange="1" LargeChange="5"/>
+                    </DockPanel>
+                </StackPanel>
             </Border>
 
             <!-- Warning -->
             <Border
                 Name="TDPWarning"
                 Background="{DynamicResource AccentAcrylicBackgroundFillColorBaseBrush}"
-                Padding="15,2,15,2"
+                Padding="15,6,15,6"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Visibility="Collapsed">
 
@@ -95,10 +102,13 @@
                 </Grid>
             </Border>
         </ui:SimpleStackPanel>
+        
+        <!-- Separator -->
+        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
         <!-- Manual GPU Clock Control -->
         <Border
-            Padding="15,12,15,12"
+            Padding="15,6,15,6"
             CornerRadius="{DynamicResource ControlCornerRadius}">
 
             <Grid>
@@ -122,24 +132,26 @@
 
         <!-- Content -->
         <Border
-                Padding="15,12,15,12"
+                Padding="15,6,15,6"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
             <DockPanel Grid.Column="1" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                 <TextBlock Width="30" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}" />
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_GPUUnit}" />
-                <Slider Name="GPUSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="50" Minimum="100" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+                <Slider Name="GPUSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" TickFrequency="50" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 				ValueChanged="GPUSlider_ValueChanged" />
             </DockPanel>
-
         </Border>
+
+        <!-- Separator -->
+        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
         <!-- Power Mode -->
         <ui:SimpleStackPanel Spacing="6">
             <!-- Header -->
             <Border
-                Padding="15,12,15,12"
+                Padding="15,6,15,6"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
@@ -161,7 +173,7 @@
 
             <!-- Content -->
             <Border
-                Padding="15,12,15,12"
+                Padding="15,6,15,6"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <DockPanel Grid.Column="1">

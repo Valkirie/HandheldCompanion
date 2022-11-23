@@ -7,12 +7,9 @@ namespace HandheldCompanion.Models
     internal class ModelAYANEO2021 : Model
     {
         // Specific groups (move me)
-        Model3DGroup WFBEsc;
         Model3DGroup WFBH;
-        Model3DGroup WFBKB;
         Model3DGroup WFBRGB;
         Model3DGroup WFBTM;
-        Model3DGroup WFBWin;
         Model3DGroup LeftShoulderMiddle;
         Model3DGroup RightShoulderMiddle;
         Model3DGroup Screen;
@@ -43,12 +40,9 @@ namespace HandheldCompanion.Models
             UpwardVisibilityRotationPointRight = new Vector3D(93.32, -10.5f, 54.05f);
 
             // load model(s)
-            WFBEsc = modelImporter.Load($"models/{ModelName}/WFB-Esc.obj");
             WFBH = modelImporter.Load($"models/{ModelName}/WFB-H.obj");
-            WFBKB = modelImporter.Load($"models/{ModelName}/WFB-KB.obj");
             WFBRGB = modelImporter.Load($"models/{ModelName}/WFB-RGB.obj");
             WFBTM = modelImporter.Load($"models/{ModelName}/WFB-TM.obj");
-            WFBWin = modelImporter.Load($"models/{ModelName}/WFB-Win.obj");
             LeftShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Middle.obj");
             RightShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Middle.obj");
             Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
@@ -56,12 +50,9 @@ namespace HandheldCompanion.Models
             JoystickRightCover = modelImporter.Load($"models/{ModelName}/Joystick-Right-Cover.obj");
 
             // pull model(s)
-            model3DGroup.Children.Add(WFBEsc);
             model3DGroup.Children.Add(WFBH);
-            model3DGroup.Children.Add(WFBKB);
             model3DGroup.Children.Add(WFBRGB);
             model3DGroup.Children.Add(WFBTM);
-            model3DGroup.Children.Add(WFBWin);
             model3DGroup.Children.Add(LeftShoulderMiddle);
             model3DGroup.Children.Add(RightShoulderMiddle);
             model3DGroup.Children.Add(JoystickLeftCover);

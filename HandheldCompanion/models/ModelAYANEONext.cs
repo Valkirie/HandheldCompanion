@@ -7,8 +7,6 @@ namespace HandheldCompanion.Models
     internal class ModelAYANEONext : Model
     {
         // Specific groups (move me)
-        Model3DGroup WFB1;
-        Model3DGroup WFB2;
         Model3DGroup LeftShoulderMiddle;
         Model3DGroup RightShoulderMiddle;
         Model3DGroup Screen;
@@ -38,8 +36,6 @@ namespace HandheldCompanion.Models
             UpwardVisibilityRotationPointRight = new Vector3D(92.5f, -10.5f, 54.1f);
 
             // load model(s)
-            WFB1 = modelImporter.Load($"models/{ModelName}/WFB-1.obj");
-            WFB2 = modelImporter.Load($"models/{ModelName}/WFB-2.obj");
             LeftShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Left-Middle.obj");
             RightShoulderMiddle = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Middle.obj");
             Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
@@ -47,8 +43,6 @@ namespace HandheldCompanion.Models
             JoystickRightCover = modelImporter.Load($"models/{ModelName}/Joystick-Right-Cover.obj");
 
             // pull model(s)
-            model3DGroup.Children.Add(WFB1);
-            model3DGroup.Children.Add(WFB2);
             model3DGroup.Children.Add(LeftShoulderMiddle);
             model3DGroup.Children.Add(RightShoulderMiddle);
             model3DGroup.Children.Add(JoystickLeftCover);

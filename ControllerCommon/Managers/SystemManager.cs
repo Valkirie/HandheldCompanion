@@ -4,7 +4,6 @@ using ControllerCommon.Utils;
 using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
-using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +11,6 @@ using System.Linq;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using static ControllerCommon.Managers.SystemManager;
 using Attributes = ControllerCommon.Managers.Hid.Attributes;
 using Capabilities = ControllerCommon.Managers.Hid.Capabilities;
 

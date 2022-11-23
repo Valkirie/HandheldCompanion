@@ -17,6 +17,7 @@ namespace ControllerCommon.Devices
             // https://www.amd.com/fr/products/apu/amd-ryzen-7-5825u
             this.nTDP = new double[] { 15, 15, 20 };
             this.cTDP = new double[] { 10, 25 };
+            this.GfxClock = new double[] { 100, 2000 };
 
             this.AngularVelocityAxisSwap = new()
             {
@@ -34,12 +35,14 @@ namespace ControllerCommon.Devices
 
             listeners.Add(new DeviceChord("Custom key BIG",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 },
-                new List<KeyCode>() { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey }
+                new List<KeyCode>() { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey },
+                false, Controllers.ControllerButtonFlags.OEM1
                 ));
 
             listeners.Add(new DeviceChord("Custom key Small",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                new List<KeyCode>() { KeyCode.LWin, KeyCode.D }
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
+                false, Controllers.ControllerButtonFlags.OEM2
                 ));
         }
     }

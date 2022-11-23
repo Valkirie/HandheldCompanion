@@ -13,8 +13,10 @@ namespace ControllerCommon.Devices
             // device specific settings
             this.ProductIllustration = "device_gpd_winmax2";
 
+            // https://ark.intel.com/content/www/us/en/ark/products/226254/intel-core-i71260p-processor-18m-cache-up-to-4-70-ghz.html
             this.nTDP = new double[] { 15, 15, 20 };
             this.cTDP = new double[] { 15, 28 };
+            this.GfxClock = new double[] { 100, 1400 };
 
             this.AngularVelocityAxis = new Vector3(1.0f, -1.0f, 1.0f);
             this.AngularVelocityAxisSwap = new()

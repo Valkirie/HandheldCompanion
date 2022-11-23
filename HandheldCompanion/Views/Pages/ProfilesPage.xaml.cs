@@ -1,24 +1,18 @@
 using ControllerCommon;
-using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
-using Gma.System.MouseKeyHook.HotKeys;
 using HandheldCompanion.Managers;
 using Microsoft.Win32;
 using ModernWpf.Controls;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
-using System.Xml.Linq;
-using System.Linq;
 using Page = System.Windows.Controls.Page;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -290,10 +284,7 @@ namespace HandheldCompanion.Views.Pages
                     }
 
                     if (!exists)
-                    {
                         ProfileManager.UpdateOrCreateProfile(profile, false);
-                        ProfileManager.SerializeProfile(profile);
-                    }
                 }
                 catch (Exception ex)
                 {
@@ -346,7 +337,7 @@ namespace HandheldCompanion.Views.Pages
                 UniversalSettings.IsEnabled = true;
 
                 // disable button if is default profile or application is running
-                b_DeleteProfile.IsEnabled = !currentProfile.isDefault && currentProfile.error != ProfileErrorCode.IsRunning;
+                b_DeleteProfile.IsEnabled = !currentProfile.isDefault && !currentProfile.isRunning;
                 // prevent user from renaming default profile
                 tB_ProfileName.IsEnabled = !currentProfile.isDefault;
                 // prevent user from setting power settings on default profile
@@ -483,7 +474,6 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.TDP_override = (bool)TDPToggle.IsOn;
 
             ProfileManager.UpdateOrCreateProfile(currentProfile, false);
-            ProfileManager.SerializeProfile(currentProfile);
         }
 
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)
@@ -577,19 +567,18 @@ namespace HandheldCompanion.Views.Pages
 
         private void TriggerCreated(Hotkey hotkey)
         {
-            switch (hotkey.hotkeyId)
+            switch (hotkey.inputsHotkey.Listener)
             {
-                case 50:
+                case "shortcutProfilesPage1":
                     {
-                        // pull hotkey
-                        ProfilesPageHotkey = hotkey;
-
-                        // add to UI
-                        Border hotkeyBorder = ProfilesPageHotkey.GetHotkey();
+                        Border hotkeyBorder = hotkey.GetHotkey();
                         if (hotkeyBorder is null || hotkeyBorder.Parent != null)
                             return;
 
-                        UMC_Activator.Children.Add(hotkeyBorder);
+                        // pull hotkey
+                        ProfilesPageHotkey = hotkey;
+
+                        this.UMC_Activator.Children.Add(hotkeyBorder);
                     }
                     break;
             }
@@ -597,18 +586,11 @@ namespace HandheldCompanion.Views.Pages
 
         private void TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
         {
-            Hotkey hotkey = HotkeysManager.Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(listener)).FirstOrDefault();
-
-            if (hotkey is null)
-                return;
-
-            switch (hotkey.hotkeyId)
+            switch(listener)
             {
-                case 50:
-                    {
-                        // update profile
-                        currentProfile.umc_trigger = inputs.GamepadButtons;
-                    }
+                case "shortcutProfilesPage1":
+                case "shortcutProfilesPage2":
+                    currentProfile.umc_trigger = inputs.GamepadButtons;
                     break;
             }
         }

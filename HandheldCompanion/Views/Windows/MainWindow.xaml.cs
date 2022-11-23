@@ -76,6 +76,9 @@ namespace HandheldCompanion.Views
             fileVersionInfo = _fileVersionInfo;
             CurrentWindow = this;
 
+            // get process
+            Process process = Process.GetCurrentProcess();
+
             // initialize splash screen
 #if !DEBUG
                 SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
@@ -117,7 +120,7 @@ namespace HandheldCompanion.Views
             notifyIcon.ContextMenuStrip.Items.Add(menuItemExit);
 
             // paths
-            CurrentExe = Process.GetCurrentProcess().MainModule.FileName;
+            CurrentExe = process.MainModule.FileName;
             CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
             CurrentPathService = Path.Combine(CurrentPath, "ControllerService.exe");
 
@@ -133,6 +136,7 @@ namespace HandheldCompanion.Views
 
             // initialize title
             this.Title += $" ({fileVersionInfo.FileVersion})";
+            this.Title += " (BETA)";
 
             // initialize device
             handheldDevice = Device.GetDefault();
@@ -401,8 +405,6 @@ namespace HandheldCompanion.Views
                     case "DSUip":
                         break;
                     case "DSUport":
-                        break;
-                    case "HIDmode":
                         break;
                 }
             }

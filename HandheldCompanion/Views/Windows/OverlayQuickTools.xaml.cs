@@ -31,6 +31,7 @@ namespace HandheldCompanion.Views.Windows
         public OverlayQuickTools()
         {
             InitializeComponent();
+            ShowActivated = true;
 
             // create manager(s)
             brightnessControl = new();
