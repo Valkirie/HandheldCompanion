@@ -17,6 +17,7 @@ namespace ControllerCommon.Devices
             // https://www.amd.com/en/products/apu/amd-ryzen-7-6800u 
             this.nTDP = new double[] { 15, 15, 20 };
             this.cTDP = new double[] { 10, 28 };
+            this.GfxClock = new double[] { 100, 2200 };
 
             this.AngularVelocityAxisSwap = new()
             {

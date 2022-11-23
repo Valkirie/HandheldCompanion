@@ -29,6 +29,8 @@ namespace ControllerCommon.Devices
         public double[] nTDP = { 15, 15, 20 };
         // device configurable TDP (down, up)
         public double[] cTDP = { 10, 25 };
+        // device GfxClock frequency limits
+        public double[] GfxClock = { 100, 1800 };
 
         public Vector3 AngularVelocityAxis = new Vector3(1.0f, 1.0f, 1.0f);
         public Dictionary<char, char> AngularVelocityAxisSwap = new()

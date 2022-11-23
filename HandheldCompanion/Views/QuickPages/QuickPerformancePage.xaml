@@ -139,7 +139,7 @@
             <DockPanel Grid.Column="1" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                 <TextBlock Width="30" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}" />
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_GPUUnit}" />
-                <Slider Name="GPUSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="1800" TickFrequency="50" Minimum="100" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+                <Slider Name="GPUSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" TickFrequency="50" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 				ValueChanged="GPUSlider_ValueChanged" />
             </DockPanel>
         </Border>
