@@ -284,7 +284,8 @@ namespace HandheldCompanion.Managers
             processStackPanel.Children.Add(new Separator()
             {
                 Margin = new Thickness(-50, 0, -20, 0),
-                Background = Application.Current.FindResource("SystemControlBackgroundChromeMediumBrush") as Brush
+                Background = Application.Current.FindResource("SystemControlBackgroundChromeMediumBrush") as Brush,
+                Opacity = 0.25
             });
 
             Grid row2 = new Grid();
