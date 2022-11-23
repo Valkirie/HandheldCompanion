@@ -18,7 +18,7 @@
         <Grid>
             <!-- Header -->
             <Border
-                Padding="15,12,15,12"
+                Padding="15,6,15,6"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
@@ -44,7 +44,7 @@
             <Grid Name="StackProfileToggle">
                 <!-- Header -->
                 <Border
-                    Padding="15,12,15,12"
+                    Padding="15,6,15,6"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
@@ -73,11 +73,11 @@
             <Grid Name="StackProfileUMC">
                 <!-- Header -->
                 <Border
-                    Padding="15,12,15,12"
+                    Padding="15,6,15,6"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
 
-                    <ui:SimpleStackPanel Spacing="10">
+                    <ui:SimpleStackPanel Spacing="6">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition></ColumnDefinition>
@@ -105,7 +105,7 @@
             <Grid Name="StackProfileUMCSettings">
                 <!-- Header -->
                 <Border
-                    Padding="15,12,15,12"
+                    Padding="15,6,15,6"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=UMCToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
@@ -116,7 +116,7 @@
                         </MultiBinding>
                     </Border.IsEnabled>
 
-                    <ui:SimpleStackPanel Spacing="10">
+                    <ui:SimpleStackPanel Spacing="6">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition MinWidth="420"></ColumnDefinition>
@@ -130,7 +130,7 @@
                         </Grid>
 
                         <!-- Content -->
-                        <ui:RadioButtons Margin="6,0,0,0" Name="cB_Input" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="3" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Input_SelectionChanged"/>
+                        <ui:RadioButtons Margin="6,0,0,0" Name="cB_Input" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="2" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Input_SelectionChanged"/>
                     
                         <!-- Separator -->
                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
@@ -148,7 +148,7 @@
                         </Grid>
 
                         <!-- Content -->
-                        <ui:RadioButtons Margin="6,0,0,0" Name="cB_Output" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="3" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Output_SelectionChanged"/>
+                        <ui:RadioButtons Margin="6,0,0,0" Name="cB_Output" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="2" VerticalAlignment="Center" SelectedIndex="0" SelectionChanged="cB_Output_SelectionChanged"/>
 
                         <!-- Separator -->
                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
@@ -166,7 +166,7 @@
                         </Grid>
                         
                         <!-- Content -->
-                        <ui:RadioButtons Margin="6,0,0,0" Name="cB_UMC_MotionDefaultOffOn" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="1"  SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
+                        <ui:RadioButtons Margin="6,0,0,0" Name="cB_UMC_MotionDefaultOffOn" Grid.Column="1" HorizontalAlignment="Left" MaxColumns="2"  SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
                             <RadioButton Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}"></RadioButton>
                             <RadioButton Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}"></RadioButton>
                         </ui:RadioButtons>
@@ -177,7 +177,7 @@
                         <!-- Separator -->
                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
                         
-                        <ui:SimpleStackPanel Spacing="10" Name="GridSensivity">
+                        <ui:SimpleStackPanel Spacing="6" Name="GridSensivity">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition MinWidth="420"></ColumnDefinition>
@@ -209,7 +209,7 @@
                         <!-- Separator -->
                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
-                        <ui:SimpleStackPanel Spacing="10" Name="GridAntiDeadzone">
+                        <ui:SimpleStackPanel Spacing="6" Name="GridAntiDeadzone">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition MinWidth="420"></ColumnDefinition>
@@ -242,7 +242,7 @@
             <ui:SimpleStackPanel Name="StackProfilePower" Spacing="2" IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
                 <!-- Header -->
                 <Border
-                    Padding="15,12,15,12"
+                    Padding="15,6,15,6"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
@@ -266,7 +266,7 @@
 
                 <!-- TDP Sustained -->
                 <Border
-                    Padding="15,12,15,12"
+                    Padding="15,6,15,6"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
@@ -285,7 +285,7 @@
 
                 <!-- TDP Boost -->
                 <Border
-                    Padding="15,0,15,12"
+                    Padding="15,6,15,6"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 

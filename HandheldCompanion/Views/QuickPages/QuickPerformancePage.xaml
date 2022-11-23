@@ -19,7 +19,7 @@
         <ui:SimpleStackPanel Spacing="2">
             <!-- Header -->
             <Border                      
-                        Padding="15,12,15,12"
+                        Padding="15,6,15,6"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
@@ -43,7 +43,7 @@
 
             <!-- TDP Sustained -->
             <Border
-                Padding="15,12,15,12"
+                Padding="15,6,15,6"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
@@ -62,7 +62,7 @@
 
             <!-- TDP Boost -->
             <Border
-                Padding="15,0,15,12"
+                Padding="15,6,15,6"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
@@ -83,7 +83,7 @@
             <Border
                 Name="TDPWarning"
                 Background="{DynamicResource AccentAcrylicBackgroundFillColorBaseBrush}"
-                Padding="15,2,15,2"
+                Padding="15,6,15,6"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Visibility="Collapsed">
 
@@ -108,7 +108,7 @@
 
         <!-- Manual GPU Clock Control -->
         <Border
-            Padding="15,12,15,12"
+            Padding="15,6,15,6"
             CornerRadius="{DynamicResource ControlCornerRadius}">
 
             <Grid>
@@ -132,7 +132,7 @@
 
         <!-- Content -->
         <Border
-                Padding="15,12,15,12"
+                Padding="15,6,15,6"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
@@ -151,7 +151,7 @@
         <ui:SimpleStackPanel Spacing="6">
             <!-- Header -->
             <Border
-                Padding="15,12,15,12"
+                Padding="15,6,15,6"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
@@ -173,7 +173,7 @@
 
             <!-- Content -->
             <Border
-                Padding="15,12,15,12"
+                Padding="15,6,15,6"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <DockPanel Grid.Column="1">
