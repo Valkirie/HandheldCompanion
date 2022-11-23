@@ -7,7 +7,6 @@ using Microsoft.Win32;
 using ModernWpf.Controls;
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -586,7 +585,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
         {
-            switch(listener)
+            switch (listener)
             {
                 case "shortcutProfilesPage1":
                 case "shortcutProfilesPage2":

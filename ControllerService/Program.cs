@@ -1,5 +1,4 @@
-﻿using ControllerCommon;
-using ControllerCommon.Managers;
+﻿using ControllerCommon.Managers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

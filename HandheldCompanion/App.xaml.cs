@@ -1,5 +1,4 @@
-﻿using ControllerCommon;
-using ControllerCommon.Managers;
+﻿using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
@@ -7,7 +6,6 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-using System.Reflection.Metadata;
 using System.Threading;
 using System.Windows;
 using static ControllerCommon.WinAPI;

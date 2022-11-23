@@ -229,8 +229,8 @@ namespace HandheldCompanion.Managers
         {
             listener = listener.TrimEnd(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' });
             var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener));
-            
-            foreach(Hotkey hotkey in hotkeys)
+
+            foreach (Hotkey hotkey in hotkeys)
             {
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
