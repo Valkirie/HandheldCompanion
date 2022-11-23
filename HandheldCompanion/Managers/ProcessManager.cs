@@ -11,7 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation;
 using Windows.System.Diagnostics;
-using static ControllerCommon.WinAPI
+using static ControllerCommon.WinAPI;
 using static HandheldCompanion.Managers.ProcessEx;
 using Timer = System.Timers.Timer;
 
