@@ -177,12 +177,14 @@
 
                             <!-- Content -->
                             <DockPanel Grid.Column="1" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_SensitivityX}" />
                                 <TextBlock Width="30" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityX, Mode=OneWay}" />
                                 <Slider Name="SliderSensitivityX" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3.0" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" SmallChange="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 								ValueChanged="SliderSensitivityX_ValueChanged" />
                             </DockPanel>
                             
                             <DockPanel Grid.Column="1" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_SensitivityY}" />
                                 <TextBlock Width="30" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityY, Mode=OneWay}" />
                                 <Slider Name="SliderSensitivityY" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="0.1" Maximum="3.0" Minimum="0.1" Value="1" TickPlacement="BottomRight" TickFrequency="0.1" SmallChange="0.1" AutoToolTipPrecision="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
 								ValueChanged="SliderSensitivityY_ValueChanged" />
@@ -252,6 +254,7 @@
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                        <TextBlock Width="62" VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPSustained}" />
                         <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" />
                         <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
                         <Slider Name="TDPSustainedSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" TickFrequency="1" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
@@ -267,6 +270,7 @@
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                        <TextBlock Width="62" VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPBoost}" />
                         <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
                         <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
                         <Slider Name="TDPBoostSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" TickFrequency="1" TickPlacement="BottomRight" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"

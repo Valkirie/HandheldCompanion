@@ -48,6 +48,7 @@
                 Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                 <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                    <TextBlock Width="62" VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPSustained}" />
                     <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" IsManipulationEnabled="True" />
                     <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
                     <Slider Name="TDPSustainedSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
@@ -63,6 +64,7 @@
                 Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                 <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                    <TextBlock Width="62" VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPBoost}" />
                     <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
                     <Slider Name="TDPBoostSlider" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="30" TickFrequency="1" TickPlacement="BottomRight" Minimum="5" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"

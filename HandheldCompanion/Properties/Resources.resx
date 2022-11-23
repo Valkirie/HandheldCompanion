@@ -751,6 +751,12 @@
   <data name="ProfilesPage_Roll" xml:space="preserve">
     <value>Roll</value>
   </data>
+  <data name="ProfilesPage_SensitivityX" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="ProfilesPage_SensitivityY" xml:space="preserve">
+    <value>Y</value>
+  </data>
   <data name="ProfilesPage_StyleofInput" xml:space="preserve">
     <value>Style of input</value>
   </data>
@@ -842,6 +848,9 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="QuickPerformancePage_PowerModePerformance" xml:space="preserve">
     <value>Performance</value>
   </data>
+  <data name="QuickPerformancePage_TDPBoost" xml:space="preserve">
+    <value>Boost</value>
+  </data>
   <data name="QuickPerformancePage_TDPLimit" xml:space="preserve">
     <value>Thermal Power (TDP) Limit</value>
   </data>
@@ -850,6 +859,9 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="QuickPerformancePage_TDPOverWrittenWarning" xml:space="preserve">
     <value>Thermal Power Limit is overwritten by a profile</value>
+  </data>
+  <data name="QuickPerformancePage_TDPSustained" xml:space="preserve">
+    <value>Sustained</value>
   </data>
   <data name="QuickPerformancePage_TDPUnitWatt" xml:space="preserve">
     <value> W</value>

@@ -1994,6 +1994,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to X.
+        /// </summary>
+        public static string ProfilesPage_SensitivityX {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SensitivityX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Y.
+        /// </summary>
+        public static string ProfilesPage_SensitivityY {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SensitivityY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Style of input.
         /// </summary>
         public static string ProfilesPage_StyleofInput {
@@ -2265,6 +2283,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Boost.
+        /// </summary>
+        public static string QuickPerformancePage_TDPBoost {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_TDPBoost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Thermal Power (TDP) Limit.
         /// </summary>
         public static string QuickPerformancePage_TDPLimit {
@@ -2288,6 +2315,15 @@ namespace HandheldCompanion.Properties {
         public static string QuickPerformancePage_TDPOverWrittenWarning {
             get {
                 return ResourceManager.GetString("QuickPerformancePage_TDPOverWrittenWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sustained.
+        /// </summary>
+        public static string QuickPerformancePage_TDPSustained {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_TDPSustained", resourceCulture);
             }
         }
         
