@@ -258,7 +258,7 @@ namespace HandheldCompanion.Managers
                     // not ready yet
                     if (CurrentGfxClock == 0)
                     {
-                        Monitor.Exit(cpuLock);
+                        Monitor.Exit(gfxLock);
                         return;
                     }
                 }
@@ -267,7 +267,7 @@ namespace HandheldCompanion.Managers
                     // not ready yet
                     if (CurrentGfxClock == 0)
                     {
-                        Monitor.Exit(cpuLock);
+                        Monitor.Exit(gfxLock);
                         return;
                     }
                 }
@@ -275,7 +275,7 @@ namespace HandheldCompanion.Managers
                 // not ready yet
                 if (StoredGfxClock == 0)
                 {
-                    Monitor.Exit(cpuLock);
+                    Monitor.Exit(gfxLock);
                     return;
                 }
 
