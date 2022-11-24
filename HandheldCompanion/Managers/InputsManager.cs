@@ -203,6 +203,7 @@ namespace HandheldCompanion.Managers
                         return;
 
                     List<KeyCode> chords = chord.chords[IsKeyDown];
+                    LogManager.LogDebug("Released: KeyCodes: {0}, IsKeyDown: {1}", string.Join(',', chords), IsKeyDown);
 
                     if (IsKeyDown)
                         SendChordDown(chords);
