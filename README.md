@@ -1,3 +1,7 @@
+[![Download Latest](https://img.shields.io/github/downloads/Valkirie/HandheldCompanion/latest/total?style=flat-square&color=orange&label=Download%20Latest)](https://github.com/Valkirie/ControllerService/releases/latest)
+[![discord](https://img.shields.io/discord/717181357109018694?color=orange&label=Discord&logo=discord&logoColor=white&style=flat-square)](https://discord.gg/T8RgDkBfxp)
+[![YouTube Channel](https://img.shields.io/youtube/channel/subscribers/UCFLra6QVYJYeaWp2mGaq3Og?style=flat-square&color=orange&label=YouTube%20Channel&logo=youtube&logoColor=white)](https://www.youtube.com/channel/UCFLra6QVYJYeaWp2mGaq3Og)
+
 # Controller Service & Handheld Companion
 
 A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include:
@@ -5,8 +9,6 @@ A combination of a Windows service and a touch interface optimized GUI to increa
 - Virtual controller simulation of [Microsoft Xbox 360 Controller](https://en.wikipedia.org/wiki/Xbox_360_controller) and [Sony DualShock 4 Controller](https://en.wikipedia.org/wiki/DualShock#DualShock_4)
 - Overlay, virtual touchpads and 3D controller model
 - Per application based profile settings system
-
-[Download Latest](https://github.com/Valkirie/ControllerService/releases/latest)
 
 ## Use cases
 A few examples of the most common use cases are:
@@ -21,11 +23,13 @@ A few examples of the most common use cases are:
 The software is built for Windows 10/Windows 11 (x86 and amd64).
 
 ## Supported Devices
+- AOKZOE A1
 - AYA Neo and its different versions
-- AYA Next and its different versions
-- Aya Neo Air and it's different versions
+- AYA Neo Next and its different versions
+- AYA Neo Air and it's different versions
 - ONEXPLAYER MINI and its different versions (Intel, AMD, Gundam)
 - GPD WIN Max 2 (Intel and AMD)
+- GPD Win 3
 
 ## Supported Sensors
 - Bosch BMI160 (and similar)
