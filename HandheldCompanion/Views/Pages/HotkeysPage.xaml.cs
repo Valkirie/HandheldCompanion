@@ -35,6 +35,13 @@ namespace HandheldCompanion.Views.Pages
 
         private void HotkeysManager_HotkeyTypeCreated(InputsHotkey.InputsHotkeyType type)
         {
+            // These are special shortcut keys with no related events
+            switch (type)
+            {
+                case InputsHotkey.InputsHotkeyType.UI:
+                    return;
+            }
+
             this.Dispatcher.Invoke(() =>
             {
                 SimpleStackPanel stackPanel = new()
