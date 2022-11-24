@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -36,11 +37,8 @@ namespace HandheldCompanion.Views.Pages
         private void HotkeysManager_HotkeyTypeCreated(InputsHotkey.InputsHotkeyType type)
         {
             // These are special shortcut keys with no related events
-            switch (type)
-            {
-                case InputsHotkey.InputsHotkeyType.UI:
-                    return;
-            }
+            if (type == InputsHotkey.InputsHotkeyType.UI)
+                return;
 
             this.Dispatcher.Invoke(() =>
             {

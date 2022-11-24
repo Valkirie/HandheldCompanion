@@ -20,6 +20,7 @@ namespace HandheldCompanion.Views.Windows
         private PrecisionTimer UpdateTimer;
 
         private ControllerInput Inputs = new();
+        private ControllerButtonFlags prevButtons;
 
         private Model CurrentModel;
         private OverlayModelMode Modelmode;
@@ -238,30 +239,35 @@ namespace HandheldCompanion.Views.Windows
             if (CurrentModel is null)
                 return;
 
-            this.Dispatcher.Invoke(() =>
-            {
-                GeometryModel3D model = null;
-                foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
-                {
-                    if (!CurrentModel.ButtonMap.ContainsKey(button))
-                        continue;
-
-                    foreach (Model3DGroup modelgroup in CurrentModel.ButtonMap[button])
-                    {
-                        model = (GeometryModel3D)modelgroup.Children.FirstOrDefault();
-
-                        if (model.Material.GetType() != typeof(DiffuseMaterial))
-                            continue;
-
-                        model.Material = Inputs.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
-                        model.BackMaterial = Inputs.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
-                    }
-                }
-            });
-
             // skip virtual controller update if hidden or collapsed
             if (Visibility != Visibility.Visible)
                 return;
+
+            if (prevButtons != Inputs.Buttons)
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    GeometryModel3D model = null;
+                    foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
+                    {
+                        if (!CurrentModel.ButtonMap.ContainsKey(button))
+                            continue;
+
+                        foreach (Model3DGroup modelgroup in CurrentModel.ButtonMap[button])
+                        {
+                            model = (GeometryModel3D)modelgroup.Children.FirstOrDefault();
+
+                            if (model.Material.GetType() != typeof(DiffuseMaterial))
+                                continue;
+
+                            model.Material = Inputs.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
+                            model.BackMaterial = Inputs.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
+                        }
+                    }
+                });
+
+                prevButtons = Inputs.Buttons;
+            }
 
             // update model
             UpdateModelVisual3D();
