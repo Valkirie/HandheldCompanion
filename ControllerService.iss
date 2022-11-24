@@ -255,9 +255,9 @@ begin
   if not Dependency_IsNetCoreInstalled('Microsoft.NETCore.App 7.0.0') then begin
     Dependency_Add('dotnet50' + Dependency_ArchSuffix + '.exe',
       '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
-      '.NET Runtime 7.0.0-rc.2' + Dependency_ArchTitle,
-      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/e6fbeee4-9023-4276-8418-cc28050f4e56/2193f6783d7e03b09b5c0c912d2cff8e/dotnet-runtime-7.0.0-rc.2.22472.3-win-x86.exe',
-	  'https://download.visualstudio.microsoft.com/download/pr/2f425d93-c8e9-4ad5-9996-771cb48d720a/f13436591e1719ff17d3e3e95be8c29f/dotnet-runtime-7.0.0-rc.2.22472.3-win-x64.exe'),
+      '.NET Runtime 7.0.0' + Dependency_ArchTitle,
+      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/75c0d7c7-9f30-46fd-9675-a301f0e051f4/ec04d5cc40aa6537a4af21fad6bf8ba9/dotnet-runtime-7.0.0-win-x86.exe',
+	  'https://download.visualstudio.microsoft.com/download/pr/87bc5966-97cc-498c-8381-bff4c43aafc6/baca88b989e7d2871e989d33a667d8e9/dotnet-runtime-7.0.0-win-x64.exe'),
       '', False, False);
   end;
 end;
@@ -268,9 +268,9 @@ begin
   if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 7.0.0') then begin
     Dependency_Add('dotnet60desktop' + Dependency_ArchSuffix + '.exe',
       '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
-      '.NET Desktop Runtime 7.0.0-rc.2' + Dependency_ArchTitle,
-      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/9d37bfa6-73f1-491c-8c36-e443da3a6c15/2cd00958fe50c8d131f75ac6bc1dc93e/windowsdesktop-runtime-7.0.0-rc.2.22472.13-win-x86.exe',
-	  'https://download.visualstudio.microsoft.com/download/pr/21f395ec-4dcc-463e-aebe-be7290272558/1f05f6b2b8fd7b992947fae43ba45e00/windowsdesktop-runtime-7.0.0-rc.2.22472.13-win-x64.exe'),
+      '.NET Desktop Runtime 7.0.0' + Dependency_ArchTitle,
+      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/d05a833c-2cf9-4d06-89ae-a0f3e10c5c91/c668ff42e23c2f67aa3d80227860585f/windowsdesktop-runtime-7.0.0-win-x86.exe',
+	  'https://download.visualstudio.microsoft.com/download/pr/5b2fbe00-507e-450e-8b52-43ab052aadf2/79d54c3a19ce3fce314f2367cf4e3b21/windowsdesktop-runtime-7.0.0-win-x64.exe'),
       '', False, False);
   end;
 end;
@@ -387,8 +387,8 @@ end;
 ; requires netcorecheck.exe and netcorecheck_x64.exe (see download link below)
 #define UseNetCoreCheck
 #ifdef UseNetCoreCheck
-  #define UseDotNet60  
-  ;#define UseDotNet70
+  ;#define UseDotNet60  
+  #define UseDotNet70
 #endif
 
 #define UseVC2005
@@ -407,7 +407,7 @@ end;
 #define MyBuildId 'HandheldCompanion'
 #define MyAppVersion '0.13.0.0'
 #define MyAppPublisher 'BenjaminLSR'
-#define MyAppCopyright 'Copyright © BenjaminLSR'
+#define MyAppCopyright 'Copyright @ BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/HandheldCompanion'
 #define MyAppExeName "HandheldCompanion.exe"
 #define MySerExeName "ControllerService.exe"

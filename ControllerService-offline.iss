@@ -225,8 +225,8 @@ end;
 #ifdef UseNetCoreCheck
 #endif
 
-#define UseDotNet60
-;#define UseDotNet70
+;#define UseDotNet60
+#define UseDotNet70
 
 #define UseVC2005
 #define UseVC2008
@@ -315,8 +315,8 @@ Source: "vcredist2019_x64.exe"; Flags: dontcopy noencryption
 	#endif
 	
 	#ifdef UseDotNet70
-		Source: "dotnet-runtime-7.0.0-rc.2.22472.3-win-x64.exe"; Flags: dontcopy noencryption
-		Source: "windowsdesktop-runtime-7.0.0-rc.2.22472.13-win-x64.exe"; Flags: dontcopy noencryption
+		Source: "dotnet-runtime-7.0.0-win-x64.exe"; Flags: dontcopy noencryption
+		Source: "windowsdesktop-runtime-7.0.0-win-x64.exe"; Flags: dontcopy noencryption
 	#endif
 #endif
 
