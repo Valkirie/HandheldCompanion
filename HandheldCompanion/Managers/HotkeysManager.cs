@@ -13,14 +13,12 @@ using System.Threading;
 using System.Windows;
 using static HandheldCompanion.Managers.InputsHotkey;
 using static HandheldCompanion.Managers.InputsManager;
-using Shell = Shell32.Shell;
 
 namespace HandheldCompanion.Managers
 {
     public static class HotkeysManager
     {
         private static string Path;
-        private static Shell Shell = new Shell();
 
         public static event HotkeyTypeCreatedEventHandler HotkeyTypeCreated;
         public delegate void HotkeyTypeCreatedEventHandler(InputsHotkeyType type);
@@ -258,7 +256,7 @@ namespace HandheldCompanion.Managers
                         }).Start();
                         break;
                     case "shortcutDesktop":
-                        Shell.ToggleDesktop();
+                        InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
                         break;
                     case "shortcutESC":
                         if (fProcess != null && fProcess.Filter == ProcessEx.ProcessFilter.None)
