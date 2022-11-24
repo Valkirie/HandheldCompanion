@@ -290,6 +290,7 @@ namespace HandheldCompanion.Managers
                         break;
                     case "shortcutGuide":
                         // temporary, move me to remapper !
+                        ControllerManager.buttonMaps.Clear();
                         ControllerManager.buttonMaps[input.GamepadButtons] = ControllerButtonFlags.Special;
                         break;
                     case "suspendResumeTask":
