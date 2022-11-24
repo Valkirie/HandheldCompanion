@@ -336,7 +336,7 @@ namespace HandheldCompanion.Managers
             switch (hotkey.inputsHotkey.Listener)
             {
                 case "shortcutGuide":
-                    ControllerManager.buttonMaps[hotkey.inputsChord.GamepadButtons] = ControllerButtonFlags.None;
+                    ControllerManager.buttonMaps.Remove(hotkey.inputsChord.GamepadButtons);
                     break;
             }
         }

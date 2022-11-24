@@ -260,8 +260,8 @@ namespace HandheldCompanion.Managers
 
         private void ClearButton_Click()
         {
-            InputsManager.ClearListening(this);
             HotkeysManager.ClearHotkey(this);
+            InputsManager.ClearListening(this);
         }
 
         public void StartListening(ListenerType type)
