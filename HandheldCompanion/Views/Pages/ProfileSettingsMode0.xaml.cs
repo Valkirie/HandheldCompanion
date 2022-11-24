@@ -276,7 +276,7 @@ namespace HandheldCompanion.Views.Pages
             switch (listener)
             {
                 case "shortcutProfilesSettingsMode0":
-                    currentProfile.umc_trigger = inputs.GamepadButtons;
+                    currentProfile.aiming_down_sights_activation = inputs.GamepadButtons;
                     break;
             }
         }
