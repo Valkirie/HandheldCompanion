@@ -162,7 +162,6 @@ namespace HandheldCompanion.Views
             ControllerManager.Start();
             InputsManager.Start();
             EnergyManager.Start();
-            SettingsManager.Start();
             HotkeysManager.Start();
             SystemManager.Start();
             ProfileManager.Start();
@@ -171,6 +170,9 @@ namespace HandheldCompanion.Views
             // start manager(s) asynchroneously
             foreach (Manager manager in _managers)
                 new Thread(() => { manager.Start(); }).Start();
+
+            // start manager(s) last
+            SettingsManager.Start();
 
             // update Position and Size
             Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("MainWindowHeight"));
