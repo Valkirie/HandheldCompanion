@@ -112,6 +112,9 @@ namespace ControllerCommon.Devices
                     {
                         switch (ProductName)
                         {
+                            case "G1618-03":
+                                device = new GPDWin3();
+                                break;
                             case "G1619-03":
                                 device = new GPDWinMax2Intel();
                                 break;
