@@ -196,6 +196,19 @@ namespace HandheldCompanion.Managers
                         TriggerRaised?.Invoke(key, chord, IsKeyDown, IsKeyUp);
                     }
                 }
+                else
+                {
+                    DeviceChord chord = MainWindow.handheldDevice.listeners.Where(a => a.button == currentChord.GamepadButtons).FirstOrDefault();
+                    if (chord is null)
+                        return;
+
+                    List<KeyCode> chords = chord.chords[IsKeyDown];
+
+                    if (IsKeyDown)
+                        SendChordDown(chords);
+                    else if (IsKeyUp)
+                        SendChordUp(chords);
+                }
             }
             else
             {
@@ -419,6 +432,18 @@ namespace HandheldCompanion.Managers
 
             foreach (VirtualKeyCode key in keys)
                 m_InputSimulator.Keyboard.KeyUp(key);
+        }
+
+        public static void SendChordDown(List<KeyCode> keys)
+        {
+            foreach (KeyCode key in keys)
+                m_InputSimulator.Keyboard.KeyDown((VirtualKeyCode)key);
+        }
+
+        public static void SendChordUp(List<KeyCode> keys)
+        {
+            foreach (KeyCode key in keys)
+                m_InputSimulator.Keyboard.KeyUp((VirtualKeyCode)key);
         }
 
         public static void KeyPress(List<OutputKey> keys)
