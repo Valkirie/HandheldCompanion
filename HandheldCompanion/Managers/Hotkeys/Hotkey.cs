@@ -3,10 +3,13 @@ using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static HandheldCompanion.Managers.InputsManager;
+using static System.Net.Mime.MediaTypeNames;
 using Application = System.Windows.Application;
 
 namespace HandheldCompanion.Managers
@@ -20,6 +23,7 @@ namespace HandheldCompanion.Managers
         public ushort hotkeyId { get; set; }
         public InputsChord inputsChord { get; set; } = new();
         public bool IsPinned { get; set; }
+        public string Name { get; set; }
 
         // HotkeysPage UI
         public Border mainBorder;
@@ -27,8 +31,11 @@ namespace HandheldCompanion.Managers
         public DockPanel mainPanel = new();
         public FontIcon currentIcon;
         public SimpleStackPanel contentPanel;
+
         public TextBlock contentName;
+        public TextBox customName;
         public TextBlock contentDesc;
+
         public SimpleStackPanel buttonPanel;
         public Button inputButton;
         public Button outputButton;
@@ -40,6 +47,9 @@ namespace HandheldCompanion.Managers
         public Button quickButton;
         public FontIcon quickIcon;
         public TextBlock quickName;
+
+        public event UpdatedEventHandler Updated;
+        public delegate void UpdatedEventHandler(Hotkey hotkey);
 
         public Hotkey()
         {
@@ -127,10 +137,17 @@ namespace HandheldCompanion.Managers
 
             contentName = new TextBlock()
             {
-                Text = inputsHotkey.GetName(),
                 TextWrapping = TextWrapping.Wrap,
-                FontSize = 14
+                FontSize = 14,
             };
+
+            customName = new TextBox()
+            {
+                TextWrapping = TextWrapping.Wrap,
+                FontSize = 14,
+                Margin = new Thickness(0, 0, 12, 0)
+            };
+            customName.TextChanged += (sender, e) => customName_Changed();
 
             contentDesc = new TextBlock()
             {
@@ -139,10 +156,6 @@ namespace HandheldCompanion.Managers
                 FontSize = 12
             };
             contentDesc.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-
-            // add elements to content panel
-            contentPanel.Children.Add(contentName);
-            contentPanel.Children.Add(contentDesc);
 
             buttonPanel = new SimpleStackPanel()
             {
@@ -200,10 +213,16 @@ namespace HandheldCompanion.Managers
                 HorizontalAlignment = HorizontalAlignment.Stretch,
             };
 
+            // add elements to content panel
             switch (inputsHotkey.hotkeyType)
             {
                 case InputsHotkey.InputsHotkeyType.Custom:
                     buttonPanel.Children.Add(outputButton);
+                    contentPanel.Children.Add(customName);
+                    break;
+                default:
+                    contentPanel.Children.Add(contentName);
+                    contentPanel.Children.Add(contentDesc);
                     break;
             }
 
@@ -251,6 +270,12 @@ namespace HandheldCompanion.Managers
                 FontSize = 12
             };
 
+            // refresh name
+            if (!string.IsNullOrEmpty(Name))
+                quickName.Text = contentName.Text = customName.Text = Name;
+            else
+                quickName.Text = contentName.Text = customName.Text = inputsHotkey.GetName();
+
             quickPanel.Children.Add(quickButton);
             quickPanel.Children.Add(quickName);
 
@@ -258,8 +283,18 @@ namespace HandheldCompanion.Managers
             Refresh();
         }
 
+        private void customName_Changed()
+        {
+            this.Name = quickName.Text = customName.Text;
+
+            Updated?.Invoke(this);
+        }
+
         private void ClearButton_Click()
         {
+            // restore default name
+            customName.Text = inputsHotkey.GetName();
+
             HotkeysManager.ClearHotkey(this);
             InputsManager.ClearListening(this);
         }

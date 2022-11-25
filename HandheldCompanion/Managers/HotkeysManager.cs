@@ -109,6 +109,8 @@ namespace HandheldCompanion.Managers
                 hotkey.quickButton.PreviewTouchDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
                 hotkey.quickButton.PreviewMouseDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
                 hotkey.quickButton.PreviewMouseUp += (sender, e) => { InputsManager.InvokeTrigger(hotkey, false, true); };
+
+                hotkey.Updated += (hotkey) => SerializeHotkey(hotkey, true);
             }
 
             IsInitialized = true;
@@ -158,7 +160,6 @@ namespace HandheldCompanion.Managers
 
             // overwrite current file
             SerializeHotkey(hotkey, true);
-            HotkeyUpdated?.Invoke(hotkey);
         }
 
         private static int CountPinned()
@@ -180,7 +181,6 @@ namespace HandheldCompanion.Managers
 
                     // overwrite current file
                     SerializeHotkey(hotkey, true);
-                    HotkeyUpdated?.Invoke(hotkey);
                 }
             }));
         }
@@ -223,6 +223,9 @@ namespace HandheldCompanion.Managers
                 string jsonString = JsonSerializer.Serialize(hotkey, options);
                 File.WriteAllText(settingsPath, jsonString);
             }
+
+            // raise event
+            HotkeyUpdated?.Invoke(hotkey);
         }
 
         public static void TriggerRaised(string listener, InputsChord input, bool IsKeyDown, bool IsKeyUp)
