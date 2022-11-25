@@ -58,7 +58,6 @@ namespace HandheldCompanion.Managers
         private static InputsHotkey currentHotkey = new();
 
         private static List<KeyEventArgsExt> BufferKeys = new();
-        private static List<KeyEventArgsExt> CapturedKeys = new();
 
         private static Dictionary<string, InputsChord> Triggers = new();
 
@@ -289,11 +288,6 @@ namespace HandheldCompanion.Managers
             if (currentType == ListenerType.Output)
             {
                 args.SuppressKeyPress = true;
-                if (args.IsKeyUp && args.IsExtendedKey)
-                {
-                    var modifiers = InjectModifiers(args);
-                    CapturedKeys.AddRange(modifiers);
-                }
 
                 // add key to InputsChord
                 currentChord.AddKey(args);
@@ -336,12 +330,6 @@ namespace HandheldCompanion.Managers
                 // add key to buffer
                 BufferKeys.Add(args);
 
-                if (args.IsKeyUp && args.IsExtendedKey)
-                {
-                    var modifiers = InjectModifiers(args);
-                    BufferKeys.AddRange(modifiers);
-                }
-
                 // search for matching triggers
                 string buffer_keys = GetChord(BufferKeys);
 
@@ -368,13 +356,6 @@ namespace HandheldCompanion.Managers
                             // spamming
                             if (args.Timestamp - prevTimestamp < TIME_SPAM)
                                 IsKeyUnexpected = true;
-                        }
-
-                        // only intercept inputs if not too close
-                        if (!IsKeyUnexpected)
-                        {
-                            CapturedKeys.AddRange(BufferKeys);
-                            CapturedKeys.Clear(); // todo: remove me later
                         }
 
                         // clear buffer
