@@ -568,7 +568,7 @@ namespace HandheldCompanion.Views.Pages
         {
             switch (hotkey.inputsHotkey.Listener)
             {
-                case "shortcutProfilesPage1":
+                case "shortcutProfilesPage@":
                     {
                         Border hotkeyBorder = hotkey.GetHotkey();
                         if (hotkeyBorder is null || hotkeyBorder.Parent != null)
@@ -587,8 +587,8 @@ namespace HandheldCompanion.Views.Pages
         {
             switch (listener)
             {
-                case "shortcutProfilesPage1":
-                case "shortcutProfilesPage2":
+                case "shortcutProfilesPage@":
+                case "shortcutProfilesPage@@":
                     currentProfile.umc_trigger = inputs.GamepadButtons;
                     break;
             }
