@@ -36,25 +36,29 @@ namespace HandheldCompanion.Managers
             TaskServ = new TaskService();
             task = TaskServ.FindTask(ServiceName);
 
-            if (task != null)
+            try
             {
-                task.Definition.Actions.Clear();
-                task.Definition.Actions.Add(new ExecAction(ServiceExecutable));
-                task = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, task.Definition);
+                if (task != null)
+                {
+                    task.Definition.Actions.Clear();
+                    task.Definition.Actions.Add(new ExecAction(ServiceExecutable));
+                    task = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, task.Definition);
+                }
+                else
+                {
+                    taskDefinition = TaskService.Instance.NewTask();
+                    taskDefinition.Principal.RunLevel = TaskRunLevel.Highest;
+                    taskDefinition.Principal.LogonType = TaskLogonType.InteractiveToken;
+                    taskDefinition.Settings.DisallowStartIfOnBatteries = false;
+                    taskDefinition.Settings.StopIfGoingOnBatteries = false;
+                    taskDefinition.Settings.ExecutionTimeLimit = TimeSpan.Zero;
+                    taskDefinition.Settings.Enabled = false;
+                    taskDefinition.Triggers.Add(new LogonTrigger());
+                    taskDefinition.Actions.Add(new ExecAction(ServiceExecutable));
+                    task = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, taskDefinition);
+                }
             }
-            else
-            {
-                taskDefinition = TaskService.Instance.NewTask();
-                taskDefinition.Principal.RunLevel = TaskRunLevel.Highest;
-                taskDefinition.Principal.LogonType = TaskLogonType.InteractiveToken;
-                taskDefinition.Settings.DisallowStartIfOnBatteries = false;
-                taskDefinition.Settings.StopIfGoingOnBatteries = false;
-                taskDefinition.Settings.ExecutionTimeLimit = TimeSpan.Zero;
-                taskDefinition.Settings.Enabled = false;
-                taskDefinition.Triggers.Add(new LogonTrigger());
-                taskDefinition.Actions.Add(new ExecAction(ServiceExecutable));
-                task = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, taskDefinition);
-            }
+            catch { }
 
             base.Start();
         }
