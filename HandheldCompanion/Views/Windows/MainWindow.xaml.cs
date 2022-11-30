@@ -622,6 +622,9 @@ namespace HandheldCompanion.Views
             settingsPage.Page_Closed();
             overlayPage.Page_Closed();
             hotkeysPage.Page_Closed();
+
+            // force kill application
+            Environment.Exit(0);
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
