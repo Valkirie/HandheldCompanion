@@ -200,16 +200,16 @@ namespace HandheldCompanion.Managers
                             continue;
                     }
 
-                    // not ready yet
-                    if (CurrentTDP[idx] == 0)
-                        break;
+                    double ReadTDP = CurrentTDP[idx];
 
                     // we're in degraded condition
-                    if (CurrentTDP[idx] < 0)
+                    if (ReadTDP == 0 || ReadTDP < byte.MinValue || ReadTDP > byte.MaxValue)
                         cpuWatchdog.Interval = INTERVAL_DEGRADED;
+                    else
+                        cpuWatchdog.Interval = INTERVAL_DEFAULT;
 
                     // only request an update if current limit is different than stored
-                    if (CurrentTDP[idx] != TDP)
+                    if (ReadTDP != TDP)
                         processor.SetTDPLimit(type, TDP);
                     else
                         TDPdone = true;
