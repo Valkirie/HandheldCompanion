@@ -1,86 +1,125 @@
 ﻿using ControllerCommon.Managers;
 using ControllerCommon.Utils;
-using Nefarius.Drivers.HidHide;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using static PInvoke.Kernel32;
 
 namespace ControllerCommon
 {
     public static class HidHide
     {
-        private static HidHideControlService service;
+        private static Process process;
+
         static HidHide()
         {
-            service = new HidHideControlService();
+            // verifying HidHide is installed
+            string path = RegistryUtils.GetHKLM(@"SOFTWARE\Nefarius Software Solutions e.U.\HidHide", "Path");
+            if (!string.IsNullOrEmpty(path))
+                path = Path.Combine(path, "x64", "HidHideCLI.exe");
 
-            if (!service.IsInstalled)
+            if (!File.Exists(path))
             {
                 LogManager.LogWarning("HidHide is missing. Application behavior will be degraded. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
                 throw new InvalidOperationException();
             }
-        }
 
-        public static IReadOnlyList<string> GetRegisteredApplications()
-        {
-            return service.ApplicationPaths;
-        }
-
-        public static IReadOnlyList<string> GetRegisteredDevices()
-        {
-            return service.BlockedInstanceIds;
-        }
-
-        public static void UnregisterApplication(string fileName)
-        {
-            try
+            process = new Process
             {
-                service.RemoveApplicationPath(fileName);
-                LogManager.LogInformation("HideDevice RemoveApplicationPath: {0}", fileName);
-            }
-            catch { }
+                StartInfo =
+                {
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    FileName = path,
+                    Verb = "runas"
+                }
+            };
         }
 
-        public static void RegisterApplication(string fileName)
+        public static List<string> GetRegisteredApplications()
         {
-            try
+            process.StartInfo.Arguments = $"--app-list";
+            process.Start();
+            process.WaitForExit();
+
+            string standard_output;
+            List<string> whitelist = new List<string>();
+            while ((standard_output = process.StandardOutput.ReadLine()) != null)
             {
-                service.AddApplicationPath(fileName);
-                LogManager.LogInformation("HideDevice AddApplicationPath: {0}", fileName);
+                if (!standard_output.Contains("app-reg"))
+                    break;
+
+                // --app-reg \"C:\\Program Files\\Nefarius Software Solutions e.U\\HidHideCLI\\HidHideCLI.exe\"
+                string path = CommonUtils.Between(standard_output, "--app-reg \"", "\"");
+                whitelist.Add(path);
             }
-            catch { }
+            return whitelist;
+        }
+
+        public static List<string> GetRegisteredDevices()
+        {
+            process.StartInfo.Arguments = $"--dev-list";
+            process.Start();
+            process.WaitForExit();
+
+            string standard_output;
+            List<string> devices = new List<string>();
+            while ((standard_output = process.StandardOutput.ReadLine()) != null)
+            {
+                if (!standard_output.Contains("dev-hide"))
+                    break;
+
+                // --app-reg \"C:\\Program Files\\Nefarius Software Solutions e.U\\HidHideCLI\\HidHideCLI.exe\"
+                string path = CommonUtils.Between(standard_output, "--dev-hide \"", "\"");
+                devices.Add(path);
+            }
+            return devices;
+        }
+
+        public static void UnregisterApplication(string path)
+        {
+            process.StartInfo.Arguments = $"--app-unreg \"{path}\"";
+            process.Start();
+            process.WaitForExit();
+            process.StandardOutput.ReadToEnd();
+        }
+
+        public static void RegisterApplication(string path)
+        {
+            process.StartInfo.Arguments = $"--app-reg \"{path}\"";
+            process.Start();
+            process.WaitForExit();
+            process.StandardOutput.ReadToEnd();
         }
 
         public static void SetCloaking(bool status)
         {
-            try
-            {
-                service.IsActive = status;
-                LogManager.LogInformation("HideDevice IsActive: {0}", status);
-            }
-            catch { }
+            process.StartInfo.Arguments = status ? $"--cloak-on" : $"--cloak-off";
+            process.Start();
+            process.WaitForExit();
+            process.StandardOutput.ReadToEnd();
+
+            LogManager.LogInformation("Cloak status set to {0}", status);
         }
 
         public static void UnhidePath(string deviceInstancePath)
         {
-            try
-            {
-                service.RemoveBlockedInstanceId(deviceInstancePath);
-                LogManager.LogInformation("HideDevice RemoveBlockedInstanceId: {0}", deviceInstancePath);
-            }
-            catch { }
+            LogManager.LogInformation("HideDevice unhiding DeviceID: {0}", deviceInstancePath);
+            process.StartInfo.Arguments = $"--dev-unhide \"{deviceInstancePath}\"";
+            process.Start();
+            process.WaitForExit();
+            process.StandardOutput.ReadToEnd();
         }
 
         public static void HidePath(string deviceInstancePath)
         {
-            try
-            {
-                service.AddBlockedInstanceId(deviceInstancePath);
-                LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
-            }
-            catch { }
+            LogManager.LogInformation("HideDevice hiding DeviceID: {0}", deviceInstancePath);
+            process.StartInfo.Arguments = $"--dev-hide \"{deviceInstancePath}\"";
+            process.Start();
+            process.WaitForExit();
+            process.StandardOutput.ReadToEnd();
         }
     }
 }
