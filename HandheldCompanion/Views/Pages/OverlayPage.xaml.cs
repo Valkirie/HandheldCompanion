@@ -5,6 +5,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using Color = System.Windows.Media.Color;
 using ColorConverter = System.Windows.Media.ColorConverter;
 using Page = System.Windows.Controls.Page;
@@ -244,7 +245,18 @@ namespace HandheldCompanion.Views.Pages
         {
             ((Expander)sender).BringIntoView();
         }
+        private void Toggle_MotionActivated_Toggled(object sender, RoutedEventArgs e)
+        {
+            MainWindow.overlayModel.MotionActivated = Toggle_MotionActivated.IsOn;
 
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            // On change of motion activated, reset object alignment
+            MainWindow.overlayModel.FaceCameraObjectAlignment = new Vector3D(0.0d, 0.0d, 0.0d);
+
+            SettingsManager.SetProperty("OverlayMotionActivated", Toggle_MotionActivated.IsOn);
+        }
         private void Toggle_FaceCamera_Toggled(object sender, RoutedEventArgs e)
         {
             MainWindow.overlayModel.FaceCamera = Toggle_FaceCamera.IsOn;

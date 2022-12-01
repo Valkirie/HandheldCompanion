@@ -1036,6 +1036,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Motion.
+        /// </summary>
+        public static string OverlayPage_MotionActivated {
+            get {
+                return ResourceManager.GetString("OverlayPage_MotionActivated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Model will move in accordance with user movements based on sensor information.
+        /// </summary>
+        public static string OverlayPage_MotionActivatedDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_MotionActivatedDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to N64.
         /// </summary>
         public static string OverlayPage_N64Controller {

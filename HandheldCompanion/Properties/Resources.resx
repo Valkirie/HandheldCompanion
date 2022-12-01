@@ -433,6 +433,12 @@
   <data name="OverlayPage_MainTriggerDesc" xml:space="preserve">
     <value>Change 3D controller overlay main trigger</value>
   </data>
+  <data name="OverlayPage_MotionActivated" xml:space="preserve">
+    <value>Motion</value>
+  </data>
+  <data name="OverlayPage_MotionActivatedDesc" xml:space="preserve">
+    <value>Model will move in accordance with user movements based on sensor information</value>
+  </data>
   <data name="OverlayPage_N64Controller" xml:space="preserve">
     <value>N64</value>
   </data>
