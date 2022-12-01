@@ -28,12 +28,12 @@ namespace HandheldCompanion.Views.Windows
 
         private GeometryModel3D model;
 
-        private Vector3D FaceCameraObjectAlignment = new Vector3D(0.0d, 0.0d, 0.0d);
-
-        public Boolean FaceCamera = false;
+        public bool FaceCamera = false;
+        public Vector3D FaceCameraObjectAlignment = new Vector3D(0.0d, 0.0d, 0.0d);
+        public bool MotionActivated = true;
         public Vector3D DesiredAngleDeg = new Vector3D(0, 0, 0);
-        private float q_w = 0.0f, q_x = 0.0f, q_y = 1.0f, q_z = 0.0f;
-        private Vector3D PoseRad = new Vector3D(0, 3.14, 0);
+        private Quaternion DevicePose = new Quaternion(0.0f, 0.0f, 1.0f, 0.0f);
+        private Vector3D DevicePoseRad = new Vector3D(0, 3.14, 0);
 
         // TODO Dummy variables, placeholder and for testing 
         private short MotorLeftPlaceholder;
@@ -202,8 +202,6 @@ namespace HandheldCompanion.Views.Windows
         private RotateTransform3D DeviceRotateTransformFaceCameraZ;
         private RotateTransform3D LeftJoystickRotateTransform;
         private RotateTransform3D RightJoystickRotateTransform;
-        private RotateTransform3D TransformTriggerPositionLeft;
-        private RotateTransform3D TransformTriggerPositionRight;
 
         private void OnServerMessage(PipeMessage message)
         {
@@ -215,18 +213,14 @@ namespace HandheldCompanion.Views.Windows
                         if (this.Visibility != Visibility.Visible)
                             return;
 
+                        // Add return here if motion is not wanted for 3D model
+
                         PipeSensor sensor = (PipeSensor)message;
                         switch (sensor.type)
                         {
                             case SensorType.Quaternion:
-                                q_w = sensor.q_w;
-                                q_x = sensor.q_x;
-                                q_y = sensor.q_y;
-                                q_z = sensor.q_z;
-
-                                PoseRad.X = sensor.x;
-                                PoseRad.Y = sensor.y;
-                                PoseRad.Z = sensor.z;
+                                DevicePose = new Quaternion(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z);
+                                DevicePoseRad = new Vector3D(sensor.x, sensor.y, sensor.z);
                                 break;
                         }
                     }
@@ -514,8 +508,14 @@ namespace HandheldCompanion.Views.Windows
             {
                 Transform3DGroup Transform3DGroupModel = new Transform3DGroup();
 
+                // When motion is disabled, overwrite poses with defaults
+                if (!MotionActivated)
+                {
+                    DevicePose = new Quaternion(0.0f, 0.0f, 1.0f, 0.0f);
+                    DevicePoseRad = new Vector3D(0, 3.14, 0);
+                }
+
                 // Device transformation based on pose
-                Quaternion DevicePose = new Quaternion(q_w, q_x, q_y, q_z);
                 var Ax3DDevicePose = new QuaternionRotation3D(DevicePose);
                 DeviceRotateTransform = new RotateTransform3D(Ax3DDevicePose);
                 Transform3DGroupModel.Children.Add(DeviceRotateTransform);
@@ -524,12 +524,12 @@ namespace HandheldCompanion.Views.Windows
                 Vector3D DiffAngle = new Vector3D(0, 0, 0);
 
                 // Determine diff angles
-                DiffAngle.X = (InputUtils.rad2deg((float)PoseRad.X) - (float)FaceCameraObjectAlignment.X) - (float)DesiredAngleDeg.X;
-                DiffAngle.Y = (InputUtils.rad2deg((float)PoseRad.Y) - (float)FaceCameraObjectAlignment.Y) - (float)DesiredAngleDeg.Y;
-                DiffAngle.Z = (InputUtils.rad2deg((float)PoseRad.Z) - (float)FaceCameraObjectAlignment.Z) - (float)DesiredAngleDeg.Z;
+                DiffAngle.X = (InputUtils.rad2deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X) - (float)DesiredAngleDeg.X;
+                DiffAngle.Y = (InputUtils.rad2deg((float)DevicePoseRad.Y) - (float)FaceCameraObjectAlignment.Y) - (float)DesiredAngleDeg.Y;
+                DiffAngle.Z = (InputUtils.rad2deg((float)DevicePoseRad.Z) - (float)FaceCameraObjectAlignment.Z) - (float)DesiredAngleDeg.Z;
 
                 // Handle wrap around at -180 +180 position which is horizontal for steering
-                DiffAngle.Y = ((float)PoseRad.Y < 0.0) ? DiffAngle.Y += 180.0f : DiffAngle.Y -= 180.0f;
+                DiffAngle.Y = ((float)DevicePoseRad.Y < 0.0) ? DiffAngle.Y += 180.0f : DiffAngle.Y -= 180.0f;
 
                 // Correction amount for camera, increase slowly
                 FaceCameraObjectAlignment += DiffAngle * 0.0015; // 0.0015 = ~90 degrees in 30 seconds
@@ -565,12 +565,12 @@ namespace HandheldCompanion.Views.Windows
 
                 if (FaceCamera)
                 {
-                    ModelPoseXDeg = InputUtils.rad2deg((float)PoseRad.X) - (float)FaceCameraObjectAlignment.X;
+                    ModelPoseXDeg = InputUtils.rad2deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X;
                 }
                 else
                 {
                     // Not slowly rotate into view when face camera is off
-                    ModelPoseXDeg = InputUtils.rad2deg((float)PoseRad.X);
+                    ModelPoseXDeg = InputUtils.rad2deg((float)DevicePoseRad.X);
                 }
 
                 float ShoulderButtonsAngleDeg = 0.0f;

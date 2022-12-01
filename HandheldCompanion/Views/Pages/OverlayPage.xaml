@@ -244,6 +244,31 @@
                     </Grid>
                 </Border>
 
+                <!-- Motion Activated -->
+                <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE895;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_MotionActivated}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.OverlayPage_MotionActivatedDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch Name="Toggle_MotionActivated" Grid.Column="1" Toggled="Toggle_MotionActivated_Toggled" IsOn="True"/>
+                    </Grid>
+                </Border>
+
                 <!-- Model settings -->
                 <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
                     <Expander.Header>
@@ -304,7 +329,7 @@
                 <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch">
                     <Expander.Header>
                         <DockPanel Margin="0,12,12,12">
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF617;" Height="40" HorizontalAlignment="Center"/>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE89E;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Text="{x:Static resx:Resources.OverlayPage_CameraAngle}" FontSize="14"/>
@@ -354,7 +379,7 @@
 									 LargeChange="10" SmallChange="5" ValueChanged="Slider_RestingPitch_ValueChanged" IsEnabled="False"/>
                                 </DockPanel>
                             </Grid>
-     
+
                         </ui:SimpleStackPanel>
                     </Expander.Content>
                 </Expander>
