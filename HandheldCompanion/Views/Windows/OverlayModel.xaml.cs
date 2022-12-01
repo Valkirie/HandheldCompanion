@@ -36,13 +36,17 @@ namespace HandheldCompanion.Views.Windows
         private Quaternion DevicePose = new Quaternion(0.0f, 0.0f, 1.0f, 0.0f);
         private Vector3D DevicePoseRad = new Vector3D(0, 3.14, 0);
         private Vector3D DiffAngle = new Vector3D(0, 0, 0);
+        Transform3DGroup Transform3DGroupModelPrevious = new Transform3DGroup();
 
         // TODO Dummy variables, placeholder and for testing 
         private short MotorLeftPlaceholder;
         private short MotorRightPlaceholder;
 
         private float TriggerAngleShoulderLeft;
+        private float TriggerAngleShoulderLeftPrev;
         private float TriggerAngleShoulderRight;
+        private float TriggerAngleShoulderRightPrev;
+        private float ShoulderButtonsAngleDegPrev;
 
         public OverlayModel()
         {
@@ -568,8 +572,12 @@ namespace HandheldCompanion.Views.Windows
                     Transform3DGroupModel.Children.Add(DeviceRotateTransformFaceCameraX);
                 }
 
-                // Transform mode with group
-                ModelVisual3D.Content.Transform = Transform3DGroupModel;
+                // Transform mode with group if there are any changes
+                if (Transform3DGroupModel != Transform3DGroupModelPrevious)
+                {
+                    ModelVisual3D.Content.Transform = Transform3DGroupModel;
+                    Transform3DGroupModelPrevious = Transform3DGroupModel;
+                }
 
                 // Upward visibility rotation for shoulder buttons
                 // Model angle to compensate for
@@ -603,34 +611,52 @@ namespace HandheldCompanion.Views.Windows
                 {
                     ShoulderButtonsAngleDeg = 0.0f;
                 }
+                Model3DGroup Placeholder = new Model3DGroup();
 
-                // Left shoulder buttons visibility rotation and trigger button angle
-                Model3DGroup Placeholder = CurrentModel.ButtonMap[ControllerButtonFlags.LeftShoulder][0];
+                // Left shoulder buttons visibility rotation and trigger button angle 
+                // only perform when model or triggers are in a different position 
+                if (ShoulderButtonsAngleDeg != ShoulderButtonsAngleDegPrev || TriggerAngleShoulderLeft != TriggerAngleShoulderLeftPrev)
+                {
 
-                UpwardVisibilityRotationShoulderButtons(ShoulderButtonsAngleDeg,
-                                                        CurrentModel.UpwardVisibilityRotationAxisLeft,
-                                                        CurrentModel.UpwardVisibilityRotationPointLeft,
-                                                        TriggerAngleShoulderLeft,
-                                                        CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter,
-                                                        ref CurrentModel.LeftShoulderTrigger,
-                                                        ref Placeholder
-                                                        );
+                    Placeholder = CurrentModel.ButtonMap[ControllerButtonFlags.LeftShoulder][0];
 
-                CurrentModel.ButtonMap[ControllerButtonFlags.LeftShoulder][0] = Placeholder;
+                    UpwardVisibilityRotationShoulderButtons(ShoulderButtonsAngleDeg,
+                                                            CurrentModel.UpwardVisibilityRotationAxisLeft,
+                                                            CurrentModel.UpwardVisibilityRotationPointLeft,
+                                                            TriggerAngleShoulderLeft,
+                                                            CurrentModel.ShoulderTriggerRotationPointCenterLeftMillimeter,
+                                                            ref CurrentModel.LeftShoulderTrigger,
+                                                            ref Placeholder
+                                                            );
 
-                // Right shoulder buttons visibility rotation and trigger button angle
-                Placeholder = CurrentModel.ButtonMap[ControllerButtonFlags.RightShoulder][0];
+                    CurrentModel.ButtonMap[ControllerButtonFlags.LeftShoulder][0] = Placeholder;
 
-                UpwardVisibilityRotationShoulderButtons(ShoulderButtonsAngleDeg,
-                                                        CurrentModel.UpwardVisibilityRotationAxisRight,
-                                                        CurrentModel.UpwardVisibilityRotationPointRight,
-                                                        TriggerAngleShoulderRight,
-                                                        CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter,
-                                                        ref CurrentModel.RightShoulderTrigger,
-                                                        ref Placeholder
-                                                        );
+                    TriggerAngleShoulderLeftPrev = TriggerAngleShoulderLeft;
+                }
 
-                CurrentModel.ButtonMap[ControllerButtonFlags.RightShoulder][0] = Placeholder;
+                // Right shoulder buttons visibility rotation and trigger button angle 
+                // only perform when model or triggers are in a different position 
+                if (ShoulderButtonsAngleDeg != ShoulderButtonsAngleDegPrev || TriggerAngleShoulderRight != TriggerAngleShoulderRightPrev)
+                {
+
+                    Placeholder = CurrentModel.ButtonMap[ControllerButtonFlags.RightShoulder][0];
+
+                    UpwardVisibilityRotationShoulderButtons(ShoulderButtonsAngleDeg,
+                                                            CurrentModel.UpwardVisibilityRotationAxisRight,
+                                                            CurrentModel.UpwardVisibilityRotationPointRight,
+                                                            TriggerAngleShoulderRight,
+                                                            CurrentModel.ShoulderTriggerRotationPointCenterRightMillimeter,
+                                                            ref CurrentModel.RightShoulderTrigger,
+                                                            ref Placeholder
+                                                            );
+
+                    CurrentModel.ButtonMap[ControllerButtonFlags.RightShoulder][0] = Placeholder;
+
+                    TriggerAngleShoulderRightPrev = TriggerAngleShoulderRight;
+                }
+
+                ShoulderButtonsAngleDegPrev = ShoulderButtonsAngleDeg;
+
             });
         }
         #endregion
