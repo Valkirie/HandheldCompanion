@@ -73,6 +73,9 @@ namespace HandheldCompanion.Views.Pages
                     case "OverlayControllerAlwaysOnTop":
                         Toggle_AlwaysOnTop.IsOn = Convert.ToBoolean(value);
                         break;
+                    case "OverlayControllerMotion":
+                        Toggle_MotionActivated.IsOn = Convert.ToBoolean(value);
+                        break;
                 }
             });
         }
@@ -252,10 +255,7 @@ namespace HandheldCompanion.Views.Pages
             if (!SettingsManager.IsInitialized)
                 return;
 
-            // On change of motion activated, reset object alignment
-            MainWindow.overlayModel.FaceCameraObjectAlignment = new Vector3D(0.0d, 0.0d, 0.0d);
-
-            SettingsManager.SetProperty("OverlayMotionActivated", Toggle_MotionActivated.IsOn);
+            SettingsManager.SetProperty("OverlayControllerMotion", Toggle_MotionActivated.IsOn);
         }
         private void Toggle_FaceCamera_Toggled(object sender, RoutedEventArgs e)
         {

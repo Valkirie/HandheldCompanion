@@ -670,5 +670,17 @@ namespace HandheldCompanion.Properties {
                 this["HIDInstancePath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool OverlayControllerMotion {
+            get {
+                return ((bool)(this["OverlayControllerMotion"]));
+            }
+            set {
+                this["OverlayControllerMotion"] = value;
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Utils;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
 using HandheldCompanion.Views.Classes;
 using PrecisionTiming;
@@ -34,6 +35,7 @@ namespace HandheldCompanion.Views.Windows
         public Vector3D DesiredAngleDeg = new Vector3D(0, 0, 0);
         private Quaternion DevicePose = new Quaternion(0.0f, 0.0f, 1.0f, 0.0f);
         private Vector3D DevicePoseRad = new Vector3D(0, 3.14, 0);
+        private Vector3D DiffAngle = new Vector3D(0, 0, 0);
 
         // TODO Dummy variables, placeholder and for testing 
         private short MotorLeftPlaceholder;
@@ -47,6 +49,7 @@ namespace HandheldCompanion.Views.Windows
             InitializeComponent();
 
             PipeClient.ServerMessage += OnServerMessage;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // initialize timers
             UpdateTimer = new PrecisionTimer();
@@ -54,6 +57,24 @@ namespace HandheldCompanion.Views.Windows
             UpdateTimer.Tick += DrawModel;
 
             UpdateModel();
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                switch (name)
+                {
+                    case "OverlayControllerMotion":
+                        MotionActivated = Convert.ToBoolean(value);
+
+                        // On change of motion activated, reset object alignment
+                        FaceCameraObjectAlignment = new Vector3D(0.0d, 0.0d, 0.0d);
+                        DevicePose = new Quaternion(0.0f, 0.0f, 1.0f, 0.0f);
+                        DevicePoseRad = new Vector3D(0, 3.14, 0);
+                        break;
+                }
+            });
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -214,6 +235,8 @@ namespace HandheldCompanion.Views.Windows
                             return;
 
                         // Add return here if motion is not wanted for 3D model
+                        if (!MotionActivated)
+                            return;
 
                         PipeSensor sensor = (PipeSensor)message;
                         switch (sensor.type)
@@ -508,20 +531,10 @@ namespace HandheldCompanion.Views.Windows
             {
                 Transform3DGroup Transform3DGroupModel = new Transform3DGroup();
 
-                // When motion is disabled, overwrite poses with defaults
-                if (!MotionActivated)
-                {
-                    DevicePose = new Quaternion(0.0f, 0.0f, 1.0f, 0.0f);
-                    DevicePoseRad = new Vector3D(0, 3.14, 0);
-                }
-
                 // Device transformation based on pose
                 var Ax3DDevicePose = new QuaternionRotation3D(DevicePose);
                 DeviceRotateTransform = new RotateTransform3D(Ax3DDevicePose);
                 Transform3DGroupModel.Children.Add(DeviceRotateTransform);
-
-                // Face camera
-                Vector3D DiffAngle = new Vector3D(0, 0, 0);
 
                 // Determine diff angles
                 DiffAngle.X = (InputUtils.rad2deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X) - (float)DesiredAngleDeg.X;
