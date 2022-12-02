@@ -423,8 +423,8 @@ begin
 #endif
 
 #ifdef UseDotNet70
-  ExtractTemporaryFile('dotnet-runtime-7.0.0-rc.2.22472.3-win-x64.exe');
-  ExtractTemporaryFile('windowsdesktop-runtime-7.0.0-rc.2.22472.13-win-x64.exe');
+  ExtractTemporaryFile('dotnet-runtime-7.0.0-win-x64.exe');
+  ExtractTemporaryFile('windowsdesktop-runtime-7.0.0-win-x64.exe');
 #endif
 
 #ifdef UseVC2005
