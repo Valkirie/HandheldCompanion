@@ -346,8 +346,15 @@ Filename: "{tmp}\vcredist2010_x64.exe"; StatusMsg: "Installing Visual C++ 2010 R
 Filename: "{tmp}\vcredist2008_x64.exe"; StatusMsg: "Installing Visual C++ 2008 Redistributable"; Parameters: "/passive /norestart"; Flags: waituntilterminated
 Filename: "{tmp}\vcredist2005_x64.exe"; StatusMsg: "Installing Visual C++ 2005 Redistributable"; Parameters: "/Q"; Flags: waituntilterminated
 
+#ifdef UseDotNet60
 Filename: "{tmp}\windowsdesktop-runtime-6.0.6-win-x64.exe"; StatusMsg: ".NET Desktop Runtime 6.0.6"; Parameters: "/passive /norestart"; Flags: waituntilterminated
 Filename: "{tmp}\dotnet-runtime-6.0.6-win-x64.exe"; StatusMsg: "Installing .NET Runtime 6.0.6"; Parameters: "/passive /norestart"; Flags: waituntilterminated
+#endif
+
+#ifdef UseDotNet70
+Filename: "{tmp}\windowsdesktop-runtime-7.0.0-win-x64"; StatusMsg: ".NET Desktop Runtime 7.0.0"; Parameters: "/passive /norestart"; Flags: waituntilterminated
+Filename: "{tmp}\dotnet-runtime-7.0.0-win-x64"; StatusMsg: "Installing .NET Runtime 7.0.0"; Parameters: "/passive /norestart"; Flags: waituntilterminated
+#endif
 
 Filename: "{app}\redist\ViGEmBus_1.21.442_x64_x86_arm64.exe"; StatusMsg: "Installing ViGEmBus"; Parameters: "/quiet /norestart"; Flags: runascurrentuser
 Filename: "{app}\redist\HidHide_1.2.98_x64.exe"; StatusMsg: "Installing HidHide"; Parameters: "/quiet /norestart"; Flags: runascurrentuser
