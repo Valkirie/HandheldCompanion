@@ -17,9 +17,9 @@ namespace HandheldCompanion.Managers
     {
         public enum ProcessFilter
         {
-            None = 0,
-            Bypassed = 1,
-            Silenced = 2,
+            Allowed = 0,
+            Restricted = 1,
+            Ignored = 2,
         }
 
         public Process Process;

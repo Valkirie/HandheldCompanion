@@ -266,14 +266,14 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
                         break;
                     case "shortcutESC":
-                        if (fProcess != null && fProcess.Filter == ProcessEx.ProcessFilter.None)
+                        if (fProcess != null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
                         {
                             ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
                             InputsManager.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
-                        if (fProcess != null && fProcess.Filter == ProcessEx.ProcessFilter.None)
+                        if (fProcess != null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
                         {
                             var Placement = ProcessUtils.GetPlacement(fProcess.MainWindowHandle);
 
@@ -304,7 +304,7 @@ namespace HandheldCompanion.Managers
                         {
                             var sProcess = ProcessManager.GetSuspendedProcess();
 
-                            if (sProcess is null || sProcess.Filter != ProcessEx.ProcessFilter.None)
+                            if (sProcess is null || sProcess.Filter != ProcessEx.ProcessFilter.Allowed)
                                 break;
 
                             if (sProcess.IsSuspended())

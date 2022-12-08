@@ -191,10 +191,14 @@ namespace HandheldCompanion.Managers
             try
             {
                 proc = Process.GetProcessById((int)processInfo.ProcessId);
+
+                // process has exited on arrival
+                if (proc.HasExited)
+                    return;
             }
-            catch
+            catch (Exception)
             {
-                // return if process has exited
+                // process has too high elevation
                 return;
             }
 
@@ -203,21 +207,21 @@ namespace HandheldCompanion.Managers
             string path = ProcessUtils.GetPathToApp(proc);
             string exec = System.IO.Path.GetFileName(path);
 
-            bool self = IsSelf(exec, path);
-            if (self)
-                return;
-
+            // ignore if self or specific
             ProcessFilter filter = GetFilter(exec, path);
-            if (filter == ProcessFilter.Silenced)
+            if (filter == ProcessFilter.Ignored)
                 return;
 
             // save previous process (if exists)
             if (foregroundProcess != null)
                 backgroundProcess = foregroundProcess;
 
+            // pull process from running processes
             if (Processes.ContainsKey(procId))
                 foregroundProcess = Processes[procId];
             else
+            {
+                // create temporary process
                 foregroundProcess = new ProcessEx(proc)
                 {
                     Name = exec,
@@ -225,6 +229,7 @@ namespace HandheldCompanion.Managers
                     Path = path,
                     Filter = filter,
                 };
+            }
 
             // update main window handle
             foregroundProcess.MainWindowHandle = hWnd;
@@ -298,7 +303,7 @@ namespace HandheldCompanion.Managers
 
                     Processes.TryAdd(processEx.Id, processEx);
 
-                    if (processEx.Filter != ProcessFilter.None)
+                    if (processEx.Filter != ProcessFilter.Allowed)
                         return;
 
                     // raise event
@@ -325,21 +330,17 @@ namespace HandheldCompanion.Managers
         private static ProcessFilter GetFilter(string exec, string path)
         {
             if (string.IsNullOrEmpty(path))
-                return ProcessFilter.Bypassed;
+                return ProcessFilter.Restricted;
 
             if (path.Contains(Environment.GetEnvironmentVariable("windir"), StringComparison.InvariantCultureIgnoreCase))
-                return ProcessFilter.Bypassed;
+                return ProcessFilter.Restricted;
 
             // manual filtering
             switch (exec.ToLower())
             {
                 case "rw.exe":                  // Used to change TDP
                 case "kx.exe":                  // Used to change TDP
-
-#if DEBUG
                 case "devenv.exe":              // Visual Studio
-#endif
-
                 case "msedge.exe":              // Edge has energy awareness
                 case "webviewhost.exe":
                 case "taskmgr.exe":
@@ -365,24 +366,18 @@ namespace HandheldCompanion.Managers
                 // Other
                 case "bdagent.exe":             // Bitdefender Agent
                 case "monotificationux.exe":
+                    return ProcessFilter.Restricted;
 
                 // handheld companion
                 case "handheldcompanion.exe":
                 case "controllerservice.exe":
                 case "controllerservice.dll":
-                    return ProcessFilter.Bypassed;
-
                 case "radeonsoftware.exe":
-                    return ProcessFilter.Silenced;
+                    return ProcessFilter.Ignored;
 
                 default:
-                    return ProcessFilter.None;
+                    return ProcessFilter.Allowed;
             }
-        }
-
-        private static bool IsSelf(string exec, string path)
-        {
-            return exec.ToLower().Equals("handheldcompanion.exe");
         }
 
         public static void ResumeProcess(ProcessEx processEx)

@@ -212,7 +212,7 @@ namespace HandheldCompanion.Views.QuickPages
                 ProcessPath.Text = currentProcess.Path;
 
                 // disable create button if process is bypassed
-                b_CreateProfile.IsEnabled = processEx.Filter == ProcessEx.ProcessFilter.None;
+                b_CreateProfile.IsEnabled = processEx.Filter == ProcessEx.ProcessFilter.Allowed;
 
                 if (currentProfile is null)
                 {

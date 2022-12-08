@@ -18,7 +18,7 @@ namespace ControllerCommon
 
             if (!service.IsInstalled)
             {
-                LogManager.LogWarning("HidHide is missing. Application behavior will be degraded. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
+                LogManager.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
                 throw new InvalidOperationException();
             }
         }

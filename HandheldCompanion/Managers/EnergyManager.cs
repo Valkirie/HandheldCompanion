@@ -94,11 +94,11 @@ namespace HandheldCompanion.Managers
         private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
             // set efficiency mode to Eco on background(ed) process
-            if (backgroundEx != null && backgroundEx.Filter == ProcessEx.ProcessFilter.None && !backgroundEx.IsSuspended())
+            if (backgroundEx != null && backgroundEx.Filter == ProcessEx.ProcessFilter.Allowed && !backgroundEx.IsSuspended())
                 ToggleEfficiencyMode(backgroundEx.Id, QualityOfServiceLevel.Eco);
 
             // set efficency mode to High on foreground(ed) process
-            if (processEx != null && processEx.Filter == ProcessEx.ProcessFilter.None && !processEx.IsSuspended())
+            if (processEx != null && processEx.Filter == ProcessEx.ProcessFilter.Allowed && !processEx.IsSuspended())
                 ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
         }
 
@@ -151,7 +151,7 @@ namespace HandheldCompanion.Managers
                 if (processEx == foregroundProcess)
                     continue;
 
-                if (processEx.Filter != ProcessEx.ProcessFilter.None || processEx.IsSuspended())
+                if (processEx.Filter != ProcessEx.ProcessFilter.Allowed || processEx.IsSuspended())
                     continue;
 
                 ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.Eco);
@@ -160,7 +160,7 @@ namespace HandheldCompanion.Managers
 
         public static void RestoreDefaultEfficiency()
         {
-            foreach (ProcessEx processEx in ProcessManager.GetProcesses().Where(item => item.Filter == ProcessEx.ProcessFilter.None && !item.IsSuspended()))
+            foreach (ProcessEx processEx in ProcessManager.GetProcesses().Where(item => item.Filter == ProcessEx.ProcessFilter.Allowed && !item.IsSuspended()))
                 ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
         }
 
