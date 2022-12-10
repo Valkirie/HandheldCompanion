@@ -10,9 +10,10 @@ namespace ControllerCommon.Utils
     {
         public enum SensorFamily
         {
-            WindowsDevicesSensors = 0,
-            SerialUSBIMU = 1,
-            None = 2
+            None = 0,
+            Windows = 1,
+            SerialUSBIMU = 2,
+            Controller = 3
         }
 
         public static USBDeviceInfo GetUSBDevice(string DeviceId)

@@ -19,21 +19,25 @@ namespace ControllerService.Sensors
 
         public IMUGyrometer(SensorFamily sensorFamily, int updateInterval) : base()
         {
+            this.sensorFamily = sensorFamily;
             this.updateInterval = updateInterval;
             centerTimer.Interval = updateInterval * 6;
 
-            UpdateSensor(sensorFamily);
+            UpdateSensor();
         }
 
-        public void UpdateSensor(SensorFamily sensorFamily)
+        public void UpdateSensor()
         {
             switch (sensorFamily)
             {
-                case SensorFamily.WindowsDevicesSensors:
+                case SensorFamily.Windows:
                     sensor = Gyrometer.GetDefault();
                     break;
                 case SensorFamily.SerialUSBIMU:
                     sensor = SerialUSBIMU.GetDefault();
+                    break;
+                case SensorFamily.Controller:
+                    sensor = new object();
                     break;
             }
 
@@ -45,7 +49,7 @@ namespace ControllerService.Sensors
 
             switch (sensorFamily)
             {
-                case SensorFamily.WindowsDevicesSensors:
+                case SensorFamily.Windows:
                     ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
 
                     LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
@@ -55,14 +59,14 @@ namespace ControllerService.Sensors
                     break;
             }
 
-            StartListening(sensorFamily);
+            StartListening();
         }
 
-        public void StartListening(SensorFamily sensorFamily)
+        public void StartListening()
         {
             switch (sensorFamily)
             {
-                case SensorFamily.WindowsDevicesSensors:
+                case SensorFamily.Windows:
                     ((Gyrometer)sensor).ReadingChanged += ReadingChanged;
                     break;
                 case SensorFamily.SerialUSBIMU:
@@ -71,14 +75,14 @@ namespace ControllerService.Sensors
             }
         }
 
-        public void StopListening(SensorFamily sensorFamily)
+        public void StopListening()
         {
             if (sensor is null)
                 return;
 
             switch (sensorFamily)
             {
-                case SensorFamily.WindowsDevicesSensors:
+                case SensorFamily.Windows:
                     ((Gyrometer)sensor).ReadingChanged -= ReadingChanged;
                     break;
                 case SensorFamily.SerialUSBIMU:
@@ -91,11 +95,18 @@ namespace ControllerService.Sensors
 
         public void ReadingChanged(float GyroRoll, float GyroPitch, float GyroYaw)
         {
-            this.reading.X = this.reading_fixed.X = GyroRoll;
-            this.reading.Y = this.reading_fixed.Y = GyroPitch;
-            this.reading.Z = this.reading_fixed.Z = GyroYaw;
+            switch (sensorFamily)
+            {
+                case SensorFamily.Controller:
+                    {
+                        this.reading.X = this.reading_fixed.X = GyroRoll;
+                        this.reading.Y = this.reading_fixed.Y = GyroPitch;
+                        this.reading.Z = this.reading_fixed.Z = GyroYaw;
 
-            base.ReadingChanged();
+                        base.ReadingChanged();
+                    }
+                    break;
+            }
         }
 
         private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)

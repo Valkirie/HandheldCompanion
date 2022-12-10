@@ -13,10 +13,10 @@ namespace ControllerService.Sensors
     [Flags]
     public enum XInputSensorFlags
     {
-        Default = 0000,
-        RawValue = 0001,
-        Centered = 0010,
-        WithRatio = 0100,
+        Default = 0,
+        RawValue = 1,
+        Centered = 2,
+        WithRatio = 4,
         CenteredRaw = RawValue | Centered,
         CenteredRatio = RawValue | WithRatio,
     }
@@ -38,6 +38,7 @@ namespace ControllerService.Sensors
 
         protected Timer centerTimer;
         protected int updateInterval;
+        protected SensorFamily sensorFamily;
 
         public object sensor;
         public OneEuroFilter3D filter = new();
@@ -60,28 +61,6 @@ namespace ControllerService.Sensors
             // reset reading after inactivity
             centerTimer.Stop();
             centerTimer.Start();
-        }
-
-        public static XInputSensorStatus GetStatus(SensorFamily sensorFamily)
-        {
-            switch (sensorFamily)
-            {
-                case SensorFamily.WindowsDevicesSensors:
-                    {
-                        var sensor = Gyrometer.GetDefault();
-                        if (sensor != null)
-                            return XInputSensorStatus.Busy;
-                    }
-                    break;
-                case SensorFamily.SerialUSBIMU:
-                    {
-                        var sensor = SerialUSBIMU.GetDefault();
-                        if (sensor != null)
-                            return sensor.IsOpen() ? XInputSensorStatus.Busy : XInputSensorStatus.Ready;
-                    }
-                    break;
-            }
-            return XInputSensorStatus.Missing;
         }
 
         protected virtual void Timer_Elapsed(object sender, ElapsedEventArgs e)

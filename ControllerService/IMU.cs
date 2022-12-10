@@ -22,7 +22,6 @@ namespace ControllerService
         public static PrecisionTimer UpdateTimer;
         public const int UpdateInterval = 10;
 
-        private static SensorFamily SensorFamily = SensorFamily.None;
         public static IMUGyrometer Gyrometer;
         public static IMUAccelerometer Accelerometer;
         public static IMUInclinometer Inclinometer;
@@ -42,17 +41,11 @@ namespace ControllerService
 
         private static object updateLock = new();
 
-        public static void Initialize(SensorFamily sensorFamily)
+        static IMU()
         {
             // initialize sensorfusion and madgwick
             sensorFusion = new SensorFusion();
             madgwickAHRS = new MadgwickAHRS(0.01f, 0.1f);
-
-            // initialize sensors
-            SensorFamily = sensorFamily;
-            Gyrometer = new IMUGyrometer(SensorFamily, UpdateInterval);
-            Accelerometer = new IMUAccelerometer(SensorFamily, UpdateInterval);
-            Inclinometer = new IMUInclinometer(SensorFamily, UpdateInterval);
 
             // initialize stopwatch
             stopwatch = new Stopwatch();
@@ -61,6 +54,19 @@ namespace ControllerService
             UpdateTimer = new PrecisionTimer();
             UpdateTimer.SetInterval(UpdateInterval);
             UpdateTimer.SetAutoResetMode(true);
+        }
+
+        public static void Initialize(SensorFamily sensorFamily)
+        {
+            // halt sensors
+            Gyrometer.StopListening();
+            Accelerometer.StopListening();
+            Inclinometer.StopListening();
+
+            // initialize sensors
+            Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval);
+            Accelerometer = new IMUAccelerometer(sensorFamily, UpdateInterval);
+            Inclinometer = new IMUInclinometer(sensorFamily, UpdateInterval);
         }
 
         public static void StartListening()
@@ -73,9 +79,9 @@ namespace ControllerService
 
         public static void StopListening()
         {
-            Gyrometer.StopListening(SensorFamily);
-            Accelerometer.StopListening(SensorFamily);
-            Inclinometer.StopListening(SensorFamily);
+            Gyrometer.StopListening();
+            Accelerometer.StopListening();
+            Inclinometer.StopListening();
 
             UpdateTimer.Tick -= ComputeMovements;
             UpdateTimer.Stop();
@@ -83,25 +89,11 @@ namespace ControllerService
             stopwatch.Stop();
         }
 
-        public static void ResumeListening()
+        public static void RefreshSensors()
         {
-            Gyrometer.StartListening(SensorFamily);
-            Accelerometer.StartListening(SensorFamily);
-            Inclinometer.StartListening(SensorFamily);
-        }
-
-        public static void PauseListening()
-        {
-            Gyrometer.StopListening(SensorFamily);
-            Accelerometer.StopListening(SensorFamily);
-            Inclinometer.StopListening(SensorFamily);
-        }
-
-        public static void UpdateSensors()
-        {
-            Gyrometer.UpdateSensor(SensorFamily);
-            Accelerometer.UpdateSensor(SensorFamily);
-            Inclinometer.UpdateSensor(SensorFamily);
+            Gyrometer.UpdateSensor();
+            Accelerometer.UpdateSensor();
+            Inclinometer.UpdateSensor();
         }
 
         public static void UpdateInputs(ControllerInput inputs)

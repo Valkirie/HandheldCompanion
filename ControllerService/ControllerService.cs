@@ -127,7 +127,8 @@ namespace ControllerService
                         sensor.Open();
                         sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
 
-                        IMU.UpdateSensors();
+                        // todo: improve me
+                        IMU.RefreshSensors();
                     }
                     break;
             }
@@ -143,7 +144,9 @@ namespace ControllerService
                             break;
 
                         sensor.Close();
-                        IMU.UpdateSensors();
+
+                        // todo: improve me
+                        IMU.RefreshSensors();
                     }
                     break;
             }
@@ -328,7 +331,7 @@ namespace ControllerService
                         {
                             case ControllerCapacities.Gyroscope:
                             case ControllerCapacities.Accelerometer:
-                                IMU.PauseListening();
+                                IMU.Initialize(SensorFamily.Controller);
                                 break;
                         }
                     }
@@ -336,7 +339,8 @@ namespace ControllerService
 
                 case PipeCode.CLIENT_CONTROLLER_DISCONNECT:
                     {
-                        IMU.ResumeListening();
+                        // restore previous IMU family
+                        IMU.Initialize(SensorSelection);
                     }
                     break;
             }
@@ -512,7 +516,7 @@ namespace ControllerService
                         await Task.Delay(4000);
 
                         // (re)initialize sensors
-                        IMU.UpdateSensors();
+                        IMU.RefreshSensors();
 
                         // (re)initialize ViGEm
                         vClient = new ViGEmClient();
