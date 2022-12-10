@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace ControllerCommon.Managers
         private static DeviceNotificationListener XInputListener = new();
         private static DeviceNotificationListener HIDListener = new();
 
-        private static Dictionary<string, PnPDetails> PnPDevices = new();
+        private static ConcurrentDictionary<string, PnPDetails> PnPDevices = new();
 
         private static bool IsPowerSuspended;
         private static bool IsSessionLocked;
@@ -279,7 +280,7 @@ namespace ControllerCommon.Managers
                 InstanceId = CommonUtils.Between(InstanceId, @"\\?\", @"\{");
 
                 var deviceEx = GetPnPDeviceEx(InstanceId);
-                PnPDevices.Remove(InstanceId);
+                PnPDevices.TryRemove(InstanceId, out var value);
 
                 XInputDeviceRemoved?.Invoke(deviceEx);
             }
@@ -318,7 +319,7 @@ namespace ControllerCommon.Managers
                 InstanceId = CommonUtils.Between(InstanceId, @"\\?\", @"\{");
 
                 var deviceEx = GetPnPDeviceEx(InstanceId);
-                PnPDevices.Remove(InstanceId);
+                PnPDevices.TryRemove(InstanceId, out var value);
 
                 DInputDeviceRemoved?.Invoke(deviceEx);
             }

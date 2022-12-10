@@ -141,16 +141,13 @@ namespace ControllerCommon.Controllers
             Inputs.LeftTrigger = L2;
             Inputs.RightTrigger = R2;
 
-            Inputs.GyroAccelX = input.State.AxesState[NeptuneControllerAxis.GyroAccelX];
-            Inputs.GyroAccelY = input.State.AxesState[NeptuneControllerAxis.GyroAccelY];
-            Inputs.GyroAccelZ = input.State.AxesState[NeptuneControllerAxis.GyroAccelZ];
+            Inputs.GyroAccelX = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / 8000.0f;
+            Inputs.GyroAccelY = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / 8000.0f;
+            Inputs.GyroAccelZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / 8000.0f;
 
-            Inputs.GyroPitch = input.State.AxesState[NeptuneControllerAxis.GyroPitch];
-            Inputs.GyroRoll = input.State.AxesState[NeptuneControllerAxis.GyroRoll];
-            Inputs.GyroYaw = input.State.AxesState[NeptuneControllerAxis.GyroYaw];
-
-            // Debug.WriteLine("GyroPitch:{0}\tGyroRoll:{1}\tGyroYaw:{2}", Inputs.GyroPitch, Inputs.GyroRoll, Inputs.GyroYaw);
-            // Debug.WriteLine("AccelX:{0}\tAccelY:{1}\tAccelZ:{2}", Inputs.GyroAccelX, Inputs.GyroAccelY, Inputs.GyroAccelZ);
+            Inputs.GyroPitch = -(float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / 8.0f;
+            Inputs.GyroRoll = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / 8.0f;
+            Inputs.GyroYaw = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / 8.0f;
 
             // todo: map trackpad(s)
 
