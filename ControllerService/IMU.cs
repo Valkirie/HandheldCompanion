@@ -59,9 +59,9 @@ namespace ControllerService
         public static void Initialize(SensorFamily sensorFamily)
         {
             // halt sensors
-            Gyrometer.StopListening();
-            Accelerometer.StopListening();
-            Inclinometer.StopListening();
+            Gyrometer?.StopListening();
+            Accelerometer?.StopListening();
+            Inclinometer?.StopListening();
 
             // initialize sensors
             Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval);
