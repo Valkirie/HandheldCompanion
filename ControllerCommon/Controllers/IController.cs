@@ -51,7 +51,8 @@ namespace ControllerCommon.Controllers
         OEM3 = 2147483648,
         OEM4 = 4294967296,
         OEM5 = 8589934592,
-        OEM6 = 17179869184
+        OEM6 = 17179869184,
+        OEM7 = 34359738368
     }
 
     [Serializable]
@@ -60,8 +61,11 @@ namespace ControllerCommon.Controllers
         public ControllerButtonFlags Buttons;
         public float LeftThumbX, LeftThumbY;
         public float RightThumbX, RightThumbY;
-        public float LeftTrigger;
-        public float RightTrigger;
+        public float LeftTrigger, RightTrigger;
+
+        public float GyroAccelX, GyroAccelY, GyroAccelZ;
+        public float GyroRoll, GyroPitch, GyroYaw;
+
         public int Timestamp;
     }
 

@@ -34,7 +34,7 @@ namespace ControllerCommon.Controllers
         public override string ToString()
         {
             // todo: localize me
-            return "Neptune Controller";
+            return "Steam Controller Neptune";
         }
 
         public override void UpdateReport()
@@ -63,9 +63,12 @@ namespace ControllerCommon.Controllers
             if (input.State.ButtonState[NeptuneControllerButton.BtnQuickAccess])
                 Inputs.Buttons |= ControllerButtonFlags.OEM1;
 
-            if (input.State.AxesState[NeptuneControllerAxis.L2] > Gamepad.TriggerThreshold)
+            var L2 = input.State.AxesState[NeptuneControllerAxis.L2] * byte.MaxValue / short.MaxValue;
+            var R2 = input.State.AxesState[NeptuneControllerAxis.R2] * byte.MaxValue / short.MaxValue;
+
+            if (L2 > Gamepad.TriggerThreshold)
                 Inputs.Buttons |= ControllerButtonFlags.LeftTrigger;
-            if (input.State.AxesState[NeptuneControllerAxis.R2] > Gamepad.TriggerThreshold)
+            if (R2 > Gamepad.TriggerThreshold)
                 Inputs.Buttons |= ControllerButtonFlags.RightTrigger;
 
             if (input.State.ButtonState[NeptuneControllerButton.BtnLStickPress])
@@ -77,6 +80,16 @@ namespace ControllerCommon.Controllers
                 Inputs.Buttons |= ControllerButtonFlags.OEM2;
             if (input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch])
                 Inputs.Buttons |= ControllerButtonFlags.OEM3;
+
+            if (input.State.ButtonState[NeptuneControllerButton.BtnL4])
+                Inputs.Buttons |= ControllerButtonFlags.OEM4;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnL5])
+                Inputs.Buttons |= ControllerButtonFlags.OEM5;
+
+            if (input.State.ButtonState[NeptuneControllerButton.BtnR4])
+                Inputs.Buttons |= ControllerButtonFlags.OEM6;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnR5])
+                Inputs.Buttons |= ControllerButtonFlags.OEM7;
 
             if (input.State.ButtonState[NeptuneControllerButton.BtnL1])
                 Inputs.Buttons |= ControllerButtonFlags.LeftShoulder;
@@ -120,8 +133,16 @@ namespace ControllerCommon.Controllers
             Inputs.RightThumbX = input.State.AxesState[NeptuneControllerAxis.RightStickX];
             Inputs.RightThumbY = input.State.AxesState[NeptuneControllerAxis.RightStickY];
 
-            Inputs.LeftTrigger = input.State.AxesState[NeptuneControllerAxis.L2] * byte.MaxValue / short.MaxValue;
-            Inputs.RightTrigger = input.State.AxesState[NeptuneControllerAxis.R2] * byte.MaxValue / short.MaxValue;
+            Inputs.LeftTrigger = L2;
+            Inputs.RightTrigger = R2;
+
+            Inputs.GyroAccelX = input.State.AxesState[NeptuneControllerAxis.GyroAccelX];
+            Inputs.GyroAccelY = input.State.AxesState[NeptuneControllerAxis.GyroAccelY];
+            Inputs.GyroAccelZ = input.State.AxesState[NeptuneControllerAxis.GyroAccelZ];
+
+            Inputs.GyroPitch = input.State.AxesState[NeptuneControllerAxis.GyroPitch];
+            Inputs.GyroRoll = input.State.AxesState[NeptuneControllerAxis.GyroRoll];
+            Inputs.GyroYaw = input.State.AxesState[NeptuneControllerAxis.GyroYaw];
 
             // todo: map trackpad(s)
 
