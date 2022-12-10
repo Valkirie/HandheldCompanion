@@ -150,7 +150,7 @@ namespace ControllerCommon
             code = PipeCode.CLIENT_CONTROLLER_CONNECT;
         }
 
-        public PipeClientControllerConnect(string name, ControllerCapacities capacities)
+        public PipeClientControllerConnect(string name, ControllerCapacities capacities) : this()
         {
             ControllerName = name;
             Capacacities = capacities;

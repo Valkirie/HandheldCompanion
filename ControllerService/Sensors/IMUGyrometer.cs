@@ -57,6 +57,9 @@ namespace ControllerService.Sensors
                 case SensorFamily.SerialUSBIMU:
                     LogManager.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
                     break;
+                case SensorFamily.Controller:
+                    LogManager.LogInformation("{0} initialised as a {1}.", this.ToString(), sensorFamily.ToString());
+                    break;
             }
 
             StartListening();

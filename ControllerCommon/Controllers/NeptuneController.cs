@@ -1,7 +1,9 @@
-﻿using neptune_hidapi.net;
+﻿using ControllerCommon.Managers;
+using neptune_hidapi.net;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace ControllerCommon.Controllers
@@ -146,6 +148,9 @@ namespace ControllerCommon.Controllers
             Inputs.GyroPitch = input.State.AxesState[NeptuneControllerAxis.GyroPitch];
             Inputs.GyroRoll = input.State.AxesState[NeptuneControllerAxis.GyroRoll];
             Inputs.GyroYaw = input.State.AxesState[NeptuneControllerAxis.GyroYaw];
+
+            // Debug.WriteLine("GyroPitch:{0}\tGyroRoll:{1}\tGyroYaw:{2}", Inputs.GyroPitch, Inputs.GyroRoll, Inputs.GyroYaw);
+            // Debug.WriteLine("AccelX:{0}\tAccelY:{1}\tAccelZ:{2}", Inputs.GyroAccelX, Inputs.GyroAccelY, Inputs.GyroAccelZ);
 
             // todo: map trackpad(s)
 

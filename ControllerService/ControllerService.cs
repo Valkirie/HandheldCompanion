@@ -327,13 +327,9 @@ namespace ControllerService
                 case PipeCode.CLIENT_CONTROLLER_CONNECT:
                     {
                         PipeClientControllerConnect controller = (PipeClientControllerConnect)message;
-                        switch(controller.Capacacities)
-                        {
-                            case ControllerCapacities.Gyroscope:
-                            case ControllerCapacities.Accelerometer:
-                                IMU.Initialize(SensorFamily.Controller);
-                                break;
-                        }
+
+                        if (controller.Capacacities.HasFlag(ControllerCapacities.Gyroscope | ControllerCapacities.Accelerometer))
+                            IMU.Initialize(SensorFamily.Controller);
                     }
                     break;
 
