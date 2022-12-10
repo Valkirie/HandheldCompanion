@@ -141,18 +141,35 @@ namespace ControllerCommon.Controllers
             Inputs.LeftTrigger = L2;
             Inputs.RightTrigger = R2;
 
-            Inputs.GyroAccelX = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / 8000.0f;
-            Inputs.GyroAccelY = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / 8000.0f;
-            Inputs.GyroAccelZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / 8000.0f;
+            if (input.State.AxesState[NeptuneControllerAxis.GyroAccelX] > maxX)
+                maxX = input.State.AxesState[NeptuneControllerAxis.GyroAccelX];
+            if (input.State.AxesState[NeptuneControllerAxis.GyroAccelY] > maxY)
+                maxY = input.State.AxesState[NeptuneControllerAxis.GyroAccelY];
+            if (input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] > maxZ)
+                maxZ = input.State.AxesState[NeptuneControllerAxis.GyroAccelZ];
 
-            Inputs.GyroPitch = -(float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / 8.0f;
-            Inputs.GyroRoll = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / 8.0f;
-            Inputs.GyroYaw = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / 8.0f;
+            if (input.State.AxesState[NeptuneControllerAxis.GyroPitch] > maxpitch)
+                maxpitch = input.State.AxesState[NeptuneControllerAxis.GyroPitch];
+            if (input.State.AxesState[NeptuneControllerAxis.GyroRoll] > maxroll)
+                maxroll = input.State.AxesState[NeptuneControllerAxis.GyroRoll];
+            if (input.State.AxesState[NeptuneControllerAxis.GyroYaw] > maxyaw)
+                maxyaw = input.State.AxesState[NeptuneControllerAxis.GyroYaw];
+
+            Inputs.GyroAccelX   = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
+            Inputs.GyroAccelY   = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
+            Inputs.GyroAccelZ   = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
+
+            Inputs.GyroPitch    = -(float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / 12.0f;
+            Inputs.GyroRoll     = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / 12.0f;
+            Inputs.GyroYaw      = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / 12.0f;
 
             // todo: map trackpad(s)
 
             base.UpdateReport();
         }
+
+        private float maxX,maxY, maxZ;
+        private float maxpitch, maxroll, maxyaw;
 
         public override bool IsConnected()
         {
