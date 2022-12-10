@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using PrecisionTiming;
@@ -82,11 +83,32 @@ namespace ControllerService
             stopwatch.Stop();
         }
 
+        public static void ResumeListening()
+        {
+            Gyrometer.StartListening(SensorFamily);
+            Accelerometer.StartListening(SensorFamily);
+            Inclinometer.StartListening(SensorFamily);
+        }
+
+        public static void PauseListening()
+        {
+            Gyrometer.StopListening(SensorFamily);
+            Accelerometer.StopListening(SensorFamily);
+            Inclinometer.StopListening(SensorFamily);
+        }
+
         public static void UpdateSensors()
         {
             Gyrometer.UpdateSensor(SensorFamily);
             Accelerometer.UpdateSensor(SensorFamily);
             Inclinometer.UpdateSensor(SensorFamily);
+        }
+
+        public static void UpdateInputs(ControllerInput inputs)
+        {
+            Gyrometer.ReadingChanged(inputs.GyroRoll, inputs.GyroPitch, inputs.GyroYaw);
+            Accelerometer.ReadingChanged(inputs.GyroAccelX, inputs.GyroAccelY, inputs.GyroAccelZ);
+            Inclinometer.ReadingChanged(inputs.GyroAccelX, inputs.GyroAccelY, inputs.GyroAccelZ);
         }
 
         private static void ComputeMovements(object sender, EventArgs e)

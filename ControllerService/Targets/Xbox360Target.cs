@@ -31,10 +31,14 @@ namespace ControllerService.Targets
             if (IsConnected)
                 return;
 
-            virtualController.Connect();
-            UpdateTimer.Start();
+            try
+            {
+                virtualController.Connect();
+                UpdateTimer.Start();
 
-            base.Connect();
+                base.Connect();
+            }
+            catch { }
         }
 
         public override void Disconnect()
@@ -42,10 +46,14 @@ namespace ControllerService.Targets
             if (!IsConnected)
                 return;
 
-            virtualController.Disconnect();
-            UpdateTimer.Stop();
+            try
+            {
+                virtualController.Disconnect();
+                UpdateTimer.Stop();
 
-            base.Disconnect();
+                base.Disconnect();
+            }
+            catch { }
         }
 
         public void FeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)

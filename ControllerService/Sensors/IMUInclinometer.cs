@@ -84,7 +84,16 @@ namespace ControllerService.Sensors
             sensor = null;
         }
 
-        private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
+        public void ReadingChanged(float GyroAccelX, float GyroAccelY, float GyroAccelZ)
+        {
+            this.reading.X = this.reading_fixed.X = GyroAccelX;
+            this.reading.Y = this.reading_fixed.Y = GyroAccelY;
+            this.reading.Z = this.reading_fixed.Z = GyroAccelZ;
+
+            base.ReadingChanged();
+        }
+
+        public void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
         {
             this.reading.X = this.reading_fixed.X = (float)filter.axis1Filter.Filter(AccelerationG.X, IMU.DeltaSeconds);
             this.reading.Y = this.reading_fixed.Y = (float)filter.axis2Filter.Filter(AccelerationG.Y, IMU.DeltaSeconds);

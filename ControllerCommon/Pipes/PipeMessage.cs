@@ -140,6 +140,33 @@ namespace ControllerCommon
     }
 
     [Serializable]
+    public partial class PipeClientControllerConnect : PipeMessage
+    {
+        public string ControllerName;
+        public ControllerCapacities Capacacities;
+
+        public PipeClientControllerConnect()
+        {
+            code = PipeCode.CLIENT_CONTROLLER_CONNECT;
+        }
+
+        public PipeClientControllerConnect(string name, ControllerCapacities capacities)
+        {
+            ControllerName = name;
+            Capacacities = capacities;
+        }
+    }
+
+    [Serializable]
+    public partial class PipeClientControllerDisconnect : PipeMessage
+    {
+        public PipeClientControllerDisconnect()
+        {
+            code = PipeCode.CLIENT_CONTROLLER_DISCONNECT;
+        }
+    }
+
+    [Serializable]
     public enum SensorType
     {
         Girometer = 0,

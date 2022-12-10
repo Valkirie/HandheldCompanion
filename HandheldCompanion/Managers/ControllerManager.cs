@@ -16,7 +16,7 @@ namespace HandheldCompanion.Managers
     public static class ControllerManager
     {
         private static Dictionary<string, IController> Controllers = new();
-        private static IController targetController;
+        private static IController? targetController;
 
         private static DirectInput directInput = new DirectInput();
 
@@ -229,6 +229,9 @@ namespace HandheldCompanion.Managers
 
             // rumble current controller
             targetController.Rumble();
+
+            // warn service
+            SendTargetController();
         }
 
         public static void ClearTargetController()
@@ -240,6 +243,17 @@ namespace HandheldCompanion.Managers
             targetController.Unhide();
 
             targetController = null;
+
+            // warn service
+            SendTargetController();
+        }
+
+        public static void SendTargetController()
+        {
+            if (targetController is null)
+                PipeClient.SendMessage(new PipeClientControllerDisconnect());
+            else
+                PipeClient.SendMessage(new PipeClientControllerConnect(targetController.ToString(), targetController.Capacities));
         }
 
         public static IController GetTargetController()
@@ -254,18 +268,8 @@ namespace HandheldCompanion.Managers
             MainWindow.overlayModel.UpdateReport(Inputs);
 
             // todo: pass inputs to (re)mapper
-            ControllerInput filtered = new()
-            {
-                Buttons = Inputs.Buttons,
-                Timestamp = Inputs.Timestamp,
-                LeftThumbX = Inputs.LeftThumbX,
-                LeftThumbY = Inputs.LeftThumbY,
-                RightThumbX = Inputs.RightThumbX,
-                RightThumbY = Inputs.RightThumbY,
-                RightTrigger = Inputs.RightTrigger,
-                LeftTrigger = Inputs.LeftTrigger,
-            };
-
+            // todo: filter inputs if part of shortcut
+            ControllerInput filtered = new(Inputs);
             foreach (var pair in buttonMaps)
             {
                 ControllerButtonFlags origin = pair.Key;
@@ -277,8 +281,6 @@ namespace HandheldCompanion.Managers
                 filtered.Buttons &= ~origin;
                 filtered.Buttons |= substitute;
             }
-
-            // todo: filter inputs if part of shortcut
 
             // pass inputs to service
             PipeClient.SendMessage(new PipeClientInput(filtered));

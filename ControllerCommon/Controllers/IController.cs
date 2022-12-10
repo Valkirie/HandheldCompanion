@@ -55,6 +55,14 @@ namespace ControllerCommon.Controllers
         OEM7 = 34359738368
     }
 
+    [Flags]
+    public enum ControllerCapacities : ushort
+    {
+        None = 0,
+        Gyroscope = 1,
+        Accelerometer = 2,
+    }
+
     [Serializable]
     public class ControllerInput
     {
@@ -67,6 +75,29 @@ namespace ControllerCommon.Controllers
         public float GyroRoll, GyroPitch, GyroYaw;
 
         public int Timestamp;
+
+        public ControllerInput() 
+        { }
+
+        public ControllerInput(ControllerInput Inputs)
+        {
+            Buttons = Inputs.Buttons;
+            Timestamp = Inputs.Timestamp;
+            LeftThumbX = Inputs.LeftThumbX;
+            LeftThumbY = Inputs.LeftThumbY;
+            RightThumbX = Inputs.RightThumbX;
+            RightThumbY = Inputs.RightThumbY;
+            RightTrigger = Inputs.RightTrigger;
+            LeftTrigger = Inputs.LeftTrigger;
+
+            GyroAccelX = Inputs.GyroAccelX;
+            GyroAccelY = Inputs.GyroAccelY;
+            GyroAccelZ = Inputs.GyroAccelZ;
+
+            GyroRoll = Inputs.GyroRoll;
+            GyroPitch = Inputs.GyroPitch;
+            GyroYaw = Inputs.GyroYaw;
+        }
     }
 
     public abstract class IController
@@ -78,6 +109,7 @@ namespace ControllerCommon.Controllers
 
         protected int UserIndex;
         protected double VibrationStrength = 1.0d;
+        public ControllerCapacities Capacities = ControllerCapacities.None;
 
         public const short UPDATE_INTERVAL = 5;
 
@@ -101,6 +133,16 @@ namespace ControllerCommon.Controllers
             prevInjectedButtons = InjectedButtons;
 
             Updated?.Invoke(Inputs);
+        }
+
+        public bool HasGyro()
+        {
+            return Capacities.HasFlag(ControllerCapacities.Gyroscope);
+        }
+
+        public bool HasAccelerometer()
+        {
+            return Capacities.HasFlag(ControllerCapacities.Accelerometer);
         }
 
         public bool IsVirtual()

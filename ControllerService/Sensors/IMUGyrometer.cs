@@ -89,6 +89,15 @@ namespace ControllerService.Sensors
             sensor = null;
         }
 
+        public void ReadingChanged(float GyroRoll, float GyroPitch, float GyroYaw)
+        {
+            this.reading.X = this.reading_fixed.X = GyroRoll;
+            this.reading.Y = this.reading_fixed.Y = GyroPitch;
+            this.reading.Z = this.reading_fixed.Z = GyroYaw;
+
+            base.ReadingChanged();
+        }
+
         private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
         {
             this.reading.X = this.reading_fixed.X = (float)AngularVelocityDeg.X;

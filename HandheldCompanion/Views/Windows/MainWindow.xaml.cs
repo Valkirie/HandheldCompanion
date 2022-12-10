@@ -147,7 +147,6 @@ namespace HandheldCompanion.Views
             PipeClient.ServerMessage += OnServerMessage;
             PipeClient.Connected += OnClientConnected;
             PipeClient.Disconnected += OnClientDisconnected;
-            PipeClient.Open();
 
             // load manager(s)
             loadManagers();
@@ -173,6 +172,7 @@ namespace HandheldCompanion.Views
 
             // start manager(s) last
             SettingsManager.Start();
+            PipeClient.Open();
 
             // update Position and Size
             Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("MainWindowHeight"));
@@ -381,6 +381,9 @@ namespace HandheldCompanion.Views
                 settings.settings.Add(values.Key, values.Value);
 
             PipeClient.SendMessage(settings);
+
+            // warn service
+            ControllerManager.SendTargetController();
         }
 
         private void OnClientDisconnected()

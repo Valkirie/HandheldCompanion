@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
@@ -252,68 +253,99 @@ namespace ControllerService
             switch (message.code)
             {
                 case PipeCode.CLIENT_PROFILE:
-                    PipeClientProfile profile = (PipeClientProfile)message;
-                    ProfileUpdated(profile.profile, profile.backgroundTask);
+                    {
+                        PipeClientProfile profile = (PipeClientProfile)message;
+                        ProfileUpdated(profile.profile, profile.backgroundTask);
+                    }
                     break;
 
                 case PipeCode.CLIENT_CURSOR:
-                    PipeClientCursor cursor = (PipeClientCursor)message;
-
-                    switch (cursor.action)
                     {
-                        case CursorAction.CursorUp:
-                            DS4Touch.OnMouseUp(cursor.x, cursor.y, cursor.button, cursor.flags);
-                            break;
-                        case CursorAction.CursorDown:
-                            DS4Touch.OnMouseDown(cursor.x, cursor.y, cursor.button, cursor.flags);
-                            break;
-                        case CursorAction.CursorMove:
-                            DS4Touch.OnMouseMove(cursor.x, cursor.y, cursor.button, cursor.flags);
-                            break;
+                        PipeClientCursor cursor = (PipeClientCursor)message;
+
+                        switch (cursor.action)
+                        {
+                            case CursorAction.CursorUp:
+                                DS4Touch.OnMouseUp(cursor.x, cursor.y, cursor.button, cursor.flags);
+                                break;
+                            case CursorAction.CursorDown:
+                                DS4Touch.OnMouseDown(cursor.x, cursor.y, cursor.button, cursor.flags);
+                                break;
+                            case CursorAction.CursorMove:
+                                DS4Touch.OnMouseMove(cursor.x, cursor.y, cursor.button, cursor.flags);
+                                break;
+                        }
                     }
                     break;
 
                 case PipeCode.CLIENT_SETTINGS:
-                    PipeClientSettings settings = (PipeClientSettings)message;
-                    UpdateSettings(settings.settings);
+                    {
+                        PipeClientSettings settings = (PipeClientSettings)message;
+                        UpdateSettings(settings.settings);
+                    }
                     break;
 
                 case PipeCode.CLIENT_NAVIGATED:
-                    PipeNavigation navigation = (PipeNavigation)message;
-                    CurrentTag = navigation.Tag;
-
-                    switch (navigation.Tag)
                     {
-                        case "ProfileSettingsMode0":
-                            // do something
-                            break;
-                        case "ProfileSettingsMode1":
-                            // do something
-                            break;
-                        default:
-                            break;
-                    }
+                        PipeNavigation navigation = (PipeNavigation)message;
+                        CurrentTag = navigation.Tag;
 
+                        switch (navigation.Tag)
+                        {
+                            case "ProfileSettingsMode0":
+                                // do something
+                                break;
+                            case "ProfileSettingsMode1":
+                                // do something
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                     break;
 
                 case PipeCode.CLIENT_OVERLAY:
-                    PipeOverlay overlay = (PipeOverlay)message;
-                    CurrentOverlayStatus = overlay.Visibility;
+                    {
+                        PipeOverlay overlay = (PipeOverlay)message;
+                        CurrentOverlayStatus = overlay.Visibility;
+                    }
                     break;
 
                 case PipeCode.CLIENT_INPUT:
-                    PipeClientInput input = (PipeClientInput)message;
+                    {
+                        PipeClientInput input = (PipeClientInput)message;
 
-                    vTarget?.UpdateInputs(input.Inputs);
-                    DSUServer.UpdateInputs(input.Inputs);
+                        vTarget?.UpdateInputs(input.Inputs);
+                        DSUServer.UpdateInputs(input.Inputs);
+                        IMU.UpdateInputs(input.Inputs);
+                    }
+                    break;
+
+                case PipeCode.CLIENT_CONTROLLER_CONNECT:
+                    {
+                        PipeClientControllerConnect controller = (PipeClientControllerConnect)message;
+                        switch(controller.Capacacities)
+                        {
+                            case ControllerCapacities.Gyroscope:
+                            case ControllerCapacities.Accelerometer:
+                                IMU.PauseListening();
+                                break;
+                        }
+                    }
+                    break;
+
+                case PipeCode.CLIENT_CONTROLLER_DISCONNECT:
+                    {
+                        IMU.ResumeListening();
+                    }
                     break;
             }
         }
 
         private void OnClientDisconnected()
         {
-            DS4Touch.OnMouseUp(0, 0, CursorButton.TouchLeft, 26);
-            DS4Touch.OnMouseUp(0, 0, CursorButton.TouchRight, 26);
+            DS4Touch.OnMouseUp(0, 0, CursorButton.TouchLeft);
+            DS4Touch.OnMouseUp(0, 0, CursorButton.TouchRight);
         }
 
         private void OnClientConnected()

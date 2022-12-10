@@ -31,9 +31,9 @@ namespace ControllerCommon
         CLIENT_SETTINGS = 8,                // Sent to server to update settings
                                             // args: ...
 
-        OBSOLETE_0 = 9,                     // OBSOLETE, REUSEME
+        CLIENT_CONTROLLER_CONNECT = 9,      // Sent to server to share current controller details
 
-        OBSOLETE_1 = 11,                    // OBSOLETE, REUSEME
+        CLIENT_CONTROLLER_DISCONNECT = 11,  // Sent to server to warn current controller was disconnected
 
         CLIENT_CONSOLE = 12,                // Sent from client to client to pass parameters
                                             // args: string[] parameters

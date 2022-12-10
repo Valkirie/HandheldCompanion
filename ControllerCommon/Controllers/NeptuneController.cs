@@ -18,6 +18,9 @@ namespace ControllerCommon.Controllers
             Details = details;
             Details.isHooked = true;
 
+            Capacities |= ControllerCapacities.Gyroscope;
+            Capacities |= ControllerCapacities.Accelerometer;
+
             try
             {
                 Controller.Open();
