@@ -3,10 +3,13 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using HandheldCompanion.Views;
 using SharpDX.DirectInput;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using DeviceType = SharpDX.DirectInput.DeviceType;
 
 namespace HandheldCompanion.Managers
 {
@@ -95,58 +98,76 @@ namespace HandheldCompanion.Managers
 
         private static void DInputUpdated(PnPDetails details)
         {
+            Joystick joystick = null;
             foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
             {
-                // Instantiate the joystick
-                var joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
-
-                if (!joystick.Properties.InterfacePath.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
-                    continue;
-
-                // is an XInput controller, handled elsewhere
-                if (joystick.Properties.InterfacePath.Contains("IG_", StringComparison.InvariantCultureIgnoreCase))
-                    continue;
-
-                IController controller = null;
-                switch (joystick.Properties.VendorId)
+                try
                 {
-                    // SONY
-                    case 1356:
-                        {
-                            switch (joystick.Properties.ProductId)
-                            {
-                                // DualShock4
-                                case 2508:
-                                    controller = new DS4Controller(joystick, details);
-                                    break;
-                            }
-                        }
-                        break;
+                    // Instantiate the joystick
+                    joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
+
+                    if (!joystick.Properties.InterfacePath.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
+                        continue;
+
+                    // is an XInput controller, handled elsewhere
+                    if (joystick.Properties.InterfacePath.Contains("IG_", StringComparison.InvariantCultureIgnoreCase))
+                        continue;
                 }
-
-                // unsupported DInput controller
-                if (controller is null)
-                    continue;
-
-                if (!controller.IsConnected())
-                    continue;
-
-                if (controller.IsVirtual())
-                    continue;
-
-                // update or create controller
-                string path = controller.GetInstancePath();
-                Controllers[path] = controller;
-
-                // raise event
-                ControllerPlugged?.Invoke(controller);
+                catch { }
             }
 
-            string[] keys = Controllers.Keys.ToArray();
+            IController controller = null;
+            switch (details.attributes.VendorID)
+            {
+                // SONY
+                case 1356:
+                    {
+                        switch (details.attributes.ProductID)
+                        {
+                            // DualShock4
+                            case 2508:
+                                controller = new DS4Controller(joystick, details);
+                                break;
+                        }
+                    }
+                    break;
 
+                // STEAM
+                case 0x28DE:
+                    {
+                        switch (details.attributes.ProductID)
+                        {
+                            // STEAM DECK
+                            case 0x1205:
+                                controller = new NeptuneController(details);
+                                break;
+                        }
+                    }
+                    break;
+            }
+
+            // unsupported DInput controller
+            if (controller is null)
+                return;
+
+            if (!controller.IsConnected())
+                return;
+
+            if (controller.IsVirtual())
+                return;
+
+            // update or create controller
+            string path = controller.GetInstancePath();
+            Controllers[path] = controller;
+
+            // raise event
+            ControllerPlugged?.Invoke(controller);
+
+            // search for unplugged controllers
+            string[] keys = Controllers.Keys.ToArray();
             foreach (string key in keys)
             {
-                IController controller = Controllers[key];
+                controller = Controllers[key];
                 if (!controller.IsConnected())
                 {
                     // controller was unplugged

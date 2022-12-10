@@ -6,68 +6,40 @@ using System.Threading.Tasks;
 
 namespace ControllerCommon.Controllers
 {
-    public class NetpuneController : IController
+    public class NeptuneController : IController
     {
-        private NeptuneController Controller = new();
-        private NeptuneControllerInputState State;
-        private NeptuneControllerInputState prevState;
+        private neptune_hidapi.net.NeptuneController Controller = new();
+        private NeptuneControllerInputEventArgs input;
 
         private bool isConnected = false;
 
-        public NetpuneController(PnPDetails details)
+        public NeptuneController(PnPDetails details)
         {
             Details = details;
             Details.isHooked = true;
-        }
 
-        public override string ToString()
-        {
-            return Details.DeviceDesc;
-        }
-
-        public override void UpdateReport()
-        {
-        }
-
-        public override bool IsConnected()
-        {
-            return isConnected;
-        }
-
-        public override async void Rumble()
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                SetVibration(ushort.MaxValue, ushort.MaxValue);
-                await Task.Delay(100);
-
-                SetVibration(0, 0);
-                await Task.Delay(100);
-            }
-            base.Rumble();
-        }
-
-        public override void Plug()
-        {
             try
             {
                 Controller.Open();
                 isConnected = true;
+
+                UpdateTimer.Tick += (sender, e) => UpdateReport();
             }
             catch (Exception)
             {
                 return;
             }
-
-            Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
-
-            PipeClient.ServerMessage += OnServerMessage;
-            base.Plug();
         }
 
-        private void OnControllerInputReceived(NeptuneControllerInputEventArgs input)
+        public override string ToString()
         {
-            if (prevState.GetHashCode() == State.GetHashCode())
+            // todo: localize me
+            return "Neptune Controller";
+        }
+
+        public override void UpdateReport()
+        {
+            if (input is null)
                 return;
 
             Inputs.Buttons = InjectedButtons;
@@ -148,15 +120,43 @@ namespace ControllerCommon.Controllers
             Inputs.RightThumbX = input.State.AxesState[NeptuneControllerAxis.RightStickX];
             Inputs.RightThumbY = input.State.AxesState[NeptuneControllerAxis.RightStickY];
 
-            Inputs.LeftTrigger = input.State.AxesState[NeptuneControllerAxis.L2];
-            Inputs.RightTrigger = input.State.AxesState[NeptuneControllerAxis.R2];
+            Inputs.LeftTrigger = input.State.AxesState[NeptuneControllerAxis.L2] * byte.MaxValue / short.MaxValue;
+            Inputs.RightTrigger = input.State.AxesState[NeptuneControllerAxis.R2] * byte.MaxValue / short.MaxValue;
 
             // todo: map trackpad(s)
 
-            // update states
-            prevState = State;
-
             base.UpdateReport();
+        }
+
+        public override bool IsConnected()
+        {
+            return isConnected;
+        }
+
+        public override async void Rumble()
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                SetVibration(ushort.MaxValue, ushort.MaxValue);
+                await Task.Delay(100);
+
+                SetVibration(0, 0);
+                await Task.Delay(100);
+            }
+            base.Rumble();
+        }
+
+        public override void Plug()
+        {
+            Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
+
+            PipeClient.ServerMessage += OnServerMessage;
+            base.Plug();
+        }
+
+        private void OnControllerInputReceived(NeptuneControllerInputEventArgs input)
+        {
+            this.input = input;
         }
 
         public override void Unplug()
@@ -175,15 +175,33 @@ namespace ControllerCommon.Controllers
             base.Unplug();
         }
 
+        private bool lastLeftHapticOn = false;
+        private bool lastRightHapticOn = false;
+
+
         public override void SetVibration(ushort LargeMotor, ushort SmallMotor)
         {
             ushort LeftMotorSpeed = (ushort)((LargeMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
             ushort RightMotorSpeed = (ushort)((SmallMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
 
-            // most likely incorrect
+            // todo: improve me
             // todo: https://github.com/mKenfenheuer/steam-deck-windows-usermode-driver/blob/69ce8085d3b6afe888cb2e36bd95836cea58084a/SWICD/Services/ControllerService.cs
-            Controller.SetHaptic(1, LeftMotorSpeed, 30, 0);
-            Controller.SetHaptic(0, RightMotorSpeed, 30, 0);
+
+            byte amplitude = 15;
+            byte period = 15;
+
+            bool leftHaptic = LargeMotor > 0;
+            bool rightHaptic = SmallMotor > 0;
+
+            if (leftHaptic != lastLeftHapticOn)
+                _ = Controller.SetHaptic(1, (ushort)(leftHaptic ? amplitude : 0), (ushort)(leftHaptic ? period : 0), 0);
+
+
+            if (rightHaptic != lastRightHapticOn)
+                _ = Controller.SetHaptic(0, (ushort)(rightHaptic ? amplitude : 0), (ushort)(rightHaptic ? period : 0), 0);
+
+            lastLeftHapticOn = leftHaptic;
+            lastRightHapticOn = rightHaptic;
         }
 
         private void OnServerMessage(PipeMessage message)
