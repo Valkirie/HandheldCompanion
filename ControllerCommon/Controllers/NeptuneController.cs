@@ -155,9 +155,9 @@ namespace ControllerCommon.Controllers
             if (input.State.AxesState[NeptuneControllerAxis.GyroYaw] > maxyaw)
                 maxyaw = input.State.AxesState[NeptuneControllerAxis.GyroYaw];
 
+            Inputs.GyroAccelZ   = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
+            Inputs.GyroAccelY   = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
             Inputs.GyroAccelX   = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
-            Inputs.GyroAccelY   = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
-            Inputs.GyroAccelZ   = (float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
 
             Inputs.GyroPitch    = -(float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;
             Inputs.GyroRoll     = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;
