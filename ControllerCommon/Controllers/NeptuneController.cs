@@ -10,7 +10,7 @@ namespace ControllerCommon.Controllers
 {
     public class NeptuneController : IController
     {
-        private neptune_hidapi.net.NeptuneController Controller = new();
+        private neptune_hidapi.net.NeptuneController Controller;
         private NeptuneControllerInputEventArgs input;
 
         private bool isConnected = false;
@@ -25,6 +25,7 @@ namespace ControllerCommon.Controllers
 
             try
             {
+                Controller = new();
                 Controller.Open();
                 isConnected = true;
 
