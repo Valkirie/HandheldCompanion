@@ -131,7 +131,7 @@ namespace HandheldCompanion.Views.Pages
                 // Search for an existing controller, remove it
                 foreach (IController ctrl in RadioControllers.Items)
                 {
-                    if (ctrl.GetInstancePath() == Controller.GetInstancePath())
+                    if (ctrl.GetInstancePath() == Controller.GetInstancePath() || !ctrl.IsConnected())
                     {
                         RadioControllers.Items.Remove(ctrl);
                         break;

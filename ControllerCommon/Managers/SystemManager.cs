@@ -138,6 +138,11 @@ namespace ControllerCommon.Managers
             HIDListener.DeviceRemoved -= HIDListener_DeviceRemoved;
         }
 
+        private static PnPDetails FindDeviceFromUSB(string InstanceId)
+        {
+            return PnPDevices.Values.Where(device => device.baseContainerDeviceInstancePath.Equals(InstanceId, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+        }
+
         private static PnPDetails FindDeviceFromUSB(PnPDevice parent)
         {
             return PnPDevices.Values.Where(device => device.baseContainerDeviceInstancePath.Equals(parent.InstanceId, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
@@ -274,21 +279,17 @@ namespace ControllerCommon.Managers
         private async static void XInputListener_DeviceRemoved(DeviceEventArgs obj)
         {
             // XInput device removed
-            try
-            {
-                string InstanceId = obj.SymLink.Replace("#", @"\");
-                InstanceId = CommonUtils.Between(InstanceId, @"\\?\", @"\{");
+            string InstanceId = obj.SymLink.Replace("#", @"\");
+            InstanceId = CommonUtils.Between(InstanceId, @"\\?\", @"\{");
 
-                var deviceEx = GetPnPDeviceEx(InstanceId);
-                PnPDevices.TryRemove(InstanceId, out var value);
-
-                XInputDeviceRemoved?.Invoke(deviceEx);
-            }
-            catch (Exception) { }
+            var deviceEx = FindDeviceFromUSB(InstanceId);
 
             // give system at least one second to initialize device
             await Task.Delay(1000);
+            PnPDevices.TryRemove(InstanceId, out var value);
+
             RefreshHID();
+            XInputDeviceRemoved?.Invoke(deviceEx);
         }
 
         private async static void XInputListener_DeviceArrived(DeviceEventArgs obj)
@@ -319,15 +320,15 @@ namespace ControllerCommon.Managers
                 InstanceId = CommonUtils.Between(InstanceId, @"\\?\", @"\{");
 
                 var deviceEx = GetPnPDeviceEx(InstanceId);
+
+                // give system at least one second to initialize device
+                await Task.Delay(1000);
                 PnPDevices.TryRemove(InstanceId, out var value);
 
+                RefreshHID();
                 DInputDeviceRemoved?.Invoke(deviceEx);
             }
             catch (Exception) { }
-
-            // give system at least one second to initialize device
-            await Task.Delay(1000);
-            RefreshHID();
         }
 
         private async static void HIDListener_DeviceArrived(DeviceEventArgs obj)

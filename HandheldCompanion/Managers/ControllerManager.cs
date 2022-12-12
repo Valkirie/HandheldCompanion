@@ -199,8 +199,8 @@ namespace HandheldCompanion.Managers
                 ControllerPlugged?.Invoke(controller);
             }
 
+            // search for unplugged controllers
             string[] keys = Controllers.Keys.ToArray();
-
             foreach (string key in keys)
             {
                 IController controller = Controllers[key];
