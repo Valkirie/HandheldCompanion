@@ -148,7 +148,7 @@ namespace HandheldCompanion.Managers
         private static async void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
         {
             // give the window a bit of time to land
-            await Task.Delay(500);
+            await Task.Delay(750);
 
             try
             {
@@ -185,7 +185,7 @@ namespace HandheldCompanion.Managers
         private static async void EventCallback(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
         {
             // give the window a bit of time to land
-            await Task.Delay(500);
+            await Task.Delay(750);
 
             ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
 
@@ -337,8 +337,6 @@ namespace HandheldCompanion.Managers
         {
             if (string.IsNullOrEmpty(path))
                 return ProcessFilter.Restricted;
-
-            LogManager.LogDebug("Filtering exec: {0}", exec.ToLower());
 
             // manual filtering
             switch (exec.ToLower())
