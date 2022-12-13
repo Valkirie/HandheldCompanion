@@ -131,6 +131,10 @@ namespace ControllerService
 
             TrackPadTouch1.X = (short)(inputs.LeftPadX * TOUCHPAD_WIDTH / ushort.MaxValue);
             TrackPadTouch1.Y = (short)(inputs.LeftPadY * TOUCHPAD_HEIGHT / ushort.MaxValue);
+
+            TrackPadTouch2.X = (short)(inputs.RightPadX * TOUCHPAD_WIDTH / ushort.MaxValue);
+            TrackPadTouch2.Y = (short)(inputs.RightPadY * TOUCHPAD_HEIGHT / ushort.MaxValue);
+
             OutputClickButton = inputs.LeftPadClick & inputs.RightPadClick;
 
             prevLeftPadTouch = inputs.LeftPadTouch;
