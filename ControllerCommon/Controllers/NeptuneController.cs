@@ -39,7 +39,6 @@ namespace ControllerCommon.Controllers
 
         public override string ToString()
         {
-            // todo: localize me
             return "Steam Controller Neptune";
         }
 

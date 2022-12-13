@@ -52,7 +52,7 @@ namespace HandheldCompanion.Views.Pages
             cB_Language.Items.Add(new CultureInfo("zh-Hant"));
 
             // call function
-            UpdateDevice(null);
+            UpdateDevice();
 
             // initialize manager(s)
             MainWindow.serviceManager.Updated += OnServiceUpdate;
@@ -131,12 +131,13 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
-        public void UpdateDevice(PnPDevice? device)
+        public void UpdateDevice(PnPDevice device = null)
         {
             this.Dispatcher.Invoke(() =>
             {
                 SensorInternal.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.Windows];
                 SensorExternal.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.SerialUSBIMU];
+                SensorController.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.Controller];
             });
         }
 

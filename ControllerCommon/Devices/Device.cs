@@ -150,6 +150,17 @@ namespace ControllerCommon.Devices
                         }
                     }
                     break;
+
+                case "VALVE":
+                    {
+                        switch (ProductName)
+                        {
+                            case "Jupiter":
+                                device = new SteamDeck();
+                                break;
+                        }
+                    }
+                    break;
             }
 
             if (device is null)
