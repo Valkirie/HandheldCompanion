@@ -632,7 +632,7 @@ namespace ControllerService
                 //DS4 only: touchpad points
                 for (int i = 0; i < 2; i++)
                 {
-                    var tpad = (i == 0) ? DS4Touch.TrackPadTouch1 : DS4Touch.TrackPadTouch2;
+                    var tpad = (i == 0) ? DS4Touch.LeftPadTouch : DS4Touch.RightPadTouch;
 
                     outputData[outIdx++] = tpad.IsActive ? (byte)1 : (byte)0;
                     outputData[outIdx++] = (byte)tpad.RawTrackingNum;

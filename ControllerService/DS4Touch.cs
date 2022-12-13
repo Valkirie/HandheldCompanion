@@ -28,8 +28,8 @@ namespace ControllerService
             }
         }
 
-        public static TrackPadTouch TrackPadTouch1 = new(TOUCH0_ID);
-        public static TrackPadTouch TrackPadTouch2 = new(TOUCH1_ID);
+        public static TrackPadTouch LeftPadTouch = new(TOUCH0_ID);
+        public static TrackPadTouch RightPadTouch = new(TOUCH1_ID);
         public static byte TouchPacketCounter = 0;
 
         private static short TouchX, TouchY;
@@ -43,14 +43,14 @@ namespace ControllerService
             switch (Button)
             {
                 case CursorButton.TouchLeft:
-                    TrackPadTouch1.X = TouchX;
-                    TrackPadTouch1.Y = TouchY;
-                    TrackPadTouch1.RawTrackingNum |= TOUCH_DISABLE;
+                    LeftPadTouch.X = TouchX;
+                    LeftPadTouch.Y = TouchY;
+                    LeftPadTouch.RawTrackingNum |= TOUCH_DISABLE;
                     break;
                 case CursorButton.TouchRight:
-                    TrackPadTouch2.X = TouchX;
-                    TrackPadTouch2.Y = TouchY;
-                    TrackPadTouch2.RawTrackingNum |= TOUCH_DISABLE;
+                    RightPadTouch.X = TouchX;
+                    RightPadTouch.Y = TouchY;
+                    RightPadTouch.RawTrackingNum |= TOUCH_DISABLE;
                     break;
             }
 
@@ -65,14 +65,14 @@ namespace ControllerService
             switch (Button)
             {
                 case CursorButton.TouchLeft:
-                    TrackPadTouch1.X = TouchX;
-                    TrackPadTouch1.Y = TouchY;
-                    TrackPadTouch1.RawTrackingNum &= ~TOUCH_DISABLE;
+                    LeftPadTouch.X = TouchX;
+                    LeftPadTouch.Y = TouchY;
+                    LeftPadTouch.RawTrackingNum &= ~TOUCH_DISABLE;
                     break;
                 case CursorButton.TouchRight:
-                    TrackPadTouch2.X = TouchX;
-                    TrackPadTouch2.Y = TouchY;
-                    TrackPadTouch2.RawTrackingNum &= ~TOUCH_DISABLE;
+                    RightPadTouch.X = TouchX;
+                    RightPadTouch.Y = TouchY;
+                    RightPadTouch.RawTrackingNum &= ~TOUCH_DISABLE;
                     break;
             }
 
@@ -90,12 +90,12 @@ namespace ControllerService
             switch (Button)
             {
                 case CursorButton.TouchLeft:
-                    TrackPadTouch1.X = TouchX;
-                    TrackPadTouch1.Y = TouchY;
+                    LeftPadTouch.X = TouchX;
+                    LeftPadTouch.Y = TouchY;
                     break;
                 case CursorButton.TouchRight:
-                    TrackPadTouch2.X = TouchX;
-                    TrackPadTouch2.Y = TouchY;
+                    RightPadTouch.X = TouchX;
+                    RightPadTouch.Y = TouchY;
                     break;
             }
         }
@@ -108,14 +108,11 @@ namespace ControllerService
                 if (inputs.LeftPadTouch)
                 {
                     TouchPacketCounter++;
-                    TrackPadTouch1.RawTrackingNum &= ~TOUCH_DISABLE;
-
-                    TrackPadTouch1.X = (short)(inputs.LeftPadX * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f);
-                    TrackPadTouch1.Y = (short)(inputs.LeftPadY * TOUCHPAD_HEIGHT / ushort.MaxValue);
+                    LeftPadTouch.RawTrackingNum &= ~TOUCH_DISABLE;
                 }
                 else
                 {
-                    TrackPadTouch1.RawTrackingNum |= TOUCH_DISABLE;
+                    LeftPadTouch.RawTrackingNum |= TOUCH_DISABLE;
                 }
             }
 
@@ -124,15 +121,24 @@ namespace ControllerService
                 if (inputs.RightPadTouch)
                 {
                     TouchPacketCounter++;
-                    TrackPadTouch2.RawTrackingNum &= ~TOUCH_DISABLE;
-
-                    TrackPadTouch2.X = (short)((inputs.RightPadX * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f) + (0.5f * TOUCHPAD_WIDTH));
-                    TrackPadTouch2.Y = (short)(inputs.RightPadY * TOUCHPAD_HEIGHT / ushort.MaxValue);
+                    RightPadTouch.RawTrackingNum &= ~TOUCH_DISABLE;
                 }
                 else
                 {
-                    TrackPadTouch2.RawTrackingNum |= TOUCH_DISABLE;
+                    RightPadTouch.RawTrackingNum |= TOUCH_DISABLE;
                 }
+            }
+
+            if (inputs.LeftPadTouch)
+            {
+                LeftPadTouch.X = (short)(inputs.LeftPadX * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f);
+                LeftPadTouch.Y = (short)(inputs.LeftPadY * TOUCHPAD_HEIGHT / ushort.MaxValue);
+            }
+
+            if (inputs.RightPadTouch)
+            {
+                RightPadTouch.X = (short)((inputs.RightPadX * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f) + (0.5f * TOUCHPAD_WIDTH));
+                RightPadTouch.Y = (short)(inputs.RightPadY * TOUCHPAD_HEIGHT / ushort.MaxValue);
             }
 
             OutputClickButton = inputs.LeftPadClick || inputs.RightPadClick;
