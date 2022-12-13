@@ -464,9 +464,6 @@ namespace ControllerService
             // listen to system events
             SystemManager.SystemStatusChanged += OnSystemStatusChanged;
 
-            // OnPowerChange(null, new PowerModeChangedEventArgs(PowerModes.Suspend));
-            // OnPowerChange(null, new PowerModeChangedEventArgs(PowerModes.Resume));
-
             return Task.CompletedTask;
         }
 
