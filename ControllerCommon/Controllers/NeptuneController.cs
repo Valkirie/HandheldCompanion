@@ -1,4 +1,6 @@
-﻿using neptune_hidapi.net;
+﻿using ControllerCommon.Managers;
+using Microsoft.VisualBasic.Logging;
+using neptune_hidapi.net;
 using SharpDX.XInput;
 using System;
 using System.Threading.Tasks;
@@ -161,6 +163,15 @@ namespace ControllerCommon.Controllers
             Inputs.GyroYaw = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;
 
             // todo: map trackpad(s)
+            if (input.State.AxesState[NeptuneControllerAxis.LeftPadX] != 0)
+                LogManager.LogDebug("LeftPadX: {0}", input.State.AxesState[NeptuneControllerAxis.LeftPadX]);
+            if (input.State.AxesState[NeptuneControllerAxis.LeftPadY] != 0)
+                LogManager.LogDebug("LeftPadY: {0}", input.State.AxesState[NeptuneControllerAxis.LeftPadY]);
+
+            if (input.State.AxesState[NeptuneControllerAxis.RightPadX] != 0)
+                LogManager.LogDebug("RightPadX: {0}", input.State.AxesState[NeptuneControllerAxis.RightPadX]);
+            if (input.State.AxesState[NeptuneControllerAxis.RightPadY] != 0)
+                LogManager.LogDebug("RightPadY: {0}", input.State.AxesState[NeptuneControllerAxis.RightPadY]);
 
             base.UpdateReport();
         }
