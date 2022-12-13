@@ -254,12 +254,7 @@ namespace HandheldCompanion.Managers
             if (targetController is null)
                 PipeClient.SendMessage(new PipeClientControllerDisconnect());
             else
-            {
                 PipeClient.SendMessage(new PipeClientControllerConnect(targetController.ToString(), targetController.Capacities));
-
-                if (targetController.Capacities.HasFlag(ControllerCapacities.Gyroscope | ControllerCapacities.Accelerometer))
-                    SettingsManager.SetProperty("SensorSelection", SensorFamily.Controller);
-            }
         }
 
         public static IController GetTargetController()
