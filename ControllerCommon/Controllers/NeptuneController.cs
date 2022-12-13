@@ -163,7 +163,7 @@ namespace ControllerCommon.Controllers
             Inputs.GyroYaw = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;
 
             Inputs.LeftPadX = short.MaxValue + input.State.AxesState[NeptuneControllerAxis.LeftPadX];
-            Inputs.LeftPadX = short.MaxValue - input.State.AxesState[NeptuneControllerAxis.LeftPadY];
+            Inputs.LeftPadY = short.MaxValue - input.State.AxesState[NeptuneControllerAxis.LeftPadY];
             Inputs.LeftPadTouch = input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch];
             Inputs.LeftPadClick = input.State.ButtonState[NeptuneControllerButton.BtnLPadPress];
 

@@ -107,6 +107,16 @@ namespace ControllerCommon.Controllers
             GyroRoll = Inputs.GyroRoll;
             GyroPitch = Inputs.GyroPitch;
             GyroYaw = Inputs.GyroYaw;
+
+            LeftPadX = Inputs.LeftPadX;
+            LeftPadY = Inputs.LeftPadY;
+            LeftPadTouch = Inputs.LeftPadTouch;
+            LeftPadClick = Inputs.LeftPadClick;
+
+            RightPadX = Inputs.RightPadX;
+            RightPadY = Inputs.RightPadY;
+            RightPadTouch = Inputs.RightPadTouch;
+            RightPadClick = Inputs.RightPadClick;
         }
     }
 
