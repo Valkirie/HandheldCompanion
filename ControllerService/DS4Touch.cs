@@ -109,6 +109,9 @@ namespace ControllerService
                 {
                     TouchPacketCounter++;
                     TrackPadTouch1.RawTrackingNum &= ~TOUCH_DISABLE;
+
+                    TrackPadTouch1.X = (short)(inputs.LeftPadX * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f);
+                    TrackPadTouch1.Y = (short)(inputs.LeftPadY * TOUCHPAD_HEIGHT / ushort.MaxValue);
                 }
                 else
                 {
@@ -122,18 +125,15 @@ namespace ControllerService
                 {
                     TouchPacketCounter++;
                     TrackPadTouch2.RawTrackingNum &= ~TOUCH_DISABLE;
+
+                    TrackPadTouch2.X = (short)((inputs.RightPadX * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f) + (0.5f * TOUCHPAD_WIDTH));
+                    TrackPadTouch2.Y = (short)(inputs.RightPadY * TOUCHPAD_HEIGHT / ushort.MaxValue);
                 }
                 else
                 {
                     TrackPadTouch2.RawTrackingNum |= TOUCH_DISABLE;
                 }
             }
-
-            TrackPadTouch1.X = (short)(inputs.LeftPadX * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f);
-            TrackPadTouch1.Y = (short)(inputs.LeftPadY * TOUCHPAD_HEIGHT / ushort.MaxValue);
-
-            TrackPadTouch2.X = (short)((inputs.RightPadX * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f) + (0.5f * TOUCHPAD_WIDTH));
-            TrackPadTouch2.Y = (short)(inputs.RightPadY * TOUCHPAD_HEIGHT / ushort.MaxValue);
 
             OutputClickButton = inputs.LeftPadClick || inputs.RightPadClick;
 
