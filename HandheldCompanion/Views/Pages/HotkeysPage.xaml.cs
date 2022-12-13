@@ -1,7 +1,6 @@
 ﻿using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;

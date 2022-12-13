@@ -1,11 +1,7 @@
 ﻿using ControllerCommon.Managers;
-using ControllerCommon.Utils;
 using Nefarius.Drivers.HidHide;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using static PInvoke.Kernel32;
 
 namespace ControllerCommon
 {

@@ -1,10 +1,8 @@
-﻿using ControllerCommon.Sensors;
-using ControllerCommon.Utils;
+﻿using ControllerCommon.Utils;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Timers;
-using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.CommonUtils;
 using static ControllerCommon.Utils.DeviceUtils;
 

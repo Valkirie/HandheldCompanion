@@ -3,13 +3,10 @@ using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static HandheldCompanion.Managers.InputsManager;
-using static System.Net.Mime.MediaTypeNames;
 using Application = System.Windows.Application;
 
 namespace HandheldCompanion.Managers

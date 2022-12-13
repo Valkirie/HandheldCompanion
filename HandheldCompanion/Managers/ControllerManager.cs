@@ -3,13 +3,10 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using HandheldCompanion.Views;
 using SharpDX.DirectInput;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using static ControllerCommon.Utils.DeviceUtils;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using DeviceType = SharpDX.DirectInput.DeviceType;
 
 namespace HandheldCompanion.Managers

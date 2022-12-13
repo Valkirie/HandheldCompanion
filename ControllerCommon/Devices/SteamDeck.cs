@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
-using WindowsInput.Events;
-
-namespace ControllerCommon.Devices
+﻿namespace ControllerCommon.Devices
 {
     public class SteamDeck : Device
     {

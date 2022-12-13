@@ -76,7 +76,7 @@ namespace ControllerCommon.Controllers
 
         public int Timestamp;
 
-        public ControllerInput() 
+        public ControllerInput()
         { }
 
         public ControllerInput(ControllerInput Inputs)
