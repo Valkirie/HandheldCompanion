@@ -145,15 +145,18 @@ namespace HandheldCompanion.Managers
             return null;
         }
 
-        private static void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
+        private static async void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
         {
+            // give the window a bit of time to land
+            await Task.Delay(500);
+
             try
             {
                 var element = sender as AutomationElement;
                 if (element != null)
                 {
                     IntPtr hWnd = (IntPtr)element.Current.NativeWindowHandle;
-                    ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd).Process;
+                    ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
 
                     if (processInfo == null)
                         return;
@@ -171,7 +174,7 @@ namespace HandheldCompanion.Managers
         {
             if (IsWindowVisible((int)hWnd))
             {
-                ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd).Process;
+                ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
 
                 Process proc = Process.GetProcessById((int)processInfo.ProcessId);
                 ProcessCreated(proc, (int)hWnd, true);
@@ -179,9 +182,12 @@ namespace HandheldCompanion.Managers
             return true;
         }
 
-        private static void EventCallback(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
+        private static async void EventCallback(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
         {
-            ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd).Process;
+            // give the window a bit of time to land
+            await Task.Delay(500);
+
+            ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
 
             if (processInfo == null)
                 return;
@@ -332,8 +338,7 @@ namespace HandheldCompanion.Managers
             if (string.IsNullOrEmpty(path))
                 return ProcessFilter.Restricted;
 
-            if (path.Contains(Environment.GetEnvironmentVariable("windir"), StringComparison.InvariantCultureIgnoreCase))
-                return ProcessFilter.Restricted;
+            LogManager.LogDebug("Filtering exec: {0}", exec.ToLower());
 
             // manual filtering
             switch (exec.ToLower())
@@ -351,9 +356,6 @@ namespace HandheldCompanion.Managers
                 // System shell
                 case "dwm.exe":
                 case "explorer.exe":
-                case "shellexperiencehost.exe":
-                case "startmenuexperiencehost.exe":
-                case "searchhost.exe":
                 case "sihost.exe":
                 case "fontdrvhost.exe":
                 case "chsime.exe":
@@ -373,6 +375,10 @@ namespace HandheldCompanion.Managers
                 case "controllerservice.exe":
                 case "controllerservice.dll":
                 case "radeonsoftware.exe":
+                case "applicationframehost.exe":
+                case "shellexperiencehost.exe":
+                case "startmenuexperiencehost.exe":
+                case "searchhost.exe":
                     return ProcessFilter.Ignored;
 
                 default:

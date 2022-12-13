@@ -112,8 +112,7 @@ namespace ControllerCommon.Utils
             // Speical handling needs for UWP to get the child window process
             public const string UWPFrameHostApp = "ApplicationFrameHost.exe";
 
-            public ProcessDiagnosticInfo Process { get; private set; }
-            int attempt = 0;
+            public ProcessDiagnosticInfo _realProcess { get; private set; }
 
             public FindHostedProcess(IntPtr foregroundProcessID)
             {
@@ -122,32 +121,28 @@ namespace ControllerCommon.Utils
                     if (foregroundProcessID == IntPtr.Zero)
                         return;
 
-                    Process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(foregroundProcessID));
+                    _realProcess = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(foregroundProcessID));
 
-                    if (Process == null)
+                    if (_realProcess == null)
                         return;
 
                     // Get real process
-                    while (Process.ExecutableFileName.Equals(UWPFrameHostApp, StringComparison.InvariantCultureIgnoreCase) && attempt < 10)
-                    {
+                    if (_realProcess.ExecutableFileName == UWPFrameHostApp)
                         EnumChildWindows(foregroundProcessID, ChildWindowCallback, IntPtr.Zero);
-                        Task.Delay(500);
-                    }
                 }
                 catch (Exception)
                 {
-                    Process = null;
+                    _realProcess = null;
                 }
             }
 
             private bool ChildWindowCallback(IntPtr hwnd, IntPtr lparam)
             {
-                var process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(hwnd));
+                ProcessDiagnosticInfo childProcess = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(hwnd));
 
-                if (!Process.ExecutableFileName.Equals(UWPFrameHostApp, StringComparison.InvariantCultureIgnoreCase))
-                    Process = process;
+                if (childProcess.ExecutableFileName != UWPFrameHostApp)
+                    _realProcess = childProcess;
 
-                attempt++;
                 return true;
             }
         }

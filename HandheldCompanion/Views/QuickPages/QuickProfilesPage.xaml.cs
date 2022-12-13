@@ -208,7 +208,9 @@ namespace HandheldCompanion.Views.QuickPages
 
             this.Dispatcher.Invoke(() =>
             {
-                ProcessName.Text = currentProcess.Name;
+                string MainWindowTitle = ProcessUtils.GetWindowTitle(processEx.MainWindowHandle);
+
+                ProcessName.Text = MainWindowTitle;
                 ProcessPath.Text = currentProcess.Path;
 
                 // disable create button if process is bypassed
