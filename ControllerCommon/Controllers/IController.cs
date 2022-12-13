@@ -52,7 +52,11 @@ namespace ControllerCommon.Controllers
         OEM4 = 4294967296,
         OEM5 = 8589934592,
         OEM6 = 17179869184,
-        OEM7 = 34359738368
+        OEM7 = 34359738368,
+        OEM8 = 68719476736,
+        OEM9 = 137438953472,
+        OEM10 = 274877906944,
+        OEM11 = 549755813888
     }
 
     [Flags]
@@ -67,12 +71,18 @@ namespace ControllerCommon.Controllers
     public class ControllerInput
     {
         public ControllerButtonFlags Buttons;
+
         public float LeftThumbX, LeftThumbY;
         public float RightThumbX, RightThumbY;
         public float LeftTrigger, RightTrigger;
 
         public float GyroAccelX, GyroAccelY, GyroAccelZ;
         public float GyroRoll, GyroPitch, GyroYaw;
+
+        public float LeftPadX, LeftPadY;
+        public float RightPadX, RightPadY;
+        public bool LeftPadTouch, LeftPadClick;
+        public bool RightPadTouch, RightPadClick;
 
         public int Timestamp;
 

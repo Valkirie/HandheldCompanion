@@ -314,6 +314,7 @@ namespace ControllerService
                         vTarget?.UpdateInputs(input.Inputs);
                         DSUServer.UpdateInputs(input.Inputs);
                         IMU.UpdateInputs(input.Inputs);
+                        DS4Touch.UpdateInputs(input.Inputs);
                     }
                     break;
 

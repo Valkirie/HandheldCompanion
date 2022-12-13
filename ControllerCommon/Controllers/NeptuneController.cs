@@ -162,16 +162,15 @@ namespace ControllerCommon.Controllers
             Inputs.GyroRoll = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;
             Inputs.GyroYaw = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;
 
-            // todo: map trackpad(s)
-            if (input.State.AxesState[NeptuneControllerAxis.LeftPadX] != 0)
-                LogManager.LogDebug("LeftPadX: {0}", input.State.AxesState[NeptuneControllerAxis.LeftPadX]);
-            if (input.State.AxesState[NeptuneControllerAxis.LeftPadY] != 0)
-                LogManager.LogDebug("LeftPadY: {0}", input.State.AxesState[NeptuneControllerAxis.LeftPadY]);
+            Inputs.LeftPadX = short.MaxValue + input.State.AxesState[NeptuneControllerAxis.LeftPadX];
+            Inputs.LeftPadX = short.MaxValue - input.State.AxesState[NeptuneControllerAxis.LeftPadY];
+            Inputs.LeftPadTouch = input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch];
+            Inputs.LeftPadClick = input.State.ButtonState[NeptuneControllerButton.BtnLPadPress];
 
-            if (input.State.AxesState[NeptuneControllerAxis.RightPadX] != 0)
-                LogManager.LogDebug("RightPadX: {0}", input.State.AxesState[NeptuneControllerAxis.RightPadX]);
-            if (input.State.AxesState[NeptuneControllerAxis.RightPadY] != 0)
-                LogManager.LogDebug("RightPadY: {0}", input.State.AxesState[NeptuneControllerAxis.RightPadY]);
+            Inputs.RightPadX = short.MaxValue + input.State.AxesState[NeptuneControllerAxis.RightPadX];
+            Inputs.RightPadY = short.MaxValue - input.State.AxesState[NeptuneControllerAxis.RightPadY];
+            Inputs.RightPadTouch = input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch];
+            Inputs.RightPadClick = input.State.ButtonState[NeptuneControllerButton.BtnRPadPress];
 
             base.UpdateReport();
         }

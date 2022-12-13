@@ -1,4 +1,6 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Controllers;
+using Windows.Devices.Sensors;
 
 namespace ControllerService
 {
@@ -32,8 +34,6 @@ namespace ControllerService
 
         private static short TouchX, TouchY;
         public static bool OutputClickButton;
-
-        private static float BoundsWidth, BoundsHeight;
 
         public static void OnMouseUp(double X, double Y, CursorButton Button, int flags = 20)
         {
@@ -98,6 +98,43 @@ namespace ControllerService
                     TrackPadTouch2.Y = TouchY;
                     break;
             }
+        }
+
+        private static bool prevLeftPadTouch, prevRightPadTouch;
+        public static void UpdateInputs(ControllerInput inputs)
+        {
+            if (prevLeftPadTouch != inputs.LeftPadTouch)
+            {
+                if (inputs.LeftPadTouch)
+                {
+                    TouchPacketCounter++;
+                    TrackPadTouch1.RawTrackingNum &= ~TOUCH_DISABLE;
+                }
+                else
+                {
+                    TrackPadTouch1.RawTrackingNum |= TOUCH_DISABLE;
+                }
+            }
+
+            if (prevRightPadTouch != inputs.RightPadTouch)
+            {
+                if (inputs.RightPadTouch)
+                {
+                    TouchPacketCounter++;
+                    TrackPadTouch2.RawTrackingNum &= ~TOUCH_DISABLE;
+                }
+                else
+                {
+                    TrackPadTouch2.RawTrackingNum |= TOUCH_DISABLE;
+                }
+            }
+
+            TrackPadTouch1.X = (short)(inputs.LeftPadX * TOUCHPAD_WIDTH / ushort.MaxValue);
+            TrackPadTouch1.Y = (short)(inputs.LeftPadY * TOUCHPAD_HEIGHT / ushort.MaxValue);
+            OutputClickButton = inputs.LeftPadClick & inputs.RightPadClick;
+
+            prevLeftPadTouch = inputs.LeftPadTouch;
+            prevRightPadTouch = inputs.RightPadTouch;
         }
     }
 }
