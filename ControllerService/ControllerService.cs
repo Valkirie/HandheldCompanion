@@ -126,9 +126,6 @@ namespace ControllerService
 
                         sensor.Open();
                         sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
-
-                        // todo: improve me
-                        IMU.RefreshSensors();
                     }
                     break;
             }
@@ -144,9 +141,6 @@ namespace ControllerService
                             break;
 
                         sensor.Close();
-
-                        // todo: improve me
-                        IMU.RefreshSensors();
                     }
                     break;
             }
@@ -326,17 +320,15 @@ namespace ControllerService
 
                 case PipeCode.CLIENT_CONTROLLER_CONNECT:
                     {
-                        PipeClientControllerConnect controller = (PipeClientControllerConnect)message;
-
-                        if (controller.Capacacities.HasFlag(ControllerCapacities.Gyroscope | ControllerCapacities.Accelerometer))
-                            IMU.Initialize(SensorFamily.Controller);
+                        PipeClientControllerConnect connect = (PipeClientControllerConnect)message;
+                        // do something?
                     }
                     break;
 
                 case PipeCode.CLIENT_CONTROLLER_DISCONNECT:
                     {
-                        // restore previous IMU family
-                        IMU.Initialize(SensorSelection);
+                        PipeClientControllerDisconnect disconnect = (PipeClientControllerDisconnect)message;
+                        // do something ?
                     }
                     break;
             }
@@ -444,12 +436,13 @@ namespace ControllerService
                         sensor?.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
                     }
                     break;
-                    /* case "SensorSelection":
-                        {
-                            SensorFamily value = Enum.Parse<SensorFamily>(property);
-                            SensorSelection = value;
-                        }
-                        break; */
+                case "SensorSelection":
+                    {
+                        SensorFamily value = Enum.Parse<SensorFamily>(property);
+                        SensorSelection = value;
+                        IMU.Initialize(SensorSelection);
+                    }
+                    break;
             }
         }
 
