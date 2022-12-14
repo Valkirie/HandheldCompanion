@@ -443,18 +443,14 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (Monitor.TryEnter(updateLock))
+            // no Monitor on threaded calls ?
+            switch (listener)
             {
-                switch (listener)
-                {
-                    case "shortcutProfilesPage@":
-                    case "shortcutProfilesPage@@":
-                        currentProfile.umc_trigger = inputs.GamepadButtons;
-                        UpdateProfile();
-                        break;
-                }
-
-                Monitor.Exit(updateLock);
+                case "shortcutProfilesPage@":
+                case "shortcutProfilesPage@@":
+                    currentProfile.umc_trigger = inputs.GamepadButtons;
+                    UpdateProfile();
+                    break;
             }
         }
 
