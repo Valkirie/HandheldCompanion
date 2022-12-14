@@ -136,7 +136,6 @@ namespace HandheldCompanion.Views
 
             // initialize title
             this.Title += $" ({fileVersionInfo.FileVersion})";
-            //this.Title += " (BETA)";
 
             // initialize device
             handheldDevice = Device.GetDefault();

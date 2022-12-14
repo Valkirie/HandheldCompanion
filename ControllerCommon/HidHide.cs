@@ -1,12 +1,18 @@
 ﻿using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using Nefarius.Drivers.HidHide;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 namespace ControllerCommon
 {
     public static class HidHide
     {
+        private static Process process;
         static HidHide()
         {
             var service = new HidHideControlService();
@@ -16,6 +22,24 @@ namespace ControllerCommon
                 LogManager.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
                 throw new InvalidOperationException();
             }
+
+            // verifying HidHide is installed
+            string path = RegistryUtils.GetHKLM(@"SOFTWARE\Nefarius Software Solutions e.U.\HidHide", "Path");
+            if (!string.IsNullOrEmpty(path))
+                path = Path.Combine(path, "x64", "HidHideCLI.exe");
+
+            process = new Process
+            {
+                StartInfo =
+                {
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    FileName = path,
+                    Verb = "runas"
+                }
+            };
         }
 
         public static IReadOnlyList<string> GetRegisteredApplications()
@@ -36,9 +60,18 @@ namespace ControllerCommon
             {
                 var service = new HidHideControlService();
                 service.RemoveApplicationPath(fileName);
+            }
+            catch
+            {
+                process.StartInfo.Arguments = $"--app-unreg \"{fileName}\"";
+                process.Start();
+                process.WaitForExit();
+                process.StandardOutput.ReadToEnd();
+            }
+            finally
+            {
                 LogManager.LogInformation("HideDevice RemoveApplicationPath: {0}", fileName);
             }
-            catch { }
         }
 
         public static void RegisterApplication(string fileName)
@@ -47,9 +80,18 @@ namespace ControllerCommon
             {
                 var service = new HidHideControlService();
                 service.AddApplicationPath(fileName);
+            }
+            catch
+            {
+                process.StartInfo.Arguments = $"--app-reg \"{fileName}\"";
+                process.Start();
+                process.WaitForExit();
+                process.StandardOutput.ReadToEnd();
+            }
+            finally
+            {
                 LogManager.LogInformation("HideDevice AddApplicationPath: {0}", fileName);
             }
-            catch { }
         }
 
         public static void SetCloaking(bool status)
