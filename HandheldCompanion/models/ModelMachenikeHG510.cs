@@ -35,7 +35,7 @@ namespace HandheldCompanion.Models
             var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#242526");//151515
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#C1C5C6");
             var ColorAccent = (Color)ColorConverter.ConvertFromString("#63645F"); //53544E
-            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var ColorHighlight = (Brush)Application.Current.Resources["AccentButtonBackground"];
 
             var MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
             var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));

@@ -36,7 +36,7 @@ namespace HandheldCompanion.Models
             var ColorMetal = (Color)ColorConverter.ConvertFromString("#5A4928");
             var ColorLEDOff = (Color)ColorConverter.ConvertFromString("#35383E");
 
-            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var ColorHighlight = (Brush)Application.Current.Resources["AccentButtonBackground"];
             var ColorPlasticTransparent = ColorPlasticWhite;
             byte TransparancyAmount = 100;
             ColorPlasticTransparent.A = TransparancyAmount;
@@ -194,7 +194,7 @@ namespace HandheldCompanion.Models
 
         private new void DrawHighligths()
         {
-            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var ColorHighlight = (Brush)Application.Current.Resources["AccentButtonBackground"];
             var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
             foreach (Model3DGroup model3D in model3DGroup.Children)

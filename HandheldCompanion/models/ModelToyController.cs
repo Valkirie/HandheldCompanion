@@ -40,7 +40,7 @@ namespace HandheldCompanion.Models
             // colors
             var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#333333");
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#F0EFF0");
-            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var ColorHighlight = (Brush)Application.Current.Resources["AccentButtonBackground"];
 
             Color ColorPlasticBlue = (Color)ColorConverter.ConvertFromString("#02BCE3");
             Color ColorPlasticGreen = (Color)ColorConverter.ConvertFromString("#7BBF46");

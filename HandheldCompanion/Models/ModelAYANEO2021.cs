@@ -82,7 +82,7 @@ namespace HandheldCompanion.Models
 
         private new void DrawHighligths()
         {
-            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var ColorHighlight = (Brush)Application.Current.Resources["AccentButtonBackground"];
             var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
             foreach (Model3DGroup model3D in model3DGroup.Children)
