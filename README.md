@@ -23,10 +23,12 @@ A few examples of the most common use cases are:
 The software is built for Windows 10/Windows 11 (x86 and amd64).
 
 ## Supported Devices
+
 - AOKZOE A1
 - AYA Neo and its different versions
 - AYA Neo Next and its different versions
 - AYA Neo Air and it's different versions
+- AYA Neo 2
 - ONEXPLAYER MINI and its different versions (Intel, AMD, Gundam)
 - GPD WIN Max 2 (Intel and AMD)
 - GPD Win 3
