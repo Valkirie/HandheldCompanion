@@ -101,6 +101,7 @@ namespace ControllerService
         }
 
         private static bool prevLeftPadTouch, prevRightPadTouch;
+        private static bool prevLeftPadClick, prevRightPadClick;
         public static void UpdateInputs(ControllerInput inputs)
         {
             if (prevLeftPadTouch != inputs.LeftPadTouch)
@@ -114,6 +115,8 @@ namespace ControllerService
                 {
                     LeftPadTouch.RawTrackingNum |= TOUCH_DISABLE;
                 }
+
+                prevLeftPadTouch = inputs.LeftPadTouch;
             }
 
             if (prevRightPadTouch != inputs.RightPadTouch)
@@ -127,6 +130,8 @@ namespace ControllerService
                 {
                     RightPadTouch.RawTrackingNum |= TOUCH_DISABLE;
                 }
+
+                prevRightPadTouch = inputs.RightPadTouch;
             }
 
             if (inputs.LeftPadTouch)
@@ -141,10 +146,16 @@ namespace ControllerService
                 RightPadTouch.Y = (short)(inputs.RightPadY * TOUCHPAD_HEIGHT / ushort.MaxValue);
             }
 
-            OutputClickButton = inputs.LeftPadClick || inputs.RightPadClick;
+            if (prevLeftPadClick != inputs.LeftPadClick || prevRightPadClick != inputs.RightPadClick)
+            {
+                if (inputs.LeftPadClick || inputs.RightPadClick)
+                    OutputClickButton = true;
+                else
+                    OutputClickButton = false;
 
-            prevLeftPadTouch = inputs.LeftPadTouch;
-            prevRightPadTouch = inputs.RightPadTouch;
+                prevLeftPadClick = inputs.LeftPadClick;
+                prevRightPadClick = inputs.RightPadClick;
+            }
         }
     }
 }
