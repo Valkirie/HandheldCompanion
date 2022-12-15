@@ -234,24 +234,26 @@ namespace ControllerCommon.Controllers
 
         public override void SetVibration(ushort LargeMotor, ushort SmallMotor)
         {
-            ushort LeftMotorSpeed = (ushort)((LargeMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
-            ushort RightMotorSpeed = (ushort)((SmallMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
-
             // todo: improve me
             // todo: https://github.com/mKenfenheuer/steam-deck-windows-usermode-driver/blob/69ce8085d3b6afe888cb2e36bd95836cea58084a/SWICD/Services/ControllerService.cs
 
-            byte amplitude = 15;
+            // Linear motors have a peak bell curve / s curve like responce, use left half, no linearization (yet?)
+            // https://www.precisionmicrodrives.com/ab-003
+            // SteamDeck max was found at amplitude of 12, scale motor input request with user vibration strenth 0 to 100% accordingly
+
+            byte AmplitudeLeft = (byte)Math.Clamp((LargeMotor * VibrationStrength) * 12 / ushort.MaxValue, byte.MinValue, byte.MaxValue);
+            byte AmplitudeRight = (byte)Math.Clamp((SmallMotor * VibrationStrength) * 12 / ushort.MaxValue, byte.MinValue, byte.MaxValue);
             byte period = 15;
 
             bool leftHaptic = LargeMotor > 0;
             bool rightHaptic = SmallMotor > 0;
 
             if (leftHaptic != lastLeftHapticOn)
-                _ = Controller.SetHaptic(1, (ushort)(leftHaptic ? amplitude : 0), (ushort)(leftHaptic ? period : 0), 0);
+                _ = Controller.SetHaptic(1, (ushort)(leftHaptic ? AmplitudeLeft : 0), (ushort)(leftHaptic ? period : 0), 0);
 
 
             if (rightHaptic != lastRightHapticOn)
-                _ = Controller.SetHaptic(0, (ushort)(rightHaptic ? amplitude : 0), (ushort)(rightHaptic ? period : 0), 0);
+                _ = Controller.SetHaptic(0, (ushort)(rightHaptic ? AmplitudeRight : 0), (ushort)(rightHaptic ? period : 0), 0);
 
             lastLeftHapticOn = leftHaptic;
             lastRightHapticOn = rightHaptic;
