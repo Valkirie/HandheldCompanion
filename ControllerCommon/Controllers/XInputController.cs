@@ -160,7 +160,7 @@ namespace ControllerCommon.Controllers
         {
             if (!string.IsNullOrEmpty(Details.Name))
                 return Details.Name;
-            return "XInput Controller";
+            return $"XInput Controller {UserIndex}";
         }
 
         public override void UpdateReport()

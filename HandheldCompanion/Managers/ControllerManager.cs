@@ -166,12 +166,15 @@ namespace HandheldCompanion.Managers
             if (controller.IsVirtual())
                 return;
 
-            // update or create controller
-            string path = controller.GetInstancePath();
-            Controllers[path] = controller;
+            if (controller.IsConnected())
+            {
+                // update or create controller
+                string path = controller.GetInstancePath();
+                Controllers[path] = controller;
 
-            // raise event
-            ControllerPlugged?.Invoke(controller);
+                // raise event
+                ControllerPlugged?.Invoke(controller);
+            }
 
             // search for unplugged controllers
             string[] keys = Controllers.Keys.ToArray();
