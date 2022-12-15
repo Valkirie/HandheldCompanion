@@ -171,9 +171,13 @@ namespace ControllerCommon.Managers
 
                 var ProductID = ((Attributes)attributes).ProductID.ToString("X4");
                 var VendorID = ((Attributes)attributes).VendorID.ToString("X4");
+                string FriendlyName = string.Empty;
 
                 while (parent is not null)
                 {
+                    if (string.IsNullOrEmpty(FriendlyName))
+                        FriendlyName = parent.GetProperty<string>(DevicePropertyKey.Device_FriendlyName);
+
                     var parentId = parent.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
                     if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.InvariantCultureIgnoreCase))
@@ -205,7 +209,7 @@ namespace ControllerCommon.Managers
                     deviceInstancePath = children.DeviceId,
                     baseContainerDeviceInstancePath = parent.DeviceId,
 
-                    FriendlyName = parent.GetProperty<string>(DevicePropertyKey.Device_FriendlyName),
+                    FriendlyName = FriendlyName,
                     DeviceDesc = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
                     Manufacturer = parent.GetProperty<string>(DevicePropertyKey.Device_Manufacturer),
 
