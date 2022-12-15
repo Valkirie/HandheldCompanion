@@ -449,7 +449,7 @@ namespace ControllerService
                     }
                 }
             }
-            catch (Exception)
+            catch
             {
             }
         }
@@ -471,7 +471,7 @@ namespace ControllerService
                     Array.Copy(recvBuffer, localMsg, msgLen);
                 }
             }
-            catch (Exception)
+            catch
             {
                 uint IOC_IN = 0x80000000;
                 uint IOC_VENDOR = 0x18000000;
@@ -497,7 +497,7 @@ namespace ControllerService
                     udpSock?.BeginReceiveFrom(recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ref newClientEP, ReceiveCallback, udpSock);
                 }
             }
-            catch (Exception)
+            catch
             {
                 uint IOC_IN = 0x80000000;
                 uint IOC_VENDOR = 0x18000000;

@@ -139,7 +139,7 @@ namespace HandheldCompanion.Managers
                     processQoS.Text = EnumUtils.GetDescriptionFromEnumValue(EcoQoS);
                 }));
             }
-            catch (Exception) { }
+            catch { }
         }
 
         public Expander GetControl()

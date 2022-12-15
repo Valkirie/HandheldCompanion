@@ -189,7 +189,7 @@ namespace HandheldCompanion.Managers
             {
                 CloseHandle(hProcess);
             }
-            catch (Exception) { }
+            catch { }
 
             // process failed or process is child
             if (!result || parent != null)

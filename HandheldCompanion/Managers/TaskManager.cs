@@ -80,7 +80,7 @@ namespace HandheldCompanion.Managers
             {
                 task.Enabled = value;
             }
-            catch (Exception) { }
+            catch { }
         }
     }
 }

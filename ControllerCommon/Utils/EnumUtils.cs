@@ -29,7 +29,7 @@ namespace ControllerCommon.Utils
                 .GetCustomAttributes(typeof(DescriptionAttribute), false)
                 .SingleOrDefault() as DescriptionAttribute;
             }
-            catch (Exception) { }
+            catch { }
             return attribute == null ? value.ToString() : attribute.Description;
         }
 

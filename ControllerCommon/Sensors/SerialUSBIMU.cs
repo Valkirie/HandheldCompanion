@@ -125,7 +125,7 @@ namespace ControllerCommon.Sensors
 
                     LogManager.LogInformation("{0} connected", serial.ToString());
                 }
-                catch (Exception)
+                catch
                 {
                     // port is not ready yet
                     tentative++;
@@ -145,7 +145,7 @@ namespace ControllerCommon.Sensors
                 LogManager.LogInformation("{0} disconnected", serial.ToString());
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
@@ -163,7 +163,7 @@ namespace ControllerCommon.Sensors
                 // Read serial, store in byte array, at specified offset, certain amount and determine length
                 usLength = (ushort)port.Read(byteTemp, 0, 1000);
             }
-            catch (Exception)
+            catch
             {
                 return;
             }
@@ -192,7 +192,7 @@ namespace ControllerCommon.Sensors
                     {
                         port.Write(buffer, 0, buffer.Length);
                     }
-                    catch (Exception)
+                    catch
                     {
                         return;
                     }
@@ -215,7 +215,7 @@ namespace ControllerCommon.Sensors
                     {
                         port.Write(buffer, 0, buffer.Length);
                     }
-                    catch (Exception)
+                    catch
                     {
                         return;
                     }

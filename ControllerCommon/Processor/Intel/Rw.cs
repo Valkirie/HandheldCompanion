@@ -59,7 +59,7 @@ namespace ControllerCommon.Processor.Intel
                     }
                 }
             }
-            catch (Exception) { }
+            catch { }
 
             return false;
         }

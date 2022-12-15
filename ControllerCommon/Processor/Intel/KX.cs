@@ -66,7 +66,7 @@ namespace ControllerCommon.Processor.Intel
                     ProcessOutput.Close();
                 }
             }
-            catch (Exception) { }
+            catch { }
 
             return false;
         }
@@ -118,7 +118,7 @@ namespace ControllerCommon.Processor.Intel
                         return (int)output;
                     }
                 }
-                catch (Exception) { }
+                catch { }
                 ProcessOutput.Close();
             }
 
@@ -151,7 +151,7 @@ namespace ControllerCommon.Processor.Intel
                         return (int)output;
                     }
                 }
-                catch (Exception) { }
+                catch { }
                 ProcessOutput.Close();
             }
 
@@ -262,7 +262,7 @@ namespace ControllerCommon.Processor.Intel
                         return clock;
                     }
                 }
-                catch (Exception) { }
+                catch { }
                 ProcessOutput.Close();
             }
 

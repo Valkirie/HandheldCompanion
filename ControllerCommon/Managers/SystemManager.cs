@@ -308,7 +308,7 @@ namespace ControllerCommon.Managers
                     LogManager.LogDebug("XUsbDevice arrived: {0}:{1} (VID:{2}, PID:{3}) {4}", deviceEx.Manufacturer, deviceEx.DeviceDesc, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstancePath);
                 }
             }
-            catch (Exception) { }
+            catch { }
         }
 
         private async static void HidDevice_DeviceRemoved(DeviceEventArgs obj)
@@ -328,7 +328,7 @@ namespace ControllerCommon.Managers
                 HidDeviceRemoved?.Invoke(deviceEx);
                 LogManager.LogDebug("HidDevice removed: {0}:{1}", deviceEx.Manufacturer, deviceEx.DeviceDesc);
             }
-            catch (Exception) { }
+            catch { }
         }
 
         private async static void HidDevice_DeviceArrived(DeviceEventArgs obj)
@@ -361,7 +361,7 @@ namespace ControllerCommon.Managers
                 if (SerialUSBIMU.vendors.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
                     UsbDeviceRemoved?.Invoke(null);
             }
-            catch (Exception) { }
+            catch { }
         }
 
         private static void UsbDevice_DeviceArrived(DeviceEventArgs obj)
@@ -375,7 +375,7 @@ namespace ControllerCommon.Managers
                 if (SerialUSBIMU.vendors.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
                     UsbDeviceArrived?.Invoke(null);
             }
-            catch (Exception) { }
+            catch { }
         }
 
         private static void OnPowerChange(object s, PowerModeChangedEventArgs e)

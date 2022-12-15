@@ -86,7 +86,7 @@ namespace ControllerCommon.Utils
                     return CanWrite;
                 }
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
@@ -99,7 +99,7 @@ namespace ControllerCommon.Utils
                 using (FileStream fs = File.Create(Path.Combine(dirPath, Path.GetRandomFileName()), 1, FileOptions.DeleteOnClose))
                     return true;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }

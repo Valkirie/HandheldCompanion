@@ -87,7 +87,7 @@ namespace HandheldCompanion.Managers
                     return Convert.ToInt32(fileSize);
                 }
             }
-            catch (Exception) { return 0; }
+            catch { return 0; }
         }
 
         private void WebClient_DownloadFileCompleted(object? sender, System.ComponentModel.AsyncCompletedEventArgs e)
@@ -232,7 +232,7 @@ namespace HandheldCompanion.Managers
                 status = UpdateStatus.Ready;
                 Updated?.Invoke(status, null, updateFiles);
             }
-            catch (Exception)
+            catch
             {
                 // failed to parse Json
                 status = UpdateStatus.Failed;

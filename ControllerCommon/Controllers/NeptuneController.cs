@@ -220,7 +220,7 @@ namespace ControllerCommon.Controllers
                 Controller.Close();
                 isConnected = false;
             }
-            catch (Exception)
+            catch
             {
                 return;
             }

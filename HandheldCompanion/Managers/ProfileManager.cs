@@ -155,7 +155,7 @@ namespace HandheldCompanion.Managers
                     UpdateOrCreateProfile(profile, true, false);
                 }
             }
-            catch (Exception) { }
+            catch { }
         }
 
         private static void ProcessManager_ProcessStarted(ProcessEx processEx, bool startup)
@@ -173,7 +173,7 @@ namespace HandheldCompanion.Managers
                 // update profile
                 UpdateOrCreateProfile(profile, true, false);
             }
-            catch (Exception) { }
+            catch { }
         }
 
         private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
@@ -216,7 +216,7 @@ namespace HandheldCompanion.Managers
                 profile.fullpath = processEx.Path;
                 UpdateOrCreateProfile(profile, true, false);
             }
-            catch (Exception) { }
+            catch { }
         }
 
         private static void ProfileDeleted(object sender, FileSystemEventArgs e)

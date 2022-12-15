@@ -10,6 +10,8 @@ using System.Management;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -109,9 +111,10 @@ namespace ControllerCommon.Utils
         public class FindHostedProcess
         {
             // Speical handling needs for UWP to get the child window process
-            public const string UWPFrameHostApp = "ApplicationFrameHost.exe";
+            private const string UWPFrameHostApp = "ApplicationFrameHost.exe";
 
             public ProcessDiagnosticInfo _realProcess { get; private set; }
+            private byte UWPattempt;
 
             public FindHostedProcess(IntPtr foregroundProcessID)
             {
@@ -126,10 +129,14 @@ namespace ControllerCommon.Utils
                         return;
 
                     // Get real process
-                    if (_realProcess.ExecutableFileName == UWPFrameHostApp)
+                    while (_realProcess.ExecutableFileName == UWPFrameHostApp && UWPattempt < 10)
+                    {
                         EnumChildWindows(foregroundProcessID, ChildWindowCallback, IntPtr.Zero);
+                        UWPattempt++;
+                        Thread.Sleep(200);
+                    }
                 }
-                catch (Exception)
+                catch
                 {
                     _realProcess = null;
                 }

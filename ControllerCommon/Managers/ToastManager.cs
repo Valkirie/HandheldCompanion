@@ -60,7 +60,7 @@ namespace ControllerCommon.Managers
                     }
                 }).Start();
             }
-            catch (Exception) { }
+            catch { }
         }
 
         public override void Start()

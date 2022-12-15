@@ -25,7 +25,7 @@ namespace ControllerCommon.Utils
                     return new USBDeviceInfo(devices.FirstOrDefault());
                 }
             }
-            catch (Exception) { }
+            catch { }
 
             return null;
         }
@@ -42,7 +42,7 @@ namespace ControllerCommon.Utils
                         serials.Add(new USBDeviceInfo(device));
                 }
             }
-            catch (Exception) { }
+            catch { }
 
             return serials;
         }

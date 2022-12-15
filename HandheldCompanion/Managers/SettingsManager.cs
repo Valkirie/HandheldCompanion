@@ -68,7 +68,7 @@ namespace HandheldCompanion.Managers
 
                 LogManager.LogDebug("Settings {0} set to {1}", name, value);
             }
-            catch (Exception) { }
+            catch { }
         }
 
         private static bool PropertyExists(string name)

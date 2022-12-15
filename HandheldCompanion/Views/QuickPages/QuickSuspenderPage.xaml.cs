@@ -28,7 +28,7 @@ namespace HandheldCompanion.Views.QuickPages
                         CurrentProcesses.Children.Remove(element);
                 });
             }
-            catch (Exception)
+            catch
             {
             }
         }
@@ -46,7 +46,7 @@ namespace HandheldCompanion.Views.QuickPages
                         CurrentProcesses.Children.Add(element);
                 });
             }
-            catch (Exception)
+            catch
             {
                 // process might have exited already
             }

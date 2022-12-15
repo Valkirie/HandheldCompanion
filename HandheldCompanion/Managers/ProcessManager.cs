@@ -1,5 +1,7 @@
-﻿using ControllerCommon.Managers;
+﻿using ABI.System;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
+using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -147,9 +149,6 @@ namespace HandheldCompanion.Managers
 
         private static async void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
         {
-            // give the window a bit of time to land
-            await Task.Delay(750);
-
             try
             {
                 var element = sender as AutomationElement;
@@ -165,7 +164,7 @@ namespace HandheldCompanion.Managers
                     ProcessCreated(proc, element.Current.NativeWindowHandle);
                 }
             }
-            catch (Exception)
+            catch
             {
             }
         }
@@ -184,9 +183,6 @@ namespace HandheldCompanion.Managers
 
         private static async void EventCallback(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
         {
-            // give the window a bit of time to land
-            await Task.Delay(750);
-
             ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
 
             if (processInfo == null)
@@ -202,7 +198,7 @@ namespace HandheldCompanion.Managers
                 if (proc.HasExited)
                     return;
             }
-            catch (Exception)
+            catch
             {
                 // process has too high elevation
                 return;
@@ -263,7 +259,7 @@ namespace HandheldCompanion.Managers
                 int processId = int.Parse(e.NewEvent.Properties["ProcessID"].Value.ToString());
                 ProcessHalted(processId);
             }
-            catch (Exception) { }
+            catch { }
         }
 
         private static void ProcessHalted(int processId)
@@ -316,7 +312,7 @@ namespace HandheldCompanion.Managers
                     ProcessStarted?.Invoke(processEx, startup);
                 }
             }
-            catch (Exception)
+            catch
             {
                 // process has too high elevation
                 return;
