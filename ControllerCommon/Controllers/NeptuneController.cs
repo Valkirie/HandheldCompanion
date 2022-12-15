@@ -41,7 +41,6 @@ namespace ControllerCommon.Controllers
         {
             if (!string.IsNullOrEmpty(Details.FriendlyName))
                 return Details.FriendlyName;
-
             return "Steam Controller Neptune";
         }
 

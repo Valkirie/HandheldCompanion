@@ -142,6 +142,18 @@ namespace HandheldCompanion.Managers
                         }
                     }
                     break;
+
+                // NINTENDO
+                case 0x057E:
+                    {
+                        switch (details.attributes.ProductID)
+                        {
+                            // Nintendo Wireless Gamepad
+                            case 0x2009:
+                                break;
+                        }
+                    }
+                    break;
             }
 
             // unsupported controller

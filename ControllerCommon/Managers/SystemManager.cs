@@ -138,19 +138,22 @@ namespace ControllerCommon.Managers
             HidDeviceListener.DeviceRemoved -= HidDevice_DeviceRemoved;
         }
 
+        private static PnPDetails FindDevice(string InstanceId)
+        {
+            if (InstanceId.StartsWith("USB"))
+                return FindDeviceFromUSB(InstanceId);
+            else
+                return FindDeviceFromHID(InstanceId);
+        }
+
         private static PnPDetails FindDeviceFromUSB(string InstanceId)
         {
             return PnPDevices.Values.Where(device => device.baseContainerDeviceInstancePath.Equals(InstanceId, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
         }
 
-        private static PnPDetails FindDeviceFromUSB(PnPDevice parent)
+        private static PnPDetails FindDeviceFromHID(string InstanceId)
         {
-            return PnPDevices.Values.Where(device => device.baseContainerDeviceInstancePath.Equals(parent.InstanceId, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-        }
-
-        private static PnPDetails FindDeviceFromHID(PnPDevice children)
-        {
-            PnPDevices.TryGetValue(children.InstanceId, out var device);
+            PnPDevices.TryGetValue(InstanceId, out var device);
             return device;
         }
 
@@ -210,8 +213,6 @@ namespace ControllerCommon.Managers
                     baseContainerDeviceInstancePath = parent.DeviceId,
 
                     FriendlyName = FriendlyName,
-                    DeviceDesc = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
-                    Manufacturer = parent.GetProperty<string>(DevicePropertyKey.Device_Manufacturer),
 
                     isVirtual = parent.IsVirtual(),
                     isGaming = IsGaming((Attributes)attributes, (Capabilities)capabilities),
@@ -277,11 +278,14 @@ namespace ControllerCommon.Managers
 
         private async static void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
         {
-            // XInput device removed
-            string InstanceId = obj.SymLink.Replace("#", @"\");
-            InstanceId = CommonUtils.Between(InstanceId, @"\\?\", @"\{");
+            string InstanceId = obj.SymLink.Replace("{" + obj.InterfaceGuid.ToString() + "}", string.Empty);
+            InstanceId = InstanceId.Replace(@"\\?\", string.Empty);
+            InstanceId = InstanceId.Replace("#", @"\");
+            InstanceId = InstanceId.TrimEnd(new char[] { '\\' });
 
-            var deviceEx = FindDeviceFromUSB(InstanceId);
+            var deviceEx = FindDevice(InstanceId);
+            if (deviceEx is null)
+                return;
 
             // give system at least one second to initialize device
             await Task.Delay(1000);
@@ -289,7 +293,7 @@ namespace ControllerCommon.Managers
 
             RefreshHID();
             XUsbDeviceRemoved?.Invoke(deviceEx);
-            LogManager.LogDebug("XUsbDevice removed: {0}:{1}", deviceEx.Manufacturer, deviceEx.DeviceDesc);
+            LogManager.LogDebug("XUsbDevice removed: {0}", deviceEx.FriendlyName);
         }
 
         private async static void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
@@ -305,11 +309,11 @@ namespace ControllerCommon.Managers
                     RefreshHID();
                 }
 
-                PnPDetails deviceEx = FindDeviceFromUSB(device);
+                PnPDetails deviceEx = FindDevice(device.InstanceId);
                 if (deviceEx != null && deviceEx.isGaming)
                 {
                     XUsbDeviceArrived?.Invoke(deviceEx);
-                    LogManager.LogDebug("XUsbDevice arrived: {0}:{1} (VID:{2}, PID:{3}) {4}", deviceEx.Manufacturer, deviceEx.DeviceDesc, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstancePath);
+                    LogManager.LogDebug("XUsbDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.FriendlyName, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstancePath);
                 }
             }
             catch { }
@@ -319,10 +323,14 @@ namespace ControllerCommon.Managers
         {
             try
             {
-                string InstanceId = obj.SymLink.Replace("#", @"\");
-                InstanceId = CommonUtils.Between(InstanceId, @"\\?\", @"\{");
+                string InstanceId = obj.SymLink.Replace("{" + obj.InterfaceGuid.ToString() + "}", string.Empty);
+                InstanceId = InstanceId.Replace(@"\\?\", string.Empty);
+                InstanceId = InstanceId.Replace("#", @"\");
+                InstanceId = InstanceId.TrimEnd(new char[] { '\\' });
 
                 var deviceEx = GetPnPDeviceEx(InstanceId);
+                if (deviceEx is null)
+                    return;
 
                 // give system at least one second to initialize device
                 await Task.Delay(1000);
@@ -330,7 +338,7 @@ namespace ControllerCommon.Managers
 
                 RefreshHID();
                 HidDeviceRemoved?.Invoke(deviceEx);
-                LogManager.LogDebug("HidDevice removed: {0}:{1}", deviceEx.Manufacturer, deviceEx.DeviceDesc);
+                LogManager.LogDebug("HidDevice removed: {0}", deviceEx.FriendlyName);
             }
             catch { }
         }
@@ -346,11 +354,11 @@ namespace ControllerCommon.Managers
                 RefreshHID();
             }
 
-            PnPDetails deviceEx = FindDeviceFromHID(device);
+            PnPDetails deviceEx = FindDeviceFromHID(device.InstanceId);
             if (deviceEx != null && deviceEx.isGaming)
             {
                 HidDeviceArrived?.Invoke(deviceEx);
-                LogManager.LogDebug("HidDevice arrived: {0}:{1} (VID:{2}, PID:{3}) {4}", deviceEx.Manufacturer, deviceEx.DeviceDesc, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstancePath);
+                LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.FriendlyName, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstancePath);
             }
         }
 

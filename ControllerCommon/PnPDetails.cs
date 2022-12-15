@@ -8,8 +8,6 @@ namespace ControllerCommon
     public class PnPDetails
     {
         public string FriendlyName;
-        public string Manufacturer;
-        public string DeviceDesc;
         public string SymLink;
 
         public bool isVirtual;
@@ -25,12 +23,12 @@ namespace ControllerCommon
 
         public string GetProductID()
         {
-            return ((Attributes)attributes).ProductID.ToString("X4");
+            return "0x" + attributes.ProductID.ToString("X4");
         }
 
         public string GetVendorID()
         {
-            return ((Attributes)attributes).VendorID.ToString("X4");
+            return "0x" + attributes.VendorID.ToString("X4");
         }
     }
 }

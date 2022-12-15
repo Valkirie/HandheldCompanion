@@ -155,7 +155,9 @@ namespace ControllerCommon.Controllers
 
         public override string ToString()
         {
-            return Details.DeviceDesc;
+            if (!string.IsNullOrEmpty(Details.FriendlyName))
+                return Details.FriendlyName;
+            return "XInput Controller";
         }
 
         public override void UpdateReport()
@@ -261,6 +263,9 @@ namespace ControllerCommon.Controllers
 
         public override void SetVibration(ushort LargeMotor, ushort SmallMotor)
         {
+            if (!IsConnected())
+                return;
+
             ushort LeftMotorSpeed = (ushort)((LargeMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
             ushort RightMotorSpeed = (ushort)((SmallMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
 

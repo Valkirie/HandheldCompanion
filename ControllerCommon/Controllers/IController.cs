@@ -187,7 +187,7 @@ namespace ControllerCommon.Controllers
 
         public override string ToString()
         {
-            return Details.DeviceDesc;
+            return Details.FriendlyName;
         }
 
         public void InjectButton(ControllerButtonFlags button, bool IsKeyDown, bool IsKeyUp)

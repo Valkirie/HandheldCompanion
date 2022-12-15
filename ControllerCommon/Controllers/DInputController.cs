@@ -22,6 +22,8 @@ namespace ControllerCommon.Controllers
 
         public override string ToString()
         {
+            if (!string.IsNullOrEmpty(Details.FriendlyName))
+                return Details.FriendlyName;
             return Controller.Information.ProductName;
         }
 
