@@ -30,14 +30,18 @@ namespace ControllerCommon.Controllers
 
                 UpdateTimer.Tick += (sender, e) => UpdateReport();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                LogManager.LogError("Couldn't initialize NeptuneController. Exception: {0}", ex.Message);
                 return;
             }
         }
 
         public override string ToString()
         {
+            if (!string.IsNullOrEmpty(Details.FriendlyName))
+                return Details.FriendlyName;
+
             return "Steam Controller Neptune";
         }
 

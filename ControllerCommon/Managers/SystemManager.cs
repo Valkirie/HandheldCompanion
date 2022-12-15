@@ -205,6 +205,7 @@ namespace ControllerCommon.Managers
                     deviceInstancePath = children.DeviceId,
                     baseContainerDeviceInstancePath = parent.DeviceId,
 
+                    FriendlyName = children.GetProperty<string>(DevicePropertyKey.Device_FriendlyName),
                     DeviceDesc = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
                     Manufacturer = parent.GetProperty<string>(DevicePropertyKey.Device_Manufacturer),
 
@@ -224,13 +225,7 @@ namespace ControllerCommon.Managers
 
         public static List<PnPDetails> GetDetails(ushort VendorId = 0, ushort ProductId = 0)
         {
-            List<PnPDetails> temp = PnPDevices.Values.OrderBy(a => a.arrivalDate).Where(a => a.attributes.VendorID == VendorId && a.attributes.ProductID == ProductId && !a.isHooked).ToList();
-            return temp;
-        }
-
-        public static void UpdateDetails(string InstanceId)
-        {
-            PnPDevices[InstanceId].isHooked = true;
+            return PnPDevices.Values.OrderBy(a => a.arrivalDate).Where(a => a.attributes.VendorID == VendorId && a.attributes.ProductID == ProductId && !a.isHooked).ToList();
         }
 
         private static Attributes? GetHidAttributes(string path)
@@ -290,6 +285,7 @@ namespace ControllerCommon.Managers
 
             RefreshHID();
             XInputDeviceRemoved?.Invoke(deviceEx);
+            LogManager.LogDebug("XInput Controller: {0}:{1} removed ({2}:{3}, {4})", deviceEx.Manufacturer, deviceEx.DeviceDesc, deviceEx.attributes.VendorID, deviceEx.attributes.ProductID, deviceEx.deviceInstancePath);
         }
 
         private async static void XInputListener_DeviceArrived(DeviceEventArgs obj)
@@ -307,7 +303,10 @@ namespace ControllerCommon.Managers
 
                 PnPDetails deviceEx = FindDeviceFromUSB(device);
                 if (deviceEx != null && deviceEx.isGaming)
+                {
                     XInputDeviceArrived?.Invoke(deviceEx);
+                    LogManager.LogDebug("XInput Controller: {0}:{1} arrived ({2}:{3}, {4})", deviceEx.Manufacturer, deviceEx.DeviceDesc, deviceEx.attributes.VendorID, deviceEx.attributes.ProductID, deviceEx.deviceInstancePath);
+                }
             }
             catch (Exception) { }
         }
@@ -327,6 +326,7 @@ namespace ControllerCommon.Managers
 
                 RefreshHID();
                 DInputDeviceRemoved?.Invoke(deviceEx);
+                LogManager.LogDebug("DInput Controller: {0}:{1} removed ({2}:{3}, {4})", deviceEx.Manufacturer, deviceEx.DeviceDesc, deviceEx.attributes.VendorID, deviceEx.attributes.ProductID, deviceEx.deviceInstancePath);
             }
             catch (Exception) { }
         }
@@ -344,7 +344,10 @@ namespace ControllerCommon.Managers
 
             PnPDetails deviceEx = FindDeviceFromHID(device);
             if (deviceEx != null && deviceEx.isGaming)
+            {
                 DInputDeviceArrived?.Invoke(deviceEx);
+                LogManager.LogDebug("DInput Controller: {0}:{1} arrived ({2}:{3}, {4})", deviceEx.Manufacturer, deviceEx.DeviceDesc, deviceEx.attributes.VendorID, deviceEx.attributes.ProductID, deviceEx.deviceInstancePath);
+            }
         }
 
         private static void GenericListener_DeviceRemoved(DeviceEventArgs obj)
@@ -377,7 +380,7 @@ namespace ControllerCommon.Managers
 
         private static void OnPowerChange(object s, PowerModeChangedEventArgs e)
         {
-            LogManager.LogInformation("Device power mode set to {0}", e.Mode);
+            LogManager.LogDebug("Device power mode set to {0}", e.Mode);
 
             switch (e.Mode)
             {
@@ -397,7 +400,7 @@ namespace ControllerCommon.Managers
 
         private static void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
         {
-            LogManager.LogInformation("Session switched to {0}", e.Reason);
+            LogManager.LogDebug("Session switched to {0}", e.Reason);
 
             switch (e.Reason)
             {

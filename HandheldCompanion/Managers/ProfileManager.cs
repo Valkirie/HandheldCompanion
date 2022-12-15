@@ -199,7 +199,7 @@ namespace HandheldCompanion.Managers
                 // update current profile
                 currentProfile = profile;
 
-                LogManager.LogDebug("Profile {0} applied", profile.name);
+                LogManager.LogInformation("Profile {0} applied", profile.name);
 
                 // inform service
                 PipeClient.SendMessage(new PipeClientProfile { profile = profile, backgroundTask = true });
@@ -363,6 +363,13 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
+            // serialize
+            if (serialize)
+                SerializeProfile(profile);
+
+            if (profile.isDefault)
+                return;
+
             // only bother updating wrapper and cloaking on profile creation or process start
             if (fullUpdate)
             {
@@ -372,10 +379,6 @@ namespace HandheldCompanion.Managers
                 // update cloaking
                 UpdateProfileCloaking(profile);
             }
-
-            // serialize
-            if (serialize)
-                SerializeProfile(profile);
         }
 
         public static void UpdateProfileCloaking(Profile profile)

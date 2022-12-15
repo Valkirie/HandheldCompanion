@@ -7,6 +7,7 @@ namespace ControllerCommon
     [StructLayout(LayoutKind.Sequential)]
     public class PnPDetails
     {
+        public string FriendlyName;
         public string Manufacturer;
         public string DeviceDesc;
         public string SymLink;
