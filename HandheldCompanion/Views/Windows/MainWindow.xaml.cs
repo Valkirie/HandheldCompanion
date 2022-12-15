@@ -303,8 +303,8 @@ namespace HandheldCompanion.Views
                 _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStopIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
             };
 
-            SystemManager.GenericDeviceArrived += GenericDeviceUpdated;
-            SystemManager.GenericDeviceRemoved += GenericDeviceUpdated;
+            SystemManager.UsbDeviceArrived += GenericDeviceUpdated;
+            SystemManager.UsbDeviceRemoved += GenericDeviceUpdated;
 
             // handle settings events and forward to common managers
             SettingsManager.SettingValueChanged += (name, value) =>

@@ -94,8 +94,8 @@ namespace ControllerService
             PipeServer.ClientMessage += OnClientMessage;
 
             // initialize manager(s)
-            SystemManager.GenericDeviceArrived += GenericDeviceArrived;
-            SystemManager.GenericDeviceRemoved += GenericDeviceRemoved;
+            SystemManager.UsbDeviceArrived += GenericDeviceArrived;
+            SystemManager.UsbDeviceRemoved += GenericDeviceRemoved;
             SystemManager.Start();
             GenericDeviceArrived(null);
 

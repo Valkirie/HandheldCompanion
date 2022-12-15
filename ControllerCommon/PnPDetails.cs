@@ -22,5 +22,15 @@ namespace ControllerCommon
 
         public Attributes attributes;
         public Capabilities capabilities;
+
+        public string GetProductID()
+        {
+            return ((Attributes)attributes).ProductID.ToString("X4");
+        }
+
+        public string GetVendorID()
+        {
+            return ((Attributes)attributes).VendorID.ToString("X4");
+        }
     }
 }

@@ -126,6 +126,8 @@ namespace HandheldCompanion.Views.Pages
 
         private void ControllerUnplugged(IController Controller)
         {
+            LogManager.LogDebug("Controller unplugged: {0}", Controller.ToString());
+
             this.Dispatcher.Invoke(() =>
             {
                 // Search for an existing controller, remove it
@@ -144,6 +146,8 @@ namespace HandheldCompanion.Views.Pages
 
         private void ControllerPlugged(IController Controller)
         {
+            LogManager.LogDebug("Controller plugged: {0}", Controller.ToString());
+
             this.Dispatcher.Invoke(() =>
             {
                 // Search for an existing controller, update it

@@ -34,11 +34,11 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            SystemManager.XInputDeviceArrived += XInputUpdated;
-            SystemManager.XInputDeviceRemoved += XInputUpdated;
+            SystemManager.XUsbDeviceArrived += XUsbDeviceUpdated;
+            SystemManager.XUsbDeviceRemoved += XUsbDeviceUpdated;
 
-            SystemManager.DInputDeviceArrived += DInputUpdated;
-            SystemManager.DInputDeviceRemoved += DInputUpdated;
+            SystemManager.HidDeviceArrived += HidDeviceUpdated;
+            SystemManager.HidDeviceRemoved += HidDeviceUpdated;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -61,8 +61,8 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = false;
 
-            SystemManager.XInputDeviceArrived -= XInputUpdated;
-            SystemManager.XInputDeviceRemoved -= XInputUpdated;
+            SystemManager.XUsbDeviceArrived -= XUsbDeviceUpdated;
+            SystemManager.XUsbDeviceRemoved -= XUsbDeviceUpdated;
 
             SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
@@ -94,7 +94,7 @@ namespace HandheldCompanion.Managers
             target.SetVibrationStrength(value);
         }
 
-        private static void DInputUpdated(PnPDetails details)
+        private static void HidDeviceUpdated(PnPDetails details)
         {
             Joystick joystick = null;
             foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
@@ -144,12 +144,12 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            // unsupported DInput controller
+            // unsupported controller
             if (controller is null)
+            {
+                LogManager.LogError("Controller unsupported: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
                 return;
-
-            if (!controller.IsConnected())
-                return;
+            }
 
             if (controller.IsVirtual())
                 return;
@@ -177,7 +177,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static void XInputUpdated(PnPDetails details)
+        private static void XUsbDeviceUpdated(PnPDetails details)
         {
             for (int idx = 0; idx < 4; idx++)
             {
