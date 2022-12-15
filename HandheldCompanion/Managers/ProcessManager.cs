@@ -314,8 +314,6 @@ namespace HandheldCompanion.Managers
 
                     // raise event
                     ProcessStarted?.Invoke(processEx, startup);
-
-                    LogManager.LogDebug("Process created: {0}", proc.ProcessName);
                 }
             }
             catch (Exception)
