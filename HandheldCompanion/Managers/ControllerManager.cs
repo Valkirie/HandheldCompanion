@@ -238,7 +238,7 @@ namespace HandheldCompanion.Managers
             targetController.Hide();
 
             // rumble current controller
-            targetController.Rumble();
+            targetController.Rumble(targetController.GetUserIndex() + 1);
 
             // warn service
             SendTargetController();

@@ -147,6 +147,9 @@ namespace ControllerCommon.Controllers
                 var VendorId = CapabilitiesEx.VendorId.ToString("X4");
 
                 Details = SystemManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId).FirstOrDefault();
+                if (Details is null)
+                    return;
+
                 Details.isHooked = true;
             }
 
@@ -261,29 +264,35 @@ namespace ControllerCommon.Controllers
             return (bool)(Controller?.IsConnected);
         }
 
-        public override void SetVibration(ushort LargeMotor, ushort SmallMotor)
+        public override void SetVibrationStrength(double value)
+        {
+            base.SetVibrationStrength(value);
+            this.Rumble(1);
+        }
+
+        public override void SetVibration(byte LargeMotor, byte SmallMotor)
         {
             if (!IsConnected())
                 return;
 
-            ushort LeftMotorSpeed = (ushort)((LargeMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
-            ushort RightMotorSpeed = (ushort)((SmallMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
+            ushort LeftMotorSpeed = (ushort)((double)LargeMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
+            ushort RightMotorSpeed = (ushort)((double)SmallMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
 
             Vibration vibration = new Vibration() { LeftMotorSpeed = LeftMotorSpeed, RightMotorSpeed = RightMotorSpeed };
             Controller.SetVibration(vibration);
         }
 
-        public override async void Rumble()
+        public override async void Rumble(int loop)
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < loop; i++)
             {
-                SetVibration(ushort.MaxValue, ushort.MaxValue);
+                SetVibration(byte.MaxValue, byte.MaxValue);
                 await Task.Delay(100);
 
                 SetVibration(0, 0);
                 await Task.Delay(100);
             }
-            base.Rumble();
+            base.Rumble(loop);
         }
 
         public override void Plug()

@@ -175,6 +175,11 @@ namespace ControllerCommon.Controllers
             return Details.isGaming;
         }
 
+        public int GetUserIndex()
+        {
+            return UserIndex;
+        }
+
         public string GetInstancePath()
         {
             return Details.deviceInstancePath;
@@ -203,12 +208,12 @@ namespace ControllerCommon.Controllers
             LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", button, IsKeyDown, IsKeyUp, ToString());
         }
 
-        public void SetVibrationStrength(double value)
+        public virtual void SetVibrationStrength(double value)
         {
             VibrationStrength = value / 100;
         }
 
-        public virtual void SetVibration(ushort LargeMotor, ushort SmallMotor)
+        public virtual void SetVibration(byte LargeMotor, byte SmallMotor)
         { }
 
         public virtual bool IsConnected()
@@ -216,7 +221,7 @@ namespace ControllerCommon.Controllers
             return false;
         }
 
-        public virtual async void Rumble()
+        public virtual async void Rumble(int loop)
         { }
 
         public virtual void Plug()

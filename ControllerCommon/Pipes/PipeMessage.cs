@@ -130,8 +130,8 @@ namespace ControllerCommon
     [Serializable]
     public partial class PipeClientVibration : PipeMessage
     {
-        public ushort LargeMotor;
-        public ushort SmallMotor;
+        public byte LargeMotor;
+        public byte SmallMotor;
 
         public PipeClientVibration()
         {

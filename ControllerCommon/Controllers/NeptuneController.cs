@@ -186,17 +186,17 @@ namespace ControllerCommon.Controllers
             return isConnected;
         }
 
-        public override async void Rumble()
+        public override async void Rumble(int loop)
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < loop; i++)
             {
-                SetVibration(ushort.MaxValue, ushort.MaxValue);
+                SetVibration(byte.MaxValue, byte.MaxValue);
                 await Task.Delay(100);
 
                 SetVibration(0, 0);
                 await Task.Delay(100);
             }
-            base.Rumble();
+            base.Rumble(loop);
         }
 
         public override void Plug()
@@ -232,7 +232,7 @@ namespace ControllerCommon.Controllers
         private bool lastRightHapticOn = false;
 
 
-        public override void SetVibration(ushort LargeMotor, ushort SmallMotor)
+        public override void SetVibration(byte LargeMotor, byte SmallMotor)
         {
             // todo: improve me
             // todo: https://github.com/mKenfenheuer/steam-deck-windows-usermode-driver/blob/69ce8085d3b6afe888cb2e36bd95836cea58084a/SWICD/Services/ControllerService.cs
