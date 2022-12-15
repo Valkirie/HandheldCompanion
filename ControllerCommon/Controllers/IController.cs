@@ -192,7 +192,7 @@ namespace ControllerCommon.Controllers
 
         public override string ToString()
         {
-            return Details.FriendlyName;
+            return Details.Name;
         }
 
         public void InjectButton(ControllerButtonFlags button, bool IsKeyDown, bool IsKeyUp)

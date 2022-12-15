@@ -7,7 +7,7 @@ namespace ControllerCommon
     [StructLayout(LayoutKind.Sequential)]
     public class PnPDetails
     {
-        public string FriendlyName;
+        public string Name;
         public string SymLink;
 
         public bool isVirtual;

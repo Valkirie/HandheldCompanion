@@ -204,6 +204,12 @@ namespace ControllerCommon.Managers
                     parent = PnPDevice.GetDeviceByInstanceId(parentId, DeviceLocationFlags.Normal);
                 }
 
+                if (string.IsNullOrEmpty(FriendlyName))
+                {
+                    FriendlyName = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc);
+                    // FriendlyName = parent.GetProperty<string>(DevicePropertyKey.Device_BusReportedDeviceDesc);
+                }
+
                 // get details
                 PnPDetails details = new PnPDetails()
                 {
@@ -212,7 +218,7 @@ namespace ControllerCommon.Managers
                     deviceInstancePath = children.DeviceId,
                     baseContainerDeviceInstancePath = parent.DeviceId,
 
-                    FriendlyName = FriendlyName,
+                    Name = FriendlyName,
 
                     isVirtual = parent.IsVirtual(),
                     isGaming = IsGaming((Attributes)attributes, (Capabilities)capabilities),
@@ -293,7 +299,7 @@ namespace ControllerCommon.Managers
 
             RefreshHID();
             XUsbDeviceRemoved?.Invoke(deviceEx);
-            LogManager.LogDebug("XUsbDevice removed: {0}", deviceEx.FriendlyName);
+            LogManager.LogDebug("XUsbDevice removed: {0}", deviceEx.Name);
         }
 
         private async static void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
@@ -313,7 +319,7 @@ namespace ControllerCommon.Managers
                 if (deviceEx != null && deviceEx.isGaming)
                 {
                     XUsbDeviceArrived?.Invoke(deviceEx);
-                    LogManager.LogDebug("XUsbDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.FriendlyName, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstancePath);
+                    LogManager.LogDebug("XUsbDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstancePath);
                 }
             }
             catch { }
@@ -338,7 +344,7 @@ namespace ControllerCommon.Managers
 
                 RefreshHID();
                 HidDeviceRemoved?.Invoke(deviceEx);
-                LogManager.LogDebug("HidDevice removed: {0}", deviceEx.FriendlyName);
+                LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
             }
             catch { }
         }
@@ -358,7 +364,7 @@ namespace ControllerCommon.Managers
             if (deviceEx != null && deviceEx.isGaming)
             {
                 HidDeviceArrived?.Invoke(deviceEx);
-                LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.FriendlyName, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstancePath);
+                LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstancePath);
             }
         }
 

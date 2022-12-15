@@ -39,8 +39,8 @@ namespace ControllerCommon.Controllers
 
         public override string ToString()
         {
-            if (!string.IsNullOrEmpty(Details.FriendlyName))
-                return Details.FriendlyName;
+            if (!string.IsNullOrEmpty(Details.Name))
+                return Details.Name;
             return "Steam Controller Neptune";
         }
 
