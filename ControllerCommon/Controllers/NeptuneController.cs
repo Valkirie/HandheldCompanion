@@ -241,8 +241,8 @@ namespace ControllerCommon.Controllers
             // https://www.precisionmicrodrives.com/ab-003
             // SteamDeck max was found at amplitude of 12, scale motor input request with user vibration strenth 0 to 100% accordingly
 
-            byte AmplitudeLeft = (byte)Math.Clamp((LargeMotor * VibrationStrength) * 12 / ushort.MaxValue, byte.MinValue, byte.MaxValue);
-            byte AmplitudeRight = (byte)Math.Clamp((SmallMotor * VibrationStrength) * 12 / ushort.MaxValue, byte.MinValue, byte.MaxValue);
+            byte AmplitudeLeft = (byte)Math.Clamp((LargeMotor * VibrationStrength) * 12 / byte.MaxValue, byte.MinValue, byte.MaxValue);
+            byte AmplitudeRight = (byte)Math.Clamp((SmallMotor * VibrationStrength) * 12 / byte.MaxValue, byte.MinValue, byte.MaxValue);
             byte period = 15;
 
             bool leftHaptic = LargeMotor > 0;
