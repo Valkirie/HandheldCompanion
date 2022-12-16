@@ -14,6 +14,9 @@ namespace ControllerCommon.Controllers
 
         private bool isConnected = false;
 
+        private bool lastLeftHapticOn = false;
+        private bool lastRightHapticOn = false;
+
         public NeptuneController(PnPDetails details)
         {
             Details = details;
@@ -228,9 +231,11 @@ namespace ControllerCommon.Controllers
             base.Unplug();
         }
 
-        private bool lastLeftHapticOn = false;
-        private bool lastRightHapticOn = false;
-
+        public override void SetVibrationStrength(double value)
+        {
+            base.SetVibrationStrength(value);
+            this.Rumble(1);
+        }
 
         public override void SetVibration(byte LargeMotor, byte SmallMotor)
         {
