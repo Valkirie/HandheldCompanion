@@ -182,12 +182,12 @@ namespace ControllerCommon.Controllers
 
         public string GetInstancePath()
         {
-            return Details.deviceInstancePath;
+            return Details.deviceInstanceId;
         }
 
         public string GetContainerInstancePath()
         {
-            return Details.baseContainerDeviceInstancePath;
+            return Details.baseContainerDeviceInstanceId;
         }
 
         public override string ToString()
@@ -237,14 +237,14 @@ namespace ControllerCommon.Controllers
 
         public virtual void Hide()
         {
-            HidHide.HidePath(Details.deviceInstancePath);
-            HidHide.HidePath(Details.baseContainerDeviceInstancePath);
+            HidHide.HidePath(Details.deviceInstanceId);
+            HidHide.HidePath(Details.baseContainerDeviceInstanceId);
         }
 
         public virtual void Unhide()
         {
-            HidHide.UnhidePath(Details.deviceInstancePath);
-            HidHide.UnhidePath(Details.baseContainerDeviceInstancePath);
+            HidHide.UnhidePath(Details.deviceInstanceId);
+            HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
         }
     }
 }

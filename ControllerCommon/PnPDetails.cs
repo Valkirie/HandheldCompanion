@@ -15,8 +15,8 @@ namespace ControllerCommon
         public bool isHooked;
         public DateTimeOffset arrivalDate;
 
-        public string deviceInstancePath;
-        public string baseContainerDeviceInstancePath;
+        public string deviceInstanceId;
+        public string baseContainerDeviceInstanceId;
 
         public Attributes attributes;
         public Capabilities capabilities;
