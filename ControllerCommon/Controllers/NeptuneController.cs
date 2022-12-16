@@ -244,10 +244,10 @@ namespace ControllerCommon.Controllers
 
             // Linear motors have a peak bell curve / s curve like responce, use left half, no linearization (yet?)
             // https://www.precisionmicrodrives.com/ab-003
-            // SteamDeck max was found at amplitude of 7.5, scale motor input request with user vibration strenth 0 to 100% accordingly
+            // Scale motor input request with user vibration strenth 0 to 100% accordingly
 
-            byte AmplitudeLeft = (byte)(LargeMotor * VibrationStrength / byte.MaxValue * 10);
-            byte AmplitudeRight = (byte)(SmallMotor * VibrationStrength / byte.MaxValue * 10);
+            byte AmplitudeLeft = (byte)(LargeMotor * VibrationStrength / byte.MaxValue * 12);
+            byte AmplitudeRight = (byte)(SmallMotor * VibrationStrength / byte.MaxValue * 12);
             
             byte PeriodLeft = (byte)(30 - AmplitudeLeft);
             byte PeriodRight = (byte)(30 - AmplitudeRight);
