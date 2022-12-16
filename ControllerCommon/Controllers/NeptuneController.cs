@@ -244,21 +244,23 @@ namespace ControllerCommon.Controllers
 
             // Linear motors have a peak bell curve / s curve like responce, use left half, no linearization (yet?)
             // https://www.precisionmicrodrives.com/ab-003
-            // SteamDeck max was found at amplitude of 12, scale motor input request with user vibration strenth 0 to 100% accordingly
+            // SteamDeck max was found at amplitude of 7.5, scale motor input request with user vibration strenth 0 to 100% accordingly
 
-            byte AmplitudeLeft = (byte)Math.Clamp((LargeMotor * VibrationStrength) * 12 / byte.MaxValue, byte.MinValue, byte.MaxValue);
-            byte AmplitudeRight = (byte)Math.Clamp((SmallMotor * VibrationStrength) * 12 / byte.MaxValue, byte.MinValue, byte.MaxValue);
-            byte period = 15;
+            byte AmplitudeLeft = (byte)(LargeMotor * VibrationStrength / byte.MaxValue * 10);
+            byte AmplitudeRight = (byte)(SmallMotor * VibrationStrength / byte.MaxValue * 10);
+            
+            byte PeriodLeft = (byte)(30 - AmplitudeLeft);
+            byte PeriodRight = (byte)(30 - AmplitudeRight);
 
             bool leftHaptic = LargeMotor > 0;
             bool rightHaptic = SmallMotor > 0;
 
             if (leftHaptic != lastLeftHapticOn)
-                _ = Controller.SetHaptic(1, (ushort)(leftHaptic ? AmplitudeLeft : 0), (ushort)(leftHaptic ? period : 0), 0);
+                _ = Controller.SetHaptic(1, (ushort)(leftHaptic ? AmplitudeLeft : 0), (ushort)(leftHaptic ? PeriodLeft : 0), 0);
 
 
             if (rightHaptic != lastRightHapticOn)
-                _ = Controller.SetHaptic(0, (ushort)(rightHaptic ? AmplitudeRight : 0), (ushort)(rightHaptic ? period : 0), 0);
+                _ = Controller.SetHaptic(0, (ushort)(rightHaptic ? AmplitudeRight : 0), (ushort)(rightHaptic ? PeriodRight : 0), 0);
 
             lastLeftHapticOn = leftHaptic;
             lastRightHapticOn = rightHaptic;
