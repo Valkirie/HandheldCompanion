@@ -301,8 +301,6 @@ namespace ControllerCommon.Managers
         {
             try
             {
-                var device = PnPDevice.GetDeviceByInterfaceId(obj.SymLink);
-
                 if (IsInitialized)
                 {
                     // give system at least one second to initialize device
@@ -324,7 +322,7 @@ namespace ControllerCommon.Managers
         {
             try
             {
-                var deviceEx = GetPnPDeviceEx(obj.SymLink);
+                var deviceEx = FindDevice(obj.SymLink);
                 if (deviceEx is null)
                     return;
 
@@ -341,8 +339,6 @@ namespace ControllerCommon.Managers
 
         private async static void HidDevice_DeviceArrived(DeviceEventArgs obj)
         {
-            var device = PnPDevice.GetDeviceByInterfaceId(obj.SymLink);
-
             if (IsInitialized)
             {
                 // give system at least one second to initialize device
@@ -350,7 +346,7 @@ namespace ControllerCommon.Managers
                 RefreshHID();
             }
 
-            PnPDetails deviceEx = FindDeviceFromHID(obj.SymLink);
+            PnPDetails deviceEx = FindDevice(obj.SymLink);
             if (deviceEx != null && deviceEx.isGaming)
             {
                 HidDeviceArrived?.Invoke(deviceEx);
