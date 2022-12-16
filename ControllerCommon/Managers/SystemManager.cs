@@ -138,22 +138,22 @@ namespace ControllerCommon.Managers
             HidDeviceListener.DeviceRemoved -= HidDevice_DeviceRemoved;
         }
 
-        private static PnPDetails FindDevice(string InstanceId)
+        private static PnPDetails FindDevice(string SymLink)
         {
-            if (InstanceId.StartsWith("USB"))
-                return FindDeviceFromUSB(InstanceId);
+            if (SymLink.StartsWith("USB"))
+                return FindDeviceFromUSB(SymLink);
             else
-                return FindDeviceFromHID(InstanceId);
+                return FindDeviceFromHID(SymLink);
         }
 
-        private static PnPDetails FindDeviceFromUSB(string InstanceId)
+        private static PnPDetails FindDeviceFromUSB(string SymLink)
         {
-            return PnPDevices.Values.Where(device => device.baseContainerDeviceInstancePath.Equals(InstanceId, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            return PnPDevices.Values.Where(device => device.SymLink.Equals(SymLink, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
         }
 
-        private static PnPDetails FindDeviceFromHID(string InstanceId)
+        private static PnPDetails FindDeviceFromHID(string SymLink)
         {
-            PnPDevices.TryGetValue(InstanceId, out var device);
+            PnPDevices.TryGetValue(SymLink, out var device);
             return device;
         }
 
@@ -230,7 +230,7 @@ namespace ControllerCommon.Managers
                 };
 
                 // add or update device
-                PnPDevices[children.InstanceId] = details;
+                PnPDevices[details.SymLink] = details;
             }
         }
 
@@ -277,25 +277,20 @@ namespace ControllerCommon.Managers
             return (((attributes.VendorID == 0x28DE) && (attributes.ProductID == 0x1205)) || ((attributes.VendorID == 0x28DE) && (attributes.ProductID == 0x1142)) || (0x05 == capabilities.UsagePage) || (0x01 == capabilities.UsagePage) && ((0x04 == capabilities.Usage) || (0x05 == capabilities.Usage)));
         }
 
-        private static PnPDetails GetPnPDeviceEx(string InstanceId)
+        private static PnPDetails GetPnPDeviceEx(string SymLink)
         {
-            return PnPDevices[InstanceId];
+            return PnPDevices[SymLink];
         }
 
         private async static void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
         {
-            string InstanceId = obj.SymLink.Replace("{" + obj.InterfaceGuid.ToString() + "}", string.Empty);
-            InstanceId = InstanceId.Replace(@"\\?\", string.Empty);
-            InstanceId = InstanceId.Replace("#", @"\");
-            InstanceId = InstanceId.TrimEnd(new char[] { '\\' });
-
-            var deviceEx = FindDevice(InstanceId);
+            var deviceEx = FindDevice(obj.SymLink);
             if (deviceEx is null)
                 return;
 
             // give system at least one second to initialize device
             await Task.Delay(1000);
-            PnPDevices.TryRemove(InstanceId, out var value);
+            PnPDevices.TryRemove(obj.SymLink, out var value);
 
             RefreshHID();
             XUsbDeviceRemoved?.Invoke(deviceEx);
@@ -315,7 +310,7 @@ namespace ControllerCommon.Managers
                     RefreshHID();
                 }
 
-                PnPDetails deviceEx = FindDevice(device.InstanceId);
+                PnPDetails deviceEx = FindDevice(obj.SymLink);
                 if (deviceEx != null && deviceEx.isGaming)
                 {
                     XUsbDeviceArrived?.Invoke(deviceEx);
@@ -329,18 +324,13 @@ namespace ControllerCommon.Managers
         {
             try
             {
-                string InstanceId = obj.SymLink.Replace("{" + obj.InterfaceGuid.ToString() + "}", string.Empty);
-                InstanceId = InstanceId.Replace(@"\\?\", string.Empty);
-                InstanceId = InstanceId.Replace("#", @"\");
-                InstanceId = InstanceId.TrimEnd(new char[] { '\\' });
-
-                var deviceEx = GetPnPDeviceEx(InstanceId);
+                var deviceEx = GetPnPDeviceEx(obj.SymLink);
                 if (deviceEx is null)
                     return;
 
                 // give system at least one second to initialize device
                 await Task.Delay(1000);
-                PnPDevices.TryRemove(InstanceId, out var value);
+                PnPDevices.TryRemove(obj.SymLink, out var value);
 
                 RefreshHID();
                 HidDeviceRemoved?.Invoke(deviceEx);
@@ -360,7 +350,7 @@ namespace ControllerCommon.Managers
                 RefreshHID();
             }
 
-            PnPDetails deviceEx = FindDeviceFromHID(device.InstanceId);
+            PnPDetails deviceEx = FindDeviceFromHID(obj.SymLink);
             if (deviceEx != null && deviceEx.isGaming)
             {
                 HidDeviceArrived?.Invoke(deviceEx);
