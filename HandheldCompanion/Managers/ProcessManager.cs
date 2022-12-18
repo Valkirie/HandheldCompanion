@@ -3,6 +3,7 @@ using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -69,7 +70,7 @@ namespace HandheldCompanion.Managers
 
         static ProcessManager()
         {
-            MonitorTimer = new Timer(1000);
+            MonitorTimer = new Timer(2000);
             MonitorTimer.Elapsed += MonitorHelper;
 
             // hook: on process halt
@@ -245,8 +246,10 @@ namespace HandheldCompanion.Managers
         {
             if (Monitor.TryEnter(updateLock))
             {
-                foreach (ProcessEx proc in Processes.Values)
+                Parallel.ForEach(Processes.Values, proc =>
+                {
                     proc.Refresh();
+                });
 
                 Monitor.Exit(updateLock);
             }

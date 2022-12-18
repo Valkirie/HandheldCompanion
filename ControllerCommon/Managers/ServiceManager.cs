@@ -75,7 +75,7 @@ namespace ControllerCommon.Managers
             };
 
             // monitor service
-            MonitorTimer = new Timer(1000) { Enabled = true, AutoReset = true };
+            MonitorTimer = new Timer(2000) { Enabled = true, AutoReset = true };
         }
 
         public override void Start()
