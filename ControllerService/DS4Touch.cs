@@ -1,6 +1,5 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Controllers;
-using Windows.Devices.Sensors;
 
 namespace ControllerService
 {

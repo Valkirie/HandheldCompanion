@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using ControllerCommon.Controllers;
+﻿using ControllerCommon.Controllers;
+using System.Collections.Generic;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices

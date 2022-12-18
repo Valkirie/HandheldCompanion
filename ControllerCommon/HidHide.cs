@@ -4,8 +4,6 @@ using Nefarius.Drivers.HidHide;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Windows.Shapes;
 using Path = System.IO.Path;
 
 namespace ControllerCommon

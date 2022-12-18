@@ -1,7 +1,6 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
-using Microsoft.VisualBasic.Logging;
 using neptune_hidapi.net;
 using SharpDX.XInput;
 using System;
@@ -250,7 +249,7 @@ namespace HandheldCompanion.Controllers
 
             byte AmplitudeLeft = (byte)(LargeMotor * VibrationStrength / byte.MaxValue * 12);
             byte AmplitudeRight = (byte)(SmallMotor * VibrationStrength / byte.MaxValue * 12);
-            
+
             byte PeriodLeft = (byte)(30 - AmplitudeLeft);
             byte PeriodRight = (byte)(30 - AmplitudeRight);
 

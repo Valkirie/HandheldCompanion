@@ -81,8 +81,8 @@ namespace HandheldCompanion.Views
 
             // initialize splash screen
 #if !DEBUG
-                SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
-                splashScreen.Show(true, true);
+            SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
+            splashScreen.Show(true, true);
 #endif
 
             // fix touch support

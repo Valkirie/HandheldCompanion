@@ -13,7 +13,6 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Shapes;
 using Attributes = ControllerCommon.Managers.Hid.Attributes;
 using Capabilities = ControllerCommon.Managers.Hid.Capabilities;
 using Path = System.IO.Path;
