@@ -91,6 +91,11 @@ namespace ControllerService
 
         public static void RefreshSensors()
         {
+            // halt sensors
+            Gyrometer?.StopListening();
+            Accelerometer?.StopListening();
+            Inclinometer?.StopListening();
+
             Gyrometer.UpdateSensor();
             Accelerometer.UpdateSensor();
             Inclinometer.UpdateSensor();
