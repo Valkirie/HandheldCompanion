@@ -1,4 +1,5 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using SharpDX.XInput;
 using System;

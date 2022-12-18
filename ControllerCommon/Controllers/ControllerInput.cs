@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ControllerCommon
+namespace ControllerCommon.Controllers
 {
     [Flags]
     public enum ControllerButtonFlags : ulong

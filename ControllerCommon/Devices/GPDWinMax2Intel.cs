@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
+using ControllerCommon.Controllers;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
