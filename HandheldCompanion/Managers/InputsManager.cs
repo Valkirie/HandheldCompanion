@@ -1,4 +1,4 @@
-using ControllerCommon.Controllers;
+using ControllerCommon;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using Gma.System.MouseKeyHook;

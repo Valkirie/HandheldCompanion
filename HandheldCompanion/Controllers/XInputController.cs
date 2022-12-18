@@ -1,11 +1,12 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using SharpDX.XInput;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace ControllerCommon.Controllers
+namespace HandheldCompanion.Controllers
 {
     public class XInputController : IController
     {

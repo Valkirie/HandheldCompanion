@@ -1,4 +1,4 @@
-using ControllerCommon.Controllers;
+using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;

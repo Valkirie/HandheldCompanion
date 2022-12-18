@@ -1,4 +1,4 @@
-using ControllerCommon.Controllers;
+using ControllerCommon;
 using System;
 using System.Windows;
 using System.Windows.Media;

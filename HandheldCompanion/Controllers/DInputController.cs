@@ -1,6 +1,7 @@
-﻿using SharpDX.DirectInput;
+﻿using ControllerCommon;
+using SharpDX.DirectInput;
 
-namespace ControllerCommon.Controllers
+namespace HandheldCompanion.Controllers
 {
     public class DInputController : IController
     {

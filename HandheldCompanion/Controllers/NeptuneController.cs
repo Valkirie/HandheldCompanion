@@ -1,11 +1,12 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using Microsoft.VisualBasic.Logging;
 using neptune_hidapi.net;
 using SharpDX.XInput;
 using System;
 using System.Threading.Tasks;
 
-namespace ControllerCommon.Controllers
+namespace HandheldCompanion.Controllers
 {
     public class NeptuneController : IController
     {
