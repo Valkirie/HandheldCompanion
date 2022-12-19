@@ -13,10 +13,12 @@
             // Steam Controller Neptune
             this.hasSensors[Utils.DeviceUtils.SensorFamily.Controller] = true;
 
-            // https://www.amd.com/fr/products/apu/amd-ryzen-7-5800u
-            this.nTDP = new double[] { 15, 15, 20 };
-            this.cTDP = new double[] { 10, 25 };
-            this.GfxClock = new double[] { 100, 2000 };
+            // https://www.steamdeck.com/en/tech
+            this.nTDP = new double[] { 10, 10, 15 };
+            this.cTDP = new double[] { 4, 15 };
+
+            // https://www.techpowerup.com/gpu-specs/steam-deck-gpu.c3897
+            this.GfxClock = new double[] { 100, 1600 };
         }
     }
 }
