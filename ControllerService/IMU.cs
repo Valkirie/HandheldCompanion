@@ -59,9 +59,7 @@ namespace ControllerService
         public static void Initialize(SensorFamily sensorFamily)
         {
             // halt sensors
-            Gyrometer?.StopListening();
-            Accelerometer?.StopListening();
-            Inclinometer?.StopListening();
+            StopListening();
 
             // initialize sensors
             Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval);
@@ -69,7 +67,7 @@ namespace ControllerService
             Inclinometer = new IMUInclinometer(sensorFamily, UpdateInterval);
         }
 
-        public static void StartListening()
+        public static void Start()
         {
             stopwatch.Start();
 
@@ -77,11 +75,10 @@ namespace ControllerService
             UpdateTimer.Start();
         }
 
-        public static void StopListening()
+        public static void Stop()
         {
-            Gyrometer.StopListening();
-            Accelerometer.StopListening();
-            Inclinometer.StopListening();
+            // halt sensors
+            StopListening();
 
             UpdateTimer.Tick -= ComputeMovements;
             UpdateTimer.Stop();
@@ -89,12 +86,17 @@ namespace ControllerService
             stopwatch.Stop();
         }
 
-        public static void RefreshSensors()
+        private static void StopListening()
         {
-            // halt sensors
             Gyrometer?.StopListening();
             Accelerometer?.StopListening();
             Inclinometer?.StopListening();
+        }
+
+        public static void RefreshSensors()
+        {
+            // halt sensors
+            StopListening();
 
             Gyrometer.UpdateSensor();
             Accelerometer.UpdateSensor();

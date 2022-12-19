@@ -449,7 +449,7 @@ namespace ControllerService
         public Task StartAsync(CancellationToken cancellationToken)
         {
             // start listening to controller
-            IMU.StartListening();
+            IMU.Start();
 
             // start DSUClient
             if (DSUEnabled)
@@ -470,7 +470,7 @@ namespace ControllerService
         public Task StopAsync(CancellationToken cancellationToken)
         {
             // stop listening from controller
-            IMU.StopListening();
+            IMU.Stop();
 
             // update virtual controller
             SetControllerMode(HIDmode.NoController);
