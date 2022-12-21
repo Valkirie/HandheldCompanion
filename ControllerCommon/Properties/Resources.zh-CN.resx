@@ -187,7 +187,7 @@
     <value>未连接</value>
   </data>
   <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
-    <value>Auto Roll Yaw Swap</value>
+    <value>自动横滚/航向轴切换</value>
   </data>
   <data name="Enum.Input.JoystickCamera" xml:space="preserve">
     <value>体感视角</value>
@@ -197,6 +197,18 @@
   </data>
   <data name="Enum.Input.PlayerSpace" xml:space="preserve">
     <value>玩家空间</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">
+    <value>浮窗</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Quicktools" xml:space="preserve">
+    <value>快捷工具</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Windows" xml:space="preserve">
+    <value>窗口</value>
   </data>
   <data name="Enum.Output.LeftStick" xml:space="preserve">
     <value>左摇杆</value>
@@ -222,6 +234,15 @@
   <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
     <value>这里没什么好看的。</value>
   </data>
+  <data name="Enum.QualityOfServiceLevel.Default" xml:space="preserve">
+    <value>默认</value>
+  </data>
+  <data name="Enum.QualityOfServiceLevel.Eco" xml:space="preserve">
+    <value>节能</value>
+  </data>
+  <data name="Enum.QualityOfServiceLevel.High" xml:space="preserve">
+    <value>高</value>
+  </data>
   <data name="Enum.ServiceStartMode.Automatic" xml:space="preserve">
     <value>自动</value>
   </data>
@@ -239,26 +260,5 @@
   </data>
   <data name="PlayerSpaceDesc" xml:space="preserve">
     <value>这个输入将作为一个为第一或第三人称视角优化的摇杆</value>
-  </data>
-  <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
-    <value>Handheld Companion</value>
-  </data>
-  <data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">
-    <value>Overlay</value>
-  </data>
-  <data name="Enum.InputsHotkeyType.Quicktools" xml:space="preserve">
-    <value>Quick tools</value>
-  </data>
-  <data name="Enum.InputsHotkeyType.Windows" xml:space="preserve">
-    <value>Windows</value>
-  </data>
-  <data name="Enum.QualityOfServiceLevel.Default" xml:space="preserve">
-    <value>Default</value>
-  </data>
-  <data name="Enum.QualityOfServiceLevel.Eco" xml:space="preserve">
-    <value>Eco</value>
-  </data>
-  <data name="Enum.QualityOfServiceLevel.High" xml:space="preserve">
-    <value>High</value>
   </data>
 </root>
