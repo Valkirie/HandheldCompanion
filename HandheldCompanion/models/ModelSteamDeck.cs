@@ -45,8 +45,8 @@ namespace HandheldCompanion.Models
             JoystickRotationPointCenterRightMillimeter = new Vector3D(102.83f, 6.15f, 34.5f);
             JoystickMaxAngleDeg = 14.0f;
 
-            ShoulderTriggerRotationPointCenterLeftMillimeter = new Vector3D(-117.528f, 23.0f, 49.43f);
-            ShoulderTriggerRotationPointCenterRightMillimeter = new Vector3D(117.528f, 23.0f, 49.43f);
+            ShoulderTriggerRotationPointCenterLeftMillimeter = new Vector3D(-145.6f, 17.475f, 41.0f);
+            ShoulderTriggerRotationPointCenterRightMillimeter = new Vector3D(145.6f, 17.475f, 41.0f);
             TriggerMaxAngleDeg = 16.0f;
 
             UpwardVisibilityRotationAxisLeft = new Vector3D(1, 0, 0);
