@@ -119,23 +119,24 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(ShareSymbol);
             model3DGroup.Children.Add(MenuSymbol);
 
-            model3DGroup.Children.Add(DPadDownCover);
-            model3DGroup.Children.Add(DPadUpCover);
-            model3DGroup.Children.Add(DPadLeftCover);
-            model3DGroup.Children.Add(DPadRightCover);
             model3DGroup.Children.Add(DPadDownArrow);
             model3DGroup.Children.Add(DPadUpArrow);
             model3DGroup.Children.Add(DPadLeftArrow);
             model3DGroup.Children.Add(DPadRightArrow);
+            model3DGroup.Children.Add(DPadDownCover);
+            model3DGroup.Children.Add(DPadUpCover);
+            model3DGroup.Children.Add(DPadLeftCover);
+            model3DGroup.Children.Add(DPadRightCover);
 
-            model3DGroup.Children.Add(B1Button);
-            model3DGroup.Children.Add(B2Button);
-            model3DGroup.Children.Add(B3Button);
-            model3DGroup.Children.Add(B4Button);
             model3DGroup.Children.Add(B1ButtonSymbolx);
             model3DGroup.Children.Add(B2ButtonSymbolx);
             model3DGroup.Children.Add(B3ButtonSymbolx);
             model3DGroup.Children.Add(B4ButtonSymbolx);
+            model3DGroup.Children.Add(B1Button);
+            model3DGroup.Children.Add(B2Button);
+            model3DGroup.Children.Add(B3Button);
+            model3DGroup.Children.Add(B4Button);
+
 
             // specific button material(s)
             foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
