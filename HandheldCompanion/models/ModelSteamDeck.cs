@@ -106,8 +106,20 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            default:
+                            case ControllerButtonFlags.B1:
+                            case ControllerButtonFlags.B2:
+                            case ControllerButtonFlags.B3:
+                            case ControllerButtonFlags.B4:
+                            case ControllerButtonFlags.DPadUp:
+                            case ControllerButtonFlags.DPadRight:
+                            case ControllerButtonFlags.DPadDown:
+                            case ControllerButtonFlags.DPadLeft:
+                            case ControllerButtonFlags.LeftThumb:
+                            case ControllerButtonFlags.RightThumb:
                                 buttonMaterial = MaterialPlasticBlack;
+                                break;
+                            default:
+                                buttonMaterial = MaterialPlasticDarkGrey;
                                 break;
                         }
 
@@ -124,16 +136,16 @@ namespace HandheldCompanion.Models
                     continue;
 
                 // default material(s)
-                ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
-                ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticBlack;
-                DefaultMaterials[model3D] = MaterialPlasticBlack;
+                ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticDarkGrey;
+                ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticDarkGrey;
+                DefaultMaterials[model3D] = MaterialPlasticDarkGrey;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == MainBodyLeftOver)
+                if (model3D == Screen || model3D == LeftThumbRing || model3D == RightThumbRing)
                 {
-                    ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticDarkGrey;
-                    ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticDarkGrey;
-                    DefaultMaterials[model3D] = MaterialPlasticDarkGrey;
+                    ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
+                    ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticBlack;
+                    DefaultMaterials[model3D] = MaterialPlasticBlack;
                     continue;
                 }
 
@@ -141,6 +153,7 @@ namespace HandheldCompanion.Models
                 if (model3D == SteamText || model3D == ThreeDots
                     || model3D == BackIcon || model3D == StartIcon
                     || model3D == B1Symbol || model3D == B2Symbol || model3D == B3Symbol || model3D == B4Symbol
+                    || model3D == JoystickLeftTouch || model3D == JoystickRightTouch
                     )
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
