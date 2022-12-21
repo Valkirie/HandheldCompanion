@@ -373,7 +373,6 @@ namespace HandheldCompanion.Managers
                 case "controllerservice.exe":
                 case "controllerservice.dll":
                 case "radeonsoftware.exe":
-                case "applicationframehost.exe":
                     return ProcessFilter.Ignored;
 
                 default:
