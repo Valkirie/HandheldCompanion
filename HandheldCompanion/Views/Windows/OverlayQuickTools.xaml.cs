@@ -79,6 +79,9 @@ namespace HandheldCompanion.Views.Windows
                     case Visibility.Hidden:
                         this.Show();
                         this.Activate();
+                       
+                        // this.InvalidateVisual();
+                        this.UpdateLayout();
                         break;
                 }
             });
