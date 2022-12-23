@@ -240,7 +240,7 @@
   <data name="PlayerSpaceDesc" xml:space="preserve">
     <value>這個輸入將作為一個為第一或第三人稱視角優化的搖桿</value>
   </data>
-  <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
+  <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
     <value>Handheld Companion</value>
   </data>
   <data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">

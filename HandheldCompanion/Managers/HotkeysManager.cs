@@ -5,6 +5,7 @@ using GregsStack.InputSimulatorStandard.Native;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -49,6 +50,7 @@ namespace HandheldCompanion.Managers
 
             InputsManager.TriggerUpdated += TriggerUpdated;
             InputsManager.TriggerRaised += TriggerRaised;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
         public static void Start()
@@ -123,6 +125,16 @@ namespace HandheldCompanion.Managers
                 return;
 
             IsInitialized = false;
+        }
+
+        private static void SettingsManager_SettingValueChanged(string? name, object value)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                switch (name)
+                {
+                }
+            }));
         }
 
         private static void StartListening(Hotkey hotkey, ListenerType type)
@@ -319,6 +331,21 @@ namespace HandheldCompanion.Managers
                             fProcess.Process.Kill();
                         }
                         break;
+
+                    case "shortcutSDLizardMouse":
+                        {
+                            bool SteamDeckLizardMode = SettingsManager.GetBoolean("SteamDeckLizardMouse");
+                            SettingsManager.SetProperty("SteamDeckLizardMouse", !SteamDeckLizardMode);
+                        }
+                        break;
+
+                    case "shortcutSDLizardButtons":
+                        {
+                            bool SteamDeckLizardMode = SettingsManager.GetBoolean("SteamDeckLizardButtons");
+                            SettingsManager.SetProperty("SteamDeckLizardButtons", !SteamDeckLizardMode);
+                        }
+                        break;
+
                     default:
                         InputsManager.KeyPress(input.OutputKeys);
                         break;

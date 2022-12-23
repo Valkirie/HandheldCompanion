@@ -80,9 +80,9 @@
                     </Border>
                 </ui:SimpleStackPanel>
 
-                <!-- Device settings -->
+                <!-- Controller settings -->
                 <ui:SimpleStackPanel Spacing="6">
-                    <Label Content="Device settings" FontWeight="SemiBold"></Label>
+                    <Label Content="{x:Static resx:Resources.ControllerPage_DeviceSettings}" FontWeight="SemiBold"></Label>
 
                     <!-- Vibration Strength -->
                     <Border                      
@@ -115,7 +115,7 @@
                     </Border>
                 </ui:SimpleStackPanel>
 
-                <!-- Device cloaking -->
+                <!-- Controller cloaking -->
                 <ui:SimpleStackPanel Spacing="6">
                     <Label Content="{x:Static resx:Resources.ControllerPage_DeviceCloaking}" FontWeight="SemiBold"></Label>
 
@@ -167,6 +167,63 @@
 
                             <ui:ToggleSwitch Name="Toggle_Uncloak" Grid.Column="1" Toggled="Toggle_Uncloak_Toggled"/>
                         </Grid>
+                    </Border>
+                </ui:SimpleStackPanel>
+
+                <!-- Steam Deck settings -->
+                <ui:SimpleStackPanel Name="SteamDeckPanel" Spacing="6" Visibility="Collapsed">
+                    <Label Content="Steam Deck Settings" FontWeight="SemiBold"></Label>
+
+                    <!-- Lizard mode (Mouse) -->
+                    <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE877;" Height="40" HorizontalAlignment="Center"/>
+
+                                <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <TextBlock Text="{x:Static resx:Resources.InputsHotkey_shortcutSDLizardMouse}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.InputsHotkey_shortcutSDLizardMouseDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <ui:ToggleSwitch Name="Toggle_SDLizardMouse" Grid.Column="1" Toggled="Toggle_SDLizardMouse_Toggled"/>
+                        </Grid>
+
+                    </Border>
+
+                    <!-- Lizard mode (Buttons) -->
+                    <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE877;" Height="40" HorizontalAlignment="Center"/>
+
+                                <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <TextBlock Text="{x:Static resx:Resources.InputsHotkey_shortcutSDLizardButtons}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.InputsHotkey_shortcutSDLizardButtonsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <ui:ToggleSwitch Name="Toggle_SDLizardButtons" Grid.Column="1" Toggled="Toggle_SDLizardButtons_Toggled"/>
+                        </Grid>
+
                     </Border>
                 </ui:SimpleStackPanel>
             </ui:SimpleStackPanel>

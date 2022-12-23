@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -57,6 +58,10 @@ namespace HandheldCompanion.Views.Pages
         {
             // These are special shortcut keys with no related events
             if (hotkey.inputsHotkey.hotkeyType == InputsHotkey.InputsHotkeyType.UI)
+                return;
+
+            Type DeviceType = hotkey.inputsHotkey.DeviceType;
+            if (DeviceType != null && DeviceType != MainWindow.handheldDevice.GetType())
                 return;
 
             this.Dispatcher.Invoke(() =>

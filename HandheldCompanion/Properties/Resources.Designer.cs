@@ -292,11 +292,20 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Device cloaking.
+        ///   Looks up a localized string similar to Controller cloaking.
         /// </summary>
         public static string ControllerPage_DeviceCloaking {
             get {
                 return ResourceManager.GetString("ControllerPage_DeviceCloaking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controller settings.
+        /// </summary>
+        public static string ControllerPage_DeviceSettings {
+            get {
+                return ResourceManager.GetString("ControllerPage_DeviceSettings", resourceCulture);
             }
         }
         
@@ -630,6 +639,42 @@ namespace HandheldCompanion.Properties {
         public static string InputsHotkey_shortcutMainwindowDesc {
             get {
                 return ResourceManager.GetString("InputsHotkey_shortcutMainwindowDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lizard mode (Buttons).
+        /// </summary>
+        public static string InputsHotkey_shortcutSDLizardButtons {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutSDLizardButtons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle buttons from or into lizard brain (mouse and keyboard emulation).
+        /// </summary>
+        public static string InputsHotkey_shortcutSDLizardButtonsDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutSDLizardButtonsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lizard mode (Mouse).
+        /// </summary>
+        public static string InputsHotkey_shortcutSDLizardMouse {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutSDLizardMouse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle trackpads from or into lizard brain (mouse and keyboard emulation).
+        /// </summary>
+        public static string InputsHotkey_shortcutSDLizardMouseDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutSDLizardMouseDesc", resourceCulture);
             }
         }
         

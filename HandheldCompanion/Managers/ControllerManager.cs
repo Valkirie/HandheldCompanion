@@ -82,6 +82,30 @@ namespace HandheldCompanion.Managers
                         double HIDstrength = Convert.ToDouble(value);
                         SetHIDStrength(HIDstrength);
                         break;
+
+                    case "SteamDeckLizardMouse":
+                    case "SteamDeckLizardButtons":
+                        {
+                            IController target = GetTargetController();
+                            if (target is null)
+                                return;
+
+                            if (typeof(NeptuneController) != target.GetType())
+                                return;
+
+                            bool LizardMode = Convert.ToBoolean(value);
+
+                            switch(name)
+                            {
+                                case "SteamDeckLizardMouse":
+                                    ((NeptuneController)target).SetLizardMouse(LizardMode);
+                                    break;
+                                case "SteamDeckLizardButtons":
+                                    ((NeptuneController)target).SetLizardButtons(LizardMode);
+                                    break;
+                            }
+                        }
+                        break;
                 }
             }));
         }

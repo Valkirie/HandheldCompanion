@@ -194,7 +194,10 @@
     <value>Controller</value>
   </data>
   <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
-    <value>Device cloaking</value>
+    <value>Controller cloaking</value>
+  </data>
+  <data name="ControllerPage_DeviceSettings" xml:space="preserve">
+    <value>Controller settings</value>
   </data>
   <data name="ControllerPage_Disconnect" xml:space="preserve">
     <value>Disconnect</value>
@@ -303,6 +306,18 @@
   </data>
   <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
     <value>Change hotkey by pressing a button or a special key</value>
+  </data>
+  <data name="InputsHotkey_shortcutSDLizardButtons" xml:space="preserve">
+    <value>Lizard mode (Buttons)</value>
+  </data>
+  <data name="InputsHotkey_shortcutSDLizardButtonsDesc" xml:space="preserve">
+    <value>Toggle buttons from or into lizard brain (mouse and keyboard emulation)</value>
+  </data>
+  <data name="InputsHotkey_shortcutSDLizardMouse" xml:space="preserve">
+    <value>Lizard mode (Mouse)</value>
+  </data>
+  <data name="InputsHotkey_shortcutSDLizardMouseDesc" xml:space="preserve">
+    <value>Toggle trackpads from or into lizard brain (mouse and keyboard emulation)</value>
   </data>
   <data name="InputsHotkey_shortcutTaskManager" xml:space="preserve">
     <value>Open Task Manager</value>

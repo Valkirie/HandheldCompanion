@@ -1,6 +1,7 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
+using HandheldCompanion.Managers;
 using neptune_hidapi.net;
 using SharpDX.XInput;
 using System;
@@ -31,14 +32,20 @@ namespace HandheldCompanion.Controllers
                 Controller = new();
                 Controller.Open();
                 isConnected = true;
-
-                UpdateTimer.Tick += (sender, e) => UpdateReport();
             }
             catch (Exception ex)
             {
                 LogManager.LogError("Couldn't initialize NeptuneController. Exception: {0}", ex.Message);
                 return;
             }
+
+            UpdateTimer.Tick += (sender, e) => UpdateReport();
+
+            bool LizardMouse = SettingsManager.GetBoolean("SteamDeckLizardMouse");
+            SetLizardMouse(LizardMouse);
+
+            bool LizardButtons = SettingsManager.GetBoolean("SteamDeckLizardButtons");
+            SetLizardButtons(LizardButtons);
         }
 
         public override string ToString()
@@ -190,6 +197,16 @@ namespace HandheldCompanion.Controllers
             return isConnected;
         }
 
+        public bool IsLizardMouseEnabled()
+        {
+            return Controller.LizardMouseEnabled;
+        }
+
+        public bool IsLizardButtonsEnabled()
+        {
+            return Controller.LizardButtonsEnabled;
+        }
+
         public override async void Rumble(int loop)
         {
             for (int i = 0; i < loop; i++)
@@ -248,23 +265,26 @@ namespace HandheldCompanion.Controllers
             // Scale motor input request with user vibration strenth 0 to 100% accordingly
 
             byte AmplitudeLeft = (byte)(LargeMotor * VibrationStrength / byte.MaxValue * 12);
-            byte AmplitudeRight = (byte)(SmallMotor * VibrationStrength / byte.MaxValue * 12);
-
-            byte PeriodLeft = (byte)(30 - AmplitudeLeft);
-            byte PeriodRight = (byte)(30 - AmplitudeRight);
 
             bool leftHaptic = LargeMotor > 0;
-            bool rightHaptic = SmallMotor > 0;
+            byte PeriodLeft = (byte)(30 - AmplitudeLeft);
 
             if (leftHaptic != lastLeftHapticOn)
+            {
                 _ = Controller.SetHaptic(1, (ushort)(leftHaptic ? AmplitudeLeft : 0), (ushort)(leftHaptic ? PeriodLeft : 0), 0);
+                lastLeftHapticOn = leftHaptic;
+            }
 
+            byte AmplitudeRight = (byte)(SmallMotor * VibrationStrength / byte.MaxValue * 12);
+
+            bool rightHaptic = SmallMotor > 0;
+            byte PeriodRight = (byte)(30 - AmplitudeRight);
 
             if (rightHaptic != lastRightHapticOn)
+            {
                 _ = Controller.SetHaptic(0, (ushort)(rightHaptic ? AmplitudeRight : 0), (ushort)(rightHaptic ? PeriodRight : 0), 0);
-
-            lastLeftHapticOn = leftHaptic;
-            lastRightHapticOn = rightHaptic;
+                lastRightHapticOn = rightHaptic;
+            }
         }
 
         private void OnServerMessage(PipeMessage message)
@@ -278,6 +298,16 @@ namespace HandheldCompanion.Controllers
                     }
                     break;
             }
+        }
+
+        public void SetLizardMouse(bool lizardMode)
+        {
+            Controller.LizardMouseEnabled = lizardMode;
+        }
+
+        public void SetLizardButtons(bool lizardMode)
+        {
+            Controller.LizardButtonsEnabled = lizardMode;
         }
     }
 }

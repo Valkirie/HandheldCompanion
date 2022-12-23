@@ -1,10 +1,12 @@
 using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -51,6 +53,11 @@ namespace HandheldCompanion.Views.Pages
             ControllerManager.ControllerPlugged += ControllerPlugged;
             ControllerManager.ControllerUnplugged += ControllerUnplugged;
             SystemManager.Initialized += SystemManager_Initialized;
+
+            // device specific settings
+            Type DeviceType = MainWindow.handheldDevice.GetType();
+            if (DeviceType == typeof(SteamDeck))
+                SteamDeckPanel.Visibility = Visibility.Visible;
         }
 
         public ControllerPage(string Tag) : this()
@@ -72,6 +79,13 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "HIDstrength":
                         SliderStrength.Value = Convert.ToDouble(value);
+                        break;
+
+                    case "SteamDeckLizardMouse":
+                        Toggle_SDLizardMouse.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "SteamDeckLizardButtons":
+                        Toggle_SDLizardButtons.IsOn = Convert.ToBoolean(value);
                         break;
                 }
             });
@@ -329,6 +343,22 @@ namespace HandheldCompanion.Views.Pages
             ControllerManager.SetTargetController(path);
 
             SettingsManager.SetProperty("HIDInstancePath", path);
+        }
+
+        private void Toggle_SDLizardButtons_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("SteamDeckLizardButtons", Toggle_SDLizardButtons.IsOn);
+        }
+
+        private void Toggle_SDLizardMouse_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("SteamDeckLizardMouse", Toggle_SDLizardMouse.IsOn);
         }
     }
 }

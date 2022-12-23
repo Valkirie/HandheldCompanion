@@ -198,7 +198,7 @@
   <data name="Enum.Input.PlayerSpace" xml:space="preserve">
     <value>Player space</value>
   </data>
-  <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
+  <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
     <value>Handheld Companion</value>
   </data>
   <data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">

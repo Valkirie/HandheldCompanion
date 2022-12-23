@@ -306,9 +306,9 @@ namespace ControllerCommon.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Handheld Companion.
         /// </summary>
-        public static string Enum_InputsHotkeyType_Handheld {
+        public static string Enum_InputsHotkeyType_HC {
             get {
-                return ResourceManager.GetString("Enum.InputsHotkeyType.Handheld", resourceCulture);
+                return ResourceManager.GetString("Enum.InputsHotkeyType.HC", resourceCulture);
             }
         }
         

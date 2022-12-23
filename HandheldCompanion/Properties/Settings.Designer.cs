@@ -682,5 +682,29 @@ namespace HandheldCompanion.Properties {
                 this["OverlayControllerMotion"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SteamDeckLizardMouse {
+            get {
+                return ((bool)(this["SteamDeckLizardMouse"]));
+            }
+            set {
+                this["SteamDeckLizardMouse"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SteamDeckLizardButtons {
+            get {
+                return ((bool)(this["SteamDeckLizardButtons"]));
+            }
+            set {
+                this["SteamDeckLizardButtons"] = value;
+            }
+        }
     }
 }
