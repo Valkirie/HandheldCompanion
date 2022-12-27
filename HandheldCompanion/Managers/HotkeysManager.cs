@@ -18,7 +18,7 @@ namespace HandheldCompanion.Managers
 {
     public static class HotkeysManager
     {
-        private static string Path;
+        private static string InstallPath;
 
         public static event HotkeyTypeCreatedEventHandler HotkeyTypeCreated;
         public delegate void HotkeyTypeCreatedEventHandler(InputsHotkeyType type);
@@ -43,9 +43,9 @@ namespace HandheldCompanion.Managers
         static HotkeysManager()
         {
             // initialize path
-            Path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "hotkeys");
-            if (!Directory.Exists(Path))
-                Directory.CreateDirectory(Path);
+            InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "hotkeys");
+            if (!Directory.Exists(InstallPath))
+                Directory.CreateDirectory(InstallPath);
 
             InputsManager.TriggerUpdated += TriggerUpdated;
             InputsManager.TriggerRaised += TriggerRaised;
@@ -62,7 +62,7 @@ namespace HandheldCompanion.Managers
 
                 Hotkey hotkey = null;
 
-                string fileName = System.IO.Path.Combine(Path, $"{inputsHotkey.Listener}.json");
+                string fileName = System.IO.Path.Combine(InstallPath, $"{inputsHotkey.Listener}.json");
 
                 if (File.Exists(fileName))
                     hotkey = ProcessHotkey(fileName);
@@ -227,7 +227,7 @@ namespace HandheldCompanion.Managers
         {
             string listener = hotkey.inputsHotkey.Listener;
 
-            string settingsPath = System.IO.Path.Combine(Path, $"{listener}.json");
+            string settingsPath = Path.Combine(InstallPath, $"{listener}.json");
             if (!File.Exists(settingsPath) || overwrite)
             {
                 var options = new JsonSerializerOptions { WriteIndented = true };

@@ -42,15 +42,15 @@ namespace HandheldCompanion.Managers
         #endregion
 
         public static Profile currentProfile = new();
-        public static string Path;
+        public static string InstallPath;
         private static bool IsInitialized;
 
         static ProfileManager()
         {
             // initialiaze path
-            Path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "profiles");
-            if (!Directory.Exists(Path))
-                Directory.CreateDirectory(Path);
+            InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "profiles");
+            if (!Directory.Exists(InstallPath))
+                Directory.CreateDirectory(InstallPath);
 
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
             ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
@@ -68,7 +68,7 @@ namespace HandheldCompanion.Managers
                     continue;
 
                 object resource = entry.Value;
-                string profile_path = System.IO.Path.Combine(Path, resourceKey);
+                string profile_path = Path.Combine(InstallPath, resourceKey);
 
                 if (!File.Exists(profile_path))
                     File.WriteAllText(profile_path, (string)resource);
@@ -77,7 +77,7 @@ namespace HandheldCompanion.Managers
             // monitor profile file deletions
             profileWatcher = new FileSystemWatcher()
             {
-                Path = Path,
+                Path = InstallPath,
                 EnableRaisingEvents = true,
                 IncludeSubdirectories = true,
                 Filter = "*.json",
@@ -86,7 +86,7 @@ namespace HandheldCompanion.Managers
             profileWatcher.Deleted += ProfileDeleted;
 
             // process existing profiles
-            string[] fileEntries = Directory.GetFiles(Path, "*.json", SearchOption.AllDirectories);
+            string[] fileEntries = Directory.GetFiles(InstallPath, "*.json", SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
                 ProcessProfile(fileName);
 
@@ -280,7 +280,7 @@ namespace HandheldCompanion.Managers
 
         public static void DeleteProfile(Profile profile)
         {
-            string settingsPath = System.IO.Path.Combine(Path, profile.json);
+            string settingsPath = Path.Combine(InstallPath, profile.json);
 
             if (profiles.ContainsKey(profile.name))
             {
@@ -315,7 +315,7 @@ namespace HandheldCompanion.Managers
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(profile, options);
 
-            string settingsPath = System.IO.Path.Combine(Path, profile.json);
+            string settingsPath = System.IO.Path.Combine(InstallPath, profile.json);
             File.WriteAllText(settingsPath, jsonString);
         }
 

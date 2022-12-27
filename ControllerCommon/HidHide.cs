@@ -4,7 +4,7 @@ using Nefarius.Drivers.HidHide;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Path = System.IO.Path;
+using System.IO;
 
 namespace ControllerCommon
 {
@@ -22,9 +22,9 @@ namespace ControllerCommon
             }
 
             // verifying HidHide is installed
-            string path = RegistryUtils.GetHKLM(@"SOFTWARE\Nefarius Software Solutions e.U.\HidHide", "Path");
-            if (!string.IsNullOrEmpty(path))
-                path = Path.Combine(path, "x64", "HidHideCLI.exe");
+            string InstallPath = RegistryUtils.GetHKLM(@"SOFTWARE\Nefarius Software Solutions e.U.\HidHide", "Path");
+            if (!string.IsNullOrEmpty(InstallPath))
+                InstallPath = Path.Combine(InstallPath, "x64", "HidHideCLI.exe");
 
             process = new Process
             {
@@ -34,7 +34,7 @@ namespace ControllerCommon
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    FileName = path,
+                    FileName = InstallPath,
                     Verb = "runas"
                 }
             };
