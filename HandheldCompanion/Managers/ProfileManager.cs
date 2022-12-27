@@ -1,6 +1,5 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Managers;
-using ControllerCommon.Platforms;
 using ControllerCommon.Utils;
 using Force.Crc32;
 using HandheldCompanion.Views;

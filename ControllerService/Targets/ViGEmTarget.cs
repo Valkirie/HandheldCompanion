@@ -2,15 +2,12 @@ using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
-using ControllerCommon.Platforms;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using Nefarius.ViGEm.Client;
 using PrecisionTiming;
 using System;
 using System.Numerics;
-using Windows.Foundation.Metadata;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Platform = ControllerCommon.Platforms.Platform;
 
 namespace ControllerService.Targets

@@ -95,7 +95,7 @@ namespace HandheldCompanion.Managers
 
                             bool LizardMode = Convert.ToBoolean(value);
 
-                            switch(name)
+                            switch (name)
                             {
                                 case "SteamDeckLizardMouse":
                                     ((NeptuneController)target).SetLizardMouse(LizardMode);

@@ -1,12 +1,8 @@
 ﻿using ControllerCommon.Platforms;
 using ControllerCommon.Utils;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Platforms
 {

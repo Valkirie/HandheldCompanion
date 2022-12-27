@@ -17,7 +17,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using static ControllerCommon.Managers.SystemManager;
 using static ControllerCommon.Utils.DeviceUtils;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Device = ControllerCommon.Devices.Device;
 
 namespace ControllerService

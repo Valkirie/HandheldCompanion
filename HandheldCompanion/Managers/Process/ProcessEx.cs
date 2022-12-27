@@ -1,6 +1,5 @@
 ﻿using ControllerCommon.Platforms;
 using ControllerCommon.Utils;
-using HandheldCompanion.Platforms;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
