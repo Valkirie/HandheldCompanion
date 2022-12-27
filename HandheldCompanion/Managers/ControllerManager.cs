@@ -184,7 +184,7 @@ namespace HandheldCompanion.Managers
             // unsupported controller
             if (controller is null)
             {
-                LogManager.LogError("Controller unsupported: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+                LogManager.LogError("Unsupported DInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
                 return;
             }
 
