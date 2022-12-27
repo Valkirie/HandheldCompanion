@@ -76,10 +76,6 @@ namespace HandheldCompanion.Managers
             // hook: on process halt
             MonitorWatcher = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
             MonitorWatcher.EventArrived += new EventArrivedEventHandler(ProcessHalted);
-
-            // hook: on window foregroud
-            listener = new WinEventProc(EventCallback);
-            winHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, listener, 0, 0, WINEVENT_OUTOFCONTEXT);
         }
 
         public static void Start()
@@ -93,6 +89,10 @@ namespace HandheldCompanion.Managers
                 element: AutomationElement.RootElement,
                 scope: TreeScope.Children,
                 eventHandler: OnWindowOpened);
+
+            // hook: on window foregroud
+            listener = new WinEventProc(EventCallback);
+            winHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, listener, 0, 0, WINEVENT_OUTOFCONTEXT);
 
             // hook: on process stop
             MonitorWatcher.Start();
