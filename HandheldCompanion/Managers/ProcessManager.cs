@@ -41,18 +41,7 @@ namespace HandheldCompanion.Managers
         public static extern bool IsWindowVisible(int h);
         #endregion
 
-        // process vars
-        private static Timer MonitorTimer;
-        private static ManagementEventWatcher stopWatch;
-
-        private static ConcurrentDictionary<int, ProcessEx> Processes = new();
-
-        private static ProcessEx foregroundProcess;
-        private static ProcessEx backgroundProcess;
-
-        private static object updateLock = new();
-        private static bool IsInitialized;
-
+        #region events
         public static event ForegroundChangedEventHandler ForegroundChanged;
         public delegate void ForegroundChangedEventHandler(ProcessEx processEx, ProcessEx backgroundEx);
 
@@ -64,6 +53,19 @@ namespace HandheldCompanion.Managers
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
+        #endregion
+
+        // process vars
+        private static Timer MonitorTimer;
+        private static ManagementEventWatcher MonitorWatcher;
+
+        private static ConcurrentDictionary<int, ProcessEx> Processes = new();
+
+        private static ProcessEx foregroundProcess;
+        private static ProcessEx backgroundProcess;
+
+        private static object updateLock = new();
+        private static bool IsInitialized;
 
         static ProcessManager()
         {
@@ -71,8 +73,8 @@ namespace HandheldCompanion.Managers
             MonitorTimer.Elapsed += MonitorHelper;
 
             // hook: on process halt
-            stopWatch = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
-            stopWatch.EventArrived += new EventArrivedEventHandler(ProcessHalted);
+            MonitorWatcher = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace"));
+            MonitorWatcher.EventArrived += new EventArrivedEventHandler(ProcessHalted);
 
             // hook: on window foregroud
             listener = new WinEventProc(EventCallback);
@@ -92,7 +94,7 @@ namespace HandheldCompanion.Managers
                 eventHandler: OnWindowOpened);
 
             // hook: on process stop
-            stopWatch.Start();
+            MonitorWatcher.Start();
 
             // list all current processes
             EnumWindows(new WindowEnumCallback(AddWnd), 0);
@@ -116,7 +118,7 @@ namespace HandheldCompanion.Managers
             MonitorTimer.Elapsed -= MonitorHelper;
             MonitorTimer.Stop();
 
-            stopWatch.Stop();
+            MonitorWatcher.Stop();
             Automation.RemoveAllEventHandlers();
 
             UnhookWinEvent(winHook);
@@ -186,12 +188,10 @@ namespace HandheldCompanion.Managers
             if (processInfo == null)
                 return;
 
-            Process proc;
+            Process proc = Process.GetProcessById((int)processInfo.ProcessId);
 
             try
             {
-                proc = Process.GetProcessById((int)processInfo.ProcessId);
-
                 // process has exited on arrival
                 if (proc.HasExited)
                     return;
@@ -228,6 +228,8 @@ namespace HandheldCompanion.Managers
                     Executable = exec,
                     Path = path,
                     Filter = filter,
+
+                    Platform = PlatformManager.GetPlatform(proc),
                 };
             }
 
@@ -298,7 +300,9 @@ namespace HandheldCompanion.Managers
                         Executable = exec,
                         Path = path,
                         MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle,
-                        Filter = GetFilter(exec, path)
+                        Filter = GetFilter(exec, path),
+
+                        Platform = PlatformManager.GetPlatform(proc),
                     };
 
                     processEx.ChildProcessCreated += ChildProcessCreated;

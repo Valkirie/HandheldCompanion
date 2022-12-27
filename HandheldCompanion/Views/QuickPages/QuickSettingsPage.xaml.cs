@@ -36,7 +36,7 @@ namespace HandheldCompanion.Views.QuickPages
             }
 
             // get current system volume
-            DevEnum = new MMDeviceEnumerator();
+            DevEnum = new MMDeviceEnumerator(new Guid());
             multimediaDevice = DevEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
 
             if (multimediaDevice != null && multimediaDevice.AudioEndpointVolume != null)

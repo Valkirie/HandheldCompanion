@@ -162,6 +162,7 @@ namespace HandheldCompanion.Views
             EnergyManager.Start();
             HotkeysManager.Start();
             SystemManager.Start();
+            PlatformManager.Start();
             ProfileManager.Start();
             ProcessManager.Start();
 

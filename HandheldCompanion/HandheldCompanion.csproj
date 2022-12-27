@@ -107,7 +107,7 @@
 
   <ItemGroup>
     <PackageReference Include="CodeHollow.FeedReader" Version="1.2.4" />
-    <PackageReference Include="CoreAudio" Version="1.22.0" />
+    <PackageReference Include="CoreAudio" Version="1.24.0" />
     <PackageReference Include="FluentWPF" Version="0.10.2" />
     <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.3.5" />
     <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.23.0" />

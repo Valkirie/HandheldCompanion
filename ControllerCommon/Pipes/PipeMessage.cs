@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Controllers;
+using ControllerCommon.Platforms;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -56,7 +57,7 @@ namespace ControllerCommon
     public partial class PipeClientProfile : PipeMessage
     {
         public Profile profile;
-        public bool backgroundTask;
+        public Platform platform;
 
         public PipeClientProfile()
         {

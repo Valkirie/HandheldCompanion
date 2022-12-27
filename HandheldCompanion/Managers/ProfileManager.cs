@@ -1,5 +1,6 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Managers;
+using ControllerCommon.Platforms;
 using ControllerCommon.Utils;
 using Force.Crc32;
 using HandheldCompanion.Views;
@@ -176,11 +177,11 @@ namespace HandheldCompanion.Managers
             catch { }
         }
 
-        private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
+        private static void ProcessManager_ForegroundChanged(ProcessEx proc, ProcessEx back)
         {
             try
             {
-                var profile = GetProfileFromExec(processEx.Name);
+                var profile = GetProfileFromExec(proc.Name);
 
                 if (profile == null)
                     profile = GetDefault();
@@ -202,7 +203,7 @@ namespace HandheldCompanion.Managers
                 LogManager.LogInformation("Profile {0} applied", profile.name);
 
                 // inform service
-                PipeClient.SendMessage(new PipeClientProfile { profile = profile, backgroundTask = true });
+                PipeClient.SendMessage(new PipeClientProfile { profile = profile, platform = proc.Platform });
 
                 // do not update default profile path
                 if (profile.isDefault)
@@ -213,7 +214,7 @@ namespace HandheldCompanion.Managers
                 MainWindow.toastManager.SendToast($"Profile {profile.name} applied");
 
                 profile.isRunning = true;
-                profile.fullpath = processEx.Path;
+                profile.fullpath = proc.Path;
                 UpdateOrCreateProfile(profile, true, false);
             }
             catch { }
@@ -355,7 +356,10 @@ namespace HandheldCompanion.Managers
 
             // inform service
             if (isCurrent)
-                PipeClient.SendMessage(new PipeClientProfile { profile = currentProfile, backgroundTask = backgroundtask });
+            {
+                ProcessEx proc = ProcessManager.GetForegroundProcess();
+                PipeClient.SendMessage(new PipeClientProfile { profile = currentProfile, platform = proc.Platform });
+            }
 
             if (profile.error != ProfileErrorCode.None && !profile.isDefault)
             {

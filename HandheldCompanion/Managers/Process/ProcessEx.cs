@@ -1,4 +1,6 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon.Platforms;
+using ControllerCommon.Utils;
+using HandheldCompanion.Platforms;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
@@ -36,6 +38,8 @@ namespace HandheldCompanion.Managers
         public string Executable;
         public string Path;
         public ProcessFilter Filter;
+
+        public Platform Platform { get; set; }
 
         private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
 

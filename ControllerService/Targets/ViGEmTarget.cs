@@ -1,12 +1,17 @@
 using ControllerCommon;
 using ControllerCommon.Controllers;
+using ControllerCommon.Devices;
 using ControllerCommon.Managers;
+using ControllerCommon.Platforms;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using Nefarius.ViGEm.Client;
 using PrecisionTiming;
 using System;
 using System.Numerics;
+using Windows.Foundation.Metadata;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Platform = ControllerCommon.Platforms.Platform;
 
 namespace ControllerService.Targets
 {
@@ -30,6 +35,7 @@ namespace ControllerService.Targets
         public delegate void DisconnectedEventHandler(ViGEmTarget target);
 
         public bool IsConnected = false;
+        protected bool IsSilenced = false;
 
         protected ViGEmTarget()
         {
@@ -39,6 +45,31 @@ namespace ControllerService.Targets
             UpdateTimer = new PrecisionTimer();
             UpdateTimer.SetInterval(5);
             UpdateTimer.SetAutoResetMode(true);
+
+            ControllerService.ProfileUpdated += ProfileUpdated;
+        }
+
+        private void ProfileUpdated(Profile profile, Platform platform)
+        {
+            if (profile.whitelisted)
+                IsSilenced = true;
+            else
+            {
+                // platform specific
+                switch (platform)
+                {
+                    case Platform.Steam:
+                        {
+                            if (ControllerService.handheldDevice.GetType() == typeof(SteamDeck))
+                                IsSilenced = true;
+                        }
+                        break;
+
+                    default:
+                        IsSilenced = false;
+                        break;
+                }
+            }
         }
 
         protected void FeedbackReceived(object sender, EventArgs e)

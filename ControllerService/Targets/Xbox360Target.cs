@@ -67,7 +67,7 @@ namespace ControllerService.Targets
             if (!IsConnected)
                 return;
 
-            if (ControllerService.currentProfile.whitelisted)
+            if (IsSilenced)
                 return;
 
             base.UpdateReport();

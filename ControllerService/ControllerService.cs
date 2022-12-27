@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Managers;
+using ControllerCommon.Platforms;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using ControllerService.Targets;
@@ -51,6 +52,9 @@ namespace ControllerService
         // profile vars
         public static Profile currentProfile = new();
         public static Profile defaultProfile = new();
+
+        public static event ProfileUpdatedEventHandler ProfileUpdated;
+        public delegate void ProfileUpdatedEventHandler(Profile profile, Platform platform);
 
         public ControllerService(IHostApplicationLifetime lifetime)
         {
@@ -251,7 +255,7 @@ namespace ControllerService
                 case PipeCode.CLIENT_PROFILE:
                     {
                         PipeClientProfile profile = (PipeClientProfile)message;
-                        ProfileUpdated(profile.profile, profile.backgroundTask);
+                        UpdateProfile(profile.profile, profile.platform);
                     }
                     break;
 
@@ -346,7 +350,7 @@ namespace ControllerService
             PipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
         }
 
-        internal void ProfileUpdated(Profile profile, bool backgroundtask)
+        internal void UpdateProfile(Profile profile, Platform platform)
         {
             // skip if current profile
             if (profile == currentProfile)
@@ -358,6 +362,7 @@ namespace ControllerService
 
             // update current profile
             currentProfile = profile;
+            ProfileUpdated?.Invoke(profile, platform);
 
             // update default profile
             if (profile.isDefault)

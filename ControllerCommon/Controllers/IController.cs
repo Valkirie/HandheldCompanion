@@ -4,7 +4,7 @@ using ControllerCommon.Managers;
 using PrecisionTiming;
 using System;
 
-namespace HandheldCompanion.Controllers
+namespace ControllerCommon.Controllers
 {
     public abstract class IController
     {
