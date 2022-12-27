@@ -1,4 +1,4 @@
-﻿using ControllerCommon.Managers;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using System;
 using System.Collections.Concurrent;
@@ -373,6 +373,7 @@ namespace HandheldCompanion.Managers
                 case "controllerservice.exe":
                 case "controllerservice.dll":
                 case "radeonsoftware.exe":
+                case "applicationframehost.exe":
                     return ProcessFilter.Ignored;
 
                 default:
