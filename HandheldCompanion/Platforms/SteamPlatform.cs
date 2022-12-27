@@ -29,6 +29,8 @@ namespace HandheldCompanion.Platforms
             InstallPath = RegistryUtils.GetHKLM("SOFTWARE\\Wow6432Node\\Valve\\Steam", "InstallPath");
             if (Path.Exists(InstallPath))
                 IsInstalled = true;
+
+            base.Platform = Platform.Steam;
         }
 
         public bool IsRelated(Process proc)

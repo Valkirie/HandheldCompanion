@@ -57,11 +57,21 @@ namespace ControllerCommon
     public partial class PipeClientProfile : PipeMessage
     {
         public Profile profile;
-        public Platform platform;
 
         public PipeClientProfile()
         {
             code = PipeCode.CLIENT_PROFILE;
+        }
+    }
+    [Serializable]
+    public partial class PipeClientProcess : PipeMessage
+    {
+        public string executable;
+        public Platform platform;
+
+        public PipeClientProcess()
+        {
+            code = PipeCode.CLIENT_PROCESS;
         }
     }
 

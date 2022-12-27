@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using System;
 using System.Collections.Concurrent;
@@ -236,9 +237,13 @@ namespace HandheldCompanion.Managers
             // update main window handle
             foregroundProcess.MainWindowHandle = hWnd;
 
-            LogManager.LogDebug("{0} now has the foreground", foregroundProcess.Name);
+            // inform service
+            PipeClient.SendMessage(new PipeClientProcess { executable = foregroundProcess.Executable, platform = foregroundProcess.Platform });
 
             ForegroundChanged?.Invoke(foregroundProcess, backgroundProcess);
+
+            LogManager.LogDebug("executable: {0}, platform: {1} now has the foreground", foregroundProcess.Name, foregroundProcess.Platform);
+
         }
 
         private static void MonitorHelper(object? sender, EventArgs e)

@@ -46,17 +46,17 @@ namespace ControllerService.Targets
             UpdateTimer.SetInterval(5);
             UpdateTimer.SetAutoResetMode(true);
 
-            ControllerService.ProfileUpdated += ProfileUpdated;
+            ControllerService.ForegroundUpdated += ForegroundUpdated;
         }
 
-        private void ProfileUpdated(Profile profile, Platform platform)
+        private void ForegroundUpdated()
         {
-            if (profile.whitelisted)
+            if (ControllerService.currentProfile.whitelisted)
                 IsSilenced = true;
             else
             {
                 // platform specific
-                switch (platform)
+                switch (ControllerService.currentPlatform)
                 {
                     case Platform.Steam:
                         {

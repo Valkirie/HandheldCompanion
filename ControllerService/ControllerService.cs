@@ -17,6 +17,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static ControllerCommon.Managers.SystemManager;
 using static ControllerCommon.Utils.DeviceUtils;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Device = ControllerCommon.Devices.Device;
 
 namespace ControllerService
@@ -52,9 +53,10 @@ namespace ControllerService
         // profile vars
         public static Profile currentProfile = new();
         public static Profile defaultProfile = new();
+        public static Platform currentPlatform;
 
-        public static event ProfileUpdatedEventHandler ProfileUpdated;
-        public delegate void ProfileUpdatedEventHandler(Profile profile, Platform platform);
+        public static event UpdatedEventHandler ForegroundUpdated;
+        public delegate void UpdatedEventHandler();
 
         public ControllerService(IHostApplicationLifetime lifetime)
         {
@@ -255,7 +257,14 @@ namespace ControllerService
                 case PipeCode.CLIENT_PROFILE:
                     {
                         PipeClientProfile profile = (PipeClientProfile)message;
-                        UpdateProfile(profile.profile, profile.platform);
+                        UpdateProfile(profile.profile);
+                    }
+                    break;
+
+                case PipeCode.CLIENT_PROCESS:
+                    {
+                        PipeClientProcess process = (PipeClientProcess)message;
+                        UpdateProcess(process.executable, process.platform);
                     }
                     break;
 
@@ -350,25 +359,38 @@ namespace ControllerService
             PipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
         }
 
-        internal void UpdateProfile(Profile profile, Platform platform)
+        internal void UpdateProfile(Profile profile)
         {
             // skip if current profile
             if (profile == currentProfile)
                 return;
 
             // restore default profile
-            if (profile == null || !profile.isEnabled)
+            if (profile is null || !profile.isEnabled)
                 profile = defaultProfile;
 
             // update current profile
             currentProfile = profile;
-            ProfileUpdated?.Invoke(profile, platform);
+            ForegroundUpdated?.Invoke();
 
             // update default profile
             if (profile.isDefault)
                 defaultProfile = profile;
             else
-                LogManager.LogInformation("Profile {0} applied.", profile.name);
+                LogManager.LogInformation("Profile {0} applied", profile.name);
+        }
+
+        internal void UpdateProcess(string executable, Platform platform)
+        {
+            // skip if current platform
+            if (platform == currentPlatform)
+                return;
+
+            // update current platform
+            currentPlatform = platform;
+            ForegroundUpdated?.Invoke();
+
+            LogManager.LogInformation("Platform {0} detected", platform);
         }
 
         public void UpdateSettings(Dictionary<string, object> args)
@@ -396,12 +418,20 @@ namespace ControllerService
                 case "HIDmode":
                     {
                         HIDmode value = Enum.Parse<HIDmode>(property);
+
+                        if (HIDmode == value)
+                            return;
+
                         SetControllerMode(value);
                     }
                     break;
                 case "HIDstatus":
                     {
                         HIDstatus value = Enum.Parse<HIDstatus>(property);
+
+                        if (HIDstatus == value)
+                            return;
+
                         SetControllerStatus(value);
                     }
                     break;
@@ -444,6 +474,10 @@ namespace ControllerService
                 case "SensorSelection":
                     {
                         SensorFamily value = Enum.Parse<SensorFamily>(property);
+
+                        if (SensorSelection == value)
+                            return;
+
                         SensorSelection = value;
                         IMU.Initialize(SensorSelection);
                     }

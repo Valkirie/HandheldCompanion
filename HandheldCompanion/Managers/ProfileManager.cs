@@ -203,7 +203,7 @@ namespace HandheldCompanion.Managers
                 LogManager.LogInformation("Profile {0} applied", profile.name);
 
                 // inform service
-                PipeClient.SendMessage(new PipeClientProfile { profile = profile, platform = proc.Platform });
+                PipeClient.SendMessage(new PipeClientProfile { profile = profile });
 
                 // do not update default profile path
                 if (profile.isDefault)
@@ -356,10 +356,7 @@ namespace HandheldCompanion.Managers
 
             // inform service
             if (isCurrent)
-            {
-                ProcessEx proc = ProcessManager.GetForegroundProcess();
-                PipeClient.SendMessage(new PipeClientProfile { profile = currentProfile, platform = proc.Platform });
-            }
+                PipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
 
             if (profile.error != ProfileErrorCode.None && !profile.isDefault)
             {
