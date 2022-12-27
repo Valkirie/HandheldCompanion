@@ -189,60 +189,60 @@ namespace HandheldCompanion.Managers
             if (processInfo is null)
                 return;
 
-            Process proc = Process.GetProcessById((int)processInfo.ProcessId);
-
             try
             {
+                Process proc = Process.GetProcessById((int)processInfo.ProcessId);
+
                 // process has exited on arrival
                 if (proc.HasExited)
                     return;
+
+                int procId = proc.Id;
+
+                string path = ProcessUtils.GetPathToApp(proc);
+                string exec = System.IO.Path.GetFileName(path);
+
+                // ignore if self or specific
+                ProcessFilter filter = GetFilter(exec, path);
+                if (filter == ProcessFilter.Ignored)
+                    return;
+
+                // save previous process (if exists)
+                if (foregroundProcess is not null)
+                    backgroundProcess = foregroundProcess;
+
+                // pull process from running processes
+                if (Processes.ContainsKey(procId))
+                    foregroundProcess = Processes[procId];
+                else
+                {
+                    // create temporary process
+                    foregroundProcess = new ProcessEx(proc)
+                    {
+                        Name = exec,
+                        Executable = exec,
+                        Path = path,
+                        Filter = filter,
+
+                        Platform = PlatformManager.GetPlatform(proc),
+                    };
+                }
+
+                // update main window handle
+                foregroundProcess.MainWindowHandle = hWnd;
+
+                // inform service
+                PipeClient.SendMessage(new PipeClientProcess { executable = foregroundProcess.Executable, platform = foregroundProcess.Platform });
+
+                ForegroundChanged?.Invoke(foregroundProcess, backgroundProcess);
+
+                LogManager.LogDebug("executable: {0}, platform: {1} now has the foreground", foregroundProcess.Name, foregroundProcess.Platform);
             }
             catch
             {
                 // process has too high elevation
                 return;
             }
-
-            int procId = proc.Id;
-
-            string path = ProcessUtils.GetPathToApp(proc);
-            string exec = System.IO.Path.GetFileName(path);
-
-            // ignore if self or specific
-            ProcessFilter filter = GetFilter(exec, path);
-            if (filter == ProcessFilter.Ignored)
-                return;
-
-            // save previous process (if exists)
-            if (foregroundProcess is not null)
-                backgroundProcess = foregroundProcess;
-
-            // pull process from running processes
-            if (Processes.ContainsKey(procId))
-                foregroundProcess = Processes[procId];
-            else
-            {
-                // create temporary process
-                foregroundProcess = new ProcessEx(proc)
-                {
-                    Name = exec,
-                    Executable = exec,
-                    Path = path,
-                    Filter = filter,
-
-                    Platform = PlatformManager.GetPlatform(proc),
-                };
-            }
-
-            // update main window handle
-            foregroundProcess.MainWindowHandle = hWnd;
-
-            // inform service
-            PipeClient.SendMessage(new PipeClientProcess { executable = foregroundProcess.Executable, platform = foregroundProcess.Platform });
-
-            ForegroundChanged?.Invoke(foregroundProcess, backgroundProcess);
-
-            LogManager.LogDebug("executable: {0}, platform: {1} now has the foreground", foregroundProcess.Name, foregroundProcess.Platform);
 
         }
 

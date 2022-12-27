@@ -210,7 +210,7 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 string MainWindowTitle = ProcessUtils.GetWindowTitle(processEx.MainWindowHandle);
 
-                ProcessName.Text = MainWindowTitle;
+                ProcessName.Text = currentProcess.Executable;
                 ProcessPath.Text = currentProcess.Path;
 
                 // disable create button if process is bypassed
