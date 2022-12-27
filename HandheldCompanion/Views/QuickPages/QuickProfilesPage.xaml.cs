@@ -110,7 +110,7 @@ namespace HandheldCompanion.Views.QuickPages
                 {
                     case "increaseTDP":
                         {
-                            if (currentProfile == null || currentProfile.isDefault || !currentProfile.TDP_override)
+                            if (currentProfile is null || currentProfile.isDefault || !currentProfile.TDP_override)
                                 return;
 
                             TDPSustainedSlider.Value++;
@@ -119,7 +119,7 @@ namespace HandheldCompanion.Views.QuickPages
                         break;
                     case "decreaseTDP":
                         {
-                            if (currentProfile == null || currentProfile.isDefault || !currentProfile.TDP_override)
+                            if (currentProfile is null || currentProfile.isDefault || !currentProfile.TDP_override)
                                 return;
 
                             TDPSustainedSlider.Value--;
@@ -174,7 +174,7 @@ namespace HandheldCompanion.Views.QuickPages
                     cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)profile.umc_motion_defaultoffon;
 
                     // Sustained TDP settings (slow, stapm, long)
-                    double[] TDP = profile.TDP_value != null ? profile.TDP_value : MainWindow.handheldDevice.nTDP;
+                    double[] TDP = profile.TDP_value is not null ? profile.TDP_value : MainWindow.handheldDevice.nTDP;
                     TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
                     TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
 
@@ -426,7 +426,7 @@ namespace HandheldCompanion.Views.QuickPages
                 case "shortcutProfilesPage@@":
                     {
                         Border hotkeyBorder = hotkey.GetHotkey();
-                        if (hotkeyBorder is null || hotkeyBorder.Parent != null)
+                        if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
                             return;
 
                         // pull hotkey

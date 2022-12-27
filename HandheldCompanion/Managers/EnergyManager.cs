@@ -94,11 +94,11 @@ namespace HandheldCompanion.Managers
         private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
             // set efficiency mode to Eco on background(ed) process
-            if (backgroundEx != null && backgroundEx.Filter == ProcessEx.ProcessFilter.Allowed && !backgroundEx.IsSuspended())
+            if (backgroundEx is not null && backgroundEx.Filter == ProcessEx.ProcessFilter.Allowed && !backgroundEx.IsSuspended())
                 ToggleEfficiencyMode(backgroundEx.Id, QualityOfServiceLevel.Eco);
 
             // set efficency mode to High on foreground(ed) process
-            if (processEx != null && processEx.Filter == ProcessEx.ProcessFilter.Allowed && !processEx.IsSuspended())
+            if (processEx is not null && processEx.Filter == ProcessEx.ProcessFilter.Allowed && !processEx.IsSuspended())
                 ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
         }
 
@@ -192,7 +192,7 @@ namespace HandheldCompanion.Managers
             catch { }
 
             // process failed or process is child
-            if (!result || parent != null)
+            if (!result || parent is not null)
                 return;
 
             ProcessEx processEx = ProcessManager.GetProcesses(pId);
@@ -223,7 +223,7 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            if (infoType != null)
+            if (infoType is not null)
             {
                 int sizeOfProcessInfo = Marshal.SizeOf(infoType);
                 var pProcessInfo = Marshal.AllocHGlobal(sizeOfProcessInfo);
@@ -252,7 +252,7 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            if (infoType != null)
+            if (infoType is not null)
             {
                 int sizeOfProcessInfo = Marshal.SizeOf(infoType);
 

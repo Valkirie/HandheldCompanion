@@ -402,10 +402,10 @@ namespace ControllerService
                         outputData[outIdx++] = (byte)padData.ConnectionType;
 
                         byte[] addressBytes = null;
-                        if (padData.PadMacAddress != null)
+                        if (padData.PadMacAddress is not null)
                             addressBytes = padData.PadMacAddress.GetAddressBytes();
 
-                        if (addressBytes != null && addressBytes.Length == 6)
+                        if (addressBytes is not null && addressBytes.Length == 6)
                         {
                             outputData[outIdx++] = addressBytes[0];
                             outputData[outIdx++] = addressBytes[1];
@@ -483,7 +483,7 @@ namespace ControllerService
             StartReceive();
 
             //Process the data if its valid
-            if (localMsg != null)
+            if (localMsg is not null)
                 ProcessIncoming(localMsg, (IPEndPoint)clientEP);
         }
         private void StartReceive()
@@ -547,7 +547,7 @@ namespace ControllerService
 
         public void Stop()
         {
-            if (udpSock != null)
+            if (udpSock is not null)
             {
                 udpSock.Close();
                 udpSock = null;

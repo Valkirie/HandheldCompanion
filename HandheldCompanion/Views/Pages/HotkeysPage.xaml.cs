@@ -61,13 +61,13 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             Type DeviceType = hotkey.inputsHotkey.DeviceType;
-            if (DeviceType != null && DeviceType != MainWindow.handheldDevice.GetType())
+            if (DeviceType is not null && DeviceType != MainWindow.handheldDevice.GetType())
                 return;
 
             this.Dispatcher.Invoke(() =>
             {
                 Border hotkeyBorder = hotkey.GetHotkey();
-                if (hotkeyBorder is null || hotkeyBorder.Parent != null)
+                if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
                     return;
 
                 ushort idx = (ushort)hotkey.inputsHotkey.hotkeyType;

@@ -41,7 +41,7 @@ namespace ControllerService.Sensors
                     break;
             }
 
-            if (sensor == null)
+            if (sensor is null)
             {
                 LogManager.LogWarning("{0} not initialised as a {1}.", this.ToString(), sensorFamily.ToString());
                 return;

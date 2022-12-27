@@ -19,7 +19,7 @@ namespace ControllerCommon.Utils
             int Pos1 = STR.IndexOf(FirstString) + FirstString.Length;
             int Pos2 = STR.Length;
 
-            if (LastString != null)
+            if (LastString is not null)
                 Pos2 = STR.IndexOf(LastString, Pos1);
 
             FinalString = STR.Substring(Pos1, Pos2 - Pos1);

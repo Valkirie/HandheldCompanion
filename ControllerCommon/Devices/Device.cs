@@ -61,7 +61,7 @@ namespace ControllerCommon.Devices
         private static Device device;
         public static Device GetDefault()
         {
-            if (device != null)
+            if (device is not null)
                 return device;
 
             var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
@@ -181,19 +181,19 @@ namespace ControllerCommon.Devices
             var gyrometer = Gyrometer.GetDefault();
             var accelerometer = Accelerometer.GetDefault();
 
-            if (gyrometer != null && accelerometer != null)
+            if (gyrometer is not null && accelerometer is not null)
             {
                 // check sensor
                 string DeviceId = CommonUtils.Between(gyrometer.DeviceId, @"\\?\", @"#{").Replace(@"#", @"\");
                 sensor = GetUSBDevice(DeviceId);
-                if (sensor != null)
+                if (sensor is not null)
                     InternalSensorName = sensor.Name;
 
                 hasSensors[SensorFamily.Windows] = true;
             }
 
             var USB = SerialUSBIMU.GetDefault();
-            if (USB != null)
+            if (USB is not null)
             {
                 ExternalSensorName = USB.GetName();
                 hasSensors[SensorFamily.SerialUSBIMU] = true;

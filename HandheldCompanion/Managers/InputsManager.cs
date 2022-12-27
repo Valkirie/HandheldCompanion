@@ -223,7 +223,7 @@ namespace HandheldCompanion.Managers
                 }
 
                 InputsHotkey hotkey = InputsHotkey.InputsHotkeys.Values.Where(item => item.Listener == currentHotkey.Listener).FirstOrDefault();
-                if (hotkey != null)
+                if (hotkey is not null)
                 {
                     switch (hotkey.OnKeyDown)
                     {
@@ -597,7 +597,7 @@ namespace HandheldCompanion.Managers
 
         private static void StopListening(InputsChord inputsChord = null)
         {
-            if (inputsChord == null)
+            if (inputsChord is null)
                 inputsChord = new InputsChord();
 
             switch (currentType)

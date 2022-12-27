@@ -455,7 +455,7 @@ namespace HandheldCompanion.Views
                         b_ServiceInstall.IsEnabled = true;
                         b_ServiceDelete.IsEnabled = false;
 
-                        if (notifyIcon.ContextMenuStrip != null)
+                        if (notifyIcon.ContextMenuStrip is not null)
                         {
                             notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
                             notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
@@ -475,7 +475,7 @@ namespace HandheldCompanion.Views
                                     b_ServiceInstall.IsEnabled = false;
                                     b_ServiceDelete.IsEnabled = true;
 
-                                    if (notifyIcon.ContextMenuStrip != null)
+                                    if (notifyIcon.ContextMenuStrip is not null)
                                     {
                                         notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
                                         notifyIcon.ContextMenuStrip.Items[1].Enabled = true;
@@ -489,7 +489,7 @@ namespace HandheldCompanion.Views
                                     b_ServiceInstall.IsEnabled = false;
                                     b_ServiceDelete.IsEnabled = false;
 
-                                    if (notifyIcon.ContextMenuStrip != null)
+                                    if (notifyIcon.ContextMenuStrip is not null)
                                     {
                                         notifyIcon.ContextMenuStrip.Items[0].Enabled = true;
                                         notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
@@ -506,7 +506,7 @@ namespace HandheldCompanion.Views
                                     b_ServiceInstall.IsEnabled = false;
                                     b_ServiceDelete.IsEnabled = false;
 
-                                    if (notifyIcon.ContextMenuStrip != null)
+                                    if (notifyIcon.ContextMenuStrip is not null)
                                     {
                                         notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
                                         notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
@@ -520,7 +520,7 @@ namespace HandheldCompanion.Views
                                     b_ServiceInstall.IsEnabled = true;
                                     b_ServiceDelete.IsEnabled = false;
 
-                                    if (notifyIcon.ContextMenuStrip != null)
+                                    if (notifyIcon.ContextMenuStrip is not null)
                                     {
                                         notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
                                         notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
@@ -539,7 +539,7 @@ namespace HandheldCompanion.Views
         #region UI
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            if (args.InvokedItemContainer != null)
+            if (args.InvokedItemContainer is not null)
             {
                 NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
                 string navItemTag = (string)navItem.Tag;
@@ -723,7 +723,7 @@ namespace HandheldCompanion.Views
         {
             navView.IsBackEnabled = ContentFrame.CanGoBack;
 
-            if (ContentFrame.SourcePageType != null)
+            if (ContentFrame.SourcePageType is not null)
             {
                 var preNavPageType = ContentFrame.CurrentSourcePageType;
                 var preNavPageName = preNavPageType.Name;

@@ -65,7 +65,7 @@ namespace ControllerCommon.Processor
 
         public static Processor GetCurrent()
         {
-            if (processor != null)
+            if (processor is not null)
                 return processor;
 
             Manufacturer = GetProcessorDetails("Manufacturer");

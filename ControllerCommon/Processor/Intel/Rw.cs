@@ -38,7 +38,7 @@ namespace ControllerCommon.Processor.Intel
 
         internal bool init()
         {
-            if (startInfo == null)
+            if (startInfo is null)
                 return false;
 
             try

@@ -124,7 +124,7 @@ namespace ControllerCommon.Utils
 
                     _realProcess = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(foregroundProcessID));
 
-                    if (_realProcess == null)
+                    if (_realProcess is null)
                         return;
 
                     // Get real process
@@ -172,12 +172,12 @@ namespace ControllerCommon.Utils
             foreach (var property in typeof(ShellProperties.PropertySystem).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 IShellProperty shellProperty = property.GetValue(shellFile.Properties.System, null) as IShellProperty;
-                if (shellProperty?.ValueAsObject == null) continue;
+                if (shellProperty?.ValueAsObject is null) continue;
                 if (AppProperties.ContainsKey(property.Name)) continue;
 
                 string[] shellPropertyValues = shellProperty.ValueAsObject as string[];
 
-                if (shellPropertyValues != null && shellPropertyValues.Length > 0)
+                if (shellPropertyValues is not null && shellPropertyValues.Length > 0)
                 {
                     foreach (string shellPropertyValue in shellPropertyValues)
                         AppProperties[property.Name] = shellPropertyValue.ToString();
@@ -205,7 +205,7 @@ namespace ControllerCommon.Utils
                     object id = item["ProcessID"];
                     object path = item["ExecutablePath"];
 
-                    if (path != null && id.ToString() == process.Id.ToString())
+                    if (path is not null && id.ToString() == process.Id.ToString())
                     {
                         return path.ToString();
                     }

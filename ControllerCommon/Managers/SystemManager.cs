@@ -380,7 +380,7 @@ namespace ControllerCommon.Managers
                 }
 
                 PnPDetails deviceEx = FindDevice(SymLink);
-                if (deviceEx != null && deviceEx.isGaming)
+                if (deviceEx is not null && deviceEx.isGaming)
                 {
                     XUsbDeviceArrived?.Invoke(deviceEx);
                     LogManager.LogDebug("XUsbDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
@@ -422,7 +422,7 @@ namespace ControllerCommon.Managers
             }
 
             PnPDetails deviceEx = FindDevice(SymLink);
-            if (deviceEx != null && deviceEx.isGaming)
+            if (deviceEx is not null && deviceEx.isGaming)
             {
                 HidDeviceArrived?.Invoke(deviceEx);
                 LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);

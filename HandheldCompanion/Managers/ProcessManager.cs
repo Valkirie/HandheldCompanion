@@ -153,12 +153,12 @@ namespace HandheldCompanion.Managers
             try
             {
                 var element = sender as AutomationElement;
-                if (element != null)
+                if (element is not null)
                 {
                     IntPtr hWnd = (IntPtr)element.Current.NativeWindowHandle;
                     ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
 
-                    if (processInfo == null)
+                    if (processInfo is null)
                         return;
 
                     Process proc = Process.GetProcessById((int)processInfo.ProcessId);
@@ -186,7 +186,7 @@ namespace HandheldCompanion.Managers
         {
             ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
 
-            if (processInfo == null)
+            if (processInfo is null)
                 return;
 
             Process proc = Process.GetProcessById((int)processInfo.ProcessId);
@@ -214,7 +214,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // save previous process (if exists)
-            if (foregroundProcess != null)
+            if (foregroundProcess is not null)
                 backgroundProcess = foregroundProcess;
 
             // pull process from running processes
@@ -282,7 +282,7 @@ namespace HandheldCompanion.Managers
                 LogManager.LogDebug("Process halted: {0}", processEx.Name);
             }
 
-            if (foregroundProcess != null && processId == foregroundProcess.Id)
+            if (foregroundProcess is not null && processId == foregroundProcess.Id)
                 foregroundProcess = null;
         }
 

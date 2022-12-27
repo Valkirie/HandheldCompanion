@@ -152,7 +152,7 @@ namespace HandheldCompanion.Managers
                 StartTDPWatchdog();
 
             // apply profile defined TDP
-            if (profile.TDP_override && profile.TDP_value != null)
+            if (profile.TDP_override && profile.TDP_value is not null)
                 RequestTDP(profile.TDP_value, false);
             else
                 RequestTDP(FallbackTDP, false); // redudant with ProfileManager_Discarded ?
@@ -168,7 +168,7 @@ namespace HandheldCompanion.Managers
 
         private void cpuWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (processor == null || !processor.IsInitialized)
+            if (processor is null || !processor.IsInitialized)
                 return;
 
             if (Monitor.TryEnter(cpuLock))
@@ -246,7 +246,7 @@ namespace HandheldCompanion.Managers
 
         private void gfxWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (processor == null || !processor.IsInitialized)
+            if (processor is null || !processor.IsInitialized)
                 return;
 
             if (Monitor.TryEnter(gfxLock))

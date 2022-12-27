@@ -145,7 +145,7 @@ namespace HandheldCompanion.Views.QuickPages
         {
             this.Dispatcher.Invoke(() =>
             {
-                if (currentProfile != null)
+                if (currentProfile is not null)
                 {
                     TDPToggle.IsEnabled = TDPSustainedSlider.IsEnabled = TDPBoostSlider.IsEnabled = CanChangeTDP && !currentProfile.TDP_override;
                     TDPWarning.Visibility = currentProfile.TDP_override ? Visibility.Visible : Visibility.Collapsed;

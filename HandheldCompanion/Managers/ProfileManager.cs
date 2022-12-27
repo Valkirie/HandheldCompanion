@@ -135,7 +135,7 @@ namespace HandheldCompanion.Managers
             {
                 Profile profile = GetProfileFromExec(processEx.Name);
 
-                if (profile == null)
+                if (profile is null)
                     return;
 
                 if (profile.isRunning)
@@ -165,7 +165,7 @@ namespace HandheldCompanion.Managers
             {
                 Profile profile = GetProfileFromExec(processEx.Name);
 
-                if (profile == null)
+                if (profile is null)
                     return;
 
                 profile.fullpath = processEx.Path;
@@ -183,7 +183,7 @@ namespace HandheldCompanion.Managers
             {
                 var profile = GetProfileFromExec(proc.Name);
 
-                if (profile == null)
+                if (profile is null)
                     profile = GetDefault();
 
                 if (!profile.isEnabled)
@@ -262,7 +262,7 @@ namespace HandheldCompanion.Managers
             }
 
             // failed to parse
-            if (profile == null || profile.name == null || profile.path == null)
+            if (profile is null || profile.name is null || profile.path is null)
             {
                 LogManager.LogError("Could not parse profile {0}.", fileName);
                 return;

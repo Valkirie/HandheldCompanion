@@ -211,7 +211,7 @@ namespace HandheldCompanion.Managers
             }
 
             // failed to parse
-            if (hotkey == null)
+            if (hotkey is null)
             {
                 LogManager.LogError("Error while parsing hotkey {0}. Object is null.", fileName);
             }
@@ -278,14 +278,14 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
                         break;
                     case "shortcutESC":
-                        if (fProcess != null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
+                        if (fProcess is not null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
                         {
                             ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
                             InputsManager.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
-                        if (fProcess != null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
+                        if (fProcess is not null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
                         {
                             var Placement = ProcessUtils.GetPlacement(fProcess.MainWindowHandle);
 
@@ -326,7 +326,7 @@ namespace HandheldCompanion.Managers
                         }
                         break;
                     case "shortcutKillApp":
-                        if (fProcess != null)
+                        if (fProcess is not null)
                         {
                             fProcess.Process.Kill();
                         }

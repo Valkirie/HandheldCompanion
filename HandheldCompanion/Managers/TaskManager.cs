@@ -38,7 +38,7 @@ namespace HandheldCompanion.Managers
 
             try
             {
-                if (task != null)
+                if (task is not null)
                 {
                     task.Definition.Actions.Clear();
                     task.Definition.Actions.Add(new ExecAction(ServiceExecutable));
@@ -73,7 +73,7 @@ namespace HandheldCompanion.Managers
 
         public void UpdateTask(bool value)
         {
-            if (task == null)
+            if (task is null)
                 return;
 
             try

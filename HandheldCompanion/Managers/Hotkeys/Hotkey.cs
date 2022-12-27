@@ -68,7 +68,7 @@ namespace HandheldCompanion.Managers
 
         public void DrawControl(bool embedded = false)
         {
-            if (mainBorder != null)
+            if (mainBorder is not null)
                 return;
 
             // create main border
@@ -369,7 +369,7 @@ namespace HandheldCompanion.Managers
             string buttons = EnumUtils.GetDescriptionFromEnumValue(inputsChord.GamepadButtons);
             string combo = string.Join(", ", inputsChord.OutputKeys.Where(key => key.IsKeyDown));
 
-            if (outputButton != null)
+            if (outputButton is not null)
             {
                 // comboContent content
                 SimpleStackPanel comboContent = new()

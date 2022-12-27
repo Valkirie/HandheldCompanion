@@ -158,7 +158,7 @@ namespace HandheldCompanion.Managers
 
         public void DrawControl()
         {
-            if (processExpander != null)
+            if (processExpander is not null)
                 return;
 
             processExpander = new Expander()

@@ -214,7 +214,7 @@ namespace HandheldCompanion.Views.Pages
                     case UpdateStatus.Updated:
                     case UpdateStatus.Initialized:
                         {
-                            if (updateFile != null)
+                            if (updateFile is not null)
                             {
                                 updateFile.updateDownload.Visibility = Visibility.Visible;
 

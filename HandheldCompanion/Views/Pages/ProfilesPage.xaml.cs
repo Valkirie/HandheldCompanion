@@ -230,7 +230,7 @@ namespace HandheldCompanion.Views.Pages
                                     {
                                         if (child.Name.Equals("Application"))
                                         {
-                                            if (child.Attributes != null)
+                                            if (child.Attributes is not null)
                                             {
                                                 foreach (XmlAttribute attribute in child.Attributes)
                                                 {
@@ -294,7 +294,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void b_AdditionalSettings_Click(object sender, RoutedEventArgs e)
         {
-            if (currentProfile == null)
+            if (currentProfile is null)
                 return;
 
             switch ((Input)cB_Input.SelectedIndex)
@@ -315,7 +315,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_Profiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cB_Profiles.SelectedItem == null)
+            if (cB_Profiles.SelectedItem is null)
                 return;
 
             currentProfile = (Profile)cB_Profiles.SelectedItem;
@@ -325,7 +325,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void DrawProfile()
         {
-            if (currentProfile == null)
+            if (currentProfile is null)
                 return;
 
             Dispatcher.BeginInvoke(() =>
@@ -362,7 +362,7 @@ namespace HandheldCompanion.Views.Pages
                 cB_InvertVertical.IsChecked = currentProfile.invertvertical;
 
                 // Sustained TDP settings (slow, stapm, long)
-                double[] TDP = currentProfile.TDP_value != null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
+                double[] TDP = currentProfile.TDP_value is not null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
                 TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
                 TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
 
@@ -416,7 +416,7 @@ namespace HandheldCompanion.Views.Pages
 
         private async void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
         {
-            if (currentProfile == null)
+            if (currentProfile is null)
                 return;
 
             Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{currentProfile.name}\"?",
@@ -439,7 +439,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void b_ApplyProfile_Click(object sender, RoutedEventArgs e)
         {
-            if (currentProfile == null)
+            if (currentProfile is null)
                 return;
 
             // Profile
@@ -503,7 +503,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_UniversalMotion_Toggled(object sender, RoutedEventArgs e)
         {
-            if (currentProfile == null)
+            if (currentProfile is null)
                 return;
 
             cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !currentProfile.isDefault;
@@ -571,7 +571,7 @@ namespace HandheldCompanion.Views.Pages
                 case "shortcutProfilesPage@":
                     {
                         Border hotkeyBorder = hotkey.GetHotkey();
-                        if (hotkeyBorder is null || hotkeyBorder.Parent != null)
+                        if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
                             return;
 
                         // pull hotkey

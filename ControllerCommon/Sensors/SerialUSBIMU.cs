@@ -63,7 +63,7 @@ namespace ControllerCommon.Sensors
                 string ProductID = sensor.Key.Value;
 
                 deviceInfo = devices.Where(a => a.VID == VendorID && a.PID == ProductID).FirstOrDefault();
-                if (deviceInfo != null)
+                if (deviceInfo is not null)
                 {
                     serial.device = deviceInfo;
                     serial.port = sensor.Value;
@@ -95,7 +95,7 @@ namespace ControllerCommon.Sensors
 
         public string GetName()
         {
-            return device != null ? device.Name : "N/A";
+            return device is not null ? device.Name : "N/A";
         }
 
         public double GetFilterCutoff()

@@ -153,7 +153,7 @@ namespace ControllerService
 
         private void SetControllerMode(HIDmode mode)
         {
-            if (HIDmode == mode && vTarget != null)
+            if (HIDmode == mode && vTarget is not null)
                 return;
 
             // disconnect current virtual controller
@@ -175,7 +175,7 @@ namespace ControllerService
                     break;
             }
 
-            if (vTarget != null)
+            if (vTarget is not null)
             {
                 vTarget.Connected += OnTargetConnected;
                 vTarget.Disconnected += OnTargetDisconnected;
@@ -190,7 +190,7 @@ namespace ControllerService
 
         private void SetControllerStatus(HIDstatus status)
         {
-            if (vTarget == null)
+            if (vTarget is null)
                 return;
 
             switch (status)

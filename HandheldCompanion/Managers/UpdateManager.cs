@@ -125,11 +125,11 @@ namespace HandheldCompanion.Managers
         private void WebClient_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
             // something went wrong with the connection
-            if (e.Error != null)
+            if (e.Error is not null)
             {
                 UpdateFile update = null;
 
-                if (e.UserState != null)
+                if (e.UserState is not null)
                 {
                     var filename = (string)e.UserState;
                     if (updateFiles.ContainsKey(filename))

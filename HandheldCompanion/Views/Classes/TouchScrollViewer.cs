@@ -18,7 +18,7 @@ namespace HandheldCompanion.Views.Classes
             HitTestResult result = VisualTreeHelper.HitTest(this, pt);
             DependencyObject hit = result.VisualHit;
 
-            while (hit != null && hit != ancestor)
+            while (hit is not null && hit != ancestor)
             {
                 ancestor = hit;
 

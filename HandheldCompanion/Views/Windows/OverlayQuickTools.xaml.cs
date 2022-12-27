@@ -90,7 +90,7 @@ namespace HandheldCompanion.Views.Windows
         #region navView
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            if (args.InvokedItemContainer != null)
+            if (args.InvokedItemContainer is not null)
             {
                 NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
                 string navItemTag = (string)navItem.Tag;
@@ -172,7 +172,7 @@ namespace HandheldCompanion.Views.Windows
         {
             navView.IsBackEnabled = ContentFrame.CanGoBack;
 
-            if (ContentFrame.SourcePageType != null)
+            if (ContentFrame.SourcePageType is not null)
             {
                 var preNavPageType = ContentFrame.CurrentSourcePageType;
                 var preNavPageName = preNavPageType.Name;
