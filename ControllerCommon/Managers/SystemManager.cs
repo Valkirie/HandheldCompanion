@@ -13,6 +13,7 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using Attributes = ControllerCommon.Managers.Hid.Attributes;
 using Capabilities = ControllerCommon.Managers.Hid.Capabilities;
 using Path = System.IO.Path;
@@ -148,29 +149,39 @@ namespace ControllerCommon.Managers
             HidDeviceListener.DeviceRemoved -= HidDevice_DeviceRemoved;
         }
 
-        private static PnPDetails FindDevice(string SymLink)
+        private static PnPDetails FindDevice(string SymLink, bool Removed = false)
         {
-            if (SymLink.StartsWith(@"\\?\USB"))
-                return FindDeviceFromUSB(SymLink);
+            if (SymLink.StartsWith(@"USB\"))
+                return FindDeviceFromUSB(SymLink, Removed);
+            else if (SymLink.StartsWith(@"HID\"))
+                return FindDeviceFromHID(SymLink, Removed);
             else
-                return FindDeviceFromHID(SymLink);
+                return null;
         }
 
-        private static PnPDetails FindDeviceFromUSB(string SymLink)
+        private static PnPDetails FindDeviceFromUSB(string SymLink, bool Removed)
         {
-            int deviceIndex = 0;
-            while (Devcon.Find(DeviceInterfaceIds.UsbDevice, out var path, out var instanceId, deviceIndex++))
+            if (Removed)
             {
-                PnPDevice parent = PnPDevice.GetDeviceByInterfaceId(path);
-
-                path = path.Replace(DeviceInterfaceIds.UsbDevice.ToString(), "", StringComparison.InvariantCultureIgnoreCase);
-                if (path == SymLink)
-                    return PnPDevices.Values.Where(device => device.baseContainerDeviceInstanceId.Equals(parent.InstanceId, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                return PnPDevices.Values.Where(device => device.baseContainerDeviceInstanceId.Equals(SymLink, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
             }
+            else
+            {
+                int deviceIndex = 0;
+                while (Devcon.Find(DeviceInterfaceIds.UsbDevice, out var path, out var instanceId, deviceIndex++))
+                {
+                    PnPDevice parent = PnPDevice.GetDeviceByInterfaceId(path);
+
+                    path = PathToInstanceId(path, DeviceInterfaceIds.UsbDevice.ToString());
+                    if (path == SymLink)
+                        return PnPDevices.Values.Where(device => device.baseContainerDeviceInstanceId.Equals(parent.InstanceId, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                }
+            }
+
             return null;
         }
 
-        private static PnPDetails FindDeviceFromHID(string SymLink)
+        private static PnPDetails FindDeviceFromHID(string SymLink, bool Removed)
         {
             PnPDevices.TryGetValue(SymLink, out var device);
             return device;
@@ -236,7 +247,7 @@ namespace ControllerCommon.Managers
                 // get details
                 PnPDetails details = new PnPDetails()
                 {
-                    SymLink = path.Replace(DeviceInterfaceIds.HidDevice.ToString(), "", StringComparison.InvariantCultureIgnoreCase),
+                    SymLink = PathToInstanceId(path, DeviceInterfaceIds.HidDevice.ToString()),
 
                     deviceInstanceId = children.InstanceId,
                     baseContainerDeviceInstanceId = parent.InstanceId,
@@ -349,17 +360,26 @@ namespace ControllerCommon.Managers
             return PnPDevices[SymLink];
         }
 
+        private static string PathToInstanceId(string SymLink, string InterfaceGuid)
+        {
+            string output = SymLink.ToUpper().Replace(InterfaceGuid, "", StringComparison.InvariantCultureIgnoreCase);
+            output = output.Replace("#", @"\");
+            output = output.Replace(@"\\?\", "");
+            output = output.Replace(@"\{}", "");
+            return output;
+        }
+
         private async static void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
         {
-            string SymLink = obj.SymLink.ToUpper().Replace(obj.InterfaceGuid.ToString(), "", StringComparison.InvariantCultureIgnoreCase);
+            string SymLink = PathToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
 
-            var deviceEx = FindDevice(SymLink);
+            var deviceEx = FindDevice(SymLink, true);
             if (deviceEx is null)
                 return;
 
             // give system at least one second to initialize device
             await Task.Delay(1000);
-            PnPDevices.TryRemove(SymLink, out var value);
+            PnPDevices.TryRemove(deviceEx.SymLink, out var value);
 
             RefreshHID();
             XUsbDeviceRemoved?.Invoke(deviceEx);
@@ -370,12 +390,12 @@ namespace ControllerCommon.Managers
         {
             try
             {
-                string SymLink = obj.SymLink.ToUpper().Replace(obj.InterfaceGuid.ToString(), "", StringComparison.InvariantCultureIgnoreCase);
+                string SymLink = PathToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
 
                 if (IsInitialized)
                 {
                     // give system at least one second to initialize device
-                    await Task.Delay(1000);
+                    await Task.Delay(1000);                                                        
                     RefreshHID();
                 }
 
@@ -393,15 +413,15 @@ namespace ControllerCommon.Managers
         {
             try
             {
-                string SymLink = obj.SymLink.ToUpper().Replace(obj.InterfaceGuid.ToString(), "", StringComparison.InvariantCultureIgnoreCase);
+                string SymLink = PathToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
 
-                var deviceEx = FindDevice(SymLink);
+                var deviceEx = FindDevice(SymLink, true);
                 if (deviceEx is null)
                     return;
 
                 // give system at least one second to initialize device
                 await Task.Delay(1000);
-                PnPDevices.TryRemove(SymLink, out var value);
+                PnPDevices.TryRemove(deviceEx.SymLink, out var value);
 
                 RefreshHID();
                 HidDeviceRemoved?.Invoke(deviceEx);
@@ -412,7 +432,7 @@ namespace ControllerCommon.Managers
 
         private async static void HidDevice_DeviceArrived(DeviceEventArgs obj)
         {
-            string SymLink = obj.SymLink.ToUpper().Replace(obj.InterfaceGuid.ToString(), "", StringComparison.InvariantCultureIgnoreCase);
+            string SymLink = PathToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
 
             if (IsInitialized)
             {
