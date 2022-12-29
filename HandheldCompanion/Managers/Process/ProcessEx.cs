@@ -63,6 +63,8 @@ namespace HandheldCompanion.Managers
         {
             this.Process = process;
             this.Id = process.Id;
+
+            this.MainThread = Process.Threads[0];
         }
 
         public void Refresh()
@@ -75,7 +77,6 @@ namespace HandheldCompanion.Managers
                     return;
 
                 // refresh main thread
-                MainThread = Process.Threads[0];
                 if (MainThread is null)
                     return;
 
@@ -133,6 +134,11 @@ namespace HandheldCompanion.Managers
 
                             threadWaitReason = MainThread.WaitReason;
                             break;
+
+                        case ThreadState.Terminated:
+                            MainThread = Process.Threads[0];
+                            break;
+
                         default:
                             threadWaitReason = ThreadWaitReason.UserRequest;
                             break;
