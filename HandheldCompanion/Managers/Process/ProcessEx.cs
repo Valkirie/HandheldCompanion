@@ -40,6 +40,7 @@ namespace HandheldCompanion.Managers
 
         public Platform Platform { get; set; }
 
+        private ThreadState threadState = ThreadState.Terminated;
         private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
 
         // UI vars
@@ -80,19 +81,6 @@ namespace HandheldCompanion.Managers
                 if (MainThread is null)
                     return;
 
-                // refresh all child processes
-                List<int> childs = ProcessUtils.GetChildIds(this.Process);
-
-                // remove exited children
-                Children.RemoveAll(item => !childs.Contains(item));
-
-                // raise event on new children
-                foreach (int child in childs.Where(item => !Children.Contains(item)))
-                {
-                    Children.Add(child);
-                    ChildProcessCreated?.Invoke(this, child);
-                }
-
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
                     if (MainWindowHandle != IntPtr.Zero)
@@ -109,39 +97,57 @@ namespace HandheldCompanion.Managers
                         processExpander.Visibility = Visibility.Collapsed;
 
                     // manage process state
-                    switch (MainThread.ThreadState)
+                    if (MainThread.ThreadState != threadState)
                     {
-                        case ThreadState.Wait:
+                        // refresh all child processes
+                        List<int> childs = ProcessUtils.GetChildIds(this.Process);
 
-                            if (MainThread.WaitReason != threadWaitReason)
-                            {
-                                switch (MainThread.WaitReason)
+                        // remove exited children
+                        Children.RemoveAll(item => !childs.Contains(item));
+
+                        // raise event on new children
+                        foreach (int child in childs.Where(item => !Children.Contains(item)))
+                        {
+                            Children.Add(child);
+                            ChildProcessCreated?.Invoke(this, child);
+                        }
+
+                        switch (MainThread.ThreadState)
+                        {
+                            case ThreadState.Wait:
+
+                                if (MainThread.WaitReason != threadWaitReason)
                                 {
-                                    case ThreadWaitReason.Suspended:
-                                        processSuspend.Visibility = Visibility.Collapsed;
-                                        processResume.Visibility = Visibility.Visible;
+                                    switch (MainThread.WaitReason)
+                                    {
+                                        case ThreadWaitReason.Suspended:
+                                            processSuspend.Visibility = Visibility.Collapsed;
+                                            processResume.Visibility = Visibility.Visible;
 
-                                        processResume.IsEnabled = true;
-                                        break;
-                                    default:
-                                        processSuspend.Visibility = Visibility.Visible;
-                                        processResume.Visibility = Visibility.Collapsed;
+                                            processResume.IsEnabled = true;
+                                            break;
+                                        default:
+                                            processSuspend.Visibility = Visibility.Visible;
+                                            processResume.Visibility = Visibility.Collapsed;
 
-                                        processSuspend.IsEnabled = true;
-                                        break;
+                                            processSuspend.IsEnabled = true;
+                                            break;
+                                    }
                                 }
-                            }
 
-                            threadWaitReason = MainThread.WaitReason;
-                            break;
+                                threadWaitReason = MainThread.WaitReason;
+                                break;
 
-                        case ThreadState.Terminated:
-                            MainThread = Process.Threads[0];
-                            break;
+                            case ThreadState.Terminated:
+                                MainThread = Process.Threads[0];
+                                break;
 
-                        default:
-                            threadWaitReason = ThreadWaitReason.UserRequest;
-                            break;
+                            default:
+                                threadWaitReason = ThreadWaitReason.UserRequest;
+                                break;
+                        }
+
+                        threadState = MainThread.ThreadState;
                     }
 
                     // manage process throttling
