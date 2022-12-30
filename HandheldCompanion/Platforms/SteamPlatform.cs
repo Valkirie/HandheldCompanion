@@ -1,5 +1,6 @@
 ﻿using ControllerCommon.Platforms;
 using ControllerCommon.Utils;
+using HandheldCompanion.Managers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -29,13 +30,19 @@ namespace HandheldCompanion.Platforms
             base.Platform = Platform.Steam;
         }
 
-        public bool IsRelated(Process proc)
+        public override bool IsRelated(Process proc)
         {
             foreach (ProcessModule module in proc.Modules)
                 if (Modules.Contains(module.ModuleName))
                     return true;
 
             return false;
+        }
+
+        public override bool IsRunning()
+        {
+            var processes = ProcessManager.GetProcesses("steam.exe");
+            return processes.Count > 0;
         }
     }
 }

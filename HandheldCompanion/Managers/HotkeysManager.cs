@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
+using Gma.System.MouseKeyHook.HotKeys;
 using GregsStack.InputSimulatorStandard.Native;
 using ModernWpf.Controls;
 using System;
@@ -126,12 +127,23 @@ namespace HandheldCompanion.Managers
             IsInitialized = false;
         }
 
-        private static void SettingsManager_SettingValueChanged(string? name, object value)
+        private static void SettingsManager_SettingValueChanged(string name, object value)
         {
+            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(name)).FirstOrDefault();
+            if (hotkey is null)
+                return;
+
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 switch (name)
                 {
+                    case "SteamDeckLizardMouse":
+                    case "SteamDeckLizardButtons":
+                        {
+                            bool toggle = Convert.ToBoolean(value);
+                            hotkey.SetToggle(toggle);
+                        }
+                        break;
                 }
             }));
         }
@@ -331,17 +343,11 @@ namespace HandheldCompanion.Managers
                         }
                         break;
 
-                    case "shortcutSDLizardMouse":
+                    case "SteamDeckLizardMouse":
+                    case "SteamDeckLizardButtons":
                         {
-                            bool SteamDeckLizardMode = SettingsManager.GetBoolean("SteamDeckLizardMouse");
-                            SettingsManager.SetProperty("SteamDeckLizardMouse", !SteamDeckLizardMode);
-                        }
-                        break;
-
-                    case "shortcutSDLizardButtons":
-                        {
-                            bool SteamDeckLizardMode = SettingsManager.GetBoolean("SteamDeckLizardButtons");
-                            SettingsManager.SetProperty("SteamDeckLizardButtons", !SteamDeckLizardMode);
+                            bool SteamDeckLizardMode = SettingsManager.GetBoolean(listener);
+                            SettingsManager.SetProperty(listener, !SteamDeckLizardMode);
                         }
                         break;
 

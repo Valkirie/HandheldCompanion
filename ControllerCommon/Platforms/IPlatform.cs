@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ControllerCommon.Platforms
 {
     public enum Platform
     {
-        None = 0,
+        Windows = 0,
         Steam = 1,
         Origin = 2,
         UbisoftConnect = 3,
@@ -25,5 +26,7 @@ namespace ControllerCommon.Platforms
         public string GetPath() { return InstallPath; }
 
         public virtual string GetSetting(string key) { return string.Empty; }
+        public virtual bool IsRelated(Process proc) { return false; }
+        public virtual bool IsRunning() { return false; }
     }
 }

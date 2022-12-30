@@ -22,6 +22,9 @@ namespace HandheldCompanion.Controllers
         public NeptuneController(PnPDetails details)
         {
             Details = details;
+            if (Details is null)
+                throw new Exception();
+
             Details.isHooked = true;
 
             Capacities |= ControllerCapacities.Gyroscope;
@@ -36,7 +39,7 @@ namespace HandheldCompanion.Controllers
             catch (Exception ex)
             {
                 LogManager.LogError("Couldn't initialize NeptuneController. Exception: {0}", ex.Message);
-                return;
+                throw new Exception();
             }
 
             UpdateTimer.Tick += (sender, e) => UpdateReport();

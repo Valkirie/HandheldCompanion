@@ -22,7 +22,7 @@
                     <Border
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Background="{DynamicResource ExpanderContentBackground}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -138,7 +138,7 @@
                     <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>

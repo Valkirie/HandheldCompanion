@@ -19,12 +19,12 @@ namespace HandheldCompanion.Managers
         public static Platform GetPlatform(Process proc)
         {
             if (!IsInitialized)
-                return Platform.None;
+                return Platform.Windows;
 
             if (steamPlatform.IsRelated(proc))
                 return steamPlatform.Platform;
 
-            return Platform.None;
+            return Platform.Windows;
         }
     }
 }

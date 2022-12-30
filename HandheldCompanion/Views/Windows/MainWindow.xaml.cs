@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers;
@@ -156,7 +157,7 @@ namespace HandheldCompanion.Views
             // load page(s)
             loadPages();
 
-            // start manager(s) synchroneously
+            // start static managers in sequence
             ControllerManager.Start();
             InputsManager.Start();
             EnergyManager.Start();
@@ -166,12 +167,14 @@ namespace HandheldCompanion.Views
             ProfileManager.Start();
             ProcessManager.Start();
 
-            // start manager(s) asynchroneously
+            // start managers asynchroneously
             foreach (Manager manager in _managers)
-                new Thread(() => { manager.Start(); }).Start();
+                new Thread(manager.Start).Start();
 
-            // start manager(s) last
+            // start setting last
             SettingsManager.Start();
+
+            // open pipe
             PipeClient.Open();
 
             // update Position and Size
@@ -383,7 +386,8 @@ namespace HandheldCompanion.Views
             PipeClient.SendMessage(settings);
 
             // warn service
-            ControllerManager.SendTargetController();
+            IController controller = ControllerManager.GetTargetController();
+            PipeClient.SendMessage(new PipeClientControllerConnect(controller.ToString(), controller.Capacities));
         }
 
         private void OnClientDisconnected()

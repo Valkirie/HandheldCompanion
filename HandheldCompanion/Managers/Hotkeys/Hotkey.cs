@@ -80,7 +80,7 @@ namespace HandheldCompanion.Managers
             };
 
             if (!embedded)
-                mainBorder.SetResourceReference(Control.BackgroundProperty, "SystemControlBackgroundChromeMediumLowBrush");
+                mainBorder.SetResourceReference(Control.BackgroundProperty, "ExpanderContentBackground");
 
             // main grid content
             // Define the Columns
@@ -477,6 +477,19 @@ namespace HandheldCompanion.Managers
             Storyboard.SetTargetProperty(opacityAnimation, new PropertyPath("Opacity"));
 
             storyboard.Begin(inputButton);
+        }
+
+        public void SetToggle(bool toggle)
+        {
+            switch (toggle)
+            {
+                case true:
+                    quickButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                    break;
+                case false:
+                    quickButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                    break;
+            }
         }
     }
 }

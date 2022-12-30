@@ -645,36 +645,36 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Lizard mode (Buttons).
         /// </summary>
-        public static string InputsHotkey_shortcutSDLizardButtons {
+        public static string InputsHotkey_SteamDeckLizardButtons {
             get {
-                return ResourceManager.GetString("InputsHotkey_shortcutSDLizardButtons", resourceCulture);
+                return ResourceManager.GetString("InputsHotkey_SteamDeckLizardButtons", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Toggle buttons from or into lizard brain (mouse and keyboard emulation).
         /// </summary>
-        public static string InputsHotkey_shortcutSDLizardButtonsDesc {
+        public static string InputsHotkey_SteamDeckLizardButtonsDesc {
             get {
-                return ResourceManager.GetString("InputsHotkey_shortcutSDLizardButtonsDesc", resourceCulture);
+                return ResourceManager.GetString("InputsHotkey_SteamDeckLizardButtonsDesc", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Lizard mode (Mouse).
         /// </summary>
-        public static string InputsHotkey_shortcutSDLizardMouse {
+        public static string InputsHotkey_SteamDeckLizardMouse {
             get {
-                return ResourceManager.GetString("InputsHotkey_shortcutSDLizardMouse", resourceCulture);
+                return ResourceManager.GetString("InputsHotkey_SteamDeckLizardMouse", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Toggle trackpads from or into lizard brain (mouse and keyboard emulation).
         /// </summary>
-        public static string InputsHotkey_shortcutSDLizardMouseDesc {
+        public static string InputsHotkey_SteamDeckLizardMouseDesc {
             get {
-                return ResourceManager.GetString("InputsHotkey_shortcutSDLizardMouseDesc", resourceCulture);
+                return ResourceManager.GetString("InputsHotkey_SteamDeckLizardMouseDesc", resourceCulture);
             }
         }
         

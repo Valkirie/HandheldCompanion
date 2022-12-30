@@ -4,8 +4,11 @@ using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
+using ModernWpf.Controls;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -51,7 +54,6 @@ namespace HandheldCompanion.Views.Pages
 
             ControllerManager.ControllerPlugged += ControllerPlugged;
             ControllerManager.ControllerUnplugged += ControllerUnplugged;
-            SystemManager.Initialized += SystemManager_Initialized;
 
             // device specific settings
             Type DeviceType = MainWindow.handheldDevice.GetType();
@@ -78,6 +80,10 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "HIDstrength":
                         SliderStrength.Value = Convert.ToDouble(value);
+                        break;
+                    case "HIDInstancePath":
+                        string path = Convert.ToString(value);
+                        ControllerManager.SetTargetController(path);
                         break;
 
                     case "SteamDeckLizardMouse":
@@ -144,11 +150,16 @@ namespace HandheldCompanion.Views.Pages
             this.Dispatcher.Invoke(() =>
             {
                 // Search for an existing controller, remove it
-                foreach (IController ctrl in RadioControllers.Items)
+                foreach (Border border in InputDevices.Children)
                 {
-                    if (ctrl.GetInstancePath() == Controller.GetInstancePath() || !ctrl.IsConnected())
+                    // pull controller from panel
+                    IController ctrl = (IController)border.Tag;
+                    if (ctrl is null)
+                        continue;
+
+                    if (ctrl.GetInstancePath() == Controller.GetInstancePath())
                     {
-                        RadioControllers.Items.Remove(ctrl);
+                        InputDevices.Children.Remove(border);
                         break;
                     }
                 }
@@ -163,51 +174,68 @@ namespace HandheldCompanion.Views.Pages
 
             this.Dispatcher.Invoke(() =>
             {
+                /*
                 // Search for an existing controller, update it
-                var found = false;
-                foreach (IController ctrl in RadioControllers.Items)
+                string path = Controller.GetInstancePath();
+                int idx = InputDevices.Children.Count;
+                bool isPlugged = false;
+
+                foreach (Border border in InputDevices.Children)
                 {
-                    found = ctrl.GetInstancePath() == Controller.GetInstancePath();
-                    if (found)
+                    // pull controller from panel
+                    IController ctrl = (IController)border.Tag;
+                    if (ctrl is null)
+                        continue;
+
+                    if (ctrl.GetInstancePath() == path)
                     {
-                        int idx = RadioControllers.Items.IndexOf(ctrl);
-                        RadioControllers.Items[idx] = Controller;
+                        idx = InputDevices.Children.IndexOf(border);
+                        isPlugged = ctrl.IsPlugged();
+
+                        InputDevices.Children.Remove(border);
                         break;
                     }
                 }
+                */
 
                 // Add new controller to list if no existing controller was found
-                if (!found)
-                    RadioControllers.Items.Add(Controller);
+                FrameworkElement control = Controller.GetControl();
+                InputDevices.Children.Add(control);
+
+                Button ui_button_hook = Controller.GetButtonHook();
+                ui_button_hook.Click += (sender, e) => ControllerHookClicked(Controller);
+
+                Button ui_button_hide = Controller.GetButtonHide();
+                ui_button_hide.Click += (sender, e) => ControllerHideClicked(Controller);
 
                 ControllerRefresh();
             });
         }
 
-        private void ControllerRefresh()
+        private void ControllerHookClicked(IController Controller)
         {
-            this.Dispatcher.Invoke(() =>
-            {
-                NoDevices.Visibility = RadioControllers.Items.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-                InputDevices.Visibility = RadioControllers.Items.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
-            });
+            string path = Controller.GetInstancePath();
+
+            SettingsManager.SetProperty("HIDInstancePath", path);
         }
 
-        private void SystemManager_Initialized()
+        private void ControllerHideClicked(IController Controller)
         {
-            // get last picked controller
-            string path = SettingsManager.GetString("HIDInstancePath");
+            if (Controller.IsHidden())
+                Controller.Unhide();
+            else
+                Controller.Hide();
+        }
 
-            foreach (IController ctrl in RadioControllers.Items)
+        private void ControllerRefresh()
+        {
+            bool hascontroller = InputDevices.Children.Count != 0;
+
+            this.Dispatcher.Invoke(() =>
             {
-                if (ctrl.GetInstancePath() == path)
-                {
-                    RadioControllers.SelectedItem = ctrl;
-                    return;
-                }
-            }
-
-            RadioControllers.SelectedIndex = 0;
+                InputDevices.Visibility = hascontroller ? Visibility.Visible : Visibility.Collapsed;
+                NoDevices.Visibility = hascontroller ? Visibility.Collapsed : Visibility.Visible;
+            });
         }
 
         private void UpdateController()
@@ -326,22 +354,6 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("HIDstrength", value);
-        }
-
-        private void RadioControllers_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (RadioControllers.SelectedIndex == -1)
-            {
-                ControllerManager.ClearTargetController();
-                return;
-            }
-
-            IController Controller = (IController)RadioControllers.SelectedItem;
-
-            string path = Controller.GetInstancePath();
-            ControllerManager.SetTargetController(path);
-
-            SettingsManager.SetProperty("HIDInstancePath", path);
         }
 
         private void Toggle_SDLizardButtons_Toggled(object sender, RoutedEventArgs e)

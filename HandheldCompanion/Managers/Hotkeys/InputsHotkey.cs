@@ -45,8 +45,8 @@ namespace HandheldCompanion.Managers
 
             // Device specific hotkeys
             { 40, new InputsHotkey(InputsHotkeyType.Device,     "\uE2E8",   "shortcutGuide",                    "Segoe UI Symbol",      20, false,  true) },
-            { 41, new InputsHotkey(InputsHotkeyType.Device,     "\uEFA5",   "shortcutSDLizardMouse",            "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck)) },
-            { 42, new InputsHotkey(InputsHotkeyType.Device,     "\uF093",   "shortcutSDLizardButtons",          "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck)) },
+            { 41, new InputsHotkey(InputsHotkeyType.Device,     "\uEFA5",   "SteamDeckLizardMouse",             "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck)) },
+            { 42, new InputsHotkey(InputsHotkeyType.Device,     "\uF093",   "SteamDeckLizardButtons",           "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck)) },
 
             // User customizable hotkeys
             { 50, new InputsHotkey(InputsHotkeyType.Custom,     "\u2780",   "shortcutCustom0",                  "Segoe UI Symbol",      20, false,  true) },

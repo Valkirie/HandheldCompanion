@@ -55,7 +55,7 @@
                 <Border     
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -80,7 +80,7 @@
                 <Border  
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -105,7 +105,7 @@
                 <Border  
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -130,7 +130,7 @@
                 <Border  
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -158,7 +158,7 @@
                 <Border  
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    Background="{DynamicResource ExpanderContentBackground}"
                     Visibility="Collapsed">
 
                     <Grid>
@@ -189,7 +189,7 @@
                 <Border  
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -219,7 +219,7 @@
                 <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -249,7 +249,7 @@
                 <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -274,7 +274,7 @@
                 <Border                      
                             Padding="15,12,12,12"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                            Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -301,7 +301,7 @@
                 <Border                      
                             Padding="15,12,12,12"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                            Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -331,7 +331,7 @@
                 <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -388,7 +388,7 @@
                 <Border
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    Background="{DynamicResource ExpanderContentBackground}"
                     Name="SensorPlacementVisualisation">
 
                     <Grid>
@@ -432,7 +432,7 @@
                 <Border
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    Background="{DynamicResource ExpanderContentBackground}"
                     Name="SensorPlacementUpsideDown">
 
                     <Grid>
@@ -463,7 +463,7 @@
                 <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -488,7 +488,7 @@
                 <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -513,7 +513,7 @@
                 <Border
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    Background="{DynamicResource ExpanderContentBackground}"
                     Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <Grid>
@@ -539,7 +539,7 @@
                 <Border
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    Background="{DynamicResource ExpanderContentBackground}"
                     Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <Grid>

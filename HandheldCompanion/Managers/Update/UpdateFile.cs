@@ -26,9 +26,9 @@ namespace HandheldCompanion.Managers
             updateBorder = new Border()
             {
                 Padding = new Thickness(20, 12, 12, 12),
-                Background = (Brush)Application.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"],
                 Tag = filename
             };
+            updateBorder.SetResourceReference(Control.BackgroundProperty, "ExpanderContentBackground");
 
             // Create Grid
             updateGrid = new();

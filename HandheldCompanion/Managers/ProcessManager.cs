@@ -140,6 +140,11 @@ namespace HandheldCompanion.Managers
             return Processes.Values.ToList();
         }
 
+        public static List<ProcessEx> GetProcesses(string executable)
+        {
+            return Processes.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase)).ToList();
+        }
+
         public static ProcessEx GetProcesses(int pId)
         {
             if (Processes.ContainsKey(pId))
@@ -236,7 +241,7 @@ namespace HandheldCompanion.Managers
 
                 ForegroundChanged?.Invoke(foregroundProcess, backgroundProcess);
 
-                LogManager.LogDebug("executable: {0}, platform: {1} now has the foreground", foregroundProcess.Name, foregroundProcess.Platform);
+                LogManager.LogDebug("{0} executable {1} now has the foreground", foregroundProcess.Platform, foregroundProcess.Name);
             }
             catch
             {

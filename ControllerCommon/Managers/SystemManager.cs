@@ -264,7 +264,8 @@ namespace ControllerCommon.Managers
                 };
 
                 // add or update device
-                PnPDevices[details.SymLink] = details;
+                if (!PnPDevices.ContainsKey(details.SymLink))
+                    PnPDevices.TryAdd(details.SymLink, details);
             }
         }
 
@@ -381,7 +382,7 @@ namespace ControllerCommon.Managers
             await Task.Delay(1000);
             PnPDevices.TryRemove(deviceEx.SymLink, out var value);
 
-            RefreshHID();
+            // RefreshHID();
             XUsbDeviceRemoved?.Invoke(deviceEx);
             LogManager.LogDebug("XUsbDevice removed: {0}", deviceEx.Name);
         }
@@ -423,7 +424,7 @@ namespace ControllerCommon.Managers
                 await Task.Delay(1000);
                 PnPDevices.TryRemove(deviceEx.SymLink, out var value);
 
-                RefreshHID();
+                // RefreshHID();
                 HidDeviceRemoved?.Invoke(deviceEx);
                 LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
             }

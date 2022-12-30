@@ -138,7 +138,7 @@ namespace HandheldCompanion.Controllers
             UserIndex = index;
 
             if (!IsConnected())
-                return;
+                throw new Exception();
 
             // pull data from xinput
             var CapabilitiesEx = new XInputCapabilitiesEx();
@@ -150,12 +150,16 @@ namespace HandheldCompanion.Controllers
 
                 Details = SystemManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId).FirstOrDefault();
                 if (Details is null)
-                    return;
+                    throw new Exception();
 
                 Details.isHooked = true;
             }
 
             UpdateTimer.Tick += (sender, e) => UpdateReport();
+
+            // ui
+            DrawControls();
+            RefreshControls();
         }
 
         public override string ToString()

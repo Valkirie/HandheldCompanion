@@ -4,6 +4,7 @@ using ControllerCommon.Managers;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Views;
 using SharpDX.DirectInput;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,177 +122,189 @@ namespace HandheldCompanion.Managers
 
         private static void HidDeviceUpdated(PnPDetails details)
         {
-            Joystick joystick = null;
-            foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
+            Application.Current.Dispatcher.Invoke(new Action(() =>
             {
+                Joystick joystick = null;
+                foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
+                {
+                    try
+                    {
+                        // Instantiate the joystick
+                        joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
+
+                        if (!joystick.Properties.InterfacePath.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
+                            continue;
+
+                        // is an XInput controller, handled elsewhere
+                        if (joystick.Properties.InterfacePath.Contains("IG_", StringComparison.InvariantCultureIgnoreCase))
+                            continue;
+                    }
+                    catch { }
+                }
+
                 try
                 {
-                    // Instantiate the joystick
-                    joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
+                    IController controller = null;
+                    switch (details.attributes.VendorID)
+                    {
+                        // SONY
+                        case 1356:
+                            {
+                                switch (details.attributes.ProductID)
+                                {
+                                    // DualShock4
+                                    case 2508:
+                                        controller = new DS4Controller(joystick, details);
+                                        break;
+                                }
+                            }
+                            break;
 
-                    if (!joystick.Properties.InterfacePath.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
-                        continue;
+                        // STEAM
+                        case 0x28DE:
+                            {
+                                switch (details.attributes.ProductID)
+                                {
+                                    // STEAM DECK
+                                    case 0x1205:
+                                        controller = new NeptuneController(details);
+                                        break;
+                                }
+                            }
+                            break;
 
-                    // is an XInput controller, handled elsewhere
-                    if (joystick.Properties.InterfacePath.Contains("IG_", StringComparison.InvariantCultureIgnoreCase))
-                        continue;
+                        // NINTENDO
+                        case 0x057E:
+                            {
+                                switch (details.attributes.ProductID)
+                                {
+                                    // Nintendo Wireless Gamepad
+                                    case 0x2009:
+                                        break;
+                                }
+                            }
+                            break;
+                    }
+
+                    // unsupported controller
+                    if (controller is null)
+                    {
+                        LogManager.LogError("Unsupported DInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+                        return;
+                    }
+
+                    if (controller.IsVirtual())
+                        return;
+
+                    if (controller.IsConnected())
+                    {
+                        // update or create controller
+                        string path = controller.GetInstancePath();
+                        Controllers[path] = controller;
+
+                        // raise event
+                        ControllerPlugged?.Invoke(controller);
+                    }
                 }
                 catch { }
-            }
 
-            IController controller = null;
-            switch (details.attributes.VendorID)
-            {
-                // SONY
-                case 1356:
-                    {
-                        switch (details.attributes.ProductID)
-                        {
-                            // DualShock4
-                            case 2508:
-                                controller = new DS4Controller(joystick, details);
-                                break;
-                        }
-                    }
-                    break;
-
-                // STEAM
-                case 0x28DE:
-                    {
-                        switch (details.attributes.ProductID)
-                        {
-                            // STEAM DECK
-                            case 0x1205:
-                                controller = new NeptuneController(details);
-                                break;
-                        }
-                    }
-                    break;
-
-                // NINTENDO
-                case 0x057E:
-                    {
-                        switch (details.attributes.ProductID)
-                        {
-                            // Nintendo Wireless Gamepad
-                            case 0x2009:
-                                break;
-                        }
-                    }
-                    break;
-            }
-
-            // unsupported controller
-            if (controller is null)
-            {
-                LogManager.LogError("Unsupported DInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
-                return;
-            }
-
-            if (controller.IsVirtual())
-                return;
-
-            if (controller.IsConnected())
-            {
-                // update or create controller
-                string path = controller.GetInstancePath();
-                Controllers[path] = controller;
-
-                // raise event
-                ControllerPlugged?.Invoke(controller);
-            }
-
-            // search for unplugged controllers
-            string[] keys = Controllers.Keys.ToArray();
-            foreach (string key in keys)
-            {
-                controller = Controllers[key];
-                if (!controller.IsConnected())
+                // search for unplugged controllers
+                string[] keys = Controllers.Keys.ToArray();
+                foreach (string key in keys)
                 {
-                    // controller was unplugged
-                    Controllers.Remove(key);
+                    IController controller = Controllers[key];
+                    if (!controller.IsConnected())
+                    {
+                        // controller was unplugged
+                        Controllers.Remove(key);
 
-                    // raise event
-                    ControllerUnplugged?.Invoke(controller);
+                        // raise event
+                        ControllerUnplugged?.Invoke(controller);
+
+                        // dispose controller
+                        controller.Dispose();
+                    }
                 }
-            }
+            }));
         }
 
         private static void XUsbDeviceUpdated(PnPDetails details)
         {
-            for (int idx = 0; idx < 4; idx++)
+            Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                XInputController controller = new(idx);
-
-                if (!controller.IsConnected())
-                    continue;
-
-                if (controller.IsVirtual())
-                    continue;
-
-                // update or create controller
-                string path = controller.GetInstancePath();
-                Controllers[path] = controller;
-
-                // raise event
-                ControllerPlugged?.Invoke(controller);
-            }
-
-            // search for unplugged controllers
-            string[] keys = Controllers.Keys.ToArray();
-            foreach (string key in keys)
-            {
-                IController controller = Controllers[key];
-                if (!controller.IsConnected())
+                for (int idx = 0; idx < 4; idx++)
                 {
-                    // controller was unplugged
-                    Controllers.Remove(key);
+                    try
+                    {
+                        XInputController controller = new(idx);
 
-                    // raise event
-                    ControllerUnplugged?.Invoke(controller);
+                        if (controller is null)
+                            continue;
+
+                        if (!controller.IsConnected())
+                            continue;
+
+                        if (controller.IsVirtual())
+                            continue;
+
+                        // update or create controller
+                        string path = controller.GetInstancePath();
+                        Controllers[path] = controller;
+
+                        // raise event
+                        ControllerPlugged?.Invoke(controller);
+                    }
+                    catch { }
                 }
-            }
+
+                // search for unplugged controllers
+                string[] keys = Controllers.Keys.ToArray();
+                foreach (string key in keys)
+                {
+                    IController controller = Controllers[key];
+                    if (!controller.IsConnected())
+                    {
+                        // controller was unplugged
+                        Controllers.Remove(key);
+
+                        // raise event
+                        ControllerUnplugged?.Invoke(controller);
+
+                        // dispose controller
+                        controller.Dispose();
+                    }
+                }
+            }));
         }
 
         public static void SetTargetController(string baseContainerDeviceInstancePath)
         {
-            // dispose from previous controller
-            ClearTargetController();
+            // unplug previous controller
+            if (targetController is not null)
+                targetController.Unplug();
 
-            // update target controller
-            targetController = Controllers[baseContainerDeviceInstancePath];
-            targetController.Updated += UpdateReport;
+            // warn service the current controller has been unplugged
+            PipeClient.SendMessage(new PipeClientControllerDisconnect());
 
-            targetController.Plug();
-            targetController.Hide();
-
-            // rumble current controller
-            targetController.Rumble(targetController.GetUserIndex() + 1);
-
-            // warn service
-            SendTargetController();
-        }
-
-        public static void ClearTargetController()
-        {
-            if (targetController is null)
+            // look for new controller
+            if (!Controllers.ContainsKey(baseContainerDeviceInstancePath))
                 return;
 
-            targetController.Unplug();
-            targetController.Unhide();
+            IController controller = Controllers[baseContainerDeviceInstancePath];
+            if (controller is null)
+                return;
 
-            targetController = null;
+            // update target controller
+            targetController = controller;
+            targetController.Updated += UpdateReport;
+            targetController.Plug();
+            targetController.Rumble(targetController.GetUserIndex() + 1);
 
-            // warn service
-            SendTargetController();
-        }
+            // todo: implement a toggle on controller page (Cloak on hook)
+            // targetController.Hide();
 
-        public static void SendTargetController()
-        {
-            if (targetController is null)
-                PipeClient.SendMessage(new PipeClientControllerDisconnect());
-            else
-                PipeClient.SendMessage(new PipeClientControllerConnect(targetController.ToString(), targetController.Capacities));
+            // warn service a new controller has arrived
+            PipeClient.SendMessage(new PipeClientControllerConnect(targetController.ToString(), targetController.Capacities));
         }
 
         public static IController GetTargetController()

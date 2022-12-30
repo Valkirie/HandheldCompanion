@@ -1,6 +1,10 @@
 ﻿using ControllerCommon.Managers;
+using ModernWpf.Controls;
 using PrecisionTiming;
+using SharpDX.XInput;
 using System;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace ControllerCommon.Controllers
 {
@@ -20,6 +24,15 @@ namespace ControllerCommon.Controllers
         protected PnPDetails Details;
         protected PrecisionTimer UpdateTimer;
 
+        protected Border ui_border = new Border() { CornerRadius = new CornerRadius(4, 4, 4, 4), Padding = new Thickness(15, 12, 12, 12) };
+        protected Grid ui_grid = new Grid();
+        protected FontIcon ui_icon = new FontIcon() { Glyph = "\uE7FC", Height = 40, HorizontalAlignment = HorizontalAlignment.Center };
+        protected TextBlock ui_name = new TextBlock() { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(12, 0, 0, 0) };
+        protected Button ui_button_hide = new Button() { Width = 80, FontSize = 14, VerticalAlignment = VerticalAlignment.Center };
+        protected Button ui_button_hook = new Button() { Width = 80, FontSize = 14, VerticalAlignment = VerticalAlignment.Center };
+        protected DockPanel ui_dock_content = new DockPanel() { HorizontalAlignment = HorizontalAlignment.Left };
+        protected DockPanel ui_dock_buttons = new DockPanel() { HorizontalAlignment = HorizontalAlignment.Right };
+
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(ControllerInput Inputs);
 
@@ -28,6 +41,9 @@ namespace ControllerCommon.Controllers
             UpdateTimer = new PrecisionTimer();
             UpdateTimer.SetInterval(UPDATE_INTERVAL);
             UpdateTimer.SetAutoResetMode(true);
+
+            // attribute controller to tag
+            ui_border.Tag = this;
         }
 
         public virtual void UpdateReport()
@@ -79,6 +95,60 @@ namespace ControllerCommon.Controllers
             return Details.Name;
         }
 
+        protected void DrawControls()
+        {
+            // update name
+            ui_name.Text = this.ToString();
+
+            // Define columns
+            ColumnDefinition colDef0 = new ColumnDefinition() { Width = new GridLength(9, GridUnitType.Star), MinWidth = 200 };
+            ColumnDefinition colDef1 = new ColumnDefinition() { MinWidth = 200 };
+
+            ui_grid.ColumnDefinitions.Add(colDef0);
+            ui_grid.ColumnDefinitions.Add(colDef1);
+
+            // SetResourceReference
+            ui_icon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+            ui_name.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+            ui_button_hide.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+            ui_button_hook.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+            ui_border.SetResourceReference(Control.BackgroundProperty, "SystemControlPageBackgroundAltHighBrush");
+
+            ui_dock_content.Children.Add(ui_icon);
+            ui_dock_content.Children.Add(ui_name);
+            ui_grid.Children.Add(ui_dock_content);
+            Grid.SetColumn(ui_dock_content, 0);
+
+            ui_dock_buttons.Children.Add(ui_button_hide);
+            ui_dock_buttons.Children.Add(ui_button_hook);
+            ui_grid.Children.Add(ui_dock_buttons);
+            Grid.SetColumn(ui_dock_buttons, 1);
+
+            ui_border.Child = ui_grid;
+        }
+
+        protected void RefreshControls()
+        {
+            ui_button_hook.IsEnabled = !IsPlugged();
+            ui_button_hook.Content = IsPlugged() ? "Hooked" : "Hook";
+            ui_button_hide.Content = IsHidden() ? "Uncloak" : "Cloak";
+        }
+
+        public FrameworkElement GetControl()
+        {
+            return ui_border;
+        }
+
+        public Button GetButtonHook()
+        {
+            return ui_button_hook;
+        }
+
+        public Button GetButtonHide()
+        {
+            return ui_button_hide;
+        }
+
         public void InjectButton(ControllerButtonFlags button, bool IsKeyDown, bool IsKeyUp)
         {
             if (button == ControllerButtonFlags.None)
@@ -108,27 +178,54 @@ namespace ControllerCommon.Controllers
         public virtual async void Rumble(int loop)
         { }
 
+        public virtual bool IsPlugged()
+        {
+            return UpdateTimer.IsRunning();
+        }
+
         public virtual void Plug()
         {
             InjectedButtons = ControllerButtonFlags.None;
             UpdateTimer.Start();
+
+            RefreshControls();
         }
 
         public virtual void Unplug()
         {
             UpdateTimer.Stop();
+
+            RefreshControls();
         }
 
-        public virtual void Hide()
+        public bool IsHidden()
+        {
+            bool hide_device = HidHide.IsRegistered(Details.deviceInstanceId);
+            bool hide_base = HidHide.IsRegistered(Details.baseContainerDeviceInstanceId);
+            return (hide_device || hide_base);
+        }
+
+        public void Hide()
         {
             HidHide.HidePath(Details.deviceInstanceId);
             HidHide.HidePath(Details.baseContainerDeviceInstanceId);
+
+            RefreshControls();
         }
 
-        public virtual void Unhide()
+        public void Unhide()
         {
             HidHide.UnhidePath(Details.deviceInstanceId);
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
+
+            RefreshControls();
+        }
+
+        public void Dispose()
+        {
+            UpdateTimer.Stop();
+            UpdateTimer = null;
+            Details = null;
         }
     }
 }

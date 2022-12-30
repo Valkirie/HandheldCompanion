@@ -10,7 +10,7 @@ namespace HandheldCompanion.Controllers
         public DS4Controller(Joystick joystick, PnPDetails details) : base(joystick, details)
         {
             if (!IsConnected())
-                return;
+                throw new Exception();
 
             UpdateTimer.Tick += (sender, e) => UpdateReport();
         }

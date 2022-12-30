@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace ControllerCommon
 {
@@ -50,6 +51,12 @@ namespace ControllerCommon
         {
             var service = new HidHideControlService();
             return service.BlockedInstanceIds;
+        }
+
+        public static bool IsRegistered(string InstanceId)
+        {
+            var registered = GetRegisteredDevices();
+            return registered.Contains(InstanceId);
         }
 
         public static void UnregisterApplication(string fileName)

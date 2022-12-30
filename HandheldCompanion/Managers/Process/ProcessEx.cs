@@ -64,12 +64,12 @@ namespace HandheldCompanion.Managers
         {
             this.Process = process;
             this.Id = process.Id;
-
-            this.MainThread = Process.Threads[0];
         }
 
         public void Refresh()
         {
+            return;
+
             try
             {
                 Process.Refresh();
@@ -79,7 +79,10 @@ namespace HandheldCompanion.Managers
 
                 // refresh main thread
                 if (MainThread is null)
+                {
+                    MainThread = Process.Threads[0];
                     return;
+                }
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
@@ -179,7 +182,7 @@ namespace HandheldCompanion.Managers
                 Visibility = Visibility.Collapsed,
                 Tag = Name
             };
-            processExpander.SetResourceReference(Control.BackgroundProperty, "LayerOnMicaBaseAltFillColorDefaultBrush");
+            processExpander.SetResourceReference(Control.BackgroundProperty, "ExpanderContentBackground");
 
             // Create Grid
             processGrid = new();
@@ -299,7 +302,6 @@ namespace HandheldCompanion.Managers
             processStackPanel.Children.Add(new Separator()
             {
                 Margin = new Thickness(-50, 0, -20, 0),
-                Background = Application.Current.FindResource("SystemControlBackgroundChromeMediumBrush") as Brush,
                 Opacity = 0.25
             });
 
