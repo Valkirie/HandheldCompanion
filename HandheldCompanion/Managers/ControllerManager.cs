@@ -44,6 +44,8 @@ namespace HandheldCompanion.Managers
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
+            PipeClient.Connected += OnClientConnected;
+
             // cloak on start, if requested
             bool HIDcloaked = SettingsManager.GetBoolean("HIDcloaked");
             HidHide.SetCloaking(HIDcloaked);
@@ -70,7 +72,9 @@ namespace HandheldCompanion.Managers
 
             // uncloak on close, if requested
             bool HIDuncloakonclose = SettingsManager.GetBoolean("HIDuncloakonclose");
-            HidHide.SetCloaking(!HIDuncloakonclose);
+            foreach (IController controller in Controllers.Values)
+                controller.Unhide();
+            // HidHide.SetCloaking(!HIDuncloakonclose);
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -300,10 +304,19 @@ namespace HandheldCompanion.Managers
             targetController.Plug();
             targetController.Rumble(targetController.GetUserIndex() + 1);
 
-            // todo: implement a toggle on controller page (Cloak on hook)
-            // targetController.Hide();
+            if (targetController.HideOnHook)
+                targetController.Hide();
 
             // warn service a new controller has arrived
+            PipeClient.SendMessage(new PipeClientControllerConnect(targetController.ToString(), targetController.Capacities));
+        }
+
+        private static void OnClientConnected()
+        {
+            // warn service a new controller has arrived
+            if (targetController is null)
+                return;
+
             PipeClient.SendMessage(new PipeClientControllerConnect(targetController.ToString(), targetController.Capacities));
         }
 

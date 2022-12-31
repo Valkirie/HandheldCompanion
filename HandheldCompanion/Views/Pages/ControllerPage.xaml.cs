@@ -92,6 +92,9 @@ namespace HandheldCompanion.Views.Pages
                     case "SteamDeckLizardButtons":
                         Toggle_SDLizardButtons.IsOn = Convert.ToBoolean(value);
                         break;
+                    case "SteamDeckMuteController":
+                        Toggle_SDMuteController.IsOn = Convert.ToBoolean(value);
+                        break;
                 }
             });
         }
@@ -370,6 +373,14 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("SteamDeckLizardMouse", Toggle_SDLizardMouse.IsOn);
+        }
+
+        private void Toggle_SDMuteController_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("SteamDeckMuteController", Toggle_SDMuteController.IsOn);
         }
     }
 }

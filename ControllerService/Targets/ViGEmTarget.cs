@@ -58,7 +58,10 @@ namespace ControllerService.Targets
                     case Platform.Steam:
                         {
                             if (ControllerService.handheldDevice.GetType() == typeof(SteamDeck))
-                                IsSilenced = true;
+                            {
+                                SteamDeck SteamDeck = (SteamDeck)ControllerService.handheldDevice;
+                                IsSilenced = SteamDeck.IsMuted();
+                            }
                         }
                         break;
 

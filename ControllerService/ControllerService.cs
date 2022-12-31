@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
 using ControllerCommon.Sensors;
@@ -354,7 +355,7 @@ namespace ControllerService
 
         private void OnClientConnected()
         {
-            // send server settings
+            // send server settings to client
             PipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
         }
 
@@ -436,7 +437,7 @@ namespace ControllerService
                     break;
                 case "DSUEnabled":
                     {
-                        bool value = bool.Parse(property);
+                        bool value = Convert.ToBoolean(property);
                         switch (value)
                         {
                             case true: DSUServer.Start(); break;
@@ -446,26 +447,26 @@ namespace ControllerService
                     break;
                 case "DSUip":
                     {
-                        string value = property;
+                        string value = Convert.ToString(property);
                         DSUServer.ip = value;
                     }
                     break;
                 case "DSUport":
                     {
-                        int value = int.Parse(property);
+                        int value = Convert.ToInt32(property);
                         DSUServer.port = value;
                     }
                     break;
                 case "SensorPlacement":
                     {
-                        int value = int.Parse(property);
+                        int value = Convert.ToInt32(property);
                         SensorPlacement = value;
                         sensor?.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
                     }
                     break;
                 case "SensorPlacementUpsideDown":
                     {
-                        bool value = bool.Parse(property);
+                        bool value = Convert.ToBoolean(property);
                         SensorPlacementUpsideDown = value;
                         sensor?.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
                     }
@@ -479,6 +480,15 @@ namespace ControllerService
 
                         SensorSelection = value;
                         IMU.Initialize(SensorSelection);
+                    }
+                    break;
+                case "SteamDeckMuteController":
+                    {
+                        if (ControllerService.handheldDevice.GetType() == typeof(SteamDeck))
+                        {
+                            SteamDeck SteamDeck = (SteamDeck)handheldDevice;
+                            SteamDeck.Mute(Convert.ToBoolean(property));
+                        }
                     }
                     break;
             }

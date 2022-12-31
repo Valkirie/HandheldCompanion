@@ -30,6 +30,8 @@ namespace HandheldCompanion.Controllers
             Capacities |= ControllerCapacities.Gyroscope;
             Capacities |= ControllerCapacities.Accelerometer;
 
+            HideOnHook = false;
+
             try
             {
                 Controller = new();

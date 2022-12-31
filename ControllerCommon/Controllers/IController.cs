@@ -12,14 +12,16 @@ namespace ControllerCommon.Controllers
     {
         public ControllerInput Inputs = new();
 
+        protected const short UPDATE_INTERVAL = 5;
+
         public ControllerButtonFlags InjectedButtons;
         public ControllerButtonFlags prevInjectedButtons;
 
+        public ControllerCapacities Capacities = ControllerCapacities.None;
+        public bool HideOnHook = true;
+
         protected int UserIndex;
         protected double VibrationStrength = 1.0d;
-        public ControllerCapacities Capacities = ControllerCapacities.None;
-
-        public const short UPDATE_INTERVAL = 5;
 
         protected PnPDetails Details;
         protected PrecisionTimer UpdateTimer;

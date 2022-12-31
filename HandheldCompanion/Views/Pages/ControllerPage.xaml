@@ -113,10 +113,12 @@
                     <Label Content="{x:Static resx:Resources.ControllerPage_DeviceCloaking}" FontWeight="SemiBold"></Label>
 
                     <!-- Cloak device -->
+                    <!-- DEPRECATED -->
                     <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource ExpanderContentBackground}">
+                        Background="{DynamicResource ExpanderContentBackground}"
+                        Visibility="Collapsed">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -180,7 +182,7 @@
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE877;" Height="40" HorizontalAlignment="Center"/>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" Height="40" HorizontalAlignment="Center"/>
 
                                 <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
                                     <TextBlock Text="{x:Static resx:Resources.InputsHotkey_SteamDeckLizardMouse}" FontSize="14"/>
@@ -206,7 +208,7 @@
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE877;" Height="40" HorizontalAlignment="Center"/>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE765;" Height="40" HorizontalAlignment="Center"/>
 
                                 <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
                                     <TextBlock Text="{x:Static resx:Resources.InputsHotkey_SteamDeckLizardButtons}" FontSize="14"/>
@@ -215,6 +217,32 @@
                             </DockPanel>
 
                             <ui:ToggleSwitch Name="Toggle_SDLizardButtons" Grid.Column="1" Toggled="Toggle_SDLizardButtons_Toggled"/>
+                        </Grid>
+
+                    </Border>
+
+                    <!-- Mute virtual controller -->
+                    <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource ExpanderContentBackground}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE789;" Height="40" HorizontalAlignment="Center"/>
+
+                                <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <TextBlock Text="{x:Static resx:Resources.ControllerPage_SteamDeckMuteController}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.ControllerPage_SteamDeckMuteControllerDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <ui:ToggleSwitch Name="Toggle_SDMuteController" Grid.Column="1" Toggled="Toggle_SDMuteController_Toggled"/>
                         </Grid>
 
                     </Border>

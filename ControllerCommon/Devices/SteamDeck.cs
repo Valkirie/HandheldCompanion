@@ -2,6 +2,8 @@
 {
     public class SteamDeck : Device
     {
+        private bool MuteController = false;
+
         public SteamDeck() : base()
         {
             this.ProductSupported = true;
@@ -19,6 +21,16 @@
 
             // https://www.techpowerup.com/gpu-specs/steam-deck-gpu.c3897
             this.GfxClock = new double[] { 100, 1600 };
+        }
+
+        public void Mute(bool mute)
+        {
+            this.MuteController = mute;
+        }
+
+        public bool IsMuted()
+        {
+            return MuteController;
         }
     }
 }

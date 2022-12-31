@@ -39,7 +39,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="UpdateLastChecked" Type="System.DateTime" Scope="User">
-      <Value Profile="(Default)">2022-10-20</Value>
+      <Value Profile="(Default)">1989-12-20</Value>
     </Setting>
     <Setting Name="OverlayModel" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -75,7 +75,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="SensorSelection" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="SensorPlacement" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -172,6 +172,9 @@
     </Setting>
     <Setting Name="SteamDeckLizardButtons" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SteamDeckMuteController" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

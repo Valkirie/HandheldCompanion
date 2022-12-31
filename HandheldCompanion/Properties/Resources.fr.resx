@@ -196,7 +196,7 @@
     <value>Dévoiler à la fermeture</value>
   </data>
   <data name="ControllerPage_UncloakOnCloseDesc" xml:space="preserve">
-    <value>Rétablissement de la visibilité du contrôleur physique pour les autres applications à l'arrêt du service</value>
+    <value>Rétablissement de la visibilité des contrôleurs physique pour les autres applications à l'arrêt du service</value>
   </data>
   <data name="ControllerPage_VibrationStrength" xml:space="preserve">
     <value>Force de vibration</value>

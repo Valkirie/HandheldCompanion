@@ -172,6 +172,7 @@ namespace HandheldCompanion.Views
                 new Thread(manager.Start).Start();
 
             // start setting last
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             SettingsManager.Start();
 
             // open pipe
@@ -191,6 +192,19 @@ namespace HandheldCompanion.Views
             // update FirstStart
             if (SettingsManager.GetBoolean("FirstStart"))
                 SettingsManager.SetProperty("FirstStart", false);
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            switch(name)
+            {
+                case "ToastEnable":
+                    toastManager.Enabled = Convert.ToBoolean(value);
+                    break;
+            }
+
+            PipeClientSettings settings = new PipeClientSettings(name, value);
+            PipeClient.SendMessage(settings);
         }
 
         public void SwapWindowState()
@@ -267,7 +281,6 @@ namespace HandheldCompanion.Views
 
             // initialize managers
             toastManager = new ToastManager("HandheldCompanion");
-            toastManager.Enabled = SettingsManager.GetBoolean("ToastEnable");
 
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
             taskManager = new TaskManager("HandheldCompanion", CurrentExe);
@@ -309,17 +322,6 @@ namespace HandheldCompanion.Views
 
             SystemManager.UsbDeviceArrived += GenericDeviceUpdated;
             SystemManager.UsbDeviceRemoved += GenericDeviceUpdated;
-
-            // handle settings events and forward to common managers
-            SettingsManager.SettingValueChanged += (name, value) =>
-            {
-                switch (name)
-                {
-                    case "ToastEnable":
-                        toastManager.Enabled = Convert.ToBoolean(value);
-                        break;
-                }
-            };
 
             stopwatch.Stop();
             LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
@@ -377,17 +379,13 @@ namespace HandheldCompanion.Views
 
         private void OnClientConnected()
         {
-            // lazy: send all local settings to server ?
+            // (re)send all local settings to server at once
             PipeClientSettings settings = new PipeClientSettings();
 
             foreach (KeyValuePair<string, object> values in SettingsManager.GetProperties())
                 settings.settings.Add(values.Key, values.Value);
 
             PipeClient.SendMessage(settings);
-
-            // warn service
-            IController controller = ControllerManager.GetTargetController();
-            PipeClient.SendMessage(new PipeClientControllerConnect(controller.ToString(), controller.Capacities));
         }
 
         private void OnClientDisconnected()
