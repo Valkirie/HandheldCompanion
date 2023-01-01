@@ -344,14 +344,6 @@ namespace HandheldCompanion.Managers
             profile.error = SanitizeProfile(profile);
             profile.json = $"{Path.GetFileNameWithoutExtension(profile.executable)}.json";
 
-            // skip if nothing has changed
-            if (profiles.ContainsKey(profile.name))
-            {
-                Profile prevProfile = profiles[profile.name];
-                if (prevProfile == profile)
-                    return;
-            }
-
             // update database
             profiles[profile.name] = profile;
 
