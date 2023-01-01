@@ -20,6 +20,10 @@ namespace HandheldCompanion.Controllers
 
             // Set BufferSize in order to use buffered data.
             joystick.Properties.BufferSize = 128;
+
+            // ui
+            DrawControls();
+            RefreshControls();
         }
 
         public override string ToString()

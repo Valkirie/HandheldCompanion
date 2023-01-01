@@ -51,6 +51,10 @@ namespace HandheldCompanion.Controllers
 
             bool LizardButtons = SettingsManager.GetBoolean("SteamDeckLizardButtons");
             SetLizardButtons(LizardButtons);
+
+            // ui
+            DrawControls();
+            RefreshControls();
         }
 
         public override string ToString()
