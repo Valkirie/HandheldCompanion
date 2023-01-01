@@ -315,13 +315,13 @@ namespace HandheldCompanion.Managers
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(profile, options);
 
-            string settingsPath = System.IO.Path.Combine(InstallPath, profile.json);
+            string settingsPath = Path.Combine(InstallPath, profile.json);
             File.WriteAllText(settingsPath, jsonString);
         }
 
         private static ProfileErrorCode SanitizeProfile(Profile profile)
         {
-            string processpath = System.IO.Path.GetDirectoryName(profile.fullpath);
+            string processpath = Path.GetDirectoryName(profile.fullpath);
 
             if (profile.isDefault)
                 return ProfileErrorCode.IsDefault;
@@ -342,7 +342,15 @@ namespace HandheldCompanion.Managers
         {
             // refresh error code
             profile.error = SanitizeProfile(profile);
-            profile.json = $"{System.IO.Path.GetFileNameWithoutExtension(profile.executable)}.json";
+            profile.json = $"{Path.GetFileNameWithoutExtension(profile.executable)}.json";
+
+            // skip if nothing has changed
+            if (profiles.ContainsKey(profile.name))
+            {
+                Profile prevProfile = profiles[profile.name];
+                if (prevProfile == profile)
+                    return;
+            }
 
             // update database
             profiles[profile.name] = profile;
@@ -417,8 +425,8 @@ namespace HandheldCompanion.Managers
 
             foreach (string fullpath in fullpaths)
             {
-                string processpath = System.IO.Path.GetDirectoryName(fullpath);
-                string inipath = System.IO.Path.Combine(processpath, "XInputPlus.ini");
+                string processpath = Path.GetDirectoryName(fullpath);
+                string inipath = Path.Combine(processpath, "XInputPlus.ini");
                 bool iniexist = File.Exists(inipath);
 
                 // get binary type (x64, x86)
@@ -432,14 +440,14 @@ namespace HandheldCompanion.Managers
 
                 for (int i = 0; i < 5; i++)
                 {
-                    string dllpath = System.IO.Path.Combine(processpath, $"xinput1_{i + 1}.dll");
-                    string backpath = System.IO.Path.Combine(processpath, $"xinput1_{i + 1}.back");
+                    string dllpath = Path.Combine(processpath, $"xinput1_{i + 1}.dll");
+                    string backpath = Path.Combine(processpath, $"xinput1_{i + 1}.back");
 
                     // dll has a different naming format
                     if (i == 4)
                     {
-                        dllpath = System.IO.Path.Combine(processpath, $"xinput9_1_0.dll");
-                        backpath = System.IO.Path.Combine(processpath, $"xinput9_1_0.back");
+                        dllpath = Path.Combine(processpath, $"xinput9_1_0.dll");
+                        backpath = Path.Combine(processpath, $"xinput9_1_0.back");
                     }
 
                     bool dllexist = File.Exists(dllpath);
