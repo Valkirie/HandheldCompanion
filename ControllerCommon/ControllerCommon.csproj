@@ -49,6 +49,12 @@
     <Reference Include="ModernWpf">
       <HintPath>..\Resources\ModernWpf.dll</HintPath>
     </Reference>
+    <Reference Include="ModernWpf.Controls">
+      <HintPath>..\Resources\ModernWpf.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="ModernWpf.MahApps">
+      <HintPath>..\Resources\ModernWpf.MahApps.dll</HintPath>
+    </Reference>
     <Reference Include="Nefarius.Utilities.DeviceManagement">
       <HintPath>..\Resources\Nefarius.Utilities.DeviceManagement.dll</HintPath>
     </Reference>

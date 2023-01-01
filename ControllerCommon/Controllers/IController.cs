@@ -30,8 +30,8 @@ namespace ControllerCommon.Controllers
         protected Grid ui_grid = new Grid();
         protected FontIcon ui_icon = new FontIcon() { Glyph = "\uE7FC", Height = 40, HorizontalAlignment = HorizontalAlignment.Center };
         protected TextBlock ui_name = new TextBlock() { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(12, 0, 0, 0) };
-        protected Button ui_button_hide = new Button() { Width = 80, FontSize = 14, VerticalAlignment = VerticalAlignment.Center };
-        protected Button ui_button_hook = new Button() { Width = 80, FontSize = 14, VerticalAlignment = VerticalAlignment.Center };
+        protected Button ui_button_hide = new Button() { Width = 100, FontSize = 14, VerticalAlignment = VerticalAlignment.Center };
+        protected Button ui_button_hook = new Button() { Width = 100, FontSize = 14, VerticalAlignment = VerticalAlignment.Center };
         protected DockPanel ui_dock_content = new DockPanel() { HorizontalAlignment = HorizontalAlignment.Left };
         protected DockPanel ui_dock_buttons = new DockPanel() { HorizontalAlignment = HorizontalAlignment.Right };
 
@@ -121,8 +121,8 @@ namespace ControllerCommon.Controllers
             ui_grid.Children.Add(ui_dock_content);
             Grid.SetColumn(ui_dock_content, 0);
 
-            ui_dock_buttons.Children.Add(ui_button_hide);
             ui_dock_buttons.Children.Add(ui_button_hook);
+            ui_dock_buttons.Children.Add(ui_button_hide);
             ui_grid.Children.Add(ui_dock_buttons);
             Grid.SetColumn(ui_dock_buttons, 1);
 
@@ -132,8 +132,10 @@ namespace ControllerCommon.Controllers
         protected void RefreshControls()
         {
             ui_button_hook.IsEnabled = !IsPlugged();
-            ui_button_hook.Content = IsPlugged() ? "Hooked" : "Hook";
-            ui_button_hide.Content = IsHidden() ? "Uncloak" : "Cloak";
+            ui_button_hook.Content = IsPlugged() ? "Connected" : "Connect";
+            ui_button_hook.Style = IsPlugged() ? Application.Current.FindResource("AccentButtonStyle") as Style : Application.Current.FindResource("DefaultButtonStyle") as Style;
+
+            ui_button_hide.Content = IsHidden() ? "Unhide" : "Hide";
         }
 
         public FrameworkElement GetControl()
@@ -221,13 +223,6 @@ namespace ControllerCommon.Controllers
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
 
             RefreshControls();
-        }
-
-        public void Dispose()
-        {
-            UpdateTimer.Stop();
-            UpdateTimer = null;
-            Details = null;
         }
     }
 }
