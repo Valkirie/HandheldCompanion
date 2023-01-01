@@ -219,7 +219,7 @@ namespace HandheldCompanion.Views.Pages
         {
             string path = Controller.GetInstancePath();
 
-            SettingsManager.SetProperty("HIDInstancePath", path);
+            SettingsManager.SetProperty("HIDInstancePath", path, true);
         }
 
         private void ControllerHideClicked(IController Controller)

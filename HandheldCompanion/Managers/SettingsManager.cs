@@ -41,7 +41,7 @@ namespace HandheldCompanion.Managers
             IsInitialized = false;
         }
 
-        public static void SetProperty(string name, object value)
+        public static void SetProperty(string name, object value, bool force = false)
         {
             // should not happen
             if (!PropertyExists(name))
@@ -49,7 +49,7 @@ namespace HandheldCompanion.Managers
 
             object prevValue = Properties.Settings.Default[name];
 
-            if (prevValue.ToString() == value.ToString())
+            if (prevValue.ToString() == value.ToString() && !force)
                 return;
 
             switch (name)

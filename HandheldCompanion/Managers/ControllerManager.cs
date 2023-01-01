@@ -224,9 +224,6 @@ namespace HandheldCompanion.Managers
 
                         // raise event
                         ControllerUnplugged?.Invoke(controller);
-
-                        // dispose controller
-                        controller.Dispose();
                     }
                 }
             }));
@@ -273,9 +270,6 @@ namespace HandheldCompanion.Managers
 
                         // raise event
                         ControllerUnplugged?.Invoke(controller);
-
-                        // dispose controller
-                        controller.Dispose();
                     }
                 }
             }));
