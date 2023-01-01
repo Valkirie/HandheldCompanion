@@ -192,6 +192,9 @@ namespace HandheldCompanion.Views.QuickPages
                     ProfilesPageHotkey.inputsChord.GamepadButtons = profile.umc_trigger;
                     ProfilesPageHotkey.Refresh();
 
+                    // release lock
+                    Monitor.Exit(updateLock);
+
                     if (backgroundtask)
                         return;
 
@@ -199,8 +202,6 @@ namespace HandheldCompanion.Views.QuickPages
                                         $"{profile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
                                         ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
                 });
-
-                Monitor.Exit(updateLock);
             }
         }
 
