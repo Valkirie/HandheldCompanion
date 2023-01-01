@@ -159,6 +159,9 @@ namespace HandheldCompanion.Views.QuickPages
             if (!isCurrent || profile.isDefault)
                 return;
 
+            // update current profile
+            currentProfile = profile;
+
             if (Monitor.TryEnter(updateLock))
             {
                 this.Dispatcher.Invoke(() =>
@@ -186,7 +189,7 @@ namespace HandheldCompanion.Views.QuickPages
                     SliderAntiDeadzone.Value = profile.antideadzone;
 
                     // todo: improve me ?
-                    ProfilesPageHotkey.inputsChord.GamepadButtons = currentProfile.umc_trigger;
+                    ProfilesPageHotkey.inputsChord.GamepadButtons = profile.umc_trigger;
                     ProfilesPageHotkey.Refresh();
 
                     if (backgroundtask)
@@ -203,7 +206,10 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
+            // update current process
             currentProcess = processEx;
+
+            // update current profile
             currentProfile = ProfileManager.GetProfileFromExec(currentProcess.Name);
 
             this.Dispatcher.Invoke(() =>
