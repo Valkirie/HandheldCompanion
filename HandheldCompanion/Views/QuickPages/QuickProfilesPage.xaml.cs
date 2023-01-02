@@ -22,7 +22,7 @@ namespace HandheldCompanion.Views.QuickPages
         private Hotkey ProfilesPageHotkey;
 
         private const int UpdateInterval = 500;
-        private PrecisionTimer profileTimer;
+        private PrecisionTimer UpdateTimer;
 
         private object updateLock = new();
 
@@ -105,10 +105,18 @@ namespace HandheldCompanion.Views.QuickPages
                 cB_Output.Items.Add(panel);
             }
 
-            profileTimer = new PrecisionTimer();
-            profileTimer.SetInterval(UpdateInterval);
-            profileTimer.SetAutoResetMode(false);
-            profileTimer.Tick += (sender, e) => ProfileManager.UpdateOrCreateProfile(currentProfile, true);
+            UpdateTimer = new PrecisionTimer();
+            UpdateTimer.SetInterval(UpdateInterval);
+            UpdateTimer.SetAutoResetMode(false);
+            UpdateTimer.Tick += (sender, e) => SubmitProfile();
+        }
+
+        public void SubmitProfile()
+        {
+            if (currentProfile is null)
+                return;
+
+            ProfileManager.UpdateOrCreateProfile(currentProfile, true);
         }
 
         private void HotkeysManager_CommandExecuted(string listener)
@@ -169,10 +177,10 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             // if an update is pending, execute it and stop timer
-            if (profileTimer.IsRunning())
+            if (UpdateTimer.IsRunning())
             {
-                profileTimer.Stop();
-                ProfileManager.UpdateOrCreateProfile(currentProfile, true);
+                UpdateTimer.Stop();
+                SubmitProfile();
             }
 
             // update current profile
@@ -252,10 +260,10 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
-        private void UpdateProfile()
+        private void RequestUpdate()
         {
-            profileTimer.Stop();
-            profileTimer.Start();
+            UpdateTimer.Stop();
+            UpdateTimer.Start();
         }
 
         private void ProfileToggle_Toggled(object sender, RoutedEventArgs e)
@@ -266,7 +274,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.isEnabled = ProfileToggle.IsOn;
-                UpdateProfile();
+                RequestUpdate();
 
                 Monitor.Exit(updateLock);
             }
@@ -280,7 +288,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.umc_enabled = UMCToggle.IsOn;
-                UpdateProfile();
+                RequestUpdate();
 
                 Monitor.Exit(updateLock);
             }
@@ -316,7 +324,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.umc_input = (Input)cB_Input.SelectedIndex;
-                UpdateProfile();
+                RequestUpdate();
 
                 Monitor.Exit(updateLock);
             }
@@ -330,7 +338,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
-                UpdateProfile();
+                RequestUpdate();
 
                 Monitor.Exit(updateLock);
             }
@@ -348,7 +356,7 @@ namespace HandheldCompanion.Views.QuickPages
             // update current profile
             ProfileManager.currentProfile = currentProfile;
 
-            UpdateProfile();
+            RequestUpdate();
         }
 
         private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
@@ -359,7 +367,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.TDP_override = (bool)TDPToggle.IsOn;
-                UpdateProfile();
+                RequestUpdate();
 
                 Monitor.Exit(updateLock);
             }
@@ -377,7 +385,7 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
                 currentProfile.TDP_value[1] = (int)TDPSustainedSlider.Value;
-                UpdateProfile();
+                RequestUpdate();
 
                 Monitor.Exit(updateLock);
             }
@@ -394,7 +402,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
-                UpdateProfile();
+                RequestUpdate();
 
                 Monitor.Exit(updateLock);
             }
@@ -408,7 +416,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.aiming_sensitivity_x = (float)SliderSensitivityX.Value;
-                UpdateProfile();
+                RequestUpdate();
 
                 Monitor.Exit(updateLock);
             }
@@ -422,7 +430,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.aiming_sensitivity_y = (float)SliderSensitivityY.Value;
-                UpdateProfile();
+                RequestUpdate();
 
                 Monitor.Exit(updateLock);
             }
@@ -436,7 +444,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.antideadzoneL = (float)SliderAntiDeadzoneLeft.Value;
-                UpdateProfile();
+                RequestUpdate();
 
                 Monitor.Exit(updateLock);
             }
@@ -450,7 +458,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.antideadzoneR = (float)SliderAntiDeadzoneRight.Value;
-                UpdateProfile();
+                RequestUpdate();
 
                 Monitor.Exit(updateLock);
             }
@@ -486,7 +494,7 @@ namespace HandheldCompanion.Views.QuickPages
                 case "shortcutProfilesPage@":
                 case "shortcutProfilesPage@@":
                     currentProfile.umc_trigger = inputs.GamepadButtons;
-                    UpdateProfile();
+                    RequestUpdate();
                     break;
             }
         }
@@ -499,7 +507,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.umc_motion_defaultoffon = (UMC_Motion_Default)cB_UMC_MotionDefaultOffOn.SelectedIndex;
-                UpdateProfile();
+                RequestUpdate();
 
                 Monitor.Exit(updateLock);
             }
