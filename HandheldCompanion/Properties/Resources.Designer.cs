@@ -1823,6 +1823,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Controller settings.
+        /// </summary>
+        public static string ProfilesPage_ControllerSettings {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ControllerSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Change the virtual controller settings.
+        /// </summary>
+        public static string ProfilesPage_ControllerSettingsDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ControllerSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Create a new profile.
         /// </summary>
         public static string ProfilesPage_CreateNewProfile {

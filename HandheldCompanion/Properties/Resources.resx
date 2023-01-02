@@ -1106,4 +1106,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ControllerPage_SteamDeckMuteControllerDesc" xml:space="preserve">
     <value>Mute virtual controller on steam related applications</value>
   </data>
+  <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
+    <value>Controller settings</value>
+  </data>
+  <data name="ProfilesPage_ControllerSettingsDesc" xml:space="preserve">
+    <value>Change the virtual controller settings</value>
+  </data>
 </root>

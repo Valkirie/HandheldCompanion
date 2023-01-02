@@ -46,8 +46,7 @@
                 <ui:SimpleStackPanel Spacing="6">
                     <Label Content="{x:Static resx:Resources.ControllerPage_InputDevices}" FontWeight="SemiBold"></Label>
 
-                    <ui:SimpleStackPanel Name="InputDevices" Spacing="6" Visibility="Collapsed"
-                        ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"/>
+                    <ui:SimpleStackPanel Name="InputDevices" Spacing="6" Visibility="Collapsed"/>
 
                     <Border                        
                         Name="NoDevices" Visibility="Visible"

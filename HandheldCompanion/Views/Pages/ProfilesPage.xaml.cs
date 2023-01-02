@@ -332,6 +332,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 // enable all expanders
                 ProfileDetails.IsEnabled = true;
+                ControllerSettings.IsEnabled = true;
                 MotionSettings.IsEnabled = true;
                 UniversalSettings.IsEnabled = true;
 
@@ -352,6 +353,10 @@ namespace HandheldCompanion.Views.Pages
                 // Global settings
                 cB_Whitelist.IsChecked = currentProfile.whitelisted;
                 cB_Wrapper.IsChecked = currentProfile.use_wrapper;
+
+                // Controller settings
+                tb_ProfileAntiDeadzoneLeft.Value = currentProfile.antideadzoneL;
+                tb_ProfileAntiDeadzoneRight.Value = currentProfile.antideadzoneR;
 
                 // Motion control settings
                 tb_ProfileGyroValue.Value = currentProfile.gyrometer;
@@ -379,7 +384,6 @@ namespace HandheldCompanion.Views.Pages
                 Toggle_UniversalMotion.IsOn = currentProfile.umc_enabled;
                 cB_Input.SelectedIndex = (int)currentProfile.umc_input;
                 cB_Output.SelectedIndex = (int)currentProfile.umc_output;
-                tb_ProfileAntiDeadzone.Value = currentProfile.antideadzone;
                 cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.umc_motion_defaultoffon;
 
                 // todo: improve me ?
@@ -451,6 +455,10 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.whitelisted = (bool)cB_Whitelist.IsChecked;
             currentProfile.use_wrapper = (bool)cB_Wrapper.IsChecked;
 
+            // Controller settings
+            currentProfile.antideadzoneL = (float)tb_ProfileAntiDeadzoneLeft.Value;
+            currentProfile.antideadzoneR = (float)tb_ProfileAntiDeadzoneRight.Value;
+
             // Motion control settings
             currentProfile.gyrometer = (float)tb_ProfileGyroValue.Value;
             currentProfile.accelerometer = (float)tb_ProfileAcceleroValue.Value;
@@ -463,7 +471,6 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.umc_enabled = (bool)Toggle_UniversalMotion.IsOn;
             currentProfile.umc_input = (Input)cB_Input.SelectedIndex;
             currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
-            currentProfile.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
             currentProfile.umc_motion_defaultoffon = (UMC_Motion_Default)cB_UMC_MotionDefaultOffOn.SelectedIndex;
 
             // Power settings

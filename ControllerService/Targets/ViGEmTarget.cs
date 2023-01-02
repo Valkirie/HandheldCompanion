@@ -206,19 +206,11 @@ namespace ControllerService.Targets
                             break;
                     }
                 }
-
-                // Apply user defined in game deadzone setting compensation
-                switch (ControllerService.currentProfile.umc_output)
-                {
-                    default:
-                    case Output.RightStick:
-                        RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, ControllerService.currentProfile.antideadzone);
-                        break;
-                    case Output.LeftStick:
-                        LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.antideadzone);
-                        break;
-                }
             }
+
+            // Apply user defined in game deadzone setting compensation
+            LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.antideadzoneL);
+            RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, ControllerService.currentProfile.antideadzoneR);
         }
 
         internal void SubmitReport()

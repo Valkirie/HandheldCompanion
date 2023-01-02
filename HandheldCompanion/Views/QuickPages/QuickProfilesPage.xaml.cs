@@ -166,6 +166,10 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 this.Dispatcher.Invoke(() =>
                 {
+                    // manage visibility here too...
+                    b_CreateProfile.Visibility = Visibility.Collapsed;
+                    GridProfile.Visibility = Visibility.Visible;
+
                     ProfileToggle.IsEnabled = true;
                     ProfileToggle.IsOn = profile.isEnabled;
                     UMCToggle.IsOn = profile.umc_enabled;
@@ -183,7 +187,8 @@ namespace HandheldCompanion.Views.QuickPages
                     // Slider settings
                     SliderSensitivityX.Value = profile.aiming_sensitivity_x;
                     SliderSensitivityY.Value = profile.aiming_sensitivity_y;
-                    SliderAntiDeadzone.Value = profile.antideadzone;
+                    SliderAntiDeadzoneLeft.Value = profile.antideadzoneL;
+                    SliderAntiDeadzoneRight.Value = profile.antideadzoneR;
 
                     // todo: improve me ?
                     ProfilesPageHotkey.inputsChord.GamepadButtons = profile.umc_trigger;
@@ -281,12 +286,10 @@ namespace HandheldCompanion.Views.QuickPages
                 case Input.JoystickCamera:
                     cB_Output.SelectedIndex = (int)Output.RightStick;
                     GridSensivity.Visibility = Visibility.Visible;
-                    GridAntiDeadzone.Visibility = Visibility.Visible;
                     break;
                 case Input.JoystickSteering:
                     cB_Output.SelectedIndex = (int)Output.LeftStick;
                     GridSensivity.Visibility = Visibility.Collapsed;
-                    GridAntiDeadzone.Visibility = Visibility.Collapsed;
                     break;
             }
 
@@ -410,14 +413,28 @@ namespace HandheldCompanion.Views.QuickPages
             }
         }
 
-        private void SliderAntiDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void SliderAntiDeadzoneLeft_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (currentProfile is null)
                 return;
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.antideadzone = (float)SliderAntiDeadzone.Value;
+                currentProfile.antideadzoneL = (float)SliderAntiDeadzoneLeft.Value;
+                UpdateProfile();
+
+                Monitor.Exit(updateLock);
+            }
+        }
+
+        private void SliderAntiDeadzoneRight_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (currentProfile is null)
+                return;
+
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.antideadzoneL = (float)SliderAntiDeadzoneLeft.Value;
                 UpdateProfile();
 
                 Monitor.Exit(updateLock);

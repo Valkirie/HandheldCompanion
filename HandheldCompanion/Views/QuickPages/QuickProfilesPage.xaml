@@ -40,7 +40,7 @@
         <!-- Buttons -->
         <Button Name="b_CreateProfile" Margin="12,2,15,2" Click="b_CreateProfile_Click" HorizontalAlignment="Stretch" Content="{x:Static resx:Resources.QuickProfilesPage_Create}" Style="{DynamicResource AccentButtonStyle}" Visibility="Collapsed" />
         
-        <ui:SimpleStackPanel Spacing="6" Name="GridProfile" Visibility="Collapsed">
+        <ui:SimpleStackPanel Spacing="6" Name="GridProfile" >
             <Grid Name="StackProfileToggle">
                 <!-- Header -->
                 <Border
@@ -66,7 +66,59 @@
                     </Grid>
                 </Border>
             </Grid>
-            
+
+            <!-- Separator -->
+            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
+            <!-- Controller settings -->
+            <Expander
+                Padding="15,6,15,6" 
+                IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
+                
+                <Expander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="370"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:SimpleStackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzone}" FontSize="14"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+                    </Grid>
+                </Expander.Header>
+
+                <!-- Content -->
+                <Expander.Content>
+                    <ui:SimpleStackPanel Spacing="6">
+                        <StackPanel>
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="Left joystick" />
+
+                            <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
+                                <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderAntiDeadzoneLeft, Mode=OneWay}" />
+                                <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneUnitPercentage}" />
+                                <Slider Name="SliderAntiDeadzoneLeft" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+								        ValueChanged="SliderAntiDeadzoneLeft_ValueChanged" />
+                            </DockPanel>
+                        </StackPanel>
+                        
+                        <StackPanel>
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="Right joystick" />
+
+                            <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
+                                <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderAntiDeadzoneRight, Mode=OneWay}" />
+                                <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneUnitPercentage}" />
+                                <Slider Name="SliderAntiDeadzoneRight" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+								        ValueChanged="SliderAntiDeadzoneRight_ValueChanged" />
+                            </DockPanel>
+                        </StackPanel>
+                    </ui:SimpleStackPanel>
+                </Expander.Content>
+            </Expander>
+
             <!-- Separator -->
             <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
@@ -205,38 +257,13 @@
 								ValueChanged="SliderSensitivityY_ValueChanged" />
                             </DockPanel>
                         </ui:SimpleStackPanel>
-                        
+
                         <!-- Separator -->
                         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
-
-                        <ui:SimpleStackPanel Spacing="6" Name="GridAntiDeadzone">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition MinWidth="420"></ColumnDefinition>
-                                    <ColumnDefinition></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzone}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
-                                </StackPanel>
-                            </Grid>
-
-                            <!-- Content -->
-                            <DockPanel Grid.Column="1" Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderAntiDeadzone, Mode=OneWay}" />
-                                <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneUnitPercentage}" />
-                                <Slider Name="SliderAntiDeadzone" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-								ValueChanged="SliderAntiDeadzone_ValueChanged" />
-                            </DockPanel>
-                        </ui:SimpleStackPanel>
 
                     </ui:SimpleStackPanel>
                 </Border>
             </Grid>
-            
-            <!-- Separator -->
-            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
             <!-- Thermal Power (TDP) Limit -->
             <ui:SimpleStackPanel Name="StackProfilePower" Spacing="2" IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
@@ -271,7 +298,7 @@
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <StackPanel>
-                        <TextBlock Width="62" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{x:Static resx:Resources.QuickPerformancePage_TDPSustained}" />
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{x:Static resx:Resources.QuickPerformancePage_TDPSustained}" />
                         
                         <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}" />
@@ -290,7 +317,7 @@
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <StackPanel>
-                        <TextBlock Width="62" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{x:Static resx:Resources.QuickPerformancePage_TDPBoost}" />
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{x:Static resx:Resources.QuickPerformancePage_TDPBoost}" />
                         
                         <DockPanel Grid.Column="1" Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}" />
