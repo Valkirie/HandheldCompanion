@@ -19,11 +19,6 @@ namespace HandheldCompanion.Models
         Model3DGroup Screen;
         Model3DGroup PowerButton;
 
-        Model3DGroup JoystickLeftTouch;
-        Model3DGroup JoystickRightTouch;
-        Model3DGroup LeftPadTouch;
-        Model3DGroup RightPadTouch;
-
         Model3DGroup B1Symbol;
         Model3DGroup B2Symbol;
         Model3DGroup B3Symbol;
@@ -65,11 +60,6 @@ namespace HandheldCompanion.Models
             Screen = modelImporter.Load($"models/{ModelName}/Screen.obj");
             PowerButton = modelImporter.Load($"models/{ModelName}/PowerButton.obj");
 
-            JoystickLeftTouch = modelImporter.Load($"models/{ModelName}/JoystickLeftTouch.obj");
-            JoystickRightTouch = modelImporter.Load($"models/{ModelName}/JoystickRightTouch.obj");
-            LeftPadTouch = modelImporter.Load($"models/{ModelName}/LeftPadTouch.obj");
-            RightPadTouch = modelImporter.Load($"models/{ModelName}/RightPadTouch.obj");
-
             B1Symbol = modelImporter.Load($"models/{ModelName}/B1-Symbol.obj");
             B2Symbol = modelImporter.Load($"models/{ModelName}/B2-Symbol.obj");
             B3Symbol = modelImporter.Load($"models/{ModelName}/B3-Symbol.obj");
@@ -85,11 +75,6 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(StartIcon);
             model3DGroup.Children.Add(Screen);
             model3DGroup.Children.Add(PowerButton);
-
-            model3DGroup.Children.Add(JoystickLeftTouch);
-            model3DGroup.Children.Add(JoystickRightTouch);
-            model3DGroup.Children.Add(LeftPadTouch);
-            model3DGroup.Children.Add(RightPadTouch);
 
             model3DGroup.Children.Add(B1Symbol);
             model3DGroup.Children.Add(B2Symbol);
@@ -118,6 +103,10 @@ namespace HandheldCompanion.Models
                             case ControllerButtonFlags.RightThumb:
                                 buttonMaterial = MaterialPlasticBlack;
                                 break;
+                            case ControllerButtonFlags.OEM2:
+                            case ControllerButtonFlags.OEM3:
+                                buttonMaterial = MaterialPlasticWhite;
+                                break;
                             default:
                                 buttonMaterial = MaterialPlasticDarkGrey;
                                 break;
@@ -141,7 +130,7 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticDarkGrey;
 
                 // specific material(s)
-                if (model3D == Screen || model3D == LeftThumbRing || model3D == RightThumbRing)
+                if (model3D.Equals(Screen) || model3D.Equals(LeftThumbRing) || model3D.Equals(RightThumbRing))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticBlack;
@@ -150,10 +139,9 @@ namespace HandheldCompanion.Models
                 }
 
                 // specific material(s)
-                if (model3D == SteamText || model3D == ThreeDots
-                    || model3D == BackIcon || model3D == StartIcon
-                    || model3D == B1Symbol || model3D == B2Symbol || model3D == B3Symbol || model3D == B4Symbol
-                    || model3D == JoystickLeftTouch || model3D == JoystickRightTouch
+                if (model3D.Equals(SteamText) || model3D.Equals(ThreeDots)
+                    || model3D.Equals(BackIcon) || model3D.Equals(StartIcon)
+                    || model3D.Equals(B1Symbol) || model3D.Equals(B2Symbol) || model3D.Equals(B3Symbol) || model3D.Equals(B4Symbol)
                     )
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
