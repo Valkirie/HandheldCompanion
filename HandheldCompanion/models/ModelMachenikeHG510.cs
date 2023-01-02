@@ -113,24 +113,24 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == BodyBack
-                    || model3D == LeftMotor || model3D == RightMotor
-                    || model3D == LogoInner)
+                if (model3D.Equals(MainBody) || model3D.Equals(BodyBack)
+                    || model3D.Equals(LeftMotor) || model3D.Equals(RightMotor)
+                    || model3D.Equals(LogoInner))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
                     DefaultMaterials[model3D] = MaterialPlasticWhite;
                     continue;
                 }
 
-                if (model3D == FrontAccent || model3D == Machenike || model3D == LogoOuter || model3D == LogoMid)
+                if (model3D.Equals(FrontAccent) || model3D.Equals(Machenike) || model3D.Equals(LogoOuter) || model3D.Equals(LogoMid))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialAccent;
                     DefaultMaterials[model3D] = MaterialAccent;
                     continue;
                 }
 
-                if (model3D == LED1 || model3D == LED2 || model3D == LED3 || model3D == LED4 ||
-                    model3D == LED5 || model3D == LED6 || model3D == LED7 || model3D == LED8)
+                if (model3D.Equals(LED1) || model3D.Equals(LED2) || model3D.Equals(LED3) || model3D.Equals(LED4) ||
+                    model3D.Equals(LED5) || model3D.Equals(LED6) || model3D.Equals(LED7) || model3D.Equals(LED8))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticTransparentHighlight;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticTransparentHighlight;

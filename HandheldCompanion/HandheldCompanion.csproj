@@ -1429,13 +1429,13 @@
     <None Update="models\SteamDeck\Joystick-Right-Ring.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\JoystickLeftTouch.obj">
+    <None Update="Models\SteamDeck\OEM2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\JoystickRightTouch.obj">
+    <None Update="Models\SteamDeck\OEM3.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\LeftPadTouch.obj">
+    <None Update="Models\SteamDeck\OEM8.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\SteamDeck\LeftShoulder.obj">
@@ -1474,7 +1474,7 @@
     <None Update="models\SteamDeck\PowerButton.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\RightPadTouch.obj">
+    <None Update="Models\SteamDeck\OEM9.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\SteamDeck\RightShoulder.obj">

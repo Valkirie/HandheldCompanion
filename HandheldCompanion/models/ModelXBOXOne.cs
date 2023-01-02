@@ -187,13 +187,13 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticWhite;
 
                 // specific material(s)
-                if (model3D == USBPortOuter
-                    || model3D == B1Interior || model3D == B1Interior2
-                    || model3D == B2Interior || model3D == B2Interior2
-                    || model3D == B3Interior || model3D == B3Interior2
-                    || model3D == B4Interior || model3D == B4Interior2
-                    || model3D == RightThumbRing || model3D == LeftThumbRing
-                    || model3D == ShareButtonSymbol || model3D == StartSymbol || model3D == BackSymbol)
+                if (model3D.Equals(USBPortOuter)
+                    || model3D.Equals(B1Interior) || model3D.Equals(B1Interior2)
+                    || model3D.Equals(B2Interior) || model3D.Equals(B2Interior2)
+                    || model3D.Equals(B3Interior) || model3D.Equals(B3Interior2)
+                    || model3D.Equals(B4Interior) || model3D.Equals(B4Interior2)
+                    || model3D.Equals(RightThumbRing) || model3D.Equals(LeftThumbRing)
+                    || model3D.Equals(ShareButtonSymbol) || model3D.Equals(StartSymbol) || model3D.Equals(BackSymbol))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticBlack;
@@ -202,7 +202,7 @@ namespace HandheldCompanion.Models
                 }
 
                 // specific face button material
-                if (model3D == B1Button || model3D == B2Button || model3D == B3Button || model3D == B4Button)
+                if (model3D.Equals(B1Button) || model3D.Equals(B2Button) || model3D.Equals(B3Button) || model3D.Equals(B4Button))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticTransparent;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticTransparent;

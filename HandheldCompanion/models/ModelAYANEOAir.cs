@@ -161,7 +161,7 @@ namespace HandheldCompanion.Models
 
                 // specific material(s)
                 // black
-                if (model3D == Screen)
+                if (model3D.Equals(Screen))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
                     DefaultMaterials[model3D] = MaterialPlasticBlack;
@@ -169,13 +169,13 @@ namespace HandheldCompanion.Models
                 }
 
                 // dark grey
-                if (model3D == TopBar || model3D == PowerButton
-                    || model3D == ShoulderMiddleLeft || model3D == ShoulderMiddleRight
-                    || model3D == LeftShoulderTrigger || model3D == RightShoulderTrigger
-                    || model3D == LeftThumbRing || model3D == RightThumbRing
-                    || model3D == JoystickCoverLeft || model3D == JoystickCoverRight
-                    || model3D == LeftThumb || model3D == RightThumb
-                    || model3D == JoystickPCBLeft || model3D == JoystickPCBRight
+                if (model3D.Equals(TopBar) || model3D.Equals(PowerButton)
+                    || model3D.Equals(ShoulderMiddleLeft) || model3D.Equals(ShoulderMiddleRight)
+                    || model3D.Equals(LeftShoulderTrigger) || model3D.Equals(RightShoulderTrigger)
+                    || model3D.Equals(LeftThumbRing) || model3D.Equals(RightThumbRing)
+                    || model3D.Equals(JoystickCoverLeft) || model3D.Equals(JoystickCoverRight)
+                    || model3D.Equals(LeftThumb) || model3D.Equals(RightThumb)
+                    || model3D.Equals(JoystickPCBLeft) || model3D.Equals(JoystickPCBRight)
                     )
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticGreyDark;
@@ -184,8 +184,7 @@ namespace HandheldCompanion.Models
                 }
 
                 // yellow
-                if (model3D == DPadTriangle
-                    || model3D == ALetter || model3D == BLetter || model3D == XLetter || model3D == YLetter)
+                if (model3D.Equals(DPadTriangle) || model3D.Equals(ALetter) || model3D.Equals(BLetter) || model3D.Equals(XLetter) || model3D.Equals(YLetter))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticYellow;
                     DefaultMaterials[model3D] = MaterialPlasticYellow;
@@ -193,7 +192,7 @@ namespace HandheldCompanion.Models
                 }
 
                 // LED
-                if (model3D == JoystickLEDRight || model3D == JoystickLEDLeft)
+                if (model3D.Equals(JoystickLEDRight) || model3D.Equals(JoystickLEDLeft))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticTransparentHighlight;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticYellow;

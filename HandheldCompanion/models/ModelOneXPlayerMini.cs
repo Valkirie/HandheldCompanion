@@ -97,9 +97,9 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
 
                 // specific material(s)
-                if (model3D == MainBody
-                    || model3D == LeftMotor || model3D == RightMotor
-                    || model3D == TurboIcon || model3D == MKBIcon)
+                if (model3D.Equals(MainBody)
+                    || model3D.Equals(LeftMotor) || model3D.Equals(RightMotor)
+                    || model3D.Equals(TurboIcon) || model3D.Equals(MKBIcon))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
                     DefaultMaterials[model3D] = MaterialPlasticWhite;
@@ -107,10 +107,10 @@ namespace HandheldCompanion.Models
                 }
 
                 // specific material(s)
-                if (model3D == SpeakerLeft || model3D == SpeakerRight
-                    || model3D == LeftBaseRing || model3D == RightBaseRing
-                    || model3D == StartIcon || model3D == BackIcon
-                    || model3D == B1Letter || model3D == B2Letter || model3D == B3Letter || model3D == B4Letter
+                if (model3D.Equals(SpeakerLeft) || model3D.Equals(SpeakerRight)
+                    || model3D.Equals(LeftBaseRing) || model3D.Equals(RightBaseRing)
+                    || model3D.Equals(StartIcon) || model3D.Equals(BackIcon)
+                    || model3D.Equals(B1Letter) || model3D.Equals(B2Letter) || model3D.Equals(B3Letter) || model3D.Equals(B4Letter)
                     )
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticOrange;

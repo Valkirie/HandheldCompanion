@@ -142,10 +142,10 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticWhite;
 
                 // specific material(s)
-                if (model3D == MainBodyFront || model3D == Special
-                    || model3D == AudioJack || model3D == USBPort
-                    || model3D == LeftThumbRing || model3D == RightThumbRing
-                    || model3D == LeftShoulderTrigger || model3D == RightShoulderTrigger)
+                if (model3D.Equals(MainBodyFront) || model3D.Equals(Special)
+                    || model3D.Equals(AudioJack) || model3D.Equals(USBPort)
+                    || model3D.Equals(LeftThumbRing) || model3D.Equals(RightThumbRing)
+                    || model3D.Equals(LeftShoulderTrigger) || model3D.Equals(RightShoulderTrigger))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticBlack;
@@ -153,7 +153,7 @@ namespace HandheldCompanion.Models
                     continue;
                 }
 
-                if (model3D == LED1 || model3D == LED2)
+                if (model3D.Equals(LED1) || model3D.Equals(LED2))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialHighlight;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialHighlight;
@@ -161,7 +161,7 @@ namespace HandheldCompanion.Models
                     continue;
                 }
 
-                if (model3D == Charger)
+                if (model3D.Equals(Charger))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialMetal;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialMetal;
@@ -169,7 +169,7 @@ namespace HandheldCompanion.Models
                     continue;
                 }
 
-                if (model3D == LED3)
+                if (model3D.Equals(LED3))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialLEDOff;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialLEDOff;
@@ -177,8 +177,8 @@ namespace HandheldCompanion.Models
                     continue;
                 }
 
-                if (model3D == DPadDownCover || model3D == DPadUpCover || model3D == DPadLeftCover || model3D == DPadRightCover
-                  || model3D == B1Button || model3D == B2Button || model3D == B3Button || model3D == B4Button
+                if (model3D.Equals(DPadDownCover) || model3D.Equals(DPadUpCover) || model3D.Equals(DPadLeftCover) || model3D.Equals(DPadRightCover)
+                  || model3D.Equals(B1Button) || model3D.Equals(B2Button) || model3D.Equals(B3Button) || model3D.Equals(B4Button)
                     )
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticTransparent;

@@ -169,17 +169,17 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == BodyBack
-                    || model3D == LeftMotor || model3D == RightMotor
-                    || model3D == Power
-                    || model3D == ShoulderLeftMiddle || model3D == ShoulderRightMiddle)
+                if (model3D.Equals(MainBody) || model3D.Equals(BodyBack)
+                    || model3D.Equals(LeftMotor) || model3D.Equals(RightMotor)
+                    || model3D.Equals(Power)
+                    || model3D.Equals(ShoulderLeftMiddle) || model3D.Equals(ShoulderRightMiddle))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
                     DefaultMaterials[model3D] = MaterialPlasticWhite;
                     continue;
                 }
 
-                if (model3D == LED1)
+                if (model3D.Equals(LED1))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticTransparentLED;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticTransparentLED;

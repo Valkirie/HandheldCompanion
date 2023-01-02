@@ -65,7 +65,7 @@ namespace HandheldCompanion.Models
                     continue;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == LeftMotor || model3D == RightMotor)
+                if (model3D.Equals(MainBody) || model3D.Equals(LeftMotor) || model3D.Equals(RightMotor))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
                     DefaultMaterials[model3D] = MaterialPlasticWhite;
