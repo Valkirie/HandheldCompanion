@@ -37,6 +37,7 @@ namespace HandheldCompanion.Managers
         {
             SystemManager.XUsbDeviceArrived += XUsbDeviceUpdated;
             SystemManager.XUsbDeviceRemoved += XUsbDeviceUpdated;
+            SystemManager.Initialized += SystemManager_Initialized;
 
             SystemManager.HidDeviceArrived += HidDeviceUpdated;
             SystemManager.HidDeviceRemoved += HidDeviceUpdated;
@@ -116,6 +117,23 @@ namespace HandheldCompanion.Managers
                         break;
                 }
             }));
+        }
+
+        private static void SystemManager_Initialized()
+        {
+            // search for last known controller and connect
+            string path = SettingsManager.GetString("HIDInstancePath");
+
+            if (Controllers.ContainsKey(path))
+            {
+                SetTargetController(path);
+            }
+            else if (Controllers.Count != 0)
+            {
+                // no known controller, connect to the first available
+                path = Controllers.Keys.FirstOrDefault();
+                SetTargetController(path);
+            }
         }
 
         private static void SetHIDStrength(double value)
@@ -303,6 +321,9 @@ namespace HandheldCompanion.Managers
 
             if (targetController.HideOnHook)
                 targetController.Hide();
+
+            // update settings
+            SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstancePath);
 
             // warn service a new controller has arrived
             PipeClient.SendMessage(new PipeClientControllerConnect(targetController.ToString(), targetController.Capacities));

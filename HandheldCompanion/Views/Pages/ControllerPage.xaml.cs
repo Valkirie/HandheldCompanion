@@ -78,10 +78,6 @@ namespace HandheldCompanion.Views.Pages
                     case "HIDstrength":
                         SliderStrength.Value = Convert.ToDouble(value);
                         break;
-                    case "HIDInstancePath":
-                        string path = Convert.ToString(value);
-                        ControllerManager.SetTargetController(path);
-                        break;
 
                     case "SteamDeckLizardMouse":
                         Toggle_SDLizardMouse.IsOn = Convert.ToBoolean(value);
@@ -215,8 +211,7 @@ namespace HandheldCompanion.Views.Pages
         private void ControllerHookClicked(IController Controller)
         {
             string path = Controller.GetInstancePath();
-
-            SettingsManager.SetProperty("HIDInstancePath", path, true);
+            ControllerManager.SetTargetController(path);
         }
 
         private void ControllerHideClicked(IController Controller)
