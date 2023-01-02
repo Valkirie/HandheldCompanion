@@ -109,20 +109,8 @@ namespace ControllerCommon.Managers
 
             IsInitialized = true;
             Initialized?.Invoke();
-        }
 
-        private static void RefreshXInput()
-        {
-            int deviceIndex = 0;
-            while (Devcon.Find(DeviceInterfaceIds.XUsbDevice, out var path, out var instanceId, deviceIndex++))
-                XUsbDevice_DeviceArrived(new DeviceEventArgs() { InterfaceGuid = DeviceInterfaceIds.XUsbDevice, SymLink = path });
-        }
-
-        private static void RefreshDInput()
-        {
-            int deviceIndex = 0;
-            while (Devcon.Find(DeviceInterfaceIds.HidDevice, out var path, out var instanceId, deviceIndex++))
-                HidDevice_DeviceArrived(new DeviceEventArgs() { InterfaceGuid = DeviceInterfaceIds.HidDevice, SymLink = path });
+            LogManager.LogInformation("{0} has started", "SystemManager");
         }
 
         public static void Stop()
@@ -147,6 +135,22 @@ namespace ControllerCommon.Managers
             HidDeviceListener.StopListen(DeviceInterfaceIds.HidDevice);
             HidDeviceListener.DeviceArrived -= HidDevice_DeviceArrived;
             HidDeviceListener.DeviceRemoved -= HidDevice_DeviceRemoved;
+
+            LogManager.LogInformation("{0} has stopped", "SystemManager");
+        }
+
+        private static void RefreshXInput()
+        {
+            int deviceIndex = 0;
+            while (Devcon.Find(DeviceInterfaceIds.XUsbDevice, out var path, out var instanceId, deviceIndex++))
+                XUsbDevice_DeviceArrived(new DeviceEventArgs() { InterfaceGuid = DeviceInterfaceIds.XUsbDevice, SymLink = path });
+        }
+
+        private static void RefreshDInput()
+        {
+            int deviceIndex = 0;
+            while (Devcon.Find(DeviceInterfaceIds.HidDevice, out var path, out var instanceId, deviceIndex++))
+                HidDevice_DeviceArrived(new DeviceEventArgs() { InterfaceGuid = DeviceInterfaceIds.HidDevice, SymLink = path });
         }
 
         private static PnPDetails FindDevice(string SymLink, bool Removed = false)

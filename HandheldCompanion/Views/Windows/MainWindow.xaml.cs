@@ -32,8 +32,6 @@ namespace HandheldCompanion.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static Stopwatch stopwatch = new();
-
         // devices vars
         public static Device handheldDevice;
 
@@ -231,9 +229,6 @@ namespace HandheldCompanion.Views
 
         private void loadPages()
         {
-            stopwatch.Restart();
-            LogManager.LogDebug("Loading pages...");
-
             // initialize pages
             controllerPage = new ControllerPage("controller");
             profilesPage = new ProfilesPage("profiles");
@@ -255,30 +250,18 @@ namespace HandheldCompanion.Views
             {
                 overlayModel.UpdateHIDMode(HID);
             };
-
-            stopwatch.Stop();
-            LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
         }
 
         private void loadWindows()
         {
-            stopwatch.Restart();
-            LogManager.LogDebug("Loading windows...");
-
             // initialize overlay
             overlayModel = new OverlayModel();
             overlayTrackpad = new OverlayTrackpad();
             overlayquickTools = new OverlayQuickTools();
-
-            stopwatch.Stop();
-            LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
         }
 
         private void loadManagers()
         {
-            stopwatch.Restart();
-            LogManager.LogDebug("Loading managers...");
-
             // initialize managers
             toastManager = new ToastManager("HandheldCompanion");
 
@@ -322,9 +305,6 @@ namespace HandheldCompanion.Views
 
             SystemManager.UsbDeviceArrived += GenericDeviceUpdated;
             SystemManager.UsbDeviceRemoved += GenericDeviceUpdated;
-
-            stopwatch.Stop();
-            LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
         }
 
         private void GenericDeviceUpdated(PnPDevice device)
@@ -678,7 +658,7 @@ namespace HandheldCompanion.Views
                 case WindowState.Minimized:
                     notifyIcon.Visible = true;
                     ShowInTaskbar = false;
-                    toastManager.SendToast(Title, "The application is running in the background.");
+                    toastManager.SendToast(Title, "The application is running in the background");
                     break;
                 case WindowState.Normal:
                 case WindowState.Maximized:

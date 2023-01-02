@@ -23,7 +23,7 @@ namespace ControllerCommon.Processor.Intel
 
             if (!File.Exists(path))
             {
-                LogManager.LogError("Rw.exe is missing. Power Manager won't work.");
+                LogManager.LogError("Rw.exe is missing. Power Manager won't work");
                 return;
             }
 

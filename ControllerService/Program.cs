@@ -32,7 +32,7 @@ namespace ControllerService
 
             if (processes.Length > 1)
             {
-                LogManager.LogCritical("{0} is already running. Exiting.", proc);
+                LogManager.LogCritical("{0} is already running. Exiting...", proc);
                 return;
             }
 

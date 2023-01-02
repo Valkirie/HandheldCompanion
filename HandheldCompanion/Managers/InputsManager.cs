@@ -501,6 +501,8 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = true;
             Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "InputsManager");
         }
 
         public static void Stop()
@@ -513,6 +515,8 @@ namespace HandheldCompanion.Managers
             //It is recommened to dispose it
             m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
+
+            LogManager.LogInformation("{0} has stopped", "InputsManager");
         }
 
         public static void UpdateReport(ControllerButtonFlags Buttons)

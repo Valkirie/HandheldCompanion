@@ -56,6 +56,8 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = true;
             Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "ControllerManager");
         }
 
         public static void Stop()
@@ -75,6 +77,8 @@ namespace HandheldCompanion.Managers
             foreach (IController controller in Controllers.Values)
                 controller.Unhide();
             // HidHide.SetCloaking(!HIDuncloakonclose);
+
+            LogManager.LogInformation("{0} has stopped", "ControllerManager");
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)

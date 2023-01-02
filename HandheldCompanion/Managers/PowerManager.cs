@@ -405,7 +405,7 @@ namespace HandheldCompanion.Managers
                     cpuWatchdog.Stop();
                     processor.Stop();
 
-                    LogManager.LogWarning("Core isolation, Memory integrity setting is turned on. TDP read/write is disabled.");
+                    LogManager.LogWarning("Core isolation, Memory integrity setting is turned on. TDP read/write is disabled");
                 }
             }
 

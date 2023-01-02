@@ -31,6 +31,8 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = true;
             Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "SettingsManager");
         }
 
         public static void Stop()
@@ -39,6 +41,8 @@ namespace HandheldCompanion.Managers
                 return;
 
             IsInitialized = false;
+
+            LogManager.LogInformation("{0} has stopped", "SettingsManager");
         }
 
         public static void SetProperty(string name, object value, bool force = false)

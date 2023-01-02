@@ -560,7 +560,7 @@ namespace ControllerService
             UpdateTimer.Stop();
             BatteryTimer.Stop();
 
-            LogManager.LogInformation($"{0} has stopped", this.ToString());
+            LogManager.LogInformation("{0} has stopped", this.ToString());
             Stopped?.Invoke(this);
         }
 

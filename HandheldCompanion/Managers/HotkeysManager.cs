@@ -117,6 +117,8 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = true;
             Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "HotkeysManager");
         }
 
         public static void Stop()
@@ -125,6 +127,8 @@ namespace HandheldCompanion.Managers
                 return;
 
             IsInitialized = false;
+
+            LogManager.LogInformation("{0} has stopped", "HotkeysManager");
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -224,12 +228,12 @@ namespace HandheldCompanion.Managers
             // failed to parse
             if (hotkey is null)
             {
-                LogManager.LogError("Error while parsing hotkey {0}. Object is null.", fileName);
+                LogManager.LogError("Error while parsing hotkey {0}. Object is null", fileName);
             }
 
             if (!InputsHotkey.InputsHotkeys.ContainsKey(hotkey.hotkeyId))
             {
-                LogManager.LogError("Error while parsing {0}. InputsHotkey is outdated.", fileName);
+                LogManager.LogError("Error while parsing {0}. InputsHotkey is outdated", fileName);
             }
 
             return hotkey;

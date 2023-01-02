@@ -92,6 +92,8 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = true;
             Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "ProfileManager");
         }
 
         public static void Stop()
@@ -103,6 +105,8 @@ namespace HandheldCompanion.Managers
 
             profileWatcher.Deleted -= ProfileDeleted;
             profileWatcher.Dispose();
+
+            LogManager.LogInformation("{0} has stopped", "ProfileManager");
         }
 
         public static bool Contains(Profile profile)
@@ -263,7 +267,7 @@ namespace HandheldCompanion.Managers
             // failed to parse
             if (profile is null || profile.name is null || profile.path is null)
             {
-                LogManager.LogError("Could not parse profile {0}.", fileName);
+                LogManager.LogError("Could not parse profile {0}", fileName);
                 return;
             }
 

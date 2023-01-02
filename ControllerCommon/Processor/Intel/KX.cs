@@ -23,7 +23,7 @@ namespace ControllerCommon.Processor.Intel
 
             if (!File.Exists(path))
             {
-                LogManager.LogError("KX.exe is missing. Power Manager won't work.");
+                LogManager.LogError("KX.exe is missing. Power Manager won't work");
                 return;
             }
 

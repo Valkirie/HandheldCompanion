@@ -106,6 +106,8 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = true;
             Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "ProcessManager");
         }
 
         public static void Stop()
@@ -123,6 +125,8 @@ namespace HandheldCompanion.Managers
             Automation.RemoveAllEventHandlers();
 
             UnhookWinEvent(winHook);
+
+            LogManager.LogInformation("{0} has stopped", "ProcessManager");
         }
 
         public static ProcessEx GetForegroundProcess()

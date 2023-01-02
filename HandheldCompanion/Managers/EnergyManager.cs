@@ -79,6 +79,8 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = true;
             Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "EnergyManager");
         }
 
         public static void Stop()
@@ -89,6 +91,8 @@ namespace HandheldCompanion.Managers
             IsInitialized = false;
 
             RestoreDefaultEfficiency();
+
+            LogManager.LogInformation("{0} has stopped", "EnergyManager");
         }
 
         private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)

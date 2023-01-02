@@ -186,7 +186,7 @@ namespace ControllerCommon.Sensors
                     // Checksum 0xC1
                     byte[] buffer = new byte[] { 0xA4, 0x03, 0x08, 0x12, 0xC1 };
 
-                    LogManager.LogError("Serial USB Received unexpected datalength and start register, setting register...");
+                    LogManager.LogError("Serial USB Received unexpected datalength and start register, setting register..");
 
                     try
                     {

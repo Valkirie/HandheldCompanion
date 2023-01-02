@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Platforms;
+﻿using ControllerCommon.Managers;
+using ControllerCommon.Platforms;
 using HandheldCompanion.Platforms;
 using System.Diagnostics;
 
@@ -14,6 +15,8 @@ namespace HandheldCompanion.Managers
             steamPlatform = new();
 
             IsInitialized = true;
+
+            LogManager.LogInformation("{0} has started", "PlatformManager");
         }
 
         public static Platform GetPlatform(Process proc)
