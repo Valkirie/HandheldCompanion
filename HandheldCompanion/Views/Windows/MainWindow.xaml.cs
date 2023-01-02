@@ -157,7 +157,6 @@ namespace HandheldCompanion.Views
 
             // start static managers in sequence
             ControllerManager.Start();
-            InputsManager.Start();
             EnergyManager.Start();
             HotkeysManager.Start();
             SystemManager.Start();
@@ -276,9 +275,6 @@ namespace HandheldCompanion.Views
             _managers.Add(taskManager);
             _managers.Add(powerManager);
             _managers.Add(updateManager);
-
-            // hook into managers events
-            InputsManager.TriggerRaised += InputsManager_TriggerRaised;
 
             // listen to system events
             SystemManager.SystemStatusChanged += OnSystemStatusChanged;
@@ -727,19 +723,21 @@ namespace HandheldCompanion.Views
         {
             switch (status)
             {
-                case SystemManager.SystemStatus.Ready:
+                case SystemManager.SystemStatus.SystemReady:
                     {
                         // resume delay (arbitrary)
                         await Task.Delay(2000);
 
                         // restore inputs manager
                         InputsManager.Start();
+                        InputsManager.TriggerRaised += InputsManager_TriggerRaised;
                     }
                     break;
-                case SystemManager.SystemStatus.Unready:
+                case SystemManager.SystemStatus.SystemPending:
                     {
                         //pause inputs manager
                         InputsManager.Stop();
+                        InputsManager.TriggerRaised -= InputsManager_TriggerRaised;
                     }
                     break;
             }

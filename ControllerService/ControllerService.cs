@@ -544,7 +544,7 @@ namespace ControllerService
 
             switch (status)
             {
-                case SystemStatus.Ready:
+                case SystemStatus.SystemReady:
                     {
                         // resume delay (arbitrary)
                         await Task.Delay(4000);
@@ -558,7 +558,7 @@ namespace ControllerService
                         SetControllerMode(HIDmode);
                     }
                     break;
-                case SystemStatus.Unready:
+                case SystemStatus.SystemPending:
                     {
                         vTarget.Dispose();
                         vTarget = null;

@@ -33,6 +33,9 @@ namespace ControllerCommon.Managers
         [DllImport("hid", CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.U1)]
         static extern bool HidD_GetProductString(IntPtr HidDeviceObject, [Out] byte[] Buffer, uint BufferLength);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr OpenInputDesktop(uint dwFlags, bool fInherit, uint dwDesiredAccess);
         #endregion
 
         #region events
@@ -65,18 +68,19 @@ namespace ControllerCommon.Managers
 
         private static ConcurrentDictionary<string, PnPDetails> PnPDevices = new();
 
-        private static bool IsPowerSuspended;
-        private static bool IsSessionLocked;
+        private static bool IsPowerSuspended = false;
+        private static bool IsSessionLocked = true;
 
-        private static SystemStatus currentSystemStatus = SystemStatus.Ready;
-        private static SystemStatus previousSystemStatus = SystemStatus.Ready;
+        private static SystemStatus currentSystemStatus = SystemStatus.None;
+        private static SystemStatus previousSystemStatus = SystemStatus.None;
 
         public static bool IsInitialized;
 
         public enum SystemStatus
         {
-            Unready = 0,
-            Ready = 1,
+            None = 0,
+            SystemPending = 1,
+            SystemReady = 2,
         }
 
         static SystemManager()
@@ -90,6 +94,10 @@ namespace ControllerCommon.Managers
             // listen to system events
             SystemEvents.PowerModeChanged += OnPowerChange;
             SystemEvents.SessionSwitch += OnSessionSwitch;
+
+            // check if current session is locked
+            IntPtr handle = OpenInputDesktop(0, false, 0);
+            IsSessionLocked = handle == IntPtr.Zero;
 
             UsbDeviceListener.StartListen(DeviceInterfaceIds.UsbDevice);
             UsbDeviceListener.DeviceArrived += UsbDevice_DeviceArrived;
@@ -106,6 +114,7 @@ namespace ControllerCommon.Managers
             RefreshHID();
             RefreshXInput();
             RefreshDInput();
+            SystemRoutine();
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -484,8 +493,6 @@ namespace ControllerCommon.Managers
 
         private static void OnPowerChange(object s, PowerModeChangedEventArgs e)
         {
-            LogManager.LogDebug("Device power mode set to {0}", e.Mode);
-
             switch (e.Mode)
             {
                 case PowerModes.Resume:
@@ -499,13 +506,13 @@ namespace ControllerCommon.Managers
                     return;
             }
 
+            LogManager.LogDebug("Device power mode set to {0}", e.Mode);
+
             SystemRoutine();
         }
 
         private static void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
         {
-            LogManager.LogDebug("Session switched to {0}", e.Reason);
-
             switch (e.Reason)
             {
                 case SessionSwitchReason.SessionUnlock:
@@ -518,15 +525,17 @@ namespace ControllerCommon.Managers
                     return;
             }
 
+            LogManager.LogDebug("Session switched to {0}", e.Reason);
+
             SystemRoutine();
         }
 
         private static void SystemRoutine()
         {
             if (!IsPowerSuspended && !IsSessionLocked)
-                currentSystemStatus = SystemStatus.Ready;
+                currentSystemStatus = SystemStatus.SystemReady;
             else
-                currentSystemStatus = SystemStatus.Unready;
+                currentSystemStatus = SystemStatus.SystemPending;
 
             // only raise event is system status has changed
             if (previousSystemStatus != currentSystemStatus)
