@@ -166,9 +166,6 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    b_CreateProfile.Visibility = Visibility.Collapsed;
-                    GridProfile.Visibility = Visibility.Visible;
-
                     ProfileToggle.IsEnabled = true;
                     ProfileToggle.IsOn = profile.isEnabled;
                     UMCToggle.IsOn = profile.umc_enabled;
@@ -192,16 +189,16 @@ namespace HandheldCompanion.Views.QuickPages
                     ProfilesPageHotkey.inputsChord.GamepadButtons = profile.umc_trigger;
                     ProfilesPageHotkey.Refresh();
 
-                    // release lock
-                    Monitor.Exit(updateLock);
-
-                    if (backgroundtask)
-                        return;
-
-                    _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
-                                        $"{profile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
-                                        ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+                    if (!backgroundtask)
+                    {
+                        _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
+                                            $"{profile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
+                                            ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+                    }
                 });
+
+                // release lock
+                Monitor.Exit(updateLock);
             }
         }
 
@@ -230,7 +227,8 @@ namespace HandheldCompanion.Views.QuickPages
                 }
                 else
                 {
-                    ProfileUpdated(currentProfile, true, true);
+                    b_CreateProfile.Visibility = Visibility.Collapsed;
+                    GridProfile.Visibility = Visibility.Visible;
                 }
             });
         }
