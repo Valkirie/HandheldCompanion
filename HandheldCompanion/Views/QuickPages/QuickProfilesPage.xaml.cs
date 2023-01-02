@@ -2,7 +2,9 @@ using ControllerCommon;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
+using Microsoft.VisualBasic;
 using ModernWpf.Controls;
+using PrecisionTiming;
 using System;
 using System.Threading;
 using System.Windows;
@@ -19,6 +21,9 @@ namespace HandheldCompanion.Views.QuickPages
         private ProcessEx currentProcess;
         private Profile currentProfile;
         private Hotkey ProfilesPageHotkey;
+
+        private const int UpdateInterval = 500;
+        private PrecisionTimer profileTimer;
 
         private object updateLock = new();
 
@@ -100,6 +105,11 @@ namespace HandheldCompanion.Views.QuickPages
 
                 cB_Output.Items.Add(panel);
             }
+
+            profileTimer = new PrecisionTimer();
+            profileTimer.SetInterval(UpdateInterval);
+            profileTimer.SetAutoResetMode(false);
+            profileTimer.Tick += (sender, e) => ProfileManager.UpdateOrCreateProfile(currentProfile, true);
         }
 
         private void HotkeysManager_CommandExecuted(string listener)
@@ -159,6 +169,13 @@ namespace HandheldCompanion.Views.QuickPages
             if (!isCurrent || profile.isDefault)
                 return;
 
+            // if an update is pending, execute it and stop timer
+            if (profileTimer.IsRunning())
+            {
+                profileTimer.Stop();
+                ProfileManager.UpdateOrCreateProfile(currentProfile, true);
+            }
+
             // update current profile
             currentProfile = profile;
 
@@ -212,9 +229,6 @@ namespace HandheldCompanion.Views.QuickPages
             // update current process
             currentProcess = processEx;
 
-            // update current profile
-            currentProfile = ProfileManager.GetProfileFromExec(currentProcess.Name);
-
             this.Dispatcher.Invoke(() =>
             {
                 string MainWindowTitle = ProcessUtils.GetWindowTitle(processEx.MainWindowHandle);
@@ -225,7 +239,8 @@ namespace HandheldCompanion.Views.QuickPages
                 // disable create button if process is bypassed
                 b_CreateProfile.IsEnabled = processEx.Filter == ProcessEx.ProcessFilter.Allowed;
 
-                if (currentProfile is null)
+                Profile profile = ProfileManager.GetProfileFromExec(currentProcess.Name);
+                if (profile is null)
                 {
                     b_CreateProfile.Visibility = Visibility.Visible;
                     GridProfile.Visibility = Visibility.Collapsed;
@@ -240,7 +255,8 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void UpdateProfile()
         {
-            ProfileManager.UpdateOrCreateProfile(currentProfile, true);
+            profileTimer.Stop();
+            profileTimer.Start();
         }
 
         private void ProfileToggle_Toggled(object sender, RoutedEventArgs e)
