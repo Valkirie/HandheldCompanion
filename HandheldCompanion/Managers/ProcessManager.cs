@@ -365,7 +365,6 @@ namespace HandheldCompanion.Managers
 
                 // System shell
                 case "dwm.exe":
-                case "explorer.exe":
                 case "sihost.exe":
                 case "fontdrvhost.exe":
                 case "chsime.exe":
@@ -389,6 +388,7 @@ namespace HandheldCompanion.Managers
                 case "shellexperiencehost.exe":
                 case "startmenuexperiencehost.exe":
                 case "searchhost.exe":
+                case "explorer.exe":
                     return ProcessFilter.Ignored;
 
                 default:
