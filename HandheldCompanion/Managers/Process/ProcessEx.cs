@@ -9,7 +9,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static HandheldCompanion.Managers.EnergyManager;
-using Brush = System.Windows.Media.Brush;
 using Image = System.Windows.Controls.Image;
 
 namespace HandheldCompanion.Managers

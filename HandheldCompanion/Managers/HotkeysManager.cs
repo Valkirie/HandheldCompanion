@@ -1,7 +1,6 @@
 ﻿using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
-using Gma.System.MouseKeyHook.HotKeys;
 using GregsStack.InputSimulatorStandard.Native;
 using ModernWpf.Controls;
 using System;

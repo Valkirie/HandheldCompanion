@@ -1,5 +1,4 @@
 using ControllerCommon;
-using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers;
@@ -193,7 +192,7 @@ namespace HandheldCompanion.Views
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            switch(name)
+            switch (name)
             {
                 case "ToastEnable":
                     toastManager.Enabled = Convert.ToBoolean(value);

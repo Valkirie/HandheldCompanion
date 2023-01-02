@@ -13,7 +13,6 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using Attributes = ControllerCommon.Managers.Hid.Attributes;
 using Capabilities = ControllerCommon.Managers.Hid.Capabilities;
 using Path = System.IO.Path;
@@ -409,7 +408,7 @@ namespace ControllerCommon.Managers
                 if (IsInitialized)
                 {
                     // give system at least one second to initialize device
-                    await Task.Delay(1000);                                                        
+                    await Task.Delay(1000);
                     RefreshHID();
                 }
 

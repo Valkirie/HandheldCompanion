@@ -2,7 +2,6 @@ using ControllerCommon;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
-using Microsoft.VisualBasic;
 using ModernWpf.Controls;
 using PrecisionTiming;
 using System;

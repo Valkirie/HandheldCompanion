@@ -1,7 +1,6 @@
 ﻿using ControllerCommon.Managers;
 using ModernWpf.Controls;
 using PrecisionTiming;
-using SharpDX.XInput;
 using System;
 using System.Windows;
 using System.Windows.Controls;

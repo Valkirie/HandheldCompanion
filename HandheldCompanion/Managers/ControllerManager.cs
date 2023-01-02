@@ -4,7 +4,6 @@ using ControllerCommon.Managers;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Views;
 using SharpDX.DirectInput;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
