@@ -52,7 +52,8 @@ namespace ControllerCommon
         public float accelerometer { get; set; } = 1.0f;        // accelerometer multiplicator (remove me)
 
         public int steering { get; set; } = 0;                  // 0 = Roll, 1 = Yaw
-        public float antideadzone { get; set; } = 0.0f;         // todo: typeme
+        public float antideadzoneL { get; set; } = 0.0f;        // todo: typeme
+        public float antideadzoneR { get; set; } = 0.0f;        // todo: typeme
 
         public bool inverthorizontal { get; set; }              // if true, invert horizontal axis
         public bool invertvertical { get; set; }                // if false, invert vertical axis

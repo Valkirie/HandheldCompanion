@@ -31,9 +31,9 @@ namespace ControllerCommon.Controllers
         protected FontIcon ui_icon = new FontIcon() { Glyph = "\uE7FC", Height = 40, HorizontalAlignment = HorizontalAlignment.Center };
         protected TextBlock ui_name = new TextBlock() { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(12, 0, 0, 0) };
         protected Button ui_button_hide = new Button() { Width = 100, FontSize = 14, VerticalAlignment = VerticalAlignment.Center };
-        protected Button ui_button_hook = new Button() { Width = 100, FontSize = 14, VerticalAlignment = VerticalAlignment.Center };
+        protected Button ui_button_hook = new Button() { Width = 100, FontSize = 14, VerticalAlignment = VerticalAlignment.Center, Style = Application.Current.FindResource("AccentButtonStyle") as Style };
         protected DockPanel ui_dock_content = new DockPanel() { HorizontalAlignment = HorizontalAlignment.Left };
-        protected DockPanel ui_dock_buttons = new DockPanel() { HorizontalAlignment = HorizontalAlignment.Right };
+        protected SimpleStackPanel ui_dock_buttons = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
 
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(ControllerInput Inputs);
@@ -110,10 +110,12 @@ namespace ControllerCommon.Controllers
             ui_grid.ColumnDefinitions.Add(colDef1);
 
             // SetResourceReference
+            /*
             ui_icon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
             ui_name.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
             ui_button_hide.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
             ui_button_hook.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+            */
             ui_border.SetResourceReference(Control.BackgroundProperty, "SystemControlPageBackgroundAltHighBrush");
 
             ui_dock_content.Children.Add(ui_icon);
@@ -133,8 +135,6 @@ namespace ControllerCommon.Controllers
         {
             ui_button_hook.IsEnabled = !IsPlugged();
             ui_button_hook.Content = IsPlugged() ? "Connected" : "Connect";
-            ui_button_hook.Style = IsPlugged() ? Application.Current.FindResource("AccentButtonStyle") as Style : Application.Current.FindResource("DefaultButtonStyle") as Style;
-
             ui_button_hide.Content = IsHidden() ? "Unhide" : "Hide";
         }
 
