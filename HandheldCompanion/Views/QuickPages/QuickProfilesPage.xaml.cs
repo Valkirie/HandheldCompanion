@@ -434,7 +434,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.antideadzoneL = (float)SliderAntiDeadzoneLeft.Value;
+                currentProfile.antideadzoneR = (float)SliderAntiDeadzoneRight.Value;
                 UpdateProfile();
 
                 Monitor.Exit(updateLock);

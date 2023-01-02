@@ -73,6 +73,7 @@
             <!-- Controller settings -->
             <Expander
                 Padding="15,6,15,6" 
+                HorizontalAlignment="Stretch"
                 IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
                 
                 <Expander.Header>
