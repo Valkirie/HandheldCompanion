@@ -195,6 +195,16 @@ namespace HandheldCompanion.Controllers
             Inputs.RightPadTouch = input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch];
             Inputs.RightPadClick = input.State.ButtonState[NeptuneControllerButton.BtnRPadPress];
 
+            if (Inputs.LeftPadTouch)
+                Inputs.Buttons |= ControllerButtonFlags.OEM8;
+            if (Inputs.LeftPadClick)
+                Inputs.Buttons |= ControllerButtonFlags.OEM9;
+
+            if (Inputs.RightPadTouch)
+                Inputs.Buttons |= ControllerButtonFlags.OEM10;
+            if (Inputs.RightPadClick)
+                Inputs.Buttons |= ControllerButtonFlags.OEM11;
+
             base.UpdateReport();
         }
 
