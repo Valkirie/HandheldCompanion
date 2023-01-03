@@ -289,16 +289,17 @@ namespace HandheldCompanion.Controllers
             Controller.SetVibration(vibration);
         }
 
-        public override async void Rumble(int loop)
+        public override void Rumble(int loop)
         {
             new Thread(() =>
             {
-                for (int i = 0; i < loop; i++)
+                for (int i = 0; i < loop * 2; i++)
                 {
-                    SetVibration(byte.MaxValue, byte.MaxValue);
-                    Thread.Sleep(100);
+                    if (i % 2 == 0)
+                        SetVibration(byte.MaxValue, byte.MaxValue);
+                    else
+                        SetVibration(0, 0);
 
-                    SetVibration(0, 0);
                     Thread.Sleep(100);
                 }
             }).Start();

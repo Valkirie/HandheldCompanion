@@ -178,7 +178,7 @@ namespace ControllerCommon.Controllers
             return false;
         }
 
-        public virtual async void Rumble(int loop)
+        public virtual void Rumble(int loop)
         { }
 
         public virtual bool IsPlugged()
