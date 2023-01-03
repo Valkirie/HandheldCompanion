@@ -106,6 +106,10 @@ namespace ControllerService.Targets
             LeftThumb = new Vector2(Inputs.LeftThumbX, Inputs.LeftThumbY);
             RightThumb = new Vector2(Inputs.RightThumbX, Inputs.RightThumbY);
 
+            // Apply user defined in game deadzone setting compensation prior to UMC additions
+            LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.antideadzoneL);
+            RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, ControllerService.currentProfile.antideadzoneR);
+
             if (ControllerService.currentProfile.umc_enabled)
             {
                 if ((ControllerService.currentProfile.umc_motion_defaultoffon == UMC_Motion_Default.Off && (ControllerService.currentProfile.umc_trigger & Inputs.Buttons) != 0) ||
@@ -208,9 +212,6 @@ namespace ControllerService.Targets
                 }
             }
 
-            // Apply user defined in game deadzone setting compensation
-            LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.antideadzoneL);
-            RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, ControllerService.currentProfile.antideadzoneR);
         }
 
         internal void SubmitReport()

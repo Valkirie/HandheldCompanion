@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -126,27 +126,23 @@ namespace ControllerCommon.Utils
         // Use cases foreseen:
         // - Game has deadzone, but no way to configure or change it
         // - User does not want to change general emulator deadzone setting but want's it removed for specific game and use UMC Steering
-        public static Vector2 ApplyAntiDeadzone(Vector2 ThumbValue, float DeadzoneIn)
+        public static Vector2 ApplyAntiDeadzone(Vector2 ThumbValue, float DeadzonePercentage)
         {
-            // todo: move this somewhere else
-            float deadzone = DeadzoneIn / 100;
+            // Return if thumbstick or deadzone is not used
+            if (DeadzonePercentage.Equals(0.0f) || ThumbValue == Vector2.Zero)
+                return ThumbValue;
 
-            Vector2 stickInput = new Vector2(ThumbValue.X, ThumbValue.Y) / short.MaxValue;
+            // Convert short value input to -1 to 1
+            Vector2 StickInput = new Vector2(ThumbValue.X, ThumbValue.Y) / short.MaxValue;
 
-            if (stickInput == Vector2.Zero)
-                return stickInput;
+            // Convert 0-100% to 0 to 1
+            float Deadzone = DeadzonePercentage / 100;
 
-            float magnitude = stickInput.Length();
+            // Map vector to new range by determining the multiplier
+            float Multiplier = ((1 - Deadzone) * StickInput.Length() + Deadzone) / StickInput.Length();
 
-            if (magnitude < deadzone)
-            {
-                float dist = Math.Abs(magnitude - deadzone);
-                float mult = deadzone / magnitude;
-
-                return stickInput * mult * short.MaxValue;
-            }
-
-            return stickInput * short.MaxValue;
+            // Convert -1 to 1 back to short value and return
+            return StickInput * Multiplier * short.MaxValue;
         }
 
         // Custom sensitivity
