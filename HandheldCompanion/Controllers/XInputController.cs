@@ -5,6 +5,7 @@ using SharpDX.XInput;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HandheldCompanion.Controllers
@@ -290,14 +291,18 @@ namespace HandheldCompanion.Controllers
 
         public override async void Rumble(int loop)
         {
-            for (int i = 0; i < loop; i++)
+            new Thread(() =>
             {
-                SetVibration(byte.MaxValue, byte.MaxValue);
-                await Task.Delay(100);
+                for (int i = 0; i < loop; i++)
+                {
+                    SetVibration(byte.MaxValue, byte.MaxValue);
+                    Thread.Sleep(100);
 
-                SetVibration(0, 0);
-                await Task.Delay(100);
-            }
+                    SetVibration(0, 0);
+                    Thread.Sleep(100);
+                }
+            }).Start();
+
             base.Rumble(loop);
         }
 
