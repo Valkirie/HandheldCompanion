@@ -384,6 +384,7 @@ namespace HandheldCompanion.Views.Pages
                 Toggle_UniversalMotion.IsOn = currentProfile.umc_enabled;
                 cB_Input.SelectedIndex = (int)currentProfile.umc_input;
                 cB_Output.SelectedIndex = (int)currentProfile.umc_output;
+                tb_ProfileUMCAntiDeadzone.Value = currentProfile.umc_anti_deadzone;
                 cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.umc_motion_defaultoffon;
 
                 // todo: improve me ?
@@ -471,6 +472,7 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.umc_enabled = (bool)Toggle_UniversalMotion.IsOn;
             currentProfile.umc_input = (Input)cB_Input.SelectedIndex;
             currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
+            currentProfile.umc_anti_deadzone = (float)tb_ProfileUMCAntiDeadzone.Value;
             currentProfile.umc_motion_defaultoffon = (UMC_Motion_Default)cB_UMC_MotionDefaultOffOn.SelectedIndex;
 
             // Power settings

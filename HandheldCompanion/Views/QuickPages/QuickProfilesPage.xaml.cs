@@ -209,6 +209,7 @@ namespace HandheldCompanion.Views.QuickPages
                     TDPToggle.IsOn = profile.TDP_override;
 
                     // Slider settings
+                    SliderUMCAntiDeadzone.Value = profile.umc_anti_deadzone;
                     SliderSensitivityX.Value = profile.aiming_sensitivity_x;
                     SliderSensitivityY.Value = profile.aiming_sensitivity_y;
                     SliderAntiDeadzoneLeft.Value = profile.antideadzoneL;
@@ -402,6 +403,20 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
+                RequestUpdate();
+
+                Monitor.Exit(updateLock);
+            }
+        }
+
+        private void SliderUMCAntiDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (currentProfile is null)
+                return;
+
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.umc_anti_deadzone = (float)SliderUMCAntiDeadzone.Value;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
