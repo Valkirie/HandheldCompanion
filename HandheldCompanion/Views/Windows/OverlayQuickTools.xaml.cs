@@ -81,6 +81,8 @@ namespace HandheldCompanion.Views.Windows
                         this.Activate();
                         break;
                 }
+
+                this.UpdateLayout();
             });
         }
 
