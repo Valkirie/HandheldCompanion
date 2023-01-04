@@ -172,6 +172,8 @@ namespace ControllerService.Targets
                                             // Y input only from motion controls
                                             RightThumb.X = (short)(Math.Clamp(GamepadThumb.X - FlickStickX, short.MinValue, short.MaxValue));
                                             RightThumb.Y = (short)(Math.Clamp(GamepadThumb.Y, short.MinValue, short.MaxValue));
+                                            
+                                            RightThumb = InputUtils.ImproveCircularity(RightThumb);
                                         }
                                         else
                                         {
@@ -185,6 +187,8 @@ namespace ControllerService.Targets
                                     case Output.LeftStick:
                                         LeftThumb.X = (short)(Math.Clamp(LeftThumb.X + GamepadThumb.X, short.MinValue, short.MaxValue));
                                         LeftThumb.Y = (short)(Math.Clamp(LeftThumb.Y + GamepadThumb.Y, short.MinValue, short.MaxValue));
+
+                                        LeftThumb = InputUtils.ImproveCircularity(LeftThumb);
                                         break;
                                 }
                             }
