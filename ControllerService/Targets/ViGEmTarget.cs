@@ -177,6 +177,8 @@ namespace ControllerService.Targets
                                         {
                                             RightThumb.X = (short)(Math.Clamp(RightThumb.X + GamepadThumb.X, short.MinValue, short.MaxValue));
                                             RightThumb.Y = (short)(Math.Clamp(RightThumb.Y + GamepadThumb.Y, short.MinValue, short.MaxValue));
+
+                                            RightThumb = InputUtils.ImproveCircularity(RightThumb);
                                         }
                                         break;
 

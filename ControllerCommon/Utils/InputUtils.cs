@@ -145,6 +145,22 @@ namespace ControllerCommon.Utils
             return StickInput * Multiplier * short.MaxValue;
         }
 
+        public static Vector2 ImproveCircularity(Vector2 ThumbValue)
+        {
+            // Convert short value input to -1 to 1
+            Vector2 StickInput = new Vector2(ThumbValue.X, ThumbValue.Y) / short.MaxValue;
+
+            // Return if length is not longer then 1
+            if (StickInput.Length() <= 1.0f)
+                return ThumbValue;
+
+            // Cap vector length to 1 by determining the multiplier
+            float Multiplier = 1 / StickInput.Length();
+
+            // Convert -1 to 1 back to short value and return
+            return StickInput * Multiplier * short.MaxValue;
+        }
+
         // Custom sensitivity
         // Interpolation function (linear), takes list of nodes coordinates and gamepad joystick position returns game input
         private static int SensivityIdx = 2;
