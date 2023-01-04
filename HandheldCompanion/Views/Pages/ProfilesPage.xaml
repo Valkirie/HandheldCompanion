@@ -495,6 +495,27 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                        <TextBlock Width="25" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Value, ElementName=tb_ProfileUMCAntiDeadzone, Mode=OneWay}" />
+                                        <TextBlock VerticalAlignment="Center" Text="%" />
+                                        <Slider Margin="6,0,0,0" Name="tb_ProfileUMCAntiDeadzone" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                                    </DockPanel>
+                                </Grid>
+
+                                <!-- Separator -->
+                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />                                
+                                
+                                <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
                                         <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOff}" FontSize="14" VerticalAlignment="Center"/>
                                         <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOffDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>

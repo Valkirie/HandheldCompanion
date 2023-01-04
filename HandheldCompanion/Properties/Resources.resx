@@ -1112,4 +1112,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_ControllerSettingsDesc" xml:space="preserve">
     <value>Change the virtual controller settings</value>
   </data>
+  <data name="ProfilesPage_UMCAntiDeadzone" xml:space="preserve">
+    <value>Motion anti-deadzone</value>
+  </data>
+  <data name="ProfilesPage_UMCAntiDeadzoneDesc" xml:space="preserve">
+    <value>Compensate for in game deadzone, improve registration of small movements</value>
+  </data>
 </root>

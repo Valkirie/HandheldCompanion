@@ -152,6 +152,9 @@ namespace ControllerService.Targets
                                     Angular.X * ControllerService.currentProfile.GetSensitivityX(),
                                     Angular.Y * ControllerService.currentProfile.GetSensitivityY());
 
+                                // apply anti deadzone to motion based thumb input to overcome deadzone and experience small movements properly
+                                GamepadThumb = InputUtils.ApplyAntiDeadzone(GamepadThumb, ControllerService.currentProfile.umc_anti_deadzone);
+
                                 switch (ControllerService.currentProfile.umc_output)
                                 {
                                     default:
