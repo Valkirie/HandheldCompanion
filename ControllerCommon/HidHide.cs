@@ -64,7 +64,11 @@ namespace ControllerCommon
             try
             {
                 var service = new HidHideControlService();
-                service.RemoveApplicationPath(fileName);
+                if (service.ApplicationPaths.Contains(fileName))
+                {
+                    service.RemoveApplicationPath(fileName);
+                    LogManager.LogInformation("HideDevice RemoveApplicationPath: {0}", fileName);
+                }
             }
             catch
             {
@@ -72,9 +76,7 @@ namespace ControllerCommon
                 process.Start();
                 process.WaitForExit();
                 process.StandardOutput.ReadToEnd();
-            }
-            finally
-            {
+
                 LogManager.LogInformation("HideDevice RemoveApplicationPath: {0}", fileName);
             }
         }
@@ -84,7 +86,11 @@ namespace ControllerCommon
             try
             {
                 var service = new HidHideControlService();
-                service.AddApplicationPath(fileName);
+                if (!service.ApplicationPaths.Contains(fileName))
+                {
+                    service.AddApplicationPath(fileName);
+                    LogManager.LogInformation("HideDevice AddApplicationPath: {0}", fileName);
+                }
             }
             catch
             {
@@ -92,9 +98,7 @@ namespace ControllerCommon
                 process.Start();
                 process.WaitForExit();
                 process.StandardOutput.ReadToEnd();
-            }
-            finally
-            {
+
                 LogManager.LogInformation("HideDevice AddApplicationPath: {0}", fileName);
             }
         }
@@ -115,8 +119,11 @@ namespace ControllerCommon
             try
             {
                 var service = new HidHideControlService();
-                service.RemoveBlockedInstanceId(deviceInstancePath);
-                LogManager.LogInformation("HideDevice RemoveBlockedInstanceId: {0}", deviceInstancePath);
+                if (service.BlockedInstanceIds.Contains(deviceInstancePath))
+                {
+                    service.RemoveBlockedInstanceId(deviceInstancePath);
+                    LogManager.LogInformation("HideDevice RemoveBlockedInstanceId: {0}", deviceInstancePath);
+                }
             }
             catch { }
         }
@@ -126,8 +133,11 @@ namespace ControllerCommon
             try
             {
                 var service = new HidHideControlService();
-                service.AddBlockedInstanceId(deviceInstancePath);
-                LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
+                if (!service.BlockedInstanceIds.Contains(deviceInstancePath))
+                {
+                    service.AddBlockedInstanceId(deviceInstancePath);
+                    LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
+                }
             }
             catch { }
         }
