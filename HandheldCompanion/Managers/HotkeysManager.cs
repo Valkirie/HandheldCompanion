@@ -62,16 +62,22 @@ namespace HandheldCompanion.Managers
 
                 Hotkey hotkey = null;
 
-                string fileName = System.IO.Path.Combine(InstallPath, $"{inputsHotkey.Listener}.json");
+                string fileName = Path.Combine(InstallPath, $"{inputsHotkey.Listener}.json");
 
+                // check for existing hotkey
                 if (File.Exists(fileName))
                     hotkey = ProcessHotkey(fileName);
 
+                // no hotkey found or failed parsing
                 if (hotkey is null)
                     hotkey = new Hotkey(Id, inputsHotkey);
 
-                hotkey.inputsHotkey = InputsHotkey.InputsHotkeys[hotkey.hotkeyId];
+                // hotkey is outdated and using an unknown inputs hotkey
+                if (!InputsHotkeys.ContainsKey(hotkey.hotkeyId))
+                    continue;
 
+                // pull inputs hotkey
+                hotkey.inputsHotkey = InputsHotkey.InputsHotkeys[hotkey.hotkeyId];
                 switch (hotkey.inputsHotkey.hotkeyType)
                 {
                     case InputsHotkeyType.UI:
@@ -222,17 +228,6 @@ namespace HandheldCompanion.Managers
             catch (Exception ex)
             {
                 LogManager.LogError("Could not parse hotkey {0}. {1}", fileName, ex.Message);
-            }
-
-            // failed to parse
-            if (hotkey is null)
-            {
-                LogManager.LogError("Error while parsing hotkey {0}. Object is null", fileName);
-            }
-
-            if (!InputsHotkey.InputsHotkeys.ContainsKey(hotkey.hotkeyId))
-            {
-                LogManager.LogError("Error while parsing {0}. InputsHotkey is outdated", fileName);
             }
 
             return hotkey;
