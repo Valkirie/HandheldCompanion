@@ -206,7 +206,7 @@ namespace HandheldCompanion.Managers
 
                     if (IsKeyDown)
                         SendChordDown(chords);
-                    else if (IsKeyUp)
+                    // else if (IsKeyUp)
                         SendChordUp(chords);
                 }
             }
