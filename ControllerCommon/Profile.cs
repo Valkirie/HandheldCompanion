@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace ControllerCommon
 {
+    [Flags]
     public enum ProfileErrorCode
     {
         None = 0,
@@ -14,6 +15,14 @@ namespace ControllerCommon
         MissingPermission = 3,
         IsDefault = 4,
         IsRunning = 5
+    }
+
+    [Flags]
+    public enum ProfileUpdateSource
+    {
+        Background = 0,
+        ProfilesPage = 1,
+        QuickProfilesPage = 2
     }
 
     [Serializable]

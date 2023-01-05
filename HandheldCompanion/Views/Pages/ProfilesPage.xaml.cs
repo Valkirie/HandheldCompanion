@@ -144,7 +144,7 @@ namespace HandheldCompanion.Views.Pages
         }
 
         #region UI
-        public void ProfileUpdated(Profile profile, bool backgroundtask, bool isCurrent)
+        public void ProfileUpdated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -167,7 +167,7 @@ namespace HandheldCompanion.Views.Pages
                 cB_Profiles.SelectedItem = profile;
             });
 
-            if (backgroundtask)
+            if (source == ProfileUpdateSource.Background)
                 return;
 
             _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
@@ -283,7 +283,7 @@ namespace HandheldCompanion.Views.Pages
                     }
 
                     if (!exists)
-                        ProfileManager.UpdateOrCreateProfile(profile, false);
+                        ProfileManager.UpdateOrCreateProfile(profile, ProfileUpdateSource.ProfilesPage);
                 }
                 catch (Exception ex)
                 {
@@ -481,7 +481,7 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
             currentProfile.TDP_override = (bool)TDPToggle.IsOn;
 
-            ProfileManager.UpdateOrCreateProfile(currentProfile, false);
+            ProfileManager.UpdateOrCreateProfile(currentProfile, ProfileUpdateSource.ProfilesPage);
         }
 
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)

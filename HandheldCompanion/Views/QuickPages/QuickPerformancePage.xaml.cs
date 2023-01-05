@@ -114,7 +114,7 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
-        private void ProfileManager_Updated(Profile profile, bool backgroundtask, bool isCurrent)
+        private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
             if (!isCurrent)
                 return;

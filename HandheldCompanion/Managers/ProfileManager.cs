@@ -30,7 +30,7 @@ namespace HandheldCompanion.Managers
         public static event DeletedEventHandler Deleted;
         public delegate void DeletedEventHandler(Profile profile);
         public static event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(Profile profile, bool backgroundtask, bool isCurrent);
+        public delegate void UpdatedEventHandler(Profile profile, ProfileUpdateSource source, bool isCurrent);
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
 
@@ -156,7 +156,7 @@ namespace HandheldCompanion.Managers
                     Discarded?.Invoke(profile, isCurrent);
 
                     // update profile
-                    UpdateOrCreateProfile(profile, true, false);
+                    UpdateOrCreateProfile(profile, ProfileUpdateSource.Background, false);
                 }
             }
             catch { }
@@ -175,7 +175,7 @@ namespace HandheldCompanion.Managers
                 profile.isRunning = true;
 
                 // update profile
-                UpdateOrCreateProfile(profile, true, false);
+                UpdateOrCreateProfile(profile, ProfileUpdateSource.Background, false);
             }
             catch { }
         }
@@ -218,7 +218,7 @@ namespace HandheldCompanion.Managers
 
                 profile.isRunning = true;
                 profile.fullpath = proc.Path;
-                UpdateOrCreateProfile(profile, true, false);
+                UpdateOrCreateProfile(profile, ProfileUpdateSource.Background, false);
             }
             catch { }
         }
@@ -342,7 +342,7 @@ namespace HandheldCompanion.Managers
             return ProfileErrorCode.None;
         }
 
-        public static void UpdateOrCreateProfile(Profile profile, bool backgroundtask = true, bool fullUpdate = true, bool serialize = true)
+        public static void UpdateOrCreateProfile(Profile profile, ProfileUpdateSource source = ProfileUpdateSource.Background, bool fullUpdate = true, bool serialize = true)
         {
             // refresh error code
             profile.error = SanitizeProfile(profile);
@@ -355,7 +355,7 @@ namespace HandheldCompanion.Managers
             bool isCurrent = profile.executable == currentProfile.executable;
 
             // raise event(s)
-            Updated?.Invoke(profile, backgroundtask, isCurrent);
+            Updated?.Invoke(profile, source, isCurrent);
 
             // inform service
             if (isCurrent)

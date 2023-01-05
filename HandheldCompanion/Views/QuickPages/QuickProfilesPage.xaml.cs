@@ -116,7 +116,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            ProfileManager.UpdateOrCreateProfile(currentProfile, true);
+            ProfileManager.UpdateOrCreateProfile(currentProfile, ProfileUpdateSource.QuickProfilesPage);
         }
 
         private void HotkeysManager_CommandExecuted(string listener)
@@ -171,23 +171,31 @@ namespace HandheldCompanion.Views.QuickPages
                 ProcessManager_ForegroundChanged(currentProcess, null);
         }
 
-        private void ProfileUpdated(Profile profile, bool backgroundtask, bool isCurrent)
+        private void ProfileUpdated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
             if (!isCurrent || profile.isDefault)
                 return;
 
-            // if an update is pending, execute it and stop timer
-            if (UpdateTimer.IsRunning())
-            {
-                UpdateTimer.Stop();
-                SubmitProfile();
-            }
-
-            // update current profile
-            currentProfile = profile;
-
             if (Monitor.TryEnter(updateLock))
             {
+                switch(source)
+                {
+                    // self update, unlock and exit
+                    case ProfileUpdateSource.QuickProfilesPage:
+                        Monitor.Exit(updateLock);
+                        return;
+                }
+
+                // if an update is pending, execute it and stop timer
+                if (UpdateTimer.IsRunning())
+                {
+                    UpdateTimer.Stop();
+                    SubmitProfile();
+                }
+
+                // update current profile
+                currentProfile = profile;
+
                 this.Dispatcher.Invoke(() =>
                 {
                     // manage visibility here too...
@@ -218,13 +226,6 @@ namespace HandheldCompanion.Views.QuickPages
                     // todo: improve me ?
                     ProfilesPageHotkey.inputsChord.GamepadButtons = profile.umc_trigger;
                     ProfilesPageHotkey.Refresh();
-
-                    if (!backgroundtask)
-                    {
-                        _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
-                                            $"{profile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
-                                            ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
-                    }
                 });
 
                 // release lock
