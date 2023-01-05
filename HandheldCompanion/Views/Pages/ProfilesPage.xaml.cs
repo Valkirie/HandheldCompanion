@@ -318,8 +318,10 @@ namespace HandheldCompanion.Views.Pages
             if (cB_Profiles.SelectedItem is null)
                 return;
 
+            // update current profile
             currentProfile = (Profile)cB_Profiles.SelectedItem;
 
+            // todo: find a way to avoid a useless circle of drawing when profile was update from ProfilesPage
             DrawProfile();
         }
 
