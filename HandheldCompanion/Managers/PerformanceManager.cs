@@ -32,7 +32,7 @@ namespace HandheldCompanion.Managers
         public static List<Guid> PowerModes = new() { BetterBattery, BetterPerformance, BestPerformance };
     }
 
-    public class PowerManager : Manager
+    public class PerformanceManager : Manager
     {
         #region imports
         /// <summary>
@@ -91,7 +91,7 @@ namespace HandheldCompanion.Managers
         // Power modes
         private Guid RequestedPowerMode;
 
-        public PowerManager() : base()
+        public PerformanceManager() : base()
         {
             // initialize timer(s)
             powerWatchdog = new Timer() { Interval = INTERVAL_DEFAULT, AutoReset = true, Enabled = false };
@@ -122,7 +122,7 @@ namespace HandheldCompanion.Managers
                 RequestGPUClock(GPU, true);
         }
 
-        private void ProfileManager_Updated(Profile profile, bool backgroundtask, bool isCurrent)
+        private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
             if (!isCurrent)
                 return;

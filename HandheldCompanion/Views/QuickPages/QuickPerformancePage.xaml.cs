@@ -19,7 +19,7 @@ namespace HandheldCompanion.Views.QuickPages
         {
             InitializeComponent();
 
-            MainWindow.powerManager.ProcessorStatusChanged += PowerManager_StatusChanged;
+            MainWindow.performanceManager.ProcessorStatusChanged += PowerManager_StatusChanged;
             // MainWindow.powerManager.PowerLimitChanged += PowerManager_LimitChanged;
             // MainWindow.powerManager.PowerValueChanged += PowerManager_ValueChanged;
 
@@ -213,8 +213,8 @@ namespace HandheldCompanion.Views.QuickPages
             if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled"))
                 return;
 
-            MainWindow.powerManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
-            MainWindow.powerManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
+            MainWindow.performanceManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
+            MainWindow.performanceManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -227,7 +227,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled"))
                 return;
 
-            MainWindow.powerManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
+            MainWindow.performanceManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -239,18 +239,18 @@ namespace HandheldCompanion.Views.QuickPages
         {
             if (TDPToggle.IsOn)
             {
-                MainWindow.powerManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
-                MainWindow.powerManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
-                MainWindow.powerManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
+                MainWindow.performanceManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
+                MainWindow.performanceManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
+                MainWindow.performanceManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
 
-                MainWindow.powerManager.StartTDPWatchdog();
+                MainWindow.performanceManager.StartTDPWatchdog();
             }
             else
             {
                 // restore default TDP and halt watchdog
-                MainWindow.powerManager.RequestTDP(MainWindow.handheldDevice.nTDP);
+                MainWindow.performanceManager.RequestTDP(MainWindow.handheldDevice.nTDP);
 
-                MainWindow.powerManager.StopTDPWatchdog();
+                MainWindow.performanceManager.StopTDPWatchdog();
             }
 
             if (!SettingsManager.IsInitialized)
@@ -263,14 +263,14 @@ namespace HandheldCompanion.Views.QuickPages
         {
             if (GPUToggle.IsOn)
             {
-                MainWindow.powerManager.RequestGPUClock(GPUSlider.Value);
-                MainWindow.powerManager.StartGPUWatchdog();
+                MainWindow.performanceManager.RequestGPUClock(GPUSlider.Value);
+                MainWindow.performanceManager.StartGPUWatchdog();
             }
             else
             {
                 // restore default GPU clock and halt watchdog
-                MainWindow.powerManager.RequestGPUClock(255 * 50);
-                MainWindow.powerManager.StopGPUWatchdog();
+                MainWindow.performanceManager.RequestGPUClock(255 * 50);
+                MainWindow.performanceManager.StopGPUWatchdog();
             }
 
             if (!SettingsManager.IsInitialized)
@@ -294,7 +294,7 @@ namespace HandheldCompanion.Views.QuickPages
                 TextBlock.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
             });
 
-            MainWindow.powerManager.RequestPowerMode((int)PowerModeSlider.Value);
+            MainWindow.performanceManager.RequestPowerMode((int)PowerModeSlider.Value);
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -307,7 +307,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (!SettingsManager.GetBoolean("QuickToolsPerformanceGPUEnabled"))
                 return;
 
-            MainWindow.powerManager.RequestGPUClock(GPUSlider.Value);
+            MainWindow.performanceManager.RequestGPUClock(GPUSlider.Value);
 
             if (!SettingsManager.IsInitialized)
                 return;

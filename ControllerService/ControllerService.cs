@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static ControllerCommon.Managers.PowerManager;
 using static ControllerCommon.Managers.SystemManager;
 using static ControllerCommon.Utils.DeviceUtils;
 using Device = ControllerCommon.Devices.Device;
@@ -509,8 +510,9 @@ namespace ControllerService
             // start Pipe Server
             PipeServer.Open();
 
-            // listen to system events
-            SystemManager.SystemStatusChanged += OnSystemStatusChanged;
+            // start Power Manager
+            PowerManager.SystemStatusChanged += OnSystemStatusChanged;
+            PowerManager.Start();
 
             return Task.CompletedTask;
         }
@@ -523,8 +525,9 @@ namespace ControllerService
             // update virtual controller
             SetControllerMode(HIDmode.NoController);
 
-            // stop listening to system events
-            SystemManager.SystemStatusChanged -= OnSystemStatusChanged;
+            // stop Power Manager
+            PowerManager.SystemStatusChanged -= OnSystemStatusChanged;
+            PowerManager.Stop();
 
             // stop DSUClient
             DSUServer?.Stop();
