@@ -103,7 +103,7 @@ namespace ControllerCommon.Controllers
 
             // Define columns
             ColumnDefinition colDef0 = new ColumnDefinition() { Width = new GridLength(9, GridUnitType.Star), MinWidth = 200 };
-            ColumnDefinition colDef1 = new ColumnDefinition() { MinWidth = 200 };
+            ColumnDefinition colDef1 = new ColumnDefinition() { MinWidth = 240 };
 
             ui_grid.ColumnDefinitions.Add(colDef0);
             ui_grid.ColumnDefinitions.Add(colDef1);
