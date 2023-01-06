@@ -92,7 +92,7 @@ Found a bug and want it fixed? Open a detailed issue on the [GitHub issue tracke
 Have an idea for a new feature? Let's have a chat about your request on [Discord](https://discord.gg/CY6GFskwwg).
 
 ### Questions & Support
-Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Discord server](https://discord.gg/CY6GFskwwg), where you're welcome to check out and engage in discussions!
+Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Discord server](https://discord.gg/znHuywFz5M), where you're welcome to check out and engage in discussions!
 
 ### Donation
 If you would like to support this project, please consider making a donation to `BenjaminLSR` via [PayPal](https://www.paypal.com/paypalme/BenjaminLSR).
