@@ -43,6 +43,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void DesktopManager_PrimaryScreenChanged(DesktopScreen screen)
         {
+            ComboBoxResolution.Items.Clear();
             foreach (ScreenResolution resolution in screen.resolutions)
                 ComboBoxResolution.Items.Add(resolution);
         }
