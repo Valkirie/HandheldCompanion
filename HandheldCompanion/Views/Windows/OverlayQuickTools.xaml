@@ -22,44 +22,61 @@
         ui:WindowHelper.UseModernWindowStyle="True"
         Title="QuickTools" Topmost="True" WindowStyle="ToolWindow" ShowInTaskbar="False">
 
-    <ui:NavigationView
-        Name="navView" PaneDisplayMode="Left"
-        IsPaneOpen="False"
-        ItemInvoked="navView_ItemInvoked"
-        OpenPaneLength="160" IsBackEnabled="True"
-        SelectionFollowsFocus="Enabled"
-        ShoulderNavigationEnabled="WhenSelectionFollowsFocus"
-        Loaded="navView_Loaded"
-        BackRequested="navView_BackRequested" IsSettingsVisible="False">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*"></RowDefinition>
+            <RowDefinition MaxHeight="60"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <ui:NavigationView
+            Name="navView" PaneDisplayMode="Left"
+            IsPaneOpen="False"
+            ItemInvoked="navView_ItemInvoked"
+            OpenPaneLength="160" IsBackEnabled="True"
+            SelectionFollowsFocus="Enabled"
+            ShoulderNavigationEnabled="WhenSelectionFollowsFocus"
+            Loaded="navView_Loaded"
+            BackRequested="navView_BackRequested" IsSettingsVisible="False">
 
-        <ui:NavigationView.MenuItems>
-            <ui:NavigationViewItem Name="navSettingsPage" Tag="QuickSettingsPage" Content="Settings">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;"></ui:FontIcon>
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
+            <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItem Name="navSettingsPage" Tag="QuickSettingsPage" Content="Settings">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;"></ui:FontIcon>
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navPerformancePage" Tag="QuickPerformancePage" Content="Performance">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE83F;"></ui:FontIcon>
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
+                <ui:NavigationViewItem Name="navPerformancePage" Tag="QuickPerformancePage" Content="Performance">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE83F;"></ui:FontIcon>
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navProfilesPage" Tag="QuickProfilesPage" Content="Profile">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE748;"></ui:FontIcon>
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
+                <ui:NavigationViewItem Name="navProfilesPage" Tag="QuickProfilesPage" Content="Profile">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE748;"></ui:FontIcon>
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navSuspenderPage" Tag="QuickSuspenderPage" Content="Suspender">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE769;"></ui:FontIcon>
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
-        </ui:NavigationView.MenuItems>
+                <ui:NavigationViewItem Name="navSuspenderPage" Tag="QuickSuspenderPage" Content="Suspender">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE769;"></ui:FontIcon>
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.MenuItems>
 
-        <common:TouchScrollViewer x:Name="scrollViewer" PanningMode="VerticalOnly">
-            <ui:Frame Name="ContentFrame"/>
-        </common:TouchScrollViewer>
-    </ui:NavigationView>
+            <common:TouchScrollViewer x:Name="scrollViewer" PanningMode="VerticalOnly">
+                <ui:Frame Name="ContentFrame"/>
+            </common:TouchScrollViewer>
+        </ui:NavigationView>
+
+        <Grid Grid.Row="1"
+              Background="{DynamicResource SystemControlBackgroundAltMediumLowBrush}">
+
+            <DockPanel HorizontalAlignment="Left" Margin="15,0,0,0">
+                <ui:FontIcon Name="BatteryIndicatorIcon" FontSize="20" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}"/>
+                <TextBlock Name="BatteryIndicatorPercentage" FontSize="12" Margin="6,0,0,0" VerticalAlignment="Center"/>
+            </DockPanel>
+
+        </Grid>
+    </Grid>
 </Window>

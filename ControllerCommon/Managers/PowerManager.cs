@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ControllerCommon.Managers
 {
@@ -20,6 +21,9 @@ namespace ControllerCommon.Managers
         public static event SystemStatusChangedEventHandler SystemStatusChanged;
         public delegate void SystemStatusChangedEventHandler(SystemStatus status);
 
+        public static event PowerStatusChangedEventHandler PowerStatusChanged;
+        public delegate void PowerStatusChangedEventHandler(PowerStatus status);
+
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
         #endregion
@@ -31,6 +35,33 @@ namespace ControllerCommon.Managers
         private static SystemStatus previousSystemStatus = SystemStatus.None;
 
         public static bool IsInitialized;
+
+        public static Dictionary<string, string> PowerStatusIcon = new()
+        {
+            { "Battery0", "\uE850" },
+            { "Battery1", "\uE851" },
+            { "Battery2", "\uE852" },
+            { "Battery3", "\uE853" },
+            { "Battery4", "\uE854" },
+            { "Battery5", "\uE855" },
+            { "Battery6", "\uE856" },
+            { "Battery7", "\uE857" },
+            { "Battery8", "\uE858" },
+            { "Battery9", "\uE839" },
+            { "Battery10", "\uE83F" },
+
+            { "BatteryCharging0", "\uE85A" },
+            { "BatteryCharging1", "\uE85B" },
+            { "BatteryCharging2", "\uE85C" },
+            { "BatteryCharging3", "\uE85D" },
+            { "BatteryCharging4", "\uE85E" },
+            { "BatteryCharging5", "\uE85F" },
+            { "BatteryCharging6", "\uE860" },
+            { "BatteryCharging7", "\uE861" },
+            { "BatteryCharging8", "\uE862" },
+            { "BatteryCharging9", "\uE83E" },
+            { "BatteryCharging10", "\uEA93" },
+        };
 
         public enum SystemStatus
         {
@@ -94,6 +125,7 @@ namespace ControllerCommon.Managers
                     break;
                 default:
                 case PowerModes.StatusChange:
+                    PowerStatusChanged?.Invoke(SystemInformation.PowerStatus);
                     return;
             }
 

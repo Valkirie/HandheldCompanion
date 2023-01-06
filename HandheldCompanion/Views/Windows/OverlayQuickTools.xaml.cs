@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Extensions;
+﻿using ControllerCommon.Managers;
+using HandheldCompanion.Extensions;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.QuickPages;
 using ModernWpf.Controls;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Navigation;
 using Page = System.Windows.Controls.Page;
 
@@ -35,6 +37,8 @@ namespace HandheldCompanion.Views.Windows
 
             // create manager(s)
             brightnessControl = new();
+            PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
+            PowerManager_PowerStatusChanged(SystemInformation.PowerStatus);
 
             // create pages
             performancePage = new QuickPerformancePage();
@@ -54,6 +58,27 @@ namespace HandheldCompanion.Views.Windows
             Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("QuickToolsTop"));
 
             SourceInitialized += QuickTools_SourceInitialized;
+        }
+
+        private void PowerManager_PowerStatusChanged(PowerStatus status)
+        {
+            BatteryIndicatorPercentage.Text = $"{status.BatteryLifePercent * 100.0f}%";
+
+            string key = "Battery";
+
+            switch (status.PowerLineStatus)
+            {
+                case System.Windows.Forms.PowerLineStatus.Online:
+                    key += "Charging";
+                    break;
+            }
+
+            // get battery key
+            int batteryKey = (int)Math.Round(status.BatteryLifePercent * 10);
+            key += batteryKey;
+
+            if (PowerManager.PowerStatusIcon.ContainsKey(key))
+                BatteryIndicatorIcon.Glyph = PowerManager.PowerStatusIcon[key];
         }
 
         private void QuickTools_SourceInitialized(object? sender, EventArgs e)
