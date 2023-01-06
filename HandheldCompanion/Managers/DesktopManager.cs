@@ -165,7 +165,7 @@ namespace HandheldCompanion.Managers
 
         private static void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
         {
-            if (PrimaryScreen != Screen.PrimaryScreen)
+            if (PrimaryScreen is null || PrimaryScreen.DeviceName != Screen.PrimaryScreen.DeviceName)
             {
                 // update current primary screen
                 PrimaryScreen = Screen.PrimaryScreen;

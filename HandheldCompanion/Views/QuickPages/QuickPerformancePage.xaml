@@ -164,8 +164,8 @@
                         <ui:FontIcon FontFamily="Segoe UI Symbol" Glyph="&#xE2CB;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <TextBlock Text="Display resolution" FontSize="14"/>
-                            <TextBlock Text="Adjust the resolution to fit your connected display" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock Text="Display resolution and refresh rate" FontSize="14"/>
+                            <TextBlock Text="Adjust main display resolution and refresh rate" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
