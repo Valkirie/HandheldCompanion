@@ -115,7 +115,6 @@ namespace ControllerService.Targets
 
         public override void Dispose()
         {
-            Disconnect();
             base.Dispose();
         }
     }

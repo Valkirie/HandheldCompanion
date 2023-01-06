@@ -159,13 +159,15 @@ namespace ControllerService
 
             // disconnect current virtual controller
             // todo: do not disconnect if similar to incoming mode
-            vTarget?.Disconnect();
+            if (vTarget is not null)
+                vTarget.Disconnect();
 
             switch (mode)
             {
                 default:
                 case HIDmode.NoController:
-                    vTarget.Dispose();
+                    if (vTarget is not null)
+                        vTarget.Dispose();
                     vTarget = null;
                     break;
                 case HIDmode.DualShock4Controller:

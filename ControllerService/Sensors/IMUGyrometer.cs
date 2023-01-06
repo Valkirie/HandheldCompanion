@@ -21,7 +21,7 @@ namespace ControllerService.Sensors
         {
             this.sensorFamily = sensorFamily;
             this.updateInterval = updateInterval;
-            centerTimer.Interval = updateInterval * 6;
+            base.centerTimer.SetInterval(updateInterval * 6);
 
             UpdateSensor();
         }

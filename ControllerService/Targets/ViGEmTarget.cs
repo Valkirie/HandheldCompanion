@@ -90,6 +90,8 @@ namespace ControllerService.Targets
 
         public virtual void Disconnect()
         {
+            this.UpdateTimer.Stop();
+
             IsConnected = false;
             Disconnected?.Invoke(this);
             LogManager.LogInformation("{0} disconnected", ToString());
@@ -233,6 +235,9 @@ namespace ControllerService.Targets
 
         public virtual void Dispose()
         {
+            this.Disconnect();
+            this.UpdateTimer = null;
+            GC.SuppressFinalize(this);
         }
     }
 }

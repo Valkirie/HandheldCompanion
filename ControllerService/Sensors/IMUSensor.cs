@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Utils;
+using PrecisionTiming;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -34,7 +35,7 @@ namespace ControllerService.Sensors
 
         protected static SensorSpec sensorSpec;
 
-        protected Timer centerTimer;
+        protected PrecisionTimer centerTimer;
         protected int updateInterval;
         protected SensorFamily sensorFamily;
 
@@ -50,18 +51,20 @@ namespace ControllerService.Sensors
 
         protected IMUSensor()
         {
-            this.centerTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 100 };
-            this.centerTimer.Elapsed += Timer_Elapsed;
+            this.centerTimer = new PrecisionTimer();
+            this.centerTimer.SetInterval(100);
+            this.centerTimer.SetAutoResetMode(false);
+            this.centerTimer.Tick += Timer_Elapsed;
         }
 
         protected virtual void ReadingChanged()
         {
             // reset reading after inactivity
-            centerTimer.Stop();
-            centerTimer.Start();
+            this.centerTimer.Stop();
+            this.centerTimer.Start();
         }
 
-        protected virtual void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        protected virtual void Timer_Elapsed(object sender, EventArgs e)
         {
             this.reading_fixed.X = this.reading_fixed.Y = this.reading_fixed.Z = 0;
         }
