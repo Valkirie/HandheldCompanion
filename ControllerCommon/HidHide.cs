@@ -41,22 +41,40 @@ namespace ControllerCommon
             };
         }
 
-        public static IReadOnlyList<string> GetRegisteredApplications()
+        public static List<string> GetRegisteredApplications()
         {
-            var service = new HidHideControlService();
-            return service.ApplicationPaths;
+            try
+            {
+                var service = new HidHideControlService();
+                return service.ApplicationPaths.ToList();
+            }
+            catch { }
+
+            return new();
         }
 
-        public static IReadOnlyList<string> GetRegisteredDevices()
+        public static List<string> GetRegisteredDevices()
         {
-            var service = new HidHideControlService();
-            return service.BlockedInstanceIds;
+            try
+            {
+                var service = new HidHideControlService();
+                return service.BlockedInstanceIds.ToList();
+            }
+            catch { }
+
+            return new();
         }
 
         public static bool IsRegistered(string InstanceId)
         {
-            var registered = GetRegisteredDevices();
-            return registered.Contains(InstanceId);
+            try
+            {
+                var registered = GetRegisteredDevices();
+                return registered.Contains(InstanceId);
+            }
+            catch { }
+
+            return false;
         }
 
         public static void UnregisterApplication(string fileName)
