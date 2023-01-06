@@ -182,10 +182,16 @@ namespace HandheldCompanion.Managers
 
                     var frequencies = resolutions.Where(a => a.dmPelsWidth == mode.dmPelsWidth && a.dmPelsHeight == mode.dmPelsHeight).Select(b => b.dmDisplayFrequency).Distinct().ToList();
                     res.AddFrequencies(frequencies);
-                    
+
+                    // sort frequencies
+                    res.SortFrequencies();
+
                     if (!DesktopScreen.HasResolution(res))
                         DesktopScreen.resolutions.Add(res);
                 }
+
+                // sort resolutions
+                DesktopScreen.SortResolutions();
 
                 // raise event
                 PrimaryScreenChanged?.Invoke(DesktopScreen);

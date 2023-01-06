@@ -25,10 +25,15 @@ namespace HandheldCompanion.Managers.Desktop
             return $"{width} x {height}";
         }
 
-        internal void AddFrequencies(List<int> _frequencies)
+        public void AddFrequencies(List<int> _frequencies)
         {
             foreach (int frequency in _frequencies)
                 frequencies.Add(new ScreenFrequency(frequency));
+        }
+
+        public void SortFrequencies()
+        {
+            frequencies = frequencies.OrderByDescending(a => a.frequency).ToList();
         }
     }
 
@@ -63,9 +68,14 @@ namespace HandheldCompanion.Managers.Desktop
             return resolutions.Where(a => a.width == resolution.width && a.height == resolution.height).Count() > 0;
         }
 
-        internal ScreenResolution GetResolution(int dmPelsWidth, int dmPelsHeight)
+        public ScreenResolution GetResolution(int dmPelsWidth, int dmPelsHeight)
         {
             return resolutions.Where(a => a.width == dmPelsWidth && a.height == dmPelsHeight).FirstOrDefault();
+        }
+
+        public void SortResolutions()
+        {
+            resolutions = resolutions.OrderByDescending(a => a.width).ThenByDescending(b => b.height).ToList();
         }
     }
 }

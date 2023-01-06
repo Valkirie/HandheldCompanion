@@ -182,8 +182,8 @@
                         <ColumnDefinition Width="3*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <ComboBox Grid.Column="0" Name="ComboBoxResolution" HorizontalAlignment="Stretch" SelectionChanged="ComboBoxResolution_SelectionChanged"/>
-                    <ComboBox Grid.Column="1" Name="ComboBoxFrequency" HorizontalAlignment="Stretch" SelectionChanged="ComboBoxFrequency_SelectionChanged"/>
+                    <ComboBox Grid.Column="0" Name="ComboBoxResolution" HorizontalAlignment="Stretch" SelectionChanged="ComboBoxResolution_SelectionChanged" IsReadOnly="True"/>
+                    <ComboBox Grid.Column="1" Name="ComboBoxFrequency" HorizontalAlignment="Stretch" SelectionChanged="ComboBoxFrequency_SelectionChanged" IsReadOnly="True"/>
                 </Grid>
             </Border>            
         </ui:SimpleStackPanel>
