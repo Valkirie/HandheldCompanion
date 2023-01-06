@@ -41,6 +41,8 @@ namespace ControllerService
 
         private static object updateLock = new();
 
+        public static bool IsInitialized;
+
         static IMU()
         {
             // initialize sensorfusion and madgwick
@@ -65,6 +67,8 @@ namespace ControllerService
             Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval);
             Accelerometer = new IMUAccelerometer(sensorFamily, UpdateInterval);
             Inclinometer = new IMUInclinometer(sensorFamily, UpdateInterval);
+
+            IsInitialized = true;
         }
 
         public static void Start()

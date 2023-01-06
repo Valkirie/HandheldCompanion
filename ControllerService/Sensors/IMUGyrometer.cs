@@ -94,6 +94,8 @@ namespace ControllerService.Sensors
             }
 
             sensor = null;
+
+            base.StopListening();
         }
 
         public void ReadingChanged(float GyroRoll, float GyroPitch, float GyroYaw)
@@ -123,6 +125,9 @@ namespace ControllerService.Sensors
 
         private void ReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
         {
+            if (sensor is null)
+                return;
+
             foreach (char axis in reading_axis.Keys)
             {
                 switch (ControllerService.handheldDevice.AngularVelocityAxisSwap[axis])

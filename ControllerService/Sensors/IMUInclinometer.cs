@@ -1,5 +1,6 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
+using ControllerCommon.Utils;
 using System;
 using System.Numerics;
 using Windows.Devices.Sensors;
@@ -9,6 +10,14 @@ namespace ControllerService.Sensors
 {
     public class IMUInclinometer : IMUSensor
     {
+        public static SensorSpec sensorSpec = new SensorSpec()
+        {
+            minIn = -2.0f,
+            maxIn = 2.0f,
+            minOut = short.MinValue,
+            maxOut = short.MaxValue,
+        };
+
         public IMUInclinometer(SensorFamily sensorFamily, int updateInterval) : base()
         {
             this.sensorFamily = sensorFamily;
@@ -90,6 +99,8 @@ namespace ControllerService.Sensors
             }
 
             sensor = null;
+
+            base.StopListening();
         }
 
         public void ReadingChanged(float GyroAccelX, float GyroAccelY, float GyroAccelZ)
@@ -119,6 +130,9 @@ namespace ControllerService.Sensors
 
         private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
+            if (sensor is null)
+                return;
+
             foreach (char axis in reading_axis.Keys)
             {
                 switch (ControllerService.handheldDevice.AccelerationAxisSwap[axis])

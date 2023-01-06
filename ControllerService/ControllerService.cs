@@ -551,6 +551,10 @@ namespace ControllerService
             {
                 case SystemStatus.SystemReady:
                     {
+                        // check if service/system was suspended previously
+                        if (vTarget is not null)
+                            return;
+
                         // resume delay (arbitrary)
                         await Task.Delay(4000);
 

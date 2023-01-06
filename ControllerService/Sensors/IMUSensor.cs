@@ -59,9 +59,22 @@ namespace ControllerService.Sensors
 
         protected virtual void ReadingChanged()
         {
+            if (centerTimer is null)
+                return;
+
             // reset reading after inactivity
             this.centerTimer.Stop();
             this.centerTimer.Start();
+        }
+
+        protected virtual void StopListening()
+        {
+            if (centerTimer is null)
+                return;
+
+            this.centerTimer.Stop();
+            this.centerTimer.Dispose();
+            this.centerTimer = null;
         }
 
         protected virtual void Timer_Elapsed(object sender, EventArgs e)
