@@ -25,7 +25,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="9*"></RowDefinition>
-            <RowDefinition MaxHeight="60"></RowDefinition>
+            <RowDefinition MaxHeight="50"></RowDefinition>
         </Grid.RowDefinitions>
         
         <ui:NavigationView

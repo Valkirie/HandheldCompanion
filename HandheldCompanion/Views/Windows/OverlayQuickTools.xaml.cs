@@ -117,6 +117,7 @@ namespace HandheldCompanion.Views.Windows
                 }
 
                 this.UpdateLayout();
+                this.UpdateDefaultStyle();
             });
         }
 
