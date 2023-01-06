@@ -44,14 +44,22 @@ namespace ControllerCommon.Managers
             // listen to system events
             SystemEvents.PowerModeChanged += OnPowerChange;
             SystemEvents.SessionSwitch += OnSessionSwitch;
-
-            // check if current session is locked
-            IntPtr handle = OpenInputDesktop(0, false, 0);
-            IsSessionLocked = handle == IntPtr.Zero;
         }
 
-        public static void Start()
+        public static void Start(bool service = false)
         {
+            // check if current session is locked
+            if (!service)
+            {
+                IntPtr handle = OpenInputDesktop(0, false, 0);
+                IsSessionLocked = handle == IntPtr.Zero;
+            }
+            else
+            {
+                // bypass session lock check when running as a service
+                IsSessionLocked = false;
+            }
+
             SystemRoutine();
 
             IsInitialized = true;

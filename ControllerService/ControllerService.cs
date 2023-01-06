@@ -514,7 +514,7 @@ namespace ControllerService
 
             // start Power Manager
             PowerManager.SystemStatusChanged += OnSystemStatusChanged;
-            PowerManager.Start();
+            PowerManager.Start(true);
 
             return Task.CompletedTask;
         }
