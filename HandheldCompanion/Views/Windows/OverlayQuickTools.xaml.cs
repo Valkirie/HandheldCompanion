@@ -79,6 +79,15 @@ namespace HandheldCompanion.Views.Windows
 
             if (PowerManager.PowerStatusIcon.ContainsKey(key))
                 BatteryIndicatorIcon.Glyph = PowerManager.PowerStatusIcon[key];
+
+            if (status.BatteryLifeRemaining > 0)
+            {
+                var BatteryLifeRemaining = SystemInformation.PowerStatus.BatteryLifeRemaining;
+                
+                TimeSpan time = TimeSpan.FromSeconds(BatteryLifeRemaining);
+                string remaining = string.Format("{0:D2}h:{1:D2}m", time.Hours, time.Minutes);
+                BatteryIndicatorLifeRemaining.Text = $"({remaining} remaining)";
+            }
         }
 
         private void QuickTools_SourceInitialized(object? sender, EventArgs e)
