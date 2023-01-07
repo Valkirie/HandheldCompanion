@@ -21,7 +21,7 @@ namespace HandheldCompanion.Views.Pages
     public partial class ProfilesPage : Page
     {
         private Profile currentProfile;
-        private Hotkey ProfilesPageHotkey;
+        private Hotkey ProfilesPageHotkey = new(60);
 
         ProfileSettingsMode0 page0 = new ProfileSettingsMode0("ProfileSettingsMode0");
         ProfileSettingsMode0 page1 = new ProfileSettingsMode0("ProfileSettingsMode1");

@@ -19,7 +19,7 @@ namespace HandheldCompanion.Views.QuickPages
     {
         private ProcessEx currentProcess;
         private Profile currentProfile;
-        private Hotkey ProfilesPageHotkey;
+        private Hotkey ProfilesPageHotkey = new(61);
 
         private const int UpdateInterval = 500;
         private PrecisionTimer UpdateTimer;
