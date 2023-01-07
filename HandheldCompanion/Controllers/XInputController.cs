@@ -133,10 +133,10 @@ namespace HandheldCompanion.Controllers
         private XInputStateSecret State;
         private XInputStateSecret prevState;
 
-        public XInputController(int index)
+        public XInputController(UserIndex index)
         {
-            Controller = new Controller((UserIndex)index);
-            UserIndex = index;
+            Controller = new Controller(index);
+            UserIndex = (int)index;
 
             if (!IsConnected())
                 throw new Exception();
@@ -149,7 +149,10 @@ namespace HandheldCompanion.Controllers
                 var ProductId = CapabilitiesEx.ProductId.ToString("X4");
                 var VendorId = CapabilitiesEx.VendorId.ToString("X4");
 
-                Details = SystemManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId).FirstOrDefault();
+                var devices = SystemManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId);
+                if (devices.Count >= UserIndex)
+                    Details = devices[UserIndex];
+
                 if (Details is null)
                     throw new Exception();
 

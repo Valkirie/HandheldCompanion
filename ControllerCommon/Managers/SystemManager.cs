@@ -251,7 +251,7 @@ namespace ControllerCommon.Managers
 
         public static List<PnPDetails> GetDetails(ushort VendorId = 0, ushort ProductId = 0)
         {
-            return PnPDevices.Values.OrderBy(a => a.arrivalDate).Where(a => a.attributes.VendorID == VendorId && a.attributes.ProductID == ProductId && !a.isHooked).ToList();
+            return PnPDevices.Values.OrderBy(a => a.arrivalDate).Where(a => a.attributes.VendorID == VendorId && a.attributes.ProductID == ProductId).ToList();
         }
 
         public static string GetManufacturerString(string path)
