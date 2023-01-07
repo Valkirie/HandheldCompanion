@@ -6,13 +6,13 @@ namespace HandheldCompanion.Controllers
 {
     public class DInputController : IController
     {
-        protected Joystick Controller;
+        public Joystick joystick;
         protected JoystickState State = new();
         protected JoystickState prevState = new();
 
         public DInputController(Joystick joystick, PnPDetails details)
         {
-            Controller = joystick;
+            this.joystick = joystick;
             UserIndex = joystick.Properties.JoystickId;
 
             Details = details;
@@ -30,7 +30,7 @@ namespace HandheldCompanion.Controllers
         {
             if (!string.IsNullOrEmpty(Details.Name))
                 return Details.Name;
-            return Controller.Information.ProductName;
+            return joystick.Information.ProductName;
         }
 
         public override void UpdateReport()
@@ -43,13 +43,13 @@ namespace HandheldCompanion.Controllers
 
         public override bool IsConnected()
         {
-            return (bool)(!Controller?.IsDisposed);
+            return (bool)(!joystick?.IsDisposed);
         }
 
         public override void Plug()
         {
             // Acquire the joystick
-            Controller.Acquire();
+            joystick.Acquire();
 
             base.Plug();
         }
@@ -57,7 +57,7 @@ namespace HandheldCompanion.Controllers
         public override void Unplug()
         {
             // Acquire the joystick
-            Controller.Unacquire();
+            joystick.Unacquire();
 
             base.Unplug();
         }

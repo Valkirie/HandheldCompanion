@@ -265,6 +265,10 @@ namespace HandheldCompanion.Managers
             if (controller.IsVirtual())
                 return;
 
+            // XInput controller are handled elsewhere
+            if (controller.GetType() == typeof(XInputController))
+                return;
+
             // controller was unplugged
             Controllers.Remove(details.deviceInstanceId);
 
@@ -276,12 +280,22 @@ namespace HandheldCompanion.Managers
         {
             // trying to guess XInput behavior...
             // get first available slot
-            UserIndex slot = XUsbControllers.Where(a => a.Value).FirstOrDefault().Key;
+            UserIndex slot = UserIndex.One;
+            Controller _controller = new(slot);
+
+            for (slot = UserIndex.One; slot <= UserIndex.Three; slot++)
+            {
+                _controller = new(slot);
+
+                // check if controller is connected and slot free
+                if (_controller.IsConnected && XUsbControllers[slot])
+                    break;
+            }
 
             // use dispatcher because we're drawing UI elements when initializing the controller object
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                XInputController controller = new(slot);
+                XInputController controller = new(_controller);
 
                 if (controller is null)
                     return;

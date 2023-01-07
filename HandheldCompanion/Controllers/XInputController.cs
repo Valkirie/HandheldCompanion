@@ -3,6 +3,7 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using SharpDX.XInput;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -131,10 +132,10 @@ namespace HandheldCompanion.Controllers
         private XInputStateSecret State;
         private XInputStateSecret prevState;
 
-        public XInputController(UserIndex index)
+        public XInputController(Controller controller)
         {
-            Controller = new Controller(index);
-            UserIndex = (int)index;
+            Controller = controller;
+            UserIndex = (int)controller.UserIndex;
 
             if (!IsConnected())
                 throw new Exception();
@@ -148,8 +149,7 @@ namespace HandheldCompanion.Controllers
                 var VendorId = CapabilitiesEx.VendorId.ToString("X4");
 
                 var devices = SystemManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId);
-                if (devices.Count >= UserIndex)
-                    Details = devices[UserIndex];
+                Details = devices.FirstOrDefault();
 
                 if (Details is null)
                     throw new Exception();

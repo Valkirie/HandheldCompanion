@@ -19,7 +19,7 @@ namespace HandheldCompanion.Controllers
         {
             if (!string.IsNullOrEmpty(Details.Name))
                 return Details.Name;
-            return Controller.Information.ProductName;
+            return joystick.Information.ProductName;
         }
 
         public override void UpdateReport()
@@ -29,10 +29,10 @@ namespace HandheldCompanion.Controllers
                 return;
 
             // Poll events from joystick
-            Controller.Poll();
+            joystick.Poll();
 
             // update gamepad state
-            State = Controller.GetCurrentState();
+            State = joystick.GetCurrentState();
 
             if (prevState.GetHashCode() == State.GetHashCode() && prevInjectedButtons == InjectedButtons)
                 return;
@@ -120,7 +120,7 @@ namespace HandheldCompanion.Controllers
 
         public override bool IsConnected()
         {
-            return (bool)(!Controller?.IsDisposed);
+            return (bool)(!joystick?.IsDisposed);
         }
 
         public override void Plug()

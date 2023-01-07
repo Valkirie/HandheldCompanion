@@ -250,7 +250,7 @@ namespace ControllerCommon.Managers
 
         public static List<PnPDetails> GetDetails(ushort VendorId = 0, ushort ProductId = 0)
         {
-            return PnPDevices.Values.OrderBy(a => a.arrivalDate).Where(a => a.attributes.VendorID == VendorId && a.attributes.ProductID == ProductId).ToList();
+            return PnPDevices.Values.OrderBy(a => a.arrivalDate).Where(a => a.attributes.VendorID == VendorId && a.attributes.ProductID == ProductId && !a.isHooked).ToList();
         }
 
         public static string GetManufacturerString(string path)
@@ -382,6 +382,8 @@ namespace ControllerCommon.Managers
                 PnPDetails deviceEx = FindDevice(SymLink);
                 if (deviceEx is not null && deviceEx.isGaming)
                 {
+                    deviceEx.isXInput = true;
+
                     XUsbDeviceArrived?.Invoke(deviceEx);
                     LogManager.LogDebug("XUsbDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
                 }
@@ -399,8 +401,8 @@ namespace ControllerCommon.Managers
                 if (deviceEx is null)
                     return;
 
-                // give system at least one second to initialize device
-                await Task.Delay(1000);
+                // give system at least one second to initialize device (+500 ms to give XInput priority)
+                await Task.Delay(1500);
                 PnPDevices.TryRemove(deviceEx.SymLink, out var value);
 
                 // RefreshHID();
@@ -416,13 +418,13 @@ namespace ControllerCommon.Managers
 
             if (IsInitialized)
             {
-                // give system at least one second to initialize device
-                await Task.Delay(1000);
+                // give system at least one second to initialize device (+500 ms to give XInput priority)
+                await Task.Delay(1500);
                 RefreshHID();
             }
 
             PnPDetails deviceEx = FindDevice(SymLink);
-            if (deviceEx is not null && deviceEx.isGaming)
+            if (deviceEx is not null && deviceEx.isGaming && !deviceEx.isXInput)
             {
                 HidDeviceArrived?.Invoke(deviceEx);
                 LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
