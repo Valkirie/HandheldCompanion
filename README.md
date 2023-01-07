@@ -1,5 +1,5 @@
 [![Download Latest](https://img.shields.io/github/downloads/Valkirie/HandheldCompanion/latest/total?style=flat-square&color=orange&label=Download%20Latest)](https://github.com/Valkirie/ControllerService/releases/latest)
-[![discord](https://img.shields.io/discord/717181357109018694?color=orange&label=Discord&logo=discord&logoColor=white&style=flat-square)](https://discord.gg/T8RgDkBfxp)
+[![discord](https://img.shields.io/discord/1054321983166365726?color=orange&label=Discord&logo=discord&logoColor=white&style=flat-square)](https://discord.gg/znHuywFz5M)
 [![YouTube Channel](https://img.shields.io/youtube/channel/subscribers/UCFLra6QVYJYeaWp2mGaq3Og?style=flat-square&color=orange&label=YouTube%20Channel&logo=youtube&logoColor=white)](https://www.youtube.com/channel/UCFLra6QVYJYeaWp2mGaq3Og)
 
 # Controller Service & Handheld Companion
@@ -94,7 +94,7 @@ Found a bug and want it fixed? Open a detailed issue on the [GitHub issue tracke
 Have an idea for a new feature? Let's have a chat about your request on [Discord](https://discord.gg/CY6GFskwwg).
 
 ### Questions & Support
-Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Discord server](https://discord.gg/CY6GFskwwg), where you're welcome to check out and engage in discussions!
+Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Discord server](https://discord.gg/znHuywFz5M), where you're welcome to check out and engage in discussions!
 
 ### Donation
 If you would like to support this project, please consider making a donation to `BenjaminLSR` via [PayPal](https://www.paypal.com/paypalme/BenjaminLSR).

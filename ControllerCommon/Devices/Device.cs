@@ -108,6 +108,9 @@ namespace ControllerCommon.Devices
                             case "NEXT":
                                 device = new AYANEONEXT();
                                 break;
+                            case "AYANEO 2":
+                                device = new AYANEO2();
+                                break;
                         }
                     }
                     break;

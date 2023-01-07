@@ -1026,4 +1026,43 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_AntiDeadzoneUnitPercentage" xml:space="preserve">
     <value> %</value>
   </data>
+  <data name="InputsHotkey_shortcutKillApp" xml:space="preserve">
+    <value>Force application shutdown</value>
+  </data>
+  <data name="InputsHotkey_shortcutKillAppDesc" xml:space="preserve">
+    <value>Change hotkey by pressing a button or a special key</value>
+  </data>
+  <data name="OverlayPage_DualSenseController" xml:space="preserve">
+    <value>Playstation DualSense</value>
+  </data>
+  <data name="OverlayPage_MotionActivated" xml:space="preserve">
+    <value>Motion</value>
+  </data>
+  <data name="OverlayPage_MotionActivatedDesc" xml:space="preserve">
+    <value>Model will move in accordance with user movements based on sensor information</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensitivityX" xml:space="preserve">
+    <value>Sensitivity X</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensitivityXDesc" xml:space="preserve">
+    <value>Change the motion sensitivity of the horizontal axis</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensitivityY" xml:space="preserve">
+    <value>Sensitivity Y</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensitivityYDesc" xml:space="preserve">
+    <value>Change the motion sensitivity of the vertical axis</value>
+  </data>
+  <data name="ProfilesPage_SensitivityX" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="ProfilesPage_SensitivityY" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="QuickPerformancePage_TDPBoost" xml:space="preserve">
+    <value>Boost</value>
+  </data>
+  <data name="QuickPerformancePage_TDPSustained" xml:space="preserve">
+    <value>Sustained</value>
+  </data>
 </root>
