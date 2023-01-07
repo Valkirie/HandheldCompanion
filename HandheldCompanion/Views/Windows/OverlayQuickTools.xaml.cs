@@ -12,7 +12,7 @@ using System.Windows.Navigation;
 using Windows.System.Power;
 using Page = System.Windows.Controls.Page;
 using PowerManager = ControllerCommon.Managers.PowerManager;
-using PwrManager = Windows.System.Power.PowerManager;
+using SystemPowerManager = Windows.System.Power.PowerManager;
 
 namespace HandheldCompanion.Views.Windows
 {
@@ -65,53 +65,57 @@ namespace HandheldCompanion.Views.Windows
 
         private void PowerManager_PowerStatusChanged(PowerStatus status)
         {
-            BatteryIndicatorPercentage.Text = $"{status.BatteryLifePercent * 100.0f}%";
-
-            // get status key
-            string KeyStatus = string.Empty;
-            switch (status.PowerLineStatus)
+            this.Dispatcher.Invoke(() =>
             {
-                case System.Windows.Forms.PowerLineStatus.Online:
-                    KeyStatus = "Charging";
-                    break;
-                default:
-                    {
-                        EnergySaverStatus energy = PwrManager.EnergySaverStatus;
-                        switch (energy)
+                int BatteryLifePercent = (int)Math.Truncate(status.BatteryLifePercent * 100.0f);
+                BatteryIndicatorPercentage.Text = $"{BatteryLifePercent}%";
+
+                // get status key
+                string KeyStatus = string.Empty;
+                switch (status.PowerLineStatus)
+                {
+                    case System.Windows.Forms.PowerLineStatus.Online:
+                        KeyStatus = "Charging";
+                        break;
+                    default:
                         {
-                            case EnergySaverStatus.On:
-                                KeyStatus = "Saver";
-                                break;
+                            EnergySaverStatus energy = SystemPowerManager.EnergySaverStatus;
+                            switch (energy)
+                            {
+                                case EnergySaverStatus.On:
+                                    KeyStatus = "Saver";
+                                    break;
+                            }
                         }
-                    }
-                    break;
-            }
+                        break;
+                }
 
-            // get battery key
-            int KeyValue = (int)Math.Round(status.BatteryLifePercent * 10);
+                // get battery key
+                int KeyValue = (int)Math.Truncate(status.BatteryLifePercent * 10);
 
-            // set key
-            string Key = $"Battery{KeyStatus}{KeyValue}";
+                // set key
+                string Key = $"Battery{KeyStatus}{KeyValue}";
 
-            if (PowerManager.PowerStatusIcon.ContainsKey(Key))
-                BatteryIndicatorIcon.Glyph = PowerManager.PowerStatusIcon[Key];
+                if (PowerManager.PowerStatusIcon.ContainsKey(Key))
+                    BatteryIndicatorIcon.Glyph = PowerManager.PowerStatusIcon[Key];
 
-            if (status.BatteryLifeRemaining > 0)
-            {
-                TimeSpan time = TimeSpan.FromSeconds(status.BatteryLifeRemaining);
+                if (status.BatteryLifeRemaining > 0)
+                {
+                    TimeSpan time = TimeSpan.FromSeconds(status.BatteryLifeRemaining);
 
-                string remaining;
-                if (status.BatteryLifeRemaining >= 3600)
-                    remaining = $"{time.Hours}h {time.Minutes}min";
+                    string remaining;
+                    if (status.BatteryLifeRemaining >= 3600)
+                        remaining = $"{time.Hours}h {time.Minutes}min";
+                    else
+                        remaining = $"{time.Minutes}min";
+
+                    BatteryIndicatorLifeRemaining.Text = $"({remaining} remaining)";
+                }
                 else
-                    remaining = $"{time.Minutes}min";
-
-                BatteryIndicatorLifeRemaining.Text = $"({remaining} remaining)";
-            }
-            else
-            {
-                BatteryIndicatorLifeRemaining.Text = string.Empty;
-            }
+                {
+                    BatteryIndicatorLifeRemaining.Text = string.Empty;
+                }
+            });
         }
 
         private void QuickTools_SourceInitialized(object? sender, EventArgs e)

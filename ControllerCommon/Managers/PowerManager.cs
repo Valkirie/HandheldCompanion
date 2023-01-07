@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Windows.System.Power;
+using SystemPowerManager = Windows.System.Power.PowerManager;
 
 namespace ControllerCommon.Managers
 {
@@ -88,6 +89,17 @@ namespace ControllerCommon.Managers
             // listen to system events
             SystemEvents.PowerModeChanged += OnPowerChange;
             SystemEvents.SessionSwitch += OnSessionSwitch;
+
+            SystemPowerManager.BatteryStatusChanged += BatteryStatusChanged;
+            SystemPowerManager.EnergySaverStatusChanged += BatteryStatusChanged;
+            SystemPowerManager.PowerSupplyStatusChanged += BatteryStatusChanged;
+            SystemPowerManager.RemainingChargePercentChanged += BatteryStatusChanged;
+            SystemPowerManager.RemainingDischargeTimeChanged += BatteryStatusChanged;
+        }
+
+        private static void BatteryStatusChanged(object sender, object e)
+        {
+            PowerStatusChanged?.Invoke(SystemInformation.PowerStatus);
         }
 
         public static void Start(bool service = false)
