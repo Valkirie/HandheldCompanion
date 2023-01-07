@@ -6,7 +6,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class ModelSteamDeck : Model
+    internal class ModelSteamDeck : IModel
     {
         // Specific groups
         Model3DGroup BackIcon;

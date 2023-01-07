@@ -7,7 +7,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class ModelToyController : Model
+    internal class ModelToyController : IModel
     {
         // Specific groups (move me)
         Model3DGroup JoystickLeftCover;
@@ -267,7 +267,7 @@ namespace HandheldCompanion.Models
                 }
             }
 
-            DrawHighligths();
+            base.DrawHighligths();
         }
     }
 }

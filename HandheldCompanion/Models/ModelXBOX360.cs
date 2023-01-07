@@ -5,7 +5,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class ModelXBOX360 : Model
+    internal class ModelXBOX360 : IModel
     {
         // Specific groups (move me)
         Model3DGroup MainBodyCharger;
@@ -179,7 +179,7 @@ namespace HandheldCompanion.Models
                 }
             }
 
-            DrawHighligths();
+            base.DrawAccentHighligths();
         }
     }
 }

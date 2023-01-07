@@ -7,7 +7,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class Model8BitDoLite2 : Model
+    internal class Model8BitDoLite2 : IModel
     {
         // Specific groups (move me)
         Model3DGroup BodyBack;
@@ -189,7 +189,7 @@ namespace HandheldCompanion.Models
 
             }
 
-            DrawHighligths();
+            base.DrawAccentHighligths();
         }
     }
 }

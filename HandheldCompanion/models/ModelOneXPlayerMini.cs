@@ -3,7 +3,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class ModelOneXPlayerMini : Model
+    internal class ModelOneXPlayerMini : IModel
     {
         // Specific groups (move me)
         Model3DGroup B1Letter;

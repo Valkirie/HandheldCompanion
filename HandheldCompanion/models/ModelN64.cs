@@ -5,7 +5,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class ModelN64 : Model
+    internal class ModelN64 : IModel
     {
         // Specific groups (move me)
         Model3DGroup JoystickShield;
@@ -120,7 +120,7 @@ namespace HandheldCompanion.Models
                 }
             }
 
-            DrawHighligths();
+            base.DrawHighligths();
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class ModelZDOPlus : Model
+    internal class ModelZDOPlus : IModel
     {
         // Specific groups (move me)
         Model3DGroup MainBodyRight;
@@ -148,7 +148,7 @@ namespace HandheldCompanion.Models
 
             }
 
-            DrawHighligths();
+            base.DrawAccentHighligths();
         }
     }
 }

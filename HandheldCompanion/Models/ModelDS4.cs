@@ -7,7 +7,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class ModelDS4 : Model
+    internal class ModelDS4 : IModel
     {
         // Specific groups (move me)
         Model3DGroup LeftShoulderMiddle;
@@ -155,7 +155,7 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
             }
 
-            DrawHighligths();
+            base.DrawAccentHighligths();
         }
     }
 }

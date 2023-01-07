@@ -6,7 +6,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class ModelDualSense : Model
+    internal class ModelDualSense : IModel
     {
         // Specific groups
         Model3DGroup AudioJack;
@@ -235,19 +235,7 @@ namespace HandheldCompanion.Models
 
             }
 
-            DrawHighligths();
-        }
-
-        private new void DrawHighligths()
-        {
-            var ColorHighlight = (Brush)Application.Current.Resources["AccentButtonBackground"];
-            var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
-
-            foreach (Model3DGroup model3D in model3DGroup.Children)
-            {
-                // generic material(s)
-                HighlightMaterials[model3D] = MaterialHighlight;
-            }
+            base.DrawAccentHighligths();
         }
     }
 }

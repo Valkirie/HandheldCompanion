@@ -5,7 +5,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class ModelXBOXOne : Model
+    internal class ModelXBOXOne : IModel
     {
         // Specific models
         Model3DGroup BackSymbol;
@@ -210,7 +210,7 @@ namespace HandheldCompanion.Models
                 }
             }
 
-            DrawHighligths();
+            base.DrawAccentHighligths();
         }
     }
 }

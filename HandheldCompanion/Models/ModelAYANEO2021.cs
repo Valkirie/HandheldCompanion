@@ -4,7 +4,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class ModelAYANEO2021 : Model
+    internal class ModelAYANEO2021 : IModel
     {
         // Specific groups (move me)
         Model3DGroup WFBH;

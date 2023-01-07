@@ -5,7 +5,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class ModelAYANEOAir : Model
+    internal class ModelAYANEOAir : IModel
     {
         // Specific groups (move me)
         Model3DGroup AudioJack;

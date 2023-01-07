@@ -3,12 +3,13 @@ using HelixToolkit.Wpf;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion
 {
-    public abstract class Model
+    public abstract class IModel
     {
         // Model3D vars
         public Model3DGroup model3DGroup = new Model3DGroup();
@@ -45,7 +46,7 @@ namespace HandheldCompanion
 
         public string ModelName;
 
-        protected Model(string ModelName)
+        protected IModel(string ModelName)
         {
             this.ModelName = ModelName;
 
@@ -93,7 +94,7 @@ namespace HandheldCompanion
             model3DGroup.Children.Add(RightShoulderTrigger);
         }
 
-        protected void DrawHighligths()
+        protected virtual void DrawHighligths()
         {
             foreach (Model3DGroup model3D in model3DGroup.Children)
             {
@@ -111,6 +112,18 @@ namespace HandheldCompanion
                 var solidColor = new SolidColorBrush(outColor);
 
                 HighlightMaterials[model3D] = new DiffuseMaterial(solidColor);
+            }
+        }
+
+        protected virtual void DrawAccentHighligths()
+        {
+            var ColorHighlight = (Brush)Application.Current.Resources["AccentButtonBackground"];
+            var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
+
+            foreach (Model3DGroup model3D in model3DGroup.Children)
+            {
+                // generic material(s)
+                HighlightMaterials[model3D] = MaterialHighlight;
             }
         }
     }

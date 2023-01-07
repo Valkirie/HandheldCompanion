@@ -23,7 +23,7 @@ namespace HandheldCompanion.Views.Windows
         private ControllerInput Inputs = new();
         private ControllerButtonFlags prevButtons;
 
-        private Model CurrentModel;
+        private IModel CurrentModel;
         private OverlayModelMode Modelmode;
         private HIDmode HIDmode;
 
@@ -114,7 +114,7 @@ namespace HandheldCompanion.Views.Windows
 
         public void UpdateModel()
         {
-            Model newModel = null;
+            IModel newModel = null;
             switch (Modelmode)
             {
                 default:

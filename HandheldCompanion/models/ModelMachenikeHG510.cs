@@ -4,7 +4,7 @@ using System.Windows.Media.Media3D;
 
 namespace HandheldCompanion.Models
 {
-    internal class ModelMachenikeHG510 : Model
+    internal class ModelMachenikeHG510 : IModel
     {
 
         Model3DGroup BodyBack;
@@ -140,19 +140,7 @@ namespace HandheldCompanion.Models
 
             }
 
-            DrawHighligths();
-        }
-
-        private new void DrawHighligths()
-        {
-            var ColorHighlight = (Color)ColorConverter.ConvertFromString("#53544E");
-            var MaterialHighlight = new DiffuseMaterial(new SolidColorBrush(ColorHighlight));
-
-            foreach (Model3DGroup model3D in model3DGroup.Children)
-            {
-                // generic material(s)
-                HighlightMaterials[model3D] = MaterialHighlight;
-            }
+            base.DrawHighligths();
         }
     }
 }
