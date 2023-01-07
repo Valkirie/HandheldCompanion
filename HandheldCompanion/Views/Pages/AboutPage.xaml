@@ -48,7 +48,7 @@
                 Visibility="Collapsed"
                 Padding="20,12,12,12"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
-                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                Background="{DynamicResource ExpanderContentBackground}">
 
                 <Grid>
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">

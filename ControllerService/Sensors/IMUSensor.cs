@@ -1,10 +1,8 @@
-﻿using ControllerCommon.Sensors;
-using ControllerCommon.Utils;
+﻿using ControllerCommon.Utils;
+using PrecisionTiming;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Timers;
-using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.CommonUtils;
 using static ControllerCommon.Utils.DeviceUtils;
 
@@ -13,10 +11,10 @@ namespace ControllerService.Sensors
     [Flags]
     public enum XInputSensorFlags
     {
-        Default = 0000,
-        RawValue = 0001,
-        Centered = 0010,
-        WithRatio = 0100,
+        Default = 0,
+        RawValue = 1,
+        Centered = 2,
+        WithRatio = 4,
         CenteredRaw = RawValue | Centered,
         CenteredRatio = RawValue | WithRatio,
     }
@@ -36,8 +34,9 @@ namespace ControllerService.Sensors
 
         protected static SensorSpec sensorSpec;
 
-        protected Timer centerTimer;
+        protected PrecisionTimer centerTimer;
         protected int updateInterval;
+        protected SensorFamily sensorFamily;
 
         public object sensor;
         public OneEuroFilter3D filter = new();
@@ -51,40 +50,33 @@ namespace ControllerService.Sensors
 
         protected IMUSensor()
         {
-            this.centerTimer = new Timer() { Enabled = false, AutoReset = false, Interval = 100 };
-            this.centerTimer.Elapsed += Timer_Elapsed;
+            this.centerTimer = new PrecisionTimer();
+            this.centerTimer.SetInterval(100);
+            this.centerTimer.SetAutoResetMode(false);
+            this.centerTimer.Tick += Timer_Elapsed;
         }
 
         protected virtual void ReadingChanged()
         {
+            if (centerTimer is null)
+                return;
+
             // reset reading after inactivity
-            centerTimer.Stop();
-            centerTimer.Start();
+            this.centerTimer.Stop();
+            this.centerTimer.Start();
         }
 
-        public static XInputSensorStatus GetStatus(SensorFamily sensorFamily)
+        protected virtual void StopListening()
         {
-            switch (sensorFamily)
-            {
-                case SensorFamily.WindowsDevicesSensors:
-                    {
-                        var sensor = Gyrometer.GetDefault();
-                        if (sensor != null)
-                            return XInputSensorStatus.Busy;
-                    }
-                    break;
-                case SensorFamily.SerialUSBIMU:
-                    {
-                        var sensor = SerialUSBIMU.GetDefault();
-                        if (sensor != null)
-                            return sensor.IsOpen() ? XInputSensorStatus.Busy : XInputSensorStatus.Ready;
-                    }
-                    break;
-            }
-            return XInputSensorStatus.Missing;
+            if (centerTimer is null)
+                return;
+
+            this.centerTimer.Stop();
+            this.centerTimer.Dispose();
+            this.centerTimer = null;
         }
 
-        protected virtual void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        protected virtual void Timer_Elapsed(object sender, EventArgs e)
         {
             this.reading_fixed.X = this.reading_fixed.Y = this.reading_fixed.Z = 0;
         }

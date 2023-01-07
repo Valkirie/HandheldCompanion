@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ControllerCommon.Controllers;
+using System.Collections.Generic;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
@@ -36,13 +37,13 @@ namespace ControllerCommon.Devices
             listeners.Add(new DeviceChord("Custom key BIG",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 },
                 new List<KeyCode>() { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey },
-                false, Controllers.ControllerButtonFlags.OEM1
+                false, ControllerButtonFlags.OEM1
                 ));
 
             listeners.Add(new DeviceChord("Custom key Small",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                false, Controllers.ControllerButtonFlags.OEM2
+                false, ControllerButtonFlags.OEM2
                 ));
         }
     }

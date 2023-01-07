@@ -1,11 +1,12 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Controllers;
+using ControllerCommon.Managers;
 using SharpDX.XInput;
 using System;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+using System.Threading;
 
-namespace ControllerCommon.Controllers
+namespace HandheldCompanion.Controllers
 {
     public class XInputController : IController
     {
@@ -130,13 +131,13 @@ namespace ControllerCommon.Controllers
         private XInputStateSecret State;
         private XInputStateSecret prevState;
 
-        public XInputController(int index)
+        public XInputController(UserIndex index)
         {
-            Controller = new Controller((UserIndex)index);
-            UserIndex = index;
+            Controller = new Controller(index);
+            UserIndex = (int)index;
 
             if (!IsConnected())
-                return;
+                throw new Exception();
 
             // pull data from xinput
             var CapabilitiesEx = new XInputCapabilitiesEx();
@@ -146,16 +147,28 @@ namespace ControllerCommon.Controllers
                 var ProductId = CapabilitiesEx.ProductId.ToString("X4");
                 var VendorId = CapabilitiesEx.VendorId.ToString("X4");
 
-                Details = SystemManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId).FirstOrDefault();
+                var devices = SystemManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId);
+                if (devices.Count >= UserIndex)
+                    Details = devices[UserIndex];
+
+                if (Details is null)
+                    throw new Exception();
+
                 Details.isHooked = true;
             }
 
             UpdateTimer.Tick += (sender, e) => UpdateReport();
+
+            // ui
+            DrawControls();
+            RefreshControls();
         }
 
         public override string ToString()
         {
-            return Details.DeviceDesc;
+            if (!string.IsNullOrEmpty(Details.Name))
+                return Details.Name;
+            return $"XInput Controller {UserIndex}";
         }
 
         public override void UpdateReport()
@@ -259,26 +272,40 @@ namespace ControllerCommon.Controllers
             return (bool)(Controller?.IsConnected);
         }
 
-        public override void SetVibration(ushort LargeMotor, ushort SmallMotor)
+        public override void SetVibrationStrength(double value)
         {
-            ushort LeftMotorSpeed = (ushort)((LargeMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
-            ushort RightMotorSpeed = (ushort)((SmallMotor * ushort.MaxValue / byte.MaxValue) * VibrationStrength);
+            base.SetVibrationStrength(value);
+            this.Rumble(1);
+        }
+
+        public override void SetVibration(byte LargeMotor, byte SmallMotor)
+        {
+            if (!IsConnected())
+                return;
+
+            ushort LeftMotorSpeed = (ushort)((double)LargeMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
+            ushort RightMotorSpeed = (ushort)((double)SmallMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
 
             Vibration vibration = new Vibration() { LeftMotorSpeed = LeftMotorSpeed, RightMotorSpeed = RightMotorSpeed };
             Controller.SetVibration(vibration);
         }
 
-        public override async void Rumble()
+        public override void Rumble(int loop)
         {
-            for (int i = 0; i < 2; i++)
+            new Thread(() =>
             {
-                SetVibration(ushort.MaxValue, ushort.MaxValue);
-                await Task.Delay(100);
+                for (int i = 0; i < loop * 2; i++)
+                {
+                    if (i % 2 == 0)
+                        SetVibration(byte.MaxValue, byte.MaxValue);
+                    else
+                        SetVibration(0, 0);
 
-                SetVibration(0, 0);
-                await Task.Delay(100);
-            }
-            base.Rumble();
+                    Thread.Sleep(100);
+                }
+            }).Start();
+
+            base.Rumble(loop);
         }
 
         public override void Plug()

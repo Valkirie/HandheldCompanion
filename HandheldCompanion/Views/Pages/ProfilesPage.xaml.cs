@@ -144,7 +144,7 @@ namespace HandheldCompanion.Views.Pages
         }
 
         #region UI
-        public void ProfileUpdated(Profile profile, bool backgroundtask, bool isCurrent)
+        public void ProfileUpdated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -167,7 +167,7 @@ namespace HandheldCompanion.Views.Pages
                 cB_Profiles.SelectedItem = profile;
             });
 
-            if (backgroundtask)
+            if (source == ProfileUpdateSource.Background)
                 return;
 
             _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
@@ -230,7 +230,7 @@ namespace HandheldCompanion.Views.Pages
                                     {
                                         if (child.Name.Equals("Application"))
                                         {
-                                            if (child.Attributes != null)
+                                            if (child.Attributes is not null)
                                             {
                                                 foreach (XmlAttribute attribute in child.Attributes)
                                                 {
@@ -283,7 +283,7 @@ namespace HandheldCompanion.Views.Pages
                     }
 
                     if (!exists)
-                        ProfileManager.UpdateOrCreateProfile(profile, false);
+                        ProfileManager.UpdateOrCreateProfile(profile, ProfileUpdateSource.ProfilesPage);
                 }
                 catch (Exception ex)
                 {
@@ -294,7 +294,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void b_AdditionalSettings_Click(object sender, RoutedEventArgs e)
         {
-            if (currentProfile == null)
+            if (currentProfile is null)
                 return;
 
             switch ((Input)cB_Input.SelectedIndex)
@@ -315,23 +315,26 @@ namespace HandheldCompanion.Views.Pages
 
         private void cB_Profiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cB_Profiles.SelectedItem == null)
+            if (cB_Profiles.SelectedItem is null)
                 return;
 
+            // update current profile
             currentProfile = (Profile)cB_Profiles.SelectedItem;
 
+            // todo: find a way to avoid a useless circle of drawing when profile was update from ProfilesPage
             DrawProfile();
         }
 
         private void DrawProfile()
         {
-            if (currentProfile == null)
+            if (currentProfile is null)
                 return;
 
             Dispatcher.BeginInvoke(() =>
             {
                 // enable all expanders
                 ProfileDetails.IsEnabled = true;
+                ControllerSettings.IsEnabled = true;
                 MotionSettings.IsEnabled = true;
                 UniversalSettings.IsEnabled = true;
 
@@ -353,6 +356,10 @@ namespace HandheldCompanion.Views.Pages
                 cB_Whitelist.IsChecked = currentProfile.whitelisted;
                 cB_Wrapper.IsChecked = currentProfile.use_wrapper;
 
+                // Controller settings
+                tb_ProfileAntiDeadzoneLeft.Value = currentProfile.antideadzoneL;
+                tb_ProfileAntiDeadzoneRight.Value = currentProfile.antideadzoneR;
+
                 // Motion control settings
                 tb_ProfileGyroValue.Value = currentProfile.gyrometer;
                 tb_ProfileAcceleroValue.Value = currentProfile.accelerometer;
@@ -362,7 +369,7 @@ namespace HandheldCompanion.Views.Pages
                 cB_InvertVertical.IsChecked = currentProfile.invertvertical;
 
                 // Sustained TDP settings (slow, stapm, long)
-                double[] TDP = currentProfile.TDP_value != null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
+                double[] TDP = currentProfile.TDP_value is not null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
                 TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
                 TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
 
@@ -379,7 +386,7 @@ namespace HandheldCompanion.Views.Pages
                 Toggle_UniversalMotion.IsOn = currentProfile.umc_enabled;
                 cB_Input.SelectedIndex = (int)currentProfile.umc_input;
                 cB_Output.SelectedIndex = (int)currentProfile.umc_output;
-                tb_ProfileAntiDeadzone.Value = currentProfile.antideadzone;
+                tb_ProfileUMCAntiDeadzone.Value = currentProfile.umc_anti_deadzone;
                 cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.umc_motion_defaultoffon;
 
                 // todo: improve me ?
@@ -416,7 +423,7 @@ namespace HandheldCompanion.Views.Pages
 
         private async void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
         {
-            if (currentProfile == null)
+            if (currentProfile is null)
                 return;
 
             Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{currentProfile.name}\"?",
@@ -439,7 +446,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void b_ApplyProfile_Click(object sender, RoutedEventArgs e)
         {
-            if (currentProfile == null)
+            if (currentProfile is null)
                 return;
 
             // Profile
@@ -450,6 +457,10 @@ namespace HandheldCompanion.Views.Pages
             // Global settings
             currentProfile.whitelisted = (bool)cB_Whitelist.IsChecked;
             currentProfile.use_wrapper = (bool)cB_Wrapper.IsChecked;
+
+            // Controller settings
+            currentProfile.antideadzoneL = (float)tb_ProfileAntiDeadzoneLeft.Value;
+            currentProfile.antideadzoneR = (float)tb_ProfileAntiDeadzoneRight.Value;
 
             // Motion control settings
             currentProfile.gyrometer = (float)tb_ProfileGyroValue.Value;
@@ -463,7 +474,7 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.umc_enabled = (bool)Toggle_UniversalMotion.IsOn;
             currentProfile.umc_input = (Input)cB_Input.SelectedIndex;
             currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
-            currentProfile.antideadzone = (float)tb_ProfileAntiDeadzone.Value;
+            currentProfile.umc_anti_deadzone = (float)tb_ProfileUMCAntiDeadzone.Value;
             currentProfile.umc_motion_defaultoffon = (UMC_Motion_Default)cB_UMC_MotionDefaultOffOn.SelectedIndex;
 
             // Power settings
@@ -472,7 +483,7 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
             currentProfile.TDP_override = (bool)TDPToggle.IsOn;
 
-            ProfileManager.UpdateOrCreateProfile(currentProfile, false);
+            ProfileManager.UpdateOrCreateProfile(currentProfile, ProfileUpdateSource.ProfilesPage);
         }
 
         private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)
@@ -503,7 +514,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_UniversalMotion_Toggled(object sender, RoutedEventArgs e)
         {
-            if (currentProfile == null)
+            if (currentProfile is null)
                 return;
 
             cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !currentProfile.isDefault;
@@ -571,7 +582,7 @@ namespace HandheldCompanion.Views.Pages
                 case "shortcutProfilesPage@":
                     {
                         Border hotkeyBorder = hotkey.GetHotkey();
-                        if (hotkeyBorder is null || hotkeyBorder.Parent != null)
+                        if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
                             return;
 
                         // pull hotkey

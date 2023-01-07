@@ -87,7 +87,7 @@ namespace HandheldCompanion.Managers
                     return Convert.ToInt32(fileSize);
                 }
             }
-            catch (Exception) { return 0; }
+            catch { return 0; }
         }
 
         private void WebClient_DownloadFileCompleted(object? sender, System.ComponentModel.AsyncCompletedEventArgs e)
@@ -125,11 +125,11 @@ namespace HandheldCompanion.Managers
         private void WebClient_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
             // something went wrong with the connection
-            if (e.Error != null)
+            if (e.Error is not null)
             {
                 UpdateFile update = null;
 
-                if (e.UserState != null)
+                if (e.UserState is not null)
                 {
                     var filename = (string)e.UserState;
                     if (updateFiles.ContainsKey(filename))
@@ -232,7 +232,7 @@ namespace HandheldCompanion.Managers
                 status = UpdateStatus.Ready;
                 Updated?.Invoke(status, null, updateFiles);
             }
-            catch (Exception)
+            catch
             {
                 // failed to parse Json
                 status = UpdateStatus.Failed;

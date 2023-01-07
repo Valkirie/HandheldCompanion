@@ -19,33 +19,37 @@ namespace ControllerService.Sensors
 
         public IMUGyrometer(SensorFamily sensorFamily, int updateInterval) : base()
         {
+            this.sensorFamily = sensorFamily;
             this.updateInterval = updateInterval;
-            centerTimer.Interval = updateInterval * 6;
+            base.centerTimer.SetInterval(updateInterval * 6);
 
-            UpdateSensor(sensorFamily);
+            UpdateSensor();
         }
 
-        public void UpdateSensor(SensorFamily sensorFamily)
+        public void UpdateSensor()
         {
             switch (sensorFamily)
             {
-                case SensorFamily.WindowsDevicesSensors:
+                case SensorFamily.Windows:
                     sensor = Gyrometer.GetDefault();
                     break;
                 case SensorFamily.SerialUSBIMU:
                     sensor = SerialUSBIMU.GetDefault();
                     break;
+                case SensorFamily.Controller:
+                    sensor = new object();
+                    break;
             }
 
-            if (sensor == null)
+            if (sensor is null)
             {
-                LogManager.LogWarning("{0} not initialised as a {1}.", this.ToString(), sensorFamily.ToString());
+                LogManager.LogWarning("{0} not initialised as a {1}", this.ToString(), sensorFamily.ToString());
                 return;
             }
 
             switch (sensorFamily)
             {
-                case SensorFamily.WindowsDevicesSensors:
+                case SensorFamily.Windows:
                     ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
 
                     LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
@@ -53,16 +57,19 @@ namespace ControllerService.Sensors
                 case SensorFamily.SerialUSBIMU:
                     LogManager.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
                     break;
+                case SensorFamily.Controller:
+                    LogManager.LogInformation("{0} initialised as a {1}", this.ToString(), sensorFamily.ToString());
+                    break;
             }
 
-            StartListening(sensorFamily);
+            StartListening();
         }
 
-        public void StartListening(SensorFamily sensorFamily)
+        public void StartListening()
         {
             switch (sensorFamily)
             {
-                case SensorFamily.WindowsDevicesSensors:
+                case SensorFamily.Windows:
                     ((Gyrometer)sensor).ReadingChanged += ReadingChanged;
                     break;
                 case SensorFamily.SerialUSBIMU:
@@ -71,14 +78,14 @@ namespace ControllerService.Sensors
             }
         }
 
-        public void StopListening(SensorFamily sensorFamily)
+        public void StopListening()
         {
             if (sensor is null)
                 return;
 
             switch (sensorFamily)
             {
-                case SensorFamily.WindowsDevicesSensors:
+                case SensorFamily.Windows:
                     ((Gyrometer)sensor).ReadingChanged -= ReadingChanged;
                     break;
                 case SensorFamily.SerialUSBIMU:
@@ -87,6 +94,24 @@ namespace ControllerService.Sensors
             }
 
             sensor = null;
+
+            base.StopListening();
+        }
+
+        public void ReadingChanged(float GyroRoll, float GyroPitch, float GyroYaw)
+        {
+            switch (sensorFamily)
+            {
+                case SensorFamily.Controller:
+                    {
+                        this.reading.X = this.reading_fixed.X = GyroRoll;
+                        this.reading.Y = this.reading_fixed.Y = GyroPitch;
+                        this.reading.Z = this.reading_fixed.Z = GyroYaw;
+
+                        base.ReadingChanged();
+                    }
+                    break;
+            }
         }
 
         private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
@@ -100,6 +125,9 @@ namespace ControllerService.Sensors
 
         private void ReadingChanged(Gyrometer sender, GyrometerReadingChangedEventArgs args)
         {
+            if (sensor is null)
+                return;
+
             foreach (char axis in reading_axis.Keys)
             {
                 switch (ControllerService.handheldDevice.AngularVelocityAxisSwap[axis])

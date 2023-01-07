@@ -40,7 +40,7 @@ namespace HandheldCompanion.Models
             // colors
             var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#333333");
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#F0EFF0");
-            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var ColorHighlight = (Brush)Application.Current.Resources["AccentButtonBackground"];
 
             Color ColorPlasticBlue = (Color)ColorConverter.ConvertFromString("#02BCE3");
             Color ColorPlasticGreen = (Color)ColorConverter.ConvertFromString("#7BBF46");
@@ -217,9 +217,9 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == Smile1 || model3D == Smile2
-                    || model3D == DPadLeft1 || model3D == DPadUp2 || model3D == DPadRight3 || model3D == DPadDown4
-                    || model3D == B1Letter || model3D == B2Letter || model3D == B3Letter || model3D == B4Letter
+                if (model3D.Equals(MainBody) || model3D.Equals(Smile1) || model3D.Equals(Smile2)
+                    || model3D.Equals(DPadLeft1) || model3D.Equals(DPadUp2) || model3D.Equals(DPadRight3) || model3D.Equals(DPadDown4)
+                    || model3D.Equals(B1Letter) || model3D.Equals(B2Letter) || model3D.Equals(B3Letter) || model3D.Equals(B4Letter)
                     )
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
@@ -227,40 +227,40 @@ namespace HandheldCompanion.Models
                     continue;
                 }
 
-                if (model3D == MainBodyBack || model3D == LeftMotor || model3D == RightMotor)
+                if (model3D.Equals(MainBodyBack) || model3D.Equals(LeftMotor) || model3D.Equals(RightMotor))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticGreenFluorescent;
                     DefaultMaterials[model3D] = MaterialPlasticGreenFluorescent;
                 }
 
-                if (model3D == Smile3)
+                if (model3D.Equals(Smile3))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticRed;
                     DefaultMaterials[model3D] = MaterialPlasticRed;
                 }
 
 
-                if (model3D == JoystickLeftCover || model3D == JoystickRightCover
-                    || model3D == LeftThumbRing || model3D == RightThumbRing
-                    || model3D == B4LetterInside1 || model3D == B4LetterInside2)
+                if (model3D.Equals(JoystickLeftCover) || model3D.Equals(JoystickRightCover)
+                    || model3D.Equals(LeftThumbRing) || model3D.Equals(RightThumbRing)
+                    || model3D.Equals(B4LetterInside1) || model3D.Equals(B4LetterInside2))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlue;
                     DefaultMaterials[model3D] = MaterialPlasticBlue;
                 }
 
-                if (model3D == RightShoulderTrigger)
+                if (model3D.Equals(RightShoulderTrigger))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticPurple;
                     DefaultMaterials[model3D] = MaterialPlasticPurple;
                 }
 
-                if (model3D == LeftShoulderTrigger || model3D == B1LetterInside)
+                if (model3D.Equals(LeftShoulderTrigger) || model3D.Equals(B1LetterInside))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticOrange;
                     DefaultMaterials[model3D] = MaterialPlasticOrange;
                 }
 
-                if (model3D == B3LetterInside)
+                if (model3D.Equals(B3LetterInside))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticGreen;
                     DefaultMaterials[model3D] = MaterialPlasticGreen;

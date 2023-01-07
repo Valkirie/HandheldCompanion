@@ -402,10 +402,10 @@ namespace ControllerService
                         outputData[outIdx++] = (byte)padData.ConnectionType;
 
                         byte[] addressBytes = null;
-                        if (padData.PadMacAddress != null)
+                        if (padData.PadMacAddress is not null)
                             addressBytes = padData.PadMacAddress.GetAddressBytes();
 
-                        if (addressBytes != null && addressBytes.Length == 6)
+                        if (addressBytes is not null && addressBytes.Length == 6)
                         {
                             outputData[outIdx++] = addressBytes[0];
                             outputData[outIdx++] = addressBytes[1];
@@ -449,7 +449,7 @@ namespace ControllerService
                     }
                 }
             }
-            catch (Exception)
+            catch
             {
             }
         }
@@ -471,7 +471,7 @@ namespace ControllerService
                     Array.Copy(recvBuffer, localMsg, msgLen);
                 }
             }
-            catch (Exception)
+            catch
             {
                 uint IOC_IN = 0x80000000;
                 uint IOC_VENDOR = 0x18000000;
@@ -483,7 +483,7 @@ namespace ControllerService
             StartReceive();
 
             //Process the data if its valid
-            if (localMsg != null)
+            if (localMsg is not null)
                 ProcessIncoming(localMsg, (IPEndPoint)clientEP);
         }
         private void StartReceive()
@@ -497,7 +497,7 @@ namespace ControllerService
                     udpSock?.BeginReceiveFrom(recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ref newClientEP, ReceiveCallback, udpSock);
                 }
             }
-            catch (Exception)
+            catch
             {
                 uint IOC_IN = 0x80000000;
                 uint IOC_VENDOR = 0x18000000;
@@ -547,7 +547,7 @@ namespace ControllerService
 
         public void Stop()
         {
-            if (udpSock != null)
+            if (udpSock is not null)
             {
                 udpSock.Close();
                 udpSock = null;
@@ -560,7 +560,7 @@ namespace ControllerService
             UpdateTimer.Stop();
             BatteryTimer.Stop();
 
-            LogManager.LogInformation($"{0} has stopped", this.ToString());
+            LogManager.LogInformation("{0} has stopped", this.ToString());
             Stopped?.Invoke(this);
         }
 
@@ -632,7 +632,7 @@ namespace ControllerService
                 //DS4 only: touchpad points
                 for (int i = 0; i < 2; i++)
                 {
-                    var tpad = (i == 0) ? DS4Touch.TrackPadTouch1 : DS4Touch.TrackPadTouch2;
+                    var tpad = (i == 0) ? DS4Touch.LeftPadTouch : DS4Touch.RightPadTouch;
 
                     outputData[outIdx++] = tpad.IsActive ? (byte)1 : (byte)0;
                     outputData[outIdx++] = (byte)tpad.RawTrackingNum;

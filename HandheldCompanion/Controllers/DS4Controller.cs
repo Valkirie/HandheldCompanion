@@ -1,20 +1,24 @@
-﻿using SharpDX.DirectInput;
+﻿using ControllerCommon;
+using ControllerCommon.Controllers;
+using SharpDX.DirectInput;
 using System;
 
-namespace ControllerCommon.Controllers
+namespace HandheldCompanion.Controllers
 {
     public class DS4Controller : DInputController
     {
         public DS4Controller(Joystick joystick, PnPDetails details) : base(joystick, details)
         {
             if (!IsConnected())
-                return;
+                throw new Exception();
 
             UpdateTimer.Tick += (sender, e) => UpdateReport();
         }
 
         public override string ToString()
         {
+            if (!string.IsNullOrEmpty(Details.Name))
+                return Details.Name;
             return Controller.Information.ProductName;
         }
 

@@ -206,8 +206,8 @@ namespace HandheldCompanion.Managers
 
                     if (IsKeyDown)
                         SendChordDown(chords);
-                    else if (IsKeyUp)
-                        SendChordUp(chords);
+                    // else if (IsKeyUp)
+                    SendChordUp(chords);
                 }
             }
             else
@@ -223,7 +223,7 @@ namespace HandheldCompanion.Managers
                 }
 
                 InputsHotkey hotkey = InputsHotkey.InputsHotkeys.Values.Where(item => item.Listener == currentHotkey.Listener).FirstOrDefault();
-                if (hotkey != null)
+                if (hotkey is not null)
                 {
                     switch (hotkey.OnKeyDown)
                     {
@@ -501,6 +501,8 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = true;
             Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "InputsManager");
         }
 
         public static void Stop()
@@ -513,6 +515,8 @@ namespace HandheldCompanion.Managers
             //It is recommened to dispose it
             m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
+
+            LogManager.LogInformation("{0} has stopped", "InputsManager");
         }
 
         public static void UpdateReport(ControllerButtonFlags Buttons)
@@ -597,7 +601,7 @@ namespace HandheldCompanion.Managers
 
         private static void StopListening(InputsChord inputsChord = null)
         {
-            if (inputsChord == null)
+            if (inputsChord is null)
                 inputsChord = new InputsChord();
 
             switch (currentType)

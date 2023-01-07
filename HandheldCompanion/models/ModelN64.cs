@@ -112,7 +112,7 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticDarkGrey;
 
                 // specific materials
-                if (model3D == MainBody || model3D == LeftThumbRing)
+                if (model3D.Equals(MainBody) || model3D.Equals(LeftThumbRing))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticGrey;
                     DefaultMaterials[model3D] = MaterialPlasticGrey;

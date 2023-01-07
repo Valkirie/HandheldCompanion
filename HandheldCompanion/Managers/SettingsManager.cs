@@ -31,6 +31,8 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = true;
             Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "SettingsManager");
         }
 
         public static void Stop()
@@ -39,9 +41,11 @@ namespace HandheldCompanion.Managers
                 return;
 
             IsInitialized = false;
+
+            LogManager.LogInformation("{0} has stopped", "SettingsManager");
         }
 
-        public static void SetProperty(string name, object value)
+        public static void SetProperty(string name, object value, bool force = false)
         {
             // should not happen
             if (!PropertyExists(name))
@@ -49,7 +53,7 @@ namespace HandheldCompanion.Managers
 
             object prevValue = Properties.Settings.Default[name];
 
-            if (prevValue.ToString() == value.ToString())
+            if (prevValue.ToString() == value.ToString() && !force)
                 return;
 
             switch (name)
@@ -68,7 +72,7 @@ namespace HandheldCompanion.Managers
 
                 LogManager.LogDebug("Settings {0} set to {1}", name, value);
             }
-            catch (Exception) { }
+            catch { }
         }
 
         private static bool PropertyExists(string name)

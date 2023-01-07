@@ -36,10 +36,10 @@ namespace HandheldCompanion.Views.QuickPages
             }
 
             // get current system volume
-            DevEnum = new MMDeviceEnumerator();
+            DevEnum = new MMDeviceEnumerator(new Guid());
             multimediaDevice = DevEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
 
-            if (multimediaDevice != null && multimediaDevice.AudioEndpointVolume != null)
+            if (multimediaDevice is not null && multimediaDevice.AudioEndpointVolume is not null)
             {
                 multimediaDevice.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
                 SliderVolume.Value = multimediaDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100.0d;
@@ -100,7 +100,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (multimediaDevice == null || multimediaDevice.AudioEndpointVolume == null)
+            if (multimediaDevice is null || multimediaDevice.AudioEndpointVolume is null)
                 return;
 
             if (!IsLoaded)

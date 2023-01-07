@@ -147,6 +147,50 @@
         <!-- Separator -->
         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
+        <!-- Refresh rate -->
+        <ui:SimpleStackPanel Spacing="6">
+            <!-- Header -->
+            <Border
+                Padding="15,6,15,6"
+                CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="370"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel>
+                        <ui:FontIcon FontFamily="Segoe UI Symbol" Glyph="&#xE2CB;" Height="40" HorizontalAlignment="Center"/>
+
+                        <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                            <TextBlock Text="Display resolution and refresh rate" FontSize="14"/>
+                            <TextBlock Text="Adjust main display resolution and refresh rate" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                        </ui:SimpleStackPanel>
+                    </DockPanel>
+                </Grid>
+            </Border>
+
+            <!-- Content -->
+            <Border
+                Padding="15,6,15,6"
+                CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="7*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <ComboBox Grid.Column="0" Name="ComboBoxResolution" HorizontalAlignment="Stretch" SelectionChanged="ComboBoxResolution_SelectionChanged" IsReadOnly="True"/>
+                    <ComboBox Grid.Column="1" Name="ComboBoxFrequency" HorizontalAlignment="Stretch" SelectionChanged="ComboBoxFrequency_SelectionChanged" IsReadOnly="True"/>
+                </Grid>
+            </Border>            
+        </ui:SimpleStackPanel>
+        
+        <!-- Separator -->
+        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
         <!-- Power Mode -->
         <ui:SimpleStackPanel Spacing="6">
             <!-- Header -->

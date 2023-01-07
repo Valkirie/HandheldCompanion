@@ -23,7 +23,7 @@ namespace ControllerCommon.Processor.Intel
 
             if (!File.Exists(path))
             {
-                LogManager.LogError("KX.exe is missing. Power Manager won't work.");
+                LogManager.LogError("KX.exe is missing. Power Manager won't work");
                 return;
             }
 
@@ -38,7 +38,7 @@ namespace ControllerCommon.Processor.Intel
 
         internal bool init()
         {
-            if (startInfo == null)
+            if (startInfo is null)
                 return false;
 
             try
@@ -66,7 +66,7 @@ namespace ControllerCommon.Processor.Intel
                     ProcessOutput.Close();
                 }
             }
-            catch (Exception) { }
+            catch { }
 
             return false;
         }
@@ -118,7 +118,7 @@ namespace ControllerCommon.Processor.Intel
                         return (int)output;
                     }
                 }
-                catch (Exception) { }
+                catch { }
                 ProcessOutput.Close();
             }
 
@@ -151,7 +151,7 @@ namespace ControllerCommon.Processor.Intel
                         return (int)output;
                     }
                 }
-                catch (Exception) { }
+                catch { }
                 ProcessOutput.Close();
             }
 
@@ -262,7 +262,7 @@ namespace ControllerCommon.Processor.Intel
                         return clock;
                     }
                 }
-                catch (Exception) { }
+                catch { }
                 ProcessOutput.Close();
             }
 

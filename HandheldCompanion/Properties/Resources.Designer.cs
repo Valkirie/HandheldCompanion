@@ -256,7 +256,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cloak device.
+        ///   Looks up a localized string similar to Cloak physical controller.
         /// </summary>
         public static string ControllerPage_CloakDevice {
             get {
@@ -265,7 +265,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the physical controller visibility to other applications.
+        ///   Looks up a localized string similar to Change physical controller visibility to other applications.
         /// </summary>
         public static string ControllerPage_CloakDeviceDesc {
             get {
@@ -292,11 +292,20 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Device cloaking.
+        ///   Looks up a localized string similar to Controller cloaking.
         /// </summary>
         public static string ControllerPage_DeviceCloaking {
             get {
                 return ResourceManager.GetString("ControllerPage_DeviceCloaking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controller settings.
+        /// </summary>
+        public static string ControllerPage_DeviceSettings {
+            get {
+                return ResourceManager.GetString("ControllerPage_DeviceSettings", resourceCulture);
             }
         }
         
@@ -319,6 +328,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mute virtual controller.
+        /// </summary>
+        public static string ControllerPage_SteamDeckMuteController {
+            get {
+                return ResourceManager.GetString("ControllerPage_SteamDeckMuteController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mute virtual controller on steam related applications.
+        /// </summary>
+        public static string ControllerPage_SteamDeckMuteControllerDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_SteamDeckMuteControllerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Uncloak on close.
         /// </summary>
         public static string ControllerPage_UncloakOnClose {
@@ -328,7 +355,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Restore visibility of the physical controller to other applications on service exit.
+        ///   Looks up a localized string similar to Restore visibility of all physical controllers to other applications on service exit.
         /// </summary>
         public static string ControllerPage_UncloakOnCloseDesc {
             get {
@@ -666,6 +693,42 @@ namespace HandheldCompanion.Properties {
         public static string InputsHotkey_shortcutTaskviewDesc {
             get {
                 return ResourceManager.GetString("InputsHotkey_shortcutTaskviewDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lizard mode (Buttons).
+        /// </summary>
+        public static string InputsHotkey_SteamDeckLizardButtons {
+            get {
+                return ResourceManager.GetString("InputsHotkey_SteamDeckLizardButtons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle buttons from or into lizard brain (mouse and keyboard emulation).
+        /// </summary>
+        public static string InputsHotkey_SteamDeckLizardButtonsDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_SteamDeckLizardButtonsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lizard mode (Mouse).
+        /// </summary>
+        public static string InputsHotkey_SteamDeckLizardMouse {
+            get {
+                return ResourceManager.GetString("InputsHotkey_SteamDeckLizardMouse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle trackpads from or into lizard brain (mouse and keyboard emulation).
+        /// </summary>
+        public static string InputsHotkey_SteamDeckLizardMouseDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_SteamDeckLizardMouseDesc", resourceCulture);
             }
         }
         
@@ -1760,6 +1823,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Controller settings.
+        /// </summary>
+        public static string ProfilesPage_ControllerSettings {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ControllerSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the virtual controller settings.
+        /// </summary>
+        public static string ProfilesPage_ControllerSettingsDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ControllerSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create a new profile.
         /// </summary>
         public static string ProfilesPage_CreateNewProfile {
@@ -2098,6 +2179,24 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_TDPOverrideDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_TDPOverrideDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motion anti-deadzone.
+        /// </summary>
+        public static string ProfilesPage_UMCAntiDeadzone {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCAntiDeadzone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compensate for in game deadzone, improve registration of small movements.
+        /// </summary>
+        public static string ProfilesPage_UMCAntiDeadzoneDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCAntiDeadzoneDesc", resourceCulture);
             }
         }
         

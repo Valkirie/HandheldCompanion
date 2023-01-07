@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Management;
-using System.Runtime.InteropServices;
 
 namespace ControllerCommon.Utils
 {
@@ -10,9 +8,10 @@ namespace ControllerCommon.Utils
     {
         public enum SensorFamily
         {
-            WindowsDevicesSensors = 0,
-            SerialUSBIMU = 1,
-            None = 2
+            None = 0,
+            Windows = 1,
+            SerialUSBIMU = 2,
+            Controller = 3
         }
 
         public static USBDeviceInfo GetUSBDevice(string DeviceId)
@@ -25,7 +24,7 @@ namespace ControllerCommon.Utils
                     return new USBDeviceInfo(devices.FirstOrDefault());
                 }
             }
-            catch (Exception) { }
+            catch { }
 
             return null;
         }
@@ -42,7 +41,7 @@ namespace ControllerCommon.Utils
                         serials.Add(new USBDeviceInfo(device));
                 }
             }
-            catch (Exception) { }
+            catch { }
 
             return serials;
         }

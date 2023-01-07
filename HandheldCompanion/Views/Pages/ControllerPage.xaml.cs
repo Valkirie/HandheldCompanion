@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Controllers;
+using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
@@ -50,7 +51,11 @@ namespace HandheldCompanion.Views.Pages
 
             ControllerManager.ControllerPlugged += ControllerPlugged;
             ControllerManager.ControllerUnplugged += ControllerUnplugged;
-            SystemManager.Initialized += SystemManager_Initialized;
+
+            // device specific settings
+            Type DeviceType = MainWindow.handheldDevice.GetType();
+            if (DeviceType == typeof(SteamDeck))
+                SteamDeckPanel.Visibility = Visibility.Visible;
         }
 
         public ControllerPage(string Tag) : this()
@@ -72,6 +77,16 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "HIDstrength":
                         SliderStrength.Value = Convert.ToDouble(value);
+                        break;
+
+                    case "SteamDeckLizardMouse":
+                        Toggle_SDLizardMouse.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "SteamDeckLizardButtons":
+                        Toggle_SDLizardButtons.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "SteamDeckMuteController":
+                        Toggle_SDMuteController.IsOn = Convert.ToBoolean(value);
                         break;
                 }
             });
@@ -126,14 +141,21 @@ namespace HandheldCompanion.Views.Pages
 
         private void ControllerUnplugged(IController Controller)
         {
+            LogManager.LogDebug("Controller unplugged: {0}", Controller.ToString());
+
             this.Dispatcher.Invoke(() =>
             {
                 // Search for an existing controller, remove it
-                foreach (IController ctrl in RadioControllers.Items)
+                foreach (Border border in InputDevices.Children)
                 {
+                    // pull controller from panel
+                    IController ctrl = (IController)border.Tag;
+                    if (ctrl is null)
+                        continue;
+
                     if (ctrl.GetInstancePath() == Controller.GetInstancePath())
                     {
-                        RadioControllers.Items.Remove(ctrl);
+                        InputDevices.Children.Remove(border);
                         break;
                     }
                 }
@@ -144,53 +166,71 @@ namespace HandheldCompanion.Views.Pages
 
         private void ControllerPlugged(IController Controller)
         {
+            LogManager.LogDebug("Controller plugged: {0}", Controller.ToString());
+
             this.Dispatcher.Invoke(() =>
             {
+                /*
                 // Search for an existing controller, update it
-                var found = false;
-                foreach (IController ctrl in RadioControllers.Items)
+                string path = Controller.GetInstancePath();
+                int idx = InputDevices.Children.Count;
+                bool isPlugged = false;
+
+                foreach (Border border in InputDevices.Children)
                 {
-                    found = ctrl.GetInstancePath() == Controller.GetInstancePath();
-                    if (found)
+                    // pull controller from panel
+                    IController ctrl = (IController)border.Tag;
+                    if (ctrl is null)
+                        continue;
+
+                    if (ctrl.GetInstancePath() == path)
                     {
-                        int idx = RadioControllers.Items.IndexOf(ctrl);
-                        RadioControllers.Items[idx] = Controller;
+                        idx = InputDevices.Children.IndexOf(border);
+                        isPlugged = ctrl.IsPlugged();
+
+                        InputDevices.Children.Remove(border);
                         break;
                     }
                 }
+                */
 
                 // Add new controller to list if no existing controller was found
-                if (!found)
-                    RadioControllers.Items.Add(Controller);
+                FrameworkElement control = Controller.GetControl();
+                InputDevices.Children.Add(control);
+
+                Button ui_button_hook = Controller.GetButtonHook();
+                ui_button_hook.Click += (sender, e) => ControllerHookClicked(Controller);
+
+                Button ui_button_hide = Controller.GetButtonHide();
+                ui_button_hide.Click += (sender, e) => ControllerHideClicked(Controller);
 
                 ControllerRefresh();
             });
         }
 
-        private void ControllerRefresh()
+        private void ControllerHookClicked(IController Controller)
         {
-            this.Dispatcher.Invoke(() =>
-            {
-                NoDevices.Visibility = RadioControllers.Items.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-                InputDevices.Visibility = RadioControllers.Items.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
-            });
+            string path = Controller.GetInstancePath();
+            ControllerManager.SetTargetController(path);
         }
 
-        private void SystemManager_Initialized()
+        private void ControllerHideClicked(IController Controller)
         {
-            // get last picked controller
-            string path = SettingsManager.GetString("HIDInstancePath");
+            if (Controller.IsHidden())
+                Controller.Unhide();
+            else
+                Controller.Hide();
+        }
 
-            foreach (IController ctrl in RadioControllers.Items)
+        private void ControllerRefresh()
+        {
+            bool hascontroller = InputDevices.Children.Count != 0;
+
+            this.Dispatcher.Invoke(() =>
             {
-                if (ctrl.GetInstancePath() == path)
-                {
-                    RadioControllers.SelectedItem = ctrl;
-                    return;
-                }
-            }
-
-            RadioControllers.SelectedIndex = 0;
+                InputDevices.Visibility = hascontroller ? Visibility.Visible : Visibility.Collapsed;
+                NoDevices.Visibility = hascontroller ? Visibility.Collapsed : Visibility.Visible;
+            });
         }
 
         private void UpdateController()
@@ -311,20 +351,28 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("HIDstrength", value);
         }
 
-        private void RadioControllers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Toggle_SDLizardButtons_Toggled(object sender, RoutedEventArgs e)
         {
-            if (RadioControllers.SelectedIndex == -1)
-            {
-                ControllerManager.ClearTargetController();
+            if (!SettingsManager.IsInitialized)
                 return;
-            }
 
-            IController Controller = (IController)RadioControllers.SelectedItem;
+            SettingsManager.SetProperty("SteamDeckLizardButtons", Toggle_SDLizardButtons.IsOn);
+        }
 
-            string path = Controller.GetInstancePath();
-            ControllerManager.SetTargetController(path);
+        private void Toggle_SDLizardMouse_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!SettingsManager.IsInitialized)
+                return;
 
-            SettingsManager.SetProperty("HIDInstancePath", path);
+            SettingsManager.SetProperty("SteamDeckLizardMouse", Toggle_SDLizardMouse.IsOn);
+        }
+
+        private void Toggle_SDMuteController_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("SteamDeckMuteController", Toggle_SDMuteController.IsOn);
         }
     }
 }

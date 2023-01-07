@@ -48,7 +48,7 @@ namespace HandheldCompanion.Models
             var ColorMetal = (Color)ColorConverter.ConvertFromString("#5A4928");
             var ColorLEDOff = (Color)ColorConverter.ConvertFromString("#35383E");
 
-            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var ColorHighlight = (Brush)Application.Current.Resources["AccentButtonBackground"];
             var ColorPlasticTransparent = ColorPlasticWhite;
             byte TransparancyAmount = 100;
             ColorPlasticTransparent.A = TransparancyAmount;
@@ -178,10 +178,10 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticWhite;
 
                 // specific material(s)
-                if (model3D == MainBodyFront || model3D == Special
-                    || model3D == AudioJack || model3D == USBPort
-                    || model3D == LeftThumbRing || model3D == RightThumbRing
-                    || model3D == LeftShoulderTrigger || model3D == RightShoulderTrigger)
+                if (model3D.Equals(MainBodyFront) || model3D.Equals(Special)
+                    || model3D.Equals(AudioJack) || model3D.Equals(USBPort)
+                    || model3D.Equals(LeftThumbRing) || model3D.Equals(RightThumbRing)
+                    || model3D.Equals(LeftShoulderTrigger) || model3D.Equals(RightShoulderTrigger))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticBlack;
@@ -189,9 +189,9 @@ namespace HandheldCompanion.Models
                     continue;
                 }
 
-                if (model3D == ShareSymbol || model3D == MenuSymbol
-                    || model3D == DPadUpArrow || model3D == DPadRightArrow || model3D == DPadDownArrow || model3D == DPadLeftArrow
-                    || model3D == B1ButtonSymbolx || model3D == B2ButtonSymbolx || model3D == B3ButtonSymbolx || model3D == B4ButtonSymbolx)
+                if (model3D.Equals(ShareSymbol) || model3D.Equals(MenuSymbol)
+                    || model3D.Equals(DPadUpArrow) || model3D.Equals(DPadRightArrow) || model3D.Equals(DPadDownArrow) || model3D.Equals(DPadLeftArrow)
+                    || model3D.Equals(B1ButtonSymbolx) || model3D.Equals(B2ButtonSymbolx) || model3D.Equals(B3ButtonSymbolx) || model3D.Equals(B4ButtonSymbolx))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticGrey;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticGrey;
@@ -199,7 +199,7 @@ namespace HandheldCompanion.Models
                     continue;
                 }
 
-                if (model3D == LED1 || model3D == LED2)
+                if (model3D.Equals(LED1) || model3D.Equals(LED2))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialHighlight;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialHighlight;
@@ -207,7 +207,7 @@ namespace HandheldCompanion.Models
                     continue;
                 }
 
-                if (model3D == Charger)
+                if (model3D.Equals(Charger))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialMetal;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialMetal;
@@ -215,7 +215,7 @@ namespace HandheldCompanion.Models
                     continue;
                 }
 
-                if (model3D == LED3)
+                if (model3D.Equals(LED3))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialLEDOff;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialLEDOff;
@@ -223,8 +223,8 @@ namespace HandheldCompanion.Models
                     continue;
                 }
 
-                if (model3D == DPadDownCover || model3D == DPadUpCover || model3D == DPadLeftCover || model3D == DPadRightCover
-                  || model3D == B1Button || model3D == B2Button || model3D == B3Button || model3D == B4Button
+                if (model3D.Equals(DPadDownCover) || model3D.Equals(DPadUpCover) || model3D.Equals(DPadLeftCover) || model3D.Equals(DPadRightCover)
+                  || model3D.Equals(B1Button) || model3D.Equals(B2Button) || model3D.Equals(B3Button) || model3D.Equals(B4Button)
                     )
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticTransparent;
@@ -240,7 +240,7 @@ namespace HandheldCompanion.Models
 
         private new void DrawHighligths()
         {
-            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var ColorHighlight = (Brush)Application.Current.Resources["AccentButtonBackground"];
             var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
             foreach (Model3DGroup model3D in model3DGroup.Children)

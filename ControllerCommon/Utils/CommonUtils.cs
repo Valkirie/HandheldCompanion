@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -20,7 +19,7 @@ namespace ControllerCommon.Utils
             int Pos1 = STR.IndexOf(FirstString) + FirstString.Length;
             int Pos2 = STR.Length;
 
-            if (LastString != null)
+            if (LastString is not null)
                 Pos2 = STR.IndexOf(LastString, Pos1);
 
             FinalString = STR.Substring(Pos1, Pos2 - Pos1);
@@ -86,7 +85,7 @@ namespace ControllerCommon.Utils
                     return CanWrite;
                 }
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
@@ -99,7 +98,7 @@ namespace ControllerCommon.Utils
                 using (FileStream fs = File.Create(Path.Combine(dirPath, Path.GetRandomFileName()), 1, FileOptions.DeleteOnClose))
                     return true;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }

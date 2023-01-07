@@ -63,7 +63,7 @@ namespace ControllerCommon.Sensors
                 string ProductID = sensor.Key.Value;
 
                 deviceInfo = devices.Where(a => a.VID == VendorID && a.PID == ProductID).FirstOrDefault();
-                if (deviceInfo != null)
+                if (deviceInfo is not null)
                 {
                     serial.device = deviceInfo;
                     serial.port = sensor.Value;
@@ -95,7 +95,7 @@ namespace ControllerCommon.Sensors
 
         public string GetName()
         {
-            return device != null ? device.Name : "N/A";
+            return device is not null ? device.Name : "N/A";
         }
 
         public double GetFilterCutoff()
@@ -125,7 +125,7 @@ namespace ControllerCommon.Sensors
 
                     LogManager.LogInformation("{0} connected", serial.ToString());
                 }
-                catch (Exception)
+                catch
                 {
                     // port is not ready yet
                     tentative++;
@@ -145,7 +145,7 @@ namespace ControllerCommon.Sensors
                 LogManager.LogInformation("{0} disconnected", serial.ToString());
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
@@ -163,7 +163,7 @@ namespace ControllerCommon.Sensors
                 // Read serial, store in byte array, at specified offset, certain amount and determine length
                 usLength = (ushort)port.Read(byteTemp, 0, 1000);
             }
-            catch (Exception)
+            catch
             {
                 return;
             }
@@ -186,13 +186,13 @@ namespace ControllerCommon.Sensors
                     // Checksum 0xC1
                     byte[] buffer = new byte[] { 0xA4, 0x03, 0x08, 0x12, 0xC1 };
 
-                    LogManager.LogError("Serial USB Received unexpected datalength and start register, setting register...");
+                    LogManager.LogError("Serial USB Received unexpected datalength and start register, setting register..");
 
                     try
                     {
                         port.Write(buffer, 0, buffer.Length);
                     }
-                    catch (Exception)
+                    catch
                     {
                         return;
                     }
@@ -215,7 +215,7 @@ namespace ControllerCommon.Sensors
                     {
                         port.Write(buffer, 0, buffer.Length);
                     }
-                    catch (Exception)
+                    catch
                     {
                         return;
                     }

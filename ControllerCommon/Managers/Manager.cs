@@ -13,11 +13,15 @@
         {
             IsInitialized = true;
             Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", this.ToString());
         }
 
         public virtual void Stop()
         {
             IsInitialized = false;
+
+            LogManager.LogInformation("{0} has stopped", this.ToString());
         }
     }
 }

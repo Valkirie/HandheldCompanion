@@ -1,5 +1,7 @@
 using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Managers;
+using ControllerCommon.Platforms;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using ControllerService.Targets;
@@ -14,7 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static ControllerCommon.Managers.SystemManager;
+using static ControllerCommon.Managers.PowerManager;
 using static ControllerCommon.Utils.DeviceUtils;
 using Device = ControllerCommon.Devices.Device;
 
@@ -51,6 +53,10 @@ namespace ControllerService
         // profile vars
         public static Profile currentProfile = new();
         public static Profile defaultProfile = new();
+        public static Platform currentPlatform;
+
+        public static event UpdatedEventHandler ForegroundUpdated;
+        public delegate void UpdatedEventHandler();
 
         public ControllerService(IHostApplicationLifetime lifetime)
         {
@@ -94,8 +100,8 @@ namespace ControllerService
             PipeServer.ClientMessage += OnClientMessage;
 
             // initialize manager(s)
-            SystemManager.GenericDeviceArrived += GenericDeviceArrived;
-            SystemManager.GenericDeviceRemoved += GenericDeviceRemoved;
+            SystemManager.UsbDeviceArrived += GenericDeviceArrived;
+            SystemManager.UsbDeviceRemoved += GenericDeviceRemoved;
             SystemManager.Start();
             GenericDeviceArrived(null);
 
@@ -125,8 +131,6 @@ namespace ControllerService
 
                         sensor.Open();
                         sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
-
-                        IMU.UpdateSensors();
                     }
                     break;
             }
@@ -142,7 +146,6 @@ namespace ControllerService
                             break;
 
                         sensor.Close();
-                        IMU.UpdateSensors();
                     }
                     break;
             }
@@ -150,18 +153,20 @@ namespace ControllerService
 
         private void SetControllerMode(HIDmode mode)
         {
-            if (HIDmode == mode && vTarget != null)
+            if (HIDmode == mode && vTarget is not null)
                 return;
 
             // disconnect current virtual controller
             // todo: do not disconnect if similar to incoming mode
-            vTarget?.Disconnect();
+            if (vTarget is not null)
+                vTarget.Disconnect();
 
             switch (mode)
             {
                 default:
                 case HIDmode.NoController:
-                    vTarget.Dispose();
+                    if (vTarget is not null)
+                        vTarget.Dispose();
                     vTarget = null;
                     break;
                 case HIDmode.DualShock4Controller:
@@ -172,7 +177,7 @@ namespace ControllerService
                     break;
             }
 
-            if (vTarget != null)
+            if (vTarget is not null)
             {
                 vTarget.Connected += OnTargetConnected;
                 vTarget.Disconnected += OnTargetDisconnected;
@@ -187,7 +192,7 @@ namespace ControllerService
 
         private void SetControllerStatus(HIDstatus status)
         {
-            if (vTarget == null)
+            if (vTarget is null)
                 return;
 
             switch (status)
@@ -252,94 +257,142 @@ namespace ControllerService
             switch (message.code)
             {
                 case PipeCode.CLIENT_PROFILE:
-                    PipeClientProfile profile = (PipeClientProfile)message;
-                    ProfileUpdated(profile.profile, profile.backgroundTask);
+                    {
+                        PipeClientProfile profile = (PipeClientProfile)message;
+                        UpdateProfile(profile.profile);
+                    }
+                    break;
+
+                case PipeCode.CLIENT_PROCESS:
+                    {
+                        PipeClientProcess process = (PipeClientProcess)message;
+                        UpdateProcess(process.executable, process.platform);
+                    }
                     break;
 
                 case PipeCode.CLIENT_CURSOR:
-                    PipeClientCursor cursor = (PipeClientCursor)message;
-
-                    switch (cursor.action)
                     {
-                        case CursorAction.CursorUp:
-                            DS4Touch.OnMouseUp(cursor.x, cursor.y, cursor.button, cursor.flags);
-                            break;
-                        case CursorAction.CursorDown:
-                            DS4Touch.OnMouseDown(cursor.x, cursor.y, cursor.button, cursor.flags);
-                            break;
-                        case CursorAction.CursorMove:
-                            DS4Touch.OnMouseMove(cursor.x, cursor.y, cursor.button, cursor.flags);
-                            break;
+                        PipeClientCursor cursor = (PipeClientCursor)message;
+
+                        switch (cursor.action)
+                        {
+                            case CursorAction.CursorUp:
+                                DS4Touch.OnMouseUp(cursor.x, cursor.y, cursor.button, cursor.flags);
+                                break;
+                            case CursorAction.CursorDown:
+                                DS4Touch.OnMouseDown(cursor.x, cursor.y, cursor.button, cursor.flags);
+                                break;
+                            case CursorAction.CursorMove:
+                                DS4Touch.OnMouseMove(cursor.x, cursor.y, cursor.button, cursor.flags);
+                                break;
+                        }
                     }
                     break;
 
                 case PipeCode.CLIENT_SETTINGS:
-                    PipeClientSettings settings = (PipeClientSettings)message;
-                    UpdateSettings(settings.settings);
+                    {
+                        PipeClientSettings settings = (PipeClientSettings)message;
+                        UpdateSettings(settings.settings);
+                    }
                     break;
 
                 case PipeCode.CLIENT_NAVIGATED:
-                    PipeNavigation navigation = (PipeNavigation)message;
-                    CurrentTag = navigation.Tag;
-
-                    switch (navigation.Tag)
                     {
-                        case "ProfileSettingsMode0":
-                            // do something
-                            break;
-                        case "ProfileSettingsMode1":
-                            // do something
-                            break;
-                        default:
-                            break;
-                    }
+                        PipeNavigation navigation = (PipeNavigation)message;
+                        CurrentTag = navigation.Tag;
 
+                        switch (navigation.Tag)
+                        {
+                            case "ProfileSettingsMode0":
+                                // do something
+                                break;
+                            case "ProfileSettingsMode1":
+                                // do something
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                     break;
 
                 case PipeCode.CLIENT_OVERLAY:
-                    PipeOverlay overlay = (PipeOverlay)message;
-                    CurrentOverlayStatus = overlay.Visibility;
+                    {
+                        PipeOverlay overlay = (PipeOverlay)message;
+                        CurrentOverlayStatus = overlay.Visibility;
+                    }
                     break;
 
                 case PipeCode.CLIENT_INPUT:
-                    PipeClientInput input = (PipeClientInput)message;
+                    {
+                        PipeClientInput input = (PipeClientInput)message;
 
-                    vTarget?.UpdateInputs(input.Inputs);
-                    DSUServer.UpdateInputs(input.Inputs);
+                        vTarget?.UpdateInputs(input.Inputs);
+                        DSUServer.UpdateInputs(input.Inputs);
+                        IMU.UpdateInputs(input.Inputs);
+                        DS4Touch.UpdateInputs(input.Inputs);
+                    }
+                    break;
+
+                case PipeCode.CLIENT_CONTROLLER_CONNECT:
+                    {
+                        PipeClientControllerConnect connect = (PipeClientControllerConnect)message;
+                        // do something?
+                    }
+                    break;
+
+                case PipeCode.CLIENT_CONTROLLER_DISCONNECT:
+                    {
+                        PipeClientControllerDisconnect disconnect = (PipeClientControllerDisconnect)message;
+                        // do something ?
+                    }
                     break;
             }
         }
 
         private void OnClientDisconnected()
         {
-            DS4Touch.OnMouseUp(0, 0, CursorButton.TouchLeft, 26);
-            DS4Touch.OnMouseUp(0, 0, CursorButton.TouchRight, 26);
+            DS4Touch.OnMouseUp(0, 0, CursorButton.TouchLeft);
+            DS4Touch.OnMouseUp(0, 0, CursorButton.TouchRight);
         }
 
         private void OnClientConnected()
         {
-            // send server settings
+            // send server settings to client
             PipeServer.SendMessage(new PipeServerSettings() { settings = GetSettings() });
         }
 
-        internal void ProfileUpdated(Profile profile, bool backgroundtask)
+        internal void UpdateProfile(Profile profile)
         {
             // skip if current profile
             if (profile == currentProfile)
                 return;
 
             // restore default profile
-            if (profile == null || !profile.isEnabled)
+            if (profile is null || !profile.isEnabled)
                 profile = defaultProfile;
 
             // update current profile
             currentProfile = profile;
+            ForegroundUpdated?.Invoke();
 
             // update default profile
             if (profile.isDefault)
                 defaultProfile = profile;
             else
-                LogManager.LogInformation("Profile {0} applied.", profile.name);
+                LogManager.LogInformation("Profile {0} applied", profile.name);
+        }
+
+        internal void UpdateProcess(string executable, Platform platform)
+        {
+            // skip if current platform
+            if (platform == currentPlatform)
+                return;
+
+            // update current platform
+            currentPlatform = platform;
+            ForegroundUpdated?.Invoke();
+
+            LogManager.LogInformation("Platform {0} detected", platform);
         }
 
         public void UpdateSettings(Dictionary<string, object> args)
@@ -367,18 +420,26 @@ namespace ControllerService
                 case "HIDmode":
                     {
                         HIDmode value = Enum.Parse<HIDmode>(property);
+
+                        if (HIDmode == value)
+                            return;
+
                         SetControllerMode(value);
                     }
                     break;
                 case "HIDstatus":
                     {
                         HIDstatus value = Enum.Parse<HIDstatus>(property);
+
+                        if (HIDstatus == value)
+                            return;
+
                         SetControllerStatus(value);
                     }
                     break;
                 case "DSUEnabled":
                     {
-                        bool value = bool.Parse(property);
+                        bool value = Convert.ToBoolean(property);
                         switch (value)
                         {
                             case true: DSUServer.Start(); break;
@@ -388,43 +449,57 @@ namespace ControllerService
                     break;
                 case "DSUip":
                     {
-                        string value = property;
+                        string value = Convert.ToString(property);
                         DSUServer.ip = value;
                     }
                     break;
                 case "DSUport":
                     {
-                        int value = int.Parse(property);
+                        int value = Convert.ToInt32(property);
                         DSUServer.port = value;
                     }
                     break;
                 case "SensorPlacement":
                     {
-                        int value = int.Parse(property);
+                        int value = Convert.ToInt32(property);
                         SensorPlacement = value;
                         sensor?.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
                     }
                     break;
                 case "SensorPlacementUpsideDown":
                     {
-                        bool value = bool.Parse(property);
+                        bool value = Convert.ToBoolean(property);
                         SensorPlacementUpsideDown = value;
                         sensor?.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
                     }
                     break;
-                    /* case "SensorSelection":
+                case "SensorSelection":
+                    {
+                        SensorFamily value = Enum.Parse<SensorFamily>(property);
+
+                        if (SensorSelection == value)
+                            return;
+
+                        SensorSelection = value;
+                        IMU.Initialize(SensorSelection);
+                    }
+                    break;
+                case "SteamDeckMuteController":
+                    {
+                        if (ControllerService.handheldDevice.GetType() == typeof(SteamDeck))
                         {
-                            SensorFamily value = Enum.Parse<SensorFamily>(property);
-                            SensorSelection = value;
+                            SteamDeck SteamDeck = (SteamDeck)handheldDevice;
+                            SteamDeck.Mute(Convert.ToBoolean(property));
                         }
-                        break; */
+                    }
+                    break;
             }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             // start listening to controller
-            IMU.StartListening();
+            IMU.Start();
 
             // start DSUClient
             if (DSUEnabled)
@@ -436,11 +511,9 @@ namespace ControllerService
             // start Pipe Server
             PipeServer.Open();
 
-            // listen to system events
-            SystemManager.SystemStatusChanged += OnSystemStatusChanged;
-
-            // OnPowerChange(null, new PowerModeChangedEventArgs(PowerModes.Suspend));
-            // OnPowerChange(null, new PowerModeChangedEventArgs(PowerModes.Resume));
+            // start Power Manager
+            PowerManager.SystemStatusChanged += OnSystemStatusChanged;
+            PowerManager.Start(true);
 
             return Task.CompletedTask;
         }
@@ -448,13 +521,14 @@ namespace ControllerService
         public Task StopAsync(CancellationToken cancellationToken)
         {
             // stop listening from controller
-            IMU.StopListening();
+            IMU.Stop();
 
             // update virtual controller
             SetControllerMode(HIDmode.NoController);
 
-            // stop listening to system events
-            SystemManager.SystemStatusChanged -= OnSystemStatusChanged;
+            // stop Power Manager
+            PowerManager.SystemStatusChanged -= OnSystemStatusChanged;
+            PowerManager.Stop();
 
             // stop DSUClient
             DSUServer?.Stop();
@@ -474,13 +548,17 @@ namespace ControllerService
 
             switch (status)
             {
-                case SystemStatus.Ready:
+                case SystemStatus.SystemReady:
                     {
+                        // check if service/system was suspended previously
+                        if (vTarget is not null)
+                            return;
+
                         // resume delay (arbitrary)
                         await Task.Delay(4000);
 
                         // (re)initialize sensors
-                        IMU.UpdateSensors();
+                        IMU.RefreshSensors();
 
                         // (re)initialize ViGEm
                         vClient = new ViGEmClient();
@@ -488,7 +566,7 @@ namespace ControllerService
                         SetControllerMode(HIDmode);
                     }
                     break;
-                case SystemStatus.Unready:
+                case SystemStatus.SystemPending:
                     {
                         vTarget.Dispose();
                         vTarget = null;

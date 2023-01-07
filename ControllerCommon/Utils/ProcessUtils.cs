@@ -10,7 +10,7 @@ using System.Management;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -110,10 +110,10 @@ namespace ControllerCommon.Utils
         public class FindHostedProcess
         {
             // Speical handling needs for UWP to get the child window process
-            public const string UWPFrameHostApp = "ApplicationFrameHost.exe";
+            private const string UWPFrameHostApp = "ApplicationFrameHost.exe";
 
-            public ProcessDiagnosticInfo Process { get; private set; }
-            int attempt = 0;
+            public ProcessDiagnosticInfo _realProcess { get; private set; }
+            private byte UWPattempt;
 
             public FindHostedProcess(IntPtr foregroundProcessID)
             {
@@ -122,32 +122,32 @@ namespace ControllerCommon.Utils
                     if (foregroundProcessID == IntPtr.Zero)
                         return;
 
-                    Process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(foregroundProcessID));
+                    _realProcess = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(foregroundProcessID));
 
-                    if (Process == null)
+                    if (_realProcess is null)
                         return;
 
                     // Get real process
-                    while (Process.ExecutableFileName.Equals(UWPFrameHostApp, StringComparison.InvariantCultureIgnoreCase) && attempt < 10)
+                    while (_realProcess.ExecutableFileName == UWPFrameHostApp && UWPattempt < 10)
                     {
                         EnumChildWindows(foregroundProcessID, ChildWindowCallback, IntPtr.Zero);
-                        Task.Delay(500);
+                        UWPattempt++;
+                        Thread.Sleep(200);
                     }
                 }
-                catch (Exception)
+                catch
                 {
-                    Process = null;
+                    _realProcess = null;
                 }
             }
 
             private bool ChildWindowCallback(IntPtr hwnd, IntPtr lparam)
             {
-                var process = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(hwnd));
+                ProcessDiagnosticInfo childProcess = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(hwnd));
 
-                if (!Process.ExecutableFileName.Equals(UWPFrameHostApp, StringComparison.InvariantCultureIgnoreCase))
-                    Process = process;
+                if (childProcess.ExecutableFileName != UWPFrameHostApp)
+                    _realProcess = childProcess;
 
-                attempt++;
                 return true;
             }
         }
@@ -172,12 +172,12 @@ namespace ControllerCommon.Utils
             foreach (var property in typeof(ShellProperties.PropertySystem).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 IShellProperty shellProperty = property.GetValue(shellFile.Properties.System, null) as IShellProperty;
-                if (shellProperty?.ValueAsObject == null) continue;
+                if (shellProperty?.ValueAsObject is null) continue;
                 if (AppProperties.ContainsKey(property.Name)) continue;
 
                 string[] shellPropertyValues = shellProperty.ValueAsObject as string[];
 
-                if (shellPropertyValues != null && shellPropertyValues.Length > 0)
+                if (shellPropertyValues is not null && shellPropertyValues.Length > 0)
                 {
                     foreach (string shellPropertyValue in shellPropertyValues)
                         AppProperties[property.Name] = shellPropertyValue.ToString();
@@ -205,7 +205,7 @@ namespace ControllerCommon.Utils
                     object id = item["ProcessID"];
                     object path = item["ExecutablePath"];
 
-                    if (path != null && id.ToString() == process.Id.ToString())
+                    if (path is not null && id.ToString() == process.Id.ToString())
                     {
                         return path.ToString();
                     }

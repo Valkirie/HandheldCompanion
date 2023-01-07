@@ -1,5 +1,6 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
+using ControllerCommon.Utils;
 using System;
 using System.Numerics;
 using Windows.Devices.Sensors;
@@ -9,33 +10,46 @@ namespace ControllerService.Sensors
 {
     public class IMUInclinometer : IMUSensor
     {
+        public static SensorSpec sensorSpec = new SensorSpec()
+        {
+            minIn = -2.0f,
+            maxIn = 2.0f,
+            minOut = short.MinValue,
+            maxOut = short.MaxValue,
+        };
+
         public IMUInclinometer(SensorFamily sensorFamily, int updateInterval) : base()
         {
+            this.sensorFamily = sensorFamily;
             this.updateInterval = updateInterval;
-            UpdateSensor(sensorFamily);
+
+            UpdateSensor();
         }
 
-        public void UpdateSensor(SensorFamily sensorFamily)
+        public void UpdateSensor()
         {
             switch (sensorFamily)
             {
-                case SensorFamily.WindowsDevicesSensors:
+                case SensorFamily.Windows:
                     sensor = Accelerometer.GetDefault();
                     break;
                 case SensorFamily.SerialUSBIMU:
                     sensor = SerialUSBIMU.GetDefault();
                     break;
+                case SensorFamily.Controller:
+                    sensor = new object();
+                    break;
             }
 
-            if (sensor == null)
+            if (sensor is null)
             {
-                LogManager.LogWarning("{0} not initialised as a {1}.", this.ToString(), sensorFamily.ToString());
+                LogManager.LogWarning("{0} not initialised as a {1}", this.ToString(), sensorFamily.ToString());
                 return;
             }
 
             switch (sensorFamily)
             {
-                case SensorFamily.WindowsDevicesSensors:
+                case SensorFamily.Windows:
                     ((Accelerometer)sensor).ReportInterval = (uint)updateInterval;
                     ((Accelerometer)sensor).ReadingChanged += ReadingChanged;
                     filter.SetFilterAttrs(ControllerService.handheldDevice.oneEuroSettings.minCutoff, ControllerService.handheldDevice.oneEuroSettings.beta);
@@ -48,16 +62,19 @@ namespace ControllerService.Sensors
 
                     LogManager.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
                     break;
+                case SensorFamily.Controller:
+                    LogManager.LogInformation("{0} initialised as a {1}", this.ToString(), sensorFamily.ToString());
+                    break;
             }
 
-            StartListening(sensorFamily);
+            StartListening();
         }
 
-        public void StartListening(SensorFamily sensorFamily)
+        public void StartListening()
         {
             switch (sensorFamily)
             {
-                case SensorFamily.WindowsDevicesSensors:
+                case SensorFamily.Windows:
                     ((Accelerometer)sensor).ReadingChanged += ReadingChanged;
                     break;
                 case SensorFamily.SerialUSBIMU:
@@ -66,14 +83,14 @@ namespace ControllerService.Sensors
             }
         }
 
-        public void StopListening(SensorFamily sensorFamily)
+        public void StopListening()
         {
             if (sensor is null)
                 return;
 
             switch (sensorFamily)
             {
-                case SensorFamily.WindowsDevicesSensors:
+                case SensorFamily.Windows:
                     ((Accelerometer)sensor).ReadingChanged -= ReadingChanged;
                     break;
                 case SensorFamily.SerialUSBIMU:
@@ -82,9 +99,27 @@ namespace ControllerService.Sensors
             }
 
             sensor = null;
+
+            base.StopListening();
         }
 
-        private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
+        public void ReadingChanged(float GyroAccelX, float GyroAccelY, float GyroAccelZ)
+        {
+            switch (sensorFamily)
+            {
+                case SensorFamily.Controller:
+                    {
+                        this.reading.X = this.reading_fixed.X = GyroAccelX;
+                        this.reading.Y = this.reading_fixed.Y = GyroAccelY;
+                        this.reading.Z = this.reading_fixed.Z = GyroAccelZ;
+
+                        base.ReadingChanged();
+                    }
+                    break;
+            }
+        }
+
+        public void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
         {
             this.reading.X = this.reading_fixed.X = (float)filter.axis1Filter.Filter(AccelerationG.X, IMU.DeltaSeconds);
             this.reading.Y = this.reading_fixed.Y = (float)filter.axis2Filter.Filter(AccelerationG.Y, IMU.DeltaSeconds);
@@ -95,6 +130,9 @@ namespace ControllerService.Sensors
 
         private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
         {
+            if (sensor is null)
+                return;
+
             foreach (char axis in reading_axis.Keys)
             {
                 switch (ControllerService.handheldDevice.AccelerationAxisSwap[axis])

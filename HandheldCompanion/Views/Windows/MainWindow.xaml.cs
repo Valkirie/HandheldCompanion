@@ -31,8 +31,6 @@ namespace HandheldCompanion.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static Stopwatch stopwatch = new();
-
         // devices vars
         public static Device handheldDevice;
 
@@ -57,7 +55,7 @@ namespace HandheldCompanion.Views
         public static ToastManager toastManager;
         public static ServiceManager serviceManager;
         public static TaskManager taskManager;
-        public static PowerManager powerManager;
+        public static PerformanceManager performanceManager;
         public static UpdateManager updateManager;
 
         private WindowState prevWindowState;
@@ -81,8 +79,8 @@ namespace HandheldCompanion.Views
 
             // initialize splash screen
 #if !DEBUG
-                SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
-                splashScreen.Show(true, true);
+            SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
+            splashScreen.Show(true, true);
 #endif
 
             // fix touch support
@@ -136,7 +134,6 @@ namespace HandheldCompanion.Views
 
             // initialize title
             this.Title += $" ({fileVersionInfo.FileVersion})";
-            //this.Title += " (BETA)";
 
             // initialize device
             handheldDevice = Device.GetDefault();
@@ -147,7 +144,6 @@ namespace HandheldCompanion.Views
             PipeClient.ServerMessage += OnServerMessage;
             PipeClient.Connected += OnClientConnected;
             PipeClient.Disconnected += OnClientDisconnected;
-            PipeClient.Open();
 
             // load manager(s)
             loadManagers();
@@ -158,21 +154,34 @@ namespace HandheldCompanion.Views
             // load page(s)
             loadPages();
 
-            // start manager(s) synchroneously
+            // start static managers in sequence
             ControllerManager.Start();
-            InputsManager.Start();
             EnergyManager.Start();
             HotkeysManager.Start();
+
+            SystemManager.UsbDeviceArrived += GenericDeviceUpdated;
+            SystemManager.UsbDeviceRemoved += GenericDeviceUpdated;
             SystemManager.Start();
+
+            PlatformManager.Start();
             ProfileManager.Start();
             ProcessManager.Start();
 
-            // start manager(s) asynchroneously
-            foreach (Manager manager in _managers)
-                new Thread(() => { manager.Start(); }).Start();
+            PowerManager.SystemStatusChanged += OnSystemStatusChanged;
+            PowerManager.Start();
 
-            // start manager(s) last
+            DesktopManager.Start();
+
+            // start managers asynchroneously
+            foreach (Manager manager in _managers)
+                new Thread(manager.Start).Start();
+
+            // start setting last
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             SettingsManager.Start();
+
+            // open pipe
+            PipeClient.Open();
 
             // update Position and Size
             Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("MainWindowHeight"));
@@ -188,6 +197,19 @@ namespace HandheldCompanion.Views
             // update FirstStart
             if (SettingsManager.GetBoolean("FirstStart"))
                 SettingsManager.SetProperty("FirstStart", false);
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            switch (name)
+            {
+                case "ToastEnable":
+                    toastManager.Enabled = Convert.ToBoolean(value);
+                    break;
+            }
+
+            PipeClientSettings settings = new PipeClientSettings(name, value);
+            PipeClient.SendMessage(settings);
         }
 
         public void SwapWindowState()
@@ -214,9 +236,6 @@ namespace HandheldCompanion.Views
 
         private void loadPages()
         {
-            stopwatch.Restart();
-            LogManager.LogDebug("Loading pages...");
-
             // initialize pages
             controllerPage = new ControllerPage("controller");
             profilesPage = new ProfilesPage("profiles");
@@ -238,51 +257,32 @@ namespace HandheldCompanion.Views
             {
                 overlayModel.UpdateHIDMode(HID);
             };
-
-            stopwatch.Stop();
-            LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
         }
 
         private void loadWindows()
         {
-            stopwatch.Restart();
-            LogManager.LogDebug("Loading windows...");
-
             // initialize overlay
             overlayModel = new OverlayModel();
             overlayTrackpad = new OverlayTrackpad();
             overlayquickTools = new OverlayQuickTools();
-
-            stopwatch.Stop();
-            LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
         }
 
         private void loadManagers()
         {
-            stopwatch.Restart();
-            LogManager.LogDebug("Loading managers...");
-
             // initialize managers
             toastManager = new ToastManager("HandheldCompanion");
-            toastManager.Enabled = SettingsManager.GetBoolean("ToastEnable");
 
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
             taskManager = new TaskManager("HandheldCompanion", CurrentExe);
-            powerManager = new();
+            performanceManager = new();
             updateManager = new();
 
             // store managers
             _managers.Add(toastManager);
             _managers.Add(serviceManager);
             _managers.Add(taskManager);
-            _managers.Add(powerManager);
+            _managers.Add(performanceManager);
             _managers.Add(updateManager);
-
-            // hook into managers events
-            InputsManager.TriggerRaised += InputsManager_TriggerRaised;
-
-            // listen to system events
-            SystemManager.SystemStatusChanged += OnSystemStatusChanged;
 
             serviceManager.Updated += OnServiceUpdate;
             serviceManager.Ready += () =>
@@ -303,23 +303,6 @@ namespace HandheldCompanion.Views
             {
                 _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}", $"{Properties.Resources.MainWindow_ServiceManagerStopIssue}", ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
             };
-
-            SystemManager.GenericDeviceArrived += GenericDeviceUpdated;
-            SystemManager.GenericDeviceRemoved += GenericDeviceUpdated;
-
-            // handle settings events and forward to common managers
-            SettingsManager.SettingValueChanged += (name, value) =>
-            {
-                switch (name)
-                {
-                    case "ToastEnable":
-                        toastManager.Enabled = Convert.ToBoolean(value);
-                        break;
-                }
-            };
-
-            stopwatch.Stop();
-            LogManager.LogDebug("Loaded in {0}", stopwatch.Elapsed);
         }
 
         private void GenericDeviceUpdated(PnPDevice device)
@@ -374,7 +357,7 @@ namespace HandheldCompanion.Views
 
         private void OnClientConnected()
         {
-            // lazy: send all local settings to server ?
+            // (re)send all local settings to server at once
             PipeClientSettings settings = new PipeClientSettings();
 
             foreach (KeyValuePair<string, object> values in SettingsManager.GetProperties())
@@ -452,7 +435,7 @@ namespace HandheldCompanion.Views
                         b_ServiceInstall.IsEnabled = true;
                         b_ServiceDelete.IsEnabled = false;
 
-                        if (notifyIcon.ContextMenuStrip != null)
+                        if (notifyIcon.ContextMenuStrip is not null)
                         {
                             notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
                             notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
@@ -472,7 +455,7 @@ namespace HandheldCompanion.Views
                                     b_ServiceInstall.IsEnabled = false;
                                     b_ServiceDelete.IsEnabled = true;
 
-                                    if (notifyIcon.ContextMenuStrip != null)
+                                    if (notifyIcon.ContextMenuStrip is not null)
                                     {
                                         notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
                                         notifyIcon.ContextMenuStrip.Items[1].Enabled = true;
@@ -486,7 +469,7 @@ namespace HandheldCompanion.Views
                                     b_ServiceInstall.IsEnabled = false;
                                     b_ServiceDelete.IsEnabled = false;
 
-                                    if (notifyIcon.ContextMenuStrip != null)
+                                    if (notifyIcon.ContextMenuStrip is not null)
                                     {
                                         notifyIcon.ContextMenuStrip.Items[0].Enabled = true;
                                         notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
@@ -503,7 +486,7 @@ namespace HandheldCompanion.Views
                                     b_ServiceInstall.IsEnabled = false;
                                     b_ServiceDelete.IsEnabled = false;
 
-                                    if (notifyIcon.ContextMenuStrip != null)
+                                    if (notifyIcon.ContextMenuStrip is not null)
                                     {
                                         notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
                                         notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
@@ -517,7 +500,7 @@ namespace HandheldCompanion.Views
                                     b_ServiceInstall.IsEnabled = true;
                                     b_ServiceDelete.IsEnabled = false;
 
-                                    if (notifyIcon.ContextMenuStrip != null)
+                                    if (notifyIcon.ContextMenuStrip is not null)
                                     {
                                         notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
                                         notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
@@ -536,7 +519,7 @@ namespace HandheldCompanion.Views
         #region UI
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            if (args.InvokedItemContainer != null)
+            if (args.InvokedItemContainer is not null)
             {
                 NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
                 string navItemTag = (string)navItem.Tag;
@@ -593,7 +576,7 @@ namespace HandheldCompanion.Views
         private void Window_Closed(object sender, EventArgs e)
         {
             serviceManager.Stop();
-            powerManager.Stop();
+            performanceManager.Stop();
             toastManager.Stop();
 
             notifyIcon.Visible = false;
@@ -612,9 +595,7 @@ namespace HandheldCompanion.Views
             ProfileManager.Stop();
             ProcessManager.Stop();
             EnergyManager.Stop();
-
-            // stop listening to system events
-            SystemManager.SystemStatusChanged -= OnSystemStatusChanged;
+            PowerManager.Stop();
 
             // closing page(s)
             controllerPage.Page_Closed();
@@ -673,7 +654,7 @@ namespace HandheldCompanion.Views
                 case WindowState.Minimized:
                     notifyIcon.Visible = true;
                     ShowInTaskbar = false;
-                    toastManager.SendToast(Title, "The application is running in the background.");
+                    toastManager.SendToast(Title, "The application is running in the background");
                     break;
                 case WindowState.Normal:
                 case WindowState.Maximized:
@@ -720,7 +701,7 @@ namespace HandheldCompanion.Views
         {
             navView.IsBackEnabled = ContentFrame.CanGoBack;
 
-            if (ContentFrame.SourcePageType != null)
+            if (ContentFrame.SourcePageType is not null)
             {
                 var preNavPageType = ContentFrame.CurrentSourcePageType;
                 var preNavPageName = preNavPageType.Name;
@@ -738,22 +719,24 @@ namespace HandheldCompanion.Views
         }
         #endregion
 
-        private async void OnSystemStatusChanged(SystemManager.SystemStatus status)
+        private async void OnSystemStatusChanged(PowerManager.SystemStatus status)
         {
             switch (status)
             {
-                case SystemManager.SystemStatus.Ready:
+                case PowerManager.SystemStatus.SystemReady:
                     {
                         // resume delay (arbitrary)
                         await Task.Delay(2000);
 
                         // restore inputs manager
+                        InputsManager.TriggerRaised += InputsManager_TriggerRaised;
                         InputsManager.Start();
                     }
                     break;
-                case SystemManager.SystemStatus.Unready:
+                case PowerManager.SystemStatus.SystemPending:
                     {
                         //pause inputs manager
+                        InputsManager.TriggerRaised -= InputsManager_TriggerRaised;
                         InputsManager.Stop();
                     }
                     break;

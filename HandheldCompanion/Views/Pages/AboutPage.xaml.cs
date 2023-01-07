@@ -3,6 +3,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using static ControllerCommon.Utils.DeviceUtils;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
@@ -39,8 +40,9 @@ namespace HandheldCompanion.Views.Pages
                 HandheldGrid.Visibility = Visibility.Visible;
 
                 VersionValue.Text = MainWindow.fileVersionInfo.FileVersion;
-                SensorInternal.Text = MainWindow.handheldDevice.hasInternal ? MainWindow.handheldDevice.InternalSensorName : "N/A";
-                SensorExternal.Text = MainWindow.handheldDevice.hasExternal ? MainWindow.handheldDevice.ExternalSensorName : "N/A";
+
+                SensorInternal.Text = MainWindow.handheldDevice.hasSensors[SensorFamily.Windows] ? MainWindow.handheldDevice.InternalSensorName : string.Empty;
+                SensorExternal.Text = MainWindow.handheldDevice.hasSensors[SensorFamily.SerialUSBIMU] ? MainWindow.handheldDevice.ExternalSensorName : string.Empty;
 
                 if (!MainWindow.handheldDevice.ProductSupported)
                 {

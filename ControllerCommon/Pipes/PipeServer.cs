@@ -13,7 +13,7 @@ namespace ControllerCommon
         SERVER_PING = 0,                    // Sent to client during initialization
                                             // args: ...
 
-        CLIENT_PROFILE = 1,                 // Sent to server each time a new process is in the foreground. Used to switch profiles
+        CLIENT_PROFILE = 1,                 // Sent to server to switch profiles
                                             // args: process id, process path
 
         SERVER_TOAST = 2,                   // Sent to client to display toast notification.
@@ -31,14 +31,14 @@ namespace ControllerCommon
         CLIENT_SETTINGS = 8,                // Sent to server to update settings
                                             // args: ...
 
-        OBSOLETE_0 = 9,                     // OBSOLETE, REUSEME
+        CLIENT_CONTROLLER_CONNECT = 9,      // Sent to server to share current controller details
 
-        OBSOLETE_1 = 11,                    // OBSOLETE, REUSEME
+        CLIENT_CONTROLLER_DISCONNECT = 11,  // Sent to server to warn current controller was disconnected
 
         CLIENT_CONSOLE = 12,                // Sent from client to client to pass parameters
                                             // args: string[] parameters
 
-        OBSOLETE_3 = 13,                    // OBSOLETE, REUSEME
+        CLIENT_PROCESS = 13,                // Sent to server each time a new process is in the foreground.
 
         SERVER_SENSOR = 14,                 // Sent to client to share sensor values
                                             // args: ...

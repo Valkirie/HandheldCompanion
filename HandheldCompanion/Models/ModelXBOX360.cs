@@ -141,7 +141,7 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == LeftMotor || model3D == RightMotor || model3D == LeftShoulderBottom || model3D == RightShoulderBottom)
+                if (model3D.Equals(MainBody) || model3D.Equals(LeftMotor) || model3D.Equals(RightMotor) || model3D.Equals(LeftShoulderBottom) || model3D.Equals(RightShoulderBottom))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticWhite;
@@ -150,28 +150,28 @@ namespace HandheldCompanion.Models
                 }
 
                 // specific face button material
-                if (model3D == B1Button || model3D == SpecialLED)
+                if (model3D.Equals(B1Button) || model3D.Equals(SpecialLED))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticGreenTransparent;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticGreenTransparent;
                     continue;
                 }
 
-                if (model3D == B2Button)
+                if (model3D.Equals(B2Button))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticRedTransparent;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticRedTransparent;
                     continue;
                 }
 
-                if (model3D == B3Button)
+                if (model3D.Equals(B3Button))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlueTransparent;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticBlueTransparent;
                     continue;
                 }
 
-                if (model3D == B4Button)
+                if (model3D.Equals(B4Button))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticYellowTransparent;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticYellowTransparent;

@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using static ControllerCommon.Utils.DeviceUtils;
 using static HandheldCompanion.Managers.UpdateManager;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
@@ -51,7 +52,7 @@ namespace HandheldCompanion.Views.Pages
             cB_Language.Items.Add(new CultureInfo("zh-Hant"));
 
             // call function
-            UpdateDevice(null);
+            UpdateDevice();
 
             // initialize manager(s)
             MainWindow.serviceManager.Updated += OnServiceUpdate;
@@ -130,12 +131,13 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
-        public void UpdateDevice(PnPDevice? device)
+        public void UpdateDevice(PnPDevice device = null)
         {
             this.Dispatcher.Invoke(() =>
             {
-                SensorInternal.IsEnabled = MainWindow.handheldDevice.hasInternal;
-                SensorExternal.IsEnabled = MainWindow.handheldDevice.hasExternal;
+                SensorInternal.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.Windows];
+                SensorExternal.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.SerialUSBIMU];
+                SensorController.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.Controller];
             });
         }
 
@@ -212,7 +214,7 @@ namespace HandheldCompanion.Views.Pages
                     case UpdateStatus.Updated:
                     case UpdateStatus.Initialized:
                         {
-                            if (updateFile != null)
+                            if (updateFile is not null)
                             {
                                 updateFile.updateDownload.Visibility = Visibility.Visible;
 
@@ -501,8 +503,8 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // update dependencies
-            Toggle_SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == 1 ? true : false;
-            SensorPlacementVisualisation.IsEnabled = cB_SensorSelection.SelectedIndex == 1 ? true : false;
+            SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
+            SensorPlacementVisualisation.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
@@ -532,7 +534,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void UpdateUI_SensorPlacement(int? SensorPlacement)
         {
-            foreach (SimpleStackPanel panel in SensorPlacementVisualisation.Children)
+            foreach (SimpleStackPanel panel in Grid_SensorPlacementVisualisation.Children)
             {
                 foreach (Button button in panel.Children)
                 {

@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Controllers;
+using ControllerCommon.Platforms;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -56,11 +57,21 @@ namespace ControllerCommon
     public partial class PipeClientProfile : PipeMessage
     {
         public Profile profile;
-        public bool backgroundTask;
 
         public PipeClientProfile()
         {
             code = PipeCode.CLIENT_PROFILE;
+        }
+    }
+    [Serializable]
+    public partial class PipeClientProcess : PipeMessage
+    {
+        public string executable;
+        public Platform platform;
+
+        public PipeClientProcess()
+        {
+            code = PipeCode.CLIENT_PROCESS;
         }
     }
 
@@ -130,12 +141,39 @@ namespace ControllerCommon
     [Serializable]
     public partial class PipeClientVibration : PipeMessage
     {
-        public ushort LargeMotor;
-        public ushort SmallMotor;
+        public byte LargeMotor;
+        public byte SmallMotor;
 
         public PipeClientVibration()
         {
             code = PipeCode.SERVER_VIBRATION;
+        }
+    }
+
+    [Serializable]
+    public partial class PipeClientControllerConnect : PipeMessage
+    {
+        public string ControllerName;
+        public ControllerCapacities Capacacities;
+
+        public PipeClientControllerConnect()
+        {
+            code = PipeCode.CLIENT_CONTROLLER_CONNECT;
+        }
+
+        public PipeClientControllerConnect(string name, ControllerCapacities capacities) : this()
+        {
+            ControllerName = name;
+            Capacacities = capacities;
+        }
+    }
+
+    [Serializable]
+    public partial class PipeClientControllerDisconnect : PipeMessage
+    {
+        public PipeClientControllerDisconnect()
+        {
+            code = PipeCode.CLIENT_CONTROLLER_DISCONNECT;
         }
     }
 

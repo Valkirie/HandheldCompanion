@@ -32,7 +32,7 @@ namespace HandheldCompanion.Managers
         public static List<Guid> PowerModes = new() { BetterBattery, BetterPerformance, BestPerformance };
     }
 
-    public class PowerManager : Manager
+    public class PerformanceManager : Manager
     {
         #region imports
         /// <summary>
@@ -91,7 +91,7 @@ namespace HandheldCompanion.Managers
         // Power modes
         private Guid RequestedPowerMode;
 
-        public PowerManager() : base()
+        public PerformanceManager() : base()
         {
             // initialize timer(s)
             powerWatchdog = new Timer() { Interval = INTERVAL_DEFAULT, AutoReset = true, Enabled = false };
@@ -122,7 +122,7 @@ namespace HandheldCompanion.Managers
                 RequestGPUClock(GPU, true);
         }
 
-        private void ProfileManager_Updated(Profile profile, bool backgroundtask, bool isCurrent)
+        private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
             if (!isCurrent)
                 return;
@@ -152,7 +152,7 @@ namespace HandheldCompanion.Managers
                 StartTDPWatchdog();
 
             // apply profile defined TDP
-            if (profile.TDP_override && profile.TDP_value != null)
+            if (profile.TDP_override && profile.TDP_value is not null)
                 RequestTDP(profile.TDP_value, false);
             else
                 RequestTDP(FallbackTDP, false); // redudant with ProfileManager_Discarded ?
@@ -168,7 +168,7 @@ namespace HandheldCompanion.Managers
 
         private void cpuWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (processor == null || !processor.IsInitialized)
+            if (processor is null || !processor.IsInitialized)
                 return;
 
             if (Monitor.TryEnter(cpuLock))
@@ -246,7 +246,7 @@ namespace HandheldCompanion.Managers
 
         private void gfxWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if (processor == null || !processor.IsInitialized)
+            if (processor is null || !processor.IsInitialized)
                 return;
 
             if (Monitor.TryEnter(gfxLock))
@@ -405,7 +405,7 @@ namespace HandheldCompanion.Managers
                     cpuWatchdog.Stop();
                     processor.Stop();
 
-                    LogManager.LogWarning("Core isolation, Memory integrity setting is turned on. TDP read/write is disabled.");
+                    LogManager.LogWarning("Core isolation, Memory integrity setting is turned on. TDP read/write is disabled");
                 }
             }
 

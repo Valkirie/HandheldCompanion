@@ -27,7 +27,7 @@ namespace HandheldCompanion.Models
             var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#38383A");
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#E0E0E0");
 
-            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var ColorHighlight = (Brush)Application.Current.Resources["AccentButtonBackground"];
 
             var MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
             var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
@@ -143,7 +143,7 @@ namespace HandheldCompanion.Models
                     continue;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == LeftMotor || model3D == RightMotor || model3D == Triangle)
+                if (model3D.Equals(MainBody) || model3D.Equals(LeftMotor) || model3D.Equals(RightMotor) || model3D.Equals(Triangle))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
                     DefaultMaterials[model3D] = MaterialPlasticWhite;

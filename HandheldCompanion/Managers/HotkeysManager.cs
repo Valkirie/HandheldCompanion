@@ -18,7 +18,7 @@ namespace HandheldCompanion.Managers
 {
     public static class HotkeysManager
     {
-        private static string Path;
+        private static string InstallPath;
 
         public static event HotkeyTypeCreatedEventHandler HotkeyTypeCreated;
         public delegate void HotkeyTypeCreatedEventHandler(InputsHotkeyType type);
@@ -43,12 +43,13 @@ namespace HandheldCompanion.Managers
         static HotkeysManager()
         {
             // initialize path
-            Path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "hotkeys");
-            if (!Directory.Exists(Path))
-                Directory.CreateDirectory(Path);
+            InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "hotkeys");
+            if (!Directory.Exists(InstallPath))
+                Directory.CreateDirectory(InstallPath);
 
             InputsManager.TriggerUpdated += TriggerUpdated;
             InputsManager.TriggerRaised += TriggerRaised;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
         public static void Start()
@@ -61,16 +62,22 @@ namespace HandheldCompanion.Managers
 
                 Hotkey hotkey = null;
 
-                string fileName = System.IO.Path.Combine(Path, $"{inputsHotkey.Listener}.json");
+                string fileName = Path.Combine(InstallPath, $"{inputsHotkey.Listener}.json");
 
+                // check for existing hotkey
                 if (File.Exists(fileName))
                     hotkey = ProcessHotkey(fileName);
 
+                // no hotkey found or failed parsing
                 if (hotkey is null)
                     hotkey = new Hotkey(Id, inputsHotkey);
 
-                hotkey.inputsHotkey = InputsHotkey.InputsHotkeys[hotkey.hotkeyId];
+                // hotkey is outdated and using an unknown inputs hotkey
+                if (!InputsHotkeys.ContainsKey(hotkey.hotkeyId))
+                    continue;
 
+                // pull inputs hotkey
+                hotkey.inputsHotkey = InputsHotkey.InputsHotkeys[hotkey.hotkeyId];
                 switch (hotkey.inputsHotkey.hotkeyType)
                 {
                     case InputsHotkeyType.UI:
@@ -115,6 +122,8 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = true;
             Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "HotkeysManager");
         }
 
         public static void Stop()
@@ -123,6 +132,29 @@ namespace HandheldCompanion.Managers
                 return;
 
             IsInitialized = false;
+
+            LogManager.LogInformation("{0} has stopped", "HotkeysManager");
+        }
+
+        private static void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(name)).FirstOrDefault();
+            if (hotkey is null)
+                return;
+
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                switch (name)
+                {
+                    case "SteamDeckLizardMouse":
+                    case "SteamDeckLizardButtons":
+                        {
+                            bool toggle = Convert.ToBoolean(value);
+                            hotkey.SetToggle(toggle);
+                        }
+                        break;
+                }
+            }));
         }
 
         private static void StartListening(Hotkey hotkey, ListenerType type)
@@ -198,17 +230,6 @@ namespace HandheldCompanion.Managers
                 LogManager.LogError("Could not parse hotkey {0}. {1}", fileName, ex.Message);
             }
 
-            // failed to parse
-            if (hotkey == null)
-            {
-                LogManager.LogError("Error while parsing hotkey {0}. Object is null.", fileName);
-            }
-
-            if (!InputsHotkey.InputsHotkeys.ContainsKey(hotkey.hotkeyId))
-            {
-                LogManager.LogError("Error while parsing {0}. InputsHotkey is outdated.", fileName);
-            }
-
             return hotkey;
         }
 
@@ -216,7 +237,7 @@ namespace HandheldCompanion.Managers
         {
             string listener = hotkey.inputsHotkey.Listener;
 
-            string settingsPath = System.IO.Path.Combine(Path, $"{listener}.json");
+            string settingsPath = Path.Combine(InstallPath, $"{listener}.json");
             if (!File.Exists(settingsPath) || overwrite)
             {
                 var options = new JsonSerializerOptions { WriteIndented = true };
@@ -266,14 +287,14 @@ namespace HandheldCompanion.Managers
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
                         break;
                     case "shortcutESC":
-                        if (fProcess != null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
+                        if (fProcess is not null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
                         {
                             ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
                             InputsManager.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
-                        if (fProcess != null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
+                        if (fProcess is not null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
                         {
                             var Placement = ProcessUtils.GetPlacement(fProcess.MainWindowHandle);
 
@@ -314,11 +335,20 @@ namespace HandheldCompanion.Managers
                         }
                         break;
                     case "shortcutKillApp":
-                        if (fProcess != null)
+                        if (fProcess is not null)
                         {
                             fProcess.Process.Kill();
                         }
                         break;
+
+                    case "SteamDeckLizardMouse":
+                    case "SteamDeckLizardButtons":
+                        {
+                            bool SteamDeckLizardMode = SettingsManager.GetBoolean(listener);
+                            SettingsManager.SetProperty(listener, !SteamDeckLizardMode);
+                        }
+                        break;
+
                     default:
                         InputsManager.KeyPress(input.OutputKeys);
                         break;

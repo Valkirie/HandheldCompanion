@@ -45,21 +45,13 @@
                 <!-- Input devices -->
                 <ui:SimpleStackPanel Spacing="6">
                     <Label Content="{x:Static resx:Resources.ControllerPage_InputDevices}" FontWeight="SemiBold"></Label>
-                    <Border
-                        Name="InputDevices" Visibility="Collapsed"
-                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-                        Padding="12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
 
-                        <ui:RadioButtons Name="RadioControllers" SelectionChanged="RadioControllers_SelectionChanged">
-                        </ui:RadioButtons>
-                    </Border>
+                    <ui:SimpleStackPanel Name="InputDevices" Spacing="6" Visibility="Collapsed"/>
 
                     <Border                        
                         Name="NoDevices" Visibility="Visible"
-                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-                        Padding="12"
+                        Background="{DynamicResource ExpanderContentBackground}"
+                        Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
 
@@ -80,15 +72,15 @@
                     </Border>
                 </ui:SimpleStackPanel>
 
-                <!-- Device settings -->
+                <!-- Controller settings -->
                 <ui:SimpleStackPanel Spacing="6">
-                    <Label Content="Device settings" FontWeight="SemiBold"></Label>
+                    <Label Content="{x:Static resx:Resources.ControllerPage_DeviceSettings}" FontWeight="SemiBold"></Label>
 
                     <!-- Vibration Strength -->
                     <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -115,15 +107,17 @@
                     </Border>
                 </ui:SimpleStackPanel>
 
-                <!-- Device cloaking -->
+                <!-- Controller cloaking -->
                 <ui:SimpleStackPanel Spacing="6">
                     <Label Content="{x:Static resx:Resources.ControllerPage_DeviceCloaking}" FontWeight="SemiBold"></Label>
 
                     <!-- Cloak device -->
+                    <!-- DEPRECATED -->
                     <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}"
+                        Visibility="Collapsed">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -148,7 +142,7 @@
                     <Border  
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -167,6 +161,89 @@
 
                             <ui:ToggleSwitch Name="Toggle_Uncloak" Grid.Column="1" Toggled="Toggle_Uncloak_Toggled"/>
                         </Grid>
+                    </Border>
+                </ui:SimpleStackPanel>
+
+                <!-- Steam Deck settings -->
+                <ui:SimpleStackPanel Name="SteamDeckPanel" Spacing="6" Visibility="Collapsed">
+                    <Label Content="Steam Deck Settings" FontWeight="SemiBold"></Label>
+
+                    <!-- Lizard mode (Mouse) -->
+                    <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource ExpanderContentBackground}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" Height="40" HorizontalAlignment="Center"/>
+
+                                <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <TextBlock Text="{x:Static resx:Resources.InputsHotkey_SteamDeckLizardMouse}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.InputsHotkey_SteamDeckLizardMouseDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <ui:ToggleSwitch Name="Toggle_SDLizardMouse" Grid.Column="1" Toggled="Toggle_SDLizardMouse_Toggled"/>
+                        </Grid>
+
+                    </Border>
+
+                    <!-- Lizard mode (Buttons) -->
+                    <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource ExpanderContentBackground}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE765;" Height="40" HorizontalAlignment="Center"/>
+
+                                <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <TextBlock Text="{x:Static resx:Resources.InputsHotkey_SteamDeckLizardButtons}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.InputsHotkey_SteamDeckLizardButtonsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <ui:ToggleSwitch Name="Toggle_SDLizardButtons" Grid.Column="1" Toggled="Toggle_SDLizardButtons_Toggled"/>
+                        </Grid>
+
+                    </Border>
+
+                    <!-- Mute virtual controller -->
+                    <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource ExpanderContentBackground}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE789;" Height="40" HorizontalAlignment="Center"/>
+
+                                <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <TextBlock Text="{x:Static resx:Resources.ControllerPage_SteamDeckMuteController}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.ControllerPage_SteamDeckMuteControllerDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <ui:ToggleSwitch Name="Toggle_SDMuteController" Grid.Column="1" Toggled="Toggle_SDMuteController_Toggled"/>
+                        </Grid>
+
                     </Border>
                 </ui:SimpleStackPanel>
             </ui:SimpleStackPanel>

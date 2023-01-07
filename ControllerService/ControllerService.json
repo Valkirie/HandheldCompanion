@@ -8,12 +8,12 @@
   },
   "Serilog": {
     "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Console" ],
-    "MinimumLevel": "Information",
+    "MinimumLevel": "Debug",
     "WriteTo": [
       {
         "Name": "File",
         "Args": {
-          "path": "%userprofile%\\documents\\HandheldCompanion\\logs\\ControllerService.log",
+          "path": ".\\logs\\ControllerService.log",
           "rollingInterval": "Day"
         }
       },

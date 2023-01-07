@@ -65,7 +65,7 @@ namespace HandheldCompanion.Models
                     continue;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == LeftMotor || model3D == RightMotor)
+                if (model3D.Equals(MainBody) || model3D.Equals(LeftMotor) || model3D.Equals(RightMotor))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
                     DefaultMaterials[model3D] = MaterialPlasticWhite;
@@ -82,7 +82,7 @@ namespace HandheldCompanion.Models
 
         private new void DrawHighligths()
         {
-            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var ColorHighlight = (Brush)Application.Current.Resources["AccentButtonBackground"];
             var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
             foreach (Model3DGroup model3D in model3DGroup.Children)

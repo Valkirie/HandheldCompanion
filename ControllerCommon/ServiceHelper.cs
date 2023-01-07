@@ -50,7 +50,7 @@ namespace ControllerCommon
                     svc.ServiceName,
                     SERVICE_QUERY_CONFIG | SERVICE_CHANGE_CONFIG);
             }
-            catch (Exception)
+            catch
             {
                 // service was not found
                 return;

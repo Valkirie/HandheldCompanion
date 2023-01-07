@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace ControllerCommon
 {
+    [Flags]
     public enum ProfileErrorCode
     {
         None = 0,
@@ -14,6 +15,14 @@ namespace ControllerCommon
         MissingPermission = 3,
         IsDefault = 4,
         IsRunning = 5
+    }
+
+    [Flags]
+    public enum ProfileUpdateSource
+    {
+        Background = 0,
+        ProfilesPage = 1,
+        QuickProfilesPage = 2
     }
 
     [Serializable]
@@ -52,7 +61,8 @@ namespace ControllerCommon
         public float accelerometer { get; set; } = 1.0f;        // accelerometer multiplicator (remove me)
 
         public int steering { get; set; } = 0;                  // 0 = Roll, 1 = Yaw
-        public float antideadzone { get; set; } = 0.0f;         // todo: typeme
+        public float antideadzoneL { get; set; } = 0.0f;        // todo: typeme
+        public float antideadzoneR { get; set; } = 0.0f;        // todo: typeme
 
         public bool inverthorizontal { get; set; }              // if true, invert horizontal axis
         public bool invertvertical { get; set; }                // if false, invert vertical axis
@@ -63,6 +73,8 @@ namespace ControllerCommon
         public Output umc_output { get; set; } = Output.RightStick;
 
         public UMC_Motion_Default umc_motion_defaultoffon { get; set; } = UMC_Motion_Default.Off;
+
+        public float umc_anti_deadzone { get; set; } = 0.0f;
 
         // aiming
         public float aiming_sensitivity_x { get; set; } = 1.0f;

@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon.Platforms;
+using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static HandheldCompanion.Managers.EnergyManager;
-using Brush = System.Windows.Media.Brush;
 using Image = System.Windows.Controls.Image;
 
 namespace HandheldCompanion.Managers
@@ -37,6 +37,9 @@ namespace HandheldCompanion.Managers
         public string Path;
         public ProcessFilter Filter;
 
+        public Platform Platform { get; set; }
+
+        private ThreadState threadState = ThreadState.Terminated;
         private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;
 
         // UI vars
@@ -64,6 +67,8 @@ namespace HandheldCompanion.Managers
 
         public void Refresh()
         {
+            return;
+
             try
             {
                 Process.Refresh();
@@ -72,21 +77,10 @@ namespace HandheldCompanion.Managers
                     return;
 
                 // refresh main thread
-                MainThread = Process.Threads[0];
                 if (MainThread is null)
-                    return;
-
-                // refresh all child processes
-                List<int> childs = ProcessUtils.GetChildIds(this.Process);
-
-                // remove exited children
-                Children.RemoveAll(item => !childs.Contains(item));
-
-                // raise event on new children
-                foreach (int child in childs.Where(item => !Children.Contains(item)))
                 {
-                    Children.Add(child);
-                    ChildProcessCreated?.Invoke(this, child);
+                    MainThread = Process.Threads[0];
+                    return;
                 }
 
                 Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -105,41 +99,64 @@ namespace HandheldCompanion.Managers
                         processExpander.Visibility = Visibility.Collapsed;
 
                     // manage process state
-                    switch (MainThread.ThreadState)
+                    if (MainThread.ThreadState != threadState)
                     {
-                        case ThreadState.Wait:
+                        // refresh all child processes
+                        List<int> childs = ProcessUtils.GetChildIds(this.Process);
 
-                            if (MainThread.WaitReason != threadWaitReason)
-                            {
-                                switch (MainThread.WaitReason)
+                        // remove exited children
+                        Children.RemoveAll(item => !childs.Contains(item));
+
+                        // raise event on new children
+                        foreach (int child in childs.Where(item => !Children.Contains(item)))
+                        {
+                            Children.Add(child);
+                            ChildProcessCreated?.Invoke(this, child);
+                        }
+
+                        switch (MainThread.ThreadState)
+                        {
+                            case ThreadState.Wait:
+
+                                if (MainThread.WaitReason != threadWaitReason)
                                 {
-                                    case ThreadWaitReason.Suspended:
-                                        processSuspend.Visibility = Visibility.Collapsed;
-                                        processResume.Visibility = Visibility.Visible;
+                                    switch (MainThread.WaitReason)
+                                    {
+                                        case ThreadWaitReason.Suspended:
+                                            processSuspend.Visibility = Visibility.Collapsed;
+                                            processResume.Visibility = Visibility.Visible;
 
-                                        processResume.IsEnabled = true;
-                                        break;
-                                    default:
-                                        processSuspend.Visibility = Visibility.Visible;
-                                        processResume.Visibility = Visibility.Collapsed;
+                                            processResume.IsEnabled = true;
+                                            break;
+                                        default:
+                                            processSuspend.Visibility = Visibility.Visible;
+                                            processResume.Visibility = Visibility.Collapsed;
 
-                                        processSuspend.IsEnabled = true;
-                                        break;
+                                            processSuspend.IsEnabled = true;
+                                            break;
+                                    }
                                 }
-                            }
 
-                            threadWaitReason = MainThread.WaitReason;
-                            break;
-                        default:
-                            threadWaitReason = ThreadWaitReason.UserRequest;
-                            break;
+                                threadWaitReason = MainThread.WaitReason;
+                                break;
+
+                            case ThreadState.Terminated:
+                                MainThread = Process.Threads[0];
+                                break;
+
+                            default:
+                                threadWaitReason = ThreadWaitReason.UserRequest;
+                                break;
+                        }
+
+                        threadState = MainThread.ThreadState;
                     }
 
                     // manage process throttling
                     processQoS.Text = EnumUtils.GetDescriptionFromEnumValue(EcoQoS);
                 }));
             }
-            catch (Exception) { }
+            catch { }
         }
 
         public Expander GetControl()
@@ -154,7 +171,7 @@ namespace HandheldCompanion.Managers
 
         public void DrawControl()
         {
-            if (processExpander != null)
+            if (processExpander is not null)
                 return;
 
             processExpander = new Expander()
@@ -164,7 +181,7 @@ namespace HandheldCompanion.Managers
                 Visibility = Visibility.Collapsed,
                 Tag = Name
             };
-            processExpander.SetResourceReference(Control.BackgroundProperty, "LayerOnMicaBaseAltFillColorDefaultBrush");
+            processExpander.SetResourceReference(Control.BackgroundProperty, "ExpanderContentBackground");
 
             // Create Grid
             processGrid = new();
@@ -284,7 +301,6 @@ namespace HandheldCompanion.Managers
             processStackPanel.Children.Add(new Separator()
             {
                 Margin = new Thickness(-50, 0, -20, 0),
-                Background = Application.Current.FindResource("SystemControlBackgroundChromeMediumBrush") as Brush,
                 Opacity = 0.25
             });
 

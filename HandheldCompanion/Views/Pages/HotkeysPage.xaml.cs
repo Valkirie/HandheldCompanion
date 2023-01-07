@@ -1,7 +1,7 @@
 ﻿using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
-using System.Globalization;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -60,10 +60,14 @@ namespace HandheldCompanion.Views.Pages
             if (hotkey.inputsHotkey.hotkeyType == InputsHotkey.InputsHotkeyType.UI)
                 return;
 
+            Type DeviceType = hotkey.inputsHotkey.DeviceType;
+            if (DeviceType is not null && DeviceType != MainWindow.handheldDevice.GetType())
+                return;
+
             this.Dispatcher.Invoke(() =>
             {
                 Border hotkeyBorder = hotkey.GetHotkey();
-                if (hotkeyBorder is null || hotkeyBorder.Parent != null)
+                if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
                     return;
 
                 ushort idx = (ushort)hotkey.inputsHotkey.hotkeyType;

@@ -54,7 +54,7 @@ namespace HandheldCompanion
                     }
                 }
             }
-            catch (Exception) { }
+            catch { }
         }
 
         public short GetBrightness()
@@ -74,7 +74,7 @@ namespace HandheldCompanion
                 }
                 return 0;
             }
-            catch (Exception) { }
+            catch { }
 
             return -1;
         }

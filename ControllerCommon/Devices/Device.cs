@@ -12,8 +12,8 @@ namespace ControllerCommon.Devices
     public abstract class Device
     {
         protected USBDeviceInfo sensor = new USBDeviceInfo();
-        public string InternalSensorName = "N/A";
-        public string ExternalSensorName = "N/A";
+        public string InternalSensorName = string.Empty;
+        public string ExternalSensorName = string.Empty;
         public bool ProductSupported = false;
 
         public string ManufacturerName;
@@ -22,8 +22,12 @@ namespace ControllerCommon.Devices
         public string ProductIllustration = "device_generic";
         public string ProductModel = "default";
 
-        public bool hasInternal;
-        public bool hasExternal;
+        public Dictionary<SensorFamily, bool> hasSensors = new()
+        {
+            { SensorFamily.Windows, false },
+            { SensorFamily.SerialUSBIMU, false },
+            { SensorFamily.Controller, false },
+        };
 
         // device nominal TDP (slow, fast)
         public double[] nTDP = { 15, 15, 20 };
@@ -57,7 +61,7 @@ namespace ControllerCommon.Devices
         private static Device device;
         public static Device GetDefault()
         {
-            if (device != null)
+            if (device is not null)
                 return device;
 
             var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
@@ -149,12 +153,23 @@ namespace ControllerCommon.Devices
                         }
                     }
                     break;
+
+                case "VALVE":
+                    {
+                        switch (ProductName)
+                        {
+                            case "Jupiter":
+                                device = new SteamDeck();
+                                break;
+                        }
+                    }
+                    break;
             }
 
             if (device is null)
             {
                 device = new DefaultDevice();
-                LogManager.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable.", ProductName, ManufacturerName);
+                LogManager.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable", ProductName, ManufacturerName);
             }
 
             // get the actual handheld device
@@ -169,32 +184,22 @@ namespace ControllerCommon.Devices
             var gyrometer = Gyrometer.GetDefault();
             var accelerometer = Accelerometer.GetDefault();
 
-            if (gyrometer != null && accelerometer != null)
+            if (gyrometer is not null && accelerometer is not null)
             {
                 // check sensor
                 string DeviceId = CommonUtils.Between(gyrometer.DeviceId, @"\\?\", @"#{").Replace(@"#", @"\");
                 sensor = GetUSBDevice(DeviceId);
-                if (sensor != null)
+                if (sensor is not null)
                     InternalSensorName = sensor.Name;
 
-                hasInternal = true;
-            }
-            else
-            {
-                InternalSensorName = "N/A";
-                hasInternal = false;
+                hasSensors[SensorFamily.Windows] = true;
             }
 
             var USB = SerialUSBIMU.GetDefault();
-            if (USB != null)
+            if (USB is not null)
             {
                 ExternalSensorName = USB.GetName();
-                hasExternal = true;
-            }
-            else
-            {
-                ExternalSensorName = "N/A";
-                hasExternal = false;
+                hasSensors[SensorFamily.SerialUSBIMU] = true;
             }
         }
     }

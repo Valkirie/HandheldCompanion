@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Controllers;
+using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
@@ -7,6 +8,7 @@ using Nefarius.ViGEm.Client;
 using PrecisionTiming;
 using System;
 using System.Numerics;
+using Platform = ControllerCommon.Platforms.Platform;
 
 namespace ControllerService.Targets
 {
@@ -30,6 +32,7 @@ namespace ControllerService.Targets
         public delegate void DisconnectedEventHandler(ViGEmTarget target);
 
         public bool IsConnected = false;
+        protected bool IsSilenced = false;
 
         protected ViGEmTarget()
         {
@@ -39,6 +42,34 @@ namespace ControllerService.Targets
             UpdateTimer = new PrecisionTimer();
             UpdateTimer.SetInterval(5);
             UpdateTimer.SetAutoResetMode(true);
+
+            ControllerService.ForegroundUpdated += ForegroundUpdated;
+        }
+
+        private void ForegroundUpdated()
+        {
+            if (ControllerService.currentProfile.whitelisted)
+                IsSilenced = true;
+            else
+            {
+                // platform specific
+                switch (ControllerService.currentPlatform)
+                {
+                    case Platform.Steam:
+                        {
+                            if (ControllerService.handheldDevice.GetType() == typeof(SteamDeck))
+                            {
+                                SteamDeck SteamDeck = (SteamDeck)ControllerService.handheldDevice;
+                                IsSilenced = SteamDeck.IsMuted();
+                            }
+                        }
+                        break;
+
+                    default:
+                        IsSilenced = false;
+                        break;
+                }
+            }
         }
 
         protected void FeedbackReceived(object sender, EventArgs e)
@@ -59,6 +90,8 @@ namespace ControllerService.Targets
 
         public virtual void Disconnect()
         {
+            this.UpdateTimer.Stop();
+
             IsConnected = false;
             Disconnected?.Invoke(this);
             LogManager.LogInformation("{0} disconnected", ToString());
@@ -74,6 +107,10 @@ namespace ControllerService.Targets
             // get sticks values
             LeftThumb = new Vector2(Inputs.LeftThumbX, Inputs.LeftThumbY);
             RightThumb = new Vector2(Inputs.RightThumbX, Inputs.RightThumbY);
+
+            // Apply user defined in game deadzone setting compensation prior to UMC additions
+            LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.antideadzoneL);
+            RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, ControllerService.currentProfile.antideadzoneR);
 
             if (ControllerService.currentProfile.umc_enabled)
             {
@@ -117,6 +154,9 @@ namespace ControllerService.Targets
                                     Angular.X * ControllerService.currentProfile.GetSensitivityX(),
                                     Angular.Y * ControllerService.currentProfile.GetSensitivityY());
 
+                                // apply anti deadzone to motion based thumb input to overcome deadzone and experience small movements properly
+                                GamepadThumb = InputUtils.ApplyAntiDeadzone(GamepadThumb, ControllerService.currentProfile.umc_anti_deadzone);
+
                                 switch (ControllerService.currentProfile.umc_output)
                                 {
                                     default:
@@ -137,17 +177,23 @@ namespace ControllerService.Targets
                                             // Y input only from motion controls
                                             RightThumb.X = (short)(Math.Clamp(GamepadThumb.X - FlickStickX, short.MinValue, short.MaxValue));
                                             RightThumb.Y = (short)(Math.Clamp(GamepadThumb.Y, short.MinValue, short.MaxValue));
+
+                                            RightThumb = InputUtils.ImproveCircularity(RightThumb);
                                         }
                                         else
                                         {
                                             RightThumb.X = (short)(Math.Clamp(RightThumb.X + GamepadThumb.X, short.MinValue, short.MaxValue));
                                             RightThumb.Y = (short)(Math.Clamp(RightThumb.Y + GamepadThumb.Y, short.MinValue, short.MaxValue));
+
+                                            RightThumb = InputUtils.ImproveCircularity(RightThumb);
                                         }
                                         break;
 
                                     case Output.LeftStick:
                                         LeftThumb.X = (short)(Math.Clamp(LeftThumb.X + GamepadThumb.X, short.MinValue, short.MaxValue));
                                         LeftThumb.Y = (short)(Math.Clamp(LeftThumb.Y + GamepadThumb.Y, short.MinValue, short.MaxValue));
+
+                                        LeftThumb = InputUtils.ImproveCircularity(LeftThumb);
                                         break;
                                 }
                             }
@@ -175,19 +221,8 @@ namespace ControllerService.Targets
                             break;
                     }
                 }
-
-                // Apply user defined in game deadzone setting compensation
-                switch (ControllerService.currentProfile.umc_output)
-                {
-                    default:
-                    case Output.RightStick:
-                        RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, ControllerService.currentProfile.antideadzone);
-                        break;
-                    case Output.LeftStick:
-                        LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.antideadzone);
-                        break;
-                }
             }
+
         }
 
         internal void SubmitReport()
@@ -200,6 +235,9 @@ namespace ControllerService.Targets
 
         public virtual void Dispose()
         {
+            this.Disconnect();
+            this.UpdateTimer = null;
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -55,7 +55,7 @@
                 <Border     
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -80,7 +80,7 @@
                 <Border  
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -105,7 +105,7 @@
                 <Border  
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -130,7 +130,7 @@
                 <Border  
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -158,7 +158,7 @@
                 <Border  
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    Background="{DynamicResource ExpanderContentBackground}"
                     Visibility="Collapsed">
 
                     <Grid>
@@ -189,7 +189,7 @@
                 <Border  
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -219,7 +219,7 @@
                 <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -249,7 +249,7 @@
                 <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -274,7 +274,7 @@
                 <Border                      
                             Padding="15,12,12,12"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                            Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -301,7 +301,7 @@
                 <Border                      
                             Padding="15,12,12,12"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                            Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -331,7 +331,7 @@
                 <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -349,18 +349,35 @@
                         </DockPanel>
 
                         <ui:RadioButtons Name="cB_SensorSelection" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1" SelectionChanged="cB_SensorSelection_SelectionChanged">
-
-                            <RadioButton Name="SensorInternal" IsEnabled="False" >
+                            <!-- None -->
+                            <RadioButton Name="SensorNone">
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="&#xE770;"/>
+                                    <Label Content="None"></Label>
+                                </ui:SimpleStackPanel>
+                            </RadioButton>
+                            
+                            <!-- Windows -->
+                            <RadioButton Name="SensorInternal" IsEnabled="False">
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <ui:FontIcon Glyph="&#xE770;"/>
                                     <Label Content="{x:Static resx:Resources.SettingsPage_SensorInternal}"></Label>
                                 </ui:SimpleStackPanel>
                             </RadioButton>
-                            
-                            <RadioButton Name="SensorExternal" IsEnabled="False" >
+
+                            <!-- SerialUSBIMU -->
+                            <RadioButton Name="SensorExternal" IsEnabled="False">
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <ui:FontIcon Glyph="&#xECF1;"/>
                                     <Label Content="{x:Static resx:Resources.SettingsPage_SensorExternal}"></Label>
+                                </ui:SimpleStackPanel>
+                            </RadioButton>
+
+                            <!-- Controller -->
+                            <RadioButton Name="SensorController" IsEnabled="False">
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="&#xE7FC;"/>
+                                    <Label Content="{x:Static resx:Resources.MainWindow_navController}"></Label>
                                 </ui:SimpleStackPanel>
                             </RadioButton>
                         </ui:RadioButtons>
@@ -368,10 +385,11 @@
                 </Border>
 
                 <!-- Sensor Placement Direction -->
-                <Border                      
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                <Border
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource ExpanderContentBackground}"
+                    Name="SensorPlacementVisualisation">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -389,7 +407,7 @@
                         </DockPanel>
 
                         <Grid Grid.Column="1">
-                            <ui:SimpleStackPanel Name="SensorPlacementVisualisation" Spacing="6" HorizontalAlignment="Right">
+                            <ui:SimpleStackPanel Name="Grid_SensorPlacementVisualisation" Spacing="6" HorizontalAlignment="Right">
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
                                     <Button Tag="0" Width="50" Height="50" Click="SensorPlacement_Click" IsEnabled="False"></Button>
@@ -411,10 +429,11 @@
                 </Border>
                 
                 <!-- Sensor Placement Mirror -->
-                <Border                      
-                            Padding="15,12,12,12"
-                            CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                <Border
+                    Padding="15,12,12,12"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Background="{DynamicResource ExpanderContentBackground}"
+                    Name="SensorPlacementUpsideDown">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -444,7 +463,7 @@
                 <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -469,7 +488,7 @@
                 <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -494,7 +513,7 @@
                 <Border
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    Background="{DynamicResource ExpanderContentBackground}"
                     Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <Grid>
@@ -520,7 +539,7 @@
                 <Border
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    Background="{DynamicResource ExpanderContentBackground}"
                     Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <Grid>

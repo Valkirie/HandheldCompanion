@@ -6,8 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Navigation;
+using Windows.System.Power;
 using Page = System.Windows.Controls.Page;
+using PowerManager = ControllerCommon.Managers.PowerManager;
+using SystemPowerManager = Windows.System.Power.PowerManager;
 
 namespace HandheldCompanion.Views.Windows
 {
@@ -35,6 +39,8 @@ namespace HandheldCompanion.Views.Windows
 
             // create manager(s)
             brightnessControl = new();
+            PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
+            PowerManager_PowerStatusChanged(SystemInformation.PowerStatus);
 
             // create pages
             performancePage = new QuickPerformancePage();
@@ -54,6 +60,61 @@ namespace HandheldCompanion.Views.Windows
             Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("QuickToolsTop"));
 
             SourceInitialized += QuickTools_SourceInitialized;
+        }
+
+        private void PowerManager_PowerStatusChanged(PowerStatus status)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                int BatteryLifePercent = (int)Math.Truncate(status.BatteryLifePercent * 100.0f);
+                BatteryIndicatorPercentage.Text = $"{BatteryLifePercent}%";
+
+                // get status key
+                string KeyStatus = string.Empty;
+                switch (status.PowerLineStatus)
+                {
+                    case System.Windows.Forms.PowerLineStatus.Online:
+                        KeyStatus = "Charging";
+                        break;
+                    default:
+                        {
+                            EnergySaverStatus energy = SystemPowerManager.EnergySaverStatus;
+                            switch (energy)
+                            {
+                                case EnergySaverStatus.On:
+                                    KeyStatus = "Saver";
+                                    break;
+                            }
+                        }
+                        break;
+                }
+
+                // get battery key
+                int KeyValue = (int)Math.Truncate(status.BatteryLifePercent * 10);
+
+                // set key
+                string Key = $"Battery{KeyStatus}{KeyValue}";
+
+                if (PowerManager.PowerStatusIcon.ContainsKey(Key))
+                    BatteryIndicatorIcon.Glyph = PowerManager.PowerStatusIcon[Key];
+
+                if (status.BatteryLifeRemaining > 0)
+                {
+                    TimeSpan time = TimeSpan.FromSeconds(status.BatteryLifeRemaining);
+
+                    string remaining;
+                    if (status.BatteryLifeRemaining >= 3600)
+                        remaining = $"{time.Hours}h {time.Minutes}min";
+                    else
+                        remaining = $"{time.Minutes}min";
+
+                    BatteryIndicatorLifeRemaining.Text = $"({remaining} remaining)";
+                }
+                else
+                {
+                    BatteryIndicatorLifeRemaining.Text = string.Empty;
+                }
+            });
         }
 
         private void QuickTools_SourceInitialized(object? sender, EventArgs e)
@@ -81,13 +142,16 @@ namespace HandheldCompanion.Views.Windows
                         this.Activate();
                         break;
                 }
+
+                this.UpdateLayout();
+                this.UpdateDefaultStyle();
             });
         }
 
         #region navView
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            if (args.InvokedItemContainer != null)
+            if (args.InvokedItemContainer is not null)
             {
                 NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
                 string navItemTag = (string)navItem.Tag;
@@ -169,7 +233,7 @@ namespace HandheldCompanion.Views.Windows
         {
             navView.IsBackEnabled = ContentFrame.CanGoBack;
 
-            if (ContentFrame.SourcePageType != null)
+            if (ContentFrame.SourcePageType is not null)
             {
                 var preNavPageType = ContentFrame.CurrentSourcePageType;
                 var preNavPageName = preNavPageType.Name;

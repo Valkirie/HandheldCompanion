@@ -42,7 +42,7 @@ namespace ControllerCommon.Managers
                     .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
                     .SetToastScenario(ToastScenario.Default);
 
-                    if (toast != null)
+                    if (toast is not null)
                     {
                         toast.Show(toast =>
                         {
@@ -60,7 +60,7 @@ namespace ControllerCommon.Managers
                     }
                 }).Start();
             }
-            catch (Exception) { }
+            catch { }
         }
 
         public override void Start()

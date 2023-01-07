@@ -38,7 +38,7 @@ namespace HandheldCompanion.Models
             // colors
             var ColorPlasticBlack = (Color)ColorConverter.ConvertFromString("#707477");
             var ColorPlasticWhite = (Color)ColorConverter.ConvertFromString("#D6E7EE");
-            var ColorHighlight = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+            var ColorHighlight = (Brush)Application.Current.Resources["AccentButtonBackground"];
 
             var MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
             var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
@@ -124,21 +124,21 @@ namespace HandheldCompanion.Models
                 DefaultMaterials[model3D] = MaterialPlasticBlack;
 
                 // specific material(s)
-                if (model3D == MainBody || model3D == MainBodyRight || model3D == LeftMotor || model3D == RightMotor)
+                if (model3D.Equals(MainBody) || model3D.Equals(MainBodyRight) || model3D.Equals(LeftMotor) || model3D.Equals(RightMotor))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticWhite;
                     DefaultMaterials[model3D] = MaterialPlasticWhite;
                     continue;
                 }
 
-                if (model3D == Logo)
+                if (model3D.Equals(Logo))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialHighlight;
                     DefaultMaterials[model3D] = MaterialHighlight;
                     continue;
                 }
 
-                if (model3D == HomeButton || model3D == LED1 || model3D == JoystickLeftLEDRing || model3D == JoystickRightLEDRing)
+                if (model3D.Equals(HomeButton) || model3D.Equals(LED1) || model3D.Equals(JoystickLeftLEDRing) || model3D.Equals(JoystickRightLEDRing))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticTransparentHighlight;
                     ((GeometryModel3D)model3D.Children[0]).BackMaterial = MaterialPlasticTransparentHighlight;

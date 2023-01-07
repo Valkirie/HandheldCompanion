@@ -5,58 +5,127 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using static PInvoke.Kernel32;
+using System.Linq;
 
 namespace ControllerCommon
 {
     public static class HidHide
     {
-        private static HidHideControlService service;
+        private static Process process;
         static HidHide()
         {
-            service = new HidHideControlService();
+            var service = new HidHideControlService();
 
             if (!service.IsInstalled)
             {
                 LogManager.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
                 throw new InvalidOperationException();
             }
+
+            // verifying HidHide is installed
+            string InstallPath = RegistryUtils.GetHKLM(@"SOFTWARE\Nefarius Software Solutions e.U.\HidHide", "Path");
+            if (!string.IsNullOrEmpty(InstallPath))
+                InstallPath = Path.Combine(InstallPath, "x64", "HidHideCLI.exe");
+
+            process = new Process
+            {
+                StartInfo =
+                {
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    FileName = InstallPath,
+                    Verb = "runas"
+                }
+            };
         }
 
-        public static IReadOnlyList<string> GetRegisteredApplications()
+        public static List<string> GetRegisteredApplications()
         {
-            return service.ApplicationPaths;
+            try
+            {
+                var service = new HidHideControlService();
+                return service.ApplicationPaths.ToList();
+            }
+            catch { }
+
+            return new();
         }
 
-        public static IReadOnlyList<string> GetRegisteredDevices()
+        public static List<string> GetRegisteredDevices()
         {
-            return service.BlockedInstanceIds;
+            try
+            {
+                var service = new HidHideControlService();
+                return service.BlockedInstanceIds.ToList();
+            }
+            catch { }
+
+            return new();
+        }
+
+        public static bool IsRegistered(string InstanceId)
+        {
+            try
+            {
+                var registered = GetRegisteredDevices();
+                return registered.Contains(InstanceId);
+            }
+            catch { }
+
+            return false;
         }
 
         public static void UnregisterApplication(string fileName)
         {
             try
             {
-                service.RemoveApplicationPath(fileName);
+                var service = new HidHideControlService();
+                if (service.ApplicationPaths.Contains(fileName))
+                {
+                    service.RemoveApplicationPath(fileName);
+                    LogManager.LogInformation("HideDevice RemoveApplicationPath: {0}", fileName);
+                }
+            }
+            catch
+            {
+                process.StartInfo.Arguments = $"--app-unreg \"{fileName}\"";
+                process.Start();
+                process.WaitForExit();
+                process.StandardOutput.ReadToEnd();
+
                 LogManager.LogInformation("HideDevice RemoveApplicationPath: {0}", fileName);
             }
-            catch { }
         }
 
         public static void RegisterApplication(string fileName)
         {
             try
             {
-                service.AddApplicationPath(fileName);
+                var service = new HidHideControlService();
+                if (!service.ApplicationPaths.Contains(fileName))
+                {
+                    service.AddApplicationPath(fileName);
+                    LogManager.LogInformation("HideDevice AddApplicationPath: {0}", fileName);
+                }
+            }
+            catch
+            {
+                process.StartInfo.Arguments = $"--app-reg \"{fileName}\"";
+                process.Start();
+                process.WaitForExit();
+                process.StandardOutput.ReadToEnd();
+
                 LogManager.LogInformation("HideDevice AddApplicationPath: {0}", fileName);
             }
-            catch { }
         }
 
         public static void SetCloaking(bool status)
         {
             try
             {
+                var service = new HidHideControlService();
                 service.IsActive = status;
                 LogManager.LogInformation("HideDevice IsActive: {0}", status);
             }
@@ -67,8 +136,12 @@ namespace ControllerCommon
         {
             try
             {
-                service.RemoveBlockedInstanceId(deviceInstancePath);
-                LogManager.LogInformation("HideDevice RemoveBlockedInstanceId: {0}", deviceInstancePath);
+                var service = new HidHideControlService();
+                if (service.BlockedInstanceIds.Contains(deviceInstancePath))
+                {
+                    service.RemoveBlockedInstanceId(deviceInstancePath);
+                    LogManager.LogInformation("HideDevice RemoveBlockedInstanceId: {0}", deviceInstancePath);
+                }
             }
             catch { }
         }
@@ -77,8 +150,12 @@ namespace ControllerCommon
         {
             try
             {
-                service.AddBlockedInstanceId(deviceInstancePath);
-                LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
+                var service = new HidHideControlService();
+                if (!service.BlockedInstanceIds.Contains(deviceInstancePath))
+                {
+                    service.AddBlockedInstanceId(deviceInstancePath);
+                    LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
+                }
             }
             catch { }
         }

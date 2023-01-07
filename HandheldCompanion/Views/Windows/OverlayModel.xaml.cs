@@ -134,6 +134,9 @@ namespace HandheldCompanion.Views.Windows
                             case "ONEXPLAYERMini":
                                 newModel = new ModelOneXPlayerMini();
                                 break;
+                            case "SteamDeck":
+                                newModel = new ModelSteamDeck();
+                                break;
                             default:
                                 // default model if unsupported OEM
                                 newModel = new ModelXBOX360();

@@ -14,7 +14,7 @@ namespace ControllerCommon.Utils
             string key = $"Enum.{value.GetType().Name}.{value}";
             string root = Properties.Resources.ResourceManager.GetString(key);
 
-            if (root != null)
+            if (root is not null)
                 return root;
 
             LogManager.LogError("Missing localization value for enum: {0}", key);
@@ -29,8 +29,8 @@ namespace ControllerCommon.Utils
                 .GetCustomAttributes(typeof(DescriptionAttribute), false)
                 .SingleOrDefault() as DescriptionAttribute;
             }
-            catch (Exception) { }
-            return attribute == null ? value.ToString() : attribute.Description;
+            catch { }
+            return attribute is null ? value.ToString() : attribute.Description;
         }
 
         public static T GetEnumValueFromDescription<T>(string description)
@@ -45,7 +45,7 @@ namespace ControllerCommon.Utils
                                     f, a) => new { Field = f, Att = a })
                             .Where(a => ((DescriptionAttribute)a.Att)
                                 .Description == description).SingleOrDefault();
-            return field == null ? default(T) : (T)field.Field.GetRawConstantValue();
+            return field is null ? default(T) : (T)field.Field.GetRawConstantValue();
         }
     }
 }

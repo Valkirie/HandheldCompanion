@@ -7,8 +7,7 @@ namespace ControllerCommon
     [StructLayout(LayoutKind.Sequential)]
     public class PnPDetails
     {
-        public string Manufacturer;
-        public string DeviceDesc;
+        public string Name;
         public string SymLink;
 
         public bool isVirtual;
@@ -16,10 +15,20 @@ namespace ControllerCommon
         public bool isHooked;
         public DateTimeOffset arrivalDate;
 
-        public string deviceInstancePath;
-        public string baseContainerDeviceInstancePath;
+        public string deviceInstanceId;
+        public string baseContainerDeviceInstanceId;
 
         public Attributes attributes;
         public Capabilities capabilities;
+
+        public string GetProductID()
+        {
+            return "0x" + attributes.ProductID.ToString("X4");
+        }
+
+        public string GetVendorID()
+        {
+            return "0x" + attributes.VendorID.ToString("X4");
+        }
     }
 }

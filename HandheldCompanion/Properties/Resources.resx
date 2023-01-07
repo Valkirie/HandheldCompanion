@@ -182,10 +182,10 @@
     <value>..\Resources\ControllerCompanion.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="ControllerPage_CloakDevice" xml:space="preserve">
-    <value>Cloak device</value>
+    <value>Cloak physical controller</value>
   </data>
   <data name="ControllerPage_CloakDeviceDesc" xml:space="preserve">
-    <value>Change the physical controller visibility to other applications</value>
+    <value>Change physical controller visibility to other applications</value>
   </data>
   <data name="ControllerPage_Connect" xml:space="preserve">
     <value>Connect</value>
@@ -194,7 +194,10 @@
     <value>Controller</value>
   </data>
   <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
-    <value>Device cloaking</value>
+    <value>Controller cloaking</value>
+  </data>
+  <data name="ControllerPage_DeviceSettings" xml:space="preserve">
+    <value>Controller settings</value>
   </data>
   <data name="ControllerPage_Disconnect" xml:space="preserve">
     <value>Disconnect</value>
@@ -206,7 +209,7 @@
     <value>Uncloak on close</value>
   </data>
   <data name="ControllerPage_UncloakOnCloseDesc" xml:space="preserve">
-    <value>Restore visibility of the physical controller to other applications on service exit</value>
+    <value>Restore visibility of all physical controllers to other applications on service exit</value>
   </data>
   <data name="ControllerPage_VibrationStrength" xml:space="preserve">
     <value>Vibration strength</value>
@@ -303,6 +306,18 @@
   </data>
   <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
     <value>Change hotkey by pressing a button or a special key</value>
+  </data>
+  <data name="InputsHotkey_SteamDeckLizardButtons" xml:space="preserve">
+    <value>Lizard mode (Buttons)</value>
+  </data>
+  <data name="InputsHotkey_SteamDeckLizardButtonsDesc" xml:space="preserve">
+    <value>Toggle buttons from or into lizard brain (mouse and keyboard emulation)</value>
+  </data>
+  <data name="InputsHotkey_SteamDeckLizardMouse" xml:space="preserve">
+    <value>Lizard mode (Mouse)</value>
+  </data>
+  <data name="InputsHotkey_SteamDeckLizardMouseDesc" xml:space="preserve">
+    <value>Toggle trackpads from or into lizard brain (mouse and keyboard emulation)</value>
   </data>
   <data name="InputsHotkey_shortcutTaskManager" xml:space="preserve">
     <value>Open Task Manager</value>
@@ -1084,5 +1099,23 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="XInputPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="ControllerPage_SteamDeckMuteController" xml:space="preserve">
+    <value>Mute virtual controller</value>
+  </data>
+  <data name="ControllerPage_SteamDeckMuteControllerDesc" xml:space="preserve">
+    <value>Mute virtual controller on steam related applications</value>
+  </data>
+  <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
+    <value>Controller settings</value>
+  </data>
+  <data name="ProfilesPage_ControllerSettingsDesc" xml:space="preserve">
+    <value>Change the virtual controller settings</value>
+  </data>
+  <data name="ProfilesPage_UMCAntiDeadzone" xml:space="preserve">
+    <value>Motion anti-deadzone</value>
+  </data>
+  <data name="ProfilesPage_UMCAntiDeadzoneDesc" xml:space="preserve">
+    <value>Compensate for in game deadzone, improve registration of small movements</value>
   </data>
 </root>

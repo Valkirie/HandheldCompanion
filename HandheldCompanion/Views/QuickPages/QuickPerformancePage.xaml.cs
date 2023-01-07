@@ -1,6 +1,7 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Processor;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,7 +20,7 @@ namespace HandheldCompanion.Views.QuickPages
         {
             InitializeComponent();
 
-            MainWindow.powerManager.ProcessorStatusChanged += PowerManager_StatusChanged;
+            MainWindow.performanceManager.ProcessorStatusChanged += PowerManager_StatusChanged;
             // MainWindow.powerManager.PowerLimitChanged += PowerManager_LimitChanged;
             // MainWindow.powerManager.PowerValueChanged += PowerManager_ValueChanged;
 
@@ -31,8 +32,24 @@ namespace HandheldCompanion.Views.QuickPages
 
             HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
+            DesktopManager.PrimaryScreenChanged += DesktopManager_PrimaryScreenChanged;
+            DesktopManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
+
             GPUSlider.Minimum = MainWindow.handheldDevice.GfxClock[0];
             GPUSlider.Maximum = MainWindow.handheldDevice.GfxClock[1];
+        }
+
+        private void DesktopManager_PrimaryScreenChanged(DesktopScreen screen)
+        {
+            ComboBoxResolution.Items.Clear();
+            foreach (ScreenResolution resolution in screen.resolutions)
+                ComboBoxResolution.Items.Add(resolution);
+        }
+
+        private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
+        {
+            ComboBoxResolution.SelectedItem = resolution;
+            ComboBoxFrequency.SelectedItem = DesktopManager.GetScreenFrequency();
         }
 
         private void HotkeysManager_CommandExecuted(string listener)
@@ -114,7 +131,7 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
-        private void ProfileManager_Updated(Profile profile, bool backgroundtask, bool isCurrent)
+        private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
             if (!isCurrent)
                 return;
@@ -145,7 +162,7 @@ namespace HandheldCompanion.Views.QuickPages
         {
             this.Dispatcher.Invoke(() =>
             {
-                if (currentProfile != null)
+                if (currentProfile is not null)
                 {
                     TDPToggle.IsEnabled = TDPSustainedSlider.IsEnabled = TDPBoostSlider.IsEnabled = CanChangeTDP && !currentProfile.TDP_override;
                     TDPWarning.Visibility = currentProfile.TDP_override ? Visibility.Visible : Visibility.Collapsed;
@@ -213,8 +230,8 @@ namespace HandheldCompanion.Views.QuickPages
             if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled"))
                 return;
 
-            MainWindow.powerManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
-            MainWindow.powerManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
+            MainWindow.performanceManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
+            MainWindow.performanceManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -227,7 +244,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled"))
                 return;
 
-            MainWindow.powerManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
+            MainWindow.performanceManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -239,18 +256,18 @@ namespace HandheldCompanion.Views.QuickPages
         {
             if (TDPToggle.IsOn)
             {
-                MainWindow.powerManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
-                MainWindow.powerManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
-                MainWindow.powerManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
+                MainWindow.performanceManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
+                MainWindow.performanceManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
+                MainWindow.performanceManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
 
-                MainWindow.powerManager.StartTDPWatchdog();
+                MainWindow.performanceManager.StartTDPWatchdog();
             }
             else
             {
                 // restore default TDP and halt watchdog
-                MainWindow.powerManager.RequestTDP(MainWindow.handheldDevice.nTDP);
+                MainWindow.performanceManager.RequestTDP(MainWindow.handheldDevice.nTDP);
 
-                MainWindow.powerManager.StopTDPWatchdog();
+                MainWindow.performanceManager.StopTDPWatchdog();
             }
 
             if (!SettingsManager.IsInitialized)
@@ -263,14 +280,14 @@ namespace HandheldCompanion.Views.QuickPages
         {
             if (GPUToggle.IsOn)
             {
-                MainWindow.powerManager.RequestGPUClock(GPUSlider.Value);
-                MainWindow.powerManager.StartGPUWatchdog();
+                MainWindow.performanceManager.RequestGPUClock(GPUSlider.Value);
+                MainWindow.performanceManager.StartGPUWatchdog();
             }
             else
             {
                 // restore default GPU clock and halt watchdog
-                MainWindow.powerManager.RequestGPUClock(255 * 50);
-                MainWindow.powerManager.StopGPUWatchdog();
+                MainWindow.performanceManager.RequestGPUClock(255 * 50);
+                MainWindow.performanceManager.StopGPUWatchdog();
             }
 
             if (!SettingsManager.IsInitialized)
@@ -294,7 +311,7 @@ namespace HandheldCompanion.Views.QuickPages
                 TextBlock.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
             });
 
-            MainWindow.powerManager.RequestPowerMode((int)PowerModeSlider.Value);
+            MainWindow.performanceManager.RequestPowerMode((int)PowerModeSlider.Value);
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -302,12 +319,46 @@ namespace HandheldCompanion.Views.QuickPages
             SettingsManager.SetProperty("QuickToolsPowerModeValue", value);
         }
 
+        private void ComboBoxResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ScreenResolution resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
+
+            ComboBoxFrequency.Items.Clear();
+            foreach (ScreenFrequency frequency in resolution.frequencies)
+                ComboBoxFrequency.Items.Add(frequency);
+
+            // pick current frequency, if available
+            ComboBoxFrequency.SelectedItem = DesktopManager.GetScreenFrequency();
+
+            SetResolution();
+        }
+
+        private void ComboBoxFrequency_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SetResolution();
+        }
+
+        private void SetResolution()
+        {
+            if (ComboBoxResolution.SelectedItem is null)
+                return;
+
+            if (ComboBoxFrequency.SelectedItem is null)
+                return;
+
+            ScreenResolution resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
+            ScreenFrequency frequency = (ScreenFrequency)ComboBoxFrequency.SelectedItem;
+
+            // update current screen resolution
+            DesktopManager.SetResolution(resolution.width, resolution.height, frequency.frequency);
+        }
+
         private void GPUSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (!SettingsManager.GetBoolean("QuickToolsPerformanceGPUEnabled"))
                 return;
 
-            MainWindow.powerManager.RequestGPUClock(GPUSlider.Value);
+            MainWindow.performanceManager.RequestGPUClock(GPUSlider.Value);
 
             if (!SettingsManager.IsInitialized)
                 return;

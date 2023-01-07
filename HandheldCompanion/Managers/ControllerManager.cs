@@ -1,19 +1,30 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Views;
 using SharpDX.DirectInput;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using DeviceType = SharpDX.DirectInput.DeviceType;
 
 namespace HandheldCompanion.Managers
 {
     public static class ControllerManager
     {
         private static Dictionary<string, IController> Controllers = new();
-        private static IController targetController;
+        private static Dictionary<UserIndex, bool> XUsbControllers = new()
+        {
+            { UserIndex.One, true },
+            { UserIndex.Two, true },
+            { UserIndex.Three, true },
+            { UserIndex.Four, true },
+        };
+
+        private static IController? targetController;
 
         private static DirectInput directInput = new DirectInput();
 
@@ -33,13 +44,17 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            SystemManager.XInputDeviceArrived += XInputUpdated;
-            SystemManager.XInputDeviceRemoved += XInputUpdated;
+            SystemManager.XUsbDeviceArrived += XUsbDeviceArrived;
+            SystemManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
 
-            SystemManager.DInputDeviceArrived += DInputUpdated;
-            SystemManager.DInputDeviceRemoved += DInputUpdated;
+            SystemManager.HidDeviceArrived += HidDeviceArrived;
+            SystemManager.HidDeviceRemoved += HidDeviceRemoved;
+
+            SystemManager.Initialized += SystemManager_Initialized;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            PipeClient.Connected += OnClientConnected;
 
             // cloak on start, if requested
             bool HIDcloaked = SettingsManager.GetBoolean("HIDcloaked");
@@ -51,6 +66,8 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = true;
             Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "ControllerManager");
         }
 
         public static void Stop()
@@ -60,14 +77,21 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = false;
 
-            SystemManager.XInputDeviceArrived -= XInputUpdated;
-            SystemManager.XInputDeviceRemoved -= XInputUpdated;
+            SystemManager.XUsbDeviceArrived -= XUsbDeviceArrived;
+            SystemManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
+
+            SystemManager.HidDeviceArrived -= HidDeviceArrived;
+            SystemManager.HidDeviceRemoved -= HidDeviceRemoved;
 
             SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
             // uncloak on close, if requested
             bool HIDuncloakonclose = SettingsManager.GetBoolean("HIDuncloakonclose");
-            HidHide.SetCloaking(!HIDuncloakonclose);
+            foreach (IController controller in Controllers.Values)
+                controller.Unhide();
+            // HidHide.SetCloaking(!HIDuncloakonclose);
+
+            LogManager.LogInformation("{0} has stopped", "ControllerManager");
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -80,8 +104,49 @@ namespace HandheldCompanion.Managers
                         double HIDstrength = Convert.ToDouble(value);
                         SetHIDStrength(HIDstrength);
                         break;
+
+                    case "SteamDeckLizardMouse":
+                    case "SteamDeckLizardButtons":
+                        {
+                            IController target = GetTargetController();
+                            if (target is null)
+                                return;
+
+                            if (typeof(NeptuneController) != target.GetType())
+                                return;
+
+                            bool LizardMode = Convert.ToBoolean(value);
+
+                            switch (name)
+                            {
+                                case "SteamDeckLizardMouse":
+                                    ((NeptuneController)target).SetLizardMouse(LizardMode);
+                                    break;
+                                case "SteamDeckLizardButtons":
+                                    ((NeptuneController)target).SetLizardButtons(LizardMode);
+                                    break;
+                            }
+                        }
+                        break;
                 }
             }));
+        }
+
+        private static void SystemManager_Initialized()
+        {
+            // search for last known controller and connect
+            string path = SettingsManager.GetString("HIDInstancePath");
+
+            if (Controllers.ContainsKey(path))
+            {
+                SetTargetController(path);
+            }
+            else if (Controllers.Count != 0)
+            {
+                // no known controller, connect to the first available
+                path = Controllers.Keys.FirstOrDefault();
+                SetTargetController(path);
+            }
         }
 
         private static void SetHIDStrength(double value)
@@ -93,27 +158,40 @@ namespace HandheldCompanion.Managers
             target.SetVibrationStrength(value);
         }
 
-        private static void DInputUpdated(PnPDetails details)
+        private static void HidDeviceArrived(PnPDetails details)
         {
-            foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
+            // use dispatcher because we're drawing UI elements when initializing the controller object
+            Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                // Instantiate the joystick
-                var joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
-
-                if (!joystick.Properties.InterfacePath.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
-                    continue;
-
-                // is an XInput controller, handled elsewhere
-                if (joystick.Properties.InterfacePath.Contains("IG_", StringComparison.InvariantCultureIgnoreCase))
-                    continue;
-
+                // initialize controller vars
+                Joystick joystick = null;
                 IController controller = null;
-                switch (joystick.Properties.VendorId)
+
+                // search for the plugged controller
+                foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
+                {
+                    try
+                    {
+                        // Instantiate the joystick
+                        joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
+
+                        // IG_ means it is an XInput controller and therefore is handled elsewhere
+                        if (joystick.Properties.InterfacePath.Contains("IG_", StringComparison.InvariantCultureIgnoreCase))
+                            continue;
+
+                        if (!joystick.Properties.InterfacePath.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
+                            continue;
+                    }
+                    catch { }
+                }
+
+                // search for a supported controller
+                switch (details.attributes.VendorID)
                 {
                     // SONY
                     case 1356:
                         {
-                            switch (joystick.Properties.ProductId)
+                            switch (details.attributes.ProductID)
                             {
                                 // DualShock4
                                 case 2508:
@@ -122,17 +200,45 @@ namespace HandheldCompanion.Managers
                             }
                         }
                         break;
+
+                    // STEAM
+                    case 0x28DE:
+                        {
+                            switch (details.attributes.ProductID)
+                            {
+                                // STEAM DECK
+                                case 0x1205:
+                                    controller = new NeptuneController(details);
+                                    break;
+                            }
+                        }
+                        break;
+
+                    // NINTENDO
+                    case 0x057E:
+                        {
+                            switch (details.attributes.ProductID)
+                            {
+                                // Nintendo Wireless Gamepad
+                                case 0x2009:
+                                    break;
+                            }
+                        }
+                        break;
                 }
 
-                // unsupported DInput controller
+                // unsupported controller
                 if (controller is null)
-                    continue;
+                {
+                    LogManager.LogError("Unsupported DInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
+                    return;
+                }
 
                 if (!controller.IsConnected())
-                    continue;
+                    return;
 
                 if (controller.IsVirtual())
-                    continue;
+                    return;
 
                 // update or create controller
                 string path = controller.GetInstancePath();
@@ -140,35 +246,51 @@ namespace HandheldCompanion.Managers
 
                 // raise event
                 ControllerPlugged?.Invoke(controller);
-            }
-
-            string[] keys = Controllers.Keys.ToArray();
-
-            foreach (string key in keys)
-            {
-                IController controller = Controllers[key];
-                if (!controller.IsConnected())
-                {
-                    // controller was unplugged
-                    Controllers.Remove(key);
-
-                    // raise event
-                    ControllerUnplugged?.Invoke(controller);
-                }
-            }
+            }));
         }
 
-        private static void XInputUpdated(PnPDetails details)
+        private static void HidDeviceRemoved(PnPDetails details)
         {
-            for (int idx = 0; idx < 4; idx++)
+            if (!Controllers.ContainsKey(details.deviceInstanceId))
+                return;
+
+            IController controller = Controllers[details.deviceInstanceId];
+
+            if (controller is null)
+                return;
+
+            if (controller.IsConnected())
+                return;
+
+            if (controller.IsVirtual())
+                return;
+
+            // controller was unplugged
+            Controllers.Remove(details.deviceInstanceId);
+
+            // raise event
+            ControllerUnplugged?.Invoke(controller);
+        }
+
+        private static void XUsbDeviceArrived(PnPDetails details)
+        {
+            // trying to guess XInput behavior...
+            // get first available slot
+            UserIndex slot = XUsbControllers.Where(a => a.Value).FirstOrDefault().Key;
+
+            // use dispatcher because we're drawing UI elements when initializing the controller object
+            Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                XInputController controller = new(idx);
+                XInputController controller = new(slot);
+
+                if (controller is null)
+                    return;
 
                 if (!controller.IsConnected())
-                    continue;
+                    return;
 
                 if (controller.IsVirtual())
-                    continue;
+                    return;
 
                 // update or create controller
                 string path = controller.GetInstancePath();
@@ -176,49 +298,79 @@ namespace HandheldCompanion.Managers
 
                 // raise event
                 ControllerPlugged?.Invoke(controller);
-            }
 
-            string[] keys = Controllers.Keys.ToArray();
+                // slot is now busy
+                XUsbControllers[slot] = false;
+            }));
+        }
 
-            foreach (string key in keys)
-            {
-                IController controller = Controllers[key];
-                if (!controller.IsConnected())
-                {
-                    // controller was unplugged
-                    Controllers.Remove(key);
+        private static void XUsbDeviceRemoved(PnPDetails details)
+        {
+            if (!Controllers.ContainsKey(details.deviceInstanceId))
+                return;
 
-                    // raise event
-                    ControllerUnplugged?.Invoke(controller);
-                }
-            }
+            XInputController controller = (XInputController)Controllers[details.deviceInstanceId];
+
+            if (controller is null)
+                return;
+
+            if (controller.IsConnected())
+                return;
+
+            if (controller.IsVirtual())
+                return;
+
+            // controller was unplugged
+            Controllers.Remove(details.deviceInstanceId);
+
+            // raise event
+            ControllerUnplugged?.Invoke(controller);
+
+            // slot is now free
+            UserIndex slot = (UserIndex)controller.GetUserIndex();
+            XUsbControllers[slot] = true;
         }
 
         public static void SetTargetController(string baseContainerDeviceInstancePath)
         {
-            // dispose from previous controller
-            ClearTargetController();
+            // unplug previous controller
+            if (targetController is not null)
+                targetController.Unplug();
+
+            // warn service the current controller has been unplugged
+            PipeClient.SendMessage(new PipeClientControllerDisconnect());
+
+            // look for new controller
+            if (!Controllers.ContainsKey(baseContainerDeviceInstancePath))
+                return;
+
+            IController controller = Controllers[baseContainerDeviceInstancePath];
+            if (controller is null)
+                return;
 
             // update target controller
-            targetController = Controllers[baseContainerDeviceInstancePath];
+            targetController = controller;
             targetController.Updated += UpdateReport;
-
             targetController.Plug();
-            targetController.Hide();
+            targetController.Rumble(targetController.GetUserIndex() + 1);
 
-            // rumble current controller
-            targetController.Rumble();
+            if (targetController.HideOnHook)
+                targetController.Hide();
+
+            // update settings
+            SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstancePath);
+
+            // warn service a new controller has arrived
+            PipeClient.SendMessage(new PipeClientControllerConnect(targetController.ToString(), targetController.Capacities));
         }
 
-        public static void ClearTargetController()
+        private static void OnClientConnected()
         {
+            // warn service a new controller has arrived
             if (targetController is null)
                 return;
 
-            targetController.Unplug();
-            targetController.Unhide();
-
-            targetController = null;
+            PipeClient.SendMessage(new PipeClientControllerConnect(targetController.ToString(), targetController.Capacities));
         }
 
         public static IController GetTargetController()
@@ -233,18 +385,8 @@ namespace HandheldCompanion.Managers
             MainWindow.overlayModel.UpdateReport(Inputs);
 
             // todo: pass inputs to (re)mapper
-            ControllerInput filtered = new()
-            {
-                Buttons = Inputs.Buttons,
-                Timestamp = Inputs.Timestamp,
-                LeftThumbX = Inputs.LeftThumbX,
-                LeftThumbY = Inputs.LeftThumbY,
-                RightThumbX = Inputs.RightThumbX,
-                RightThumbY = Inputs.RightThumbY,
-                RightTrigger = Inputs.RightTrigger,
-                LeftTrigger = Inputs.LeftTrigger,
-            };
-
+            // todo: filter inputs if part of shortcut
+            ControllerInput filtered = new(Inputs);
             foreach (var pair in buttonMaps)
             {
                 ControllerButtonFlags origin = pair.Key;
@@ -256,8 +398,6 @@ namespace HandheldCompanion.Managers
                 filtered.Buttons &= ~origin;
                 filtered.Buttons |= substitute;
             }
-
-            // todo: filter inputs if part of shortcut
 
             // pass inputs to service
             PipeClient.SendMessage(new PipeClientInput(filtered));

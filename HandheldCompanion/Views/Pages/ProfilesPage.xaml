@@ -22,7 +22,7 @@
                     <Border
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    Background="{DynamicResource ExpanderContentBackground}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -138,7 +138,7 @@
                     <Border                      
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                        Background="{DynamicResource ExpanderContentBackground}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -188,7 +188,59 @@
                             </ui:SimpleStackPanel>
                         </Expander.Content>
                     </Expander>
-                    
+
+                    <!-- Controller settings -->
+                    <Expander Name="ControllerSettings" Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsEnabled="false">
+                        <Expander.Header>
+                            <DockPanel Margin="0,12,12,12">
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ControllerSettings}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ControllerSettingsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                        </Expander.Header>
+
+                        <Expander.Content>
+                            <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
+                                <Grid IsEnabled="{Binding ElementName=ControllerSettings, Path=IsOn}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzone}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <ui:SimpleStackPanel Spacing="6" Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                        <StackPanel>
+                                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="Left joystick" />
+
+                                            <DockPanel>
+                                                <TextBlock Width="25" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzoneLeft, Mode=OneWay}" />
+                                                <TextBlock VerticalAlignment="Center" Text="%" />
+                                                <Slider Margin="6,0,0,0" Name="tb_ProfileAntiDeadzoneLeft" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                                            </DockPanel>
+                                        </StackPanel>
+
+                                        <StackPanel>
+                                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="Right joystick" />
+                                            
+                                            <DockPanel>
+                                                <TextBlock Width="25" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzoneRight, Mode=OneWay}" />
+                                                <TextBlock VerticalAlignment="Center" Text="%" />
+                                                <Slider Margin="6,0,0,0" Name="tb_ProfileAntiDeadzoneRight" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                                            </DockPanel>
+                                        </StackPanel>
+                                    </ui:SimpleStackPanel>
+                                </Grid>
+                            </ui:SimpleStackPanel>
+                        </Expander.Content>
+                    </Expander>
+
                     <!-- Power settings -->
                     <Expander Name="PowerSettings" Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsEnabled="false">
                         <Expander.Header>
@@ -443,20 +495,20 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzone}" FontSize="14"/>
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
 
                                     <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                        <TextBlock Width="25" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzone, Mode=OneWay}" />
+                                        <TextBlock Width="25" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Value, ElementName=tb_ProfileUMCAntiDeadzone, Mode=OneWay}" />
                                         <TextBlock VerticalAlignment="Center" Text="%" />
-                                        <Slider Margin="6,0,0,0" Name="tb_ProfileAntiDeadzone" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
+                                        <Slider Margin="6,0,0,0" Name="tb_ProfileUMCAntiDeadzone" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
                                     </DockPanel>
                                 </Grid>
 
                                 <!-- Separator -->
-                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
-
+                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />                                
+                                
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>

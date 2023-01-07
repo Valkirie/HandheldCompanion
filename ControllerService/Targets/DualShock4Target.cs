@@ -54,10 +54,14 @@ namespace ControllerService.Targets
             if (IsConnected)
                 return;
 
-            virtualController.Connect();
-            UpdateTimer.Start();
+            try
+            {
+                virtualController.Connect();
+                UpdateTimer.Start();
 
-            base.Connect();
+                base.Connect();
+            }
+            catch { }
         }
 
         public override void Disconnect()
@@ -65,10 +69,14 @@ namespace ControllerService.Targets
             if (!IsConnected)
                 return;
 
-            virtualController.Disconnect();
-            UpdateTimer.Stop();
+            try
+            {
+                virtualController.Disconnect();
+                UpdateTimer.Stop();
 
-            base.Disconnect();
+                base.Disconnect();
+            }
+            catch { }
         }
 
         public void FeedbackReceived(object sender, DualShock4FeedbackReceivedEventArgs e)
@@ -155,7 +163,7 @@ namespace ControllerService.Targets
                 outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
             }
 
-            if (!ControllerService.currentProfile.whitelisted)
+            if (!IsSilenced)
             {
                 outDS4Report.wButtons = tempButtons;
                 outDS4Report.wButtons |= tempDPad.Value;
@@ -173,17 +181,17 @@ namespace ControllerService.Targets
             {
                 outDS4Report.bTouchPacketsN = 0x01;
                 outDS4Report.sCurrentTouch.bPacketCounter = DS4Touch.TouchPacketCounter;
-                outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = (byte)DS4Touch.TrackPadTouch1.RawTrackingNum;
-                outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(DS4Touch.TrackPadTouch1.X & 0xFF);
+                outDS4Report.sCurrentTouch.bIsUpTrackingNum1 = (byte)DS4Touch.LeftPadTouch.RawTrackingNum;
+                outDS4Report.sCurrentTouch.bTouchData1[0] = (byte)(DS4Touch.LeftPadTouch.X & 0xFF);
                 outDS4Report.sCurrentTouch.bTouchData1[1] =
-                    (byte)(((DS4Touch.TrackPadTouch1.X >> 8) & 0x0F) | ((DS4Touch.TrackPadTouch1.Y << 4) & 0xF0));
-                outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(DS4Touch.TrackPadTouch1.Y >> 4);
+                    (byte)(((DS4Touch.LeftPadTouch.X >> 8) & 0x0F) | ((DS4Touch.LeftPadTouch.Y << 4) & 0xF0));
+                outDS4Report.sCurrentTouch.bTouchData1[2] = (byte)(DS4Touch.LeftPadTouch.Y >> 4);
 
-                outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = (byte)DS4Touch.TrackPadTouch2.RawTrackingNum;
-                outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(DS4Touch.TrackPadTouch2.X & 0xFF);
+                outDS4Report.sCurrentTouch.bIsUpTrackingNum2 = (byte)DS4Touch.RightPadTouch.RawTrackingNum;
+                outDS4Report.sCurrentTouch.bTouchData2[0] = (byte)(DS4Touch.RightPadTouch.X & 0xFF);
                 outDS4Report.sCurrentTouch.bTouchData2[1] =
-                    (byte)(((DS4Touch.TrackPadTouch2.X >> 8) & 0x0F) | ((DS4Touch.TrackPadTouch2.Y << 4) & 0xF0));
-                outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(DS4Touch.TrackPadTouch2.Y >> 4);
+                    (byte)(((DS4Touch.RightPadTouch.X >> 8) & 0x0F) | ((DS4Touch.RightPadTouch.Y << 4) & 0xF0));
+                outDS4Report.sCurrentTouch.bTouchData2[2] = (byte)(DS4Touch.RightPadTouch.Y >> 4);
             }
 
             // Use IMU sensor data, map to proper range, invert where needed
@@ -221,7 +229,6 @@ namespace ControllerService.Targets
 
         public override void Dispose()
         {
-            Disconnect();
             base.Dispose();
         }
     }

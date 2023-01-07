@@ -228,7 +228,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_FlickStick_Toggled(object sender, RoutedEventArgs e)
         {
-            if (currentProfile == null)
+            if (currentProfile is null)
                 return;
 
             currentProfile.flickstick_enabled = (bool)Toggle_FlickStick.IsOn;
@@ -261,7 +261,7 @@ namespace HandheldCompanion.Views.Pages
 
                         // add to UI
                         Border hotkeyBorder = ProfilesPageHotkey.GetHotkey();
-                        if (hotkeyBorder is null || hotkeyBorder.Parent != null)
+                        if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
                             return;
 
                         if (UMC_Activator.Children.Count == 0)

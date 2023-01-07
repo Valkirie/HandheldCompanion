@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HandheldCompanion.Views.Windows"
         xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
-        xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
+        xmlns:HelixToolkit="http://helix-toolkit.org/wpf"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
         Closing="Window_Closing"

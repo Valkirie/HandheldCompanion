@@ -1,6 +1,8 @@
-﻿using SharpDX.DirectInput;
+﻿using ControllerCommon;
+using ControllerCommon.Controllers;
+using SharpDX.DirectInput;
 
-namespace ControllerCommon.Controllers
+namespace HandheldCompanion.Controllers
 {
     public class DInputController : IController
     {
@@ -18,10 +20,16 @@ namespace ControllerCommon.Controllers
 
             // Set BufferSize in order to use buffered data.
             joystick.Properties.BufferSize = 128;
+
+            // ui
+            DrawControls();
+            RefreshControls();
         }
 
         public override string ToString()
         {
+            if (!string.IsNullOrEmpty(Details.Name))
+                return Details.Name;
             return Controller.Information.ProductName;
         }
 
