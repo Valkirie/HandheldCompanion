@@ -178,7 +178,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                switch(source)
+                switch (source)
                 {
                     // self update, unlock and exit
                     case ProfileUpdateSource.QuickProfilesPage:

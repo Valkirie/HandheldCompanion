@@ -1,7 +1,6 @@
 ﻿using ControllerCommon.Managers.Hid;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
-using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
 using System;

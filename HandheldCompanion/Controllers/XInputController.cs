@@ -3,10 +3,8 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using SharpDX.XInput;
 using System;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Controllers
 {

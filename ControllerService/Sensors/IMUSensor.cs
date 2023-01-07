@@ -3,7 +3,6 @@ using PrecisionTiming;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Timers;
 using static ControllerCommon.Utils.CommonUtils;
 using static ControllerCommon.Utils.DeviceUtils;
 

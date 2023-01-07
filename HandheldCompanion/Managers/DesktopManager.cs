@@ -1,14 +1,10 @@
-﻿using ControllerCommon;
-using ControllerCommon.Managers;
+﻿using ControllerCommon.Managers;
 using HandheldCompanion.Managers.Desktop;
 using Microsoft.Win32;
-using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HandheldCompanion.Managers

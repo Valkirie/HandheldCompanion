@@ -17,7 +17,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static ControllerCommon.Managers.PowerManager;
-using static ControllerCommon.Managers.SystemManager;
 using static ControllerCommon.Utils.DeviceUtils;
 using Device = ControllerCommon.Devices.Device;
 

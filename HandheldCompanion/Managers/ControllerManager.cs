@@ -8,10 +8,7 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Windows;
-using System.Windows.Input;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using DeviceType = SharpDX.DirectInput.DeviceType;
 
 namespace HandheldCompanion.Managers

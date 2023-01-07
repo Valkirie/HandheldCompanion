@@ -1,13 +1,8 @@
 ﻿using Microsoft.Win32;
-using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Windows.System.Power;
 using SystemPowerManager = Windows.System.Power.PowerManager;
 
 namespace ControllerCommon.Managers
