@@ -9,7 +9,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Navigation;
+using Windows.System.Power;
 using Page = System.Windows.Controls.Page;
+using PowerManager = ControllerCommon.Managers.PowerManager;
+using PwrManager = Windows.System.Power.PowerManager;
 
 namespace HandheldCompanion.Views.Windows
 {
@@ -64,27 +67,40 @@ namespace HandheldCompanion.Views.Windows
         {
             BatteryIndicatorPercentage.Text = $"{status.BatteryLifePercent * 100.0f}%";
 
-            string key = "Battery";
-
+            // get status key
+            string KeyStatus = string.Empty;
             switch (status.PowerLineStatus)
             {
                 case System.Windows.Forms.PowerLineStatus.Online:
-                    key += "Charging";
+                    KeyStatus = "Charging";
+                    break;
+                default:
+                    {
+                        EnergySaverStatus energy = PwrManager.EnergySaverStatus;
+                        switch (energy)
+                        {
+                            case EnergySaverStatus.On:
+                                KeyStatus = "Saver";
+                                break;
+                        }
+                    }
                     break;
             }
 
             // get battery key
-            int batteryKey = (int)Math.Round(status.BatteryLifePercent * 10);
-            key += batteryKey;
+            int KeyValue = (int)Math.Round(status.BatteryLifePercent * 10);
 
-            if (PowerManager.PowerStatusIcon.ContainsKey(key))
-                BatteryIndicatorIcon.Glyph = PowerManager.PowerStatusIcon[key];
+            // set key
+            string Key = $"Battery{KeyStatus}{KeyValue}";
+
+            if (PowerManager.PowerStatusIcon.ContainsKey(Key))
+                BatteryIndicatorIcon.Glyph = PowerManager.PowerStatusIcon[Key];
 
             if (status.BatteryLifeRemaining > 0)
             {
                 TimeSpan time = TimeSpan.FromSeconds(status.BatteryLifeRemaining);
 
-                string remaining = string.Empty;                
+                string remaining;
                 if (status.BatteryLifeRemaining >= 3600)
                     remaining = $"{time.Hours}h {time.Minutes}min";
                 else

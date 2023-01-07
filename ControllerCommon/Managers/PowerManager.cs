@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Windows.System.Power;
 
 namespace ControllerCommon.Managers
 {
@@ -61,6 +62,18 @@ namespace ControllerCommon.Managers
             { "BatteryCharging8", "\uE862" },
             { "BatteryCharging9", "\uE83E" },
             { "BatteryCharging10", "\uEA93" },
+
+            { "BatterySaver0", "\uE863" },
+            { "BatterySaver1", "\uE864" },
+            { "BatterySaver2", "\uE865" },
+            { "BatterySaver3", "\uE866" },
+            { "BatterySaver4", "\uE867" },
+            { "BatterySaver5", "\uE868" },
+            { "BatterySaver6", "\uE869" },
+            { "BatterySaver7", "\uE86A" },
+            { "BatterySaver8", "\uE86B" },
+            { "BatterySaver9", "\uEA94" },
+            { "BatterySaver10", "\uEA95" },
         };
 
         public enum SystemStatus
