@@ -44,7 +44,7 @@ namespace ControllerCommon.Managers
             { "Battery6", "\uE856" },
             { "Battery7", "\uE857" },
             { "Battery8", "\uE858" },
-            { "Battery9", "\uE839" },
+            { "Battery9", "\uE859" },
             { "Battery10", "\uE83F" },
 
             { "BatteryCharging0", "\uE85A" },
