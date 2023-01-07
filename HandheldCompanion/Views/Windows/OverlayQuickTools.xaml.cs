@@ -82,11 +82,19 @@ namespace HandheldCompanion.Views.Windows
 
             if (status.BatteryLifeRemaining > 0)
             {
-                var BatteryLifeRemaining = SystemInformation.PowerStatus.BatteryLifeRemaining;
-                
-                TimeSpan time = TimeSpan.FromSeconds(BatteryLifeRemaining);
-                string remaining = string.Format("{0:D2}h:{1:D2}m", time.Hours, time.Minutes);
+                TimeSpan time = TimeSpan.FromSeconds(status.BatteryLifeRemaining);
+
+                string remaining = string.Empty;                
+                if (status.BatteryLifeRemaining >= 3600)
+                    remaining = $"{time.Hours}h {time.Minutes}min";
+                else
+                    remaining = $"{time.Minutes}min";
+
                 BatteryIndicatorLifeRemaining.Text = $"({remaining} remaining)";
+            }
+            else
+            {
+                BatteryIndicatorLifeRemaining.Text = string.Empty;
             }
         }
 
