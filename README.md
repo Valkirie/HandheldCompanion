@@ -32,6 +32,7 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - ONEXPLAYER MINI and its different versions (Intel, AMD, Gundam)
 - GPD WIN Max 2 (Intel and AMD)
 - GPD Win 3
+- Steam Deck
 
 ## Supported Sensors
 - Bosch BMI160 (and similar)
@@ -54,7 +55,7 @@ The software has multiple built-in overlay options.
 
 ### QuickTools
 
-On the fly adjustment of TDP (global and profile), brightness, hotkeys and motion control profile settings. Summonable with a user defined button combination (including certaind supported devices mapped special keys). Window can be aligned how the user sees fit (left, right, floating).
+On the fly adjustment of TDP (global and profile), brightness, screen resolution and frequency, hotkeys and motion control profile settings. Summonable with a user defined button combination (including certaind supported devices mapped special keys). Window can be aligned how the user sees fit (left, right, floating).
 
 ![Quicktools-01](https://user-images.githubusercontent.com/14330834/184693435-7df5ad40-ddb1-4359-9335-1a5804441dc3.png)
 Quicktools profile TDP control with Axiom Verge.
