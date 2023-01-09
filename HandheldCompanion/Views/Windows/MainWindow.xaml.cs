@@ -77,10 +77,14 @@ namespace HandheldCompanion.Views
             // get process
             Process process = Process.GetCurrentProcess();
 
-            // initialize splash screen
+            // initialize splash screen on first start only
+            bool IsFirstStart = SettingsManager.GetBoolean("FirstStart");
 #if !DEBUG
-            SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
-            splashScreen.Show(true, true);
+            if (IsFirstStart)
+            {
+                SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
+                splashScreen.Show(true, true);
+            }
 #endif
 
             // fix touch support
@@ -195,7 +199,7 @@ namespace HandheldCompanion.Views
             prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
 
             // update FirstStart
-            if (SettingsManager.GetBoolean("FirstStart"))
+            if (IsFirstStart)
                 SettingsManager.SetProperty("FirstStart", false);
         }
 
