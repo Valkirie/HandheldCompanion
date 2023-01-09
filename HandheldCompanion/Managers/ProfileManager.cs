@@ -344,6 +344,18 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateOrCreateProfile(Profile profile, ProfileUpdateSource source = ProfileUpdateSource.Background, bool fullUpdate = true, bool serialize = true)
         {
+            switch(source)
+            {
+                // update current profile on creation
+                case ProfileUpdateSource.Creation:
+                    currentProfile = profile;
+                    break;
+            }
+
+            // check if application is running
+            bool hasprocesses = ProcessManager.GetProcesses(profile.executable).Capacity > 0;
+            profile.isRunning = hasprocesses;
+
             // refresh error code
             profile.error = SanitizeProfile(profile);
             profile.json = $"{Path.GetFileNameWithoutExtension(profile.executable)}.json";

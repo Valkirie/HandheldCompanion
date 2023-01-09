@@ -167,8 +167,12 @@ namespace HandheldCompanion.Views.Pages
                 cB_Profiles.SelectedItem = profile;
             });
 
-            if (source == ProfileUpdateSource.Background)
-                return;
+            switch(source)
+            {
+                case ProfileUpdateSource.Background:
+                case ProfileUpdateSource.Creation:
+                    return;
+            }
 
             _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
                              $"{currentProfile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",

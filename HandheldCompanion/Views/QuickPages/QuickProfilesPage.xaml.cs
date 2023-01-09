@@ -111,12 +111,12 @@ namespace HandheldCompanion.Views.QuickPages
             UpdateTimer.Tick += (sender, e) => SubmitProfile();
         }
 
-        public void SubmitProfile()
+        public void SubmitProfile(ProfileUpdateSource source = ProfileUpdateSource.QuickProfilesPage)
         {
             if (currentProfile is null)
                 return;
 
-            ProfileManager.UpdateOrCreateProfile(currentProfile, ProfileUpdateSource.QuickProfilesPage);
+            ProfileManager.UpdateOrCreateProfile(currentProfile, source);
         }
 
         private void HotkeysManager_CommandExecuted(string listener)
@@ -355,10 +355,11 @@ namespace HandheldCompanion.Views.QuickPages
             currentProfile = new Profile(currentProcess.Path);
             currentProfile.TDP_value = MainWindow.handheldDevice.nTDP;
 
-            // update current profile
-            ProfileManager.currentProfile = currentProfile;
+            // if an update is pending, execute it and stop timer
+            if (UpdateTimer.IsRunning())
+                UpdateTimer.Stop();
 
-            RequestUpdate();
+            SubmitProfile(ProfileUpdateSource.Creation);
         }
 
         private void TDPToggle_Toggled(object sender, RoutedEventArgs e)

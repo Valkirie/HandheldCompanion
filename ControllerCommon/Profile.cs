@@ -22,7 +22,8 @@ namespace ControllerCommon
     {
         Background = 0,
         ProfilesPage = 1,
-        QuickProfilesPage = 2
+        QuickProfilesPage = 2,
+        Creation = 4
     }
 
     [Serializable]
