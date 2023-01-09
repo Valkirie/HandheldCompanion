@@ -108,7 +108,11 @@ namespace ControllerService.Targets
             LeftThumb = new Vector2(Inputs.LeftThumbX, Inputs.LeftThumbY);
             RightThumb = new Vector2(Inputs.RightThumbX, Inputs.RightThumbY);
 
-            // Apply user defined in game deadzone setting compensation prior to UMC additions
+            // Apply user defined scaled radial inner and outer deadzones to left and right joysticks
+            LeftThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(LeftThumb, ControllerService.currentProfile.deadzone_inner_left, ControllerService.currentProfile.deadzone_outer_left);
+            RightThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(RightThumb, ControllerService.currentProfile.deadzone_inner_right, ControllerService.currentProfile.deadzone_outer_right);
+
+            // Apply user defined in game deadzone setting compensation ie anti deadzone prior to UMC additions
             LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.antideadzoneL);
             RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, ControllerService.currentProfile.antideadzoneR);
 
