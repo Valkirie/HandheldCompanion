@@ -16,7 +16,8 @@ namespace HandheldCompanion.Views.QuickPages
     /// </summary>
     public partial class QuickSettingsPage : Page
     {
-        private object updateLock = new();
+        private object volumeLock = new();
+        private object brightnessLock = new();
 
         public QuickSettingsPage()
         {
@@ -67,20 +68,20 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void DesktopManager_BrightnessNotification(int brightness)
         {
-            if (Monitor.TryEnter(updateLock))
+            if (Monitor.TryEnter(brightnessLock))
             {
                 this.Dispatcher.Invoke(() =>
                 {
                     SliderBrightness.Value = brightness;
                 });
 
-                Monitor.Exit(updateLock);
+                Monitor.Exit(brightnessLock);
             }
         }
 
         private void DeviceManager_VolumeNotification(float volume)
         {
-            if (Monitor.TryEnter(updateLock))
+            if (Monitor.TryEnter(volumeLock))
             {
                 this.Dispatcher.Invoke(() =>
                 {
@@ -88,28 +89,28 @@ namespace HandheldCompanion.Views.QuickPages
                     SliderVolume.Value = volume;
                 });
 
-                Monitor.Exit(updateLock);
+                Monitor.Exit(volumeLock);
             }
         }
 
         private void SliderBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (Monitor.TryEnter(updateLock))
+            if (Monitor.TryEnter(brightnessLock))
             {
                 DesktopManager.SetBrightness(SliderBrightness.Value);
 
-                Monitor.Exit(updateLock);
+                Monitor.Exit(brightnessLock);
             }
         }
 
         private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (Monitor.TryEnter(updateLock))
+            if (Monitor.TryEnter(volumeLock))
             {
                 // update volume
                 DesktopManager.SetVolume(SliderVolume.Value);
 
-                Monitor.Exit(updateLock);
+                Monitor.Exit(volumeLock);
             }
         }
     }
