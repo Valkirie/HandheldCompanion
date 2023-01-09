@@ -19,6 +19,7 @@ namespace ControllerCommon.Devices
             this.cTDP = new double[] { 10, 32 };
             this.GfxClock = new double[] { 100, 2200 };
 
+            this.AccelerationAxis = new Vector3(1.0f, 1.0f, 1.0f);
             this.AngularVelocityAxisSwap = new()
             {
                 { 'X', 'X' },
@@ -26,7 +27,7 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            this.AccelerationAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+            this.AccelerationAxis = new Vector3(1.0f, 1.0f, 1.0f);
             this.AccelerationAxisSwap = new()
             {
                 { 'X', 'X' },
