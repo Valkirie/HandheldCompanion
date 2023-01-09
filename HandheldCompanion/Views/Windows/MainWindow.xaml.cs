@@ -163,9 +163,9 @@ namespace HandheldCompanion.Views
             EnergyManager.Start();
             HotkeysManager.Start();
 
-            SystemManager.UsbDeviceArrived += GenericDeviceUpdated;
-            SystemManager.UsbDeviceRemoved += GenericDeviceUpdated;
-            SystemManager.Start();
+            DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+            DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+            DeviceManager.Start();
 
             PlatformManager.Start();
             ProfileManager.Start();
@@ -595,7 +595,7 @@ namespace HandheldCompanion.Views
 
             ControllerManager.Stop();
             InputsManager.Stop();
-            SystemManager.Stop();
+            DeviceManager.Stop();
             ProfileManager.Stop();
             ProcessManager.Stop();
             EnergyManager.Stop();

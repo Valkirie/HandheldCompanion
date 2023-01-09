@@ -18,7 +18,7 @@ using Path = System.IO.Path;
 
 namespace ControllerCommon.Managers
 {
-    public static class SystemManager
+    public static class DeviceManager
     {
         #region import
         [DllImport("hid.dll", EntryPoint = "HidD_GetHidGuid")]
@@ -62,7 +62,7 @@ namespace ControllerCommon.Managers
 
         public static bool IsInitialized;
 
-        static SystemManager()
+        static DeviceManager()
         {
             // initialize hid
             HidD_GetHidGuidMethod(out HidDevice);

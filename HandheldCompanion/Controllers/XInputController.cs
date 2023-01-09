@@ -148,7 +148,7 @@ namespace HandheldCompanion.Controllers
                 var ProductId = CapabilitiesEx.ProductId.ToString("X4");
                 var VendorId = CapabilitiesEx.VendorId.ToString("X4");
 
-                var devices = SystemManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId);
+                var devices = DeviceManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId);
                 Details = devices.FirstOrDefault();
 
                 if (Details is null)

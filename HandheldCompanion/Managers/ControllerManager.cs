@@ -44,13 +44,13 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            SystemManager.XUsbDeviceArrived += XUsbDeviceArrived;
-            SystemManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
+            DeviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
+            DeviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
 
-            SystemManager.HidDeviceArrived += HidDeviceArrived;
-            SystemManager.HidDeviceRemoved += HidDeviceRemoved;
+            DeviceManager.HidDeviceArrived += HidDeviceArrived;
+            DeviceManager.HidDeviceRemoved += HidDeviceRemoved;
 
-            SystemManager.Initialized += SystemManager_Initialized;
+            DeviceManager.Initialized += SystemManager_Initialized;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -77,11 +77,11 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = false;
 
-            SystemManager.XUsbDeviceArrived -= XUsbDeviceArrived;
-            SystemManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
+            DeviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
+            DeviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
 
-            SystemManager.HidDeviceArrived -= HidDeviceArrived;
-            SystemManager.HidDeviceRemoved -= HidDeviceRemoved;
+            DeviceManager.HidDeviceArrived -= HidDeviceArrived;
+            DeviceManager.HidDeviceRemoved -= HidDeviceRemoved;
 
             SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 

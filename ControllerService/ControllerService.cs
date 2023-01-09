@@ -100,9 +100,9 @@ namespace ControllerService
             PipeServer.ClientMessage += OnClientMessage;
 
             // initialize manager(s)
-            SystemManager.UsbDeviceArrived += GenericDeviceArrived;
-            SystemManager.UsbDeviceRemoved += GenericDeviceRemoved;
-            SystemManager.Start();
+            DeviceManager.UsbDeviceArrived += GenericDeviceArrived;
+            DeviceManager.UsbDeviceRemoved += GenericDeviceRemoved;
+            DeviceManager.Start();
             GenericDeviceArrived(null);
 
             // initialize device
@@ -537,7 +537,7 @@ namespace ControllerService
             PipeServer.Close();
 
             // stop System Manager
-            SystemManager.Stop();
+            DeviceManager.Stop();
 
             return Task.CompletedTask;
         }
