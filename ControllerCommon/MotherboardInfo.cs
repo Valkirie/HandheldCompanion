@@ -20,7 +20,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }
@@ -42,7 +42,7 @@ namespace ControllerCommon
                     }
                     return false;
                 }
-                catch (Exception e)
+                catch
                 {
                     return false;
                 }
@@ -61,7 +61,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }
@@ -80,7 +80,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }
@@ -99,7 +99,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }
@@ -118,7 +118,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }
@@ -137,7 +137,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }
@@ -156,7 +156,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }
@@ -175,7 +175,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }
@@ -197,7 +197,7 @@ namespace ControllerCommon
                     }
                     return false;
                 }
-                catch (Exception e)
+                catch
                 {
                     return false;
                 }
@@ -219,7 +219,7 @@ namespace ControllerCommon
                     }
                     return false;
                 }
-                catch (Exception e)
+                catch
                 {
                     return false;
                 }
@@ -238,7 +238,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }
@@ -257,7 +257,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }
@@ -276,7 +276,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }
@@ -295,7 +295,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }
@@ -314,7 +314,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }
@@ -333,7 +333,7 @@ namespace ControllerCommon
                     }
                     return "";
                 }
-                catch (Exception e)
+                catch
                 {
                     return "";
                 }

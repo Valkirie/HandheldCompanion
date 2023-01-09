@@ -54,7 +54,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void HotkeysManager_CommandExecuted(string listener)
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 switch (listener)
                 {
@@ -82,7 +82,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -160,7 +160,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void UpdateControls()
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 if (currentProfile is not null)
                 {
@@ -188,7 +188,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void PowerManager_LimitChanged(PowerType type, int limit)
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 // do something
                 switch (type)
@@ -302,7 +302,7 @@ namespace HandheldCompanion.Views.QuickPages
             int value = (int)PowerModeSlider.Value;
 
             // update UI
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 foreach (TextBlock tb in PowerModeGrid.Children)
                     tb.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");

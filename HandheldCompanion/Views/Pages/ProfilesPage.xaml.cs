@@ -116,7 +116,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void SettingsManager_SettingValueChanged(string name, object value)
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -146,7 +146,7 @@ namespace HandheldCompanion.Views.Pages
         #region UI
         public void ProfileUpdated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
@@ -177,7 +177,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void ProfileDeleted(Profile profile)
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
@@ -192,7 +192,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void ProfileManagerLoaded()
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 cB_Profiles.SelectedItem = ProfileManager.GetDefault();
             });

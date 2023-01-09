@@ -73,7 +73,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Rotate_Needle(float y)
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 lvAngularGauge.Value = y;
             });

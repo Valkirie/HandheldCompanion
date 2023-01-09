@@ -66,7 +66,10 @@ namespace ControllerService.Sensors
             this.centerTimer.Start();
         }
 
-        protected virtual void StopListening()
+        public virtual void StartListening()
+        { }
+
+        public virtual void StopListening()
         {
             if (centerTimer is null)
                 return;

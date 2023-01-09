@@ -117,14 +117,14 @@ namespace ControllerCommon.Managers
         private static void RefreshXInput()
         {
             int deviceIndex = 0;
-            while (Devcon.Find(DeviceInterfaceIds.XUsbDevice, out var path, out var instanceId, deviceIndex++))
+            while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.XUsbDevice, out var path, out var instanceId, deviceIndex++))
                 XUsbDevice_DeviceArrived(new DeviceEventArgs() { InterfaceGuid = DeviceInterfaceIds.XUsbDevice, SymLink = path });
         }
 
         private static void RefreshDInput()
         {
             int deviceIndex = 0;
-            while (Devcon.Find(DeviceInterfaceIds.HidDevice, out var path, out var instanceId, deviceIndex++))
+            while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.HidDevice, out var path, out var instanceId, deviceIndex++))
                 HidDevice_DeviceArrived(new DeviceEventArgs() { InterfaceGuid = DeviceInterfaceIds.HidDevice, SymLink = path });
         }
 
@@ -147,7 +147,7 @@ namespace ControllerCommon.Managers
             else
             {
                 int deviceIndex = 0;
-                while (Devcon.Find(DeviceInterfaceIds.UsbDevice, out var path, out var instanceId, deviceIndex++))
+                while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.UsbDevice, out var path, out var instanceId, deviceIndex++))
                 {
                     PnPDevice parent = PnPDevice.GetDeviceByInterfaceId(path);
 
@@ -169,7 +169,7 @@ namespace ControllerCommon.Managers
         private static void RefreshHID()
         {
             int deviceIndex = 0;
-            while (Devcon.Find(DeviceInterfaceIds.HidDevice, out var path, out var instanceId, deviceIndex++))
+            while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.HidDevice, out var path, out var instanceId, deviceIndex++))
             {
                 PnPDevice children = PnPDevice.GetDeviceByInterfaceId(path);
 

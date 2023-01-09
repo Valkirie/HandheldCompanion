@@ -40,7 +40,7 @@ namespace HandheldCompanion.Views.Pages
             if (type == InputsHotkey.InputsHotkeyType.UI)
                 return;
 
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 SimpleStackPanel stackPanel = new()
                 {
@@ -64,7 +64,7 @@ namespace HandheldCompanion.Views.Pages
             if (DeviceType is not null && DeviceType != MainWindow.handheldDevice.GetType())
                 return;
 
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 Border hotkeyBorder = hotkey.GetHotkey();
                 if (hotkeyBorder is null || hotkeyBorder.Parent is not null)

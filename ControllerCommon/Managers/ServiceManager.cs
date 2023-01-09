@@ -28,7 +28,6 @@ namespace ControllerCommon.Managers
         private string ServiceName;
         private string DisplayName;
         private string Description;
-        private bool Initialized;
 
         private ServiceController controller;
         public ServiceControllerStatus status = ServiceControllerStatus.None;
@@ -148,7 +147,7 @@ namespace ControllerCommon.Managers
                         type = ServiceStartMode.Disabled;
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
                     status = ServiceControllerStatus.None;
                     type = ServiceStartMode.Disabled;
@@ -164,10 +163,10 @@ namespace ControllerCommon.Managers
                 prevStatus = (int)status;
                 prevType = (int)type;
 
-                if (!Initialized)
+                if (!IsInitialized)
                 {
                     Ready?.Invoke();
-                    Initialized = true;
+                    IsInitialized = true;
                 }
 
                 Monitor.Exit(updateLock);
@@ -225,7 +224,7 @@ namespace ControllerCommon.Managers
             if (status == ServiceControllerStatus.Running)
                 return;
 
-            while (!Initialized)
+            while (!IsInitialized)
                 await Task.Delay(1000);
 
             while (status != ServiceControllerStatus.Running && status != ServiceControllerStatus.StartPending)

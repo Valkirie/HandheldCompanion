@@ -1,14 +1,13 @@
 ﻿using ControllerCommon.Managers;
 using HandheldCompanion.Managers.Desktop;
 using Microsoft.Win32;
+using NAudio;
 using NAudio.CoreAudioApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using NAudio;
-using NAudio.CoreAudioApi;
 using System.Media;
 using System.IO;
 using System.Management;

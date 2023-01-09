@@ -65,7 +65,7 @@ namespace HandheldCompanion.Views.Windows
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -206,7 +206,7 @@ namespace HandheldCompanion.Views.Windows
 
         public override void UpdateVisibility()
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 switch (Visibility)
                 {
@@ -269,7 +269,7 @@ namespace HandheldCompanion.Views.Windows
 
             if (prevButtons != Inputs.Buttons)
             {
-                this.Dispatcher.Invoke(() =>
+                Dispatcher.Invoke(() =>
                 {
                     GeometryModel3D model = null;
                     foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
@@ -296,7 +296,7 @@ namespace HandheldCompanion.Views.Windows
             // update model
             UpdateModelVisual3D();
 
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 float GradientFactor; // Used for multiple models
 
@@ -534,7 +534,7 @@ namespace HandheldCompanion.Views.Windows
 
         private void UpdateModelVisual3D()
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 Transform3DGroup Transform3DGroupModel = new Transform3DGroup();
 
