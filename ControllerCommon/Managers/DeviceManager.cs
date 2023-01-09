@@ -458,12 +458,5 @@ namespace ControllerCommon.Managers
             }
             catch { }
         }
-
-        public static void PlayWindowsMedia(string file)
-        {
-            string path = Path.Combine(@"c:\Windows\Media\", file);
-            if (File.Exists(path))
-                new SoundPlayer(path).Play();
-        }
     }
 }

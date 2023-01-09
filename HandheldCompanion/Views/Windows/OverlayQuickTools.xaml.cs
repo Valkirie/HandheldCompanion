@@ -29,16 +29,12 @@ namespace HandheldCompanion.Views.Windows
         public QuickProfilesPage profilesPage;
         public QuickSuspenderPage suspenderPage;
 
-        // manager vers
-        public static BrightnessControl brightnessControl;
-
         public OverlayQuickTools()
         {
             InitializeComponent();
             ShowActivated = true;
 
             // create manager(s)
-            brightnessControl = new();
             PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
             PowerManager_PowerStatusChanged(SystemInformation.PowerStatus);
 
@@ -262,9 +258,6 @@ namespace HandheldCompanion.Views.Windows
                     SettingsManager.SetProperty("QuickToolsHeight", ActualHeight);
                     break;
             }
-
-            // stop manager(s)
-            brightnessControl.Dispose();
 
             e.Cancel = !isClosing;
             this.Visibility = Visibility.Collapsed;

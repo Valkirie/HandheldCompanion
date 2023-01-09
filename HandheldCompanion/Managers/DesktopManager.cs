@@ -1,11 +1,19 @@
 ﻿using ControllerCommon.Managers;
 using HandheldCompanion.Managers.Desktop;
 using Microsoft.Win32;
+using NAudio.CoreAudioApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using NAudio;
+using NAudio.CoreAudioApi;
+using System.Media;
+using System.IO;
+using System.Management;
+using Microsoft.Extensions.FileSystemGlobbing;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace HandheldCompanion.Managers
 {
@@ -133,6 +141,12 @@ namespace HandheldCompanion.Managers
         public static event PrimaryScreenChangedEventHandler PrimaryScreenChanged;
         public delegate void PrimaryScreenChangedEventHandler(DesktopScreen screen);
 
+        public static event VolumeNotificationEventHandler VolumeNotification;
+        public delegate void VolumeNotificationEventHandler(float volume);
+
+        public static event BrightnessNotificationEventHandler BrightnessNotification;
+        public delegate void BrightnessNotificationEventHandler(int brightness);
+
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
         #endregion
@@ -141,11 +155,36 @@ namespace HandheldCompanion.Managers
         private static ScreenResolution ScreenResolution;
         private static ScreenFrequency ScreenFrequency;
 
+        private static MMDeviceEnumerator DevEnum;
+        private static MMDevice multimediaDevice;
+        private static bool VolumeSupport;
+
+        private static ManagementEventWatcher EventWatcher;
+        private static ManagementScope Scope;
+        private static bool BrightnessSupport;
+
         private static Screen PrimaryScreen;
         public static bool IsInitialized;
 
         static DesktopManager()
         {
+            // get current volume value
+            DevEnum = new MMDeviceEnumerator();
+            multimediaDevice = DevEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+
+            if (multimediaDevice is not null && multimediaDevice.AudioEndpointVolume is not null)
+            {
+                VolumeSupport = true;
+                multimediaDevice.AudioEndpointVolume.OnVolumeNotification += (data) => VolumeNotification?.Invoke(data.MasterVolume * 100.0f);
+            }
+
+            // get current brightness value
+            Scope = new ManagementScope(@"\\.\root\wmi");
+            Scope.Connect();
+
+            // creating the watcher
+            EventWatcher = new ManagementEventWatcher(Scope, new EventQuery("Select * From WmiMonitorBrightnessEvent"));
+            EventWatcher.EventArrived += new EventArrivedEventHandler(onWMIEvent);
         }
 
         public static void Start()
@@ -153,10 +192,22 @@ namespace HandheldCompanion.Managers
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
             SystemEvents_DisplaySettingsChanged(null, null);
 
+            // start brightness watcher
+            EventWatcher.Start();
+
+            // check if we have control over brightness
+            BrightnessSupport = GetBrightness() != -1;
+
             IsInitialized = true;
             Initialized?.Invoke();
 
             LogManager.LogInformation("{0} has started", "DesktopManager");
+        }
+
+        private static void onWMIEvent(object sender, EventArrivedEventArgs e)
+        {
+            int brightness = Convert.ToInt32(e.NewEvent.Properties["Brightness"].Value);
+            BrightnessNotification?.Invoke(brightness);
         }
 
         private static void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
@@ -289,6 +340,87 @@ namespace HandheldCompanion.Managers
                 index++;
             }
             return allMode;
+        }
+
+        public static void PlayWindowsMedia(string file)
+        {
+            string path = Path.Combine(@"c:\Windows\Media\", file);
+            if (File.Exists(path))
+                new SoundPlayer(path).Play();
+        }
+
+        public static bool HasVolumeSupport()
+        {
+            return VolumeSupport;
+        }
+
+        public static void SetVolume(double volume)
+        {
+            if (!VolumeSupport)
+                return;
+
+            multimediaDevice.AudioEndpointVolume.MasterVolumeLevelScalar = (float)(volume / 100.0d);
+        }
+
+        public static double GetVolume()
+        {
+            if (!VolumeSupport)
+                return 0.0d;
+
+            return multimediaDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100.0d;
+        }
+
+        public static bool HasBrightnessSupport()
+        {
+            return BrightnessSupport;
+        }
+
+        public static void SetBrightness(double brightness)
+        {
+            if (!BrightnessSupport)
+                return;
+
+            try
+            {
+                using (var mclass = new ManagementClass("WmiMonitorBrightnessMethods"))
+                {
+                    mclass.Scope = new ManagementScope(@"\\.\root\wmi");
+                    using (var instances = mclass.GetInstances())
+                    {
+                        foreach (ManagementObject instance in instances)
+                        {
+                            object[] args = new object[] { 1, brightness };
+                            instance.InvokeMethod("WmiSetBrightness", args);
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        public static short GetBrightness()
+        {
+            if (!BrightnessSupport)
+                return -1;
+
+            try
+            {
+                using (var mclass = new ManagementClass("WmiMonitorBrightness"))
+                {
+                    mclass.Scope = new ManagementScope(@"\\.\root\wmi");
+                    using (var instances = mclass.GetInstances())
+                    {
+                        foreach (ManagementObject instance in instances)
+                        {
+                            return (byte)instance.GetPropertyValue("CurrentBrightness");
+                        }
+                    }
+                }
+                return 0;
+            }
+            catch { }
+
+            return -1;
         }
     }
 }

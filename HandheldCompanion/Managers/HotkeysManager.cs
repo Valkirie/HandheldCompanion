@@ -357,7 +357,7 @@ namespace HandheldCompanion.Managers
                 LogManager.LogDebug("Executed Hotkey: {0}", listener);
 
                 // play a tune to notify a command was executed
-                DeviceManager.PlayWindowsMedia("Windows Navigation Start.wav");
+                DesktopManager.PlayWindowsMedia("Windows Navigation Start.wav");
 
                 // raise an event
                 CommandExecuted?.Invoke(listener);
