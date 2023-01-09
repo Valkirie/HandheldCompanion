@@ -156,7 +156,7 @@ namespace HandheldCompanion.Managers
                     Discarded?.Invoke(profile, isCurrent);
 
                     // update profile
-                    UpdateOrCreateProfile(profile, ProfileUpdateSource.Background, false);
+                    UpdateOrCreateProfile(profile);
                 }
             }
             catch { }
@@ -175,7 +175,7 @@ namespace HandheldCompanion.Managers
                 profile.isRunning = true;
 
                 // update profile
-                UpdateOrCreateProfile(profile, ProfileUpdateSource.Background, false);
+                UpdateOrCreateProfile(profile);
             }
             catch { }
         }
@@ -218,7 +218,7 @@ namespace HandheldCompanion.Managers
 
                 profile.isRunning = true;
                 profile.fullpath = proc.Path;
-                UpdateOrCreateProfile(profile, ProfileUpdateSource.Background, false);
+                UpdateOrCreateProfile(profile);
             }
             catch { }
         }
@@ -279,12 +279,12 @@ namespace HandheldCompanion.Managers
                 currentProfile = profile;
             }
 
-            UpdateOrCreateProfile(profile);
+            UpdateOrCreateProfile(profile, ProfileUpdateSource.Serialiazer);
         }
 
         public static void DeleteProfile(Profile profile)
         {
-            string settingsPath = Path.Combine(InstallPath, profile.json);
+            string settingsPath = Path.Combine(InstallPath, profile.filename);
 
             if (profiles.ContainsKey(profile.name))
             {
@@ -319,7 +319,7 @@ namespace HandheldCompanion.Managers
             var options = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(profile, options);
 
-            string settingsPath = Path.Combine(InstallPath, profile.json);
+            string settingsPath = Path.Combine(InstallPath, profile.filename);
             File.WriteAllText(settingsPath, jsonString);
         }
 
@@ -342,7 +342,7 @@ namespace HandheldCompanion.Managers
             return ProfileErrorCode.None;
         }
 
-        public static void UpdateOrCreateProfile(Profile profile, ProfileUpdateSource source = ProfileUpdateSource.Background, bool fullUpdate = true, bool serialize = true)
+        public static void UpdateOrCreateProfile(Profile profile, ProfileUpdateSource source = ProfileUpdateSource.Background)
         {
             switch(source)
             {
@@ -356,15 +356,14 @@ namespace HandheldCompanion.Managers
             bool hasprocesses = ProcessManager.GetProcesses(profile.executable).Capacity > 0;
             profile.isRunning = hasprocesses;
 
+            // check if this is current profile
+            bool isCurrent = profile.executable == currentProfile.executable;
+
             // refresh error code
             profile.error = SanitizeProfile(profile);
-            profile.json = $"{Path.GetFileNameWithoutExtension(profile.executable)}.json";
 
             // update database
             profiles[profile.name] = profile;
-
-            // warn owner
-            bool isCurrent = profile.executable == currentProfile.executable;
 
             // raise event(s)
             Updated?.Invoke(profile, source, isCurrent);
@@ -379,22 +378,21 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
-            // serialize
-            if (serialize)
-                SerializeProfile(profile);
+            if (source == ProfileUpdateSource.Serialiazer)
+                return;
 
+            // serialize profile
+            SerializeProfile(profile);
+
+            // do not update wrapper and cloaking from default profile
             if (profile.isDefault)
                 return;
 
-            // only bother updating wrapper and cloaking on profile creation or process start
-            if (fullUpdate)
-            {
-                // update wrapper
-                UpdateProfileWrapper(profile);
+            // update wrapper
+            UpdateProfileWrapper(profile);
 
-                // update cloaking
-                UpdateProfileCloaking(profile);
-            }
+            // update cloaking
+            UpdateProfileCloaking(profile);
         }
 
         public static void UpdateProfileCloaking(Profile profile)
