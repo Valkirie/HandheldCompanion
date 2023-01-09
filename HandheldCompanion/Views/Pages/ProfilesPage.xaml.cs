@@ -357,6 +357,8 @@ namespace HandheldCompanion.Views.Pages
                 cB_Wrapper.IsChecked = currentProfile.use_wrapper;
 
                 // Controller settings
+                Toggle_ThumbImproveCircularityLeft.IsOn = currentProfile.thumb_improve_circularity_left;
+                Toggle_ThumbImproveCircularityRight.IsOn = currentProfile.thumb_improve_circularity_right;
                 tb_ProfileAntiDeadzoneLeft.Value = currentProfile.antideadzoneL;
                 tb_ProfileAntiDeadzoneRight.Value = currentProfile.antideadzoneR;
 
@@ -459,6 +461,8 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.use_wrapper = (bool)cB_Wrapper.IsChecked;
 
             // Controller settings
+            currentProfile.thumb_improve_circularity_left = (bool)Toggle_ThumbImproveCircularityLeft.IsOn;
+            currentProfile.thumb_improve_circularity_right = (bool)Toggle_ThumbImproveCircularityRight.IsOn;
             currentProfile.antideadzoneL = (float)tb_ProfileAntiDeadzoneLeft.Value;
             currentProfile.antideadzoneR = (float)tb_ProfileAntiDeadzoneRight.Value;
 
@@ -526,6 +530,16 @@ namespace HandheldCompanion.Views.Pages
         }
 
         private void Toggle_EnableProfile_Toggled(object sender, RoutedEventArgs e)
+        {
+            // do something
+        }
+
+        private void Toggle_ThumbImproveCircularityLeft_Toggled(object sender, RoutedEventArgs e)
+        {
+            // do something
+        }
+
+        private void Toggle_ThumbImproveCircularityRight_Toggled(object sender, RoutedEventArgs e)
         {
             // do something
         }

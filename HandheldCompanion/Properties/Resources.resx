@@ -1118,4 +1118,13 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_UMCAntiDeadzoneDesc" xml:space="preserve">
     <value>Compensate for in game deadzone, improve registration of small movements</value>
   </data>
+  <data name="ProfilesPage_ThumbImproveCircularityDesc" xml:space="preserve">
+    <value>Improve the stick circularity</value>
+  </data>
+  <data name="ProfilesPage_ThumbImproveCircularityLeft" xml:space="preserve">
+    <value>Circularity stick left</value>
+  </data>
+  <data name="ProfilesPage_ThumbImproveCircularityRight" xml:space="preserve">
+    <value>Circularity stick right</value>
+  </data>
 </root>

@@ -2183,6 +2183,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Improve the stick circularity.
+        /// </summary>
+        public static string ProfilesPage_ThumbImproveCircularityDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ThumbImproveCircularityDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Circularity stick left.
+        /// </summary>
+        public static string ProfilesPage_ThumbImproveCircularityLeft {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ThumbImproveCircularityLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Circularity stick right.
+        /// </summary>
+        public static string ProfilesPage_ThumbImproveCircularityRight {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ThumbImproveCircularityRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Motion anti-deadzone.
         /// </summary>
         public static string ProfilesPage_UMCAntiDeadzone {

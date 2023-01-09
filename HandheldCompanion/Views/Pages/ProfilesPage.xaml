@@ -204,6 +204,41 @@
 
                         <Expander.Content>
                             <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ThumbImproveCircularityLeft}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ThumbImproveCircularityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <ui:ToggleSwitch Grid.Column="1" Name="Toggle_ThumbImproveCircularityLeft" Toggled="Toggle_ThumbImproveCircularityLeft_Toggled"/>
+                                </Grid>
+
+                                <!-- Separator -->
+                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ThumbImproveCircularityRight}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ThumbImproveCircularityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <ui:ToggleSwitch Grid.Column="1" Name="Toggle_ThumbImproveCircularityRight" Toggled="Toggle_ThumbImproveCircularityRight_Toggled"/>
+                                </Grid>
+
+                                <!-- Separator -->
+                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
+
                                 <Grid IsEnabled="{Binding ElementName=ControllerSettings, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
