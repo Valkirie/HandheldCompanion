@@ -61,8 +61,8 @@ namespace ControllerCommon
         public float accelerometer { get; set; } = 1.0f;        // accelerometer multiplicator (remove me)
 
         public int steering { get; set; } = 0;                  // 0 = Roll, 1 = Yaw
-        public bool thumb_improve_circularity_left { get; set; } = false;
-        public bool thumb_improve_circularity_right { get; set; } = false;
+        public bool thumb_improve_circularity_left { get; set; } = true;
+        public bool thumb_improve_circularity_right { get; set; } = true;
         public float antideadzoneL { get; set; } = 0.0f;        // todo: typeme
         public float antideadzoneR { get; set; } = 0.0f;        // todo: typeme
 
