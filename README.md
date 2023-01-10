@@ -1,6 +1,7 @@
 [![Download Latest](https://img.shields.io/github/downloads/Valkirie/HandheldCompanion/latest/total?style=flat-square&color=orange&label=Download%20Latest)](https://github.com/Valkirie/ControllerService/releases/latest)
 [![discord](https://img.shields.io/discord/1054321983166365726?color=orange&label=Discord&logo=discord&logoColor=white&style=flat-square)](https://discord.gg/znHuywFz5M)
 [![YouTube Channel](https://img.shields.io/youtube/channel/subscribers/UCFLra6QVYJYeaWp2mGaq3Og?style=flat-square&color=orange&label=YouTube%20Channel&logo=youtube&logoColor=white)](https://www.youtube.com/channel/UCFLra6QVYJYeaWp2mGaq3Og)
+[![Donations](https://img.shields.io/badge/PayPal-00457C?style=flat-square&color=orange&label=Donations&logo=paypal&logoColor=white)](https://www.paypal.com/paypalme/BenjaminLSR)
 
 # Controller Service & Handheld Companion
 
