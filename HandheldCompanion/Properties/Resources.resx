@@ -1127,4 +1127,16 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_ThumbImproveCircularityRight" xml:space="preserve">
     <value>Circularity stick right</value>
   </data>
+  <data name="ProfilesPage_JoystickDeadZoneLeft" xml:space="preserve">
+    <value>Joystick deadzone % left</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneLeftDesc" xml:space="preserve">
+    <value>Adjust the inner and outer deadzone percentage of the left joystick</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneRight" xml:space="preserve">
+    <value>Joystick deadzone % right</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneRightDesc" xml:space="preserve">
+    <value>Adjust the inner and outer deadzone percentage of the right joystick</value>
+  </data>
 </root>

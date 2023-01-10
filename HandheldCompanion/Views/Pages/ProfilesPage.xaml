@@ -205,6 +205,7 @@
                         <Expander.Content>
                             <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
 
+                                <!-- Improve circularity left -->
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
@@ -222,6 +223,29 @@
                                 <!-- Separator -->
                                 <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
 
+                                <!-- Joystick deadzone left -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="10"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_JoystickDeadZoneLeft}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_JoystickDeadZoneLeftDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <ui:NumberBox Name="NumberBox_JoystickInnerDeadZoneLeft" Grid.Column="1" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_JoystickInnerDeadZoneLeft_ValueChanged"></ui:NumberBox>
+                                    <ui:NumberBox Name="NumberBox_JoystickOuterDeadZoneLeft" Grid.Column="3" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_JoystickOuterDeadZoneLeft_ValueChanged"></ui:NumberBox>
+                                    
+                                </Grid>
+
+                                <!-- Separator -->
+                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
+
+                                <!-- Improve circularity right -->
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
@@ -239,6 +263,30 @@
                                 <!-- Separator -->
                                 <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
 
+
+                                <!-- Joystick deadzone right -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="10"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_JoystickDeadZoneRight}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_JoystickDeadZoneRightDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <ui:NumberBox Name="NumberBox_JoystickInnerDeadZoneRight" Grid.Column="1" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_JoystickInnerDeadZoneRight_ValueChanged"></ui:NumberBox>
+                                    <ui:NumberBox Name="NumberBox_JoystickOuterDeadZoneRight" Grid.Column="3" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_JoystickOuterDeadZoneRight_ValueChanged"></ui:NumberBox>
+
+                                </Grid>
+
+                                <!-- Separator -->
+                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
+
+                                <!-- anti deadzone -->
                                 <Grid IsEnabled="{Binding ElementName=ControllerSettings, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
