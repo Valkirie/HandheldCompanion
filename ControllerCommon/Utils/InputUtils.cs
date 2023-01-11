@@ -180,13 +180,27 @@ namespace ControllerCommon.Utils
             float OuterDeadZone = (float)OuterDeadzonePercentage / 100.0f;
 
             // Convert 0 - 255 byte range value input to -1 to 1
-            float TriggerOutput = TriggerInput / byte.MaxValue;
+            float Trigger = TriggerInput / byte.MaxValue;
 
-            // Map to new range
-            TriggerOutput = MapRange(TriggerOutput, InnerDeadZone, (1 - OuterDeadZone), 0, 1);
-
-            // Convert back to 0 - 255 byte range
-            return TriggerOutput * byte.MaxValue;
+            // Trigger is either:
+            // - Within inner deadzone, return 0
+            // - Within outer deadzone, return max
+            // - In between deadzone values, map accordingly
+            if (Trigger <= InnerDeadZone)
+            {
+                return 0.0f;
+            }
+            else if (Trigger >= 1 - OuterDeadZone)
+            {
+                return byte.MaxValue;
+            }
+            else
+            {
+                // Map to new range
+                // Convert back to 0 - 255 byte range
+                // Cut off float remains
+                return (int)(MapRange(Trigger, InnerDeadZone, (1 - OuterDeadZone), 0, 1) * byte.MaxValue);
+            }
         }
 
         // Inner and outer scaled radial deadzone

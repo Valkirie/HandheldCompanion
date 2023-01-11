@@ -368,6 +368,11 @@ namespace HandheldCompanion.Views.Pages
                 tb_ProfileAntiDeadzoneLeft.Value = currentProfile.thumb_anti_deadzone_left;
                 tb_ProfileAntiDeadzoneRight.Value = currentProfile.thumb_anti_deadzone_right;
 
+                NumberBox_TriggerInnerDeadZoneLeft.Value = currentProfile.trigger_deadzone_inner_left;
+                NumberBox_TriggerOuterDeadZoneLeft.Value = currentProfile.trigger_deadzone_outer_left;
+                NumberBox_TriggerInnerDeadZoneRight.Value = currentProfile.trigger_deadzone_inner_right;
+                NumberBox_TriggerOuterDeadZoneRight.Value = currentProfile.trigger_deadzone_outer_right;
+
                 // Motion control settings
                 tb_ProfileGyroValue.Value = currentProfile.gyrometer;
                 tb_ProfileAcceleroValue.Value = currentProfile.accelerometer;
@@ -477,6 +482,12 @@ namespace HandheldCompanion.Views.Pages
 
             currentProfile.thumb_anti_deadzone_left = (float)tb_ProfileAntiDeadzoneLeft.Value;
             currentProfile.thumb_anti_deadzone_right = (float)tb_ProfileAntiDeadzoneRight.Value;
+
+            currentProfile.trigger_deadzone_inner_left = (int)NumberBox_TriggerInnerDeadZoneLeft.Value;
+            currentProfile.trigger_deadzone_outer_left = (int)NumberBox_TriggerOuterDeadZoneLeft.Value;
+
+            currentProfile.trigger_deadzone_inner_right = (int)NumberBox_TriggerInnerDeadZoneRight.Value;
+            currentProfile.trigger_deadzone_outer_right = (int)NumberBox_TriggerOuterDeadZoneRight.Value;
 
             // Motion control settings
             currentProfile.gyrometer = (float)tb_ProfileGyroValue.Value;
