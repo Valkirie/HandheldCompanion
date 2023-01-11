@@ -71,6 +71,11 @@ namespace ControllerCommon
         public float thumb_anti_deadzone_left { get; set; } = 0.0f;        // todo: typeme
         public float thumb_anti_deadzone_right { get; set; } = 0.0f;        // todo: typeme
 
+        public int trigger_deadzone_inner_left { get; set; } = 0;
+        public int trigger_deadzone_outer_left { get; set; } = 0;
+        public int trigger_deadzone_inner_right { get; set; } = 0;
+        public int trigger_deadzone_outer_right { get; set; } = 0;
+
         public bool inverthorizontal { get; set; }              // if true, invert horizontal axis
         public bool invertvertical { get; set; }                // if false, invert vertical axis
 

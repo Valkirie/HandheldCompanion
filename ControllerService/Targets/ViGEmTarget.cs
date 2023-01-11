@@ -25,6 +25,9 @@ namespace ControllerService.Targets
         protected Vector2 LeftThumb;
         protected Vector2 RightThumb;
 
+        protected float LeftTrigger;
+        protected float RightTrigger;
+
         public event ConnectedEventHandler Connected;
         public delegate void ConnectedEventHandler(ViGEmTarget target);
 
@@ -119,6 +122,12 @@ namespace ControllerService.Targets
             // Improve joystick circularity
             if (ControllerService.currentProfile.thumb_improve_circularity_left) { LeftThumb = InputUtils.ImproveCircularity(LeftThumb); }
             if (ControllerService.currentProfile.thumb_improve_circularity_right) { RightThumb = InputUtils.ImproveCircularity(RightThumb); }
+
+            // Trigger deadzone adjustments
+            LeftTrigger = InputUtils.TriggerInnerOuterDeadzone(Inputs.LeftTrigger, ControllerService.currentProfile.trigger_deadzone_inner_left, ControllerService.currentProfile.trigger_deadzone_outer_left);
+            RightTrigger = InputUtils.TriggerInnerOuterDeadzone(Inputs.RightTrigger, ControllerService.currentProfile.trigger_deadzone_inner_right, ControllerService.currentProfile.trigger_deadzone_outer_right);
+
+            LogManager.LogInformation("Trigger left before {0} after {1}, right before {2} after {3}", Inputs.LeftTrigger, LeftTrigger, Inputs.RightTrigger, RightTrigger);
 
             if (ControllerService.currentProfile.umc_enabled)
             {

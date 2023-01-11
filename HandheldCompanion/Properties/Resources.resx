@@ -1139,4 +1139,16 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_JoystickDeadZoneRightDesc" xml:space="preserve">
     <value>Adjust the inner and outer deadzone percentage of the right joystick</value>
   </data>
+  <data name="ProfilesPage_TriggerDeadZoneLeft" xml:space="preserve">
+    <value>Left trigger deadzone %</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneLeftDesc" xml:space="preserve">
+    <value>Adjust the inner and outer deadzone percentage of the left trigger</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneRight" xml:space="preserve">
+    <value>Right trigger deadzone %</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneRightDesc" xml:space="preserve">
+    <value>Adjust the inner and outer deadzone percentage of the right trigger</value>
+  </data>
 </root>

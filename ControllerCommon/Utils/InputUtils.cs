@@ -169,10 +169,24 @@ namespace ControllerCommon.Utils
         }
 
         // Triggers, inner and outer deadzone
-        public static float TriggerInnerOuterDeadzone(float Trigger, int InnerDeadzone, int OuterDeadzone)
+        public static float TriggerInnerOuterDeadzone(float TriggerInput, int InnerDeadzonePercentage, int OuterDeadzonePercentage)
         {
-            // Convert short value input to -1 to 1?
-            return Trigger;
+            // Return if thumbstick or deadzone is not used
+            if ((InnerDeadzonePercentage.Equals(0) && OuterDeadzonePercentage.Equals(0)) || TriggerInput.Equals(float.NaN) || TriggerInput.Equals(0.0f))
+                return TriggerInput;
+
+            // Convert deadzone percentage to 0 - 1 range
+            float InnerDeadZone = (float)InnerDeadzonePercentage / 100.0f;
+            float OuterDeadZone = (float)OuterDeadzonePercentage / 100.0f;
+
+            // Convert 0 - 255 byte range value input to -1 to 1
+            float TriggerOutput = TriggerInput / byte.MaxValue;
+
+            // Map to new range
+            TriggerOutput = MapRange(TriggerOutput, InnerDeadZone, (1 - OuterDeadZone), 0, 1);
+
+            // Convert back to 0 - 255 byte range
+            return TriggerOutput * byte.MaxValue;
         }
 
         // Inner and outer scaled radial deadzone

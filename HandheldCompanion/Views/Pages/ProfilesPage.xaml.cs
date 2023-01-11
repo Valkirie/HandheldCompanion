@@ -585,6 +585,36 @@ namespace HandheldCompanion.Views.Pages
 
             NumberBox_JoystickOuterDeadZoneRight.Maximum = 100 - NumberBox_JoystickInnerDeadZoneRight.Value - 1;
         }
+        private void NumberBox_TriggerInnerDeadZoneLeft_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
+        {
+            if (currentProfile is null)
+                return;
+
+            NumberBox_TriggerInnerDeadZoneLeft.Maximum = 100 - NumberBox_TriggerOuterDeadZoneLeft.Value - 1;
+        }
+
+        private void NumberBox_TriggerOuterDeadZoneLeft_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
+        {
+            if (currentProfile is null)
+                return;
+
+            NumberBox_TriggerOuterDeadZoneLeft.Maximum = 100 - NumberBox_TriggerInnerDeadZoneLeft.Value - 1;
+        }
+        private void NumberBox_TriggerInnerDeadZoneRight_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
+        {
+            if (currentProfile is null)
+                return;
+
+            NumberBox_TriggerInnerDeadZoneRight.Maximum = 100 - NumberBox_TriggerOuterDeadZoneRight.Value - 1;
+        }
+
+        private void NumberBox_TriggerOuterDeadZoneRight_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
+        {
+            if (currentProfile is null)
+                return;
+
+            NumberBox_TriggerOuterDeadZoneRight.Maximum = 100 - NumberBox_TriggerInnerDeadZoneRight.Value - 1;
+        }
 
         private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

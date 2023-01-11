@@ -2246,6 +2246,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Left trigger deadzone %.
+        /// </summary>
+        public static string ProfilesPage_TriggerDeadZoneLeft {
+            get {
+                return ResourceManager.GetString("ProfilesPage_TriggerDeadZoneLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust the inner and outer deadzone percentage of the left trigger.
+        /// </summary>
+        public static string ProfilesPage_TriggerDeadZoneLeftDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_TriggerDeadZoneLeftDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right trigger deadzone %.
+        /// </summary>
+        public static string ProfilesPage_TriggerDeadZoneRight {
+            get {
+                return ResourceManager.GetString("ProfilesPage_TriggerDeadZoneRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust the inner and outer deadzone percentage of the right trigger.
+        /// </summary>
+        public static string ProfilesPage_TriggerDeadZoneRightDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_TriggerDeadZoneRightDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Motion anti-deadzone.
         /// </summary>
         public static string ProfilesPage_UMCAntiDeadzone {

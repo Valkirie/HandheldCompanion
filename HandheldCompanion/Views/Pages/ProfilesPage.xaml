@@ -320,6 +320,51 @@
                                         </StackPanel>
                                     </ui:SimpleStackPanel>
                                 </Grid>
+
+                                <!-- Separator -->
+                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
+
+                                <!-- Trigger deadzone left -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="10"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TriggerDeadZoneLeft}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TriggerDeadZoneLeftDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <ui:NumberBox Name="NumberBox_TriggerInnerDeadZoneLeft" Grid.Column="1" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TriggerInnerDeadZoneLeft_ValueChanged"></ui:NumberBox>
+                                    <ui:NumberBox Name="NumberBox_TriggerOuterDeadZoneLeft" Grid.Column="3" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TriggerOuterDeadZoneLeft_ValueChanged"></ui:NumberBox>
+
+                                </Grid>
+
+                                <!-- Separator -->
+                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
+
+                                <!-- Trigger deadzone right -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="10"></ColumnDefinition>
+                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TriggerDeadZoneRight}" FontSize="14"/>
+                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TriggerDeadZoneRightDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <ui:NumberBox Name="NumberBox_TriggerInnerDeadZoneRight" Grid.Column="1" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TriggerInnerDeadZoneRight_ValueChanged"></ui:NumberBox>
+                                    <ui:NumberBox Name="NumberBox_TriggerOuterDeadZoneRight" Grid.Column="3" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TriggerOuterDeadZoneRight_ValueChanged"></ui:NumberBox>
+
+                                </Grid>
+
                             </ui:SimpleStackPanel>
                         </Expander.Content>
                     </Expander>
