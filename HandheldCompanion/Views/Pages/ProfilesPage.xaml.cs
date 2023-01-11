@@ -358,15 +358,15 @@ namespace HandheldCompanion.Views.Pages
 
                 // Controller settings
                 Toggle_ThumbImproveCircularityLeft.IsOn = currentProfile.thumb_improve_circularity_left;
-                NumberBox_JoystickInnerDeadZoneLeft.Value = currentProfile.deadzone_inner_left;
-                NumberBox_JoystickOuterDeadZoneLeft.Value = currentProfile.deadzone_outer_left;
+                NumberBox_JoystickInnerDeadZoneLeft.Value = currentProfile.thumb_deadzone_inner_left;
+                NumberBox_JoystickOuterDeadZoneLeft.Value = currentProfile.thumb_deadzone_outer_left;
 
                 Toggle_ThumbImproveCircularityRight.IsOn = currentProfile.thumb_improve_circularity_right;
-                NumberBox_JoystickInnerDeadZoneRight.Value = currentProfile.deadzone_inner_right;
-                NumberBox_JoystickOuterDeadZoneRight.Value = currentProfile.deadzone_outer_right;
+                NumberBox_JoystickInnerDeadZoneRight.Value = currentProfile.thumb_deadzone_inner_right;
+                NumberBox_JoystickOuterDeadZoneRight.Value = currentProfile.thumb_deadzone_outer_right;
 
-                tb_ProfileAntiDeadzoneLeft.Value = currentProfile.antideadzoneL;
-                tb_ProfileAntiDeadzoneRight.Value = currentProfile.antideadzoneR;
+                tb_ProfileAntiDeadzoneLeft.Value = currentProfile.thumb_anti_deadzone_left;
+                tb_ProfileAntiDeadzoneRight.Value = currentProfile.thumb_anti_deadzone_right;
 
                 // Motion control settings
                 tb_ProfileGyroValue.Value = currentProfile.gyrometer;
@@ -468,15 +468,15 @@ namespace HandheldCompanion.Views.Pages
 
             // Controller settings
             currentProfile.thumb_improve_circularity_left = (bool)Toggle_ThumbImproveCircularityLeft.IsOn;
-            currentProfile.deadzone_inner_left = (int)NumberBox_JoystickInnerDeadZoneLeft.Value;
-            currentProfile.deadzone_outer_left = (int)NumberBox_JoystickOuterDeadZoneLeft.Value;
+            currentProfile.thumb_deadzone_inner_left = (int)NumberBox_JoystickInnerDeadZoneLeft.Value;
+            currentProfile.thumb_deadzone_outer_left = (int)NumberBox_JoystickOuterDeadZoneLeft.Value;
             
             currentProfile.thumb_improve_circularity_right = (bool)Toggle_ThumbImproveCircularityRight.IsOn;
-            currentProfile.deadzone_inner_right = (int)NumberBox_JoystickInnerDeadZoneRight.Value;
-            currentProfile.deadzone_outer_right = (int)NumberBox_JoystickOuterDeadZoneRight.Value;
+            currentProfile.thumb_deadzone_inner_right = (int)NumberBox_JoystickInnerDeadZoneRight.Value;
+            currentProfile.thumb_deadzone_outer_right = (int)NumberBox_JoystickOuterDeadZoneRight.Value;
 
-            currentProfile.antideadzoneL = (float)tb_ProfileAntiDeadzoneLeft.Value;
-            currentProfile.antideadzoneR = (float)tb_ProfileAntiDeadzoneRight.Value;
+            currentProfile.thumb_anti_deadzone_left = (float)tb_ProfileAntiDeadzoneLeft.Value;
+            currentProfile.thumb_anti_deadzone_right = (float)tb_ProfileAntiDeadzoneRight.Value;
 
             // Motion control settings
             currentProfile.gyrometer = (float)tb_ProfileGyroValue.Value;

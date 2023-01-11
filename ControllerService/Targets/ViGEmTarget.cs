@@ -109,12 +109,12 @@ namespace ControllerService.Targets
             RightThumb = new Vector2(Inputs.RightThumbX, Inputs.RightThumbY);
 
             // Apply user defined scaled radial inner and outer deadzones to left and right joysticks
-            LeftThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(LeftThumb, ControllerService.currentProfile.deadzone_inner_left, ControllerService.currentProfile.deadzone_outer_left);
-            RightThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(RightThumb, ControllerService.currentProfile.deadzone_inner_right, ControllerService.currentProfile.deadzone_outer_right);
+            LeftThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(LeftThumb, ControllerService.currentProfile.thumb_deadzone_inner_left, ControllerService.currentProfile.thumb_deadzone_outer_left);
+            RightThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(RightThumb, ControllerService.currentProfile.thumb_deadzone_inner_right, ControllerService.currentProfile.thumb_deadzone_outer_right);
 
             // Apply user defined in game deadzone setting compensation ie anti deadzone prior to UMC additions
-            LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.antideadzoneL);
-            RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, ControllerService.currentProfile.antideadzoneR);
+            LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.thumb_anti_deadzone_left);
+            RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, ControllerService.currentProfile.thumb_anti_deadzone_right);
 
             // Improve joystick circularity
             if (ControllerService.currentProfile.thumb_improve_circularity_left) { LeftThumb = InputUtils.ImproveCircularity(LeftThumb); }

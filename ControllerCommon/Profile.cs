@@ -63,13 +63,13 @@ namespace ControllerCommon
         public int steering { get; set; } = 0;                  // 0 = Roll, 1 = Yaw
         public bool thumb_improve_circularity_left { get; set; } = true;
         public bool thumb_improve_circularity_right { get; set; } = true;
-        public int deadzone_inner_left { get; set; } = 0;
-        public int deadzone_outer_left { get; set; } = 0;
-        public int deadzone_inner_right { get; set; } = 0;
-        public int deadzone_outer_right { get; set; } = 0;
+        public int thumb_deadzone_inner_left { get; set; } = 0;
+        public int thumb_deadzone_outer_left { get; set; } = 0;
+        public int thumb_deadzone_inner_right { get; set; } = 0;
+        public int thumb_deadzone_outer_right { get; set; } = 0;
 
-        public float antideadzoneL { get; set; } = 0.0f;        // todo: typeme
-        public float antideadzoneR { get; set; } = 0.0f;        // todo: typeme
+        public float thumb_anti_deadzone_left { get; set; } = 0.0f;        // todo: typeme
+        public float thumb_anti_deadzone_right { get; set; } = 0.0f;        // todo: typeme
 
         public bool inverthorizontal { get; set; }              // if true, invert horizontal axis
         public bool invertvertical { get; set; }                // if false, invert vertical axis
