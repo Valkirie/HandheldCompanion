@@ -51,25 +51,7 @@ namespace ControllerService.Targets
             if (ControllerService.currentProfile.whitelisted)
                 IsSilenced = true;
             else
-            {
-                // platform specific
-                switch (ControllerService.currentPlatform)
-                {
-                    case Platform.Steam:
-                        {
-                            if (ControllerService.handheldDevice.GetType() == typeof(SteamDeck))
-                            {
-                                SteamDeck SteamDeck = (SteamDeck)ControllerService.handheldDevice;
-                                IsSilenced = SteamDeck.IsMuted();
-                            }
-                        }
-                        break;
-
-                    default:
-                        IsSilenced = false;
-                        break;
-                }
-            }
+                IsSilenced = false;
         }
 
         protected void FeedbackReceived(object sender, EventArgs e)

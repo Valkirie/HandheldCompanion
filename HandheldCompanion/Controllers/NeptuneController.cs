@@ -153,101 +153,97 @@ namespace HandheldCompanion.Controllers
 
             Inputs.Buttons = InjectedButtons;
 
-            // to avoid double inputs (keyboard + gamepad), mute controller if lizard buttons mode is enabled
-            if (!IsLizardButtonsEnabled())
-            {
-                if (input.State.ButtonState[NeptuneControllerButton.BtnA])
-                    Inputs.Buttons |= ControllerButtonFlags.B1;
-                if (input.State.ButtonState[NeptuneControllerButton.BtnB])
-                    Inputs.Buttons |= ControllerButtonFlags.B2;
-                if (input.State.ButtonState[NeptuneControllerButton.BtnX])
-                    Inputs.Buttons |= ControllerButtonFlags.B3;
-                if (input.State.ButtonState[NeptuneControllerButton.BtnY])
-                    Inputs.Buttons |= ControllerButtonFlags.B4;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnA])
+                Inputs.Buttons |= ControllerButtonFlags.B1;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnB])
+                Inputs.Buttons |= ControllerButtonFlags.B2;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnX])
+                Inputs.Buttons |= ControllerButtonFlags.B3;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnY])
+                Inputs.Buttons |= ControllerButtonFlags.B4;
 
-                if (input.State.ButtonState[NeptuneControllerButton.BtnOptions])
-                    Inputs.Buttons |= ControllerButtonFlags.Start;
-                if (input.State.ButtonState[NeptuneControllerButton.BtnMenu])
-                    Inputs.Buttons |= ControllerButtonFlags.Back;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnOptions])
+                Inputs.Buttons |= ControllerButtonFlags.Start;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnMenu])
+                Inputs.Buttons |= ControllerButtonFlags.Back;
 
-                if (input.State.ButtonState[NeptuneControllerButton.BtnSteam])
-                    Inputs.Buttons |= ControllerButtonFlags.Special;
-                if (input.State.ButtonState[NeptuneControllerButton.BtnQuickAccess])
-                    Inputs.Buttons |= ControllerButtonFlags.OEM1;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnSteam])
+                Inputs.Buttons |= ControllerButtonFlags.Special;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnQuickAccess])
+                Inputs.Buttons |= ControllerButtonFlags.OEM1;
 
-                var L2 = input.State.AxesState[NeptuneControllerAxis.L2] * byte.MaxValue / short.MaxValue;
-                var R2 = input.State.AxesState[NeptuneControllerAxis.R2] * byte.MaxValue / short.MaxValue;
+            var L2 = input.State.AxesState[NeptuneControllerAxis.L2] * byte.MaxValue / short.MaxValue;
+            var R2 = input.State.AxesState[NeptuneControllerAxis.R2] * byte.MaxValue / short.MaxValue;
 
-                if (L2 > Gamepad.TriggerThreshold)
-                    Inputs.Buttons |= ControllerButtonFlags.LeftTrigger;
-                if (R2 > Gamepad.TriggerThreshold)
-                    Inputs.Buttons |= ControllerButtonFlags.RightTrigger;
+            if (L2 > Gamepad.TriggerThreshold)
+                Inputs.Buttons |= ControllerButtonFlags.LeftTrigger;
+            if (R2 > Gamepad.TriggerThreshold)
+                Inputs.Buttons |= ControllerButtonFlags.RightTrigger;
 
-                if (input.State.ButtonState[NeptuneControllerButton.BtnLStickPress])
-                    Inputs.Buttons |= ControllerButtonFlags.LeftThumb;
-                if (input.State.ButtonState[NeptuneControllerButton.BtnRStickPress])
-                    Inputs.Buttons |= ControllerButtonFlags.RightThumb;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnLStickPress])
+                Inputs.Buttons |= ControllerButtonFlags.LeftThumb;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnRStickPress])
+                Inputs.Buttons |= ControllerButtonFlags.RightThumb;
 
-                if (input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch])
-                    Inputs.Buttons |= ControllerButtonFlags.OEM2;
-                if (input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch])
-                    Inputs.Buttons |= ControllerButtonFlags.OEM3;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch])
+                Inputs.Buttons |= ControllerButtonFlags.OEM2;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch])
+                Inputs.Buttons |= ControllerButtonFlags.OEM3;
 
-                if (input.State.ButtonState[NeptuneControllerButton.BtnL4])
-                    Inputs.Buttons |= ControllerButtonFlags.OEM4;
-                if (input.State.ButtonState[NeptuneControllerButton.BtnL5])
-                    Inputs.Buttons |= ControllerButtonFlags.OEM5;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnL4])
+                Inputs.Buttons |= ControllerButtonFlags.OEM4;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnL5])
+                Inputs.Buttons |= ControllerButtonFlags.OEM5;
 
-                if (input.State.ButtonState[NeptuneControllerButton.BtnR4])
-                    Inputs.Buttons |= ControllerButtonFlags.OEM6;
-                if (input.State.ButtonState[NeptuneControllerButton.BtnR5])
-                    Inputs.Buttons |= ControllerButtonFlags.OEM7;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnR4])
+                Inputs.Buttons |= ControllerButtonFlags.OEM6;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnR5])
+                Inputs.Buttons |= ControllerButtonFlags.OEM7;
 
-                if (input.State.ButtonState[NeptuneControllerButton.BtnL1])
-                    Inputs.Buttons |= ControllerButtonFlags.LeftShoulder;
-                if (input.State.ButtonState[NeptuneControllerButton.BtnR1])
-                    Inputs.Buttons |= ControllerButtonFlags.RightShoulder;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnL1])
+                Inputs.Buttons |= ControllerButtonFlags.LeftShoulder;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnR1])
+                Inputs.Buttons |= ControllerButtonFlags.RightShoulder;
 
-                if (input.State.ButtonState[NeptuneControllerButton.BtnDpadUp])
-                    Inputs.Buttons |= ControllerButtonFlags.DPadUp;
-                if (input.State.ButtonState[NeptuneControllerButton.BtnDpadDown])
-                    Inputs.Buttons |= ControllerButtonFlags.DPadDown;
-                if (input.State.ButtonState[NeptuneControllerButton.BtnDpadLeft])
-                    Inputs.Buttons |= ControllerButtonFlags.DPadLeft;
-                if (input.State.ButtonState[NeptuneControllerButton.BtnDpadRight])
-                    Inputs.Buttons |= ControllerButtonFlags.DPadRight;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnDpadUp])
+                Inputs.Buttons |= ControllerButtonFlags.DPadUp;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnDpadDown])
+                Inputs.Buttons |= ControllerButtonFlags.DPadDown;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnDpadLeft])
+                Inputs.Buttons |= ControllerButtonFlags.DPadLeft;
+            if (input.State.ButtonState[NeptuneControllerButton.BtnDpadRight])
+                Inputs.Buttons |= ControllerButtonFlags.DPadRight;
 
-                // Left Stick
-                if (input.State.AxesState[NeptuneControllerAxis.LeftStickX] < -Gamepad.LeftThumbDeadZone)
-                    Inputs.Buttons |= ControllerButtonFlags.LStickLeft;
-                if (input.State.AxesState[NeptuneControllerAxis.LeftStickX] > Gamepad.LeftThumbDeadZone)
-                    Inputs.Buttons |= ControllerButtonFlags.LStickRight;
+            // Left Stick
+            if (input.State.AxesState[NeptuneControllerAxis.LeftStickX] < -Gamepad.LeftThumbDeadZone)
+                Inputs.Buttons |= ControllerButtonFlags.LStickLeft;
+            if (input.State.AxesState[NeptuneControllerAxis.LeftStickX] > Gamepad.LeftThumbDeadZone)
+                Inputs.Buttons |= ControllerButtonFlags.LStickRight;
 
-                if (input.State.AxesState[NeptuneControllerAxis.LeftStickY] < -Gamepad.LeftThumbDeadZone)
-                    Inputs.Buttons |= ControllerButtonFlags.LStickDown;
-                if (input.State.AxesState[NeptuneControllerAxis.LeftStickY] > Gamepad.LeftThumbDeadZone)
-                    Inputs.Buttons |= ControllerButtonFlags.LStickUp;
+            if (input.State.AxesState[NeptuneControllerAxis.LeftStickY] < -Gamepad.LeftThumbDeadZone)
+                Inputs.Buttons |= ControllerButtonFlags.LStickDown;
+            if (input.State.AxesState[NeptuneControllerAxis.LeftStickY] > Gamepad.LeftThumbDeadZone)
+                Inputs.Buttons |= ControllerButtonFlags.LStickUp;
 
-                Inputs.LeftThumbX = input.State.AxesState[NeptuneControllerAxis.LeftStickX];
-                Inputs.LeftThumbY = input.State.AxesState[NeptuneControllerAxis.LeftStickY];
+            Inputs.LeftThumbX = input.State.AxesState[NeptuneControllerAxis.LeftStickX];
+            Inputs.LeftThumbY = input.State.AxesState[NeptuneControllerAxis.LeftStickY];
 
-                // Right Stick
-                if (input.State.AxesState[NeptuneControllerAxis.RightStickX] < -Gamepad.LeftThumbDeadZone)
-                    Inputs.Buttons |= ControllerButtonFlags.RStickLeft;
-                if (input.State.AxesState[NeptuneControllerAxis.RightStickX] > Gamepad.LeftThumbDeadZone)
-                    Inputs.Buttons |= ControllerButtonFlags.RStickRight;
+            // Right Stick
+            if (input.State.AxesState[NeptuneControllerAxis.RightStickX] < -Gamepad.LeftThumbDeadZone)
+                Inputs.Buttons |= ControllerButtonFlags.RStickLeft;
+            if (input.State.AxesState[NeptuneControllerAxis.RightStickX] > Gamepad.LeftThumbDeadZone)
+                Inputs.Buttons |= ControllerButtonFlags.RStickRight;
 
-                if (input.State.AxesState[NeptuneControllerAxis.RightStickY] < -Gamepad.LeftThumbDeadZone)
-                    Inputs.Buttons |= ControllerButtonFlags.RStickDown;
-                if (input.State.AxesState[NeptuneControllerAxis.RightStickY] > Gamepad.LeftThumbDeadZone)
-                    Inputs.Buttons |= ControllerButtonFlags.RStickUp;
+            if (input.State.AxesState[NeptuneControllerAxis.RightStickY] < -Gamepad.LeftThumbDeadZone)
+                Inputs.Buttons |= ControllerButtonFlags.RStickDown;
+            if (input.State.AxesState[NeptuneControllerAxis.RightStickY] > Gamepad.LeftThumbDeadZone)
+                Inputs.Buttons |= ControllerButtonFlags.RStickUp;
 
-                Inputs.RightThumbX = input.State.AxesState[NeptuneControllerAxis.RightStickX];
-                Inputs.RightThumbY = input.State.AxesState[NeptuneControllerAxis.RightStickY];
+            Inputs.RightThumbX = input.State.AxesState[NeptuneControllerAxis.RightStickX];
+            Inputs.RightThumbY = input.State.AxesState[NeptuneControllerAxis.RightStickY];
 
-                Inputs.LeftTrigger = L2;
-                Inputs.RightTrigger = R2;
-            }
+            Inputs.LeftTrigger = L2;
+            Inputs.RightTrigger = R2;
 
             if (input.State.AxesState[NeptuneControllerAxis.GyroAccelX] > maxX)
                 maxX = input.State.AxesState[NeptuneControllerAxis.GyroAccelX];
