@@ -9,6 +9,11 @@ namespace ControllerCommon.Controllers
 {
     public abstract class IController
     {
+        #region events
+        public event UpdatedEventHandler Updated;
+        public delegate void UpdatedEventHandler(ControllerInput Inputs);
+        #endregion
+
         public ControllerInput Inputs = new();
 
         protected const short UPDATE_INTERVAL = 5;
@@ -18,6 +23,7 @@ namespace ControllerCommon.Controllers
 
         public ControllerCapacities Capacities = ControllerCapacities.None;
         public bool HideOnHook = true;
+        protected bool Muted = false;
 
         protected int UserIndex;
         protected double VibrationStrength = 1.0d;
@@ -34,8 +40,6 @@ namespace ControllerCommon.Controllers
         protected DockPanel ui_dock_content = new DockPanel() { HorizontalAlignment = HorizontalAlignment.Left };
         protected SimpleStackPanel ui_dock_buttons = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
 
-        public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(ControllerInput Inputs);
 
         protected IController()
         {
@@ -176,6 +180,16 @@ namespace ControllerCommon.Controllers
         public virtual bool IsConnected()
         {
             return false;
+        }
+
+        public virtual void SetMute(bool mute)
+        {
+            Muted = mute;
+        }
+
+        public virtual bool IsMuted()
+        {
+            return Muted;
         }
 
         public virtual void Rumble(int loop)

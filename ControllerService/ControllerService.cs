@@ -484,15 +484,6 @@ namespace ControllerService
                         IMU.Initialize(SensorSelection);
                     }
                     break;
-                case "SteamDeckMuteController":
-                    {
-                        if (ControllerService.handheldDevice.GetType() == typeof(SteamDeck))
-                        {
-                            SteamDeck SteamDeck = (SteamDeck)handheldDevice;
-                            SteamDeck.Mute(Convert.ToBoolean(property));
-                        }
-                    }
-                    break;
             }
         }
 

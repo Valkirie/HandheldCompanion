@@ -138,6 +138,20 @@ namespace HandheldCompanion.Managers
                             }
                         }
                         break;
+
+                    case "SteamDeckMuteController":
+                        {
+                            IController target = GetTargetController();
+                            if (target is null)
+                                return;
+
+                            if (typeof(NeptuneController) != target.GetType())
+                                return;
+
+                            bool Muted = Convert.ToBoolean(value);
+                            ((NeptuneController)target).SetMute(Muted);
+                        }
+                        break;
                 }
             }));
         }
@@ -433,7 +447,6 @@ namespace HandheldCompanion.Managers
                 if (targetController.GetType() == typeof(NeptuneController))
                 {
                     NeptuneController neptuneController = (NeptuneController)targetController;
-                    SteamDeck SteamDeck = (SteamDeck)MainWindow.handheldDevice;
 
                     // mute controller if lizard buttons mode is enabled
                     if (neptuneController.IsLizardButtonsEnabled())
@@ -446,7 +459,7 @@ namespace HandheldCompanion.Managers
                         {
                             case Platform.Steam:
                                 {
-                                    if (SteamDeck.IsMuted())
+                                    if (neptuneController.IsMuted())
                                         return;
                                 }
                                 break;
