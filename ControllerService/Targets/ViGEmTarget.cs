@@ -112,8 +112,12 @@ namespace ControllerService.Targets
             RightThumb = new Vector2(Inputs.RightThumbX, Inputs.RightThumbY);
 
             // Apply user defined scaled radial inner and outer deadzones to left and right joysticks
-            LeftThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(LeftThumb, ControllerService.currentProfile.thumb_deadzone_inner_left, ControllerService.currentProfile.thumb_deadzone_outer_left);
-            RightThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(RightThumb, ControllerService.currentProfile.thumb_deadzone_inner_right, ControllerService.currentProfile.thumb_deadzone_outer_right);
+            LeftThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(LeftThumb, 
+                                                                       ControllerService.currentProfile.thumb_deadzone_inner_left, 
+                                                                       ControllerService.currentProfile.thumb_deadzone_outer_left);
+            RightThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(RightThumb, 
+                                                                        ControllerService.currentProfile.thumb_deadzone_inner_right, 
+                                                                        ControllerService.currentProfile.thumb_deadzone_outer_right);
 
             // Apply user defined in game deadzone setting compensation ie anti deadzone prior to UMC additions
             LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.thumb_anti_deadzone_left);
@@ -124,10 +128,12 @@ namespace ControllerService.Targets
             if (ControllerService.currentProfile.thumb_improve_circularity_right) { RightThumb = InputUtils.ImproveCircularity(RightThumb); }
 
             // Trigger deadzone adjustments
-            LeftTrigger = InputUtils.TriggerInnerOuterDeadzone(Inputs.LeftTrigger, ControllerService.currentProfile.trigger_deadzone_inner_left, ControllerService.currentProfile.trigger_deadzone_outer_left);
-            RightTrigger = InputUtils.TriggerInnerOuterDeadzone(Inputs.RightTrigger, ControllerService.currentProfile.trigger_deadzone_inner_right, ControllerService.currentProfile.trigger_deadzone_outer_right);
-
-            LogManager.LogInformation("Trigger left before {0} after {1}, right before {2} after {3}", Inputs.LeftTrigger, LeftTrigger, Inputs.RightTrigger, RightTrigger);
+            LeftTrigger = InputUtils.TriggerInnerOuterDeadzone(Inputs.LeftTrigger, 
+                                                               ControllerService.currentProfile.trigger_deadzone_inner_left, 
+                                                               ControllerService.currentProfile.trigger_deadzone_outer_left);
+            RightTrigger = InputUtils.TriggerInnerOuterDeadzone(Inputs.RightTrigger, 
+                                                               ControllerService.currentProfile.trigger_deadzone_inner_right, 
+                                                               ControllerService.currentProfile.trigger_deadzone_outer_right);
 
             if (ControllerService.currentProfile.umc_enabled)
             {

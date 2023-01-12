@@ -226,9 +226,9 @@
                                 <!-- Joystick deadzone left -->
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
                                         <ColumnDefinition MinWidth="120"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="10"></ColumnDefinition>
+                                        <ColumnDefinition MaxWidth="10"></ColumnDefinition>
                                         <ColumnDefinition MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
@@ -267,9 +267,9 @@
                                 <!-- Joystick deadzone right -->
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
                                         <ColumnDefinition MinWidth="120"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="10"></ColumnDefinition>
+                                        <ColumnDefinition MaxWidth="10"></ColumnDefinition>
                                         <ColumnDefinition MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
@@ -327,9 +327,9 @@
                                 <!-- Trigger deadzone left -->
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
                                         <ColumnDefinition MinWidth="120"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="10"></ColumnDefinition>
+                                        <ColumnDefinition MaxWidth="10"></ColumnDefinition>
                                         <ColumnDefinition MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
@@ -349,9 +349,9 @@
                                 <!-- Trigger deadzone right -->
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30*" MinWidth="200"></ColumnDefinition>
+                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
                                         <ColumnDefinition MinWidth="120"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="10"></ColumnDefinition>
+                                        <ColumnDefinition MaxWidth="10"></ColumnDefinition>
                                         <ColumnDefinition MinWidth="120"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
 
