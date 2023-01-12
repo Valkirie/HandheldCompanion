@@ -101,7 +101,7 @@ namespace ControllerService
 
         private static bool prevLeftPadTouch, prevRightPadTouch;
         private static bool prevLeftPadClick, prevRightPadClick;
-        public static void UpdateInputs(ControllerInput inputs)
+        public static void UpdateInputs(ControllerInputs inputs)
         {
             if (prevLeftPadTouch != inputs.LeftPadTouch)
             {

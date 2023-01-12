@@ -1,6 +1,8 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
+using ControllerCommon.Platforms;
+using ControllerCommon.Devices;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Views;
 using SharpDX.DirectInput;
@@ -15,6 +17,17 @@ namespace HandheldCompanion.Managers
 {
     public static class ControllerManager
     {
+        #region events
+        public static event ControllerPluggedEventHandler ControllerPlugged;
+        public delegate void ControllerPluggedEventHandler(IController Controller);
+
+        public static event ControllerUnpluggedEventHandler ControllerUnplugged;
+        public delegate void ControllerUnpluggedEventHandler(IController Controller);
+
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
+        #endregion
+
         private static Dictionary<string, IController> Controllers = new();
         private static Dictionary<UserIndex, bool> XUsbControllers = new()
         {
@@ -25,20 +38,10 @@ namespace HandheldCompanion.Managers
         };
 
         private static IController? targetController;
-
-        private static DirectInput directInput = new DirectInput();
+        private static ProcessEx? foregroundProcess;
 
         // temporary, improve me
         public static Dictionary<ControllerButtonFlags, ControllerButtonFlags> buttonMaps = new();
-
-        public static event ControllerPluggedEventHandler ControllerPlugged;
-        public delegate void ControllerPluggedEventHandler(IController Controller);
-
-        public static event ControllerUnpluggedEventHandler ControllerUnplugged;
-        public delegate void ControllerUnpluggedEventHandler(IController Controller);
-
-        public static event InitializedEventHandler Initialized;
-        public delegate void InitializedEventHandler();
 
         private static bool IsInitialized;
 
@@ -54,6 +57,8 @@ namespace HandheldCompanion.Managers
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
+            ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+
             PipeClient.Connected += OnClientConnected;
 
             // cloak on start, if requested
@@ -68,6 +73,11 @@ namespace HandheldCompanion.Managers
             Initialized?.Invoke();
 
             LogManager.LogInformation("{0} has started", "ControllerManager");
+        }
+
+        private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
+        {
+            foregroundProcess = processEx;
         }
 
         public static void Stop()
@@ -128,6 +138,20 @@ namespace HandheldCompanion.Managers
                             }
                         }
                         break;
+
+                    case "SteamDeckMuteController":
+                        {
+                            IController target = GetTargetController();
+                            if (target is null)
+                                return;
+
+                            if (typeof(NeptuneController) != target.GetType())
+                                return;
+
+                            bool Muted = Convert.ToBoolean(value);
+                            ((NeptuneController)target).SetVirtualMuted(Muted);
+                        }
+                        break;
                 }
             }));
         }
@@ -160,6 +184,8 @@ namespace HandheldCompanion.Managers
 
         private static void HidDeviceArrived(PnPDetails details)
         {
+            DirectInput directInput = new DirectInput();
+
             // use dispatcher because we're drawing UI elements when initializing the controller object
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -349,7 +375,11 @@ namespace HandheldCompanion.Managers
         {
             // unplug previous controller
             if (targetController is not null)
+            {
+                targetController.InputsUpdated -= UpdateInputs;
+                targetController.MovementsUpdated -= UpdateMovements;
                 targetController.Unplug();
+            }
 
             // warn service the current controller has been unplugged
             PipeClient.SendMessage(new PipeClientControllerDisconnect());
@@ -364,7 +394,10 @@ namespace HandheldCompanion.Managers
 
             // update target controller
             targetController = controller;
-            targetController.Updated += UpdateReport;
+
+            targetController.InputsUpdated += UpdateInputs;
+            targetController.MovementsUpdated += UpdateMovements;
+
             targetController.Plug();
             targetController.Rumble(targetController.GetUserIndex() + 1);
 
@@ -392,7 +425,7 @@ namespace HandheldCompanion.Managers
             return targetController;
         }
 
-        private static void UpdateReport(ControllerInput Inputs)
+        private static void UpdateInputs(ControllerInputs Inputs)
         {
             // pass inputs to InputsManager
             InputsManager.UpdateReport(Inputs.Buttons);
@@ -400,7 +433,7 @@ namespace HandheldCompanion.Managers
 
             // todo: pass inputs to (re)mapper
             // todo: filter inputs if part of shortcut
-            ControllerInput filtered = new(Inputs);
+            ControllerInputs filtered = new(Inputs);
             foreach (var pair in buttonMaps)
             {
                 ControllerButtonFlags origin = pair.Key;
@@ -413,8 +446,39 @@ namespace HandheldCompanion.Managers
                 filtered.Buttons |= substitute;
             }
 
+            // Neptune controller specific scenarios
+            if (targetController is not null)
+                if (targetController.GetType() == typeof(NeptuneController))
+                {
+                    NeptuneController neptuneController = (NeptuneController)targetController;
+
+                    // mute controller if lizard buttons mode is enabled
+                    if (neptuneController.IsLizardButtonsEnabled())
+                        return;
+
+                    // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
+                    if (foregroundProcess is not null)
+                    {
+                        switch (foregroundProcess.Platform)
+                        {
+                            case Platform.Steam:
+                                {
+                                    if (neptuneController.IsVirtualMuted())
+                                        return;
+                                }
+                                break;
+                        }
+                    }
+                }
+
             // pass inputs to service
-            PipeClient.SendMessage(new PipeClientInput(filtered));
+            PipeClient.SendMessage(new PipeClientInputs(filtered));
+        }
+
+        private static void UpdateMovements(ControllerMovements Movements)
+        {
+            // pass movements to service
+            PipeClient.SendMessage(new PipeClientMovements(Movements));
         }
     }
 }

@@ -324,12 +324,19 @@ namespace ControllerService
 
                 case PipeCode.CLIENT_INPUT:
                     {
-                        PipeClientInput input = (PipeClientInput)message;
+                        PipeClientInputs input = (PipeClientInputs)message;
 
                         vTarget?.UpdateInputs(input.Inputs);
                         DSUServer.UpdateInputs(input.Inputs);
-                        IMU.UpdateInputs(input.Inputs);
                         DS4Touch.UpdateInputs(input.Inputs);
+                    }
+                    break;
+
+                case PipeCode.CLIENT_MOVEMENTS:
+                    {
+                        PipeClientMovements movements = (PipeClientMovements)message;
+
+                        IMU.UpdateMovements(movements.Movements);
                     }
                     break;
 
@@ -482,15 +489,6 @@ namespace ControllerService
 
                         SensorSelection = value;
                         IMU.Initialize(SensorSelection);
-                    }
-                    break;
-                case "SteamDeckMuteController":
-                    {
-                        if (ControllerService.handheldDevice.GetType() == typeof(SteamDeck))
-                        {
-                            SteamDeck SteamDeck = (SteamDeck)handheldDevice;
-                            SteamDeck.Mute(Convert.ToBoolean(property));
-                        }
                     }
                     break;
             }

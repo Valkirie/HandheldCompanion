@@ -57,25 +57,14 @@ namespace ControllerCommon.Controllers
         OEM11 = 549755813888
     }
 
-    [Flags]
-    public enum ControllerCapacities : ushort
-    {
-        None = 0,
-        Gyroscope = 1,
-        Accelerometer = 2,
-    }
-
     [Serializable]
-    public class ControllerInput
+    public class ControllerInputs
     {
         public ControllerButtonFlags Buttons;
 
         public float LeftThumbX, LeftThumbY;
         public float RightThumbX, RightThumbY;
         public float LeftTrigger, RightTrigger;
-
-        public float GyroAccelX, GyroAccelY, GyroAccelZ;
-        public float GyroRoll, GyroPitch, GyroYaw;
 
         public float LeftPadX, LeftPadY;
         public float RightPadX, RightPadY;
@@ -84,10 +73,10 @@ namespace ControllerCommon.Controllers
 
         public int Timestamp;
 
-        public ControllerInput()
+        public ControllerInputs()
         { }
 
-        public ControllerInput(ControllerInput Inputs)
+        public ControllerInputs(ControllerInputs Inputs)
         {
             Buttons = Inputs.Buttons;
             Timestamp = Inputs.Timestamp;
@@ -97,14 +86,6 @@ namespace ControllerCommon.Controllers
             RightThumbY = Inputs.RightThumbY;
             RightTrigger = Inputs.RightTrigger;
             LeftTrigger = Inputs.LeftTrigger;
-
-            GyroAccelX = Inputs.GyroAccelX;
-            GyroAccelY = Inputs.GyroAccelY;
-            GyroAccelZ = Inputs.GyroAccelZ;
-
-            GyroRoll = Inputs.GyroRoll;
-            GyroPitch = Inputs.GyroPitch;
-            GyroYaw = Inputs.GyroYaw;
 
             LeftPadX = Inputs.LeftPadX;
             LeftPadY = Inputs.LeftPadY;
