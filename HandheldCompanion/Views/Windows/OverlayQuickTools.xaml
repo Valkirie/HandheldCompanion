@@ -9,7 +9,7 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
         Height="720"
-        MinHeight="500"
+        MinHeight="550"
         Width="440"
         MinWidth="440"
         MaxWidth="440"

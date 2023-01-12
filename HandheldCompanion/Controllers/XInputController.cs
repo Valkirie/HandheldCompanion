@@ -157,7 +157,7 @@ namespace HandheldCompanion.Controllers
                 Details.isHooked = true;
             }
 
-            UpdateTimer.Tick += (sender, e) => UpdateReport();
+            InputsTimer.Tick += (sender, e) => UpdateInputs();
 
             // ui
             DrawControls();
@@ -171,7 +171,7 @@ namespace HandheldCompanion.Controllers
             return $"XInput Controller {UserIndex}";
         }
 
-        public override void UpdateReport()
+        public override void UpdateInputs()
         {
             // skip if controller isn't connected
             if (!IsConnected())
@@ -264,7 +264,7 @@ namespace HandheldCompanion.Controllers
             prevGamepad = Gamepad;
             prevState = State;
 
-            base.UpdateReport();
+            base.UpdateInputs();
         }
 
         public override bool IsConnected()

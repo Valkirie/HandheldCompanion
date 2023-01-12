@@ -3,8 +3,10 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers;
 using neptune_hidapi.net;
+using PrecisionTiming;
 using SharpDX.XInput;
 using System;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,13 +14,93 @@ namespace HandheldCompanion.Controllers
 {
     public class NeptuneController : IController
     {
+        #region imports
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
+        #endregion
+
+        #region struct
+        [StructLayout(LayoutKind.Sequential)]
+        struct INPUT
+        {
+            public SendInputEventType type;
+            public MouseKeybdhardwareInputUnion mkhi;
+        }
+        [StructLayout(LayoutKind.Explicit)]
+        struct MouseKeybdhardwareInputUnion
+        {
+            [FieldOffset(0)]
+            public MouseInputData mi;
+
+            [FieldOffset(0)]
+            public KEYBDINPUT ki;
+
+            [FieldOffset(0)]
+            public HARDWAREINPUT hi;
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        struct KEYBDINPUT
+        {
+            public ushort wVk;
+            public ushort wScan;
+            public uint dwFlags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        struct HARDWAREINPUT
+        {
+            public int uMsg;
+            public short wParamL;
+            public short wParamH;
+        }
+        struct MouseInputData
+        {
+            public int dx;
+            public int dy;
+            public uint mouseData;
+            public MouseEventFlags dwFlags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+        [Flags]
+        enum MouseEventFlags : uint
+        {
+            MOUSEEVENTF_MOVE = 0x0001,
+            MOUSEEVENTF_LEFTDOWN = 0x0002,
+            MOUSEEVENTF_LEFTUP = 0x0004,
+            MOUSEEVENTF_RIGHTDOWN = 0x0008,
+            MOUSEEVENTF_RIGHTUP = 0x0010,
+            MOUSEEVENTF_MIDDLEDOWN = 0x0020,
+            MOUSEEVENTF_MIDDLEUP = 0x0040,
+            MOUSEEVENTF_XDOWN = 0x0080,
+            MOUSEEVENTF_XUP = 0x0100,
+            MOUSEEVENTF_WHEEL = 0x0800,
+            MOUSEEVENTF_VIRTUALDESK = 0x4000,
+            MOUSEEVENTF_ABSOLUTE = 0x8000
+        }
+        enum SendInputEventType : int
+        {
+            InputMouse,
+            InputKeyboard,
+            InputHardware
+        }
+        #endregion
+
         private neptune_hidapi.net.NeptuneController Controller;
         private NeptuneControllerInputEventArgs input;
 
         private bool isConnected = false;
+        private bool isVirtualMuted = false;
 
         private bool lastLeftHapticOn = false;
         private bool lastRightHapticOn = false;
+
+        // temporary workaround
+        private bool lastLeftPadClick = false;
+        private bool lastRightPadClick = false;
+
+        private NeptuneControllerInputState prevState;
 
         public NeptuneController(PnPDetails details)
         {
@@ -45,13 +127,17 @@ namespace HandheldCompanion.Controllers
                 throw new Exception();
             }
 
-            UpdateTimer.Tick += (sender, e) => UpdateReport();
+            InputsTimer.Tick += (sender, e) => UpdateInputs();
+            MovementsTimer.Tick += (sender, e) => UpdateMovements();
 
             bool LizardMouse = SettingsManager.GetBoolean("SteamDeckLizardMouse");
             SetLizardMouse(LizardMouse);
 
             bool LizardButtons = SettingsManager.GetBoolean("SteamDeckLizardButtons");
             SetLizardButtons(LizardButtons);
+
+            bool Muted = SettingsManager.GetBoolean("SteamDeckMuteController");
+            SetVirtualMuted(Muted);
 
             // ui
             DrawControls();
@@ -65,9 +151,12 @@ namespace HandheldCompanion.Controllers
             return "Steam Controller Neptune";
         }
 
-        public override void UpdateReport()
+        public override void UpdateInputs()
         {
             if (input is null)
+                return;
+
+            if (input.State.GetHashCode() == prevState.GetHashCode() && prevInjectedButtons == InjectedButtons)
                 return;
 
             Inputs.Buttons = InjectedButtons;
@@ -164,28 +253,6 @@ namespace HandheldCompanion.Controllers
             Inputs.LeftTrigger = L2;
             Inputs.RightTrigger = R2;
 
-            if (input.State.AxesState[NeptuneControllerAxis.GyroAccelX] > maxX)
-                maxX = input.State.AxesState[NeptuneControllerAxis.GyroAccelX];
-            if (input.State.AxesState[NeptuneControllerAxis.GyroAccelY] > maxY)
-                maxY = input.State.AxesState[NeptuneControllerAxis.GyroAccelY];
-            if (input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] > maxZ)
-                maxZ = input.State.AxesState[NeptuneControllerAxis.GyroAccelZ];
-
-            if (input.State.AxesState[NeptuneControllerAxis.GyroPitch] > maxpitch)
-                maxpitch = input.State.AxesState[NeptuneControllerAxis.GyroPitch];
-            if (input.State.AxesState[NeptuneControllerAxis.GyroRoll] > maxroll)
-                maxroll = input.State.AxesState[NeptuneControllerAxis.GyroRoll];
-            if (input.State.AxesState[NeptuneControllerAxis.GyroYaw] > maxyaw)
-                maxyaw = input.State.AxesState[NeptuneControllerAxis.GyroYaw];
-
-            Inputs.GyroAccelZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
-            Inputs.GyroAccelY = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
-            Inputs.GyroAccelX = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
-
-            Inputs.GyroPitch = -(float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;
-            Inputs.GyroRoll = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;
-            Inputs.GyroYaw = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;
-
             Inputs.LeftPadX = short.MaxValue + input.State.AxesState[NeptuneControllerAxis.LeftPadX];
             Inputs.LeftPadY = short.MaxValue - input.State.AxesState[NeptuneControllerAxis.LeftPadY];
             Inputs.LeftPadTouch = input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch];
@@ -206,11 +273,73 @@ namespace HandheldCompanion.Controllers
             if (Inputs.RightPadClick)
                 Inputs.Buttons |= ControllerButtonFlags.OEM11;
 
-            base.UpdateReport();
+            // temporary workaround
+            if (IsLizardMouseEnabled())
+            {
+                if (Inputs.LeftPadClick != lastLeftPadClick)
+                {
+                    INPUT mouseDownInput = new INPUT();
+                    mouseDownInput.type = SendInputEventType.InputMouse;
+
+                    switch (Inputs.LeftPadClick)
+                    {
+                        case true:
+                            mouseDownInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_RIGHTDOWN;
+                            break;
+                        case false:
+                            mouseDownInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_RIGHTUP;
+                            break;
+                    }
+
+                    // send mouse input
+                    SendInput(1, ref mouseDownInput, Marshal.SizeOf(new INPUT()));
+
+                    lastLeftPadClick = Inputs.LeftPadClick;
+                }
+
+                if (Inputs.RightPadClick != lastRightPadClick)
+                {
+                    INPUT mouseDownInput = new INPUT();
+                    mouseDownInput.type = SendInputEventType.InputMouse;
+
+                    switch (Inputs.RightPadClick)
+                    {
+                        case true:
+                            mouseDownInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_LEFTDOWN;
+                            break;
+                        case false:
+                            mouseDownInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_LEFTUP;
+                            break;
+                    }
+
+                    // send mouse input
+                    SendInput(1, ref mouseDownInput, Marshal.SizeOf(new INPUT()));
+
+                    lastRightPadClick = Inputs.RightPadClick;
+                }
+            }
+
+            // update states
+            prevState = input.State;
+
+            base.UpdateInputs();
         }
 
-        private float maxX, maxY, maxZ;
-        private float maxpitch, maxroll, maxyaw;
+        public override void UpdateMovements()
+        {
+            if (input is null)
+                return;
+
+            Movements.GyroAccelZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
+            Movements.GyroAccelY = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
+            Movements.GyroAccelX = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
+
+            Movements.GyroPitch = -(float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;
+            Movements.GyroRoll = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;
+            Movements.GyroYaw = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;
+
+            base.UpdateMovements();
+        }
 
         public override bool IsConnected()
         {
@@ -225,6 +354,11 @@ namespace HandheldCompanion.Controllers
         public bool IsLizardButtonsEnabled()
         {
             return Controller.LizardButtonsEnabled;
+        }
+
+        public virtual bool IsVirtualMuted()
+        {
+            return isVirtualMuted;
         }
 
         public override void Rumble(int loop)
@@ -333,6 +467,11 @@ namespace HandheldCompanion.Controllers
         public void SetLizardButtons(bool lizardMode)
         {
             Controller.LizardButtonsEnabled = lizardMode;
+        }
+
+        public void SetVirtualMuted(bool mute)
+        {
+            isVirtualMuted = mute;
         }
     }
 }
