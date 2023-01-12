@@ -107,11 +107,11 @@ namespace ControllerService
             Inclinometer.UpdateSensor();
         }
 
-        public static void UpdateInputs(ControllerInput inputs)
+        public static void UpdateMovements(ControllerMovements movements)
         {
-            Gyrometer.ReadingChanged(inputs.GyroRoll, inputs.GyroPitch, inputs.GyroYaw);
-            Accelerometer.ReadingChanged(inputs.GyroAccelX, inputs.GyroAccelY, inputs.GyroAccelZ);
-            Inclinometer.ReadingChanged(inputs.GyroAccelX, inputs.GyroAccelY, inputs.GyroAccelZ);
+            Gyrometer.ReadingChanged(movements.GyroRoll, movements.GyroPitch, movements.GyroYaw);
+            Accelerometer.ReadingChanged(movements.GyroAccelX, movements.GyroAccelY, movements.GyroAccelZ);
+            Inclinometer.ReadingChanged(movements.GyroAccelX, movements.GyroAccelY, movements.GyroAccelZ);
         }
 
         private static void ComputeMovements(object sender, EventArgs e)

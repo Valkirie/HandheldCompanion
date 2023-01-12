@@ -52,7 +52,7 @@ namespace ControllerCommon
         SERVER_VIBRATION = 17,              // Sent to client to notify a vibration feedback arrived
                                             // args: ...
 
-        OBSOLETE_2 = 18,                    // OBSOLETE, REUSEME
+        CLIENT_MOVEMENTS = 18,              // Sent to server to inform on controller/device movements
 
         CLIENT_CLEARINDEX = 19,             // Sent to server to clear all hidden controllers
                                             // args: ...

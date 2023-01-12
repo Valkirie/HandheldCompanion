@@ -12,7 +12,7 @@ namespace HandheldCompanion.Controllers
             if (!IsConnected())
                 throw new Exception();
 
-            UpdateTimer.Tick += (sender, e) => UpdateReport();
+            InputsTimer.Tick += (sender, e) => UpdateInputs();
         }
 
         public override string ToString()
@@ -22,7 +22,7 @@ namespace HandheldCompanion.Controllers
             return joystick.Information.ProductName;
         }
 
-        public override void UpdateReport()
+        public override void UpdateInputs()
         {
             // skip if controller isn't connected
             if (!IsConnected())
@@ -115,7 +115,7 @@ namespace HandheldCompanion.Controllers
             Inputs.RightThumbX = Math.Clamp(State.Z - short.MaxValue, short.MinValue, short.MaxValue);
             Inputs.RightThumbY = Math.Clamp(-State.RotationZ + short.MaxValue, short.MinValue, short.MaxValue);
 
-            base.UpdateReport();
+            base.UpdateInputs();
         }
 
         public override bool IsConnected()

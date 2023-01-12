@@ -149,7 +149,7 @@ namespace HandheldCompanion.Managers
                                 return;
 
                             bool Muted = Convert.ToBoolean(value);
-                            ((NeptuneController)target).SetMute(Muted);
+                            ((NeptuneController)target).SetVirtualMuted(Muted);
                         }
                         break;
                 }
@@ -376,7 +376,8 @@ namespace HandheldCompanion.Managers
             // unplug previous controller
             if (targetController is not null)
             {
-                targetController.Updated -= UpdateReport;
+                targetController.InputsUpdated -= UpdateInputs;
+                targetController.MovementsUpdated -= UpdateMovements;
                 targetController.Unplug();
             }
 
@@ -393,7 +394,10 @@ namespace HandheldCompanion.Managers
 
             // update target controller
             targetController = controller;
-            targetController.Updated += UpdateReport;
+
+            targetController.InputsUpdated += UpdateInputs;
+            targetController.MovementsUpdated += UpdateMovements;
+
             targetController.Plug();
             targetController.Rumble(targetController.GetUserIndex() + 1);
 
@@ -421,7 +425,7 @@ namespace HandheldCompanion.Managers
             return targetController;
         }
 
-        private static void UpdateReport(ControllerInput Inputs)
+        private static void UpdateInputs(ControllerInputs Inputs)
         {
             // pass inputs to InputsManager
             InputsManager.UpdateReport(Inputs.Buttons);
@@ -429,7 +433,7 @@ namespace HandheldCompanion.Managers
 
             // todo: pass inputs to (re)mapper
             // todo: filter inputs if part of shortcut
-            ControllerInput filtered = new(Inputs);
+            ControllerInputs filtered = new(Inputs);
             foreach (var pair in buttonMaps)
             {
                 ControllerButtonFlags origin = pair.Key;
@@ -459,7 +463,7 @@ namespace HandheldCompanion.Managers
                         {
                             case Platform.Steam:
                                 {
-                                    if (neptuneController.IsMuted())
+                                    if (neptuneController.IsVirtualMuted())
                                         return;
                                 }
                                 break;
@@ -468,7 +472,13 @@ namespace HandheldCompanion.Managers
                 }
 
             // pass inputs to service
-            PipeClient.SendMessage(new PipeClientInput(filtered));
+            PipeClient.SendMessage(new PipeClientInputs(filtered));
+        }
+
+        private static void UpdateMovements(ControllerMovements Movements)
+        {
+            // pass movements to service
+            PipeClient.SendMessage(new PipeClientMovements(Movements));
         }
     }
 }

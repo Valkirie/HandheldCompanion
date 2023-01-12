@@ -33,12 +33,12 @@ namespace HandheldCompanion.Controllers
             return joystick.Information.ProductName;
         }
 
-        public override void UpdateReport()
+        public override void UpdateInputs()
         {
             // update states
             prevState = State;
 
-            base.UpdateReport();
+            base.UpdateInputs();
         }
 
         public override bool IsConnected()

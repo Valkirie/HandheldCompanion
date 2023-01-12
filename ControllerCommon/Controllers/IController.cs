@@ -7,14 +7,26 @@ using System.Windows.Controls;
 
 namespace ControllerCommon.Controllers
 {
+    [Flags]
+    public enum ControllerCapacities : ushort
+    {
+        None = 0,
+        Gyroscope = 1,
+        Accelerometer = 2,
+    }
+
     public abstract class IController
     {
         #region events
-        public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(ControllerInput Inputs);
+        public event InputsUpdatedEventHandler InputsUpdated;
+        public delegate void InputsUpdatedEventHandler(ControllerInputs Inputs);
+
+        public event MovementsUpdatedEventHandler MovementsUpdated;
+        public delegate void MovementsUpdatedEventHandler(ControllerMovements Movements);
         #endregion
 
-        public ControllerInput Inputs = new();
+        public ControllerInputs Inputs = new();
+        public ControllerMovements Movements = new();
 
         protected const short UPDATE_INTERVAL = 5;
 
@@ -23,13 +35,14 @@ namespace ControllerCommon.Controllers
 
         public ControllerCapacities Capacities = ControllerCapacities.None;
         public bool HideOnHook = true;
-        protected bool Muted = false;
 
         protected int UserIndex;
         protected double VibrationStrength = 1.0d;
 
         protected PnPDetails Details;
-        protected PrecisionTimer UpdateTimer;
+
+        protected PrecisionTimer MovementsTimer;
+        protected PrecisionTimer InputsTimer;
 
         protected Border ui_border = new Border() { CornerRadius = new CornerRadius(4, 4, 4, 4), Padding = new Thickness(15, 12, 12, 12) };
         protected Grid ui_grid = new Grid();
@@ -43,21 +56,33 @@ namespace ControllerCommon.Controllers
 
         protected IController()
         {
-            UpdateTimer = new PrecisionTimer();
-            UpdateTimer.SetInterval(UPDATE_INTERVAL);
-            UpdateTimer.SetAutoResetMode(true);
+            InputsTimer = new PrecisionTimer();
+            InputsTimer.SetInterval(UPDATE_INTERVAL);
+            InputsTimer.SetAutoResetMode(true);
+
+            MovementsTimer = new PrecisionTimer();
+            MovementsTimer.SetInterval(UPDATE_INTERVAL);
+            MovementsTimer.SetAutoResetMode(true);
 
             // attribute controller to tag
             ui_border.Tag = this;
         }
 
-        public virtual void UpdateReport()
+        public virtual void UpdateInputs()
         {
             // update states
             Inputs.Timestamp = Environment.TickCount;
             prevInjectedButtons = InjectedButtons;
 
-            Updated?.Invoke(Inputs);
+            InputsUpdated?.Invoke(Inputs);
+        }
+
+        public virtual void UpdateMovements()
+        {
+            // update states
+            Movements.Timestamp = Environment.TickCount;
+
+            MovementsUpdated?.Invoke(Movements);
         }
 
         public bool HasGyro()
@@ -182,35 +207,25 @@ namespace ControllerCommon.Controllers
             return false;
         }
 
-        public virtual void SetMute(bool mute)
-        {
-            Muted = mute;
-        }
-
-        public virtual bool IsMuted()
-        {
-            return Muted;
-        }
-
         public virtual void Rumble(int loop)
         { }
 
         public virtual bool IsPlugged()
         {
-            return UpdateTimer.IsRunning();
+            return InputsTimer.IsRunning();
         }
 
         public virtual void Plug()
         {
             InjectedButtons = ControllerButtonFlags.None;
-            UpdateTimer.Start();
+            InputsTimer.Start();
 
             RefreshControls();
         }
 
         public virtual void Unplug()
         {
-            UpdateTimer.Stop();
+            InputsTimer.Stop();
 
             RefreshControls();
         }

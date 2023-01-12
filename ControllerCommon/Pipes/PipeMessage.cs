@@ -123,18 +123,34 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public partial class PipeClientInput : PipeMessage
+    public partial class PipeClientInputs : PipeMessage
     {
-        public ControllerInput Inputs;
+        public ControllerInputs Inputs;
 
-        public PipeClientInput()
+        public PipeClientInputs()
         {
             code = PipeCode.CLIENT_INPUT;
         }
 
-        public PipeClientInput(ControllerInput inputs) : this()
+        public PipeClientInputs(ControllerInputs inputs) : this()
         {
             Inputs = inputs;
+        }
+    }
+
+    [Serializable]
+    public partial class PipeClientMovements : PipeMessage
+    {
+        public ControllerMovements Movements;
+
+        public PipeClientMovements()
+        {
+            code = PipeCode.CLIENT_MOVEMENTS;
+        }
+
+        public PipeClientMovements(ControllerMovements movements) : this()
+        {
+            Movements = movements;
         }
     }
 

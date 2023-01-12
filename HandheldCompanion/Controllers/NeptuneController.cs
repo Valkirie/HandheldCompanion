@@ -3,6 +3,7 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers;
 using neptune_hidapi.net;
+using PrecisionTiming;
 using SharpDX.XInput;
 using System;
 using System.Runtime.InteropServices;
@@ -90,6 +91,7 @@ namespace HandheldCompanion.Controllers
         private NeptuneControllerInputEventArgs input;
 
         private bool isConnected = false;
+        private bool isVirtualMuted = false;
 
         private bool lastLeftHapticOn = false;
         private bool lastRightHapticOn = false;
@@ -98,8 +100,7 @@ namespace HandheldCompanion.Controllers
         private bool lastLeftPadClick = false;
         private bool lastRightPadClick = false;
 
-        private float maxX, maxY, maxZ;
-        private float maxpitch, maxroll, maxyaw;
+        private NeptuneControllerInputState prevState;
 
         public NeptuneController(PnPDetails details)
         {
@@ -126,13 +127,17 @@ namespace HandheldCompanion.Controllers
                 throw new Exception();
             }
 
-            UpdateTimer.Tick += (sender, e) => UpdateReport();
+            InputsTimer.Tick += (sender, e) => UpdateInputs();
+            MovementsTimer.Tick += (sender, e) => UpdateMovements();
 
             bool LizardMouse = SettingsManager.GetBoolean("SteamDeckLizardMouse");
             SetLizardMouse(LizardMouse);
 
             bool LizardButtons = SettingsManager.GetBoolean("SteamDeckLizardButtons");
             SetLizardButtons(LizardButtons);
+
+            bool Muted = SettingsManager.GetBoolean("SteamDeckMuteController");
+            SetVirtualMuted(Muted);
 
             // ui
             DrawControls();
@@ -146,9 +151,12 @@ namespace HandheldCompanion.Controllers
             return "Steam Controller Neptune";
         }
 
-        public override void UpdateReport()
+        public override void UpdateInputs()
         {
             if (input is null)
+                return;
+
+            if (input.State.GetHashCode() == prevState.GetHashCode() && prevInjectedButtons == InjectedButtons)
                 return;
 
             Inputs.Buttons = InjectedButtons;
@@ -245,28 +253,6 @@ namespace HandheldCompanion.Controllers
             Inputs.LeftTrigger = L2;
             Inputs.RightTrigger = R2;
 
-            if (input.State.AxesState[NeptuneControllerAxis.GyroAccelX] > maxX)
-                maxX = input.State.AxesState[NeptuneControllerAxis.GyroAccelX];
-            if (input.State.AxesState[NeptuneControllerAxis.GyroAccelY] > maxY)
-                maxY = input.State.AxesState[NeptuneControllerAxis.GyroAccelY];
-            if (input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] > maxZ)
-                maxZ = input.State.AxesState[NeptuneControllerAxis.GyroAccelZ];
-
-            if (input.State.AxesState[NeptuneControllerAxis.GyroPitch] > maxpitch)
-                maxpitch = input.State.AxesState[NeptuneControllerAxis.GyroPitch];
-            if (input.State.AxesState[NeptuneControllerAxis.GyroRoll] > maxroll)
-                maxroll = input.State.AxesState[NeptuneControllerAxis.GyroRoll];
-            if (input.State.AxesState[NeptuneControllerAxis.GyroYaw] > maxyaw)
-                maxyaw = input.State.AxesState[NeptuneControllerAxis.GyroYaw];
-
-            Inputs.GyroAccelZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
-            Inputs.GyroAccelY = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
-            Inputs.GyroAccelX = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
-
-            Inputs.GyroPitch = -(float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;
-            Inputs.GyroRoll = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;
-            Inputs.GyroYaw = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;
-
             Inputs.LeftPadX = short.MaxValue + input.State.AxesState[NeptuneControllerAxis.LeftPadX];
             Inputs.LeftPadY = short.MaxValue - input.State.AxesState[NeptuneControllerAxis.LeftPadY];
             Inputs.LeftPadTouch = input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch];
@@ -333,7 +319,26 @@ namespace HandheldCompanion.Controllers
                 }
             }
 
-            base.UpdateReport();
+            // update states
+            prevState = input.State;
+
+            base.UpdateInputs();
+        }
+
+        public override void UpdateMovements()
+        {
+            if (input is null)
+                return;
+
+            Movements.GyroAccelZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
+            Movements.GyroAccelY = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
+            Movements.GyroAccelX = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
+
+            Movements.GyroPitch = -(float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;
+            Movements.GyroRoll = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;
+            Movements.GyroYaw = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;
+
+            base.UpdateMovements();
         }
 
         public override bool IsConnected()
@@ -349,6 +354,11 @@ namespace HandheldCompanion.Controllers
         public bool IsLizardButtonsEnabled()
         {
             return Controller.LizardButtonsEnabled;
+        }
+
+        public virtual bool IsVirtualMuted()
+        {
+            return isVirtualMuted;
         }
 
         public override void Rumble(int loop)
@@ -457,6 +467,11 @@ namespace HandheldCompanion.Controllers
         public void SetLizardButtons(bool lizardMode)
         {
             Controller.LizardButtonsEnabled = lizardMode;
+        }
+
+        public void SetVirtualMuted(bool mute)
+        {
+            isVirtualMuted = mute;
         }
     }
 }

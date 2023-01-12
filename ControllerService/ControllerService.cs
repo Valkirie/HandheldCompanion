@@ -324,12 +324,19 @@ namespace ControllerService
 
                 case PipeCode.CLIENT_INPUT:
                     {
-                        PipeClientInput input = (PipeClientInput)message;
+                        PipeClientInputs input = (PipeClientInputs)message;
 
                         vTarget?.UpdateInputs(input.Inputs);
                         DSUServer.UpdateInputs(input.Inputs);
-                        IMU.UpdateInputs(input.Inputs);
                         DS4Touch.UpdateInputs(input.Inputs);
+                    }
+                    break;
+
+                case PipeCode.CLIENT_MOVEMENTS:
+                    {
+                        PipeClientMovements movements = (PipeClientMovements)message;
+
+                        IMU.UpdateMovements(movements.Movements);
                     }
                     break;
 
