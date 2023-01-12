@@ -2171,4 +2171,8 @@
     </Page>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Managers\HWiNFO\" />
+  </ItemGroup>
+
 </Project>
