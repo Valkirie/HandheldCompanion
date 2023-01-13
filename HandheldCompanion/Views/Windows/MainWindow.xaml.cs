@@ -597,6 +597,7 @@ namespace HandheldCompanion.Views
             ControllerManager.Stop();
             InputsManager.Stop();
             DeviceManager.Stop();
+            PlatformManager.Stop();
             ProfileManager.Stop();
             ProcessManager.Stop();
             EnergyManager.Stop();

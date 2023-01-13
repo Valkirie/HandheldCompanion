@@ -1,0 +1,35 @@
+"controller_mappings"
+{
+	"version"		"3"
+	"title"		"SteamController provided empty configuration"
+	"description"		"Template provided by SteamController to disable default mappings of Steam to prevent double inputs"
+	"controller_type"		"controller_neptune"
+	"major_revision"		"0"
+	"minor_revision"		"0"
+	"actions"
+	{
+		"Preset_1000001"
+		{
+			"title"		"Empty"
+			"legacy_set"		"1"
+		}
+	}
+	"preset"
+	{
+		"id"		"0"
+		"name"		"Preset_1000001"
+		"group_source_bindings"
+		{
+		}
+	}
+	"action_layers"
+	{
+	}
+	"settings"
+	{
+		"left_trackpad_mode"		"0"
+		"right_trackpad_mode"		"0"
+		"action_set_trigger_cursor_show"		"0"
+		"action_set_trigger_cursor_hide"		"0"
+	}
+}

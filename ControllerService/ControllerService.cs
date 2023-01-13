@@ -53,7 +53,7 @@ namespace ControllerService
         // profile vars
         public static Profile currentProfile = new();
         public static Profile defaultProfile = new();
-        public static Platform currentPlatform;
+        public static PlatformType currentPlatform;
 
         public static event UpdatedEventHandler ForegroundUpdated;
         public delegate void UpdatedEventHandler();
@@ -389,7 +389,7 @@ namespace ControllerService
                 LogManager.LogInformation("Profile {0} applied", profile.name);
         }
 
-        internal void UpdateProcess(string executable, Platform platform)
+        internal void UpdateProcess(string executable, PlatformType platform)
         {
             // skip if current platform
             if (platform == currentPlatform)

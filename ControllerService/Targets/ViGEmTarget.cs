@@ -8,7 +8,7 @@ using Nefarius.ViGEm.Client;
 using PrecisionTiming;
 using System;
 using System.Numerics;
-using Platform = ControllerCommon.Platforms.Platform;
+using Platform = ControllerCommon.Platforms.PlatformType;
 
 namespace ControllerService.Targets
 {

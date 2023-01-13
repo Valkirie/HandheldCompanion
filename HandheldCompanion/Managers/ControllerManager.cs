@@ -461,7 +461,7 @@ namespace HandheldCompanion.Managers
                     {
                         switch (foregroundProcess.Platform)
                         {
-                            case Platform.Steam:
+                            case PlatformType.Steam:
                                 {
                                     if (neptuneController.IsVirtualMuted())
                                         return;
