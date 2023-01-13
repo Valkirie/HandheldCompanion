@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Navigation;
+using System.Xml.Linq;
 using Windows.System.Power;
 using Page = System.Windows.Controls.Page;
 using PowerManager = ControllerCommon.Managers.PowerManager;
@@ -139,8 +140,11 @@ namespace HandheldCompanion.Views.Windows
                         break;
                 }
 
+                // force update
                 this.UpdateLayout();
-                this.UpdateDefaultStyle();
+                this.InvalidateArrange();
+                this.InvalidateMeasure();
+                this.InvalidateVisual();
             });
         }
 
