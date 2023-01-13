@@ -1,6 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Views.Windows;
 using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
@@ -365,6 +366,10 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             ThemeManager.Current.ApplicationTheme = (ApplicationTheme)cB_Theme.SelectedIndex;
+
+            // update default style
+            MainWindow.GetCurrent().UpdateDefaultStyle();
+            MainWindow.overlayquickTools.UpdateDefaultStyle();
 
             if (!SettingsManager.IsInitialized)
                 return;
