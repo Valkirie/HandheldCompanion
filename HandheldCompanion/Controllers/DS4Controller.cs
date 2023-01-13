@@ -10,7 +10,7 @@ namespace HandheldCompanion.Controllers
         public DS4Controller(Joystick joystick, PnPDetails details) : base(joystick, details)
         {
             if (!IsConnected())
-                throw new Exception();
+                return;
 
             InputsTimer.Tick += (sender, e) => UpdateInputs();
         }
@@ -28,11 +28,15 @@ namespace HandheldCompanion.Controllers
             if (!IsConnected())
                 return;
 
-            // Poll events from joystick
-            joystick.Poll();
+            try
+            {
+                // Poll events from joystick
+                joystick.Poll();
 
-            // update gamepad state
-            State = joystick.GetCurrentState();
+                // update gamepad state
+                State = joystick.GetCurrentState();
+            }
+            catch { }
 
             if (prevState.GetHashCode() == State.GetHashCode() && prevInjectedButtons == InjectedButtons)
                 return;

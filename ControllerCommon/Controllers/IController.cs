@@ -39,7 +39,7 @@ namespace ControllerCommon.Controllers
         protected int UserIndex;
         protected double VibrationStrength = 1.0d;
 
-        protected PnPDetails Details;
+        public PnPDetails Details;
 
         protected PrecisionTimer MovementsTimer;
         protected PrecisionTimer InputsTimer;
@@ -52,7 +52,6 @@ namespace ControllerCommon.Controllers
         protected Button ui_button_hook = new Button() { Width = 100, FontSize = 14, VerticalAlignment = VerticalAlignment.Center, Style = Application.Current.FindResource("AccentButtonStyle") as Style };
         protected DockPanel ui_dock_content = new DockPanel() { HorizontalAlignment = HorizontalAlignment.Left };
         protected SimpleStackPanel ui_dock_buttons = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
-
 
         protected IController()
         {

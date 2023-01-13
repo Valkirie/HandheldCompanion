@@ -260,6 +260,10 @@ namespace HandheldCompanion.Managers
                     return;
                 }
 
+                // failed to initialize
+                if (controller.Details is null)
+                    return;
+
                 if (!controller.IsConnected())
                     return;
 
@@ -281,9 +285,6 @@ namespace HandheldCompanion.Managers
                 return;
 
             IController controller = Controllers[details.deviceInstanceId];
-
-            if (controller is null)
-                return;
 
             if (controller.IsConnected())
                 return;
@@ -321,13 +322,18 @@ namespace HandheldCompanion.Managers
             // use dispatcher because we're drawing UI elements when initializing the controller object
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
+
                 XInputController controller = new(_controller);
 
-                if (controller is null)
+                // failed to initialize
+                if (controller.Details is null)
                     return;
 
                 if (!controller.IsConnected())
                     return;
+
+                // slot is now busy
+                XUsbControllers[slot] = false;
 
                 if (controller.IsVirtual())
                     return;
@@ -338,9 +344,6 @@ namespace HandheldCompanion.Managers
 
                 // raise event
                 ControllerPlugged?.Invoke(controller);
-
-                // slot is now busy
-                XUsbControllers[slot] = false;
             }));
         }
 
@@ -351,11 +354,12 @@ namespace HandheldCompanion.Managers
 
             XInputController controller = (XInputController)Controllers[details.deviceInstanceId];
 
-            if (controller is null)
-                return;
-
             if (controller.IsConnected())
                 return;
+
+            // slot is now free
+            UserIndex slot = (UserIndex)controller.GetUserIndex();
+            XUsbControllers[slot] = true;
 
             if (controller.IsVirtual())
                 return;
@@ -365,10 +369,6 @@ namespace HandheldCompanion.Managers
 
             // raise event
             ControllerUnplugged?.Invoke(controller);
-
-            // slot is now free
-            UserIndex slot = (UserIndex)controller.GetUserIndex();
-            XUsbControllers[slot] = true;
         }
 
         public static void SetTargetController(string baseContainerDeviceInstancePath)

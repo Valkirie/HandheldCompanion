@@ -106,7 +106,7 @@ namespace HandheldCompanion.Controllers
         {
             Details = details;
             if (Details is null)
-                throw new Exception();
+                return;
 
             Details.isHooked = true;
 
@@ -124,7 +124,7 @@ namespace HandheldCompanion.Controllers
             catch (Exception ex)
             {
                 LogManager.LogError("Couldn't initialize NeptuneController. Exception: {0}", ex.Message);
-                throw new Exception();
+                return;
             }
 
             InputsTimer.Tick += (sender, e) => UpdateInputs();

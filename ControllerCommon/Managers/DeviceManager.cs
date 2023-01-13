@@ -166,11 +166,10 @@ namespace ControllerCommon.Managers
 
         private static PnPDetails FindDeviceFromUSB(string SymLink, bool Removed)
         {
-            if (Removed)
-            {
-                return PnPDevices.Values.Where(device => device.baseContainerDeviceInstanceId.Equals(SymLink, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-            }
-            else
+            PnPDetails details = PnPDevices.Values.Where(device => device.baseContainerDeviceInstanceId.Equals(SymLink, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+
+            // backup plan
+            if (details is null)
             {
                 int deviceIndex = 0;
                 while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.UsbDevice, out var path, out var instanceId, deviceIndex++))
@@ -179,11 +178,14 @@ namespace ControllerCommon.Managers
 
                     path = PathToInstanceId(path, DeviceInterfaceIds.UsbDevice.ToString());
                     if (path == SymLink)
-                        return PnPDevices.Values.Where(device => device.baseContainerDeviceInstanceId.Equals(parent.InstanceId, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                    {
+                        details = PnPDevices.Values.Where(device => device.baseContainerDeviceInstanceId.Equals(parent.InstanceId, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                        break;
+                    }
                 }
             }
 
-            return null;
+            return details;
         }
 
         private static PnPDetails FindDeviceFromHID(string SymLink, bool Removed)
