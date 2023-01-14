@@ -1,3 +1,5 @@
+using ControllerCommon.Managers;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,6 +75,11 @@ namespace ControllerCommon.Utils
             return rad * (180 / (float)Math.PI);
         }
 
+        public static float MapRange(float Value, float OldMin, float OldMax, float NewMin, float NewMax)
+        {
+            return (NewMin + (NewMax - NewMin) * (Value - OldMin) / (OldMax - OldMin));
+        }
+
         public static byte NormalizeXboxInput(float input)
         {
             input = Math.Clamp(input, short.MinValue, short.MaxValue);
@@ -128,7 +135,7 @@ namespace ControllerCommon.Utils
         // - User does not want to change general emulator deadzone setting but want's it removed for specific game and use UMC Steering
         public static Vector2 ApplyAntiDeadzone(Vector2 ThumbValue, float DeadzonePercentage)
         {
-            // Return if thumbstick or deadzone is not used
+            // Return if thumbstick or anti deadzone is not used
             if (DeadzonePercentage.Equals(0.0f) || ThumbValue == Vector2.Zero)
                 return ThumbValue;
 
@@ -159,6 +166,84 @@ namespace ControllerCommon.Utils
 
             // Convert -1 to 1 back to short value and return
             return StickInput * Multiplier * short.MaxValue;
+        }
+
+        // Triggers, inner and outer deadzone
+        public static float TriggerInnerOuterDeadzone(float TriggerInput, int InnerDeadzonePercentage, int OuterDeadzonePercentage)
+        {
+            // Return if thumbstick or deadzone is not used
+            if ((InnerDeadzonePercentage.Equals(0) && OuterDeadzonePercentage.Equals(0)) || TriggerInput.Equals(float.NaN) || TriggerInput.Equals(0.0f))
+                return TriggerInput;
+
+            // Convert deadzone percentage to 0 - 1 range
+            float InnerDeadZone = (float)InnerDeadzonePercentage / 100.0f;
+            float OuterDeadZone = (float)OuterDeadzonePercentage / 100.0f;
+
+            // Convert 0 - 255 byte range value input to -1 to 1
+            float Trigger = TriggerInput / byte.MaxValue;
+
+            // Trigger is either:
+            // - Within inner deadzone, return 0
+            // - Within outer deadzone, return max
+            // - In between deadzone values, map accordingly
+            if (Trigger <= InnerDeadZone)
+            {
+                return 0.0f;
+            }
+            else if (Trigger >= 1 - OuterDeadZone)
+            {
+                return byte.MaxValue;
+            }
+            else
+            {
+                // Map to new range
+                // Convert back to 0 - 255 byte range
+                // Cut off float remains
+                return (int)(MapRange(Trigger, InnerDeadZone, (1 - OuterDeadZone), 0, 1) * byte.MaxValue);
+            }
+        }
+
+        // Inner and outer scaled radial deadzone
+        public static Vector2 ThumbScaledRadialInnerOuterDeadzone(Vector2 ThumbValue, int InnerDeadzonePercentage, int OuterDeadzonePercentage)
+        {
+            // Return if thumbstick or deadzone is not used
+            if ((InnerDeadzonePercentage.Equals(0) && OuterDeadzonePercentage.Equals(0)) || ThumbValue == Vector2.Zero)
+                return ThumbValue;
+
+            // Convert short value input to -1 to 1
+            Vector2 StickInput = new Vector2(ThumbValue.X, ThumbValue.Y) / short.MaxValue;
+
+            // Convert deadzone percentage to 0 - 1 range
+            float InnerDeadZone = (float)InnerDeadzonePercentage / 100.0f;
+            float OuterDeadZone = (float)OuterDeadzonePercentage / 100.0f;
+
+            // Joystick is either:
+            // - Within inner deadzone, return 0
+            // - Within outer deadzone, return max
+            // - In between deadzone values, map accordingly
+            if (StickInput.Length() <= InnerDeadZone)
+            {
+                return Vector2.Zero;
+            }
+            else if (StickInput.Length() >= 1 - OuterDeadZone)
+            {
+                // Cap vector length to 1 by determining the multiplier
+                float Multiplier = 1 / StickInput.Length();
+
+                // Convert -1 to 1 back to short value and return
+                return StickInput * Multiplier * short.MaxValue;
+            }
+            else
+            {
+                // Normalize values, used for direction signs
+                Vector2 StickValueNormalized = StickInput / StickInput.Length();
+
+                // Map to new range
+                Vector2 StickInputMapped = StickValueNormalized * MapRange(StickInput.Length(), InnerDeadZone, (1 - OuterDeadZone), 0, 1);
+
+                // Return and convert from 0 1 range back to short
+                return StickInputMapped * short.MaxValue;
+            }
         }
 
         // Custom sensitivity

@@ -77,8 +77,8 @@ namespace ControllerService.Targets
             virtualController.SetAxisValue(Xbox360Axis.RightThumbX, (short)RightThumb.X);
             virtualController.SetAxisValue(Xbox360Axis.RightThumbY, (short)RightThumb.Y);
 
-            virtualController.SetSliderValue(Xbox360Slider.LeftTrigger, (byte)Inputs.LeftTrigger);
-            virtualController.SetSliderValue(Xbox360Slider.RightTrigger, (byte)Inputs.RightTrigger);
+            virtualController.SetSliderValue(Xbox360Slider.LeftTrigger, (byte)LeftTrigger);
+            virtualController.SetSliderValue(Xbox360Slider.RightTrigger, (byte)RightTrigger);
 
             virtualController.SetButtonState(Xbox360Button.A, Inputs.Buttons.HasFlag(ControllerButtonFlags.B1));
             virtualController.SetButtonState(Xbox360Button.B, Inputs.Buttons.HasFlag(ControllerButtonFlags.B2));
