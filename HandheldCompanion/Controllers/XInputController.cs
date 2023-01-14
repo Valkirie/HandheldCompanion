@@ -138,7 +138,7 @@ namespace HandheldCompanion.Controllers
             UserIndex = (int)controller.UserIndex;
 
             if (!IsConnected())
-                throw new Exception();
+                return;
 
             // pull data from xinput
             var CapabilitiesEx = new XInputCapabilitiesEx();
@@ -148,11 +148,11 @@ namespace HandheldCompanion.Controllers
                 var ProductId = CapabilitiesEx.ProductId.ToString("X4");
                 var VendorId = CapabilitiesEx.VendorId.ToString("X4");
 
-                var devices = SystemManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId);
+                var devices = DeviceManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId);
                 Details = devices.FirstOrDefault();
 
                 if (Details is null)
-                    throw new Exception();
+                    return;
 
                 Details.isHooked = true;
             }

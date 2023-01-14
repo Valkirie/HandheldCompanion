@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Navigation;
+using System.Xml.Linq;
 using Windows.System.Power;
 using Page = System.Windows.Controls.Page;
 using PowerManager = ControllerCommon.Managers.PowerManager;
@@ -29,16 +30,12 @@ namespace HandheldCompanion.Views.Windows
         public QuickProfilesPage profilesPage;
         public QuickSuspenderPage suspenderPage;
 
-        // manager vers
-        public static BrightnessControl brightnessControl;
-
         public OverlayQuickTools()
         {
             InitializeComponent();
             ShowActivated = true;
 
             // create manager(s)
-            brightnessControl = new();
             PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
             PowerManager_PowerStatusChanged(SystemInformation.PowerStatus);
 
@@ -64,7 +61,7 @@ namespace HandheldCompanion.Views.Windows
 
         private void PowerManager_PowerStatusChanged(PowerStatus status)
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 int BatteryLifePercent = (int)Math.Truncate(status.BatteryLifePercent * 100.0f);
                 BatteryIndicatorPercentage.Text = $"{BatteryLifePercent}%";
@@ -129,7 +126,7 @@ namespace HandheldCompanion.Views.Windows
 
         public void UpdateVisibility()
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 switch (Visibility)
                 {
@@ -143,8 +140,11 @@ namespace HandheldCompanion.Views.Windows
                         break;
                 }
 
+                // force update
                 this.UpdateLayout();
-                this.UpdateDefaultStyle();
+                this.InvalidateArrange();
+                this.InvalidateMeasure();
+                this.InvalidateVisual();
             });
         }
 
@@ -262,9 +262,6 @@ namespace HandheldCompanion.Views.Windows
                     SettingsManager.SetProperty("QuickToolsHeight", ActualHeight);
                     break;
             }
-
-            // stop manager(s)
-            brightnessControl.Dispose();
 
             e.Cancel = !isClosing;
             this.Visibility = Visibility.Collapsed;

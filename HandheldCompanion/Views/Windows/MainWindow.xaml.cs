@@ -163,9 +163,9 @@ namespace HandheldCompanion.Views
             EnergyManager.Start();
             HotkeysManager.Start();
 
-            SystemManager.UsbDeviceArrived += GenericDeviceUpdated;
-            SystemManager.UsbDeviceRemoved += GenericDeviceUpdated;
-            SystemManager.Start();
+            DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+            DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+            DeviceManager.Start();
 
             PlatformManager.Start();
             ProfileManager.Start();
@@ -175,6 +175,7 @@ namespace HandheldCompanion.Views
             PowerManager.Start();
 
             DesktopManager.Start();
+            HWiNFOManager.Start();
 
             // start managers asynchroneously
             foreach (Manager manager in _managers)
@@ -218,7 +219,7 @@ namespace HandheldCompanion.Views
 
         public void SwapWindowState()
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 switch (WindowState)
                 {
@@ -428,7 +429,7 @@ namespace HandheldCompanion.Views
 
         private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
-            this.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
 
                 switch ((ServiceStartMode)mode)
@@ -595,7 +596,8 @@ namespace HandheldCompanion.Views
 
             ControllerManager.Stop();
             InputsManager.Stop();
-            SystemManager.Stop();
+            DeviceManager.Stop();
+            PlatformManager.Stop();
             ProfileManager.Stop();
             ProcessManager.Stop();
             EnergyManager.Stop();

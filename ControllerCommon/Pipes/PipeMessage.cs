@@ -67,7 +67,7 @@ namespace ControllerCommon
     public partial class PipeClientProcess : PipeMessage
     {
         public string executable;
-        public Platform platform;
+        public PlatformType platform;
 
         public PipeClientProcess()
         {

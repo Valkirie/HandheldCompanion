@@ -9,7 +9,7 @@ namespace ControllerService.Sensors
 {
     public class IMUAccelerometer : IMUSensor
     {
-        public static SensorSpec sensorSpec = new SensorSpec()
+        public static new SensorSpec sensorSpec = new()
         {
             minIn = -2.0f,
             maxIn = 2.0f,
@@ -69,7 +69,7 @@ namespace ControllerService.Sensors
             StartListening();
         }
 
-        public void StartListening()
+        public override void StartListening()
         {
             switch (sensorFamily)
             {
@@ -82,7 +82,7 @@ namespace ControllerService.Sensors
             }
         }
 
-        public void StopListening()
+        public override void StopListening()
         {
             if (sensor is null)
                 return;

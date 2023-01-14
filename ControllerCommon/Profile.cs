@@ -2,7 +2,9 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.Json.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ControllerCommon
 {
@@ -22,7 +24,9 @@ namespace ControllerCommon
     {
         Background = 0,
         ProfilesPage = 1,
-        QuickProfilesPage = 2
+        QuickProfilesPage = 2,
+        Creation = 4,
+        Serialiazer = 5
     }
 
     [Serializable]
@@ -117,7 +121,7 @@ namespace ControllerCommon
         // hidden settings
         [JsonIgnore] public ProfileErrorCode error;
         [JsonIgnore] public string fullpath { get; set; }
-        [JsonIgnore] public string json { get; set; }
+        [JsonIgnore] public string filename { get; set; }
         [JsonIgnore] public bool isDefault { get; set; }
         [JsonIgnore] public bool isRunning { get; set; }
         [JsonIgnore] public static int array_size = 49;             // x + 1 (hidden)
@@ -134,6 +138,9 @@ namespace ControllerCommon
                     aiming_array.Add(vector);
                 }
             }
+
+            string filtered = Path.GetFileNameWithoutExtension(executable);
+            this.filename = $"{filtered}.json";
         }
 
         public Profile(string path) : this()

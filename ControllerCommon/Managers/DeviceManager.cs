@@ -18,7 +18,7 @@ using Path = System.IO.Path;
 
 namespace ControllerCommon.Managers
 {
-    public static class SystemManager
+    public static class DeviceManager
     {
         #region import
         [DllImport("hid.dll", EntryPoint = "HidD_GetHidGuid")]
@@ -62,7 +62,7 @@ namespace ControllerCommon.Managers
 
         public static bool IsInitialized;
 
-        static SystemManager()
+        static DeviceManager()
         {
             // initialize hid
             HidD_GetHidGuidMethod(out HidDevice);
@@ -117,15 +117,41 @@ namespace ControllerCommon.Managers
         private static void RefreshXInput()
         {
             int deviceIndex = 0;
-            while (Devcon.Find(DeviceInterfaceIds.XUsbDevice, out var path, out var instanceId, deviceIndex++))
-                XUsbDevice_DeviceArrived(new DeviceEventArgs() { InterfaceGuid = DeviceInterfaceIds.XUsbDevice, SymLink = path });
+            Dictionary<string, DateTimeOffset> devices = new();
+
+            while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.XUsbDevice, out var path, out var instanceId, deviceIndex++))
+            {
+                PnPDevice device = PnPDevice.GetDeviceByInterfaceId(path);
+                DateTimeOffset arrival = device.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate);
+
+                // add new device
+                devices.Add(path, arrival);
+            }
+
+            // sort devices list
+            devices = devices.OrderBy(device => device.Value).ToDictionary(x => x.Key, x => x.Value);
+            foreach (var pair in devices)
+                XUsbDevice_DeviceArrived(new DeviceEventArgs() { InterfaceGuid = DeviceInterfaceIds.XUsbDevice, SymLink = pair.Key });
         }
 
         private static void RefreshDInput()
         {
             int deviceIndex = 0;
-            while (Devcon.Find(DeviceInterfaceIds.HidDevice, out var path, out var instanceId, deviceIndex++))
-                HidDevice_DeviceArrived(new DeviceEventArgs() { InterfaceGuid = DeviceInterfaceIds.HidDevice, SymLink = path });
+            Dictionary<string, DateTimeOffset> devices = new();
+
+            while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.HidDevice, out var path, out var instanceId, deviceIndex++))
+            {
+                PnPDevice device = PnPDevice.GetDeviceByInterfaceId(path);
+                DateTimeOffset arrival = device.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate);
+
+                // add new device
+                devices.Add(path, arrival);
+            }
+
+            // sort devices list
+            devices = devices.OrderBy(device => device.Value).ToDictionary(x => x.Key, x => x.Value);
+            foreach (var pair in devices)
+                HidDevice_DeviceArrived(new DeviceEventArgs() { InterfaceGuid = DeviceInterfaceIds.HidDevice, SymLink = pair.Key });
         }
 
         private static PnPDetails FindDevice(string SymLink, bool Removed = false)
@@ -140,24 +166,26 @@ namespace ControllerCommon.Managers
 
         private static PnPDetails FindDeviceFromUSB(string SymLink, bool Removed)
         {
-            if (Removed)
-            {
-                return PnPDevices.Values.Where(device => device.baseContainerDeviceInstanceId.Equals(SymLink, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-            }
-            else
+            PnPDetails details = PnPDevices.Values.Where(device => device.baseContainerDeviceInstanceId.Equals(SymLink, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+
+            // backup plan
+            if (details is null)
             {
                 int deviceIndex = 0;
-                while (Devcon.Find(DeviceInterfaceIds.UsbDevice, out var path, out var instanceId, deviceIndex++))
+                while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.UsbDevice, out var path, out var instanceId, deviceIndex++))
                 {
                     PnPDevice parent = PnPDevice.GetDeviceByInterfaceId(path);
 
                     path = PathToInstanceId(path, DeviceInterfaceIds.UsbDevice.ToString());
                     if (path == SymLink)
-                        return PnPDevices.Values.Where(device => device.baseContainerDeviceInstanceId.Equals(parent.InstanceId, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                    {
+                        details = PnPDevices.Values.Where(device => device.baseContainerDeviceInstanceId.Equals(parent.InstanceId, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                        break;
+                    }
                 }
             }
 
-            return null;
+            return details;
         }
 
         private static PnPDetails FindDeviceFromHID(string SymLink, bool Removed)
@@ -169,7 +197,7 @@ namespace ControllerCommon.Managers
         private static void RefreshHID()
         {
             int deviceIndex = 0;
-            while (Devcon.Find(DeviceInterfaceIds.HidDevice, out var path, out var instanceId, deviceIndex++))
+            while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.HidDevice, out var path, out var instanceId, deviceIndex++))
             {
                 PnPDevice children = PnPDevice.GetDeviceByInterfaceId(path);
 
@@ -362,8 +390,8 @@ namespace ControllerCommon.Managers
             PnPDevices.TryRemove(deviceEx.SymLink, out var value);
 
             // RefreshHID();
-            XUsbDeviceRemoved?.Invoke(deviceEx);
             LogManager.LogDebug("XUsbDevice removed: {0}", deviceEx.Name);
+            XUsbDeviceRemoved?.Invoke(deviceEx);
         }
 
         private async static void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
@@ -384,8 +412,8 @@ namespace ControllerCommon.Managers
                 {
                     deviceEx.isXInput = true;
 
-                    XUsbDeviceArrived?.Invoke(deviceEx);
                     LogManager.LogDebug("XUsbDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
+                    XUsbDeviceArrived?.Invoke(deviceEx);                    
                 }
             }
             catch { }
@@ -406,8 +434,8 @@ namespace ControllerCommon.Managers
                 PnPDevices.TryRemove(deviceEx.SymLink, out var value);
 
                 // RefreshHID();
-                HidDeviceRemoved?.Invoke(deviceEx);
                 LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
+                HidDeviceRemoved?.Invoke(deviceEx);
             }
             catch { }
         }
@@ -426,8 +454,8 @@ namespace ControllerCommon.Managers
             PnPDetails deviceEx = FindDevice(SymLink);
             if (deviceEx is not null && deviceEx.isGaming && !deviceEx.isXInput)
             {
-                HidDeviceArrived?.Invoke(deviceEx);
                 LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
+                HidDeviceArrived?.Invoke(deviceEx);
             }
         }
 
@@ -457,13 +485,6 @@ namespace ControllerCommon.Managers
                     UsbDeviceArrived?.Invoke(null);
             }
             catch { }
-        }
-
-        public static void PlayWindowsMedia(string file)
-        {
-            string path = Path.Combine(@"c:\Windows\Media\", file);
-            if (File.Exists(path))
-                new SoundPlayer(path).Play();
         }
     }
 }

@@ -241,6 +241,16 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] chord_neptune {
+            get {
+                object obj = ResourceManager.GetObject("chord_neptune", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {
         ///  &quot;name&quot;: &quot;ControllerCompanion&quot;,
         ///  &quot;path&quot;: &quot;ControllerCompanion.exe&quot;,
@@ -395,6 +405,16 @@ namespace HandheldCompanion.Properties {
         public static string Default_json {
             get {
                 return ResourceManager.GetString("Default.json", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] empty_neptune {
+            get {
+                object obj = ResourceManager.GetObject("empty_neptune", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         

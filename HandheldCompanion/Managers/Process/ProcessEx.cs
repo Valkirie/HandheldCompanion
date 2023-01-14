@@ -37,7 +37,7 @@ namespace HandheldCompanion.Managers
         public string Path;
         public ProcessFilter Filter;
 
-        public Platform Platform { get; set; }
+        public PlatformType Platform { get; set; }
 
         private ThreadState threadState = ThreadState.Terminated;
         private ThreadWaitReason threadWaitReason = ThreadWaitReason.UserRequest;

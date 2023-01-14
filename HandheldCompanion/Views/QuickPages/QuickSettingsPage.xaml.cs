@@ -1,8 +1,11 @@
-﻿using CoreAudio;
+﻿using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Windows;
+using NAudio.CoreAudioApi;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -13,36 +16,35 @@ namespace HandheldCompanion.Views.QuickPages
     /// </summary>
     public partial class QuickSettingsPage : Page
     {
-        private MMDeviceEnumerator DevEnum;
-        private MMDevice multimediaDevice;
-
-        private bool IgnoreMe;      // used to avoid infinite loop
+        private object volumeLock = new();
+        private object brightnessLock = new();
 
         public QuickSettingsPage()
         {
             InitializeComponent();
 
-            OverlayQuickTools.brightnessControl.BrightnessChanged += BrightnessControl_BrightnessChanged;
             HotkeysManager.HotkeyCreated += HotkeysManager_HotkeyCreated;
             HotkeysManager.HotkeyUpdated += HotkeysManager_HotkeyUpdated;
 
+            DesktopManager.VolumeNotification += DeviceManager_VolumeNotification;
+            DesktopManager.BrightnessNotification += DesktopManager_BrightnessNotification;
+
             // get current system brightness
-            switch (OverlayQuickTools.brightnessControl.IsSupported)
+            switch (DesktopManager.HasBrightnessSupport())
             {
                 case true:
                     SliderBrightness.IsEnabled = true;
-                    SliderBrightness.Value = OverlayQuickTools.brightnessControl.GetBrightness();
+                    SliderBrightness.Value = DesktopManager.GetBrightness();
                     break;
             }
 
             // get current system volume
-            DevEnum = new MMDeviceEnumerator(new Guid());
-            multimediaDevice = DevEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-
-            if (multimediaDevice is not null && multimediaDevice.AudioEndpointVolume is not null)
+            switch (DesktopManager.HasVolumeSupport())
             {
-                multimediaDevice.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
-                SliderVolume.Value = multimediaDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100.0d;
+                case true:
+                    SliderVolume.IsEnabled = true;
+                    SliderVolume.Value = DesktopManager.GetVolume();
+                    break;
             }
         }
 
@@ -64,52 +66,52 @@ namespace HandheldCompanion.Views.QuickPages
                 QuickHotkeys.Children.Add(hotkey.GetPin());
         }
 
-        private void BrightnessControl_BrightnessChanged(int brightness)
+        private void DesktopManager_BrightnessNotification(int brightness)
         {
-            this.Dispatcher.Invoke(() =>
+            if (Monitor.TryEnter(brightnessLock))
             {
-                IgnoreMe = true;
-                SliderBrightness.Value = brightness;
-                IgnoreMe = false;
-            });
+                Dispatcher.Invoke(() =>
+                {
+                    SliderBrightness.Value = brightness;
+                });
+
+                Monitor.Exit(brightnessLock);
+            }
         }
 
-        private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
+        private void DeviceManager_VolumeNotification(float volume)
         {
-            this.Dispatcher.Invoke(() =>
+            if (Monitor.TryEnter(volumeLock))
             {
-                IgnoreMe = true;
-                SliderVolume.Value = Convert.ToDouble(data.MasterVolume * 100.0f);
-                IgnoreMe = false;
-            });
+                Dispatcher.Invoke(() =>
+                {
+                    // todo: update volume icon on update
+                    SliderVolume.Value = volume;
+                });
+
+                Monitor.Exit(volumeLock);
+            }
         }
 
         private void SliderBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (!IsLoaded)
-                return;
+            if (Monitor.TryEnter(brightnessLock))
+            {
+                DesktopManager.SetBrightness(SliderBrightness.Value);
 
-            // todo: change glyph based on volume percentage
-
-            if (IgnoreMe)
-                return;
-
-            OverlayQuickTools.brightnessControl.SetBrightness(SliderBrightness.Value);
-            //SetMonitorBrightness(mainMonitor, SliderBrightness.Value / 100);
+                Monitor.Exit(brightnessLock);
+            }
         }
 
         private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (multimediaDevice is null || multimediaDevice.AudioEndpointVolume is null)
-                return;
+            if (Monitor.TryEnter(volumeLock))
+            {
+                // update volume
+                DesktopManager.SetVolume(SliderVolume.Value);
 
-            if (!IsLoaded)
-                return;
-
-            if (IgnoreMe)
-                return;
-
-            multimediaDevice.AudioEndpointVolume.MasterVolumeLevelScalar = (float)(SliderVolume.Value / 100.0d);
+                Monitor.Exit(volumeLock);
+            }
         }
     }
 }

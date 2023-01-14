@@ -20,7 +20,7 @@ namespace HandheldCompanion.Views.QuickPages
         {
             try
             {
-                this.Dispatcher.Invoke(() =>
+                Dispatcher.Invoke(() =>
                 {
                     var element = processEx.GetControl();
                     if (CurrentProcesses.Children.Contains(element))
@@ -36,7 +36,7 @@ namespace HandheldCompanion.Views.QuickPages
         {
             try
             {
-                this.Dispatcher.Invoke(() =>
+                Dispatcher.Invoke(() =>
                 {
                     processEx.DrawControl();
                     var element = processEx.GetControl();

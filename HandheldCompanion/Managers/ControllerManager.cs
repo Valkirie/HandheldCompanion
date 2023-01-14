@@ -47,13 +47,13 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            SystemManager.XUsbDeviceArrived += XUsbDeviceArrived;
-            SystemManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
+            DeviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
+            DeviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
 
-            SystemManager.HidDeviceArrived += HidDeviceArrived;
-            SystemManager.HidDeviceRemoved += HidDeviceRemoved;
+            DeviceManager.HidDeviceArrived += HidDeviceArrived;
+            DeviceManager.HidDeviceRemoved += HidDeviceRemoved;
 
-            SystemManager.Initialized += SystemManager_Initialized;
+            DeviceManager.Initialized += SystemManager_Initialized;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -87,11 +87,11 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = false;
 
-            SystemManager.XUsbDeviceArrived -= XUsbDeviceArrived;
-            SystemManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
+            DeviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
+            DeviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
 
-            SystemManager.HidDeviceArrived -= HidDeviceArrived;
-            SystemManager.HidDeviceRemoved -= HidDeviceRemoved;
+            DeviceManager.HidDeviceArrived -= HidDeviceArrived;
+            DeviceManager.HidDeviceRemoved -= HidDeviceRemoved;
 
             SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
@@ -260,6 +260,10 @@ namespace HandheldCompanion.Managers
                     return;
                 }
 
+                // failed to initialize
+                if (controller.Details is null)
+                    return;
+
                 if (!controller.IsConnected())
                     return;
 
@@ -282,10 +286,7 @@ namespace HandheldCompanion.Managers
 
             IController controller = Controllers[details.deviceInstanceId];
 
-            if (controller is null)
-                return;
-
-            if (controller.IsConnected())
+            if (!controller.IsConnected())
                 return;
 
             if (controller.IsVirtual())
@@ -323,11 +324,15 @@ namespace HandheldCompanion.Managers
             {
                 XInputController controller = new(_controller);
 
-                if (controller is null)
+                // failed to initialize
+                if (controller.Details is null)
                     return;
 
                 if (!controller.IsConnected())
                     return;
+
+                // slot is now busy
+                XUsbControllers[slot] = false;
 
                 if (controller.IsVirtual())
                     return;
@@ -338,9 +343,6 @@ namespace HandheldCompanion.Managers
 
                 // raise event
                 ControllerPlugged?.Invoke(controller);
-
-                // slot is now busy
-                XUsbControllers[slot] = false;
             }));
         }
 
@@ -351,11 +353,12 @@ namespace HandheldCompanion.Managers
 
             XInputController controller = (XInputController)Controllers[details.deviceInstanceId];
 
-            if (controller is null)
-                return;
-
             if (controller.IsConnected())
                 return;
+
+            // slot is now free
+            UserIndex slot = (UserIndex)controller.GetUserIndex();
+            XUsbControllers[slot] = true;
 
             if (controller.IsVirtual())
                 return;
@@ -365,10 +368,6 @@ namespace HandheldCompanion.Managers
 
             // raise event
             ControllerUnplugged?.Invoke(controller);
-
-            // slot is now free
-            UserIndex slot = (UserIndex)controller.GetUserIndex();
-            XUsbControllers[slot] = true;
         }
 
         public static void SetTargetController(string baseContainerDeviceInstancePath)
@@ -461,7 +460,7 @@ namespace HandheldCompanion.Managers
                     {
                         switch (foregroundProcess.Platform)
                         {
-                            case Platform.Steam:
+                            case PlatformType.Steam:
                                 {
                                     if (neptuneController.IsVirtualMuted())
                                         return;
