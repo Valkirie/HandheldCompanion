@@ -286,7 +286,7 @@ namespace HandheldCompanion.Managers
 
             IController controller = Controllers[details.deviceInstanceId];
 
-            if (controller.IsConnected())
+            if (!controller.IsConnected())
                 return;
 
             if (controller.IsVirtual())
@@ -322,7 +322,6 @@ namespace HandheldCompanion.Managers
             // use dispatcher because we're drawing UI elements when initializing the controller object
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-
                 XInputController controller = new(_controller);
 
                 // failed to initialize
