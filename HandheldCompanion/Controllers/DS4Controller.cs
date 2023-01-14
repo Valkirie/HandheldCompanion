@@ -76,7 +76,7 @@ namespace HandheldCompanion.Controllers
             if (State.Buttons[12])
                 Inputs.Buttons |= ControllerButtonFlags.Special;
             if (State.Buttons[13])  // TouchpadClick
-                Inputs.Buttons |= ControllerButtonFlags.Special;
+                Inputs.Buttons |= ControllerButtonFlags.OEM1;
 
             switch (State.PointOfViewControllers[0])
             {
