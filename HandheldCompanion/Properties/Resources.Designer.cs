@@ -1958,6 +1958,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Joystick deadzone % left.
+        /// </summary>
+        public static string ProfilesPage_JoystickDeadZoneLeft {
+            get {
+                return ResourceManager.GetString("ProfilesPage_JoystickDeadZoneLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust the inner and outer deadzone percentage of the left joystick.
+        /// </summary>
+        public static string ProfilesPage_JoystickDeadZoneLeftDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_JoystickDeadZoneLeftDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Joystick deadzone % right.
+        /// </summary>
+        public static string ProfilesPage_JoystickDeadZoneRight {
+            get {
+                return ResourceManager.GetString("ProfilesPage_JoystickDeadZoneRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust the inner and outer deadzone percentage of the right joystick.
+        /// </summary>
+        public static string ProfilesPage_JoystickDeadZoneRightDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_JoystickDeadZoneRightDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Motion control settings.
         /// </summary>
         public static string ProfilesPage_MotionControlSettings {
@@ -2179,6 +2215,69 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_TDPOverrideDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_TDPOverrideDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Improve the stick circularity.
+        /// </summary>
+        public static string ProfilesPage_ThumbImproveCircularityDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ThumbImproveCircularityDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Circularity stick left.
+        /// </summary>
+        public static string ProfilesPage_ThumbImproveCircularityLeft {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ThumbImproveCircularityLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Circularity stick right.
+        /// </summary>
+        public static string ProfilesPage_ThumbImproveCircularityRight {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ThumbImproveCircularityRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left trigger deadzone %.
+        /// </summary>
+        public static string ProfilesPage_TriggerDeadZoneLeft {
+            get {
+                return ResourceManager.GetString("ProfilesPage_TriggerDeadZoneLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust the inner and outer deadzone percentage of the left trigger.
+        /// </summary>
+        public static string ProfilesPage_TriggerDeadZoneLeftDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_TriggerDeadZoneLeftDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right trigger deadzone %.
+        /// </summary>
+        public static string ProfilesPage_TriggerDeadZoneRight {
+            get {
+                return ResourceManager.GetString("ProfilesPage_TriggerDeadZoneRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust the inner and outer deadzone percentage of the right trigger.
+        /// </summary>
+        public static string ProfilesPage_TriggerDeadZoneRightDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_TriggerDeadZoneRightDesc", resourceCulture);
             }
         }
         

@@ -25,6 +25,9 @@ namespace ControllerService.Targets
         protected Vector2 LeftThumb;
         protected Vector2 RightThumb;
 
+        protected float LeftTrigger;
+        protected float RightTrigger;
+
         public event ConnectedEventHandler Connected;
         public delegate void ConnectedEventHandler(ViGEmTarget target);
 
@@ -90,9 +93,29 @@ namespace ControllerService.Targets
             LeftThumb = new Vector2(Inputs.LeftThumbX, Inputs.LeftThumbY);
             RightThumb = new Vector2(Inputs.RightThumbX, Inputs.RightThumbY);
 
-            // Apply user defined in game deadzone setting compensation prior to UMC additions
-            LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.antideadzoneL);
-            RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, ControllerService.currentProfile.antideadzoneR);
+            // Apply user defined scaled radial inner and outer deadzones to left and right joysticks
+            LeftThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(LeftThumb, 
+                                                                       ControllerService.currentProfile.thumb_deadzone_inner_left, 
+                                                                       ControllerService.currentProfile.thumb_deadzone_outer_left);
+            RightThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(RightThumb, 
+                                                                        ControllerService.currentProfile.thumb_deadzone_inner_right, 
+                                                                        ControllerService.currentProfile.thumb_deadzone_outer_right);
+
+            // Apply user defined in game deadzone setting compensation ie anti deadzone prior to UMC additions
+            LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.thumb_anti_deadzone_left);
+            RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, ControllerService.currentProfile.thumb_anti_deadzone_right);
+
+            // Improve joystick circularity
+            if (ControllerService.currentProfile.thumb_improve_circularity_left) { LeftThumb = InputUtils.ImproveCircularity(LeftThumb); }
+            if (ControllerService.currentProfile.thumb_improve_circularity_right) { RightThumb = InputUtils.ImproveCircularity(RightThumb); }
+
+            // Trigger deadzone adjustments
+            LeftTrigger = InputUtils.TriggerInnerOuterDeadzone(Inputs.LeftTrigger, 
+                                                               ControllerService.currentProfile.trigger_deadzone_inner_left, 
+                                                               ControllerService.currentProfile.trigger_deadzone_outer_left);
+            RightTrigger = InputUtils.TriggerInnerOuterDeadzone(Inputs.RightTrigger, 
+                                                               ControllerService.currentProfile.trigger_deadzone_inner_right, 
+                                                               ControllerService.currentProfile.trigger_deadzone_outer_right);
 
             if (ControllerService.currentProfile.umc_enabled)
             {
@@ -139,6 +162,9 @@ namespace ControllerService.Targets
                                 // apply anti deadzone to motion based thumb input to overcome deadzone and experience small movements properly
                                 GamepadThumb = InputUtils.ApplyAntiDeadzone(GamepadThumb, ControllerService.currentProfile.umc_anti_deadzone);
 
+                                // Improve circularity to prevent 1,1 joystick values based on motion
+                                GamepadThumb = InputUtils.ImproveCircularity(GamepadThumb);
+
                                 switch (ControllerService.currentProfile.umc_output)
                                 {
                                     default:
@@ -159,15 +185,11 @@ namespace ControllerService.Targets
                                             // Y input only from motion controls
                                             RightThumb.X = (short)(Math.Clamp(GamepadThumb.X - FlickStickX, short.MinValue, short.MaxValue));
                                             RightThumb.Y = (short)(Math.Clamp(GamepadThumb.Y, short.MinValue, short.MaxValue));
-
-                                            RightThumb = InputUtils.ImproveCircularity(RightThumb);
                                         }
                                         else
                                         {
                                             RightThumb.X = (short)(Math.Clamp(RightThumb.X + GamepadThumb.X, short.MinValue, short.MaxValue));
                                             RightThumb.Y = (short)(Math.Clamp(RightThumb.Y + GamepadThumb.Y, short.MinValue, short.MaxValue));
-
-                                            RightThumb = InputUtils.ImproveCircularity(RightThumb);
                                         }
                                         break;
 
@@ -175,7 +197,6 @@ namespace ControllerService.Targets
                                         LeftThumb.X = (short)(Math.Clamp(LeftThumb.X + GamepadThumb.X, short.MinValue, short.MaxValue));
                                         LeftThumb.Y = (short)(Math.Clamp(LeftThumb.Y + GamepadThumb.Y, short.MinValue, short.MaxValue));
 
-                                        LeftThumb = InputUtils.ImproveCircularity(LeftThumb);
                                         break;
                                 }
                             }

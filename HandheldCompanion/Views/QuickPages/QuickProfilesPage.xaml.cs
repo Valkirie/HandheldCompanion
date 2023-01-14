@@ -220,8 +220,8 @@ namespace HandheldCompanion.Views.QuickPages
                     SliderUMCAntiDeadzone.Value = profile.umc_anti_deadzone;
                     SliderSensitivityX.Value = profile.aiming_sensitivity_x;
                     SliderSensitivityY.Value = profile.aiming_sensitivity_y;
-                    SliderAntiDeadzoneLeft.Value = profile.antideadzoneL;
-                    SliderAntiDeadzoneRight.Value = profile.antideadzoneR;
+                    SliderAntiDeadzoneLeft.Value = profile.thumb_anti_deadzone_left;
+                    SliderAntiDeadzoneRight.Value = profile.thumb_anti_deadzone_right;
 
                     // todo: improve me ?
                     ProfilesPageHotkey.inputsChord.GamepadButtons = profile.umc_trigger;
@@ -459,7 +459,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.antideadzoneL = (float)SliderAntiDeadzoneLeft.Value;
+                currentProfile.thumb_anti_deadzone_left = (float)SliderAntiDeadzoneLeft.Value;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
@@ -473,7 +473,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.antideadzoneR = (float)SliderAntiDeadzoneRight.Value;
+                currentProfile.thumb_anti_deadzone_right = (float)SliderAntiDeadzoneRight.Value;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
