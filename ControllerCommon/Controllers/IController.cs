@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon.Inputs;
+using ControllerCommon.Managers;
 using ModernWpf.Controls;
 using PrecisionTiming;
 using System;
@@ -30,8 +31,8 @@ namespace ControllerCommon.Controllers
 
         protected const short UPDATE_INTERVAL = 5;
 
-        public ControllerButtonFlags InjectedButtons;
-        public ControllerButtonFlags prevInjectedButtons;
+        public ButtonState InjectedButtons = new();
+        public ButtonState prevInjectedButtons = new();
 
         public ControllerCapacities Capacities = ControllerCapacities.None;
         public bool HideOnHook = true;
@@ -71,7 +72,7 @@ namespace ControllerCommon.Controllers
         {
             // update states
             Inputs.Timestamp = Environment.TickCount;
-            prevInjectedButtons = InjectedButtons;
+            prevInjectedButtons = InjectedButtons.Clone() as ButtonState;
 
             InputsUpdated?.Invoke(Inputs);
         }
@@ -180,17 +181,14 @@ namespace ControllerCommon.Controllers
             return ui_button_hide;
         }
 
-        public void InjectButton(ControllerButtonFlags button, bool IsKeyDown, bool IsKeyUp)
+        public void InjectButton(ButtonState State, bool IsKeyDown, bool IsKeyUp)
         {
-            if (button == ControllerButtonFlags.None)
+            if (State.IsEmpty())
                 return;
 
-            if (IsKeyDown)
-                InjectedButtons |= button;
-            else if (IsKeyUp)
-                InjectedButtons &= ~button;
+            InjectedButtons = State.Clone() as ButtonState;
 
-            LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", button, IsKeyDown, IsKeyUp, ToString());
+            LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", State, IsKeyDown, IsKeyUp, ToString());
         }
 
         public virtual void SetVibrationStrength(double value)
@@ -216,7 +214,7 @@ namespace ControllerCommon.Controllers
 
         public virtual void Plug()
         {
-            InjectedButtons = ControllerButtonFlags.None;
+            InjectedButtons.Clear();
             InputsTimer.Start();
 
             RefreshControls();

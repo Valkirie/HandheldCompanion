@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using System.Collections.Generic;
 using System.Numerics;
 using WindowsInput.Events;
@@ -45,13 +46,13 @@ namespace ControllerCommon.Devices
             listeners.Add(new DeviceChord("Bottom button left",
                 new List<KeyCode>() { KeyCode.D9 },
                 new List<KeyCode>() { KeyCode.D9 },
-                false, ControllerButtonFlags.OEM1
+                false, ButtonFlags.OEM1
                 ));
 
             listeners.Add(new DeviceChord("Bottom button right",
                 new List<KeyCode>() { KeyCode.D0 },
                 new List<KeyCode>() { KeyCode.D0 },
-                false, ControllerButtonFlags.OEM2
+                false, ButtonFlags.OEM2
                 ));
         }
     }

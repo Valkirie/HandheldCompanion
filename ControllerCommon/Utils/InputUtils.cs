@@ -15,7 +15,7 @@ namespace ControllerCommon.Utils
         public float maxOut;
     }
 
-    public enum Input
+    public enum MotionInput
     {
         PlayerSpace = 0,
         JoystickCamera = 1,
@@ -23,13 +23,13 @@ namespace ControllerCommon.Utils
         JoystickSteering = 3,
     }
 
-    public enum UMC_Motion_Default
+    public enum MotionMode
     {
         Off = 0,
         On = 1
     }
 
-    public enum Output
+    public enum MotionOutput
     {
         LeftStick = 0,
         RightStick = 1,

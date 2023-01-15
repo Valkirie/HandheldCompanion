@@ -1,6 +1,8 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using SharpDX.DirectInput;
+using SharpDX.XInput;
 using System;
 
 namespace HandheldCompanion.Controllers
@@ -38,86 +40,73 @@ namespace HandheldCompanion.Controllers
             }
             catch { }
 
-            if (prevState.GetHashCode() == State.GetHashCode() && prevInjectedButtons == InjectedButtons)
+            if (prevState.GetHashCode() == State.GetHashCode() && prevInjectedButtons.Equals(InjectedButtons))
                 return;
 
-            Inputs.Buttons = InjectedButtons;
+            Inputs.ButtonState = InjectedButtons as ButtonState;
 
-            // todo: implement loop
-            if (State.Buttons[0])
-                Inputs.Buttons |= ControllerButtonFlags.B3;
-            if (State.Buttons[1])
-                Inputs.Buttons |= ControllerButtonFlags.B1;
-            if (State.Buttons[2])
-                Inputs.Buttons |= ControllerButtonFlags.B2;
-            if (State.Buttons[3])
-                Inputs.Buttons |= ControllerButtonFlags.B4;
+            Inputs.ButtonState[ButtonFlags.B1] = State.Buttons[1];
+            Inputs.ButtonState[ButtonFlags.B2] = State.Buttons[2];
+            Inputs.ButtonState[ButtonFlags.B3] = State.Buttons[0];
+            Inputs.ButtonState[ButtonFlags.B4] = State.Buttons[3];
 
-            if (State.Buttons[8])
-                Inputs.Buttons |= ControllerButtonFlags.Back;
-            if (State.Buttons[9])
-                Inputs.Buttons |= ControllerButtonFlags.Start;
+            Inputs.ButtonState[ButtonFlags.Back] = State.Buttons[8];
+            Inputs.ButtonState[ButtonFlags.Start] = State.Buttons[9];
 
-            if (State.Buttons[6])
-                Inputs.Buttons |= ControllerButtonFlags.LeftTrigger;
-            if (State.Buttons[7])
-                Inputs.Buttons |= ControllerButtonFlags.RightTrigger;
+            Inputs.ButtonState[ButtonFlags.L2] = State.Buttons[6];
+            Inputs.ButtonState[ButtonFlags.R2] = State.Buttons[7];
 
-            if (State.Buttons[10])
-                Inputs.Buttons |= ControllerButtonFlags.LeftThumb;
-            if (State.Buttons[11])
-                Inputs.Buttons |= ControllerButtonFlags.RightThumb;
+            Inputs.ButtonState[ButtonFlags.LeftThumb] = State.Buttons[10];
+            Inputs.ButtonState[ButtonFlags.RightThumb] = State.Buttons[11];
 
-            if (State.Buttons[4])
-                Inputs.Buttons |= ControllerButtonFlags.LeftShoulder;
-            if (State.Buttons[5])
-                Inputs.Buttons |= ControllerButtonFlags.RightShoulder;
+            Inputs.ButtonState[ButtonFlags.L1] = State.Buttons[4];
+            Inputs.ButtonState[ButtonFlags.R1] = State.Buttons[5];
 
-            if (State.Buttons[12])
-                Inputs.Buttons |= ControllerButtonFlags.Special;
-            if (State.Buttons[13])  // TouchpadClick
-                Inputs.Buttons |= ControllerButtonFlags.OEM1;
+            Inputs.ButtonState[ButtonFlags.Special] = State.Buttons[12];
+
+            Inputs.ButtonState[ButtonFlags.LPadClick] = State.Buttons[13];
+            Inputs.ButtonState[ButtonFlags.RPadClick] = State.Buttons[13];
 
             switch (State.PointOfViewControllers[0])
             {
                 case 0:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadUp;
+                    Inputs.ButtonState[ButtonFlags.DPadUp] = true;
                     break;
                 case 4500:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadUp;
-                    Inputs.Buttons |= ControllerButtonFlags.DPadRight;
+                    Inputs.ButtonState[ButtonFlags.DPadUp] = true;
+                    Inputs.ButtonState[ButtonFlags.DPadRight] = true;
                     break;
                 case 9000:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadRight;
+                    Inputs.ButtonState[ButtonFlags.DPadRight] = true;
                     break;
                 case 13500:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadRight;
-                    Inputs.Buttons |= ControllerButtonFlags.DPadDown;
+                    Inputs.ButtonState[ButtonFlags.DPadDown] = true;
+                    Inputs.ButtonState[ButtonFlags.DPadRight] = true;
                     break;
                 case 18000:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadDown;
+                    Inputs.ButtonState[ButtonFlags.DPadDown] = true;
                     break;
                 case 22500:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadLeft;
-                    Inputs.Buttons |= ControllerButtonFlags.DPadDown;
+                    Inputs.ButtonState[ButtonFlags.DPadLeft] = true;
+                    Inputs.ButtonState[ButtonFlags.DPadDown] = true;
                     break;
                 case 27000:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadLeft;
+                    Inputs.ButtonState[ButtonFlags.DPadLeft] = true;
                     break;
                 case 31500:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadUp;
-                    Inputs.Buttons |= ControllerButtonFlags.DPadLeft;
+                    Inputs.ButtonState[ButtonFlags.DPadLeft] = true;
+                    Inputs.ButtonState[ButtonFlags.DPadUp] = true;
                     break;
             }
 
-            Inputs.RightTrigger = State.RotationY * byte.MaxValue / ushort.MaxValue;
-            Inputs.LeftTrigger = State.RotationX * byte.MaxValue / ushort.MaxValue;
+            Inputs.AxisState[AxisFlags.R2] = State.RotationY * byte.MaxValue / ushort.MaxValue;
+            Inputs.AxisState[AxisFlags.L2] = State.RotationX * byte.MaxValue / ushort.MaxValue;
 
-            Inputs.LeftThumbX = Math.Clamp(State.X - short.MaxValue, short.MinValue, short.MaxValue);
-            Inputs.LeftThumbY = Math.Clamp(-State.Y + short.MaxValue, short.MinValue, short.MaxValue);
+            Inputs.AxisState[AxisFlags.LeftThumbX] = Math.Clamp(State.X - short.MaxValue, short.MinValue, short.MaxValue);
+            Inputs.AxisState[AxisFlags.LeftThumbY] = Math.Clamp(-State.Y + short.MaxValue, short.MinValue, short.MaxValue);
 
-            Inputs.RightThumbX = Math.Clamp(State.Z - short.MaxValue, short.MinValue, short.MaxValue);
-            Inputs.RightThumbY = Math.Clamp(-State.RotationZ + short.MaxValue, short.MinValue, short.MaxValue);
+            Inputs.AxisState[AxisFlags.RightThumbX] = Math.Clamp(State.Z - short.MaxValue, short.MinValue, short.MaxValue);
+            Inputs.AxisState[AxisFlags.RightThumbY] = Math.Clamp(-State.RotationZ + short.MaxValue, short.MinValue, short.MaxValue);
 
             base.UpdateInputs();
         }

@@ -1,5 +1,6 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers;
 using neptune_hidapi.net;
@@ -156,132 +157,88 @@ namespace HandheldCompanion.Controllers
             if (input is null)
                 return;
 
-            if (input.State.GetHashCode() == prevState.GetHashCode() && prevInjectedButtons == InjectedButtons)
+            if (input.State.GetHashCode() == prevState.GetHashCode() && prevInjectedButtons.Equals(InjectedButtons))
                 return;
 
-            Inputs.Buttons = InjectedButtons;
+            Inputs.ButtonState = InjectedButtons as ButtonState;
 
-            if (input.State.ButtonState[NeptuneControllerButton.BtnA])
-                Inputs.Buttons |= ControllerButtonFlags.B1;
-            if (input.State.ButtonState[NeptuneControllerButton.BtnB])
-                Inputs.Buttons |= ControllerButtonFlags.B2;
-            if (input.State.ButtonState[NeptuneControllerButton.BtnX])
-                Inputs.Buttons |= ControllerButtonFlags.B3;
-            if (input.State.ButtonState[NeptuneControllerButton.BtnY])
-                Inputs.Buttons |= ControllerButtonFlags.B4;
+            Inputs.ButtonState[ButtonFlags.B1] = input.State.ButtonState[NeptuneControllerButton.BtnA];
+            Inputs.ButtonState[ButtonFlags.B2] = input.State.ButtonState[NeptuneControllerButton.BtnB];
+            Inputs.ButtonState[ButtonFlags.B3] = input.State.ButtonState[NeptuneControllerButton.BtnX];
+            Inputs.ButtonState[ButtonFlags.B4] = input.State.ButtonState[NeptuneControllerButton.BtnY];
 
-            if (input.State.ButtonState[NeptuneControllerButton.BtnOptions])
-                Inputs.Buttons |= ControllerButtonFlags.Start;
-            if (input.State.ButtonState[NeptuneControllerButton.BtnMenu])
-                Inputs.Buttons |= ControllerButtonFlags.Back;
+            Inputs.ButtonState[ButtonFlags.Start] = input.State.ButtonState[NeptuneControllerButton.BtnOptions];
+            Inputs.ButtonState[ButtonFlags.Back] = input.State.ButtonState[NeptuneControllerButton.BtnMenu];
 
-            if (input.State.ButtonState[NeptuneControllerButton.BtnSteam])
-                Inputs.Buttons |= ControllerButtonFlags.Special;
-            if (input.State.ButtonState[NeptuneControllerButton.BtnQuickAccess])
-                Inputs.Buttons |= ControllerButtonFlags.OEM1;
+            Inputs.ButtonState[ButtonFlags.Special] = input.State.ButtonState[NeptuneControllerButton.BtnSteam];
+            Inputs.ButtonState[ButtonFlags.OEM1] = input.State.ButtonState[NeptuneControllerButton.BtnQuickAccess];
 
             var L2 = input.State.AxesState[NeptuneControllerAxis.L2] * byte.MaxValue / short.MaxValue;
             var R2 = input.State.AxesState[NeptuneControllerAxis.R2] * byte.MaxValue / short.MaxValue;
 
-            if (L2 > Gamepad.TriggerThreshold)
-                Inputs.Buttons |= ControllerButtonFlags.LeftTrigger;
-            if (R2 > Gamepad.TriggerThreshold)
-                Inputs.Buttons |= ControllerButtonFlags.RightTrigger;
+            Inputs.ButtonState[ButtonFlags.L2] = L2 > Gamepad.TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.R2] = R2 > Gamepad.TriggerThreshold;
 
-            if (input.State.ButtonState[NeptuneControllerButton.BtnLStickPress])
-                Inputs.Buttons |= ControllerButtonFlags.LeftThumb;
-            if (input.State.ButtonState[NeptuneControllerButton.BtnRStickPress])
-                Inputs.Buttons |= ControllerButtonFlags.RightThumb;
+            Inputs.ButtonState[ButtonFlags.LeftThumb] = input.State.ButtonState[NeptuneControllerButton.BtnLStickPress];
+            Inputs.ButtonState[ButtonFlags.RightThumb] = input.State.ButtonState[NeptuneControllerButton.BtnRStickPress];
 
-            if (input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch])
-                Inputs.Buttons |= ControllerButtonFlags.OEM2;
-            if (input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch])
-                Inputs.Buttons |= ControllerButtonFlags.OEM3;
+            Inputs.ButtonState[ButtonFlags.OEM2] = input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch];
+            Inputs.ButtonState[ButtonFlags.OEM3] = input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch];
 
-            if (input.State.ButtonState[NeptuneControllerButton.BtnL4])
-                Inputs.Buttons |= ControllerButtonFlags.OEM4;
-            if (input.State.ButtonState[NeptuneControllerButton.BtnL5])
-                Inputs.Buttons |= ControllerButtonFlags.OEM5;
+            Inputs.ButtonState[ButtonFlags.L1] = input.State.ButtonState[NeptuneControllerButton.BtnL1];
+            Inputs.ButtonState[ButtonFlags.R2] = input.State.ButtonState[NeptuneControllerButton.BtnR1];
+            Inputs.ButtonState[ButtonFlags.L4] = input.State.ButtonState[NeptuneControllerButton.BtnL4];
+            Inputs.ButtonState[ButtonFlags.R4] = input.State.ButtonState[NeptuneControllerButton.BtnR4];
+            Inputs.ButtonState[ButtonFlags.L5] = input.State.ButtonState[NeptuneControllerButton.BtnL5];
+            Inputs.ButtonState[ButtonFlags.R5] = input.State.ButtonState[NeptuneControllerButton.BtnR5];
 
-            if (input.State.ButtonState[NeptuneControllerButton.BtnR4])
-                Inputs.Buttons |= ControllerButtonFlags.OEM6;
-            if (input.State.ButtonState[NeptuneControllerButton.BtnR5])
-                Inputs.Buttons |= ControllerButtonFlags.OEM7;
-
-            if (input.State.ButtonState[NeptuneControllerButton.BtnL1])
-                Inputs.Buttons |= ControllerButtonFlags.LeftShoulder;
-            if (input.State.ButtonState[NeptuneControllerButton.BtnR1])
-                Inputs.Buttons |= ControllerButtonFlags.RightShoulder;
-
-            if (input.State.ButtonState[NeptuneControllerButton.BtnDpadUp])
-                Inputs.Buttons |= ControllerButtonFlags.DPadUp;
-            if (input.State.ButtonState[NeptuneControllerButton.BtnDpadDown])
-                Inputs.Buttons |= ControllerButtonFlags.DPadDown;
-            if (input.State.ButtonState[NeptuneControllerButton.BtnDpadLeft])
-                Inputs.Buttons |= ControllerButtonFlags.DPadLeft;
-            if (input.State.ButtonState[NeptuneControllerButton.BtnDpadRight])
-                Inputs.Buttons |= ControllerButtonFlags.DPadRight;
+            Inputs.ButtonState[ButtonFlags.DPadUp] = input.State.ButtonState[NeptuneControllerButton.BtnDpadUp];
+            Inputs.ButtonState[ButtonFlags.DPadDown] = input.State.ButtonState[NeptuneControllerButton.BtnDpadDown];
+            Inputs.ButtonState[ButtonFlags.DPadLeft] = input.State.ButtonState[NeptuneControllerButton.BtnDpadLeft];
+            Inputs.ButtonState[ButtonFlags.DPadRight] = input.State.ButtonState[NeptuneControllerButton.BtnDpadRight];
 
             // Left Stick
-            if (input.State.AxesState[NeptuneControllerAxis.LeftStickX] < -Gamepad.LeftThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.LStickLeft;
-            if (input.State.AxesState[NeptuneControllerAxis.LeftStickX] > Gamepad.LeftThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.LStickRight;
+            Inputs.ButtonState[ButtonFlags.LStickLeft] = input.State.AxesState[NeptuneControllerAxis.LeftStickX] < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LStickRight] = input.State.AxesState[NeptuneControllerAxis.LeftStickX] > Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LStickDown] = input.State.AxesState[NeptuneControllerAxis.LeftStickY] < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LStickUp] = input.State.AxesState[NeptuneControllerAxis.LeftStickY] > Gamepad.LeftThumbDeadZone;
 
-            if (input.State.AxesState[NeptuneControllerAxis.LeftStickY] < -Gamepad.LeftThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.LStickDown;
-            if (input.State.AxesState[NeptuneControllerAxis.LeftStickY] > Gamepad.LeftThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.LStickUp;
-
-            Inputs.LeftThumbX = input.State.AxesState[NeptuneControllerAxis.LeftStickX];
-            Inputs.LeftThumbY = input.State.AxesState[NeptuneControllerAxis.LeftStickY];
+            Inputs.AxisState[AxisFlags.LeftThumbX] = input.State.AxesState[NeptuneControllerAxis.LeftStickX];
+            Inputs.AxisState[AxisFlags.LeftThumbY] = input.State.AxesState[NeptuneControllerAxis.LeftStickY];
 
             // Right Stick
-            if (input.State.AxesState[NeptuneControllerAxis.RightStickX] < -Gamepad.LeftThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.RStickLeft;
-            if (input.State.AxesState[NeptuneControllerAxis.RightStickX] > Gamepad.LeftThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.RStickRight;
+            Inputs.ButtonState[ButtonFlags.RStickLeft] = input.State.AxesState[NeptuneControllerAxis.RightStickX] < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RStickRight] = input.State.AxesState[NeptuneControllerAxis.RightStickX] > Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RStickDown] = input.State.AxesState[NeptuneControllerAxis.RightStickY] < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RStickUp] = input.State.AxesState[NeptuneControllerAxis.RightStickY] > Gamepad.RightThumbDeadZone;
 
-            if (input.State.AxesState[NeptuneControllerAxis.RightStickY] < -Gamepad.LeftThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.RStickDown;
-            if (input.State.AxesState[NeptuneControllerAxis.RightStickY] > Gamepad.LeftThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.RStickUp;
+            Inputs.AxisState[AxisFlags.RightThumbX] = input.State.AxesState[NeptuneControllerAxis.RightStickX];
+            Inputs.AxisState[AxisFlags.RightThumbY] = input.State.AxesState[NeptuneControllerAxis.RightStickY];
 
-            Inputs.RightThumbX = input.State.AxesState[NeptuneControllerAxis.RightStickX];
-            Inputs.RightThumbY = input.State.AxesState[NeptuneControllerAxis.RightStickY];
+            Inputs.AxisState[AxisFlags.L2] = L2;
+            Inputs.AxisState[AxisFlags.R2] = R2;
 
-            Inputs.LeftTrigger = L2;
-            Inputs.RightTrigger = R2;
+            Inputs.AxisState[AxisFlags.LeftPadX] = short.MaxValue + input.State.AxesState[NeptuneControllerAxis.LeftPadX];
+            Inputs.AxisState[AxisFlags.LeftPadY] = short.MaxValue - input.State.AxesState[NeptuneControllerAxis.LeftPadY];
 
-            Inputs.LeftPadX = short.MaxValue + input.State.AxesState[NeptuneControllerAxis.LeftPadX];
-            Inputs.LeftPadY = short.MaxValue - input.State.AxesState[NeptuneControllerAxis.LeftPadY];
-            Inputs.LeftPadTouch = input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch];
-            Inputs.LeftPadClick = input.State.ButtonState[NeptuneControllerButton.BtnLPadPress];
+            Inputs.AxisState[AxisFlags.RightPadX] = short.MaxValue + input.State.AxesState[NeptuneControllerAxis.RightPadX];
+            Inputs.AxisState[AxisFlags.RightPadY] = short.MaxValue - input.State.AxesState[NeptuneControllerAxis.RightPadY];
 
-            Inputs.RightPadX = short.MaxValue + input.State.AxesState[NeptuneControllerAxis.RightPadX];
-            Inputs.RightPadY = short.MaxValue - input.State.AxesState[NeptuneControllerAxis.RightPadY];
-            Inputs.RightPadTouch = input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch];
-            Inputs.RightPadClick = input.State.ButtonState[NeptuneControllerButton.BtnRPadPress];
+            Inputs.ButtonState[ButtonFlags.LPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch];
+            Inputs.ButtonState[ButtonFlags.LPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnLPadPress];
 
-            if (Inputs.LeftPadTouch)
-                Inputs.Buttons |= ControllerButtonFlags.OEM8;
-            if (Inputs.LeftPadClick)
-                Inputs.Buttons |= ControllerButtonFlags.OEM9;
-
-            if (Inputs.RightPadTouch)
-                Inputs.Buttons |= ControllerButtonFlags.OEM10;
-            if (Inputs.RightPadClick)
-                Inputs.Buttons |= ControllerButtonFlags.OEM11;
+            Inputs.ButtonState[ButtonFlags.RPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch];
+            Inputs.ButtonState[ButtonFlags.RPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnRPadPress];
 
             // temporary workaround
             if (IsLizardMouseEnabled())
             {
-                if (Inputs.LeftPadClick != lastLeftPadClick)
+                if (Inputs.ButtonState[ButtonFlags.LPadClick] != lastLeftPadClick)
                 {
                     INPUT mouseDownInput = new INPUT();
                     mouseDownInput.type = SendInputEventType.InputMouse;
 
-                    switch (Inputs.LeftPadClick)
+                    switch (Inputs.ButtonState[ButtonFlags.LPadClick])
                     {
                         case true:
                             mouseDownInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_RIGHTDOWN;
@@ -294,15 +251,15 @@ namespace HandheldCompanion.Controllers
                     // send mouse input
                     SendInput(1, ref mouseDownInput, Marshal.SizeOf(new INPUT()));
 
-                    lastLeftPadClick = Inputs.LeftPadClick;
+                    lastLeftPadClick = Inputs.ButtonState[ButtonFlags.LPadClick];
                 }
 
-                if (Inputs.RightPadClick != lastRightPadClick)
+                if (Inputs.ButtonState[ButtonFlags.RPadClick] != lastRightPadClick)
                 {
                     INPUT mouseDownInput = new INPUT();
                     mouseDownInput.type = SendInputEventType.InputMouse;
 
-                    switch (Inputs.RightPadClick)
+                    switch (Inputs.ButtonState[ButtonFlags.RPadClick])
                     {
                         case true:
                             mouseDownInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_LEFTDOWN;
@@ -315,7 +272,7 @@ namespace HandheldCompanion.Controllers
                     // send mouse input
                     SendInput(1, ref mouseDownInput, Marshal.SizeOf(new INPUT()));
 
-                    lastRightPadClick = Inputs.RightPadClick;
+                    lastRightPadClick = Inputs.ButtonState[ButtonFlags.RPadClick];
                 }
             }
 

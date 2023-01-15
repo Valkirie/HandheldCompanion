@@ -1,4 +1,5 @@
 using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
 using System;
 using System.Collections.Generic;
@@ -46,18 +47,18 @@ namespace ControllerCommon
     public class Profile
     {
         // move me to HandheldCompanion ?
-        public static Dictionary<Input, string> InputDescription = new()
+        public static Dictionary<MotionInput, string> InputDescription = new()
         {
-            { Input.JoystickCamera, Properties.Resources.JoystickCameraDesc },
-            { Input.JoystickSteering, Properties.Resources.JoystickSteeringDesc },
-            { Input.PlayerSpace, Properties.Resources.PlayerSpaceDesc },
-            { Input.AutoRollYawSwap, Properties.Resources.AutoRollYawSwapDesc }
+            { MotionInput.JoystickCamera, Properties.Resources.JoystickCameraDesc },
+            { MotionInput.JoystickSteering, Properties.Resources.JoystickSteeringDesc },
+            { MotionInput.PlayerSpace, Properties.Resources.PlayerSpaceDesc },
+            { MotionInput.AutoRollYawSwap, Properties.Resources.AutoRollYawSwapDesc }
         };
 
-        public string name { get; set; }
-        public string path { get; set; }
-        public string executable { get; set; }
-        public bool isEnabled { get; set; }
+        public string Name { get; set; }
+        public string Path { get; set; }
+        public string Executable { get; set; }
+        public bool Enabled { get; set; }
 
         public bool whitelisted { get; set; }                   // if true, can see through the HidHide cloak
         public bool use_wrapper { get; set; }                   // if true, deploy xinput1_3.dll
@@ -83,14 +84,12 @@ namespace ControllerCommon
         public bool inverthorizontal { get; set; }              // if true, invert horizontal axis
         public bool invertvertical { get; set; }                // if false, invert vertical axis
 
-        public bool umc_enabled { get; set; }
-
-        public Input umc_input { get; set; } = Input.JoystickCamera;
-        public Output umc_output { get; set; } = Output.RightStick;
-
-        public UMC_Motion_Default umc_motion_defaultoffon { get; set; } = UMC_Motion_Default.Off;
-
-        public float umc_anti_deadzone { get; set; } = 0.0f;
+        public bool MotionEnabled { get; set; }
+        public MotionInput MotionInput { get; set; } = MotionInput.JoystickCamera;
+        public MotionOutput MotionOutput { get; set; } = MotionOutput.RightStick;
+        public MotionMode MotionMode { get; set; } = MotionMode.Off;
+        public float MotionAntiDeadzone { get; set; } = 0.0f;
+        public ButtonState MotionTrigger { get; set; }
 
         // aiming
         public float aiming_sensitivity_x { get; set; } = 1.0f;
@@ -105,7 +104,7 @@ namespace ControllerCommon
 
         // Aiming down sights
         public float aiming_down_sights_multiplier { get; set; } = 1.0f;
-        public ControllerButtonFlags aiming_down_sights_activation { get; set; }
+        public ButtonState aiming_down_sights_activation { get; set; }
 
         // flickstick
         public bool flickstick_enabled { get; set; }
@@ -116,12 +115,10 @@ namespace ControllerCommon
         public bool TDP_override { get; set; }
         public double[] TDP_value { get; set; } = new double[3];
 
-        public ControllerButtonFlags umc_trigger { get; set; }
-
         // hidden settings
         [JsonIgnore] public ProfileErrorCode error;
-        [JsonIgnore] public string fullpath { get; set; }
-        [JsonIgnore] public string filename { get; set; }
+        [JsonIgnore] public string ExecutablePath { get; set; }
+        [JsonIgnore] public string FileName { get; set; }
         [JsonIgnore] public bool isDefault { get; set; }
         [JsonIgnore] public bool isRunning { get; set; }
         [JsonIgnore] public static int array_size = 49;             // x + 1 (hidden)
@@ -139,8 +136,8 @@ namespace ControllerCommon
                 }
             }
 
-            string filtered = Path.GetFileNameWithoutExtension(executable);
-            this.filename = $"{filtered}.json";
+            string filtered = System.IO.Path.GetFileNameWithoutExtension(Executable);
+            this.FileName = $"{filtered}.json";
         }
 
         public Profile(string path) : this()
@@ -151,13 +148,13 @@ namespace ControllerCommon
             // string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";
             // string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
 
-            this.executable = AppProperties["FileName"];
-            this.name = ProductName;
-            this.path = this.fullpath = path;
+            this.Executable = AppProperties["FileName"];
+            this.Name = ProductName;
+            this.Path = this.ExecutablePath = path;
 
             // enable the below variables when profile is created
-            this.isEnabled = true;
-            this.umc_enabled = true;
+            this.Enabled = true;
+            this.MotionEnabled = true;
         }
 
         public float GetSensitivityX()
@@ -172,7 +169,7 @@ namespace ControllerCommon
 
         public override string ToString()
         {
-            return name;
+            return Name;
         }
     }
 }

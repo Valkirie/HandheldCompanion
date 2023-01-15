@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Inputs;
 using ControllerService.Sensors;
 using HandheldCompanion.Managers;
 using System;
@@ -46,7 +47,7 @@ namespace HandheldCompanion.Views.Pages
             tb_ProfileStickSensitivity.Value = currentProfile.stick_sensivity;
 
             // todo: improve me ?
-            ProfilesPageHotkey.inputsChord.GamepadButtons = currentProfile.aiming_down_sights_activation;
+            ProfilesPageHotkey.inputsChord.State = currentProfile.aiming_down_sights_activation.Clone() as ButtonState;
             ProfilesPageHotkey.Refresh();
 
             // temp
@@ -276,7 +277,7 @@ namespace HandheldCompanion.Views.Pages
             switch (listener)
             {
                 case "shortcutProfilesSettingsMode0":
-                    currentProfile.aiming_down_sights_activation = inputs.GamepadButtons;
+                    currentProfile.aiming_down_sights_activation = inputs.State.Clone() as ButtonState;
                     break;
             }
         }

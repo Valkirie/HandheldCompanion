@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using System.Collections.Generic;
 using WindowsInput.Events;
 
@@ -36,7 +37,7 @@ namespace ControllerCommon.Devices
             listeners.Add(new DeviceChord("WIN key",
                 new List<KeyCode>() { KeyCode.LWin },
                 new List<KeyCode>() { KeyCode.LWin },
-                false, ControllerButtonFlags.OEM1
+                false, ButtonFlags.OEM1
                 ));
 
             // Conflicts with OS
@@ -45,14 +46,14 @@ namespace ControllerCommon.Devices
             listeners.Add(new DeviceChord("ESC key",
                 new List<KeyCode>() { KeyCode.Escape },
                 new List<KeyCode>() { KeyCode.Escape },
-                false, ControllerButtonFlags.OEM2
+                false, ButtonFlags.OEM2
                 ));
 
             // Conflicts with Ayaspace when installed
             listeners.Add(new DeviceChord("KB key",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O },
                 new List<KeyCode>() { KeyCode.O, KeyCode.LWin, KeyCode.RControlKey },
-                false, ControllerButtonFlags.OEM3
+                false, ButtonFlags.OEM3
                 ));
         }
     }

@@ -1123,6 +1123,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="empty_neptune" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\controller_base\empty_neptune.vdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="ProfilesPage_ThumbImproveCircularityDesc" xml:space="preserve">
     <value>Improve the stick circularity</value>
   </data>

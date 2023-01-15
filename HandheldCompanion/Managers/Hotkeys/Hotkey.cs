@@ -363,10 +363,10 @@ namespace HandheldCompanion.Managers
 
         public void Refresh()
         {
-            bool hasbuttons = (inputsChord.GamepadButtons != ControllerButtonFlags.None);
+            bool hasbuttons = !inputsChord.State.IsEmpty();
             bool hascombo = inputsChord.OutputKeys.Count != 0;
 
-            string buttons = EnumUtils.GetDescriptionFromEnumValue(inputsChord.GamepadButtons);
+            string buttons = inputsChord.State.Buttons.ToString(); // EnumUtils.GetDescriptionFromEnumValue(inputsChord.State.Buttons);
             string combo = string.Join(", ", inputsChord.OutputKeys.Where(key => key.IsKeyDown));
 
             if (outputButton is not null)

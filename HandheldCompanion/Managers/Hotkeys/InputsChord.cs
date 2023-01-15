@@ -1,8 +1,10 @@
 ﻿using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using Gma.System.MouseKeyHook;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using ButtonState = ControllerCommon.Inputs.ButtonState;
 
 namespace HandheldCompanion.Managers
 {
@@ -34,14 +36,14 @@ namespace HandheldCompanion.Managers
     [Serializable]
     public class InputsChord
     {
-        public ControllerButtonFlags GamepadButtons { get; set; } = ControllerButtonFlags.None;
+        public ButtonState State { get; set; } = new();
         public List<OutputKey> OutputKeys { get; set; } = new();
 
         public InputsChordType InputsType { get; set; } = InputsChordType.Click;
 
-        public InputsChord(ControllerButtonFlags GamepadButtons, List<OutputKey> OutputKeys, InputsChordType InputsType)
+        public InputsChord(ButtonState State, List<OutputKey> OutputKeys, InputsChordType InputsType)
         {
-            this.GamepadButtons = GamepadButtons;
+            this.State = State.Clone() as ButtonState;
             this.OutputKeys = OutputKeys;
             this.InputsType = InputsType;
         }

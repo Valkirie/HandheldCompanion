@@ -375,7 +375,7 @@ namespace ControllerService
                 return;
 
             // restore default profile
-            if (profile is null || !profile.isEnabled)
+            if (profile is null || !profile.Enabled)
                 profile = defaultProfile;
 
             // update current profile
@@ -386,7 +386,7 @@ namespace ControllerService
             if (profile.isDefault)
                 defaultProfile = profile;
             else
-                LogManager.LogInformation("Profile {0} applied", profile.name);
+                LogManager.LogInformation("Profile {0} applied", profile.Name);
         }
 
         internal void UpdateProcess(string executable, PlatformType platform)

@@ -316,11 +316,6 @@ namespace HandheldCompanion.Managers
                     case "shortcutTaskManager":
                         InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
                         break;
-                    case "shortcutGuide":
-                        // temporary, move me to remapper !
-                        ControllerManager.buttonMaps.Clear();
-                        ControllerManager.buttonMaps[input.GamepadButtons] = ControllerButtonFlags.Special;
-                        break;
                     case "suspendResumeTask":
                         {
                             var sProcess = ProcessManager.GetSuspendedProcess();
@@ -370,12 +365,7 @@ namespace HandheldCompanion.Managers
 
         internal static void ClearHotkey(Hotkey hotkey)
         {
-            switch (hotkey.inputsHotkey.Listener)
-            {
-                case "shortcutGuide":
-                    ControllerManager.buttonMaps.Remove(hotkey.inputsChord.GamepadButtons);
-                    break;
-            }
+            // do something
         }
     }
 }

@@ -1,4 +1,5 @@
 using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using System;
 using System.IO;
 using System.Windows;
@@ -67,14 +68,14 @@ namespace HandheldCompanion.Models
             DPadRightArrow = modelImporter.Load($"models/{ModelName}/DPadRightArrow.obj");
 
             // map model(s)
-            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
+            foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
                 switch (button)
                 {
-                    case ControllerButtonFlags.B1:
-                    case ControllerButtonFlags.B2:
-                    case ControllerButtonFlags.B3:
-                    case ControllerButtonFlags.B4:
+                    case ButtonFlags.B1:
+                    case ButtonFlags.B2:
+                    case ButtonFlags.B3:
+                    case ButtonFlags.B4:
 
                         string filename = $"models/{ModelName}/{button}-Symbol.obj";
                         if (File.Exists(filename))
@@ -103,7 +104,7 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(DPadRightArrow);
 
             // specific button material(s)
-            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
+            foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
                 int i = 0;
                 Material buttonMaterial = null;
@@ -113,16 +114,16 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            case ControllerButtonFlags.B1:
+                            case ButtonFlags.B1:
                                 buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticCross;
                                 break;
-                            case ControllerButtonFlags.B2:
+                            case ButtonFlags.B2:
                                 buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticCircle;
                                 break;
-                            case ControllerButtonFlags.B3:
+                            case ButtonFlags.B3:
                                 buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticSquare;
                                 break;
-                            case ControllerButtonFlags.B4:
+                            case ButtonFlags.B4:
                                 buttonMaterial = i == 0 ? MaterialPlasticBlack : MaterialPlasticTriangle;
                                 break;
                             default:

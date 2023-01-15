@@ -1,4 +1,5 @@
 using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using System;
 using System.IO;
 using System.Windows;
@@ -103,14 +104,14 @@ namespace HandheldCompanion.Models
             DPadDown4 = modelImporter.Load($"models/{ModelName}/DPadDown4.obj");
 
             // map model(s)
-            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
+            foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
                 switch (button)
                 {
-                    case ControllerButtonFlags.B1:
-                    case ControllerButtonFlags.B2:
-                    case ControllerButtonFlags.B3:
-                    case ControllerButtonFlags.B4:
+                    case ButtonFlags.B1:
+                    case ButtonFlags.B2:
+                    case ButtonFlags.B3:
+                    case ButtonFlags.B4:
 
                         string filename = $"models/{ModelName}/{button}-Letter.obj";
                         if (File.Exists(filename))
@@ -153,7 +154,7 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(DPadDown4);
 
             // specific button material(s)
-            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
+            foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
                 int i = 0;
                 Material buttonMaterial = null;
@@ -163,36 +164,36 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            case ControllerButtonFlags.B1:
+                            case ButtonFlags.B1:
                                 buttonMaterial = MaterialPlasticOrange;
                                 break;
-                            case ControllerButtonFlags.B2:
+                            case ButtonFlags.B2:
                                 buttonMaterial = MaterialPlasticRed;
                                 break;
-                            case ControllerButtonFlags.B3:
+                            case ButtonFlags.B3:
                                 buttonMaterial = MaterialPlasticGreen;
                                 break;
-                            case ControllerButtonFlags.B4:
+                            case ButtonFlags.B4:
                                 buttonMaterial = MaterialPlasticBlue;
                                 break;
-                            case ControllerButtonFlags.DPadDown:
-                            case ControllerButtonFlags.DPadUp:
-                            case ControllerButtonFlags.DPadLeft:
-                            case ControllerButtonFlags.DPadRight:
+                            case ButtonFlags.DPadDown:
+                            case ButtonFlags.DPadUp:
+                            case ButtonFlags.DPadLeft:
+                            case ButtonFlags.DPadRight:
                                 buttonMaterial = MaterialPlasticRed;
                                 break;
-                            case ControllerButtonFlags.LeftShoulder:
+                            case ButtonFlags.L2:
                                 buttonMaterial = MaterialPlasticOrange;
                                 break;
-                            case ControllerButtonFlags.RightShoulder:
+                            case ButtonFlags.R2:
                                 buttonMaterial = MaterialPlasticPurple;
                                 break;
-                            case ControllerButtonFlags.Start:
-                            case ControllerButtonFlags.Back:
+                            case ButtonFlags.Start:
+                            case ButtonFlags.Back:
                                 buttonMaterial = MaterialPlasticYellow;
                                 break;
-                            case ControllerButtonFlags.LeftThumb:
-                            case ControllerButtonFlags.RightThumb:
+                            case ButtonFlags.LeftThumb:
+                            case ButtonFlags.RightThumb:
                                 buttonMaterial = MaterialPlasticBlue;
                                 break;
                             default:

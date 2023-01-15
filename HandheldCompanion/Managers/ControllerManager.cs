@@ -2,7 +2,6 @@
 using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
-using ControllerCommon.Devices;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Views;
 using SharpDX.DirectInput;
@@ -12,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using DeviceType = SharpDX.DirectInput.DeviceType;
+using ButtonState = ControllerCommon.Inputs.ButtonState;
 
 namespace HandheldCompanion.Managers
 {
@@ -39,9 +39,6 @@ namespace HandheldCompanion.Managers
 
         private static IController? targetController;
         private static ProcessEx? foregroundProcess;
-
-        // temporary, improve me
-        public static Dictionary<ControllerButtonFlags, ControllerButtonFlags> buttonMaps = new();
 
         private static bool IsInitialized;
 
@@ -427,23 +424,10 @@ namespace HandheldCompanion.Managers
         private static void UpdateInputs(ControllerInputs Inputs)
         {
             // pass inputs to InputsManager
-            InputsManager.UpdateReport(Inputs.Buttons);
+            InputsManager.UpdateReport(Inputs.ButtonState);
             MainWindow.overlayModel.UpdateReport(Inputs);
 
             // todo: pass inputs to (re)mapper
-            // todo: filter inputs if part of shortcut
-            ControllerInputs filtered = new(Inputs);
-            foreach (var pair in buttonMaps)
-            {
-                ControllerButtonFlags origin = pair.Key;
-                ControllerButtonFlags substitute = pair.Value;
-
-                if (!filtered.Buttons.HasFlag(origin))
-                    continue;
-
-                filtered.Buttons &= ~origin;
-                filtered.Buttons |= substitute;
-            }
 
             // Neptune controller specific scenarios
             if (targetController is not null)
@@ -471,7 +455,7 @@ namespace HandheldCompanion.Managers
                 }
 
             // pass inputs to service
-            PipeClient.SendMessage(new PipeClientInputs(filtered));
+            PipeClient.SendMessage(new PipeClientInputs(Inputs));
         }
 
         private static void UpdateMovements(ControllerMovements Movements)

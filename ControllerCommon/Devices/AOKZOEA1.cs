@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using System.Collections.Generic;
 using System.Numerics;
 using WindowsInput.Events;
@@ -39,42 +40,42 @@ namespace ControllerCommon.Devices
             listeners.Add(new DeviceChord("Home",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                false, ControllerButtonFlags.OEM1
+                false, ButtonFlags.OEM1
                 ));
 
             // Home (long press 1.5s)
             listeners.Add(new DeviceChord("Home, Long-press",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.G },
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.G },
-                false, ControllerButtonFlags.OEM6
+                false, ButtonFlags.OEM6
                 ));
 
             // Keyboard
             listeners.Add(new DeviceChord("Keyboard",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O },
                 new List<KeyCode>() { KeyCode.O, KeyCode.LWin, KeyCode.RControlKey },
-                false, ControllerButtonFlags.OEM2
+                false, ButtonFlags.OEM2
                 ));
 
             // Turbo
             listeners.Add(new DeviceChord("Turbo",
                 new List<KeyCode>() { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
                 new List<KeyCode>() { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
-                false, ControllerButtonFlags.OEM3
+                false, ButtonFlags.OEM3
                 ));
 
             // Home + Keyboard
             listeners.Add(new DeviceChord("Home + Keyboard",
                 new List<KeyCode>() { KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete },
                 new List<KeyCode>() { KeyCode.Delete, KeyCode.RControlKey, KeyCode.RAlt },
-                false, ControllerButtonFlags.OEM4
+                false, ButtonFlags.OEM4
                 ));
 
             // Home + Turbo
             listeners.Add(new DeviceChord("Home + Turbo",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot },
                 new List<KeyCode>() { KeyCode.Snapshot, KeyCode.LWin },
-                false, ControllerButtonFlags.OEM5
+                false, ButtonFlags.OEM5
                 ));
         }
     }

@@ -1,6 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
@@ -25,8 +26,8 @@ namespace ControllerService.Targets
         protected Vector2 LeftThumb;
         protected Vector2 RightThumb;
 
-        protected float LeftTrigger;
-        protected float RightTrigger;
+        protected float L2;
+        protected float R2;
 
         public event ConnectedEventHandler Connected;
         public delegate void ConnectedEventHandler(ViGEmTarget target);
@@ -90,56 +91,65 @@ namespace ControllerService.Targets
         public virtual unsafe void UpdateReport()
         {
             // get sticks values
-            LeftThumb = new Vector2(Inputs.LeftThumbX, Inputs.LeftThumbY);
-            RightThumb = new Vector2(Inputs.RightThumbX, Inputs.RightThumbY);
+            LeftThumb = new Vector2(Inputs.AxisState[AxisFlags.LeftThumbX], Inputs.AxisState[AxisFlags.LeftThumbY]);
+            RightThumb = new Vector2(Inputs.AxisState[AxisFlags.RightThumbX], Inputs.AxisState[AxisFlags.RightThumbY]);
 
             // Apply user defined scaled radial inner and outer deadzones to left and right joysticks
-            LeftThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(LeftThumb, 
-                                                                       ControllerService.currentProfile.thumb_deadzone_inner_left, 
-                                                                       ControllerService.currentProfile.thumb_deadzone_outer_left);
-            RightThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(RightThumb, 
-                                                                        ControllerService.currentProfile.thumb_deadzone_inner_right, 
-                                                                        ControllerService.currentProfile.thumb_deadzone_outer_right);
+            LeftThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(
+                LeftThumb,
+                ControllerService.currentProfile.thumb_deadzone_inner_left,
+                ControllerService.currentProfile.thumb_deadzone_outer_left);
+
+            RightThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(
+                RightThumb,
+                ControllerService.currentProfile.thumb_deadzone_inner_right,
+                ControllerService.currentProfile.thumb_deadzone_outer_right);
 
             // Apply user defined in game deadzone setting compensation ie anti deadzone prior to UMC additions
             LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.thumb_anti_deadzone_left);
             RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, ControllerService.currentProfile.thumb_anti_deadzone_right);
 
             // Improve joystick circularity
-            if (ControllerService.currentProfile.thumb_improve_circularity_left) { LeftThumb = InputUtils.ImproveCircularity(LeftThumb); }
-            if (ControllerService.currentProfile.thumb_improve_circularity_right) { RightThumb = InputUtils.ImproveCircularity(RightThumb); }
+            if (ControllerService.currentProfile.thumb_improve_circularity_left)
+                LeftThumb = InputUtils.ImproveCircularity(LeftThumb);
+
+            if (ControllerService.currentProfile.thumb_improve_circularity_right)
+                RightThumb = InputUtils.ImproveCircularity(RightThumb);
 
             // Trigger deadzone adjustments
-            LeftTrigger = InputUtils.TriggerInnerOuterDeadzone(Inputs.LeftTrigger, 
-                                                               ControllerService.currentProfile.trigger_deadzone_inner_left, 
-                                                               ControllerService.currentProfile.trigger_deadzone_outer_left);
-            RightTrigger = InputUtils.TriggerInnerOuterDeadzone(Inputs.RightTrigger, 
-                                                               ControllerService.currentProfile.trigger_deadzone_inner_right, 
-                                                               ControllerService.currentProfile.trigger_deadzone_outer_right);
+            L2 = InputUtils.TriggerInnerOuterDeadzone(
+                Inputs.AxisState[AxisFlags.L2],
+                ControllerService.currentProfile.trigger_deadzone_inner_left,
+                ControllerService.currentProfile.trigger_deadzone_outer_left);
 
-            if (ControllerService.currentProfile.umc_enabled)
+            R2 = InputUtils.TriggerInnerOuterDeadzone(
+                Inputs.AxisState[AxisFlags.R2],
+                ControllerService.currentProfile.trigger_deadzone_inner_right,
+                ControllerService.currentProfile.trigger_deadzone_outer_right);
+
+            if (ControllerService.currentProfile.MotionEnabled)
             {
-                if ((ControllerService.currentProfile.umc_motion_defaultoffon == UMC_Motion_Default.Off && (ControllerService.currentProfile.umc_trigger & Inputs.Buttons) != 0) ||
-                    (ControllerService.currentProfile.umc_motion_defaultoffon == UMC_Motion_Default.On && (ControllerService.currentProfile.umc_trigger & Inputs.Buttons) == 0))
+                if ((ControllerService.currentProfile.MotionMode == MotionMode.Off && Inputs.ButtonState.Contains(ControllerService.currentProfile.MotionTrigger)) ||
+                    (ControllerService.currentProfile.MotionMode == MotionMode.On && !Inputs.ButtonState.Contains(ControllerService.currentProfile.MotionTrigger)))
                 {
-                    switch (ControllerService.currentProfile.umc_input)
+                    switch (ControllerService.currentProfile.MotionInput)
                     {
-                        case Input.PlayerSpace:
-                        case Input.JoystickCamera:
-                        case Input.AutoRollYawSwap:
+                        case MotionInput.PlayerSpace:
+                        case MotionInput.JoystickCamera:
+                        case MotionInput.AutoRollYawSwap:
                             {
                                 Vector2 Angular;
 
-                                switch (ControllerService.currentProfile.umc_input)
+                                switch (ControllerService.currentProfile.MotionInput)
                                 {
-                                    case Input.PlayerSpace:
+                                    case MotionInput.PlayerSpace:
                                         Angular = new Vector2((float)IMU.sensorFusion.CameraYawDelta, (float)IMU.sensorFusion.CameraPitchDelta);
                                         break;
-                                    case Input.AutoRollYawSwap:
+                                    case MotionInput.AutoRollYawSwap:
                                         Angular = InputUtils.AutoRollYawSwap(IMU.sensorFusion.GravityVectorSimple, IMU.AngularVelocity[XInputSensorFlags.Centered]);
                                         break;
                                     default:
-                                    case Input.JoystickCamera:
+                                    case MotionInput.JoystickCamera:
                                         Angular = new Vector2(-IMU.AngularVelocity[XInputSensorFlags.Centered].Z, IMU.AngularVelocity[XInputSensorFlags.Centered].X);
                                         break;
                                 }
@@ -149,7 +159,7 @@ namespace ControllerService.Targets
                                 Angular.Y *= InputUtils.ApplyCustomSensitivity(Angular.Y, IMUGyrometer.sensorSpec.maxIn, ControllerService.currentProfile.aiming_array);
 
                                 // apply aiming down scopes multiplier if activated
-                                if ((ControllerService.currentProfile.aiming_down_sights_activation & Inputs.Buttons) != 0)
+                                if (Inputs.ButtonState.Contains(ControllerService.currentProfile.aiming_down_sights_activation))
                                 {
                                     Angular *= ControllerService.currentProfile.aiming_down_sights_multiplier;
                                 }
@@ -160,15 +170,15 @@ namespace ControllerService.Targets
                                     Angular.Y * ControllerService.currentProfile.GetSensitivityY());
 
                                 // apply anti deadzone to motion based thumb input to overcome deadzone and experience small movements properly
-                                GamepadThumb = InputUtils.ApplyAntiDeadzone(GamepadThumb, ControllerService.currentProfile.umc_anti_deadzone);
+                                GamepadThumb = InputUtils.ApplyAntiDeadzone(GamepadThumb, ControllerService.currentProfile.MotionAntiDeadzone);
 
                                 // Improve circularity to prevent 1,1 joystick values based on motion
                                 GamepadThumb = InputUtils.ImproveCircularity(GamepadThumb);
 
-                                switch (ControllerService.currentProfile.umc_output)
+                                switch (ControllerService.currentProfile.MotionOutput)
                                 {
                                     default:
-                                    case Output.RightStick:
+                                    case MotionOutput.RightStick:
 
                                         if (ControllerService.currentProfile.flickstick_enabled)
                                         {
@@ -193,7 +203,7 @@ namespace ControllerService.Targets
                                         }
                                         break;
 
-                                    case Output.LeftStick:
+                                    case MotionOutput.LeftStick:
                                         LeftThumb.X = (short)(Math.Clamp(LeftThumb.X + GamepadThumb.X, short.MinValue, short.MaxValue));
                                         LeftThumb.Y = (short)(Math.Clamp(LeftThumb.Y + GamepadThumb.Y, short.MinValue, short.MaxValue));
 
@@ -202,7 +212,7 @@ namespace ControllerService.Targets
                             }
                             break;
 
-                        case Input.JoystickSteering:
+                        case MotionInput.JoystickSteering:
                             {
                                 float GamepadThumbX = InputUtils.Steering(
                                     IMU.sensorFusion.DeviceAngle.Y,
@@ -210,13 +220,13 @@ namespace ControllerService.Targets
                                     ControllerService.currentProfile.steering_power,
                                     ControllerService.currentProfile.steering_deadzone);
 
-                                switch (ControllerService.currentProfile.umc_output)
+                                switch (ControllerService.currentProfile.MotionOutput)
                                 {
                                     default:
-                                    case Output.RightStick:
+                                    case MotionOutput.RightStick:
                                         RightThumb.X = (short)GamepadThumbX;
                                         break;
-                                    case Output.LeftStick:
+                                    case MotionOutput.LeftStick:
                                         LeftThumb.X = (short)GamepadThumbX;
                                         break;
                                 }
@@ -225,7 +235,6 @@ namespace ControllerService.Targets
                     }
                 }
             }
-
         }
 
         internal void SubmitReport()

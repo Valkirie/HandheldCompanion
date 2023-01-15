@@ -1,5 +1,6 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
@@ -105,59 +106,55 @@ namespace ControllerService.Targets
 
             unchecked
             {
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.B1))
+                if (Inputs.ButtonState[ButtonFlags.B1])
                     tempButtons |= DualShock4Button.Cross.Value;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.B2))
+                if (Inputs.ButtonState[ButtonFlags.B2])
                     tempButtons |= DualShock4Button.Circle.Value;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.B3))
+                if (Inputs.ButtonState[ButtonFlags.B3])
                     tempButtons |= DualShock4Button.Square.Value;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.B4))
+                if (Inputs.ButtonState[ButtonFlags.B4])
                     tempButtons |= DualShock4Button.Triangle.Value;
 
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.Start))
+                if (Inputs.ButtonState[ButtonFlags.Start])
                     tempButtons |= DualShock4Button.Options.Value;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.Back))
+                if (Inputs.ButtonState[ButtonFlags.Back])
                     tempButtons |= DualShock4Button.Share.Value;
 
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.RightThumb))
+                if (Inputs.ButtonState[ButtonFlags.RightThumb])
                     tempButtons |= DualShock4Button.ThumbRight.Value;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.LeftThumb))
+                if (Inputs.ButtonState[ButtonFlags.LeftThumb])
                     tempButtons |= DualShock4Button.ThumbLeft.Value;
 
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.RightShoulder))
-                    tempButtons |= DualShock4Button.ShoulderRight.Value;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.LeftShoulder))
+                if (Inputs.ButtonState[ButtonFlags.L1])
                     tempButtons |= DualShock4Button.ShoulderLeft.Value;
+                if (Inputs.ButtonState[ButtonFlags.R1])
+                    tempButtons |= DualShock4Button.ShoulderRight.Value;
 
-                if (LeftTrigger > 0)
+                if (L2 > 0)
                     tempButtons |= DualShock4Button.TriggerLeft.Value;
-                if (RightTrigger > 0)
+                if (R2 > 0)
                     tempButtons |= DualShock4Button.TriggerRight.Value;
 
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadUp) &&
-                    Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadRight))
-                    tempDPad = DualShock4DPadDirection.Northeast;
-                else if (Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadUp) &&
-                         Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadLeft))
+                if (Inputs.ButtonState[ButtonFlags.DPadUp] && Inputs.ButtonState[ButtonFlags.DPadLeft])
                     tempDPad = DualShock4DPadDirection.Northwest;
-                else if (Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadUp))
-                    tempDPad = DualShock4DPadDirection.North;
-                else if (Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadRight) &&
-                         Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadDown))
-                    tempDPad = DualShock4DPadDirection.Southeast;
-                else if (Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadRight))
-                    tempDPad = DualShock4DPadDirection.East;
-                else if (Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadDown) &&
-                         Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadLeft))
+                else if (Inputs.ButtonState[ButtonFlags.DPadUp] && Inputs.ButtonState[ButtonFlags.DPadRight])
+                    tempDPad = DualShock4DPadDirection.Northeast;
+                else if(Inputs.ButtonState[ButtonFlags.DPadDown] && Inputs.ButtonState[ButtonFlags.DPadLeft])
                     tempDPad = DualShock4DPadDirection.Southwest;
-                else if (Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadDown))
+                else if(Inputs.ButtonState[ButtonFlags.DPadDown] && Inputs.ButtonState[ButtonFlags.DPadRight])
+                    tempDPad = DualShock4DPadDirection.Southeast;
+                else if (Inputs.ButtonState[ButtonFlags.DPadUp])
+                    tempDPad = DualShock4DPadDirection.North;
+                else if (Inputs.ButtonState[ButtonFlags.DPadDown])
                     tempDPad = DualShock4DPadDirection.South;
-                else if (Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadLeft))
+                else if (Inputs.ButtonState[ButtonFlags.DPadLeft])
                     tempDPad = DualShock4DPadDirection.West;
+                else if(Inputs.ButtonState[ButtonFlags.DPadRight])
+                    tempDPad = DualShock4DPadDirection.East;
 
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.Special))
+                if (Inputs.ButtonState[ButtonFlags.Special])
                     tempSpecial |= DualShock4SpecialButton.Ps.Value;
-                if (DS4Touch.OutputClickButton)
+                if (Inputs.ButtonState[ButtonFlags.LPadClick] || Inputs.ButtonState[ButtonFlags.RPadClick])
                     tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
 
                 outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));
@@ -168,8 +165,8 @@ namespace ControllerService.Targets
                 outDS4Report.wButtons = tempButtons;
                 outDS4Report.wButtons |= tempDPad.Value;
 
-                outDS4Report.bTriggerL = (byte)LeftTrigger;
-                outDS4Report.bTriggerR = (byte)RightTrigger;
+                outDS4Report.bTriggerL = (byte)L2;
+                outDS4Report.bTriggerR = (byte)R2;
 
                 outDS4Report.bThumbLX = InputUtils.NormalizeXboxInput(LeftThumb.X);
                 outDS4Report.bThumbLY = (byte)(byte.MaxValue - InputUtils.NormalizeXboxInput(LeftThumb.Y));

@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Inputs;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
@@ -39,7 +40,7 @@ namespace HandheldCompanion.Views.QuickPages
             HotkeysManager.HotkeyCreated += TriggerCreated;
             InputsManager.TriggerUpdated += TriggerUpdated;
 
-            foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
+            foreach (MotionInput mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
             {
                 // create panel
                 SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
@@ -50,16 +51,16 @@ namespace HandheldCompanion.Views.QuickPages
                 switch (mode)
                 {
                     default:
-                    case Input.PlayerSpace:
+                    case MotionInput.PlayerSpace:
                         icon.Glyph = "\uF119";
                         break;
-                    case Input.JoystickCamera:
+                    case MotionInput.JoystickCamera:
                         icon.Glyph = "\uE714";
                         break;
-                    case Input.AutoRollYawSwap:
+                    case MotionInput.AutoRollYawSwap:
                         icon.Glyph = "\uE7F8";
                         break;
-                    case Input.JoystickSteering:
+                    case MotionInput.JoystickSteering:
                         icon.Glyph = "\uEC47";
                         break;
                 }
@@ -75,7 +76,7 @@ namespace HandheldCompanion.Views.QuickPages
                 cB_Input.Items.Add(panel);
             }
 
-            foreach (Output mode in (Output[])Enum.GetValues(typeof(Output)))
+            foreach (MotionOutput mode in (MotionOutput[])Enum.GetValues(typeof(MotionOutput)))
             {
                 // create panel
                 SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
@@ -86,10 +87,10 @@ namespace HandheldCompanion.Views.QuickPages
                 switch (mode)
                 {
                     default:
-                    case Output.RightStick:
+                    case MotionOutput.RightStick:
                         icon.Glyph = "\uF109";
                         break;
-                    case Output.LeftStick:
+                    case MotionOutput.LeftStick:
                         icon.Glyph = "\uF108";
                         break;
                 }
@@ -167,7 +168,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (profile.executable == currentProfile.executable)
+            if (profile.Executable == currentProfile.Executable)
                 ProcessManager_ForegroundChanged(currentProcess, null);
         }
 
@@ -203,11 +204,11 @@ namespace HandheldCompanion.Views.QuickPages
                     GridProfile.Visibility = Visibility.Visible;
 
                     ProfileToggle.IsEnabled = true;
-                    ProfileToggle.IsOn = profile.isEnabled;
-                    UMCToggle.IsOn = profile.umc_enabled;
-                    cB_Input.SelectedIndex = (int)profile.umc_input;
-                    cB_Output.SelectedIndex = (int)profile.umc_output;
-                    cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)profile.umc_motion_defaultoffon;
+                    ProfileToggle.IsOn = profile.Enabled;
+                    UMCToggle.IsOn = profile.MotionEnabled;
+                    cB_Input.SelectedIndex = (int)profile.MotionInput;
+                    cB_Output.SelectedIndex = (int)profile.MotionOutput;
+                    cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)profile.MotionMode;
 
                     // Sustained TDP settings (slow, stapm, long)
                     double[] TDP = profile.TDP_value is not null ? profile.TDP_value : MainWindow.handheldDevice.nTDP;
@@ -217,14 +218,14 @@ namespace HandheldCompanion.Views.QuickPages
                     TDPToggle.IsOn = profile.TDP_override;
 
                     // Slider settings
-                    SliderUMCAntiDeadzone.Value = profile.umc_anti_deadzone;
+                    SliderUMCAntiDeadzone.Value = profile.MotionAntiDeadzone;
                     SliderSensitivityX.Value = profile.aiming_sensitivity_x;
                     SliderSensitivityY.Value = profile.aiming_sensitivity_y;
                     SliderAntiDeadzoneLeft.Value = profile.thumb_anti_deadzone_left;
                     SliderAntiDeadzoneRight.Value = profile.thumb_anti_deadzone_right;
 
                     // todo: improve me ?
-                    ProfilesPageHotkey.inputsChord.GamepadButtons = profile.umc_trigger;
+                    ProfilesPageHotkey.inputsChord.State = profile.MotionTrigger.Clone() as ButtonState;
                     ProfilesPageHotkey.Refresh();
                 });
 
@@ -275,7 +276,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.isEnabled = ProfileToggle.IsOn;
+                currentProfile.Enabled = ProfileToggle.IsOn;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
@@ -289,7 +290,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.umc_enabled = UMCToggle.IsOn;
+                currentProfile.MotionEnabled = UMCToggle.IsOn;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
@@ -301,19 +302,19 @@ namespace HandheldCompanion.Views.QuickPages
             if (cB_Input.SelectedIndex == -1)
                 return;
 
-            Input input = (Input)cB_Input.SelectedIndex;
+            MotionInput input = (MotionInput)cB_Input.SelectedIndex;
 
             // Check which input type is selected and automatically
             // set the most used output joystick accordingly.
             switch (input)
             {
-                case Input.PlayerSpace:
-                case Input.JoystickCamera:
-                    cB_Output.SelectedIndex = (int)Output.RightStick;
+                case MotionInput.PlayerSpace:
+                case MotionInput.JoystickCamera:
+                    cB_Output.SelectedIndex = (int)MotionOutput.RightStick;
                     GridSensivity.Visibility = Visibility.Visible;
                     break;
-                case Input.JoystickSteering:
-                    cB_Output.SelectedIndex = (int)Output.LeftStick;
+                case MotionInput.JoystickSteering:
+                    cB_Output.SelectedIndex = (int)MotionOutput.LeftStick;
                     GridSensivity.Visibility = Visibility.Collapsed;
                     break;
             }
@@ -325,7 +326,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.umc_input = (Input)cB_Input.SelectedIndex;
+                currentProfile.MotionInput = (MotionInput)cB_Input.SelectedIndex;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
@@ -339,7 +340,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
+                currentProfile.MotionOutput = (MotionOutput)cB_Output.SelectedIndex;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
@@ -418,7 +419,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.umc_anti_deadzone = (float)SliderUMCAntiDeadzone.Value;
+                currentProfile.MotionAntiDeadzone = (float)SliderUMCAntiDeadzone.Value;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
@@ -510,7 +511,7 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 case "shortcutProfilesPage@":
                 case "shortcutProfilesPage@@":
-                    currentProfile.umc_trigger = inputs.GamepadButtons;
+                    currentProfile.MotionTrigger = inputs.State.Clone() as ButtonState;
                     RequestUpdate();
                     break;
             }
@@ -523,7 +524,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.umc_motion_defaultoffon = (UMC_Motion_Default)cB_UMC_MotionDefaultOffOn.SelectedIndex;
+                currentProfile.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);

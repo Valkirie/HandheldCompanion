@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
@@ -21,7 +22,7 @@ namespace HandheldCompanion.Views.Windows
         private PrecisionTimer UpdateTimer;
 
         private ControllerInputs Inputs = new();
-        private ControllerButtonFlags prevButtons;
+        private ButtonState prevState = new();
 
         private IModel CurrentModel;
         private OverlayModelMode Modelmode;
@@ -267,12 +268,12 @@ namespace HandheldCompanion.Views.Windows
             if (Visibility != Visibility.Visible)
                 return;
 
-            if (prevButtons != Inputs.Buttons)
+            if (!prevState.Equals(Inputs.ButtonState))
             {
                 Dispatcher.Invoke(() =>
                 {
                     GeometryModel3D model = null;
-                    foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
+                    foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
                     {
                         if (!CurrentModel.ButtonMap.ContainsKey(button))
                             continue;
@@ -284,13 +285,15 @@ namespace HandheldCompanion.Views.Windows
                             if (model.Material.GetType() != typeof(DiffuseMaterial))
                                 continue;
 
-                            model.Material = Inputs.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
-                            model.BackMaterial = Inputs.Buttons.HasFlag(button) ? CurrentModel.HighlightMaterials[modelgroup] : CurrentModel.DefaultMaterials[modelgroup];
+                            if (Inputs.ButtonState[button])
+                                model.Material = model.BackMaterial = CurrentModel.HighlightMaterials[modelgroup];
+                            else
+                                model.Material = model.BackMaterial = CurrentModel.DefaultMaterials[modelgroup];
                         }
                     }
                 });
 
-                prevButtons = Inputs.Buttons;
+                prevState = Inputs.ButtonState as ButtonState;
             }
 
             // update model
@@ -311,9 +314,9 @@ namespace HandheldCompanion.Views.Windows
 
                 // ShoulderLeftTrigger
                 model = CurrentModel.LeftShoulderTrigger.Children[0] as GeometryModel3D;
-                if (Inputs.LeftTrigger > 0)
+                if (Inputs.AxisState[AxisFlags.L2] > 0)
                 {
-                    GradientFactor = 1 * (float)Inputs.LeftTrigger / (float)byte.MaxValue;
+                    GradientFactor = 1 * Inputs.AxisState[AxisFlags.L2] / (float)byte.MaxValue;
                     model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.LeftShoulderTrigger],
                                                        CurrentModel.HighlightMaterials[CurrentModel.LeftShoulderTrigger],
                                                        GradientFactor);
@@ -323,14 +326,14 @@ namespace HandheldCompanion.Views.Windows
                     model.Material = CurrentModel.DefaultMaterials[CurrentModel.LeftShoulderTrigger];
                 }
 
-                TriggerAngleShoulderLeft = -1 * CurrentModel.TriggerMaxAngleDeg * (float)Inputs.LeftTrigger / (float)byte.MaxValue;
+                TriggerAngleShoulderLeft = -1 * CurrentModel.TriggerMaxAngleDeg * Inputs.AxisState[AxisFlags.L2] / (float)byte.MaxValue;
 
                 // ShoulderRightTrigger
                 model = CurrentModel.RightShoulderTrigger.Children[0] as GeometryModel3D;
 
-                if (Inputs.RightTrigger > 0)
+                if (Inputs.AxisState[AxisFlags.R2] > 0)
                 {
-                    GradientFactor = 1 * (float)Inputs.RightTrigger / (float)byte.MaxValue;
+                    GradientFactor = 1 * Inputs.AxisState[AxisFlags.R2] / (float)byte.MaxValue;
                     model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.RightShoulderTrigger],
                                                        CurrentModel.HighlightMaterials[CurrentModel.RightShoulderTrigger],
                                                        GradientFactor);
@@ -340,15 +343,15 @@ namespace HandheldCompanion.Views.Windows
                     model.Material = CurrentModel.DefaultMaterials[CurrentModel.RightShoulderTrigger];
                 }
 
-                TriggerAngleShoulderRight = -1 * CurrentModel.TriggerMaxAngleDeg * (float)Inputs.RightTrigger / (float)byte.MaxValue;
+                TriggerAngleShoulderRight = -1 * CurrentModel.TriggerMaxAngleDeg * Inputs.AxisState[AxisFlags.R2] / (float)byte.MaxValue;
 
                 // JoystickLeftRing
                 model = CurrentModel.LeftThumbRing.Children[0] as GeometryModel3D;
-                if (Inputs.LeftThumbX != 0 || Inputs.LeftThumbY != 0)
+                if (Inputs.AxisState[AxisFlags.LeftThumbX] != 0.0f || Inputs.AxisState[AxisFlags.LeftThumbY] != 0.0f)
                 {
                     // Adjust color
-                    GradientFactor = Math.Max(Math.Abs(1 * (float)Inputs.LeftThumbX / (float)short.MaxValue),
-                                              Math.Abs(1 * (float)Inputs.LeftThumbY / (float)short.MaxValue));
+                    GradientFactor = Math.Max(Math.Abs(1 * Inputs.AxisState[AxisFlags.LeftThumbX] / (float)short.MaxValue),
+                                              Math.Abs(1 * Inputs.AxisState[AxisFlags.LeftThumbY] / (float)short.MaxValue));
 
                     model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.LeftThumbRing],
                                                        CurrentModel.HighlightMaterials[CurrentModel.LeftThumbRing],
@@ -356,8 +359,8 @@ namespace HandheldCompanion.Views.Windows
 
                     // Define and compute
                     Transform3DGroup Transform3DGroupJoystickLeft = new Transform3DGroup();
-                    float x = CurrentModel.JoystickMaxAngleDeg * (float)Inputs.LeftThumbX / (float)short.MaxValue;
-                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)Inputs.LeftThumbY / (float)short.MaxValue;
+                    float x = CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.LeftThumbX] / (float)short.MaxValue;
+                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.LeftThumbY] / (float)short.MaxValue;
 
                     // Rotation X
                     var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
@@ -404,11 +407,11 @@ namespace HandheldCompanion.Views.Windows
 
                 // JoystickRightRing
                 model = CurrentModel.RightThumbRing.Children[0] as GeometryModel3D;
-                if (Inputs.RightThumbX != 0 || Inputs.RightThumbY != 0)
+                if (Inputs.AxisState[AxisFlags.RightThumbX] != 0.0f || Inputs.AxisState[AxisFlags.RightThumbY] != 0.0f)
                 {
                     // Adjust color
-                    GradientFactor = Math.Max(Math.Abs(1 * (float)Inputs.RightThumbX / (float)short.MaxValue),
-                                              Math.Abs(1 * (float)Inputs.RightThumbY / (float)short.MaxValue));
+                    GradientFactor = Math.Max(Math.Abs(1 * Inputs.AxisState[AxisFlags.RightThumbX] / (float)short.MaxValue),
+                                              Math.Abs(1 * Inputs.AxisState[AxisFlags.RightThumbY] / (float)short.MaxValue));
 
                     model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.RightThumbRing],
                                                        CurrentModel.HighlightMaterials[CurrentModel.RightThumbRing],
@@ -416,8 +419,8 @@ namespace HandheldCompanion.Views.Windows
 
                     // Define and compute
                     Transform3DGroup Transform3DGroupJoystickRight = new Transform3DGroup();
-                    float x = CurrentModel.JoystickMaxAngleDeg * (float)Inputs.RightThumbX / (float)short.MaxValue;
-                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * (float)Inputs.RightThumbY / (float)short.MaxValue;
+                    float x = CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.RightThumbX] / (float)short.MaxValue;
+                    float y = -1 * CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.RightThumbY] / (float)short.MaxValue;
 
                     // Rotation X
                     var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
@@ -621,7 +624,7 @@ namespace HandheldCompanion.Views.Windows
                 if (ShoulderButtonsAngleDeg != ShoulderButtonsAngleDegPrev || TriggerAngleShoulderLeft != TriggerAngleShoulderLeftPrev)
                 {
 
-                    Placeholder = CurrentModel.ButtonMap[ControllerButtonFlags.LeftShoulder][0];
+                    Placeholder = CurrentModel.ButtonMap[ButtonFlags.L1][0];
 
                     UpwardVisibilityRotationShoulderButtons(ShoulderButtonsAngleDeg,
                                                             CurrentModel.UpwardVisibilityRotationAxisLeft,
@@ -632,7 +635,7 @@ namespace HandheldCompanion.Views.Windows
                                                             ref Placeholder
                                                             );
 
-                    CurrentModel.ButtonMap[ControllerButtonFlags.LeftShoulder][0] = Placeholder;
+                    CurrentModel.ButtonMap[ButtonFlags.L1][0] = Placeholder;
 
                     TriggerAngleShoulderLeftPrev = TriggerAngleShoulderLeft;
                 }
@@ -642,7 +645,7 @@ namespace HandheldCompanion.Views.Windows
                 if (ShoulderButtonsAngleDeg != ShoulderButtonsAngleDegPrev || TriggerAngleShoulderRight != TriggerAngleShoulderRightPrev)
                 {
 
-                    Placeholder = CurrentModel.ButtonMap[ControllerButtonFlags.RightShoulder][0];
+                    Placeholder = CurrentModel.ButtonMap[ButtonFlags.R1][0];
 
                     UpwardVisibilityRotationShoulderButtons(ShoulderButtonsAngleDeg,
                                                             CurrentModel.UpwardVisibilityRotationAxisRight,
@@ -653,7 +656,7 @@ namespace HandheldCompanion.Views.Windows
                                                             ref Placeholder
                                                             );
 
-                    CurrentModel.ButtonMap[ControllerButtonFlags.RightShoulder][0] = Placeholder;
+                    CurrentModel.ButtonMap[ButtonFlags.R1][0] = Placeholder;
 
                     TriggerAngleShoulderRightPrev = TriggerAngleShoulderRight;
                 }

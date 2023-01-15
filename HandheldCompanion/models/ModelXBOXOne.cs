@@ -1,4 +1,5 @@
 using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using System;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -136,7 +137,7 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(B4Button);
 
             // specific button material(s)
-            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
+            foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
                 Material buttonMaterial = null;
 
@@ -145,22 +146,22 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            case ControllerButtonFlags.Back:
-                            case ControllerButtonFlags.Start:
-                            case ControllerButtonFlags.LeftShoulder:
-                            case ControllerButtonFlags.RightShoulder:
+                            case ButtonFlags.Back:
+                            case ButtonFlags.Start:
+                            case ButtonFlags.L2:
+                            case ButtonFlags.R2:
                                 buttonMaterial = MaterialPlasticWhite;
                                 break;
-                            case ControllerButtonFlags.B1:
+                            case ButtonFlags.B1:
                                 buttonMaterial = MaterialPlasticGreen;
                                 break;
-                            case ControllerButtonFlags.B2:
+                            case ButtonFlags.B2:
                                 buttonMaterial = MaterialPlasticRed;
                                 break;
-                            case ControllerButtonFlags.B3:
+                            case ButtonFlags.B3:
                                 buttonMaterial = MaterialPlasticBlue;
                                 break;
-                            case ControllerButtonFlags.B4:
+                            case ButtonFlags.B4:
                                 buttonMaterial = MaterialPlasticYellow;
                                 break;
                             default:

@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
@@ -46,7 +47,7 @@ namespace HandheldCompanion.Views.Pages
             InputsManager.TriggerUpdated += TriggerUpdated;
 
             // draw input modes
-            foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
+            foreach (MotionInput mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
             {
                 // create panel
                 SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
@@ -57,16 +58,16 @@ namespace HandheldCompanion.Views.Pages
                 switch (mode)
                 {
                     default:
-                    case Input.PlayerSpace:
+                    case MotionInput.PlayerSpace:
                         icon.Glyph = "\uF119";
                         break;
-                    case Input.JoystickCamera:
+                    case MotionInput.JoystickCamera:
                         icon.Glyph = "\uE714";
                         break;
-                    case Input.AutoRollYawSwap:
+                    case MotionInput.AutoRollYawSwap:
                         icon.Glyph = "\uE7F8";
                         break;
-                    case Input.JoystickSteering:
+                    case MotionInput.JoystickSteering:
                         icon.Glyph = "\uEC47";
                         break;
                 }
@@ -83,7 +84,7 @@ namespace HandheldCompanion.Views.Pages
             }
 
             // draw output modes
-            foreach (Output mode in (Output[])Enum.GetValues(typeof(Output)))
+            foreach (MotionOutput mode in (MotionOutput[])Enum.GetValues(typeof(MotionOutput)))
             {
                 // create panel
                 SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
@@ -94,10 +95,10 @@ namespace HandheldCompanion.Views.Pages
                 switch (mode)
                 {
                     default:
-                    case Output.RightStick:
+                    case MotionOutput.RightStick:
                         icon.Glyph = "\uF109";
                         break;
-                    case Output.LeftStick:
+                    case MotionOutput.LeftStick:
                         icon.Glyph = "\uF108";
                         break;
                 }
@@ -151,7 +152,7 @@ namespace HandheldCompanion.Views.Pages
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
                 {
-                    if (pr.executable == profile.executable)
+                    if (pr.Executable == profile.Executable)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
                         break;
@@ -176,7 +177,7 @@ namespace HandheldCompanion.Views.Pages
             }
 
             _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
-                             $"{currentProfile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
+                             $"{currentProfile.Name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
                              ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
         }
 
@@ -186,7 +187,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
-                    if (pr.executable == profile.executable)
+                    if (pr.Executable == profile.Executable)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
                         break;
@@ -269,7 +270,7 @@ namespace HandheldCompanion.Views.Pages
 
                     if (ProfileManager.Contains(profile))
                     {
-                        Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureOverwrite1} \"{profile.name}\"?",
+                        Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureOverwrite1} \"{profile.Name}\"?",
                                                                             $"{Properties.Resources.ProfilesPage_AreYouSureOverwrite2}",
                                                                             ContentDialogButton.Primary,
                                                                             $"{Properties.Resources.ProfilesPage_Cancel}",
@@ -302,16 +303,16 @@ namespace HandheldCompanion.Views.Pages
             if (currentProfile is null)
                 return;
 
-            switch ((Input)cB_Input.SelectedIndex)
+            switch ((MotionInput)cB_Input.SelectedIndex)
             {
                 default:
-                case Input.JoystickCamera:
-                case Input.PlayerSpace:
+                case MotionInput.JoystickCamera:
+                case MotionInput.PlayerSpace:
                     page0.Update(currentProfile);
                     MainWindow.NavView_Navigate(page0);
                     page1.Update(currentProfile);
                     break;
-                case Input.JoystickSteering:
+                case MotionInput.JoystickSteering:
                     page1.Update(currentProfile);
                     MainWindow.NavView_Navigate(page1);
                     break;
@@ -353,9 +354,9 @@ namespace HandheldCompanion.Views.Pages
                 GlobalSettings.IsEnabled = !currentProfile.isDefault;
 
                 // Profile info
-                tB_ProfileName.Text = currentProfile.name;
-                tB_ProfilePath.Text = currentProfile.fullpath;
-                Toggle_EnableProfile.IsOn = currentProfile.isEnabled;
+                tB_ProfileName.Text = currentProfile.Name;
+                tB_ProfilePath.Text = currentProfile.ExecutablePath;
+                Toggle_EnableProfile.IsOn = currentProfile.Enabled;
 
                 // Global settings
                 cB_Whitelist.IsChecked = currentProfile.whitelisted;
@@ -401,14 +402,14 @@ namespace HandheldCompanion.Views.Pages
                 TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = TDPup;
 
                 // UMC settings
-                Toggle_UniversalMotion.IsOn = currentProfile.umc_enabled;
-                cB_Input.SelectedIndex = (int)currentProfile.umc_input;
-                cB_Output.SelectedIndex = (int)currentProfile.umc_output;
-                tb_ProfileUMCAntiDeadzone.Value = currentProfile.umc_anti_deadzone;
-                cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.umc_motion_defaultoffon;
+                Toggle_UniversalMotion.IsOn = currentProfile.MotionEnabled;
+                cB_Input.SelectedIndex = (int)currentProfile.MotionInput;
+                cB_Output.SelectedIndex = (int)currentProfile.MotionOutput;
+                tb_ProfileUMCAntiDeadzone.Value = currentProfile.MotionAntiDeadzone;
+                cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.MotionMode;
 
                 // todo: improve me ?
-                ProfilesPageHotkey.inputsChord.GamepadButtons = currentProfile.umc_trigger;
+                ProfilesPageHotkey.inputsChord.State = currentProfile.MotionTrigger.Clone() as ButtonState;
                 ProfilesPageHotkey.Refresh();
 
                 // display warnings
@@ -444,7 +445,7 @@ namespace HandheldCompanion.Views.Pages
             if (currentProfile is null)
                 return;
 
-            Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{currentProfile.name}\"?",
+            Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{currentProfile.Name}\"?",
                                                                 $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
                                                                 ContentDialogButton.Primary,
                                                                 $"{Properties.Resources.ProfilesPage_Cancel}",
@@ -468,9 +469,9 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // Profile
-            currentProfile.name = tB_ProfileName.Text;
-            currentProfile.fullpath = tB_ProfilePath.Text;
-            currentProfile.isEnabled = (bool)Toggle_EnableProfile.IsOn;
+            currentProfile.Name = tB_ProfileName.Text;
+            currentProfile.ExecutablePath = tB_ProfilePath.Text;
+            currentProfile.Enabled = (bool)Toggle_EnableProfile.IsOn;
 
             // Global settings
             currentProfile.whitelisted = (bool)cB_Whitelist.IsChecked;
@@ -503,11 +504,11 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.inverthorizontal = (bool)cB_InvertHorizontal.IsChecked;
 
             // UMC settings
-            currentProfile.umc_enabled = (bool)Toggle_UniversalMotion.IsOn;
-            currentProfile.umc_input = (Input)cB_Input.SelectedIndex;
-            currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
-            currentProfile.umc_anti_deadzone = (float)tb_ProfileUMCAntiDeadzone.Value;
-            currentProfile.umc_motion_defaultoffon = (UMC_Motion_Default)cB_UMC_MotionDefaultOffOn.SelectedIndex;
+            currentProfile.MotionEnabled = (bool)Toggle_UniversalMotion.IsOn;
+            currentProfile.MotionInput = (MotionInput)cB_Input.SelectedIndex;
+            currentProfile.MotionOutput = (MotionOutput)cB_Output.SelectedIndex;
+            currentProfile.MotionAntiDeadzone = (float)tb_ProfileUMCAntiDeadzone.Value;
+            currentProfile.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
 
             // Power settings
             currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
@@ -637,19 +638,19 @@ namespace HandheldCompanion.Views.Pages
             if (cB_Input.SelectedIndex == -1)
                 return;
 
-            Input input = (Input)cB_Input.SelectedIndex;
+            MotionInput input = (MotionInput)cB_Input.SelectedIndex;
 
             // Check which input type is selected and automatically
             // set the most used output joystick accordingly.
             switch (input)
             {
-                case Input.PlayerSpace:
-                case Input.JoystickCamera:
-                case Input.AutoRollYawSwap:
-                    cB_Output.SelectedIndex = (int)Output.RightStick;
+                case MotionInput.PlayerSpace:
+                case MotionInput.JoystickCamera:
+                case MotionInput.AutoRollYawSwap:
+                    cB_Output.SelectedIndex = (int)MotionOutput.RightStick;
                     break;
-                case Input.JoystickSteering:
-                    cB_Output.SelectedIndex = (int)Output.LeftStick;
+                case MotionInput.JoystickSteering:
+                    cB_Output.SelectedIndex = (int)MotionOutput.LeftStick;
                     break;
             }
 
@@ -702,7 +703,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 case "shortcutProfilesPage@":
                 case "shortcutProfilesPage@@":
-                    currentProfile.umc_trigger = inputs.GamepadButtons;
+                    currentProfile.MotionTrigger = inputs.State.Clone() as ButtonState;
                     break;
             }
         }
