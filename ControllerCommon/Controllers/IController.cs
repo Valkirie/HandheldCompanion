@@ -181,14 +181,15 @@ namespace ControllerCommon.Controllers
             return ui_button_hide;
         }
 
-        public void InjectButton(ButtonFlags Button, bool IsKeyDown, bool IsKeyUp)
+        public void InjectButton(ButtonState State, bool IsKeyDown, bool IsKeyUp)
         {
-            if (Button == ButtonFlags.None)
+            if (State.IsEmpty())
                 return;
 
-            InjectedButtons[Button] = IsKeyDown;
+            foreach(var button in State.Buttons)
+                InjectedButtons[button] = IsKeyDown;
 
-            LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", Button, IsKeyDown, IsKeyUp, ToString());
+            LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", State, IsKeyDown, IsKeyUp, ToString());
         }
 
         public virtual void SetVibrationStrength(double value)
