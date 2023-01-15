@@ -156,7 +156,7 @@ namespace HandheldCompanion.Controllers
             if (input is null)
                 return;
 
-            if (input.State.GetHashCode() == prevState.GetHashCode() && prevInjectedButtons == InjectedButtons)
+            if ((prevState is not null && input.State.GetHashCode() == prevState.GetHashCode()) && prevInjectedButtons == InjectedButtons)
                 return;
 
             Inputs.Buttons = InjectedButtons;
@@ -382,6 +382,7 @@ namespace HandheldCompanion.Controllers
         public override void Plug()
         {
             Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
+            MovementsTimer.Start();
 
             PipeClient.ServerMessage += OnServerMessage;
             base.Plug();
@@ -403,7 +404,9 @@ namespace HandheldCompanion.Controllers
             {
                 return;
             }
-
+            
+            MovementsTimer.Stop();
+            
             PipeClient.ServerMessage -= OnServerMessage;
             base.Unplug();
         }
