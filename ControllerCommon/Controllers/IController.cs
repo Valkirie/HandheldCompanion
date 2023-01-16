@@ -20,13 +20,13 @@ namespace ControllerCommon.Controllers
     {
         #region events
         public event InputsUpdatedEventHandler InputsUpdated;
-        public delegate void InputsUpdatedEventHandler(ControllerInputs Inputs);
+        public delegate void InputsUpdatedEventHandler(ControllerState Inputs);
 
         public event MovementsUpdatedEventHandler MovementsUpdated;
         public delegate void MovementsUpdatedEventHandler(ControllerMovements Movements);
         #endregion
 
-        public ControllerInputs Inputs = new();
+        public ControllerState Inputs = new();
         public ControllerMovements Movements = new();
 
         protected const short UPDATE_INTERVAL = 5;

@@ -383,7 +383,7 @@ namespace ControllerService
             ForegroundUpdated?.Invoke();
 
             // update default profile
-            if (profile.isDefault)
+            if (profile.Default)
                 defaultProfile = profile;
             else
                 LogManager.LogInformation("Profile {0} applied", profile.Name);

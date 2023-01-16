@@ -216,11 +216,8 @@
   <data name="Enum.Output.RightStick" xml:space="preserve">
     <value>Right joystick</value>
   </data>
-  <data name="Enum.ProfileErrorCode.IsDefault" xml:space="preserve">
+  <data name="Enum.ProfileErrorCode.Default" xml:space="preserve">
     <value>This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled.</value>
-  </data>
-  <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
-    <value>Oops. It seems this profile excutable is running. Some options requiring an executable might be disabled.</value>
   </data>
   <data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
     <value>Oops. It seems this profile does not have an executable. How is this even possible?</value>
@@ -233,6 +230,9 @@
   </data>
   <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
     <value>Nothing to see here.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.Running" xml:space="preserve">
+    <value>Oops. It seems this profile excutable is running. Some options requiring an executable might be disabled.</value>
   </data>
   <data name="Enum.QualityOfServiceLevel.Default" xml:space="preserve">
     <value>Default</value>

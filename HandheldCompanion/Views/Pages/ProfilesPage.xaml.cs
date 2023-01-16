@@ -345,13 +345,13 @@ namespace HandheldCompanion.Views.Pages
                 UniversalSettings.IsEnabled = true;
 
                 // disable button if is default profile or application is running
-                b_DeleteProfile.IsEnabled = !currentProfile.isDefault && !currentProfile.isRunning;
+                b_DeleteProfile.IsEnabled = !currentProfile.Default && !currentProfile.Running;
                 // prevent user from renaming default profile
-                tB_ProfileName.IsEnabled = !currentProfile.isDefault;
+                tB_ProfileName.IsEnabled = !currentProfile.Default;
                 // prevent user from setting power settings on default profile
-                PowerSettings.IsEnabled = !currentProfile.isDefault;
+                PowerSettings.IsEnabled = !currentProfile.Default;
                 // disable global settings on default profile
-                GlobalSettings.IsEnabled = !currentProfile.isDefault;
+                GlobalSettings.IsEnabled = !currentProfile.Default;
 
                 // Profile info
                 tB_ProfileName.Text = currentProfile.Name;
@@ -414,8 +414,8 @@ namespace HandheldCompanion.Views.Pages
 
                 // display warnings
                 ProfileErrorCode currentError = currentProfile.error;
-                if (currentProfile.isRunning)
-                    currentError = ProfileErrorCode.IsRunning;
+                if (currentProfile.Running)
+                    currentError = ProfileErrorCode.Running;
 
                 switch (currentError)
                 {
@@ -426,11 +426,11 @@ namespace HandheldCompanion.Views.Pages
                         cB_Wrapper.IsEnabled = true;
                         break;
 
-                    case ProfileErrorCode.IsRunning:
+                    case ProfileErrorCode.Running:
                     case ProfileErrorCode.MissingExecutable:
                     case ProfileErrorCode.MissingPath:
                     case ProfileErrorCode.MissingPermission:
-                    case ProfileErrorCode.IsDefault:
+                    case ProfileErrorCode.Default:
                         WarningBorder.Visibility = Visibility.Visible;
                         WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentError);
                         cB_Whitelist.IsEnabled = false;     // you can't whitelist an application without path
@@ -550,7 +550,7 @@ namespace HandheldCompanion.Views.Pages
             if (currentProfile is null)
                 return;
 
-            cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !currentProfile.isDefault;
+            cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !currentProfile.Default;
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)

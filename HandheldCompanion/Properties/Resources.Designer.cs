@@ -251,21 +251,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {
-        ///  &quot;name&quot;: &quot;ControllerCompanion&quot;,
-        ///  &quot;path&quot;: &quot;ControllerCompanion.exe&quot;,
-        ///  &quot;executable&quot;: &quot;ControllerCompanion.exe&quot;,
-        ///  &quot;isEnabled&quot;: true,
-        ///  &quot;whitelisted&quot;: true
-        ///}.
-        /// </summary>
-        public static string ControllerCompanion_json {
-            get {
-                return ResourceManager.GetString("ControllerCompanion.json", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cloak physical controller.
         /// </summary>
         public static string ControllerPage_CloakDevice {
@@ -388,23 +373,6 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_VibrationStrengthExpl {
             get {
                 return ResourceManager.GetString("ControllerPage_VibrationStrengthExpl", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///  &quot;name&quot;: &quot;Default&quot;,
-        ///  &quot;path&quot;: &quot;&quot;,
-        ///  &quot;executable&quot;: &quot;Default.exe&quot;,
-        ///  &quot;isDefault&quot;: true,
-        ///  &quot;isEnabled&quot;: true,
-        ///  &quot;whitelisted&quot;: false,
-        ///  &quot;umc_enabled&quot;: false
-        ///}.
-        /// </summary>
-        public static string Default_json {
-            get {
-                return ResourceManager.GetString("Default.json", resourceCulture);
             }
         }
         
@@ -767,21 +735,6 @@ namespace HandheldCompanion.Properties {
         public static string InputsHotkey_suspendResumeTaskDesc {
             get {
                 return ResourceManager.GetString("InputsHotkey_suspendResumeTaskDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///  &quot;name&quot;: &quot;Joyxoff&quot;,
-        ///  &quot;path&quot;: &quot;Joyxoff.exe&quot;,
-        ///  &quot;executable&quot;: &quot;Joyxoff.exe&quot;,
-        ///  &quot;isEnabled&quot;: true,
-        ///  &quot;whitelisted&quot;: true
-        ///}.
-        /// </summary>
-        public static string JoyXOff_json {
-            get {
-                return ResourceManager.GetString("JoyXOff.json", resourceCulture);
             }
         }
         
@@ -1340,37 +1293,6 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_ZDOPlusController {
             get {
                 return ResourceManager.GetString("OverlayPage_ZDOPlusController", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///  &quot;name&quot;: &quot;Playnite.FullscreenApp&quot;,
-        ///  &quot;path&quot;: &quot;Playnite.FullscreenApp.exe&quot;,
-        ///  &quot;executable&quot;: &quot;Playnite.FullscreenApp.exe&quot;,
-        ///  &quot;isEnabled&quot;: true,
-        ///  &quot;whitelisted&quot;: true
-        ///}.
-        /// </summary>
-        public static string Playnite_FullscreenApp_json {
-            get {
-                return ResourceManager.GetString("Playnite.FullscreenApp.json", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///  &quot;name&quot;: &quot;Power Control Panel&quot;,
-        ///  &quot;path&quot;: &quot;Power Control Panel.exe&quot;,
-        ///  &quot;executable&quot;: &quot;Power Control Panel.exe&quot;,
-        ///  &quot;isEnabled&quot;: true,
-        ///  &quot;whitelisted&quot;: true
-        ///}
-        ///.
-        /// </summary>
-        public static string PowerControlPanel_json {
-            get {
-                return ResourceManager.GetString("PowerControlPanel.json", resourceCulture);
             }
         }
         

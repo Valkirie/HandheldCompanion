@@ -6,17 +6,17 @@ using System.Windows.Documents;
 namespace ControllerCommon.Controllers
 {
     [Serializable]
-    public class ControllerInputs
+    public class ControllerState
     {
         public ButtonState ButtonState = new();
         public AxisState AxisState = new();
 
         public int Timestamp;
 
-        public ControllerInputs()
+        public ControllerState()
         { }
 
-        public ControllerInputs(ControllerInputs Inputs)
+        public ControllerState(ControllerState Inputs)
         {
             ButtonState = Inputs.ButtonState;
             AxisState = Inputs.AxisState;

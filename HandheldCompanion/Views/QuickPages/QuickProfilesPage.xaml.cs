@@ -128,7 +128,7 @@ namespace HandheldCompanion.Views.QuickPages
                 {
                     case "increaseTDP":
                         {
-                            if (currentProfile is null || currentProfile.isDefault || !currentProfile.TDP_override)
+                            if (currentProfile is null || currentProfile.Default || !currentProfile.TDP_override)
                                 return;
 
                             TDPSustainedSlider.Value++;
@@ -137,7 +137,7 @@ namespace HandheldCompanion.Views.QuickPages
                         break;
                     case "decreaseTDP":
                         {
-                            if (currentProfile is null || currentProfile.isDefault || !currentProfile.TDP_override)
+                            if (currentProfile is null || currentProfile.Default || !currentProfile.TDP_override)
                                 return;
 
                             TDPSustainedSlider.Value--;
@@ -174,7 +174,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ProfileUpdated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
-            if (!isCurrent || profile.isDefault)
+            if (!isCurrent || profile.Default)
                 return;
 
             if (Monitor.TryEnter(updateLock))

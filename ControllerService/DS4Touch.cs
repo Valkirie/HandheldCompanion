@@ -102,7 +102,7 @@ namespace ControllerService
 
         private static bool prevLeftPadTouch, prevRightPadTouch;
         private static bool prevLeftPadClick, prevRightPadClick;
-        public static void UpdateInputs(ControllerInputs Inputs)
+        public static void UpdateInputs(ControllerState Inputs)
         {
             if (prevLeftPadTouch != Inputs.ButtonState[ButtonFlags.LPadTouch])
             {

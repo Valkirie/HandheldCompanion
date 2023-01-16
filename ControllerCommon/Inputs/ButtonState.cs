@@ -3,24 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ControllerCommon.Inputs
 {
+    [Serializable]
     public class ButtonState : ICloneable
     {
-        private Dictionary<ButtonFlags, bool> _buttonState = new();
+        [JsonInclude]
+        public Dictionary<ButtonFlags, bool> State = new();
 
         public bool this[ButtonFlags button]
         {
             get
             {
-                if (!_buttonState.ContainsKey(button))
+                if (!State.ContainsKey(button))
                 {
                     return false;
                 }
 
-                return _buttonState[button];
+                return State[button];
             }
 
             set
@@ -28,21 +31,22 @@ namespace ControllerCommon.Inputs
                 switch(value)
                 {
                     case true:
-                        _buttonState[button] = true;
+                        State[button] = true;
                         break;
                     case false:
-                        _buttonState.Remove(button);
+                        State.Remove(button);
                         break;
                 }
             }
         }
 
-        public IEnumerable<ButtonFlags> Buttons => _buttonState.Keys;
+        [JsonIgnore]
+        public IEnumerable<ButtonFlags> Buttons => State.Keys;
 
         public ButtonState(Dictionary<ButtonFlags, bool> buttonState)
         {
             foreach (var state in buttonState)
-                _buttonState.Add(state.Key, state.Value);
+                this[state.Key] = state.Value;
         }
 
         public ButtonState()
@@ -51,30 +55,34 @@ namespace ControllerCommon.Inputs
 
         public bool IsEmpty()
         {
-            return Buttons.Count() == 0;
+            return State.Count() == 0;
         }
 
         public void Clear()
         {
-            _buttonState.Clear();
+            State.Clear();
         }
 
         public bool Contains(ButtonState State)
         {
-            foreach (var state in State._buttonState)
+            foreach (var state in State.State)
                 if (this[state.Key] != state.Value)
                     return false;
 
             return true;
         }
 
+        public void AddRange(IEnumerable<ButtonFlags> buttons)
+        {
+            foreach (ButtonFlags button in buttons)
+                this[button] = true;
+        }
+
         public override bool Equals(object obj)
         {
             ButtonState buttonState = obj as ButtonState;
             if (buttonState != null)
-            {
-                return EqualsWithValues(_buttonState, buttonState._buttonState);
-            }
+                return EqualsWithValues(State, buttonState.State);
 
             return false;
         }
@@ -110,7 +118,7 @@ namespace ControllerCommon.Inputs
 
         public object Clone()
         {
-            return new ButtonState(_buttonState);
+            return new ButtonState(State);
         }
     }
 }

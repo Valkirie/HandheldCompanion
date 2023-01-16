@@ -421,7 +421,7 @@ namespace HandheldCompanion.Managers
             return targetController;
         }
 
-        private static void UpdateInputs(ControllerInputs Inputs)
+        private static void UpdateInputs(ControllerState Inputs)
         {
             // pass inputs to InputsManager
             InputsManager.UpdateReport(Inputs.ButtonState);

@@ -96,7 +96,7 @@ namespace ControllerService
         public PrecisionTimer UpdateTimer;
         private PrecisionTimer BatteryTimer;
 
-        private ControllerInputs Inputs = new();
+        private ControllerState Inputs = new();
 
         public const int UpdateInterval = 5;
 
@@ -565,7 +565,7 @@ namespace ControllerService
             Stopped?.Invoke(this);
         }
 
-        public void UpdateInputs(ControllerInputs inputs)
+        public void UpdateInputs(ControllerState inputs)
         {
             Inputs = inputs;
         }

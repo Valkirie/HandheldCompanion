@@ -16,8 +16,8 @@ namespace ControllerCommon
         MissingExecutable = 1,
         MissingPath = 2,
         MissingPermission = 3,
-        IsDefault = 4,
-        IsRunning = 5
+        Default = 4,
+        Running = 5
     }
 
     [Flags]
@@ -55,10 +55,14 @@ namespace ControllerCommon
             { MotionInput.AutoRollYawSwap, Properties.Resources.AutoRollYawSwapDesc }
         };
 
-        public string Name { get; set; }
-        public string Path { get; set; }
-        public string Executable { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Path { get; set; } = string.Empty;
+        public string Executable { get; set; } = string.Empty;
         public bool Enabled { get; set; }
+        public bool Default { get; set; }
+
+        [JsonIgnore]
+        public bool Running { get; set; }
 
         public bool whitelisted { get; set; }                   // if true, can see through the HidHide cloak
         public bool use_wrapper { get; set; }                   // if true, deploy xinput1_3.dll
@@ -89,7 +93,7 @@ namespace ControllerCommon
         public MotionOutput MotionOutput { get; set; } = MotionOutput.RightStick;
         public MotionMode MotionMode { get; set; } = MotionMode.Off;
         public float MotionAntiDeadzone { get; set; } = 0.0f;
-        public ButtonState MotionTrigger { get; set; }
+        public ButtonState MotionTrigger { get; set; } = new();
 
         // aiming
         public float aiming_sensitivity_x { get; set; } = 1.0f;
@@ -104,7 +108,7 @@ namespace ControllerCommon
 
         // Aiming down sights
         public float aiming_down_sights_multiplier { get; set; } = 1.0f;
-        public ButtonState aiming_down_sights_activation { get; set; }
+        public ButtonState aiming_down_sights_activation { get; set; } = new();
 
         // flickstick
         public bool flickstick_enabled { get; set; }
@@ -118,9 +122,6 @@ namespace ControllerCommon
         // hidden settings
         [JsonIgnore] public ProfileErrorCode error;
         [JsonIgnore] public string ExecutablePath { get; set; }
-        [JsonIgnore] public string FileName { get; set; }
-        [JsonIgnore] public bool isDefault { get; set; }
-        [JsonIgnore] public bool isRunning { get; set; }
         [JsonIgnore] public static int array_size = 49;             // x + 1 (hidden)
 
         public Profile()
@@ -135,9 +136,6 @@ namespace ControllerCommon
                     aiming_array.Add(vector);
                 }
             }
-
-            string filtered = System.IO.Path.GetFileNameWithoutExtension(Executable);
-            this.FileName = $"{filtered}.json";
         }
 
         public Profile(string path) : this()
@@ -165,6 +163,19 @@ namespace ControllerCommon
         public float GetSensitivityY()
         {
             return aiming_sensitivity_y * 1000.0f;
+        }
+
+        public string GetFileName()
+        {
+            string name = Name;
+            switch(Default)
+            {
+                case false:
+                    name = System.IO.Path.GetFileNameWithoutExtension(Executable);
+                    break;
+            }
+
+            return $"{name}.json";
         }
 
         public override string ToString()

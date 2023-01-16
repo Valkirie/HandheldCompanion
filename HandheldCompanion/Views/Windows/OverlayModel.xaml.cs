@@ -21,7 +21,7 @@ namespace HandheldCompanion.Views.Windows
     {
         private PrecisionTimer UpdateTimer;
 
-        private ControllerInputs Inputs = new();
+        private ControllerState Inputs = new();
         private ButtonState prevState = new();
 
         private IModel CurrentModel;
@@ -467,7 +467,7 @@ namespace HandheldCompanion.Views.Windows
             });
         }
 
-        public void UpdateReport(ControllerInputs Inputs)
+        public void UpdateReport(ControllerState Inputs)
         {
             this.Inputs = Inputs;
         }

@@ -7,7 +7,8 @@ using System.Windows.Forms;
 
 namespace ControllerCommon.Inputs
 {
-    public class AxisState
+    [Serializable]
+    public class AxisState : ICloneable
     {
         private Dictionary<AxisFlags, float> _axisState;
 
@@ -104,6 +105,11 @@ namespace ControllerCommon.Inputs
             }
 
             return result;
+        }
+
+        public object Clone()
+        {
+            throw new NotImplementedException();
         }
     }
 }

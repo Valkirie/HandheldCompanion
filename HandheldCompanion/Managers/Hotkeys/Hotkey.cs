@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using static HandheldCompanion.Managers.InputsManager;
+using static System.Net.Mime.MediaTypeNames;
 using Application = System.Windows.Application;
 
 namespace HandheldCompanion.Managers
@@ -182,7 +183,8 @@ namespace HandheldCompanion.Managers
                 Content = new FontIcon() { Glyph = "\uE75C", FontSize = 14 },
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
-                Style = Application.Current.FindResource("AccentButtonStyle") as Style
+                Style = Application.Current.FindResource("AccentButtonStyle") as Style,
+                ToolTip = "Reset hotkey"
             };
             eraseButton.Click += (sender, e) => ClearButton_Click();
             Grid.SetColumn(eraseButton, 2);
@@ -193,6 +195,7 @@ namespace HandheldCompanion.Managers
                 Height = 30,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
+                ToolTip = "Pin/unpin hotkey to quicktools action center"
             };
 
             if (!embedded)
@@ -363,11 +366,8 @@ namespace HandheldCompanion.Managers
 
         public void Refresh()
         {
-            bool hasbuttons = !inputsChord.State.IsEmpty();
-            bool hascombo = inputsChord.OutputKeys.Count != 0;
-
-            string buttons = inputsChord.State.Buttons.ToString(); // EnumUtils.GetDescriptionFromEnumValue(inputsChord.State.Buttons);
-            string combo = string.Join(", ", inputsChord.OutputKeys.Where(key => key.IsKeyDown));
+            bool hasInput = !inputsChord.State.IsEmpty();
+            bool hasOutput = inputsChord.OutputKeys.Count != 0;
 
             if (outputButton is not null)
             {
@@ -378,24 +378,19 @@ namespace HandheldCompanion.Managers
                     Spacing = 6,
                 };
 
-                if (hascombo)
+                TextBlock outputText = new TextBlock();
+                switch(hasOutput)
                 {
-                    comboContent.Children.Add(new TextBlock()
-                    {
-                        Text = combo
-                    });
+                    case true:
+                        outputText.Text = string.Join(", ", inputsChord.OutputKeys.Where(key => key.IsKeyDown));
+                        outputText.SetResourceReference(Control.ForegroundProperty, "");
+                        break;
+                    case false:
+                        outputText.Text = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackOutput");
+                        outputText.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+                        break;
                 }
-                else
-                {
-                    // set fallback content
-                    TextBlock fallback = new TextBlock()
-                    {
-                        Text = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackOutput")
-                    };
-                    fallback.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-
-                    comboContent.Children.Add(fallback);
-                }
+                comboContent.Children.Add(outputText);
 
                 // update button content
                 outputButton.Content = comboContent;
@@ -408,12 +403,11 @@ namespace HandheldCompanion.Managers
                 Spacing = 6,
             };
 
-            if (hasbuttons)
+            if (hasInput)
             {
-                mainContent.Children.Add(new TextBlock()
-                {
-                    Text = buttons
-                });
+                TextBlock inputText = new();
+                inputText.Text = string.Join(", ", inputsChord.State.Buttons);
+                mainContent.Children.Add(inputText);
             }
 
             // only display inputsChord type (click, hold) if inputs were captured
@@ -443,7 +437,7 @@ namespace HandheldCompanion.Managers
             inputButton.Content = mainContent;
 
             // update delete button status
-            eraseButton.IsEnabled = hasbuttons || hascombo;
+            eraseButton.IsEnabled = hasInput || hasOutput;
 
             // update pin button
             switch (IsPinned)

@@ -543,7 +543,7 @@ namespace HandheldCompanion.Managers
                     GamepadClearPending = false;
                 }
                 else
-                    currentChord.State = State.Clone() as ButtonState;
+                    currentChord.State.AddRange(State.Buttons);
 
                 currentChord.InputsType = InputsChordType.Click;
 

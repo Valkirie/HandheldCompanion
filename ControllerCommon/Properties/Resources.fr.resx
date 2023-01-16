@@ -205,7 +205,7 @@
   <data name="Enum.Output.RightStick" xml:space="preserve">
     <value>Joystick droit</value>
   </data>
-  <data name="Enum.ProfileErrorCode.IsDefault" xml:space="preserve">
+  <data name="Enum.ProfileErrorCode.Default" xml:space="preserve">
     <value>Il s'agit de votre profil de contrôleur par défaut. Ce profil sera appliqué pour toutes vos applications qui n'ont pas de profil spécifique. Certaines options nécessitant un exécutable peuvent être désactivées.</value>
   </data>
   <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">

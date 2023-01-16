@@ -360,18 +360,9 @@ namespace ControllerCommon.Properties {
         /// <summary>
         ///   Looks up a localized string similar to This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled..
         /// </summary>
-        public static string Enum_ProfileErrorCode_IsDefault {
+        public static string Enum_ProfileErrorCode_Default {
             get {
-                return ResourceManager.GetString("Enum.ProfileErrorCode.IsDefault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Oops. It seems this profile excutable is running. Some options requiring an executable might be disabled..
-        /// </summary>
-        public static string Enum_ProfileErrorCode_IsRunning {
-            get {
-                return ResourceManager.GetString("Enum.ProfileErrorCode.IsRunning", resourceCulture);
+                return ResourceManager.GetString("Enum.ProfileErrorCode.Default", resourceCulture);
             }
         }
         
@@ -408,6 +399,15 @@ namespace ControllerCommon.Properties {
         public static string Enum_ProfileErrorCode_None {
             get {
                 return ResourceManager.GetString("Enum.ProfileErrorCode.None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oops. It seems this profile excutable is running. Some options requiring an executable might be disabled..
+        /// </summary>
+        public static string Enum_ProfileErrorCode_Running {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.Running", resourceCulture);
             }
         }
         

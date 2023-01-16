@@ -16,7 +16,7 @@ namespace ControllerService.Targets
     public abstract class ViGEmTarget : IDisposable
     {
         public FlickStick flickStick;
-        protected ControllerInputs Inputs = new();
+        protected ControllerState Inputs = new();
         protected PrecisionTimer UpdateTimer;
 
         public HIDmode HID = HIDmode.NoController;
@@ -83,7 +83,7 @@ namespace ControllerService.Targets
             LogManager.LogInformation("{0} disconnected", ToString());
         }
 
-        public void UpdateInputs(ControllerInputs inputs)
+        public void UpdateInputs(ControllerState inputs)
         {
             Inputs = inputs;
         }
