@@ -17,8 +17,11 @@ namespace HandheldCompanion.Managers
 
         static MappingManager()
         {
+            // XBOX to NINTENDO
             ButtonMapping.Add(ButtonFlags.B1, new ButtonActions(ButtonFlags.B2));
             ButtonMapping.Add(ButtonFlags.B2, new ButtonActions(ButtonFlags.B1));
+            ButtonMapping.Add(ButtonFlags.B3, new ButtonActions(ButtonFlags.B4));
+            ButtonMapping.Add(ButtonFlags.B4, new ButtonActions(ButtonFlags.B3));
 
             ButtonMapping.Add(ButtonFlags.DPadLeft, new AxisActions(AxisFlags.LeftThumbX, short.MinValue));
             ButtonMapping.Add(ButtonFlags.DPadRight, new AxisActions(AxisFlags.LeftThumbX, short.MaxValue));
@@ -63,8 +66,8 @@ namespace HandheldCompanion.Managers
                 if (!ButtonMapping.ContainsKey(button))
                     continue;
 
-                // consume button
-                outputState.ButtonState[button] = false;
+                // consume button ??
+                // outputState.ButtonState[button] = false;
 
                 // pull action
                 IActions action = ButtonMapping[button];
@@ -83,6 +86,9 @@ namespace HandheldCompanion.Managers
                     // button to axis
                     case ActionType.Axis:
                         {
+                            if (!status)
+                                continue;
+
                             // inject axis
                             AxisActions aAction = action as AxisActions;
                             outputState.AxisState[aAction.Axis] = aAction.Value;
