@@ -215,14 +215,14 @@ namespace HandheldCompanion.Controllers
             Inputs.AxisState[AxisFlags.RightThumbX] = input.State.AxesState[NeptuneControllerAxis.RightStickX];
             Inputs.AxisState[AxisFlags.RightThumbY] = input.State.AxesState[NeptuneControllerAxis.RightStickY];
 
-            Inputs.AxisState[AxisFlags.L2] = L2;
-            Inputs.AxisState[AxisFlags.R2] = R2;
+            Inputs.AxisState[AxisFlags.L2] = (short)L2;
+            Inputs.AxisState[AxisFlags.R2] = (short)R2;
 
-            Inputs.AxisState[AxisFlags.LeftPadX] = short.MaxValue + input.State.AxesState[NeptuneControllerAxis.LeftPadX];
-            Inputs.AxisState[AxisFlags.LeftPadY] = short.MaxValue - input.State.AxesState[NeptuneControllerAxis.LeftPadY];
+            Inputs.AxisState[AxisFlags.LeftPadX] = (short)(short.MaxValue + input.State.AxesState[NeptuneControllerAxis.LeftPadX]);
+            Inputs.AxisState[AxisFlags.LeftPadY] = (short)(short.MaxValue - input.State.AxesState[NeptuneControllerAxis.LeftPadY]);
 
-            Inputs.AxisState[AxisFlags.RightPadX] = short.MaxValue + input.State.AxesState[NeptuneControllerAxis.RightPadX];
-            Inputs.AxisState[AxisFlags.RightPadY] = short.MaxValue - input.State.AxesState[NeptuneControllerAxis.RightPadY];
+            Inputs.AxisState[AxisFlags.RightPadX] = (short)(short.MaxValue + input.State.AxesState[NeptuneControllerAxis.RightPadX]);
+            Inputs.AxisState[AxisFlags.RightPadY] = (short)(short.MaxValue - input.State.AxesState[NeptuneControllerAxis.RightPadY]);
 
             Inputs.ButtonState[ButtonFlags.LPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch];
             Inputs.ButtonState[ButtonFlags.LPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnLPadPress];

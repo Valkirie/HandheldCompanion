@@ -13,6 +13,8 @@ using System.Threading;
 using System.Windows.Forms;
 using WindowsInput.Events;
 using ButtonState = ControllerCommon.Inputs.ButtonState;
+using KeyboardSimulator = HandheldCompanion.Simulators.KeyboardSimulator;
+using MouseSimulator = HandheldCompanion.Simulators.MouseSimulator;
 
 namespace HandheldCompanion.Managers
 {
@@ -64,7 +66,6 @@ namespace HandheldCompanion.Managers
 
         // Keyboard vars
         private static IKeyboardMouseEvents m_GlobalHook;
-        private static InputSimulator m_InputSimulator;
 
         public static event TriggerRaisedEventHandler TriggerRaised;
         public delegate void TriggerRaisedEventHandler(string listener, InputsChord inputs, bool IsKeyDown, bool IsKeyUp);
@@ -114,7 +115,6 @@ namespace HandheldCompanion.Managers
             InputsChordInputTimer.Tick += (sender, e) => InputsChordInput_Elapsed();
 
             m_GlobalHook = Hook.GlobalEvents();
-            m_InputSimulator = new InputSimulator();
 
             HotkeysManager.HotkeyCreated += TriggerCreated;
 
@@ -206,9 +206,9 @@ namespace HandheldCompanion.Managers
                     LogManager.LogDebug("Released: KeyCodes: {0}, IsKeyDown: {1}", string.Join(',', chords), IsKeyDown);
 
                     if (IsKeyDown)
-                        SendChordDown(chords);
+                        KeyboardSimulator.KeyDown(chords.ToArray());
                     // else if (IsKeyUp)
-                    SendChordUp(chords);
+                    KeyboardSimulator.KeyUp(chords.ToArray());
                 }
             }
             else
@@ -403,48 +403,6 @@ namespace HandheldCompanion.Managers
             return keys;
         }
 
-        public static void KeyPress(VirtualKeyCode key)
-        {
-            m_InputSimulator.Keyboard.KeyPress(key);
-        }
-
-        public static void KeyPress(VirtualKeyCode[] keys)
-        {
-            foreach (VirtualKeyCode key in keys)
-                m_InputSimulator.Keyboard.KeyDown(key);
-
-            foreach (VirtualKeyCode key in keys)
-                m_InputSimulator.Keyboard.KeyUp(key);
-        }
-
-        public static void SendChordDown(List<KeyCode> keys)
-        {
-            foreach (KeyCode key in keys)
-                m_InputSimulator.Keyboard.KeyDown((VirtualKeyCode)key);
-        }
-
-        public static void SendChordUp(List<KeyCode> keys)
-        {
-            foreach (KeyCode key in keys)
-                m_InputSimulator.Keyboard.KeyUp((VirtualKeyCode)key);
-        }
-
-        public static void KeyPress(List<OutputKey> keys)
-        {
-            foreach (OutputKey key in keys)
-            {
-                if (key.IsKeyDown)
-                    m_InputSimulator.Keyboard.KeyDown((VirtualKeyCode)key.KeyValue);
-                else
-                    m_InputSimulator.Keyboard.KeyUp((VirtualKeyCode)key.KeyValue);
-            }
-        }
-
-        public static void KeyStroke(VirtualKeyCode mod, VirtualKeyCode key)
-        {
-            m_InputSimulator.Keyboard.ModifiedKeyStroke(mod, key);
-        }
-
         private static void ReleaseGamepadBuffer()
         {
             // do something
@@ -478,10 +436,10 @@ namespace HandheldCompanion.Managers
                 switch (args.IsKeyDown)
                 {
                     case true:
-                        m_InputSimulator.Keyboard.KeyDown(key);
+                        KeyboardSimulator.KeyDown(key);
                         break;
                     case false:
-                        m_InputSimulator.Keyboard.KeyUp(key);
+                        KeyboardSimulator.KeyUp(key);
                         break;
                 }
             }
@@ -543,7 +501,7 @@ namespace HandheldCompanion.Managers
                     GamepadClearPending = false;
                 }
                 else
-                    currentChord.State.AddRange(State.Buttons);
+                    currentChord.State.AddRange(State);
 
                 currentChord.InputsType = InputsChordType.Click;
 

@@ -1,0 +1,68 @@
+﻿using ControllerCommon.Inputs;
+using HandheldCompanion.Simulators;
+using System;
+using static HandheldCompanion.Simulators.MouseSimulator;
+
+namespace HandheldCompanion.Actions
+{
+    [Serializable]
+    public class MouseActions : IActions
+    {
+        private MouseActionsType Type { get; set; }
+        private bool IsCursorDown { get; set; }
+        private bool IsCursorUp { get; set; }
+        private float Sensivity { get; set; } = 10.0f;
+
+        public MouseActions()
+        {
+            this.ActionType = ActionType.Mouse;
+        }
+
+        public MouseActions(MouseActionsType type) : this()
+        {
+            this.Type = type;
+        }
+
+        public override void Execute(ButtonFlags button, bool value)
+        {
+            switch (value)
+            {
+                case true:
+                    {
+                        if (IsCursorDown)
+                            return;
+
+                        IsCursorDown = true;
+                        IsCursorUp = false;
+                        MouseSimulator.MouseDown(Type);
+                    }
+                    break;
+                case false:
+                    {
+                        if (IsCursorUp)
+                            return;
+
+                        IsCursorUp = true;
+                        IsCursorDown = false;
+                        MouseSimulator.MouseUp(Type);
+                    }
+                    break;
+            }
+        }
+
+        public override void Execute(AxisFlags axis, short value)
+        {
+            switch(Type)
+            {
+                case MouseActionsType.MoveByX:
+                    short x = (short)((float)value / short.MaxValue * Sensivity);
+                    MouseSimulator.MoveBy(x, 0);
+                    break;
+                case MouseActionsType.MoveByY:
+                    short y = (short)((float)value / short.MaxValue * Sensivity);
+                    MouseSimulator.MoveBy(0, -y);
+                    break;
+            }
+        }
+    }
+}

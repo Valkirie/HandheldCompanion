@@ -2,6 +2,7 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Simulators;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
@@ -284,13 +285,13 @@ namespace HandheldCompanion.Managers
                         }).Start();
                         break;
                     case "shortcutDesktop":
-                        InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
+                        KeyboardSimulator.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
                         break;
                     case "shortcutESC":
                         if (fProcess is not null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
                         {
                             ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
-                            InputsManager.KeyPress(VirtualKeyCode.ESCAPE);
+                            KeyboardSimulator.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
@@ -311,10 +312,10 @@ namespace HandheldCompanion.Managers
                         }
                         break;
                     case "shortcutTaskview":
-                        InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.TAB });
+                        KeyboardSimulator.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.TAB });
                         break;
                     case "shortcutTaskManager":
-                        InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
+                        KeyboardSimulator.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
                         break;
                     case "suspendResumeTask":
                         {
@@ -345,7 +346,7 @@ namespace HandheldCompanion.Managers
                         break;
 
                     default:
-                        InputsManager.KeyPress(input.OutputKeys);
+                        KeyboardSimulator.KeyPress(input.OutputKeys.ToArray());
                         break;
                 }
 

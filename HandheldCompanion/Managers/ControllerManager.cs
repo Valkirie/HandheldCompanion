@@ -421,13 +421,14 @@ namespace HandheldCompanion.Managers
             return targetController;
         }
 
-        private static void UpdateInputs(ControllerState Inputs)
+        private static void UpdateInputs(ControllerState controllerState)
         {
             // pass inputs to InputsManager
-            InputsManager.UpdateReport(Inputs.ButtonState);
-            MainWindow.overlayModel.UpdateReport(Inputs);
+            InputsManager.UpdateReport(controllerState.ButtonState);
+            MainWindow.overlayModel.UpdateReport(controllerState);
 
             // todo: pass inputs to (re)mapper
+            controllerState = MappingManager.MapController(controllerState);
 
             // Neptune controller specific scenarios
             if (targetController is not null)
@@ -455,7 +456,7 @@ namespace HandheldCompanion.Managers
                 }
 
             // pass inputs to service
-            PipeClient.SendMessage(new PipeClientInputs(Inputs));
+            PipeClient.SendMessage(new PipeClientInputs(controllerState));
         }
 
         private static void UpdateMovements(ControllerMovements Movements)

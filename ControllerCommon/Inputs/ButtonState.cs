@@ -28,20 +28,12 @@ namespace ControllerCommon.Inputs
 
             set
             {
-                switch(value)
-                {
-                    case true:
-                        State[button] = true;
-                        break;
-                    case false:
-                        State.Remove(button);
-                        break;
-                }
+                State[button] = value;
             }
         }
 
         [JsonIgnore]
-        public IEnumerable<ButtonFlags> Buttons => State.Keys;
+        public IEnumerable<ButtonFlags> Buttons => State.Where(a => a.Value is true).Select(a => a.Key).ToList();
 
         public ButtonState(Dictionary<ButtonFlags, bool> buttonState)
         {
@@ -55,7 +47,7 @@ namespace ControllerCommon.Inputs
 
         public bool IsEmpty()
         {
-            return State.Count() == 0;
+            return Buttons.Count() == 0;
         }
 
         public void Clear()
@@ -63,19 +55,19 @@ namespace ControllerCommon.Inputs
             State.Clear();
         }
 
-        public bool Contains(ButtonState State)
+        public bool Contains(ButtonState buttonState)
         {
-            foreach (var state in State.State)
+            foreach (var state in buttonState.State)
                 if (this[state.Key] != state.Value)
                     return false;
 
             return true;
         }
 
-        public void AddRange(IEnumerable<ButtonFlags> buttons)
+        public void AddRange(ButtonState buttonState)
         {
-            foreach (ButtonFlags button in buttons)
-                this[button] = true;
+            foreach (var state in buttonState.State)
+                this[state.Key] = state.Value;
         }
 
         public override bool Equals(object obj)

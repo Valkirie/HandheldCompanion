@@ -1,45 +1,49 @@
-﻿using System;
+﻿using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace ControllerCommon.Inputs
 {
     [Serializable]
     public class AxisState : ICloneable
     {
-        private Dictionary<AxisFlags, float> _axisState;
+        [JsonInclude]
+        public Dictionary<AxisFlags, short> State = new();
 
-        public float this[AxisFlags axis]
+        public short this[AxisFlags axis]
         {
             get
             {
-                if (!_axisState.ContainsKey(axis))
+                if (!State.ContainsKey(axis))
                 {
-                    return 0.0f;
+                    return 0;
                 }
 
-                return _axisState[axis];
+                return State[axis];
             }
 
             set
             {
-                _axisState[axis] = value;
+                State[axis] = value;
             }
         }
 
-        public IEnumerable<AxisFlags> Axis => _axisState.Keys;
+        [JsonIgnore]
+        public IEnumerable<AxisFlags> Axis => State.Where(a => a.Value != 0).Select(a => a.Key).ToList();
 
-        public AxisState(Dictionary<AxisFlags, float> axisState)
+        public AxisState(Dictionary<AxisFlags, short> axisState)
         {
-            _axisState = axisState;
+            foreach (var state in axisState)
+                this[state.Key] = state.Value;
         }
 
         public AxisState()
         {
-            _axisState = new();
         }
 
         public bool IsEmpty()
@@ -49,31 +53,29 @@ namespace ControllerCommon.Inputs
 
         public void Clear()
         {
-            _axisState.Clear();
+            State.Clear();
         }
 
-        public void Merge(AxisState State)
+        public bool Contains(AxisState axisState)
         {
-            foreach (var state in State._axisState)
-                this[state.Key] = state.Value;
-        }
-
-        public bool Contains(AxisState State)
-        {
-            foreach (var state in State._axisState)
+            foreach (var state in axisState.State)
                 if (this[state.Key] != state.Value)
                     return false;
 
             return true;
         }
 
+        public void AddRange(AxisState axisState)
+        {
+            foreach (var state in axisState.State)
+                this[state.Key] = state.Value;
+        }
+
         public override bool Equals(object obj)
         {
             AxisState axisState = obj as AxisState;
             if (axisState != null)
-            {
-                return EqualsWithValues(_axisState, axisState._axisState);
-            }
+                return EqualsWithValues(State, axisState.State);
 
             return false;
         }
@@ -109,7 +111,7 @@ namespace ControllerCommon.Inputs
 
         public object Clone()
         {
-            throw new NotImplementedException();
+            return new AxisState(State);
         }
     }
 }

@@ -99,14 +99,14 @@ namespace HandheldCompanion.Controllers
                     break;
             }
 
-            Inputs.AxisState[AxisFlags.R2] = State.RotationY * byte.MaxValue / ushort.MaxValue;
-            Inputs.AxisState[AxisFlags.L2] = State.RotationX * byte.MaxValue / ushort.MaxValue;
+            Inputs.AxisState[AxisFlags.R2] = (short)(State.RotationY * byte.MaxValue / ushort.MaxValue);
+            Inputs.AxisState[AxisFlags.L2] = (short)(State.RotationX * byte.MaxValue / ushort.MaxValue);
 
-            Inputs.AxisState[AxisFlags.LeftThumbX] = Math.Clamp(State.X - short.MaxValue, short.MinValue, short.MaxValue);
-            Inputs.AxisState[AxisFlags.LeftThumbY] = Math.Clamp(-State.Y + short.MaxValue, short.MinValue, short.MaxValue);
+            Inputs.AxisState[AxisFlags.LeftThumbX] = (short)(Math.Clamp(State.X - short.MaxValue, short.MinValue, short.MaxValue));
+            Inputs.AxisState[AxisFlags.LeftThumbY] = (short)(Math.Clamp(-State.Y + short.MaxValue, short.MinValue, short.MaxValue));
 
-            Inputs.AxisState[AxisFlags.RightThumbX] = Math.Clamp(State.Z - short.MaxValue, short.MinValue, short.MaxValue);
-            Inputs.AxisState[AxisFlags.RightThumbY] = Math.Clamp(-State.RotationZ + short.MaxValue, short.MinValue, short.MaxValue);
+            Inputs.AxisState[AxisFlags.RightThumbX] = (short)(Math.Clamp(State.Z - short.MaxValue, short.MinValue, short.MaxValue));
+            Inputs.AxisState[AxisFlags.RightThumbY] = (short)(Math.Clamp(-State.RotationZ + short.MaxValue, short.MinValue, short.MaxValue));
 
             base.UpdateInputs();
         }
