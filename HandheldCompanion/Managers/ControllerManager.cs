@@ -307,7 +307,7 @@ namespace HandheldCompanion.Managers
             UserIndex slot = UserIndex.One;
             Controller _controller = new(slot);
 
-            for (slot = UserIndex.One; slot <= UserIndex.Three; slot++)
+            for (slot = UserIndex.One; slot <= UserIndex.Four; slot++)
             {
                 _controller = new(slot);
 
