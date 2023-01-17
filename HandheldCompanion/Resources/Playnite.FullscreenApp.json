@@ -3,5 +3,5 @@
   "path": "Playnite.FullscreenApp.exe",
   "executable": "Playnite.FullscreenApp.exe",
   "isEnabled": true,
-  "whitelisted": true
+  "use_wrapper": true
 }
