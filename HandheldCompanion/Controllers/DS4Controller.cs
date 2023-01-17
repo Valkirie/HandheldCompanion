@@ -40,8 +40,10 @@ namespace HandheldCompanion.Controllers
             }
             catch { }
 
-            if (prevState.GetHashCode() == State.GetHashCode() && prevInjectedButtons.Equals(InjectedButtons))
+            /*
+            if (prevState.Buttons.Equals(State.Buttons) && prevState.PointOfViewControllers.Equals(State.PointOfViewControllers) && prevInjectedButtons.Equals(InjectedButtons))
                 return;
+            */
 
             Inputs.ButtonState = InjectedButtons as ButtonState;
 

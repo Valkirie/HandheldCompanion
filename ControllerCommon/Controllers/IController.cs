@@ -3,6 +3,7 @@ using ControllerCommon.Managers;
 using ModernWpf.Controls;
 using PrecisionTiming;
 using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -66,6 +67,8 @@ namespace ControllerCommon.Controllers
 
             // attribute controller to tag
             ui_border.Tag = this;
+
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
         }
 
         public virtual void UpdateInputs()

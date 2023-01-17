@@ -13,6 +13,7 @@ namespace ControllerCommon.Controllers
         public ButtonState ButtonState = new();
         public AxisState AxisState = new();
 
+        // todo: move me and make me configurable !
         [JsonIgnore]
         public static Dictionary<AxisFlags, short> AxisDeadzones = new()
         {

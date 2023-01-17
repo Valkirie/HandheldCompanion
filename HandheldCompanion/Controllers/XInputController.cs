@@ -13,6 +13,7 @@ namespace HandheldCompanion.Controllers
 {
     public class XInputController : IController
     {
+        #region struct
         [StructLayout(LayoutKind.Explicit)]
         protected struct XInputGamepad
         {
@@ -110,6 +111,7 @@ namespace HandheldCompanion.Controllers
             None = 0,
             Xbox = 1024
         }
+        #endregion
 
         #region imports
         [DllImport("xinput1_4.dll", EntryPoint = "#108")]
@@ -129,7 +131,8 @@ namespace HandheldCompanion.Controllers
 
         private Controller Controller;
         private Gamepad Gamepad;
-        private Gamepad prevGamepad;
+
+        private GamepadButtonFlags prevButtons;
 
         private XInputStateSecret State;
         private XInputStateSecret prevState;
@@ -185,8 +188,10 @@ namespace HandheldCompanion.Controllers
             // update secret state
             XInputGetStateSecret13(UserIndex, out State);
 
-            if (prevGamepad.GetHashCode() == Gamepad.GetHashCode() && State.wButtons == prevState.wButtons && prevInjectedButtons.Equals(InjectedButtons))
+            /*
+            if (prevButtons.Equals(Gamepad.Buttons) && State.wButtons.Equals(prevState.wButtons) && prevInjectedButtons.Equals(InjectedButtons))
                 return;
+            */
 
             Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
 
@@ -236,7 +241,7 @@ namespace HandheldCompanion.Controllers
             Inputs.AxisState[AxisFlags.R2] = Gamepad.RightTrigger;
 
             // update states
-            prevGamepad = Gamepad;
+            prevButtons = Gamepad.Buttons;
             prevState = State;
 
             base.UpdateInputs();
