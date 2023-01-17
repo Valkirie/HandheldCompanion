@@ -13,6 +13,8 @@ namespace ControllerCommon.Inputs
     {
         [JsonInclude]
         public Dictionary<ButtonFlags, bool> State = new();
+        [JsonIgnore]
+        public Dictionary<ButtonFlags, bool> Emulated = new();
 
         public bool this[ButtonFlags button]
         {
@@ -29,6 +31,7 @@ namespace ControllerCommon.Inputs
             set
             {
                 State[button] = value;
+                Emulated[button] = false;
             }
         }
 

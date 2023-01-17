@@ -18,6 +18,11 @@ namespace HandheldCompanion.Actions
             this.ActionType = ActionType.Axis;
         }
 
+        public AxisActions(AxisFlags axis) : this()
+        {
+            this.Axis = axis;
+        }
+
         public AxisActions(AxisFlags axis, short value) : this()
         {
             this.Axis = axis;

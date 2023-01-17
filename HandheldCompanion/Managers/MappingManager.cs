@@ -4,9 +4,7 @@ using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using static HandheldCompanion.Simulators.MouseSimulator;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace HandheldCompanion.Managers
 {
@@ -36,6 +34,9 @@ namespace HandheldCompanion.Managers
 
             AxisMapping.Add(AxisFlags.RightThumbX, new MouseActions(MouseActionsType.MoveByX));
             AxisMapping.Add(AxisFlags.RightThumbY, new MouseActions(MouseActionsType.MoveByY));
+
+            AxisMapping.Add(AxisFlags.LeftThumbX, new AxisActions(AxisFlags.RightThumbX));
+            AxisMapping.Add(AxisFlags.LeftThumbY, new AxisActions(AxisFlags.RightThumbY));
         }
 
         public static void SetAction(ButtonFlags button, IActions action)
@@ -66,20 +67,21 @@ namespace HandheldCompanion.Managers
                 if (!ButtonMapping.ContainsKey(button))
                     continue;
 
-                // consume button ??
-                // outputState.ButtonState[button] = false;
+                // consume button
+                if (!outputState.ButtonState.Emulated[button])
+                    outputState.ButtonState[button] = false;
 
-                // pull action
-                IActions action = ButtonMapping[button];
+                    // pull action
+                    IActions action = ButtonMapping[button];
 
                 switch(action.ActionType)
                 {
                     // button to button
                     case ActionType.Button:
                         {
-                            // inject button
                             ButtonActions bAction = action as ButtonActions;
                             outputState.ButtonState[bAction.Button] = status;
+                            outputState.ButtonState.Emulated[bAction.Button] = true;
                         }
                         break;
 
@@ -89,16 +91,15 @@ namespace HandheldCompanion.Managers
                             if (!status)
                                 continue;
 
-                            // inject axis
                             AxisActions aAction = action as AxisActions;
                             outputState.AxisState[aAction.Axis] = aAction.Value;
+                            outputState.AxisState.Emulated[aAction.Axis] = true;
                         }
                         break;
                     
                     // button to keyboard key
                     case ActionType.Keyboard:
                         {
-                            // inject keyboard key
                             KeyboardActions kAction = action as KeyboardActions;
                             kAction.Execute(button, status);
                         }
@@ -107,7 +108,6 @@ namespace HandheldCompanion.Managers
                     // button to mouse click
                     case ActionType.Mouse:
                         {
-                            // inject mouse click
                             MouseActions mAction = action as MouseActions;
                             mAction.Execute(button, status);
                         }
@@ -119,17 +119,15 @@ namespace HandheldCompanion.Managers
             {
                 AxisFlags axis = axisState.Key;
                 int value = axisState.Value;
+                bool below_deadzone = Math.Abs(value) <= ControllerState.AxisDeadzones[axis];
 
                 // skip if not mapped
                 if (!AxisMapping.ContainsKey(axis))
                     continue;
 
-                // skip if below deadzone
-                if (Math.Abs(value) < ControllerState.AxisDeadzones[axis])
-                    continue;
-
                 // consume axis
-                outputState.AxisState[axis] = 0;
+                if (!outputState.AxisState.Emulated[axis])
+                    outputState.AxisState[axis] = 0;
 
                 // pull action
                 IActions action = AxisMapping[axis];
@@ -139,25 +137,38 @@ namespace HandheldCompanion.Managers
                     // axis to button
                     case ActionType.Button:
                         {
+                            if (below_deadzone)
+                                break;
+
+                            // do something
                         }
                         break;
 
                     // axis to axis
                     case ActionType.Axis:
                         {
+                            AxisActions aAction = action as AxisActions;
+                            outputState.AxisState[aAction.Axis] = (short)value;
+                            outputState.AxisState.Emulated[aAction.Axis] = true;
                         }
                         break;
 
                     // axis to keyboard key
                     case ActionType.Keyboard:
                         {
+                            if (below_deadzone)
+                                break;
+
+                            // do something
                         }
                         break;
 
                     // axis to mouse movements
                     case ActionType.Mouse:
                         {
-                            // inject mouse movements
+                            if (below_deadzone)
+                                break;
+
                             MouseActions mAction = action as MouseActions;
                             mAction.Execute(axis, (short)value);
                         }
