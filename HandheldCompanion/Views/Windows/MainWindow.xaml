@@ -88,7 +88,7 @@
         <common:TouchScrollViewer x:Name="scrollViewer" PanningMode="VerticalOnly">
             <ui:Frame
                     Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-                    Name="ContentFrame" MaxWidth="1100"
+                    Name="ContentFrame"
                     HorizontalAlignment="Left"/>
         </common:TouchScrollViewer>
     </ui:NavigationView>

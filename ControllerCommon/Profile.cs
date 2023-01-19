@@ -1,11 +1,9 @@
-using ControllerCommon.Controllers;
+using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text.Json.Serialization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ControllerCommon
 {
@@ -60,6 +58,9 @@ namespace ControllerCommon
         public string Executable { get; set; } = string.Empty;
         public bool Enabled { get; set; }
         public bool Default { get; set; }
+
+        public Dictionary<ButtonFlags, IActions> ButtonMapping { get; set; } = new();
+        public Dictionary<AxisFlags, IActions> AxisMapping { get; set; } = new();
 
         [JsonIgnore]
         public bool Running { get; set; }

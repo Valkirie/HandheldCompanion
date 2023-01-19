@@ -3,16 +3,13 @@ using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using Force.Crc32;
 using HandheldCompanion.Views;
+using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Resources;
 using System.Text.Json;
 using static ControllerCommon.Utils.ProcessUtils;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HandheldCompanion.Managers
 {
@@ -84,7 +81,8 @@ namespace HandheldCompanion.Managers
                 Profile defaultProfile = new()
                 {
                     Name = DefaultName,
-                    Default = true
+                    Default = true,
+                    Enabled = true,
                 };
 
                 UpdateOrCreateProfile(defaultProfile, ProfileUpdateSource.Creation);
@@ -262,7 +260,10 @@ namespace HandheldCompanion.Managers
             try
             {
                 string outputraw = File.ReadAllText(fileName);
-                profile = JsonSerializer.Deserialize<Profile>(outputraw);
+                profile = JsonConvert.DeserializeObject<Profile>(outputraw, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
                 profile.ExecutablePath = profile.Path;
             }
             catch (Exception ex)
@@ -317,11 +318,12 @@ namespace HandheldCompanion.Managers
 
         public static void SerializeProfile(Profile profile)
         {
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            string jsonString = JsonSerializer.Serialize(profile, options);
+            string jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
 
             string settingsPath = Path.Combine(InstallPath, profile.GetFileName());
-
             File.WriteAllText(settingsPath, jsonString);
         }
 

@@ -1317,333 +1317,333 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Additional settings.
         /// </summary>
-        public static string ProfileSettingsMode0_AdditionalSettings {
+        public static string SettingsMode0_AdditionalSettings {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_AdditionalSettings", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_AdditionalSettings", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Aiming down sights motion multiplier.
         /// </summary>
-        public static string ProfileSettingsMode0_AimingDownSights {
+        public static string SettingsMode0_AimingDownSights {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_AimingDownSights", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_AimingDownSights", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Activation button.
         /// </summary>
-        public static string ProfileSettingsMode0_AimingDownSightsActivation {
+        public static string SettingsMode0_AimingDownSightsActivation {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_AimingDownSightsActivation", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_AimingDownSightsActivation", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to An additional motion sensitivity multiplier when aiming down sights or scope through the use of the configured activation button.
         /// </summary>
-        public static string ProfileSettingsMode0_AimingDownSightsDesc {
+        public static string SettingsMode0_AimingDownSightsDesc {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_AimingDownSightsDesc", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_AimingDownSightsDesc", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Multiplier value.
         /// </summary>
-        public static string ProfileSettingsMode0_AimingDownSightsMultiplier {
+        public static string SettingsMode0_AimingDownSightsMultiplier {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_AimingDownSightsMultiplier", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_AimingDownSightsMultiplier", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Camera options.
         /// </summary>
-        public static string ProfileSettingsMode0_CameraOptions {
+        public static string SettingsMode0_CameraOptions {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_CameraOptions", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_CameraOptions", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Custom response curve.
         /// </summary>
-        public static string ProfileSettingsMode0_CustomResponseCurve {
+        public static string SettingsMode0_CustomResponseCurve {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponseCurve", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_CustomResponseCurve", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Output sent to game.
         /// </summary>
-        public static string ProfileSettingsMode0_CustomResponseCurveGameOutput {
+        public static string SettingsMode0_CustomResponseCurveGameOutput {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponseCurveGameOutput", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_CustomResponseCurveGameOutput", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Movement intensity.
         /// </summary>
-        public static string ProfileSettingsMode0_CustomResponseIntensity {
+        public static string SettingsMode0_CustomResponseIntensity {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponseIntensity", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_CustomResponseIntensity", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Agressive.
         /// </summary>
-        public static string ProfileSettingsMode0_CustomResponsePresetAgressive {
+        public static string SettingsMode0_CustomResponsePresetAgressive {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponsePresetAgressive", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_CustomResponsePresetAgressive", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Default.
         /// </summary>
-        public static string ProfileSettingsMode0_CustomResponsePresetDefault {
+        public static string SettingsMode0_CustomResponsePresetDefault {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponsePresetDefault", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_CustomResponsePresetDefault", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Preset options.
         /// </summary>
-        public static string ProfileSettingsMode0_CustomResponsePresetOptions {
+        public static string SettingsMode0_CustomResponsePresetOptions {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponsePresetOptions", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_CustomResponsePresetOptions", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Precise.
         /// </summary>
-        public static string ProfileSettingsMode0_CustomResponsePresetPrecise {
+        public static string SettingsMode0_CustomResponsePresetPrecise {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_CustomResponsePresetPrecise", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_CustomResponsePresetPrecise", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Flick duration.
         /// </summary>
-        public static string ProfileSettingsMode0_FlickDuration {
+        public static string SettingsMode0_FlickDuration {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_FlickDuration", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_FlickDuration", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Change the flick duration, calibrate to 180 degree turn, in milliseconds.
         /// </summary>
-        public static string ProfileSettingsMode0_FlickDurationDesc {
+        public static string SettingsMode0_FlickDurationDesc {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_FlickDurationDesc", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_FlickDurationDesc", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Flick stick (experimental).
         /// </summary>
-        public static string ProfileSettingsMode0_FlickStick {
+        public static string SettingsMode0_FlickStick {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_FlickStick", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_FlickStick", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Point camera in direction of (right) joystick flick, rotate camera purely in horizontal plane by rotating.
         /// </summary>
-        public static string ProfileSettingsMode0_FlickStickDesc {
+        public static string SettingsMode0_FlickStickDesc {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_FlickStickDesc", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_FlickStickDesc", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Enable flick stick.
         /// </summary>
-        public static string ProfileSettingsMode0_FlickStickEnable {
+        public static string SettingsMode0_FlickStickEnable {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_FlickStickEnable", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_FlickStickEnable", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Sensitivity.
         /// </summary>
-        public static string ProfileSettingsMode0_Sensitivity {
+        public static string SettingsMode0_Sensitivity {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_Sensitivity", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_Sensitivity", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Change the motion sensitivity of the horizontal and vertical axis.
         /// </summary>
-        public static string ProfileSettingsMode0_SensitivityDesc {
+        public static string SettingsMode0_SensitivityDesc {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_SensitivityDesc", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_SensitivityDesc", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Sensitivity X.
         /// </summary>
-        public static string ProfileSettingsMode0_SensitivityX {
+        public static string SettingsMode0_SensitivityX {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_SensitivityX", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_SensitivityX", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Change the motion sensitivity of the horizontal axis.
         /// </summary>
-        public static string ProfileSettingsMode0_SensitivityXDesc {
+        public static string SettingsMode0_SensitivityXDesc {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_SensitivityXDesc", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_SensitivityXDesc", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Sensitivity Y.
         /// </summary>
-        public static string ProfileSettingsMode0_SensitivityY {
+        public static string SettingsMode0_SensitivityY {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_SensitivityY", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_SensitivityY", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Change the motion sensitivity of the vertical axis.
         /// </summary>
-        public static string ProfileSettingsMode0_SensitivityYDesc {
+        public static string SettingsMode0_SensitivityYDesc {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_SensitivityYDesc", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_SensitivityYDesc", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Stick sensitivtity.
         /// </summary>
-        public static string ProfileSettingsMode0_StickSensitivtity {
+        public static string SettingsMode0_StickSensitivtity {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_StickSensitivtity", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_StickSensitivtity", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Change the rotation rate.
         /// </summary>
-        public static string ProfileSettingsMode0_StickSensitivtityDesc {
+        public static string SettingsMode0_StickSensitivtityDesc {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode0_StickSensitivtityDesc", resourceCulture);
+                return ResourceManager.GetString("SettingsMode0_StickSensitivtityDesc", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Additional settings.
         /// </summary>
-        public static string ProfileSettingsMode1_AdditionalSettings {
+        public static string SettingsMode1_AdditionalSettings {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode1_AdditionalSettings", resourceCulture);
+                return ResourceManager.GetString("SettingsMode1_AdditionalSettings", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Deadzone.
         /// </summary>
-        public static string ProfileSettingsMode1_Deadzone {
+        public static string SettingsMode1_Deadzone {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode1_Deadzone", resourceCulture);
+                return ResourceManager.GetString("SettingsMode1_Deadzone", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Change the steering deadzone, in degree. Improves steering straight.
         /// </summary>
-        public static string ProfileSettingsMode1_DeadzoneDesc {
+        public static string SettingsMode1_DeadzoneDesc {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode1_DeadzoneDesc", resourceCulture);
+                return ResourceManager.GetString("SettingsMode1_DeadzoneDesc", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Joystick game Input.
         /// </summary>
-        public static string ProfileSettingsMode1_JoystickGameInput {
+        public static string SettingsMode1_JoystickGameInput {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode1_JoystickGameInput", resourceCulture);
+                return ResourceManager.GetString("SettingsMode1_JoystickGameInput", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Joystick steering.
         /// </summary>
-        public static string ProfileSettingsMode1_JoystickSteering {
+        public static string SettingsMode1_JoystickSteering {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode1_JoystickSteering", resourceCulture);
+                return ResourceManager.GetString("SettingsMode1_JoystickSteering", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Joystick steering options.
         /// </summary>
-        public static string ProfileSettingsMode1_JoystickSteeringOptions {
+        public static string SettingsMode1_JoystickSteeringOptions {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode1_JoystickSteeringOptions", resourceCulture);
+                return ResourceManager.GetString("SettingsMode1_JoystickSteeringOptions", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Joystick steering preview.
         /// </summary>
-        public static string ProfileSettingsMode1_JoystickSteeringPreview {
+        public static string SettingsMode1_JoystickSteeringPreview {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode1_JoystickSteeringPreview", resourceCulture);
+                return ResourceManager.GetString("SettingsMode1_JoystickSteeringPreview", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Max steering angle.
         /// </summary>
-        public static string ProfileSettingsMode1_MaxSteeringAngle {
+        public static string SettingsMode1_MaxSteeringAngle {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode1_MaxSteeringAngle", resourceCulture);
+                return ResourceManager.GetString("SettingsMode1_MaxSteeringAngle", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Change the maximum steering angle value, in degree.
         /// </summary>
-        public static string ProfileSettingsMode1_MaxSteeringAngleDesc {
+        public static string SettingsMode1_MaxSteeringAngleDesc {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode1_MaxSteeringAngleDesc", resourceCulture);
+                return ResourceManager.GetString("SettingsMode1_MaxSteeringAngleDesc", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Steering linearity.
         /// </summary>
-        public static string ProfileSettingsMode1_SteeringLinearity {
+        public static string SettingsMode1_SteeringLinearity {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode1_SteeringLinearity", resourceCulture);
+                return ResourceManager.GetString("SettingsMode1_SteeringLinearity", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Mapping between input and steering. Lower values provide more accuracy near full lock but less accuracy near the center. Higher values provide more accuracy near the center but less accuracy near full lock. 1.0 is a linear mapping.
         /// </summary>
-        public static string ProfileSettingsMode1_SteeringLinearityDesc {
+        public static string SettingsMode1_SteeringLinearityDesc {
             get {
-                return ResourceManager.GetString("ProfileSettingsMode1_SteeringLinearityDesc", resourceCulture);
+                return ResourceManager.GetString("SettingsMode1_SteeringLinearityDesc", resourceCulture);
             }
         }
         

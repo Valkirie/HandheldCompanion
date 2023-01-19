@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ControllerCommon.Inputs
 {
+    [Serializable]
     public enum AxisFlags : byte
     {
         None = 0,

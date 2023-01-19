@@ -1,18 +1,13 @@
-﻿using SharpDX.XInput;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace ControllerCommon.Inputs
 {
     [Serializable]
     public class AxisState : ICloneable
     {
-        [JsonInclude]
         public Dictionary<AxisFlags, short> State = new();
         [JsonIgnore]
         public Dictionary<AxisFlags, bool> Emulated = new();
@@ -83,14 +78,14 @@ namespace ControllerCommon.Inputs
             return false;
         }
 
-        public static bool EqualsWithValues<TKey, TValue>(Dictionary<TKey, TValue> obj1, Dictionary<TKey, TValue> obj2)
+        public static bool EqualsWithValues(Dictionary<AxisFlags, short> obj1, Dictionary<AxisFlags, short> obj2)
         {
             bool result = false;
             if (obj1.Count == obj2.Count)
             {
                 result = true;
                 {
-                    foreach (KeyValuePair<TKey, TValue> item in obj1)
+                    foreach (KeyValuePair<AxisFlags, short> item in obj1)
                     {
                         if (obj2.TryGetValue(item.Key, out var value))
                         {

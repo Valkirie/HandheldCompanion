@@ -1,15 +1,14 @@
-﻿using ControllerCommon.Controllers;
-using ControllerCommon.Managers;
+﻿using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Simulators;
 using ModernWpf.Controls;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.Json;
 using System.Threading;
 using System.Windows;
 using static HandheldCompanion.Managers.InputsHotkey;
@@ -224,7 +223,7 @@ namespace HandheldCompanion.Managers
             try
             {
                 string outputraw = File.ReadAllText(fileName);
-                hotkey = JsonSerializer.Deserialize<Hotkey>(outputraw);
+                hotkey = JsonConvert.DeserializeObject<Hotkey>(outputraw);
             }
             catch (Exception ex)
             {
@@ -241,8 +240,7 @@ namespace HandheldCompanion.Managers
             string settingsPath = Path.Combine(InstallPath, $"{listener}.json");
             if (!File.Exists(settingsPath) || overwrite)
             {
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                string jsonString = JsonSerializer.Serialize(hotkey, options);
+                string jsonString = JsonConvert.SerializeObject(hotkey, Formatting.Indented);
                 File.WriteAllText(settingsPath, jsonString);
             }
 

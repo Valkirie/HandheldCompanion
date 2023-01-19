@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Devices;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using FontFamily = System.Windows.Media.FontFamily;

@@ -2,6 +2,7 @@
 
 namespace ControllerCommon.Inputs
 {
+    [Serializable]
     public enum ButtonFlags : byte
     {
         None = 0,

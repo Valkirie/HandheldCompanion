@@ -1,17 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace ControllerCommon.Inputs
 {
     [Serializable]
     public class ButtonState : ICloneable
     {
-        [JsonInclude]
         public Dictionary<ButtonFlags, bool> State = new();
         [JsonIgnore]
         public Dictionary<ButtonFlags, bool> Emulated = new();

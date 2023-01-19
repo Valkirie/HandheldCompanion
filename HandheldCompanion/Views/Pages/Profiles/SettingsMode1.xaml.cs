@@ -5,19 +5,19 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace HandheldCompanion.Views.Pages
+namespace HandheldCompanion.Views.Pages.Profiles
 {
     /// <summary>
-    /// Interaction logic for ProfileSettingsMode1.xaml
+    /// Interaction logic for SettingsMode1.xaml
     /// </summary>
-    public partial class ProfileSettingsMode1 : Page
+    public partial class SettingsMode1 : Page
     {
         private Profile profileCurrent;
 
         private int SteeringArraySize = 30;
         private ChartValues<ObservablePoint> SteeringLinearityPoints;
 
-        public ProfileSettingsMode1()
+        public SettingsMode1()
         {
             InitializeComponent();
 
@@ -31,7 +31,7 @@ namespace HandheldCompanion.Views.Pages
             lvLineSeriesDefault.Values = new ChartValues<double>() { 0, 1 };
         }
 
-        public ProfileSettingsMode1(string Tag, Profile profileCurrent) : this()
+        public SettingsMode1(string Tag, Profile profileCurrent) : this()
         {
             this.Tag = Tag;
 

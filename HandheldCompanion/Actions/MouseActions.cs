@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Inputs;
+﻿using ControllerCommon.Actions;
+using ControllerCommon.Inputs;
 using HandheldCompanion.Simulators;
 using System;
 using static HandheldCompanion.Simulators.MouseSimulator;
@@ -8,9 +9,9 @@ namespace HandheldCompanion.Actions
     [Serializable]
     public class MouseActions : IActions
     {
-        private MouseActionsType Type { get; set; }
-        private bool IsCursorDown { get; set; }
-        private bool IsCursorUp { get; set; }
+        public MouseActionsType Type { get; set; }
+        private bool IsCursorDown { get; set; } = false;
+        private bool IsCursorUp { get; set; } = true;
         private float Sensivity { get; set; } = 10.0f;
 
         public MouseActions()
@@ -29,7 +30,7 @@ namespace HandheldCompanion.Actions
             {
                 case true:
                     {
-                        if (IsCursorDown)
+                        if (IsCursorDown || !IsCursorUp)
                             return;
 
                         IsCursorDown = true;
@@ -39,7 +40,7 @@ namespace HandheldCompanion.Actions
                     break;
                 case false:
                     {
-                        if (IsCursorUp)
+                        if (IsCursorUp || !IsCursorDown)
                             return;
 
                         IsCursorUp = true;

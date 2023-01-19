@@ -4,6 +4,7 @@ using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Views.Pages.Profiles;
 using Microsoft.Win32;
 using ModernWpf.Controls;
 using System;
@@ -24,8 +25,9 @@ namespace HandheldCompanion.Views.Pages
         private Profile currentProfile;
         private Hotkey ProfilesPageHotkey = new(60);
 
-        ProfileSettingsMode0 page0 = new ProfileSettingsMode0("ProfileSettingsMode0");
-        ProfileSettingsMode0 page1 = new ProfileSettingsMode0("ProfileSettingsMode1");
+        SettingsMode0 page0 = new SettingsMode0("SettingsMode0");
+        SettingsMode0 page1 = new SettingsMode0("SettingsMode1");
+        ControllerSettings settings = new ControllerSettings("ControllerSettings");
 
         public ProfilesPage()
         {
@@ -706,6 +708,16 @@ namespace HandheldCompanion.Views.Pages
                     currentProfile.MotionTrigger = inputs.State.Clone() as ButtonState;
                     break;
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.NavView_Navigate(settings);
         }
     }
 }

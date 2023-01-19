@@ -1,49 +1,63 @@
-﻿using ControllerCommon.Controllers;
-using ControllerCommon.Utils;
-using ModernWpf.Controls;
+﻿using ModernWpf.Controls;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using static HandheldCompanion.Managers.InputsManager;
-using static System.Net.Mime.MediaTypeNames;
 using Application = System.Windows.Application;
 
 namespace HandheldCompanion.Managers
 {
     public class Hotkey
     {
-        // not serialized
+        [JsonIgnore]
         public InputsHotkey inputsHotkey = new();
 
-        // serialized
-        public ushort hotkeyId { get; set; }
-        public InputsChord inputsChord { get; set; } = new();
-        public bool IsPinned { get; set; }
-        public string Name { get; set; }
+        public ushort hotkeyId;
+        public InputsChord inputsChord = new();
+        public bool IsPinned;
+        public string Name;
 
         // HotkeysPage UI
+        [JsonIgnore]
         public Border mainBorder;
+        [JsonIgnore]
         public Grid mainGrid = new();
+        [JsonIgnore]
         public DockPanel mainPanel = new();
+        [JsonIgnore]
         public FontIcon currentIcon;
+        [JsonIgnore]
         public SimpleStackPanel contentPanel;
 
+        [JsonIgnore]
         public TextBlock contentName;
+        [JsonIgnore]
         public TextBox customName;
+        [JsonIgnore]
         public TextBlock contentDesc;
 
+        [JsonIgnore]
         public SimpleStackPanel buttonPanel;
+        [JsonIgnore]
         public Button inputButton;
+        [JsonIgnore]
         public Button outputButton;
+        [JsonIgnore]
         public Button eraseButton;
+        [JsonIgnore]
         public Button pinButton;
 
         // QuickSettingsPage UI
+        [JsonIgnore]
         public SimpleStackPanel quickPanel;
+        [JsonIgnore]
         public Button quickButton;
+        [JsonIgnore]
         public FontIcon quickIcon;
+        [JsonIgnore]
         public TextBlock quickName;
 
         public event UpdatedEventHandler Updated;

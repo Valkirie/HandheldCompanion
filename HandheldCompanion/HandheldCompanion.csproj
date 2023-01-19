@@ -2173,6 +2173,7 @@
 
   <ItemGroup>
     <Folder Include="Managers\HWiNFO\" />
+    <Folder Include="Views\Pages\Profiles\Controller\" />
   </ItemGroup>
 
 </Project>

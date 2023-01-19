@@ -265,8 +265,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_Sensitivity}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.ProfileSettingsMode0_SensitivityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_Sensitivity}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_SensitivityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
                                 </StackPanel>
                             </Grid>
 

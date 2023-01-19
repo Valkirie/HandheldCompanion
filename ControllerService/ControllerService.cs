@@ -303,10 +303,10 @@ namespace ControllerService
 
                         switch (navigation.Tag)
                         {
-                            case "ProfileSettingsMode0":
+                            case "SettingsMode0":
                                 // do something
                                 break;
-                            case "ProfileSettingsMode1":
+                            case "SettingsMode1":
                                 // do something
                                 break;
                             default:

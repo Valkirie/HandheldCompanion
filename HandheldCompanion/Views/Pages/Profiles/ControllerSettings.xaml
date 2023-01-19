@@ -1,0 +1,65 @@
+<Page x:Class="HandheldCompanion.Views.Pages.Profiles.ControllerSettings"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:local="clr-namespace:HandheldCompanion"
+      xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
+      xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      mc:Ignorable="d" 
+      d:DesignHeight="1000" d:DesignWidth="1000"
+      Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
+      Loaded="Page_Loaded">
+
+    <ui:NavigationView
+        Name="navView" PaneDisplayMode="Top"
+        CompactPaneLength="160"
+        OpenPaneLength="160"
+        Margin="20"
+        IsPaneToggleButtonVisible="False"
+        IsBackButtonVisible="Collapsed"
+        SelectionFollowsFocus="Enabled"
+        ShoulderNavigationEnabled="WhenSelectionFollowsFocus"
+        IsSettingsVisible="False">
+
+        <ui:NavigationView.MenuItems>
+            <ui:NavigationViewItem Name="navButtons" Content="Buttons" Tag="ControllerPageButtons">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF093;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Name="navDpad" Content="Dpad" Tag="ControllerPageDpad">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10E;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Name="navTriggers" Content="Triggers" Tag="ControllerPageTriggers">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10A;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Name="navJoysticks" Content="Joysticks" Tag="ControllerPageJoysticks">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF108;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Name="navGyro" Content="Gyro" Tag="ControllerPageGyro">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+        </ui:NavigationView.MenuItems>
+
+        <common:TouchScrollViewer x:Name="scrollViewer" PanningMode="VerticalOnly">
+            <ui:Frame
+                    Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
+                    Name="ContentFrame" MaxWidth="1100"
+                    HorizontalAlignment="Left"/>
+        </common:TouchScrollViewer>
+    </ui:NavigationView>
+</Page>

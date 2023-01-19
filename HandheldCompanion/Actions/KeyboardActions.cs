@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Inputs;
+﻿using ControllerCommon.Actions;
+using ControllerCommon.Inputs;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Simulators;
 using System;
@@ -8,9 +9,9 @@ namespace HandheldCompanion.Actions
     [Serializable]
     public class KeyboardActions : IActions
     {
-        public VirtualKeyCode Key { get; }
-        private bool IsKeyDown { get; set; }
-        private bool IsKeyUp { get; set; }
+        public VirtualKeyCode Key { get; set; }
+        private bool IsKeyDown { get; set; } = false;
+        private bool IsKeyUp { get; set; } = true;
 
         public KeyboardActions()
         {
@@ -22,13 +23,13 @@ namespace HandheldCompanion.Actions
             this.Key = key;
         }
 
-        public override void Execute(object sender, bool value)
+        public override void Execute(ButtonFlags button, bool value)
         {
             switch (value)
             {
                 case true:
                     {
-                        if (IsKeyDown)
+                        if (IsKeyDown || !IsKeyUp)
                             return;
 
                         IsKeyDown = true;
@@ -38,7 +39,7 @@ namespace HandheldCompanion.Actions
                     break;
                 case false:
                     {
-                        if (IsKeyUp)
+                        if (IsKeyUp || !IsKeyDown)
                             return;
 
                         IsKeyUp = true;
