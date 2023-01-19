@@ -26,5 +26,11 @@ namespace HandheldCompanion.Actions
 
         public virtual void Execute(AxisFlags axis, short value)
         { }
+
+        public virtual void Execute(object sender, bool value)
+        { }
+
+        public virtual void Execute(object sender, short value)
+        { }
     }
 }

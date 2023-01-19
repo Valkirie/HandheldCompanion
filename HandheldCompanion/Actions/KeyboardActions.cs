@@ -22,7 +22,7 @@ namespace HandheldCompanion.Actions
             this.Key = key;
         }
 
-        public override void Execute(ButtonFlags button, bool value)
+        public override void Execute(object sender, bool value)
         {
             switch (value)
             {

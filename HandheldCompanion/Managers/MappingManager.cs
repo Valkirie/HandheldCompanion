@@ -5,6 +5,7 @@ using HandheldCompanion.Actions;
 using System;
 using System.Collections.Generic;
 using static HandheldCompanion.Simulators.MouseSimulator;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace HandheldCompanion.Managers
 {
@@ -140,7 +141,9 @@ namespace HandheldCompanion.Managers
                             if (below_deadzone)
                                 break;
 
-                            // do something
+                            ButtonActions bAction = action as ButtonActions;
+                            outputState.ButtonState[bAction.Button] = !below_deadzone;
+                            outputState.ButtonState.Emulated[bAction.Button] = true;
                         }
                         break;
 
@@ -159,7 +162,8 @@ namespace HandheldCompanion.Managers
                             if (below_deadzone)
                                 break;
 
-                            // do something
+                            KeyboardActions kAction = action as KeyboardActions;
+                            kAction.Execute(axis, !below_deadzone);
                         }
                         break;
 
