@@ -421,6 +421,9 @@ namespace HandheldCompanion.Managers
                     case ControllerType.XInput:
                         inputText.Text = string.Join("", inputsChord.State.Buttons.Select(XInputController.GetGlyph));
                         break;
+                    case ControllerType.DS4:
+                        inputText.Text = string.Join("", inputsChord.State.Buttons.Select(DS4Controller.GetGlyph));
+                        break;
                     default:
                         inputText.Text = string.Join("", inputsChord.State.Buttons.Select(DInputController.GetGlyph));
                         break;

@@ -12,8 +12,6 @@ namespace HandheldCompanion.Controllers
 
         public DInputController(Joystick joystick, PnPDetails details)
         {
-            this.ControllerType = ControllerType.DInput;
-
             this.joystick = joystick;
             UserIndex = joystick.Properties.JoystickId;
 
@@ -22,9 +20,6 @@ namespace HandheldCompanion.Controllers
 
             // Set BufferSize in order to use buffered data.
             joystick.Properties.BufferSize = 128;
-
-            // Acquire the joystick
-            joystick.Acquire();
 
             // ui
             DrawControls();
@@ -53,12 +48,14 @@ namespace HandheldCompanion.Controllers
 
         public override void Plug()
         {
+            joystick.Acquire();
+
             base.Plug();
         }
 
         public override void Unplug()
         {
-            // Acquire the joystick
+            // Unacquire the joystick
             joystick.Unacquire();
 
             base.Unplug();

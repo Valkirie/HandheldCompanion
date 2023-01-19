@@ -35,19 +35,19 @@ namespace ControllerCommon.Managers
 
         #region events
         public static event XInputDeviceArrivedEventHandler XUsbDeviceArrived;
-        public delegate void XInputDeviceArrivedEventHandler(PnPDetails device);
+        public delegate void XInputDeviceArrivedEventHandler(PnPDetails device, DeviceEventArgs obj);
         public static event XInputDeviceRemovedEventHandler XUsbDeviceRemoved;
-        public delegate void XInputDeviceRemovedEventHandler(PnPDetails device);
+        public delegate void XInputDeviceRemovedEventHandler(PnPDetails device, DeviceEventArgs obj);
 
         public static event GenericDeviceArrivedEventHandler UsbDeviceArrived;
-        public delegate void GenericDeviceArrivedEventHandler(PnPDevice device);
+        public delegate void GenericDeviceArrivedEventHandler(PnPDevice device, DeviceEventArgs obj);
         public static event GenericDeviceRemovedEventHandler UsbDeviceRemoved;
-        public delegate void GenericDeviceRemovedEventHandler(PnPDevice device);
+        public delegate void GenericDeviceRemovedEventHandler(PnPDevice device, DeviceEventArgs obj);
 
         public static event DInputDeviceArrivedEventHandler HidDeviceArrived;
-        public delegate void DInputDeviceArrivedEventHandler(PnPDetails device);
+        public delegate void DInputDeviceArrivedEventHandler(PnPDetails device, DeviceEventArgs obj);
         public static event DInputDeviceRemovedEventHandler HidDeviceRemoved;
-        public delegate void DInputDeviceRemovedEventHandler(PnPDetails device);
+        public delegate void DInputDeviceRemovedEventHandler(PnPDetails device, DeviceEventArgs obj);
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
@@ -368,7 +368,7 @@ namespace ControllerCommon.Managers
             return PnPDevices[SymLink];
         }
 
-        private static string PathToInstanceId(string SymLink, string InterfaceGuid)
+        public static string PathToInstanceId(string SymLink, string InterfaceGuid)
         {
             string output = SymLink.ToUpper().Replace(InterfaceGuid, "", StringComparison.InvariantCultureIgnoreCase);
             output = output.Replace("#", @"\");
@@ -391,7 +391,7 @@ namespace ControllerCommon.Managers
 
             // RefreshHID();
             LogManager.LogDebug("XUsbDevice removed: {0}", deviceEx.Name);
-            XUsbDeviceRemoved?.Invoke(deviceEx);
+            XUsbDeviceRemoved?.Invoke(deviceEx, obj);
         }
 
         private async static void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
@@ -413,7 +413,7 @@ namespace ControllerCommon.Managers
                     deviceEx.isXInput = true;
 
                     LogManager.LogDebug("XUsbDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
-                    XUsbDeviceArrived?.Invoke(deviceEx);                    
+                    XUsbDeviceArrived?.Invoke(deviceEx, obj);                    
                 }
             }
             catch { }
@@ -435,7 +435,7 @@ namespace ControllerCommon.Managers
 
                 // RefreshHID();
                 LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
-                HidDeviceRemoved?.Invoke(deviceEx);
+                HidDeviceRemoved?.Invoke(deviceEx, obj);
             }
             catch { }
         }
@@ -455,7 +455,7 @@ namespace ControllerCommon.Managers
             if (deviceEx is not null && deviceEx.isGaming && !deviceEx.isXInput)
             {
                 LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
-                HidDeviceArrived?.Invoke(deviceEx);
+                HidDeviceArrived?.Invoke(deviceEx, obj);
             }
         }
 
@@ -468,7 +468,7 @@ namespace ControllerCommon.Managers
                 string ProductID = CommonUtils.Between(symLink, "PID_", "&");
 
                 if (SerialUSBIMU.vendors.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
-                    UsbDeviceRemoved?.Invoke(null);
+                    UsbDeviceRemoved?.Invoke(null, obj);
             }
             catch { }
         }
@@ -482,7 +482,7 @@ namespace ControllerCommon.Managers
                 string ProductID = CommonUtils.Between(symLink, "PID_", "&");
 
                 if (SerialUSBIMU.vendors.ContainsKey(new KeyValuePair<string, string>(VendorID, ProductID)))
-                    UsbDeviceArrived?.Invoke(null);
+                    UsbDeviceArrived?.Invoke(null, obj);
             }
             catch { }
         }

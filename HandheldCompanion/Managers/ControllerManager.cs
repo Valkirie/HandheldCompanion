@@ -12,6 +12,7 @@ using System.Linq;
 using System.Windows;
 using DeviceType = SharpDX.DirectInput.DeviceType;
 using ButtonState = ControllerCommon.Inputs.ButtonState;
+using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace HandheldCompanion.Managers
 {
@@ -182,7 +183,7 @@ namespace HandheldCompanion.Managers
             target.SetVibrationStrength(value);
         }
 
-        private static void HidDeviceArrived(PnPDetails details)
+        private static void HidDeviceArrived(PnPDetails details, DeviceEventArgs obj)
         {
             DirectInput directInput = new DirectInput();
 
@@ -200,24 +201,25 @@ namespace HandheldCompanion.Managers
                     {
                         // Instantiate the joystick
                         joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
+                        string SymLink = DeviceManager.PathToInstanceId(joystick.Properties.InterfacePath, obj.InterfaceGuid.ToString());
 
                         // IG_ means it is an XInput controller and therefore is handled elsewhere
                         if (joystick.Properties.InterfacePath.Contains("IG_", StringComparison.InvariantCultureIgnoreCase))
                             continue;
 
-                        if (!joystick.Properties.InterfacePath.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
-                            continue;
+                        if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
+                            break;
                     }
                     catch { }
                 }
 
                 // search for a supported controller
-                switch (details.attributes.VendorID)
+                switch (joystick.Properties.VendorId)
                 {
                     // SONY
                     case 1356:
                         {
-                            switch (details.attributes.ProductID)
+                            switch (joystick.Properties.ProductId)
                             {
                                 // DualShock4
                                 case 2508:
@@ -230,7 +232,7 @@ namespace HandheldCompanion.Managers
                     // STEAM
                     case 0x28DE:
                         {
-                            switch (details.attributes.ProductID)
+                            switch (joystick.Properties.ProductId)
                             {
                                 // STEAM DECK
                                 case 0x1205:
@@ -243,7 +245,7 @@ namespace HandheldCompanion.Managers
                     // NINTENDO
                     case 0x057E:
                         {
-                            switch (details.attributes.ProductID)
+                            switch (joystick.Properties.ProductId)
                             {
                                 // Nintendo Wireless Gamepad
                                 case 0x2009:
@@ -279,7 +281,7 @@ namespace HandheldCompanion.Managers
             }));
         }
 
-        private static void HidDeviceRemoved(PnPDetails details)
+        private static void HidDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
         {
             if (!Controllers.ContainsKey(details.deviceInstanceId))
                 return;
@@ -303,7 +305,7 @@ namespace HandheldCompanion.Managers
             ControllerUnplugged?.Invoke(controller);
         }
 
-        private static void XUsbDeviceArrived(PnPDetails details)
+        private static void XUsbDeviceArrived(PnPDetails details, DeviceEventArgs obj)
         {
             // trying to guess XInput behavior...
             // get first available slot
@@ -346,7 +348,7 @@ namespace HandheldCompanion.Managers
             }));
         }
 
-        private static void XUsbDeviceRemoved(PnPDetails details)
+        private static void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
         {
             if (!Controllers.ContainsKey(details.deviceInstanceId))
                 return;

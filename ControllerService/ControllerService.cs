@@ -103,7 +103,7 @@ namespace ControllerService
             DeviceManager.UsbDeviceArrived += GenericDeviceArrived;
             DeviceManager.UsbDeviceRemoved += GenericDeviceRemoved;
             DeviceManager.Start();
-            GenericDeviceArrived(null);
+            GenericDeviceArrived(null, null);
 
             // initialize device
             handheldDevice = Device.GetDefault();
@@ -118,7 +118,7 @@ namespace ControllerService
         }
 
         private SerialUSBIMU sensor;
-        private void GenericDeviceArrived(PnPDevice device)
+        private void GenericDeviceArrived(PnPDevice device, DeviceEventArgs obj)
         {
             switch (SensorSelection)
             {
@@ -136,7 +136,7 @@ namespace ControllerService
             }
         }
 
-        private void GenericDeviceRemoved(PnPDevice device)
+        private void GenericDeviceRemoved(PnPDevice device, DeviceEventArgs obj)
         {
             switch (SensorSelection)
             {

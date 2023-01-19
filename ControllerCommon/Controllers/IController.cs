@@ -22,8 +22,8 @@ namespace ControllerCommon.Controllers
     public enum ControllerType
     {
         None = 0,
-        DInput = 1,
-        XInput = 2,
+        XInput = 1,
+        DS4 = 2,
     }
 
     public abstract class IController

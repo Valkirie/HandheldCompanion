@@ -11,6 +11,8 @@ namespace HandheldCompanion.Controllers
     {
         public DS4Controller(Joystick joystick, PnPDetails details) : base(joystick, details)
         {
+            this.ControllerType = ControllerType.DS4;
+
             if (!IsConnected())
                 return;
 
@@ -45,7 +47,7 @@ namespace HandheldCompanion.Controllers
                 return;
             */
 
-            Inputs.ButtonState = InjectedButtons as ButtonState;
+            Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
 
             Inputs.ButtonState[ButtonFlags.B1] = State.Buttons[1];
             Inputs.ButtonState[ButtonFlags.B2] = State.Buttons[2];
@@ -126,6 +128,53 @@ namespace HandheldCompanion.Controllers
         public override void Unplug()
         {
             base.Unplug();
+        }
+
+        public static new string GetGlyph(ButtonFlags button)
+        {
+            switch (button)
+            {
+                case ButtonFlags.B1:
+                    return "\u21E3";
+                case ButtonFlags.B2:
+                    return "\u21E2";
+                case ButtonFlags.B3:
+                    return "\u21E0";
+                case ButtonFlags.B4:
+                    return "\u21E1";
+                case ButtonFlags.L1:
+                    return "\u21B0";
+                case ButtonFlags.R1:
+                    return "\u21B1";
+                case ButtonFlags.Back:
+                    return "\u21E6";
+                case ButtonFlags.Start:
+                    return "\u21E8";
+                case ButtonFlags.L2:
+                    return "\u21B2";
+                case ButtonFlags.R2:
+                    return "\u21B3";
+                case ButtonFlags.Special:
+                    return "\uE000";
+                case ButtonFlags.LPadClick:
+                case ButtonFlags.RPadClick:
+                    return "\u21E7";
+            }
+
+            return IController.GetGlyph(button);
+        }
+
+        public static new string GetGlyph(AxisFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisFlags.L2:
+                    return "\u21B2";
+                case AxisFlags.R2:
+                    return "\u21B3";
+            }
+
+            return IController.GetGlyph(axis);
         }
     }
 }

@@ -310,7 +310,7 @@ namespace HandheldCompanion.Views
             };
         }
 
-        private void GenericDeviceUpdated(PnPDevice device)
+        private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
         {
             handheldDevice.PullSensors();
 
