@@ -53,9 +53,14 @@ namespace ControllerCommon
             { MotionInput.AutoRollYawSwap, Properties.Resources.AutoRollYawSwapDesc }
         };
 
+        [JsonIgnore]
+        public const int SensivityArraySize = 49;             // x + 1 (hidden)
+
         public string Name { get; set; } = string.Empty;
         public string Path { get; set; } = string.Empty;
         public string Executable { get; set; } = string.Empty;
+        [JsonIgnore]
+        public string ExecutablePath;
         public bool Enabled { get; set; }
         public bool Default { get; set; }
 
@@ -65,12 +70,14 @@ namespace ControllerCommon
         [JsonIgnore]
         public bool Running { get; set; }
 
-        public bool whitelisted { get; set; }                   // if true, can see through the HidHide cloak
-        public bool use_wrapper { get; set; }                   // if true, deploy xinput1_3.dll
-        public float gyrometer { get; set; } = 1.0f;            // gyroscope multiplicator (remove me)
-        public float accelerometer { get; set; } = 1.0f;        // accelerometer multiplicator (remove me)
+        public bool Whitelisted { get; set; }                       // if true, can see through the HidHide cloak
+        public bool XInputPlus { get; set; }                        // if true, deploy xinput1_3.dll
 
-        public int steering { get; set; } = 0;                  // 0 = Roll, 1 = Yaw
+        public float GyrometerMultiplier { get; set; } = 1.0f;      // gyroscope multiplicator (remove me)
+        public float AccelerometerMultiplier { get; set; } = 1.0f;  // accelerometer multiplicator (remove me)
+
+        public int SteeringAxis { get; set; } = 0;                  // 0 = Roll, 1 = Yaw
+
         public bool thumb_improve_circularity_left { get; set; } = true;
         public bool thumb_improve_circularity_right { get; set; } = true;
         public int thumb_deadzone_inner_left { get; set; } = 0;
@@ -86,55 +93,50 @@ namespace ControllerCommon
         public int trigger_deadzone_inner_right { get; set; } = 0;
         public int trigger_deadzone_outer_right { get; set; } = 0;
 
-        public bool inverthorizontal { get; set; }              // if true, invert horizontal axis
-        public bool invertvertical { get; set; }                // if false, invert vertical axis
-
         public bool MotionEnabled { get; set; }
         public MotionInput MotionInput { get; set; } = MotionInput.JoystickCamera;
         public MotionOutput MotionOutput { get; set; } = MotionOutput.RightStick;
         public MotionMode MotionMode { get; set; } = MotionMode.Off;
         public float MotionAntiDeadzone { get; set; } = 0.0f;
+        public bool MotionInvertHorizontal { get; set; }            // if true, invert horizontal axis
+        public bool MotionInvertVertical { get; set; }              // if false, invert vertical axis
+        public float MotionSensivityX { get; set; } = 1.0f;
+        public float MotionSensivityY { get; set; } = 1.0f;
+        public List<ProfileVector> MotionSensivityArray { get; set; } = new();
+
         public ButtonState MotionTrigger { get; set; } = new();
 
-        // aiming
-        public float aiming_sensitivity_x { get; set; } = 1.0f;
-        public float aiming_sensitivity_y { get; set; } = 1.0f;
-
-        public List<ProfileVector> aiming_array { get; set; } = new();
-
         // steering
-        public float steering_max_angle { get; set; } = 30.0f;
-        public float steering_power { get; set; } = 1.0f;
-        public float steering_deadzone { get; set; } = 0.0f;
+        public float SteeringMaxAngle { get; set; } = 30.0f;
+        public float SteeringPower { get; set; } = 1.0f;
+        public float SteeringDeadzone { get; set; } = 0.0f;
 
         // Aiming down sights
-        public float aiming_down_sights_multiplier { get; set; } = 1.0f;
-        public ButtonState aiming_down_sights_activation { get; set; } = new();
+        public float AimingSightsMultiplier { get; set; } = 1.0f;
+        public ButtonState AimingSightsTrigger { get; set; } = new();
 
         // flickstick
-        public bool flickstick_enabled { get; set; }
-        public float flick_duration { get; set; } = 0.1f;
-        public float stick_sensivity { get; set; } = 3.0f;
+        public bool FlickstickEnabled { get; set; }
+        public float FlickstickDuration { get; set; } = 0.1f;
+        public float FlickstickSensivity { get; set; } = 3.0f;
 
         // power
-        public bool TDP_override { get; set; }
-        public double[] TDP_value { get; set; } = new double[3];
+        public bool TDPOverrideEnabled { get; set; }
+        public double[] TDPOverrideValues { get; set; } = new double[3];
 
-        // hidden settings
-        [JsonIgnore] public ProfileErrorCode error;
-        [JsonIgnore] public string ExecutablePath { get; set; }
-        [JsonIgnore] public static int array_size = 49;             // x + 1 (hidden)
+        [JsonIgnore]
+        public ProfileErrorCode ErrorCode;
 
         public Profile()
         {
             // initialize aiming array
-            if (aiming_array.Count == 0)
+            if (MotionSensivityArray.Count == 0)
             {
-                for (int i = 0; i < array_size; i++)
+                for (int i = 0; i < SensivityArraySize; i++)
                 {
-                    double value = (double)i / (double)(array_size - 1);
+                    double value = (double)i / (double)(SensivityArraySize - 1);
                     ProfileVector vector = new ProfileVector(value, 0.5f);
-                    aiming_array.Add(vector);
+                    MotionSensivityArray.Add(vector);
                 }
             }
         }
@@ -158,12 +160,12 @@ namespace ControllerCommon
 
         public float GetSensitivityX()
         {
-            return aiming_sensitivity_x * 1000.0f;
+            return MotionSensivityX * 1000.0f;
         }
 
         public float GetSensitivityY()
         {
-            return aiming_sensitivity_y * 1000.0f;
+            return MotionSensivityY * 1000.0f;
         }
 
         public string GetFileName()

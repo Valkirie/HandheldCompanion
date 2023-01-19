@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon.Controllers;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Simulators;
@@ -50,6 +51,13 @@ namespace HandheldCompanion.Managers
             InputsManager.TriggerUpdated += TriggerUpdated;
             InputsManager.TriggerRaised += TriggerRaised;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+        }
+
+        private static void ControllerManager_ControllerSelected(IController Controller)
+        {
+            foreach (Hotkey hotkey in Hotkeys.Values)
+                hotkey.DrawInput();
         }
 
         public static void Start()

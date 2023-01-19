@@ -251,7 +251,7 @@ namespace ControllerCommon.Utils
         private static int SensivityIdx = 2;
         public static float ApplyCustomSensitivity(float AngularValue, float MaxValue, List<ProfileVector> Nodes)
         {
-            int NodeAmount = Profile.array_size;
+            int NodeAmount = Profile.SensivityArraySize;
 
             // Use absolute joystick position, range -1 to 1, re-apply direction later
             float JoystickPosAbs = (float)Math.Abs(AngularValue / MaxValue);

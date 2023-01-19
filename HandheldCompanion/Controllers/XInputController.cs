@@ -139,6 +139,8 @@ namespace HandheldCompanion.Controllers
 
         public XInputController(Controller controller)
         {
+            this.ControllerType = ControllerType.XInput;
+
             Controller = controller;
             UserIndex = (int)controller.UserIndex;
 
@@ -311,6 +313,50 @@ namespace HandheldCompanion.Controllers
                     }
                     break;
             }
+        }
+
+        public static new string GetGlyph(ButtonFlags button)
+        {
+            switch (button)
+            {
+                case ButtonFlags.B1:
+                    return "\u21D3";
+                case ButtonFlags.B2:
+                    return "\u21D2";
+                case ButtonFlags.B3:
+                    return "\u21D0";
+                case ButtonFlags.B4:
+                    return "\u21D1";
+                case ButtonFlags.L1:
+                    return "\u2198";
+                case ButtonFlags.R1:
+                    return "\u2199";
+                case ButtonFlags.Back:
+                    return "\u21FA";
+                case ButtonFlags.Start:
+                    return "\u21FB";
+                case ButtonFlags.L2:
+                    return "\u2196";
+                case ButtonFlags.R2:
+                    return "\u2197";
+                case ButtonFlags.Special:
+                    return "\uE001";
+            }
+
+            return IController.GetGlyph(button);
+        }
+
+        public static new string GetGlyph(AxisFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisFlags.L2:
+                    return "\u2196";
+                case AxisFlags.R2:
+                    return "\u2197";
+            }
+
+            return IController.GetGlyph(axis);
         }
     }
 }

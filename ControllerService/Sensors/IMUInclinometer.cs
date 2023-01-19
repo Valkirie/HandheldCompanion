@@ -166,17 +166,17 @@ namespace ControllerService.Sensors
                 Z = center ? this.reading_fixed.Z : this.reading.Z
             };
 
-            var readingZ = ControllerService.currentProfile.steering == 0 ? reading.Z : reading.Y;
-            var readingY = ControllerService.currentProfile.steering == 0 ? reading.Y : -reading.Z;
-            var readingX = ControllerService.currentProfile.steering == 0 ? reading.X : reading.X;
+            var readingZ = ControllerService.currentProfile.SteeringAxis == 0 ? reading.Z : reading.Y;
+            var readingY = ControllerService.currentProfile.SteeringAxis == 0 ? reading.Y : -reading.Z;
+            var readingX = ControllerService.currentProfile.SteeringAxis == 0 ? reading.X : reading.X;
 
-            if (ControllerService.currentProfile.inverthorizontal)
+            if (ControllerService.currentProfile.MotionInvertHorizontal)
             {
                 readingY *= -1.0f;
                 readingZ *= -1.0f;
             }
 
-            if (ControllerService.currentProfile.invertvertical)
+            if (ControllerService.currentProfile.MotionInvertVertical)
             {
                 readingY *= -1.0f;
                 readingX *= -1.0f;

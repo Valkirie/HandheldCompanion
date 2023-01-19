@@ -266,7 +266,7 @@ namespace HandheldCompanion.Views.Pages
                     Profile profile = new Profile(path);
 
                     // set default value(s)
-                    profile.TDP_value = MainWindow.handheldDevice.nTDP;
+                    profile.TDPOverrideValues = MainWindow.handheldDevice.nTDP;
 
                     bool exists = false;
 
@@ -361,8 +361,8 @@ namespace HandheldCompanion.Views.Pages
                 Toggle_EnableProfile.IsOn = currentProfile.Enabled;
 
                 // Global settings
-                cB_Whitelist.IsChecked = currentProfile.whitelisted;
-                cB_Wrapper.IsChecked = currentProfile.use_wrapper;
+                cB_Whitelist.IsChecked = currentProfile.Whitelisted;
+                cB_Wrapper.IsChecked = currentProfile.XInputPlus;
 
                 // Controller settings
                 Toggle_ThumbImproveCircularityLeft.IsOn = currentProfile.thumb_improve_circularity_left;
@@ -382,19 +382,19 @@ namespace HandheldCompanion.Views.Pages
                 NumberBox_TriggerOuterDeadZoneRight.Value = currentProfile.trigger_deadzone_outer_right;
 
                 // Motion control settings
-                tb_ProfileGyroValue.Value = currentProfile.gyrometer;
-                tb_ProfileAcceleroValue.Value = currentProfile.accelerometer;
+                tb_ProfileGyroValue.Value = currentProfile.GyrometerMultiplier;
+                tb_ProfileAcceleroValue.Value = currentProfile.AccelerometerMultiplier;
 
-                cB_GyroSteering.SelectedIndex = currentProfile.steering;
-                cB_InvertHorizontal.IsChecked = currentProfile.inverthorizontal;
-                cB_InvertVertical.IsChecked = currentProfile.invertvertical;
+                cB_GyroSteering.SelectedIndex = currentProfile.SteeringAxis;
+                cB_InvertHorizontal.IsChecked = currentProfile.MotionInvertHorizontal;
+                cB_InvertVertical.IsChecked = currentProfile.MotionInvertVertical;
 
                 // Sustained TDP settings (slow, stapm, long)
-                double[] TDP = currentProfile.TDP_value is not null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
+                double[] TDP = currentProfile.TDPOverrideValues is not null ? currentProfile.TDPOverrideValues : MainWindow.handheldDevice.nTDP;
                 TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
                 TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
 
-                TDPToggle.IsOn = currentProfile.TDP_override;
+                TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
 
                 // define slider(s) min and max values based on device specifications
                 var TDPdown = SettingsManager.GetInt("ConfigurableTDPOverrideDown");
@@ -412,10 +412,10 @@ namespace HandheldCompanion.Views.Pages
 
                 // todo: improve me ?
                 ProfilesPageHotkey.inputsChord.State = currentProfile.MotionTrigger.Clone() as ButtonState;
-                ProfilesPageHotkey.Refresh();
+                ProfilesPageHotkey.DrawInput();
 
                 // display warnings
-                ProfileErrorCode currentError = currentProfile.error;
+                ProfileErrorCode currentError = currentProfile.ErrorCode;
                 if (currentProfile.Running)
                     currentError = ProfileErrorCode.Running;
 
@@ -476,8 +476,8 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.Enabled = (bool)Toggle_EnableProfile.IsOn;
 
             // Global settings
-            currentProfile.whitelisted = (bool)cB_Whitelist.IsChecked;
-            currentProfile.use_wrapper = (bool)cB_Wrapper.IsChecked;
+            currentProfile.Whitelisted = (bool)cB_Whitelist.IsChecked;
+            currentProfile.XInputPlus = (bool)cB_Wrapper.IsChecked;
 
             // Controller settings
             currentProfile.thumb_improve_circularity_left = (bool)Toggle_ThumbImproveCircularityLeft.IsOn;
@@ -498,12 +498,12 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.trigger_deadzone_outer_right = (int)NumberBox_TriggerOuterDeadZoneRight.Value;
 
             // Motion control settings
-            currentProfile.gyrometer = (float)tb_ProfileGyroValue.Value;
-            currentProfile.accelerometer = (float)tb_ProfileAcceleroValue.Value;
+            currentProfile.GyrometerMultiplier = (float)tb_ProfileGyroValue.Value;
+            currentProfile.AccelerometerMultiplier = (float)tb_ProfileAcceleroValue.Value;
 
-            currentProfile.steering = cB_GyroSteering.SelectedIndex;
-            currentProfile.invertvertical = (bool)cB_InvertVertical.IsChecked;
-            currentProfile.inverthorizontal = (bool)cB_InvertHorizontal.IsChecked;
+            currentProfile.SteeringAxis = cB_GyroSteering.SelectedIndex;
+            currentProfile.MotionInvertVertical = (bool)cB_InvertVertical.IsChecked;
+            currentProfile.MotionInvertHorizontal = (bool)cB_InvertHorizontal.IsChecked;
 
             // UMC settings
             currentProfile.MotionEnabled = (bool)Toggle_UniversalMotion.IsOn;
@@ -513,10 +513,10 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
 
             // Power settings
-            currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
-            currentProfile.TDP_value[1] = (int)TDPSustainedSlider.Value;
-            currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
-            currentProfile.TDP_override = (bool)TDPToggle.IsOn;
+            currentProfile.TDPOverrideValues[0] = (int)TDPSustainedSlider.Value;
+            currentProfile.TDPOverrideValues[1] = (int)TDPSustainedSlider.Value;
+            currentProfile.TDPOverrideValues[2] = (int)TDPBoostSlider.Value;
+            currentProfile.TDPOverrideEnabled = (bool)TDPToggle.IsOn;
 
             ProfileManager.UpdateOrCreateProfile(currentProfile, ProfileUpdateSource.ProfilesPage);
         }

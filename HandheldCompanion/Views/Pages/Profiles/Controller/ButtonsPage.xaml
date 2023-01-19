@@ -1,0 +1,61 @@
+<Page x:Class="HandheldCompanion.Views.Pages.Profiles.Controller.ButtonsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:local="clr-namespace:HandheldCompanion"
+      xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
+      xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      mc:Ignorable="d" 
+      d:DesignHeight="1000" d:DesignWidth="1000"
+      Margin="20"
+      Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
+      Loaded="Page_Loaded">
+
+    <Grid Name="MainGrid">
+        <ui:SimpleStackPanel Spacing="6">
+            <!-- Mockup -->
+            <Border
+                Padding="15,12,12,12"
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource ExpanderContentBackground}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF093;" Foreground="GreenYellow" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+                    <ComboBox Grid.Column="1" Width="120" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <ComboBoxItem>A Button</ComboBoxItem>
+                        <ComboBoxItem>B Button</ComboBoxItem>
+                    </ComboBox>
+                </Grid>
+            </Border>
+
+            <!-- Mockup -->
+            <Border
+                Padding="15,12,12,12"
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Background="{DynamicResource ExpanderContentBackground}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF094;" Foreground="OrangeRed" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+                    <ComboBox Grid.Column="1" Width="120" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <ComboBoxItem>A Button</ComboBoxItem>
+                        <ComboBoxItem>B Button</ComboBoxItem>
+                    </ComboBox>
+                </Grid>
+            </Border>
+        </ui:SimpleStackPanel>
+    </Grid>
+</Page>

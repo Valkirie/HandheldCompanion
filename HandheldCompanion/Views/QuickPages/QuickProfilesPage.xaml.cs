@@ -128,7 +128,7 @@ namespace HandheldCompanion.Views.QuickPages
                 {
                     case "increaseTDP":
                         {
-                            if (currentProfile is null || currentProfile.Default || !currentProfile.TDP_override)
+                            if (currentProfile is null || currentProfile.Default || !currentProfile.TDPOverrideEnabled)
                                 return;
 
                             TDPSustainedSlider.Value++;
@@ -137,7 +137,7 @@ namespace HandheldCompanion.Views.QuickPages
                         break;
                     case "decreaseTDP":
                         {
-                            if (currentProfile is null || currentProfile.Default || !currentProfile.TDP_override)
+                            if (currentProfile is null || currentProfile.Default || !currentProfile.TDPOverrideEnabled)
                                 return;
 
                             TDPSustainedSlider.Value--;
@@ -211,22 +211,22 @@ namespace HandheldCompanion.Views.QuickPages
                     cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)profile.MotionMode;
 
                     // Sustained TDP settings (slow, stapm, long)
-                    double[] TDP = profile.TDP_value is not null ? profile.TDP_value : MainWindow.handheldDevice.nTDP;
+                    double[] TDP = profile.TDPOverrideValues is not null ? profile.TDPOverrideValues : MainWindow.handheldDevice.nTDP;
                     TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
                     TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
 
-                    TDPToggle.IsOn = profile.TDP_override;
+                    TDPToggle.IsOn = profile.TDPOverrideEnabled;
 
                     // Slider settings
                     SliderUMCAntiDeadzone.Value = profile.MotionAntiDeadzone;
-                    SliderSensitivityX.Value = profile.aiming_sensitivity_x;
-                    SliderSensitivityY.Value = profile.aiming_sensitivity_y;
+                    SliderSensitivityX.Value = profile.MotionSensivityX;
+                    SliderSensitivityY.Value = profile.MotionSensivityY;
                     SliderAntiDeadzoneLeft.Value = profile.thumb_anti_deadzone_left;
                     SliderAntiDeadzoneRight.Value = profile.thumb_anti_deadzone_right;
 
                     // todo: improve me ?
                     ProfilesPageHotkey.inputsChord.State = profile.MotionTrigger.Clone() as ButtonState;
-                    ProfilesPageHotkey.Refresh();
+                    ProfilesPageHotkey.DrawInput();
                 });
 
                 // release lock
@@ -354,7 +354,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             // create profile
             currentProfile = new Profile(currentProcess.Path);
-            currentProfile.TDP_value = MainWindow.handheldDevice.nTDP;
+            currentProfile.TDPOverrideValues = MainWindow.handheldDevice.nTDP;
 
             // if an update is pending, execute it and stop timer
             if (UpdateTimer.IsRunning())
@@ -370,7 +370,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.TDP_override = (bool)TDPToggle.IsOn;
+                currentProfile.TDPOverrideEnabled = (bool)TDPToggle.IsOn;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
@@ -387,8 +387,8 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
-                currentProfile.TDP_value[1] = (int)TDPSustainedSlider.Value;
+                currentProfile.TDPOverrideValues[0] = (int)TDPSustainedSlider.Value;
+                currentProfile.TDPOverrideValues[1] = (int)TDPSustainedSlider.Value;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
@@ -405,7 +405,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
+                currentProfile.TDPOverrideValues[2] = (int)TDPBoostSlider.Value;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
@@ -433,7 +433,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.aiming_sensitivity_x = (float)SliderSensitivityX.Value;
+                currentProfile.MotionSensivityX = (float)SliderSensitivityX.Value;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
@@ -447,7 +447,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.aiming_sensitivity_y = (float)SliderSensitivityY.Value;
+                currentProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);

@@ -52,7 +52,7 @@ namespace ControllerService.Targets
 
         private void ForegroundUpdated()
         {
-            if (ControllerService.currentProfile.whitelisted)
+            if (ControllerService.currentProfile.Whitelisted)
                 IsSilenced = true;
             else
                 IsSilenced = false;
@@ -155,13 +155,13 @@ namespace ControllerService.Targets
                                 }
 
                                 // apply sensivity curve
-                                Angular.X *= InputUtils.ApplyCustomSensitivity(Angular.X, IMUGyrometer.sensorSpec.maxIn, ControllerService.currentProfile.aiming_array);
-                                Angular.Y *= InputUtils.ApplyCustomSensitivity(Angular.Y, IMUGyrometer.sensorSpec.maxIn, ControllerService.currentProfile.aiming_array);
+                                Angular.X *= InputUtils.ApplyCustomSensitivity(Angular.X, IMUGyrometer.sensorSpec.maxIn, ControllerService.currentProfile.MotionSensivityArray);
+                                Angular.Y *= InputUtils.ApplyCustomSensitivity(Angular.Y, IMUGyrometer.sensorSpec.maxIn, ControllerService.currentProfile.MotionSensivityArray);
 
                                 // apply aiming down scopes multiplier if activated
-                                if (Inputs.ButtonState.Contains(ControllerService.currentProfile.aiming_down_sights_activation))
+                                if (Inputs.ButtonState.Contains(ControllerService.currentProfile.AimingSightsTrigger))
                                 {
-                                    Angular *= ControllerService.currentProfile.aiming_down_sights_multiplier;
+                                    Angular *= ControllerService.currentProfile.AimingSightsMultiplier;
                                 }
 
                                 // apply sensivity
@@ -180,15 +180,15 @@ namespace ControllerService.Targets
                                     default:
                                     case MotionOutput.RightStick:
 
-                                        if (ControllerService.currentProfile.flickstick_enabled)
+                                        if (ControllerService.currentProfile.FlickstickEnabled)
                                         {
                                             // Flick Stick:
                                             // - Detect flicking
                                             // - Filter stick input
                                             // - Determine and compute either flick or stick output
                                             float FlickStickX = flickStick.Handle(RightThumb,
-                                                                                  ControllerService.currentProfile.flick_duration,
-                                                                                  ControllerService.currentProfile.stick_sensivity,
+                                                                                  ControllerService.currentProfile.FlickstickDuration,
+                                                                                  ControllerService.currentProfile.FlickstickSensivity,
                                                                                   IMU.TotalMilliseconds);
 
                                             // X input combines motion controls plus flick stick result
@@ -216,9 +216,9 @@ namespace ControllerService.Targets
                             {
                                 float GamepadThumbX = InputUtils.Steering(
                                     IMU.sensorFusion.DeviceAngle.Y,
-                                    ControllerService.currentProfile.steering_max_angle,
-                                    ControllerService.currentProfile.steering_power,
-                                    ControllerService.currentProfile.steering_deadzone);
+                                    ControllerService.currentProfile.SteeringMaxAngle,
+                                    ControllerService.currentProfile.SteeringPower,
+                                    ControllerService.currentProfile.SteeringDeadzone);
 
                                 switch (ControllerService.currentProfile.MotionOutput)
                                 {

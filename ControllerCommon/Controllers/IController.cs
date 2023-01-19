@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Inputs;
+﻿using ControllerCommon.Actions;
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ModernWpf.Controls;
 using PrecisionTiming;
@@ -17,6 +18,14 @@ namespace ControllerCommon.Controllers
         Accelerometer = 2,
     }
 
+    [Serializable]
+    public enum ControllerType
+    {
+        None = 0,
+        DInput = 1,
+        XInput = 2,
+    }
+
     public abstract class IController
     {
         #region events
@@ -29,6 +38,7 @@ namespace ControllerCommon.Controllers
 
         public ControllerState Inputs = new();
         public ControllerMovements Movements = new();
+        public ControllerType ControllerType { get; set; }
 
         protected const short UPDATE_INTERVAL = 5;
 
@@ -252,6 +262,63 @@ namespace ControllerCommon.Controllers
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
 
             RefreshControls();
+        }
+
+        public static string GetGlyph(ButtonFlags button)
+        {
+            switch(button)
+            {
+                case ButtonFlags.DPadUp:
+                    return "\u219F";
+                case ButtonFlags.DPadDown:
+                    return "\u21A1";
+                case ButtonFlags.DPadLeft:
+                    return "\u219E";
+                case ButtonFlags.DPadRight:
+                    return "\u21A0";
+
+                case ButtonFlags.LStickUp:
+                    return "\u21BE";
+                case ButtonFlags.LStickDown:
+                    return "\u21C2";
+                case ButtonFlags.LStickLeft:
+                    return "\u21BC";
+                case ButtonFlags.LStickRight:
+                    return "\u21C0";
+
+                case ButtonFlags.RStickUp:
+                    return "\u21BF";
+                case ButtonFlags.RStickDown:
+                    return "\u21C3";
+                case ButtonFlags.RStickLeft:
+                    return "\u21BD";
+                case ButtonFlags.RStickRight:
+                    return "\u21C1";
+
+                case ButtonFlags.LeftThumb:
+                    return "\u21BA";
+                case ButtonFlags.RightThumb:
+                    return "\u21BB";
+            }
+
+            return "\u003F";
+        }
+
+        public static string GetGlyph(AxisFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisFlags.LeftThumbX:
+                    return "\u21C4";
+                case AxisFlags.LeftThumbY:
+                    return "\u21C5";
+                case AxisFlags.RightThumbX:
+                    return "\u21C6";
+                case AxisFlags.RightThumbY:
+                    return "\u21F5";
+            }
+
+            return "\u003F";
         }
     }
 }

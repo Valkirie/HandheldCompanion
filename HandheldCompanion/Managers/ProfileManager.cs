@@ -364,7 +364,7 @@ namespace HandheldCompanion.Managers
             bool isCurrent = profile.Executable == currentProfile.Executable;
 
             // refresh error code
-            profile.error = SanitizeProfile(profile);
+            profile.ErrorCode = SanitizeProfile(profile);
 
             // update database
             profiles[profile.Name] = profile;
@@ -376,9 +376,9 @@ namespace HandheldCompanion.Managers
             if (isCurrent)
                 PipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
 
-            if (profile.error != ProfileErrorCode.None && !profile.Default)
+            if (profile.ErrorCode != ProfileErrorCode.None && !profile.Default)
             {
-                LogManager.LogError("Profile {0} returned error code {1}", profile.Name, profile.error);
+                LogManager.LogError("Profile {0} returned error code {1}", profile.Name, profile.ErrorCode);
                 return;
             }
 
@@ -401,10 +401,10 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateProfileCloaking(Profile profile)
         {
-            if (profile.error == ProfileErrorCode.MissingExecutable || profile.error == ProfileErrorCode.MissingPath)
+            if (profile.ErrorCode == ProfileErrorCode.MissingExecutable || profile.ErrorCode == ProfileErrorCode.MissingPath)
                 return;
 
-            if (profile.whitelisted)
+            if (profile.Whitelisted)
             {
                 // Register application on HidHide
                 HidHide.RegisterApplication(profile.ExecutablePath);
@@ -443,7 +443,7 @@ namespace HandheldCompanion.Managers
                 BinaryType bt; GetBinaryType(fullpath, out bt);
                 bool x64 = bt == BinaryType.SCS_64BIT_BINARY;
 
-                if (profile.use_wrapper)
+                if (profile.XInputPlus)
                     File.WriteAllText(inipath, XinputPlus);
                 else if (iniexist)
                     File.Delete(inipath);
@@ -477,7 +477,7 @@ namespace HandheldCompanion.Managers
                     if (profile.Running)
                         return;
 
-                    switch (profile.error)
+                    switch (profile.ErrorCode)
                     {
                         // do not try to write/erase files when access is denied
                         case ProfileErrorCode.MissingPermission:
@@ -485,7 +485,7 @@ namespace HandheldCompanion.Managers
                             return;
                     }
 
-                    if (profile.use_wrapper)
+                    if (profile.XInputPlus)
                     {
                         if (dllexist && is_x360ce)
                             continue; // skip to next file

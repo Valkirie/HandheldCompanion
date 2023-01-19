@@ -38,11 +38,11 @@ namespace HandheldCompanion.Views.Pages.Profiles
             this.profileCurrent = profileCurrent;
             PipeClient.ServerMessage += OnServerMessage;
 
-            SliderDeadzoneAngle.Value = profileCurrent.steering_deadzone;
-            SliderPower.Value = profileCurrent.steering_power;
-            SliderSteeringAngle.Value = profileCurrent.steering_max_angle;
+            SliderDeadzoneAngle.Value = profileCurrent.SteeringDeadzone;
+            SliderPower.Value = profileCurrent.SteeringPower;
+            SliderSteeringAngle.Value = profileCurrent.SteeringMaxAngle;
 
-            lvLineSeriesValues.Values = GeneratePoints(profileCurrent.steering_power);
+            lvLineSeriesValues.Values = GeneratePoints(profileCurrent.SteeringPower);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -84,7 +84,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
             if (profileCurrent is null)
                 return;
 
-            profileCurrent.steering_max_angle = (float)SliderSteeringAngle.Value;
+            profileCurrent.SteeringMaxAngle = (float)SliderSteeringAngle.Value;
         }
 
         private void SliderPower_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -92,7 +92,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
             if (profileCurrent is null)
                 return;
 
-            profileCurrent.steering_power = (float)SliderPower.Value;
+            profileCurrent.SteeringPower = (float)SliderPower.Value;
             lvLineSeriesValues.Values = GeneratePoints(SliderPower.Value);
         }
 
@@ -101,7 +101,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
             if (profileCurrent is null)
                 return;
 
-            profileCurrent.steering_deadzone = (float)SliderDeadzoneAngle.Value;
+            profileCurrent.SteeringDeadzone = (float)SliderDeadzoneAngle.Value;
         }
 
         private ChartValues<ObservablePoint> GeneratePoints(double Power)

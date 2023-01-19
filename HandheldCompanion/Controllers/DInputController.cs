@@ -12,6 +12,8 @@ namespace HandheldCompanion.Controllers
 
         public DInputController(Joystick joystick, PnPDetails details)
         {
+            this.ControllerType = ControllerType.DInput;
+
             this.joystick = joystick;
             UserIndex = joystick.Properties.JoystickId;
 

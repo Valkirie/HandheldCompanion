@@ -480,13 +480,13 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateReport(ButtonState State)
         {
+            if (prevState.Equals(State))
+                return;
+
             GamepadResetTimer.Stop();
 
             bool IsKeyDown = false;
             bool IsKeyUp = false;
-
-            if (prevState.Equals(State))
-                return;
 
             // IsKeyDown (filter on "fake" keys)
             if (!State.IsEmpty())

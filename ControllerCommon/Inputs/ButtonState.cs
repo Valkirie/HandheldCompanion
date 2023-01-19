@@ -66,7 +66,8 @@ namespace ControllerCommon.Inputs
         public void AddRange(ButtonState buttonState)
         {
             foreach (var state in buttonState.State)
-                this[state.Key] = state.Value;
+                if (state.Value)
+                    this[state.Key] = state.Value;
         }
 
         public override bool Equals(object obj)

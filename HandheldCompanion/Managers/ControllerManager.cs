@@ -24,6 +24,9 @@ namespace HandheldCompanion.Managers
         public static event ControllerUnpluggedEventHandler ControllerUnplugged;
         public delegate void ControllerUnpluggedEventHandler(IController Controller);
 
+        public static event ControllerSelectedEventHandler ControllerSelected;
+        public delegate void ControllerSelectedEventHandler(IController Controller);
+
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
         #endregion
@@ -405,6 +408,9 @@ namespace HandheldCompanion.Managers
 
             // warn service a new controller has arrived
             PipeClient.SendMessage(new PipeClientControllerConnect(targetController.ToString(), targetController.Capacities));
+
+            // raise event
+            ControllerSelected?.Invoke(targetController);
         }
 
         private static void OnClientConnected()
@@ -419,6 +425,11 @@ namespace HandheldCompanion.Managers
         public static IController GetTargetController()
         {
             return targetController;
+        }
+
+        public static ControllerType GetTargetControllerType()
+        {
+            return targetController is not null ? targetController.ControllerType : ControllerType.None;
         }
 
         private static void UpdateInputs(ControllerState controllerState)

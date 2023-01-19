@@ -1,9 +1,12 @@
-﻿using ModernWpf.Controls;
+﻿using ControllerCommon.Controllers;
+using HandheldCompanion.Controllers;
+using ModernWpf.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static HandheldCompanion.Managers.InputsManager;
 using Application = System.Windows.Application;
@@ -186,14 +189,15 @@ namespace HandheldCompanion.Managers
                 Tag = "Chord",
                 MinWidth = 200,
                 FontSize = 12,
-                Height = 30,
+                Height = 40,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Center,
             };
 
             // todo: add localized tooltip text
             eraseButton = new Button()
             {
-                Height = 30,
+                Height = 40,
                 Content = new FontIcon() { Glyph = "\uE75C", FontSize = 14 },
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -206,7 +210,7 @@ namespace HandheldCompanion.Managers
             // todo: add localized tooltip text
             pinButton = new Button()
             {
-                Height = 30,
+                Height = 40,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
                 ToolTip = "Pin/unpin hotkey to quicktools action center"
@@ -223,7 +227,7 @@ namespace HandheldCompanion.Managers
                 Tag = "Combo",
                 MinWidth = 200,
                 FontSize = 12,
-                Height = 30,
+                Height = 40,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
             };
 
@@ -294,7 +298,7 @@ namespace HandheldCompanion.Managers
             quickPanel.Children.Add(quickName);
 
             // update buttons name and states
-            Refresh();
+            Draw();
         }
 
         private void customName_Changed()
@@ -321,11 +325,13 @@ namespace HandheldCompanion.Managers
                 case ListenerType.Output:
                     outputButton.Content = Properties.Resources.OverlayPage_Listening;
                     outputButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                    DrawOutput();
                     break;
                 case ListenerType.UI:
                 case ListenerType.Default:
                     inputButton.Content = Properties.Resources.OverlayPage_Listening;
                     inputButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                    DrawInput();
                     break;
             }
         }
@@ -339,28 +345,26 @@ namespace HandheldCompanion.Managers
             {
                 case ListenerType.Output:
                     outputButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                    DrawOutput();
                     break;
                 case ListenerType.UI:
                 case ListenerType.Default:
                     inputButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                    DrawInput();
                     break;
             }
-
-            Refresh();
         }
 
         public void StartPinning()
         {
             IsPinned = true;
-
-            Refresh();
+            DrawPin();
         }
 
         public void StopPinning()
         {
             IsPinned = false;
-
-            Refresh();
+            DrawPin();
         }
 
         public SimpleStackPanel GetButtonPanel()
@@ -378,62 +382,61 @@ namespace HandheldCompanion.Managers
             return quickPanel;
         }
 
-        public void Refresh()
+        private bool HasInput()
         {
-            bool hasInput = !inputsChord.State.IsEmpty();
-            bool hasOutput = inputsChord.OutputKeys.Count != 0;
+            return inputsChord.State.Buttons.Any();
+        }
 
-            if (outputButton is not null)
-            {
-                // comboContent content
-                SimpleStackPanel comboContent = new()
-                {
-                    Orientation = Orientation.Horizontal,
-                    Spacing = 6,
-                };
+        private bool HasOutput()
+        {
+            return inputsChord.OutputKeys.Any();
+        }
 
-                TextBlock outputText = new TextBlock();
-                switch(hasOutput)
-                {
-                    case true:
-                        outputText.Text = string.Join(", ", inputsChord.OutputKeys.Where(key => key.IsKeyDown));
-                        outputText.SetResourceReference(Control.ForegroundProperty, "");
-                        break;
-                    case false:
-                        outputText.Text = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackOutput");
-                        outputText.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-                        break;
-                }
-                comboContent.Children.Add(outputText);
+        public void Draw()
+        {
+            DrawInput();
+            DrawOutput();
+            DrawPin();
+        }
 
-                // update button content
-                outputButton.Content = comboContent;
-            }
+        public void DrawInput()
+        {
+            if (inputButton is null)
+                return;
 
             // mainButton content
-            SimpleStackPanel mainContent = new()
+            SimpleStackPanel inputContent = new()
             {
                 Orientation = Orientation.Horizontal,
-                Spacing = 6,
+                Spacing = 6
             };
 
-            if (hasInput)
+            if (HasInput())
             {
-                TextBlock inputText = new();
-                inputText.Text = string.Join(", ", inputsChord.State.Buttons);
-                mainContent.Children.Add(inputText);
-            }
+                TextBlock inputText = new() { FontFamily = new FontFamily("PromptFont"), FontSize = 24 };
 
-            // only display inputsChord type (click, hold) if inputs were captured
-            if (mainContent.Children.Count > 0)
-            {
+                ControllerType controllerType = ControllerManager.GetTargetControllerType();
+                switch (controllerType)
+                {
+                    case ControllerType.XInput:
+                        inputText.Text = string.Join("", inputsChord.State.Buttons.Select(XInputController.GetGlyph));
+                        break;
+                    default:
+                        inputText.Text = string.Join("", inputsChord.State.Buttons.Select(DInputController.GetGlyph));
+                        break;
+                }
+
+                inputContent.Children.Add(inputText);
+
+                // only display inputsChord type (click, hold) if inputs were captured
                 TextBlock type = new TextBlock()
                 {
-                    Text = inputsChord.InputsType.ToString()
+                    Text = inputsChord.InputsType.ToString(),
+                    VerticalAlignment = VerticalAlignment.Center
                 };
                 type.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
 
-                mainContent.Children.Add(type);
+                inputContent.Children.Add(type);
             }
             else
             {
@@ -444,15 +447,49 @@ namespace HandheldCompanion.Managers
                 fallback.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
 
                 // set fallback content
-                mainContent.Children.Add(fallback);
+                inputContent.Children.Add(fallback);
             }
 
             // update main button content
-            inputButton.Content = mainContent;
+            inputButton.Content = inputContent;
 
-            // update delete button status
-            eraseButton.IsEnabled = hasInput || hasOutput;
+            DrawErase();
+        }
 
+        private void DrawOutput()
+        {
+            if (outputButton is null)
+                return;
+
+            // comboContent content
+            SimpleStackPanel outputContent = new()
+            {
+                Orientation = Orientation.Horizontal,
+                Spacing = 6,
+            };
+
+            TextBlock outputText = new TextBlock();
+            switch (HasOutput())
+            {
+                case true:
+                    outputText.Text = string.Join(", ", inputsChord.OutputKeys.Where(key => key.IsKeyDown));
+                    outputText.SetResourceReference(Control.ForegroundProperty, "");
+                    break;
+                case false:
+                    outputText.Text = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackOutput");
+                    outputText.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+                    break;
+            }
+            outputContent.Children.Add(outputText);
+
+            // update button content
+            outputButton.Content = outputContent;
+
+            DrawErase();
+        }
+
+        private void DrawPin()
+        {
             // update pin button
             switch (IsPinned)
             {
@@ -465,6 +502,12 @@ namespace HandheldCompanion.Managers
                     pinButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
                     break;
             }
+        }
+
+        private void DrawErase()
+        {
+            // update delete button status
+            eraseButton.IsEnabled = HasInput() || HasOutput();
         }
 
         public void Highlight()

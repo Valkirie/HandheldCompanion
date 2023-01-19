@@ -60,7 +60,7 @@ namespace HandheldCompanion.Views.QuickPages
                 {
                     case "increaseTDP":
                         {
-                            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled") || currentProfile.TDP_override)
+                            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled") || currentProfile.TDPOverrideEnabled)
                                 return;
 
                             TDPSustainedSlider.Value++;
@@ -69,7 +69,7 @@ namespace HandheldCompanion.Views.QuickPages
                         break;
                     case "decreaseTDP":
                         {
-                            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled") || currentProfile.TDP_override)
+                            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled") || currentProfile.TDPOverrideEnabled)
                                 return;
 
                             TDPSustainedSlider.Value--;
@@ -164,8 +164,8 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 if (currentProfile is not null)
                 {
-                    TDPToggle.IsEnabled = TDPSustainedSlider.IsEnabled = TDPBoostSlider.IsEnabled = CanChangeTDP && !currentProfile.TDP_override;
-                    TDPWarning.Visibility = currentProfile.TDP_override ? Visibility.Visible : Visibility.Collapsed;
+                    TDPToggle.IsEnabled = TDPSustainedSlider.IsEnabled = TDPBoostSlider.IsEnabled = CanChangeTDP && !currentProfile.TDPOverrideEnabled;
+                    TDPWarning.Visibility = currentProfile.TDPOverrideEnabled ? Visibility.Visible : Visibility.Collapsed;
                 }
                 else
                 {

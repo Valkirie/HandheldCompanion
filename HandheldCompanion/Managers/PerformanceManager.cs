@@ -140,7 +140,7 @@ namespace HandheldCompanion.Managers
 
             // stop cpuWatchdog if system settings is disabled
             bool cpuWatchdogState = SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled");
-            if (profile.TDP_override && !cpuWatchdogState)
+            if (profile.TDPOverrideEnabled && !cpuWatchdogState)
                 StopTDPWatchdog();
         }
 
@@ -148,12 +148,12 @@ namespace HandheldCompanion.Managers
         {
             // start cpuWatchdog if system settings is disabled
             bool cpuWatchdogState = SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled");
-            if (profile.TDP_override && !cpuWatchdogState)
+            if (profile.TDPOverrideEnabled && !cpuWatchdogState)
                 StartTDPWatchdog();
 
             // apply profile defined TDP
-            if (profile.TDP_override && profile.TDP_value is not null)
-                RequestTDP(profile.TDP_value, false);
+            if (profile.TDPOverrideEnabled && profile.TDPOverrideValues is not null)
+                RequestTDP(profile.TDPOverrideValues, false);
             else
                 RequestTDP(FallbackTDP, false); // redudant with ProfileManager_Discarded ?
         }

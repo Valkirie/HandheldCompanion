@@ -13,9 +13,11 @@
       Loaded="Page_Loaded">
 
     <ui:NavigationView
-        Name="navView" PaneDisplayMode="Top"
-        CompactPaneLength="160"
-        OpenPaneLength="160"
+        Name="navView" PaneDisplayMode="Left"
+        ItemInvoked="navView_ItemInvoked"
+        Loaded="navView_Loaded"
+        BackRequested="navView_BackRequested"
+        OpenPaneLength="150"
         Margin="20"
         IsPaneToggleButtonVisible="False"
         IsBackButtonVisible="Collapsed"
@@ -24,31 +26,31 @@
         IsSettingsVisible="False">
 
         <ui:NavigationView.MenuItems>
-            <ui:NavigationViewItem Name="navButtons" Content="Buttons" Tag="ControllerPageButtons">
+            <ui:NavigationViewItem Name="navButtons" Content="Buttons" Tag="ButtonsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF093;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navDpad" Content="Dpad" Tag="ControllerPageDpad">
+            <ui:NavigationViewItem Name="navDpad" Content="Dpad" Tag="DpadPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10E;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navTriggers" Content="Triggers" Tag="ControllerPageTriggers">
+            <ui:NavigationViewItem Name="navTriggers" Content="Triggers" Tag="TriggersPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10A;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navJoysticks" Content="Joysticks" Tag="ControllerPageJoysticks">
+            <ui:NavigationViewItem Name="navJoysticks" Content="Joysticks" Tag="JoysticksPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF108;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navGyro" Content="Gyro" Tag="ControllerPageGyro">
+            <ui:NavigationViewItem Name="navGyro" Content="Gyro" Tag="GyroPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>
@@ -58,7 +60,7 @@
         <common:TouchScrollViewer x:Name="scrollViewer" PanningMode="VerticalOnly">
             <ui:Frame
                     Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-                    Name="ContentFrame" MaxWidth="1100"
+                    Name="ContentFrame" MaxWidth="1080"
                     HorizontalAlignment="Left"/>
         </common:TouchScrollViewer>
     </ui:NavigationView>
