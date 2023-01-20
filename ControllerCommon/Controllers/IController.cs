@@ -7,6 +7,7 @@ using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ControllerCommon.Controllers
 {
@@ -55,6 +56,9 @@ namespace ControllerCommon.Controllers
 
         protected PrecisionTimer MovementsTimer;
         protected PrecisionTimer InputsTimer;
+
+        // UI
+        protected static FontFamily FontFamily = new FontFamily("PromptFont");
 
         protected Border ui_border = new Border() { CornerRadius = new CornerRadius(4, 4, 4, 4), Padding = new Thickness(15, 12, 12, 12) };
         protected Grid ui_grid = new Grid();
@@ -319,6 +323,26 @@ namespace ControllerCommon.Controllers
             }
 
             return "\u003F";
+        }
+
+        public static FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
+        {
+            return new FontIcon()
+            {
+                Glyph = GetGlyph(button),
+                FontSize = FontIconSize,
+                FontFamily = FontFamily
+            };
+        }
+
+        public static FontIcon GetFontIcon(AxisFlags axis, int FontIconSize = 20)
+        {
+            return new FontIcon()
+            {
+                Glyph = GetGlyph(axis),
+                FontSize = FontIconSize,
+                FontFamily = FontFamily
+            };
         }
     }
 }

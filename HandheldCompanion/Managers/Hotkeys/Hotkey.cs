@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using HandheldCompanion.Controllers;
 using ModernWpf.Controls;
 using Newtonsoft.Json;
@@ -188,7 +189,7 @@ namespace HandheldCompanion.Managers
             {
                 Tag = "Chord",
                 MinWidth = 200,
-                FontSize = 12,
+                FontSize = 14,
                 Height = 40,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalContentAlignment = VerticalAlignment.Center,
@@ -226,7 +227,7 @@ namespace HandheldCompanion.Managers
             {
                 Tag = "Combo",
                 MinWidth = 200,
-                FontSize = 12,
+                FontSize = 14,
                 Height = 40,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
             };
@@ -315,6 +316,8 @@ namespace HandheldCompanion.Managers
 
             HotkeysManager.ClearHotkey(this);
             InputsManager.ClearListening(this);
+
+            DrawOutput();
         }
 
         public void StartListening(ListenerType type)
@@ -413,23 +416,27 @@ namespace HandheldCompanion.Managers
 
             if (HasInput())
             {
-                TextBlock inputText = new() { FontFamily = new FontFamily("PromptFont"), FontSize = 24 };
-
                 ControllerType controllerType = ControllerManager.GetTargetControllerType();
-                switch (controllerType)
-                {
-                    case ControllerType.XInput:
-                        inputText.Text = string.Join("", inputsChord.State.Buttons.Select(XInputController.GetGlyph));
-                        break;
-                    case ControllerType.DS4:
-                        inputText.Text = string.Join("", inputsChord.State.Buttons.Select(DS4Controller.GetGlyph));
-                        break;
-                    default:
-                        inputText.Text = string.Join("", inputsChord.State.Buttons.Select(DInputController.GetGlyph));
-                        break;
-                }
 
-                inputContent.Children.Add(inputText);
+                foreach(ButtonFlags button in inputsChord.State.Buttons)
+                {
+                    FontIcon fontIcon;
+
+                    switch (controllerType)
+                    {
+                        case ControllerType.XInput:
+                            fontIcon = XInputController.GetFontIcon(button);
+                            break;
+                        case ControllerType.DS4:
+                            fontIcon = DS4Controller.GetFontIcon(button);
+                            break;
+                        default:
+                            fontIcon = DInputController.GetFontIcon(button);
+                            break;
+                    }
+
+                    inputContent.Children.Add(fontIcon);
+                }
 
                 // only display inputsChord type (click, hold) if inputs were captured
                 TextBlock type = new TextBlock()
@@ -464,29 +471,18 @@ namespace HandheldCompanion.Managers
             if (outputButton is null)
                 return;
 
-            // comboContent content
-            SimpleStackPanel outputContent = new()
-            {
-                Orientation = Orientation.Horizontal,
-                Spacing = 6,
-            };
-
-            TextBlock outputText = new TextBlock();
+            // update button content
             switch (HasOutput())
             {
                 case true:
-                    outputText.Text = string.Join(", ", inputsChord.OutputKeys.Where(key => key.IsKeyDown));
-                    outputText.SetResourceReference(Control.ForegroundProperty, "");
+                    outputButton.Content = string.Join(", ", inputsChord.OutputKeys.Where(key => key.IsKeyDown));
+                    outputButton.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
                     break;
                 case false:
-                    outputText.Text = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackOutput");
-                    outputText.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+                    outputButton.Content = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackOutput");
+                    outputButton.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
                     break;
             }
-            outputContent.Children.Add(outputText);
-
-            // update button content
-            outputButton.Content = outputContent;
 
             DrawErase();
         }

@@ -2,12 +2,16 @@
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
+using ModernWpf.Controls;
 using neptune_hidapi.net;
 using SharpDX.XInput;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace HandheldCompanion.Controllers
 {
@@ -136,6 +140,14 @@ namespace HandheldCompanion.Controllers
 
         private XInputStateSecret State;
         private XInputStateSecret prevState;
+
+        private static Dictionary<ButtonFlags, SolidColorBrush> ButtonColors = new()
+        {
+            { ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)) },
+            { ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 217, 65, 38)) },
+            { ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)) },
+            { ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)) },
+        };
 
         public XInputController(Controller controller)
         {
@@ -320,13 +332,13 @@ namespace HandheldCompanion.Controllers
             switch (button)
             {
                 case ButtonFlags.B1:
-                    return "\u21D3";
+                    return "\u21D3"; // Button A
                 case ButtonFlags.B2:
-                    return "\u21D2";
+                    return "\u21D2"; // Button B
                 case ButtonFlags.B3:
-                    return "\u21D0";
+                    return "\u21D0"; // Button X
                 case ButtonFlags.B4:
-                    return "\u21D1";
+                    return "\u21D1"; // Button Y
                 case ButtonFlags.L1:
                     return "\u2198";
                 case ButtonFlags.R1:
@@ -357,6 +369,21 @@ namespace HandheldCompanion.Controllers
             }
 
             return IController.GetGlyph(axis);
+        }
+
+        public static FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
+        {
+            var fontIcon = new FontIcon()
+            {
+                Glyph = GetGlyph(button),
+                FontSize = FontIconSize,
+                FontFamily = FontFamily
+            };
+
+            if (ButtonColors.ContainsKey(button))
+                fontIcon.Foreground = ButtonColors[button];
+
+            return fontIcon;
         }
     }
 }

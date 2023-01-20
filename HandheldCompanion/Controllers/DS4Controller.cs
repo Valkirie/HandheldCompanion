@@ -1,14 +1,25 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using ModernWpf.Controls;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
+using System.Collections.Generic;
+using System.Windows.Media;
 
 namespace HandheldCompanion.Controllers
 {
     public class DS4Controller : DInputController
     {
+        private static Dictionary<ButtonFlags, SolidColorBrush> ButtonColors = new()
+        {
+            { ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 116, 139, 255)) },
+            { ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 255, 73, 75)) },
+            { ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 244, 149, 193)) },
+            { ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 73, 191, 115)) },
+        };
+
         public DS4Controller(Joystick joystick, PnPDetails details) : base(joystick, details)
         {
             this.ControllerType = ControllerType.DS4;
@@ -135,13 +146,13 @@ namespace HandheldCompanion.Controllers
             switch (button)
             {
                 case ButtonFlags.B1:
-                    return "\u21E3";
+                    return "\u21E3"; // Cross
                 case ButtonFlags.B2:
-                    return "\u21E2";
+                    return "\u21E2"; // Circle
                 case ButtonFlags.B3:
-                    return "\u21E0";
+                    return "\u21E0"; // Square
                 case ButtonFlags.B4:
-                    return "\u21E1";
+                    return "\u21E1"; // Triangle
                 case ButtonFlags.L1:
                     return "\u21B0";
                 case ButtonFlags.R1:
@@ -175,6 +186,21 @@ namespace HandheldCompanion.Controllers
             }
 
             return IController.GetGlyph(axis);
+        }
+
+        public static FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
+        {
+            var fontIcon = new FontIcon()
+            {
+                Glyph = GetGlyph(button),
+                FontSize = FontIconSize,
+                FontFamily = FontFamily
+            };
+
+            if (ButtonColors.ContainsKey(button))
+                fontIcon.Foreground = ButtonColors[button];
+
+            return fontIcon;
         }
     }
 }
