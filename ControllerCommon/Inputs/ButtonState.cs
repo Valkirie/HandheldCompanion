@@ -74,38 +74,9 @@ namespace ControllerCommon.Inputs
         {
             ButtonState buttonState = obj as ButtonState;
             if (buttonState != null)
-                return EqualsWithValues(State, buttonState.State);
+                return buttonState.Buttons.SequenceEqual(Buttons);
 
             return false;
-        }
-
-        public static bool EqualsWithValues<TKey, TValue>(Dictionary<TKey, TValue> obj1, Dictionary<TKey, TValue> obj2)
-        {
-            bool result = false;
-            if (obj1.Count == obj2.Count)
-            {
-                result = true;
-                {
-                    foreach (KeyValuePair<TKey, TValue> item in obj1)
-                    {
-                        if (obj2.TryGetValue(item.Key, out var value))
-                        {
-                            if (!value.Equals(item.Value))
-                            {
-                                return false;
-                            }
-
-                            continue;
-                        }
-
-                        return false;
-                    }
-
-                    return result;
-                }
-            }
-
-            return result;
         }
 
         public object Clone()
