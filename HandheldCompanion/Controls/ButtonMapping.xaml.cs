@@ -24,21 +24,22 @@ namespace HandheldCompanion.Controls
         public ButtonMapping()
         {
             InitializeComponent();
-        }
 
-        private void Action_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
             ActionType type = (ActionType)Action.SelectedIndex;
 
             // clear current dropdown values
             Target.Items.Clear();
 
             // populate target dropdown based on action type
-            switch(type)
+            switch (type)
             {
                 case ActionType.Button:
                     break;
             }
+        }
+
+        private void Action_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
         }
 
         private void Target_SelectionChanged(object sender, SelectionChangedEventArgs e)

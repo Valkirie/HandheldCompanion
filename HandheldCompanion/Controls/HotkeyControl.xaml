@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="HandheldCompanion.Controls.HotkeyControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HandheldCompanion.Controls" xmlns:ui="http://schemas.modernwpf.com/2019"
+             mc:Ignorable="d" 
+             d:DesignWidth="800">
+
+    <Border
+        Padding="15,12,12,12"
+        CornerRadius="{DynamicResource ControlCornerRadius}"
+        Background="{DynamicResource ExpanderContentBackground}">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                <ColumnDefinition MinWidth="50"></ColumnDefinition>
+                <ColumnDefinition MinWidth="50"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            
+            <DockPanel>
+                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
+
+                <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                    <TextBlock Text="HotkeyName" FontSize="14"/>
+                    <TextBlock Text="HotkeyDesc" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                </ui:SimpleStackPanel>
+            </DockPanel>
+
+            <ui:SimpleStackPanel Grid.Column="1" Spacing="6" Orientation="Vertical" HorizontalAlignment="Stretch">
+                <Button Height="40" MinWidth="200" FontSize="14" HorizontalAlignment="Stretch"/>
+                <Button Height="40" MinWidth="200" FontSize="14" HorizontalAlignment="Stretch"/>
+            </ui:SimpleStackPanel>
+
+            <Button Grid.Column="2" Height="40" HorizontalAlignment="Right">
+                <ui:FontIcon Glyph="&#xE75C;" FontSize="14"/>
+            </Button>
+            <Button Grid.Column="3" Height="40" HorizontalAlignment="Right">
+                <ui:FontIcon Glyph="&#xE840;" FontSize="14"/>                
+            </Button>
+        </Grid>
+    </Border>
+</UserControl>

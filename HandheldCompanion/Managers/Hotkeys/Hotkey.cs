@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
 using ModernWpf.Controls;
 using Newtonsoft.Json;
 using System;
