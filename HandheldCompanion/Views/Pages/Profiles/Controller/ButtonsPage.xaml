@@ -15,47 +15,27 @@
 
     <Grid Name="MainGrid">
         <ui:SimpleStackPanel Spacing="6">
-            <!-- Mockup -->
-            <Border
-                Padding="15,12,12,12"
-                CornerRadius="{DynamicResource ControlCornerRadius}"
-                Background="{DynamicResource ExpanderContentBackground}">
+            
+            <!-- A,B,X,Y -->
+            <Label Content="A,B,X,Y" FontWeight="SemiBold"></Label>
+            <ui:SimpleStackPanel Spacing="6" Name="ButtonsStackPanel">
+            </ui:SimpleStackPanel>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
-                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
+            <!-- BUMPERS -->
+            <Label Content="BUMPERS" FontWeight="SemiBold"></Label>
+            <ui:SimpleStackPanel Spacing="6" Name="BumpersStackPanel">
+            </ui:SimpleStackPanel>
 
-                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF093;" Foreground="GreenYellow" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <!-- MENU -->
+            <Label Content="MENU" FontWeight="SemiBold"></Label>
+            <ui:SimpleStackPanel Spacing="6" Name="MenuStackPanel">
+            </ui:SimpleStackPanel>
 
-                    <ComboBox Grid.Column="1" Width="120" HorizontalAlignment="Right" VerticalAlignment="Center">
-                        <ComboBoxItem>A Button</ComboBoxItem>
-                        <ComboBoxItem>B Button</ComboBoxItem>
-                    </ComboBox>
-                </Grid>
-            </Border>
+            <!-- OEM -->
+            <Label Content="OEM" FontWeight="SemiBold"></Label>
+            <ui:SimpleStackPanel Spacing="6" Name="OEMStackPanel">
+            </ui:SimpleStackPanel>
 
-            <!-- Mockup -->
-            <Border
-                Padding="15,12,12,12"
-                CornerRadius="{DynamicResource ControlCornerRadius}"
-                Background="{DynamicResource ExpanderContentBackground}">
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
-                        <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-
-                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF094;" Foreground="OrangeRed" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-
-                    <ComboBox Grid.Column="1" Width="120" HorizontalAlignment="Right" VerticalAlignment="Center">
-                        <ComboBoxItem>A Button</ComboBoxItem>
-                        <ComboBoxItem>B Button</ComboBoxItem>
-                    </ComboBox>
-                </Grid>
-            </Border>
         </ui:SimpleStackPanel>
     </Grid>
 </Page>
