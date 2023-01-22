@@ -2,6 +2,7 @@ using ControllerCommon;
 using ControllerCommon.Inputs;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
 using PrecisionTiming;
@@ -488,7 +489,7 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 case "shortcutProfilesPage@@":
                     {
-                        Border hotkeyBorder = hotkey.GetHotkey();
+                        HotkeyControl hotkeyBorder = hotkey.GetControl();
                         if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
                             return;
 

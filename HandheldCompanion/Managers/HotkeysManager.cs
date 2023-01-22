@@ -62,6 +62,10 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
+            // process hotkeys types
+            foreach (InputsHotkeyType type in (InputsHotkeyType[])Enum.GetValues(typeof(InputsHotkeyType)))
+                HotkeyTypeCreated?.Invoke(type);
+
             // process hotkeys
             foreach (var pair in InputsHotkey.InputsHotkeys)
             {
@@ -78,54 +82,35 @@ namespace HandheldCompanion.Managers
 
                 // no hotkey found or failed parsing
                 if (hotkey is null)
-                    hotkey = new Hotkey(Id, inputsHotkey);
+                    hotkey = new Hotkey(Id);
 
                 // hotkey is outdated and using an unknown inputs hotkey
                 if (!InputsHotkeys.ContainsKey(hotkey.hotkeyId))
                     continue;
 
                 // pull inputs hotkey
-                hotkey.inputsHotkey = InputsHotkey.InputsHotkeys[hotkey.hotkeyId];
-                switch (hotkey.inputsHotkey.hotkeyType)
-                {
-                    case InputsHotkeyType.UI:
-                        hotkey.DrawControl(true);
-                        break;
-                    default:
-                        hotkey.DrawControl();
-                        break;
-                }
+                hotkey.SetInputsHotkey(InputsHotkeys[hotkey.hotkeyId]);
+                hotkey.Refresh();
 
                 if (!Hotkeys.ContainsKey(hotkey.hotkeyId))
                     Hotkeys.Add(hotkey.hotkeyId, hotkey);
             }
 
-            // process hotkeys types
-            foreach (InputsHotkeyType type in (InputsHotkeyType[])Enum.GetValues(typeof(InputsHotkeyType)))
-                HotkeyTypeCreated?.Invoke(type);
-
             foreach (Hotkey hotkey in Hotkeys.Values)
             {
-                HotkeyCreated?.Invoke(hotkey);
+                hotkey.Listening += StartListening;
+                hotkey.Pinning += PinOrUnpinHotkey;
+                hotkey.Summoned += (hotkey) => InvokeTrigger(hotkey, false, true);
 
-                switch (hotkey.inputsHotkey.hotkeyType)
-                {
-                    case InputsHotkeyType.UI:
-                        hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.UI);
-                        break;
-                    default:
-                        hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.Default);
-                        break;
-                }
-
-                hotkey.outputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.Output);
-                hotkey.pinButton.Click += (sender, e) => PinOrUnpinHotkey(hotkey);
-
+                /*
                 hotkey.quickButton.PreviewTouchDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
                 hotkey.quickButton.PreviewMouseDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
                 hotkey.quickButton.PreviewMouseUp += (sender, e) => { InputsManager.InvokeTrigger(hotkey, false, true); };
+                */
 
                 hotkey.Updated += (hotkey) => SerializeHotkey(hotkey, true);
+
+                HotkeyCreated?.Invoke(hotkey);
             }
 
             IsInitialized = true;
@@ -188,13 +173,11 @@ namespace HandheldCompanion.Managers
                             return;
                         }
 
-                        hotkey.StartPinning();
+                        hotkey.Pinned();
                     }
                     break;
                 case true:
-                    {
-                        hotkey.StopPinning();
-                    }
+                        hotkey.Unpinned();
                     break;
             }
 

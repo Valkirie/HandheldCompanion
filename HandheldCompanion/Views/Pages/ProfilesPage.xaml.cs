@@ -3,6 +3,7 @@ using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Pages.Profiles;
 using Microsoft.Win32;
@@ -686,7 +687,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 case "shortcutProfilesPage@":
                     {
-                        Border hotkeyBorder = hotkey.GetHotkey();
+                        HotkeyControl hotkeyBorder = hotkey.GetControl();
                         if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
                             return;
 

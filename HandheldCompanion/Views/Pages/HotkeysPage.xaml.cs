@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Utils;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
 using System;
@@ -66,14 +67,12 @@ namespace HandheldCompanion.Views.Pages
 
             Dispatcher.Invoke(() =>
             {
-                Border hotkeyBorder = hotkey.GetHotkey();
-                if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
-                    return;
+                HotkeyControl control = hotkey.GetControl();
 
                 ushort idx = (ushort)hotkey.inputsHotkey.hotkeyType;
-                SimpleStackPanel stackPanel = (SimpleStackPanel)HotkeysPanel.Children[idx];
 
-                stackPanel.Children.Add(hotkeyBorder);
+                SimpleStackPanel stackPanel = (SimpleStackPanel)HotkeysPanel.Children[idx];
+                stackPanel.Children.Add(control);
             });
         }
     }

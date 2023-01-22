@@ -2,6 +2,7 @@ using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerService.Sensors;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using System;
 using System.Windows;
@@ -262,7 +263,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
                         ProfilesPageHotkey = hotkey;
 
                         // add to UI
-                        Border hotkeyBorder = ProfilesPageHotkey.GetHotkey();
+                        HotkeyControl hotkeyBorder = ProfilesPageHotkey.GetControl();
                         if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
                             return;
 

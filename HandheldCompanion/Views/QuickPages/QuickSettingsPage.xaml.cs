@@ -60,6 +60,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void UpdatePins()
         {
+            // todo, implement quick hotkey order
             QuickHotkeys.Children.Clear();
 
             foreach (Hotkey hotkey in HotkeysManager.Hotkeys.Values.Where(item => item.IsPinned))
