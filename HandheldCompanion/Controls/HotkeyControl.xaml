@@ -14,35 +14,45 @@
         CornerRadius="{DynamicResource ControlCornerRadius}"
         Background="{DynamicResource ExpanderContentBackground}">
 
-        <Grid Name="HotkeyGrid">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                <ColumnDefinition Width="40"></ColumnDefinition>
-                <ColumnDefinition Width="40"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid Name="EmbeddedGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                    <ColumnDefinition Width="40"></ColumnDefinition>
+                </Grid.ColumnDefinitions>                
+            </Grid>            
             
-            <DockPanel Name="HotkeyPanel">
-                <ui:FontIcon Name="HotkeyIcon" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
+            <Grid Name="HotkeyGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                    <ColumnDefinition Width="40"></ColumnDefinition>
+                    <ColumnDefinition Width="40"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+            
+                <DockPanel Name="HotkeyPanel">
+                    <ui:FontIcon Name="HotkeyIcon" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
-                <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                    <TextBlock Name="HotkeyName" Text="Name" FontSize="14" TextWrapping="Wrap"/>
-                    <TextBox Name="HotkeyCustomName" Visibility="Collapsed" Margin="0,0,10,0"/>
-                    <TextBlock Name="HotkeyDesc" Text="Desc" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                    <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                        <TextBlock Name="HotkeyName" Text="Name" FontSize="14" TextWrapping="Wrap"/>
+                        <TextBox Name="HotkeyCustomName" Visibility="Collapsed" Margin="0,0,10,0"/>
+                        <TextBlock Name="HotkeyDesc" Text="Desc" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                    </ui:SimpleStackPanel>
+                </DockPanel>
+
+                <ui:SimpleStackPanel Name="HotkeyButtons" Grid.Column="1" Spacing="6" Orientation="Vertical" HorizontalAlignment="Stretch">
+                    <Button Name="HotkeyInput" Content="{x:Static resx:Resources.InputsHotkey_fallbackInput}" ToolTip="{x:Static resx:Resources.InputsHotkey_fallbackInput}" Height="40" MinWidth="200" FontSize="14" HorizontalAlignment="Stretch" Margin="0,0,10,0"/>
+                    <Button Name="HotkeyOutput" Content="{x:Static resx:Resources.InputsHotkey_fallbackOutput}" ToolTip="{x:Static resx:Resources.InputsHotkey_fallbackOutput}" Height="40" MinWidth="200" FontSize="14" HorizontalAlignment="Stretch" Margin="0,0,10,0" Visibility="Collapsed"/>
                 </ui:SimpleStackPanel>
-            </DockPanel>
 
-            <ui:SimpleStackPanel Name="HotkeyButtons" Grid.Column="1" Spacing="6" Orientation="Vertical" HorizontalAlignment="Stretch" Margin="0,0,10,0">
-                <Button Name="HotkeyInput" Content="{x:Static resx:Resources.InputsHotkey_fallbackInput}" ToolTip="{x:Static resx:Resources.InputsHotkey_fallbackInput}" Height="40" MinWidth="200" FontSize="14" HorizontalAlignment="Stretch"/>
-                <Button Name="HotkeyOutput" Content="{x:Static resx:Resources.InputsHotkey_fallbackOutput}" ToolTip="{x:Static resx:Resources.InputsHotkey_fallbackOutput}" Height="40" MinWidth="200" FontSize="14" HorizontalAlignment="Stretch" Visibility="Collapsed"/>
-            </ui:SimpleStackPanel>
-
-            <Button Name="HotkeyErase" Grid.Column="2" Height="40" HorizontalAlignment="Center" ToolTip="Erase hotkey" Style="{DynamicResource AccentButtonStyle}">
-                <ui:FontIcon Glyph="&#xE75C;" FontSize="14"/>
-            </Button>
-            <Button Name="HotkeyPin" Grid.Column="3" Height="40" HorizontalAlignment="Center">
-                <ui:FontIcon Glyph="&#xE840;" FontSize="14"/>                
-            </Button>
+                <Button Name="HotkeyErase" Grid.Column="2" Height="40" HorizontalAlignment="Center" ToolTip="Erase hotkey" Style="{DynamicResource AccentButtonStyle}">
+                    <ui:FontIcon Glyph="&#xE75C;" FontSize="14"/>
+                </Button>
+                
+                <Button Name="HotkeyPin" Grid.Column="3" Height="40" HorizontalAlignment="Center">
+                    <ui:FontIcon Glyph="&#xE840;" FontSize="14"/>                
+                </Button>
+            </Grid>
         </Grid>
     </Border>
 </UserControl>

@@ -38,7 +38,7 @@ namespace HandheldCompanion.Views.Pages
         private void HotkeysManager_HotkeyTypeCreated(InputsHotkey.InputsHotkeyType type)
         {
             // These are special shortcut keys with no related events
-            if (type == InputsHotkey.InputsHotkeyType.UI)
+            if (type == InputsHotkey.InputsHotkeyType.Embedded)
                 return;
 
             Dispatcher.Invoke(() =>
@@ -58,7 +58,7 @@ namespace HandheldCompanion.Views.Pages
         private void HotkeysManager_HotkeyCreated(Hotkey hotkey)
         {
             // These are special shortcut keys with no related events
-            if (hotkey.inputsHotkey.hotkeyType == InputsHotkey.InputsHotkeyType.UI)
+            if (hotkey.inputsHotkey.hotkeyType == InputsHotkey.InputsHotkeyType.Embedded)
                 return;
 
             Type DeviceType = hotkey.inputsHotkey.DeviceType;

@@ -254,7 +254,7 @@ namespace HandheldCompanion.Managers
                 }));
 
                 // These are special shortcut keys with no related events
-                if (hotkey == hotkeys.Last() && hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.UI)
+                if (hotkey == hotkeys.Last() && hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.Embedded)
                     return;
             }
 

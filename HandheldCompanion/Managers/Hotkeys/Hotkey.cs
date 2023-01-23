@@ -77,17 +77,15 @@ namespace HandheldCompanion.Managers
 
             switch (inputsHotkey.hotkeyType)
             {
-                case InputsHotkeyType.UI:
+                case InputsHotkeyType.Embedded:
                     mainControl.HotkeyPanel.Visibility = Visibility.Collapsed;
                     mainControl.HotkeyPin.Visibility = Visibility.Collapsed;
 
-                    // dirty, improve me!
-                    Grid.SetColumn(mainControl.HotkeyButtons, 0);
-                    mainControl.HotkeyGrid.ColumnDefinitions[1] = new ColumnDefinition()
-                    {
-                        Width = new GridLength(0, GridUnitType.Star),
-                        MinWidth = 0
-                    };
+                    mainControl.HotkeyButtons.Children.Remove(mainControl.HotkeyInput);
+                    mainControl.EmbeddedGrid.Children.Add(mainControl.HotkeyInput);
+
+                    mainControl.HotkeyGrid.Children.Remove(mainControl.HotkeyErase);
+                    mainControl.EmbeddedGrid.Children.Add(mainControl.HotkeyErase);
 
                     mainControl.HotkeyInput.Click += (e, sender) => Listening?.Invoke(this, ListenerType.UI);
                     break;

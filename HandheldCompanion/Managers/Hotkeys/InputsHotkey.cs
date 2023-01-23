@@ -17,7 +17,7 @@ namespace HandheldCompanion.Managers
             HC = 3,
             Device = 4,
             Custom = 5,
-            UI = 6,
+            Embedded = 6,
         }
 
         public static SortedDictionary<ushort, InputsHotkey> InputsHotkeys = new()
@@ -62,9 +62,9 @@ namespace HandheldCompanion.Managers
             { 59, new InputsHotkey(InputsHotkeyType.Custom,     "\u2789",   "shortcutCustom9",                  "Segoe UI Symbol",      20, false,  true) },
 
             // Special, UI hotkeys
-            { 60, new InputsHotkey(InputsHotkeyType.UI,         "\uEDE3",   "shortcutProfilesPage@",            "Segoe Fluent Icons",   20, true,   true) },
-            { 61, new InputsHotkey(InputsHotkeyType.UI,         "\uEDE3",   "shortcutProfilesPage@@",           "Segoe Fluent Icons",   20, true,   true) },
-            { 62, new InputsHotkey(InputsHotkeyType.UI,         "\uEDE3",   "shortcutProfilesSettingsMode0",    "Segoe Fluent Icons",   20, true,   true) },
+            { 60, new InputsHotkey(InputsHotkeyType.Embedded,         "\uEDE3",   "shortcutProfilesPage@",            "Segoe Fluent Icons",   20, true,   true) },
+            { 61, new InputsHotkey(InputsHotkeyType.Embedded,         "\uEDE3",   "shortcutProfilesPage@@",           "Segoe Fluent Icons",   20, true,   true) },
+            { 62, new InputsHotkey(InputsHotkeyType.Embedded,         "\uEDE3",   "shortcutProfilesSettingsMode0",    "Segoe Fluent Icons",   20, true,   true) },
         };
 
         public string Glyph { get; set; }
