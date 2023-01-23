@@ -7,6 +7,7 @@
       xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       xmlns:ui="http://schemas.modernwpf.com/2019"
+      xmlns:controls="clr-namespace:HandheldCompanion.Controls"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
       Margin="20"

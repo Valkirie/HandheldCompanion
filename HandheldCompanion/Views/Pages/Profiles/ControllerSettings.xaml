@@ -57,11 +57,9 @@
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
 
-        <common:TouchScrollViewer x:Name="scrollViewer" PanningMode="VerticalOnly">
-            <ui:Frame
-                    Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-                    Name="ContentFrame" MaxWidth="1080"
-                    HorizontalAlignment="Left"/>
-        </common:TouchScrollViewer>
+        <ui:Frame
+            Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
+            Name="ContentFrame" MaxWidth="1080"
+            HorizontalAlignment="Left"/>
     </ui:NavigationView>
 </Page>

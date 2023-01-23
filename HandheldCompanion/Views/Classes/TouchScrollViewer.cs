@@ -16,6 +16,10 @@ namespace HandheldCompanion.Views.Classes
 
             // Perform the hit test against a given portion of the visual object tree.
             HitTestResult result = VisualTreeHelper.HitTest(this, pt);
+
+            if (result is null)
+                return;
+
             DependencyObject hit = result.VisualHit;
 
             while (hit is not null && hit != ancestor)

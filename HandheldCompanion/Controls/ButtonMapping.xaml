@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:HandheldCompanion.Controls" xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:local="clr-namespace:HandheldCompanion.Controls"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              mc:Ignorable="d" 
              d:DesignHeight="66" d:DesignWidth="800">
     
@@ -19,7 +20,7 @@
                 <ColumnDefinition MinWidth="150"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             
-            <ui:FontIcon Name="Icon" FontFamily="PromptFont" FontSize="20" Height="40" HorizontalAlignment="Left"/>
+            <ui:FontIcon Name="Icon" Glyph="?" FontFamily="{DynamicResource PhoneFontFamilyNormal}" FontSize="20" Height="40" Width="40" HorizontalAlignment="Left"/>
 
             <ComboBox Name="Action" Width="130" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center" SelectionChanged="Action_SelectionChanged" SelectedIndex="0">
                 <ComboBoxItem>None</ComboBoxItem>

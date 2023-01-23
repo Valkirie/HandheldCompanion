@@ -14,14 +14,14 @@
         CornerRadius="{DynamicResource ControlCornerRadius}"
         Background="{DynamicResource ExpanderContentBackground}">
 
-        <Grid>
+        <Grid Name="MainGrid" IsEnabled="False">
             <Grid Name="EmbeddedGrid">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
                     <ColumnDefinition Width="40"></ColumnDefinition>
                 </Grid.ColumnDefinitions>                
-            </Grid>            
-            
+            </Grid>
+
             <Grid Name="HotkeyGrid">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
@@ -29,7 +29,7 @@
                     <ColumnDefinition Width="40"></ColumnDefinition>
                     <ColumnDefinition Width="40"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-            
+
                 <DockPanel Name="HotkeyPanel">
                     <ui:FontIcon Name="HotkeyIcon" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 

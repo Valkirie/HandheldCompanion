@@ -1,4 +1,7 @@
 ﻿using ControllerCommon.Actions;
+using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
+using HandheldCompanion.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +24,8 @@ namespace HandheldCompanion.Controls
     /// </summary>
     public partial class ButtonMapping : UserControl
     {
+        private ButtonFlags Button;
+
         public ButtonMapping()
         {
             InitializeComponent();
@@ -38,13 +43,34 @@ namespace HandheldCompanion.Controls
             }
         }
 
+        public ButtonMapping(ButtonFlags button) : this()
+        {
+            this.Button = button;
+        }
+
+        internal void SetController(IController controller)
+        {
+            // update Icon on controller changes
+            var newIcon = controller.GetFontIcon(Button);
+
+            // unsupported button
+            if (newIcon is null)
+            {
+                this.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            this.Icon.Glyph = newIcon.Glyph;
+            this.Icon.FontFamily = newIcon.FontFamily;
+            this.Icon.Foreground = newIcon.Foreground;
+        }
+
         private void Action_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
         }
 
         private void Target_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
         }
     }
 }

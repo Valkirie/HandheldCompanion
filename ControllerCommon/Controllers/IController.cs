@@ -4,6 +4,7 @@ using ControllerCommon.Managers;
 using ModernWpf.Controls;
 using PrecisionTiming;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,14 +20,6 @@ namespace ControllerCommon.Controllers
         Accelerometer = 2,
     }
 
-    [Serializable]
-    public enum ControllerType
-    {
-        None = 0,
-        XInput = 1,
-        DS4 = 2,
-    }
-
     public abstract class IController
     {
         #region events
@@ -39,7 +32,19 @@ namespace ControllerCommon.Controllers
 
         public ControllerState Inputs = new();
         public ControllerMovements Movements = new();
-        public ControllerType ControllerType { get; set; }
+
+        protected List<ButtonFlags> ButtonSupport = new()
+        {
+            ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
+            ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
+            ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
+            ButtonFlags.L1, ButtonFlags.R1,
+            ButtonFlags.L2, ButtonFlags.R2,
+            ButtonFlags.LeftThumb, ButtonFlags.RightThumb,
+            ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
+            ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
+        };
+        protected Dictionary<ButtonFlags, Brush> ButtonBrush = new();
 
         protected const short UPDATE_INTERVAL = 5;
 
@@ -58,7 +63,7 @@ namespace ControllerCommon.Controllers
         protected PrecisionTimer InputsTimer;
 
         // UI
-        protected static FontFamily FontFamily = new FontFamily("PromptFont");
+        protected FontFamily FontFamily = new("PromptFont");
 
         protected Border ui_border = new Border() { CornerRadius = new CornerRadius(4, 4, 4, 4), Padding = new Thickness(15, 12, 12, 12) };
         protected Grid ui_grid = new Grid();
@@ -268,81 +273,34 @@ namespace ControllerCommon.Controllers
             RefreshControls();
         }
 
-        public static string GetGlyph(ButtonFlags button)
+        public virtual string GetGlyph(ButtonFlags button)
         {
-            switch(button)
-            {
-                case ButtonFlags.DPadUp:
-                    return "\u219F";
-                case ButtonFlags.DPadDown:
-                    return "\u21A1";
-                case ButtonFlags.DPadLeft:
-                    return "\u219E";
-                case ButtonFlags.DPadRight:
-                    return "\u21A0";
-
-                case ButtonFlags.LStickUp:
-                    return "\u21BE";
-                case ButtonFlags.LStickDown:
-                    return "\u21C2";
-                case ButtonFlags.LStickLeft:
-                    return "\u21BC";
-                case ButtonFlags.LStickRight:
-                    return "\u21C0";
-
-                case ButtonFlags.RStickUp:
-                    return "\u21BF";
-                case ButtonFlags.RStickDown:
-                    return "\u21C3";
-                case ButtonFlags.RStickLeft:
-                    return "\u21BD";
-                case ButtonFlags.RStickRight:
-                    return "\u21C1";
-
-                case ButtonFlags.LeftThumb:
-                    return "\u21BA";
-                case ButtonFlags.RightThumb:
-                    return "\u21BB";
-            }
-
             return "\u003F";
         }
 
-        public static string GetGlyph(AxisFlags axis)
+        public virtual string GetGlyph(AxisFlags axis)
         {
-            switch (axis)
-            {
-                case AxisFlags.LeftThumbX:
-                    return "\u21C4";
-                case AxisFlags.LeftThumbY:
-                    return "\u21C5";
-                case AxisFlags.RightThumbX:
-                    return "\u21C6";
-                case AxisFlags.RightThumbY:
-                    return "\u21F5";
-            }
-
             return "\u003F";
         }
 
-        public static FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
+        public virtual FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
         {
-            return new FontIcon()
-            {
-                Glyph = GetGlyph(button),
-                FontSize = FontIconSize,
-                FontFamily = FontFamily
-            };
+            return null;
         }
 
-        public static FontIcon GetFontIcon(AxisFlags axis, int FontIconSize = 20)
+        public virtual FontIcon GetFontIcon(AxisFlags axis, int FontIconSize = 20)
         {
-            return new FontIcon()
-            {
-                Glyph = GetGlyph(axis),
-                FontSize = FontIconSize,
-                FontFamily = FontFamily
-            };
+            return null;
+        }
+
+        public virtual Brush GetGlyphColor(ButtonFlags button)
+        {
+            return null;
+        }
+
+        public bool IsButtonSupported(ButtonFlags button)
+        {
+            return ButtonSupport.Contains(button);
         }
     }
 }

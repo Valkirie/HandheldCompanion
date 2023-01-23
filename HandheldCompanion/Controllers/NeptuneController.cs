@@ -32,8 +32,6 @@ namespace HandheldCompanion.Controllers
 
         public NeptuneController(PnPDetails details)
         {
-            this.ControllerType = ControllerType.XInput;
-
             Details = details;
             if (Details is null)
                 return;

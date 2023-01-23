@@ -429,11 +429,6 @@ namespace HandheldCompanion.Managers
             return targetController;
         }
 
-        public static ControllerType GetTargetControllerType()
-        {
-            return targetController is not null ? targetController.ControllerType : ControllerType.None;
-        }
-
         private static void UpdateInputs(ControllerState controllerState)
         {
             // pass inputs to InputsManager

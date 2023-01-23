@@ -22,8 +22,6 @@ namespace HandheldCompanion.Controllers
 
         public DS4Controller(Joystick joystick, PnPDetails details) : base(joystick, details)
         {
-            this.ControllerType = ControllerType.DS4;
-
             if (!IsConnected())
                 return;
 
@@ -141,7 +139,7 @@ namespace HandheldCompanion.Controllers
             base.Unplug();
         }
 
-        public static new string GetGlyph(ButtonFlags button)
+        public override string GetGlyph(ButtonFlags button)
         {
             switch (button)
             {
@@ -172,10 +170,10 @@ namespace HandheldCompanion.Controllers
                     return "\u21E7";
             }
 
-            return IController.GetGlyph(button);
+            return base.GetGlyph(button);
         }
 
-        public static new string GetGlyph(AxisFlags axis)
+        public override string GetGlyph(AxisFlags axis)
         {
             switch (axis)
             {
@@ -185,10 +183,10 @@ namespace HandheldCompanion.Controllers
                     return "\u21B3";
             }
 
-            return IController.GetGlyph(axis);
+            return base.GetGlyph(axis);
         }
 
-        public static FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
+        public override FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
         {
             var fontIcon = new FontIcon()
             {

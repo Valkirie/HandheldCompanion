@@ -57,7 +57,7 @@ namespace HandheldCompanion.Managers
         private static void ControllerManager_ControllerSelected(IController Controller)
         {
             foreach (Hotkey hotkey in Hotkeys.Values)
-                hotkey.DrawInput();
+                hotkey.ControllerSelected(Controller);
         }
 
         public static void Start()

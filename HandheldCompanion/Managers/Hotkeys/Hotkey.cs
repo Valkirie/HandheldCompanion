@@ -230,31 +230,20 @@ namespace HandheldCompanion.Managers
                 Spacing = 6
             };
 
+            IController controller = ControllerManager.GetTargetController();
+            if (controller is null)
+                return;
+
+            mainControl.MainGrid.IsEnabled = true;
             if (HasInput())
             {
-                ControllerType controllerType = ControllerManager.GetTargetControllerType();
-
-                foreach(ButtonFlags button in inputsChord.State.Buttons)
+                foreach (ButtonFlags button in inputsChord.State.Buttons)
                 {
-                    FontIcon fontIcon;
-
-                    switch (controllerType)
-                    {
-                        case ControllerType.XInput:
-                            fontIcon = XInputController.GetFontIcon(button);
-                            break;
-                        case ControllerType.DS4:
-                            fontIcon = DS4Controller.GetFontIcon(button);
-                            break;
-                        default:
-                            fontIcon = DInputController.GetFontIcon(button);
-                            break;
-                    }
-
-                    inputContent.Children.Add(fontIcon);
+                    FontIcon fontIcon = controller.GetFontIcon(button);
+                    if (fontIcon is not null)
+                        inputContent.Children.Add(fontIcon);
                 }
 
-                // only display inputsChord type (click, hold) if inputs were captured
                 TextBlock type = new TextBlock()
                 {
                     Text = inputsChord.InputsType.ToString(),
@@ -338,6 +327,12 @@ namespace HandheldCompanion.Managers
                     quickControl.QuickButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
                     break;
             }
+        }
+
+        public void ControllerSelected(IController controller)
+        {
+            // (re)draw inputs based on IController type
+            DrawInput();
         }
     }
 }
