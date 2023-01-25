@@ -32,7 +32,7 @@ namespace HandheldCompanion.Views
     public partial class MainWindow : Window
     {
         // devices vars
-        public static Device handheldDevice;
+        public static IDevice handheldDevice;
 
         // page vars
         private static Dictionary<string, Page> _pages = new();
@@ -140,7 +140,7 @@ namespace HandheldCompanion.Views
             this.Title += $" ({fileVersionInfo.FileVersion})";
 
             // initialize device
-            handheldDevice = Device.GetDefault();
+            handheldDevice = IDevice.GetDefault();
             handheldDevice.PullSensors();
 
             // initialize pipe client

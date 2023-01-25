@@ -23,12 +23,12 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class ProfilesPage : Page
     {
-        private Profile currentProfile;
+        public static Profile currentProfile;
         private Hotkey ProfilesPageHotkey = new(60);
 
-        SettingsMode0 page0 = new SettingsMode0("SettingsMode0");
-        SettingsMode0 page1 = new SettingsMode0("SettingsMode1");
-        ControllerSettings settings = new ControllerSettings("ControllerSettings");
+        private SettingsMode0 page0 = new SettingsMode0("SettingsMode0");
+        private SettingsMode1 page1 = new SettingsMode1("SettingsMode1");
+        private ControllerSettings settings = new ControllerSettings("ControllerSettings");
 
         public ProfilesPage()
         {
@@ -311,12 +311,11 @@ namespace HandheldCompanion.Views.Pages
                 default:
                 case MotionInput.JoystickCamera:
                 case MotionInput.PlayerSpace:
-                    page0.Update(currentProfile);
+                    page0.SetProfile();
                     MainWindow.NavView_Navigate(page0);
-                    page1.Update(currentProfile);
                     break;
                 case MotionInput.JoystickSteering:
-                    page1.Update(currentProfile);
+                    page1.SetProfile();
                     MainWindow.NavView_Navigate(page1);
                     break;
             }
@@ -328,6 +327,7 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // update current profile
+            // todo: use Clone() !
             currentProfile = (Profile)cB_Profiles.SelectedItem;
 
             // todo: find a way to avoid a useless circle of drawing when profile was update from ProfilesPage
@@ -718,6 +718,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
         {
+            settings.SetProfile();
             MainWindow.NavView_Navigate(settings);
         }
     }

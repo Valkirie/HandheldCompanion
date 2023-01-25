@@ -6,7 +6,7 @@ using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
-    public class GPDWinMax2AMD : Device
+    public class GPDWinMax2AMD : IDevice
     {
         public GPDWinMax2AMD() : base()
         {
@@ -37,19 +37,19 @@ namespace ControllerCommon.Devices
             };
 
             // Disabled this one as Win Max 2 also sends an Xbox guide input when Menu key is pressed.
-            listeners.Add(new DeviceChord("Menu",
+            OEMChords.Add(new DeviceChord("Menu",
                 new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
                 new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
                 true
                 ));
 
-            listeners.Add(new DeviceChord("Bottom button left",
+            OEMChords.Add(new DeviceChord("Bottom button left",
                 new List<KeyCode>() { KeyCode.D9 },
                 new List<KeyCode>() { KeyCode.D9 },
                 false, ButtonFlags.OEM1
                 ));
 
-            listeners.Add(new DeviceChord("Bottom button right",
+            OEMChords.Add(new DeviceChord("Bottom button right",
                 new List<KeyCode>() { KeyCode.D0 },
                 new List<KeyCode>() { KeyCode.D0 },
                 false, ButtonFlags.OEM2

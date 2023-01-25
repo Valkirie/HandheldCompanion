@@ -6,7 +6,7 @@ using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
-    public class OneXPlayerMiniIntel : Device
+    public class OneXPlayerMiniIntel : IDevice
     {
         public OneXPlayerMiniIntel() : base()
         {
@@ -38,37 +38,37 @@ namespace ControllerCommon.Devices
             };
 
             // unused
-            listeners.Add(new DeviceChord("Fan",
+            OEMChords.Add(new DeviceChord("Fan",
                 new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
                 new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
                 false, ButtonFlags.OEM5
                 ));
 
-            listeners.Add(new DeviceChord("Keyboard",
+            OEMChords.Add(new DeviceChord("Keyboard",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.RControlKey, KeyCode.O },
                 new List<KeyCode>() { KeyCode.O, KeyCode.RControlKey, KeyCode.LWin },
                 false, ButtonFlags.OEM2
                 ));
 
-            listeners.Add(new DeviceChord("Function",
+            OEMChords.Add(new DeviceChord("Function",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 new List<KeyCode>() { KeyCode.D, KeyCode.LWin },
                 false, ButtonFlags.OEM3
                 ));
 
-            listeners.Add(new DeviceChord("Function + Volume Up",
+            OEMChords.Add(new DeviceChord("Function + Volume Up",
                 new List<KeyCode>() { KeyCode.F1 },
                 new List<KeyCode>() { KeyCode.F1, KeyCode.F1 },
                 false, ButtonFlags.OEM4
                 ));
 
             // dirty implementation from OneX...
-            listeners.Add(new DeviceChord("Function + Fan",
+            OEMChords.Add(new DeviceChord("Function + Fan",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot },
                 new List<KeyCode>() { KeyCode.Snapshot, KeyCode.LWin },
                 false, ButtonFlags.OEM1
                 ));
-            listeners.Add(new DeviceChord("Function + Fan",
+            OEMChords.Add(new DeviceChord("Function + Fan",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot },
                 new List<KeyCode>() { KeyCode.Snapshot, KeyCode.Snapshot, KeyCode.LWin },
                 false, ButtonFlags.OEM1

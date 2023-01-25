@@ -42,7 +42,7 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public class Profile
+    public class Profile : ICloneable
     {
         // move me to HandheldCompanion ?
         public static Dictionary<MotionInput, string> InputDescription = new()
@@ -126,6 +126,7 @@ namespace ControllerCommon
 
         [JsonIgnore]
         public ProfileErrorCode ErrorCode;
+        private Profile profile;
 
         public Profile()
         {
@@ -158,6 +159,19 @@ namespace ControllerCommon
             this.MotionEnabled = true;
         }
 
+        public Profile(Profile profile)
+        {
+            // todo: complete this !!!!!
+            this.Name = profile.Name;
+            this.Path = profile.Path;
+            this.Executable = profile.Executable;
+            this.ExecutablePath = profile.ExecutablePath;
+            this.Enabled = profile.Enabled;
+            this.Running = profile.Running;
+            this.Whitelisted = profile.Whitelisted;
+            this.Default = profile.Default;
+        }
+
         public float GetSensitivityX()
         {
             return MotionSensivityX * 1000.0f;
@@ -184,6 +198,11 @@ namespace ControllerCommon
         public override string ToString()
         {
             return Name;
+        }
+
+        public object Clone()
+        {
+            return new Profile(this);
         }
     }
 }

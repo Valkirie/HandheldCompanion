@@ -1,6 +1,6 @@
 ﻿namespace ControllerCommon.Devices
 {
-    public class SteamDeck : Device
+    public class SteamDeck : IDevice
     {
         public SteamDeck() : base()
         {

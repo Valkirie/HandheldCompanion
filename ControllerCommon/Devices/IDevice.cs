@@ -1,15 +1,18 @@
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using WindowsInput.Events;
 using static ControllerCommon.OneEuroFilter;
 using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerCommon.Devices
 {
-    public abstract class Device
+    public abstract class IDevice
     {
         protected USBDeviceInfo sensor = new USBDeviceInfo();
         public string InternalSensorName = string.Empty;
@@ -56,10 +59,11 @@ namespace ControllerCommon.Devices
         public OneEuroSettings oneEuroSettings = new OneEuroSettings(0.002d, 0.008d);
 
         // trigger specific settings
-        public List<DeviceChord> listeners = new();
+        public List<DeviceChord> OEMChords = new();
+        public IEnumerable<ButtonFlags> OEMButtons => OEMChords.SelectMany(a => a.state.Buttons).Distinct();
 
-        private static Device device;
-        public static Device GetDefault()
+        private static IDevice device;
+        public static IDevice GetDefault()
         {
             if (device is not null)
                 return device;
@@ -201,6 +205,11 @@ namespace ControllerCommon.Devices
                 ExternalSensorName = USB.GetName();
                 hasSensors[SensorFamily.SerialUSBIMU] = true;
             }
+        }
+
+        public IDevice()
+        {
+            // OEMChords.Add(new DeviceChord("temp", new List<KeyCode>() { KeyCode.F1 }, new List<KeyCode>() { KeyCode.F1 }, false, ButtonFlags.OEM1));
         }
     }
 }

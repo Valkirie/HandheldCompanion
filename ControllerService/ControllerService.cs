@@ -18,7 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static ControllerCommon.Managers.PowerManager;
 using static ControllerCommon.Utils.DeviceUtils;
-using Device = ControllerCommon.Devices.Device;
+using IDevice = ControllerCommon.Devices.IDevice;
 
 namespace ControllerService
 {
@@ -31,7 +31,7 @@ namespace ControllerService
         private DSUServer DSUServer;
 
         // devices vars
-        public static Device handheldDevice;
+        public static IDevice handheldDevice;
 
         public static string CurrentPath, CurrentPathDep;
         public static string CurrentTag;
@@ -106,7 +106,7 @@ namespace ControllerService
             GenericDeviceArrived(null, null);
 
             // initialize device
-            handheldDevice = Device.GetDefault();
+            handheldDevice = IDevice.GetDefault();
 
             // XInputController settings
             IMU.Initialize(SensorSelection);

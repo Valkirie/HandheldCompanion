@@ -14,7 +14,7 @@ namespace ControllerCommon.Actions
     }
 
     [Serializable]
-    public class IActions
+    public abstract class IActions
     {
         public ActionType ActionType { get; set; }
 

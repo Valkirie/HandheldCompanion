@@ -19,7 +19,6 @@ namespace HandheldCompanion.Views.Pages.Profiles
     /// </summary>
     public partial class SettingsMode0 : Page
     {
-        private Profile currentProfile;
         private Hotkey ProfilesPageHotkey;
 
         public SettingsMode0()
@@ -37,19 +36,17 @@ namespace HandheldCompanion.Views.Pages.Profiles
             InputsManager.TriggerUpdated += TriggerUpdated;
         }
 
-        public void Update(Profile currentProfile)
+        public void SetProfile()
         {
-            this.currentProfile = currentProfile;
-
-            SliderSensitivityX.Value = currentProfile.MotionSensivityX;
-            SliderSensitivityY.Value = currentProfile.MotionSensivityY;
-            tb_ProfileAimingDownSightsMultiplier.Value = currentProfile.AimingSightsMultiplier;
-            Toggle_FlickStick.IsOn = currentProfile.FlickstickEnabled;
-            tb_ProfileFlickDuration.Value = currentProfile.FlickstickDuration * 1000;
-            tb_ProfileStickSensitivity.Value = currentProfile.FlickstickSensivity;
+            SliderSensitivityX.Value = ProfilesPage.currentProfile.MotionSensivityX;
+            SliderSensitivityY.Value = ProfilesPage.currentProfile.MotionSensivityY;
+            tb_ProfileAimingDownSightsMultiplier.Value = ProfilesPage.currentProfile.AimingSightsMultiplier;
+            Toggle_FlickStick.IsOn = ProfilesPage.currentProfile.FlickstickEnabled;
+            tb_ProfileFlickDuration.Value = ProfilesPage.currentProfile.FlickstickDuration * 1000;
+            tb_ProfileStickSensitivity.Value = ProfilesPage.currentProfile.FlickstickSensivity;
 
             // todo: improve me ?
-            ProfilesPageHotkey.inputsChord.State = currentProfile.AimingSightsTrigger.Clone() as ButtonState;
+            ProfilesPageHotkey.inputsChord.State = ProfilesPage.currentProfile.AimingSightsTrigger.Clone() as ButtonState;
             ProfilesPageHotkey.DrawInput();
 
             // temp
@@ -60,7 +57,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 if (i == 1)
                     continue;
 
-                double height = currentProfile.MotionSensivityArray[i - 1].y * StackCurve.Height;
+                double height = ProfilesPage.currentProfile.MotionSensivityArray[i - 1].y * StackCurve.Height;
                 Thumb thumb = new Thumb()
                 {
                     Tag = i - 1,
@@ -106,18 +103,18 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
         private void SliderSensitivityX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (currentProfile is null)
+            if (ProfilesPage.currentProfile is null)
                 return;
 
-            currentProfile.MotionSensivityX = (float)SliderSensitivityX.Value;
+            ProfilesPage.currentProfile.MotionSensivityX = (float)SliderSensitivityX.Value;
         }
 
         private void SliderSensitivityY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (currentProfile is null)
+            if (ProfilesPage.currentProfile is null)
                 return;
 
-            currentProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
+            ProfilesPage.currentProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
         }
 
         private void Highlight_Thumb(float value)
@@ -129,7 +126,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 foreach (Control control in StackCurve.Children)
                 {
                     int idx = (int)control.Tag;
-                    ProfileVector vector = currentProfile.MotionSensivityArray[idx];
+                    ProfileVector vector = ProfilesPage.currentProfile.MotionSensivityArray[idx];
 
                     if (dist_x > vector.x)
                         control.BorderThickness = new Thickness(0, 0, 0, 20);
@@ -146,7 +143,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
         private void StackCurve_MouseMove(object sender, MouseEventArgs e)
         {
-            if (currentProfile is null)
+            if (ProfilesPage.currentProfile is null)
                 return;
 
             Control Thumb = null;
@@ -172,7 +169,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
                 int idx = (int)Thumb.Tag;
                 Thumb.Height = StackCurve.ActualHeight - e.GetPosition(StackCurve).Y;
-                currentProfile.MotionSensivityArray[idx].y = Thumb.Height / StackCurve.Height;
+                ProfilesPage.currentProfile.MotionSensivityArray[idx].y = Thumb.Height / StackCurve.Height;
             }
         }
 
@@ -184,7 +181,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 int idx = (int)Thumb.Tag;
 
                 Thumb.Height = StackCurve.Height / 2.0f;
-                currentProfile.MotionSensivityArray[idx].y = Thumb.Height / StackCurve.Height;
+                ProfilesPage.currentProfile.MotionSensivityArray[idx].y = Thumb.Height / StackCurve.Height;
             }
         }
 
@@ -198,7 +195,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 float value = (float)(-Math.Sqrt(idx * tempx) + 0.85f);
 
                 Thumb.Height = StackCurve.Height * value;
-                currentProfile.MotionSensivityArray[idx].y = Thumb.Height / StackCurve.Height;
+                ProfilesPage.currentProfile.MotionSensivityArray[idx].y = Thumb.Height / StackCurve.Height;
             }
         }
 
@@ -212,7 +209,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 float value = (float)(Math.Sqrt(idx * tempx) + 0.25f - (tempx * idx));
 
                 Thumb.Height = StackCurve.Height * value;
-                currentProfile.MotionSensivityArray[idx].y = Thumb.Height / StackCurve.Height;
+                ProfilesPage.currentProfile.MotionSensivityArray[idx].y = Thumb.Height / StackCurve.Height;
             }
         }
 
@@ -223,34 +220,34 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
         private void SliderAimingDownSightsMultiplier_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (currentProfile is null)
+            if (ProfilesPage.currentProfile is null)
                 return;
 
-            currentProfile.AimingSightsMultiplier = (float)tb_ProfileAimingDownSightsMultiplier.Value;
+            ProfilesPage.currentProfile.AimingSightsMultiplier = (float)tb_ProfileAimingDownSightsMultiplier.Value;
         }
 
         private void Toggle_FlickStick_Toggled(object sender, RoutedEventArgs e)
         {
-            if (currentProfile is null)
+            if (ProfilesPage.currentProfile is null)
                 return;
 
-            currentProfile.FlickstickEnabled = (bool)Toggle_FlickStick.IsOn;
+            ProfilesPage.currentProfile.FlickstickEnabled = (bool)Toggle_FlickStick.IsOn;
         }
 
         private void SliderFlickDuration_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (currentProfile is null)
+            if (ProfilesPage.currentProfile is null)
                 return;
 
-            currentProfile.FlickstickDuration = (float)tb_ProfileFlickDuration.Value / 1000;
+            ProfilesPage.currentProfile.FlickstickDuration = (float)tb_ProfileFlickDuration.Value / 1000;
         }
 
         private void SliderStickSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (currentProfile is null)
+            if (ProfilesPage.currentProfile is null)
                 return;
 
-            currentProfile.FlickstickSensivity = (float)tb_ProfileStickSensitivity.Value;
+            ProfilesPage.currentProfile.FlickstickSensivity = (float)tb_ProfileStickSensitivity.Value;
         }
 
         private void TriggerCreated(Hotkey hotkey)
@@ -279,7 +276,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
             switch (listener)
             {
                 case "shortcutProfilesSettingsMode0":
-                    currentProfile.AimingSightsTrigger = inputs.State.Clone() as ButtonState;
+                    ProfilesPage.currentProfile.AimingSightsTrigger = inputs.State.Clone() as ButtonState;
                     break;
             }
         }

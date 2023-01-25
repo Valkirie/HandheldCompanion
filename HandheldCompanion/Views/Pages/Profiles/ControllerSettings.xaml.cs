@@ -28,14 +28,11 @@ namespace HandheldCompanion.Views.Pages.Profiles
     /// </summary>
     public partial class ControllerSettings : Page
     {
-        private Profile currentProfile;
-        private Hotkey ProfilesPageHotkey;
+        private ButtonsPage buttonsPage;
 
         // page vars
-        private static Dictionary<string, Page> _pages = new()
-        {
-            { "ButtonsPage", new ButtonsPage() }
-        };
+        private Dictionary<string, Page> _pages;
+
         private string preNavItemTag;
 
         public ControllerSettings()
@@ -46,6 +43,14 @@ namespace HandheldCompanion.Views.Pages.Profiles
         public ControllerSettings(string Tag) : this()
         {
             this.Tag = Tag;
+
+            // create controller related pages
+            this.buttonsPage = new ButtonsPage();
+
+            this._pages = new()
+            {
+                { "ButtonsPage", buttonsPage }
+            };
 
             PipeClient.ServerMessage += OnServerMessage;
         }
@@ -69,6 +74,12 @@ namespace HandheldCompanion.Views.Pages.Profiles
         private void Expander_Expanded(object sender, RoutedEventArgs e)
         {
             ((Expander)sender).BringIntoView();
+        }
+
+        public void SetProfile()
+        {
+            // cascade update to (sub)pages
+            buttonsPage.SetProfile();
         }
 
         #region UI

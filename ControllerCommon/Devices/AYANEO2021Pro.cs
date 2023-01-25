@@ -5,7 +5,7 @@ using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
-    public class AYANEO2021Pro : Device
+    public class AYANEO2021Pro : IDevice
     {
         public AYANEO2021Pro() : base()
         {
@@ -34,7 +34,7 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add(new DeviceChord("WIN key",
+            OEMChords.Add(new DeviceChord("WIN key",
                 new List<KeyCode>() { KeyCode.LWin },
                 new List<KeyCode>() { KeyCode.LWin },
                 false, ButtonFlags.OEM1
@@ -43,14 +43,14 @@ namespace ControllerCommon.Devices
             // Conflicts with OS
             //listeners.Add("TM key", new ChordClick(KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete));
 
-            listeners.Add(new DeviceChord("ESC key",
+            OEMChords.Add(new DeviceChord("ESC key",
                 new List<KeyCode>() { KeyCode.Escape },
                 new List<KeyCode>() { KeyCode.Escape },
                 false, ButtonFlags.OEM2
                 ));
 
             // Conflicts with Ayaspace when installed
-            listeners.Add(new DeviceChord("KB key",
+            OEMChords.Add(new DeviceChord("KB key",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O },
                 new List<KeyCode>() { KeyCode.O, KeyCode.LWin, KeyCode.RControlKey },
                 false, ButtonFlags.OEM3

@@ -5,7 +5,7 @@ using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
-    public class GPDWin3 : Device
+    public class GPDWin3 : IDevice
     {
         public GPDWin3() : base()
         {
@@ -20,13 +20,13 @@ namespace ControllerCommon.Devices
             this.GfxClock = new double[] { 100, 1400 };
 
             // note, need to manually configured as 0 and 9 in GPD app
-            listeners.Add(new DeviceChord("Bottom button left",
+            OEMChords.Add(new DeviceChord("Bottom button left",
                 new List<KeyCode>() { KeyCode.D9 },
                 new List<KeyCode>() { KeyCode.D9 },
                 false, ButtonFlags.OEM1
                 ));
 
-            listeners.Add(new DeviceChord("Bottom button right",
+            OEMChords.Add(new DeviceChord("Bottom button right",
                 new List<KeyCode>() { KeyCode.D0 },
                 new List<KeyCode>() { KeyCode.D0 },
                 false, ButtonFlags.OEM2

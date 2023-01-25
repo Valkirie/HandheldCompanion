@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HandheldCompanion.Controls"
              xmlns:ui="http://schemas.modernwpf.com/2019"
+             Visibility="Collapsed"
              mc:Ignorable="d" 
              d:DesignHeight="66" d:DesignWidth="800">
     
@@ -20,9 +21,9 @@
                 <ColumnDefinition MinWidth="150"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             
-            <ui:FontIcon Name="Icon" Glyph="?" FontFamily="{DynamicResource PhoneFontFamilyNormal}" FontSize="20" Height="40" Width="40" HorizontalAlignment="Left"/>
+            <ui:FontIcon Name="Icon" FontFamily="{DynamicResource PhoneFontFamilyNormal}" FontSize="12" Height="40" Width="40" HorizontalAlignment="Left"/>
 
-            <ComboBox Name="Action" Width="130" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center" SelectionChanged="Action_SelectionChanged" SelectedIndex="0">
+            <ComboBox Name="ActionComboBox" Width="130" Margin="20,0,0,0" Grid.Column="1" VerticalAlignment="Center" SelectionChanged="Action_SelectionChanged">
                 <ComboBoxItem>None</ComboBoxItem>
                 <ComboBoxItem>Button</ComboBoxItem>
                 <ComboBoxItem>Axis</ComboBoxItem>
@@ -30,7 +31,7 @@
                 <ComboBoxItem>Mouse</ComboBoxItem>
             </ComboBox>
             
-            <ComboBox Name="Target" Width="130" Margin="20,0,0,0" Grid.Column="2" VerticalAlignment="Center" SelectionChanged="Target_SelectionChanged"/>
+            <ComboBox Name="TargetComboBox" Width="130" Margin="20,0,0,0" Grid.Column="2" VerticalAlignment="Center" SelectionChanged="Target_SelectionChanged"/>
         </Grid>
     </Border>
 </UserControl>

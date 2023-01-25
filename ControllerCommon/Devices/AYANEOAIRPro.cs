@@ -6,7 +6,7 @@ using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
-    public class AYANEOAIRPro : Device
+    public class AYANEOAIRPro : IDevice
     {
         public AYANEOAIRPro() : base()
         {
@@ -36,25 +36,25 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add(new DeviceChord("Custom Key Top Right",
+            OEMChords.Add(new DeviceChord("Custom Key Top Right",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F10 },
                 new List<KeyCode>() { KeyCode.F10, KeyCode.LWin, KeyCode.RControlKey },
                 false, ButtonFlags.OEM3
                 ));
 
-            listeners.Add(new DeviceChord("Custom Key Top Left",
+            OEMChords.Add(new DeviceChord("Custom Key Top Left",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F11 },
                 new List<KeyCode>() { KeyCode.F11, KeyCode.LWin, KeyCode.RControlKey },
                 false, ButtonFlags.OEM4
                 ));
 
-            listeners.Add(new DeviceChord("Custom Key Big",
+            OEMChords.Add(new DeviceChord("Custom Key Big",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 },
                 new List<KeyCode>() { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey },
                 false, ButtonFlags.OEM1
                 ));
 
-            listeners.Add(new DeviceChord("Custom Key Small",
+            OEMChords.Add(new DeviceChord("Custom Key Small",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 false, ButtonFlags.OEM2

@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerService.Sensors;
@@ -7,6 +8,7 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceProcess;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,9 +24,6 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
     /// </summary>
     public partial class ButtonsPage : Page
     {
-        private Profile currentProfile;
-        private Hotkey ProfilesPageHotkey;
-
         // A,B,X,Y
         public static List<ButtonFlags> ABXY = new()
         {
@@ -50,41 +49,50 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             ButtonFlags.OEM6, ButtonFlags.OEM7, ButtonFlags.OEM8, ButtonFlags.OEM9, ButtonFlags.OEM10
         };
 
+        private Dictionary<ButtonFlags, ButtonMapping> Mapping = new();
+
         public ButtonsPage()
         {
             InitializeComponent();
 
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-            ProfileManager.Applied += ProfileManager_Applied;
 
             // draw UI
             foreach (ButtonFlags button in ABXY)
             {
                 ButtonMapping buttonMapping = new ButtonMapping(button);
                 ButtonsStackPanel.Children.Add(buttonMapping);
+
+                Mapping.Add(button, buttonMapping);
             }
 
             foreach (ButtonFlags button in BUMPERS)
             {
                 ButtonMapping buttonMapping = new ButtonMapping(button);
                 BumpersStackPanel.Children.Add(buttonMapping);
+
+                Mapping.Add(button, buttonMapping);
             }
 
             foreach (ButtonFlags button in MENU)
             {
                 ButtonMapping buttonMapping = new ButtonMapping(button);
                 MenuStackPanel.Children.Add(buttonMapping);
+
+                Mapping.Add(button, buttonMapping);
             }
 
             foreach (ButtonFlags button in OEM)
             {
                 ButtonMapping buttonMapping = new ButtonMapping(button);
                 OEMStackPanel.Children.Add(buttonMapping);
-            }
-        }
 
-        private void ProfileManager_Applied(Profile profile)
-        {
+                Mapping.Add(button, buttonMapping);
+
+                // only draw OEM buttons that are supported by the current device
+                if (MainWindow.handheldDevice.OEMButtons.Contains(button))
+                    buttonMapping.Visibility = Visibility.Visible;
+            }
         }
 
         private void ControllerManager_ControllerSelected(IController Controller)
@@ -95,9 +103,6 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (ButtonMapping mapping in BumpersStackPanel.Children)
                 mapping.SetController(Controller);
             foreach (ButtonMapping mapping in MenuStackPanel.Children)
-                mapping.SetController(Controller);
-
-            foreach (ButtonMapping mapping in OEMStackPanel.Children)
                 mapping.SetController(Controller);
         }
 
@@ -112,6 +117,19 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
         public void Page_Closed()
         {
+        }
+
+        public void SetProfile()
+        {
+            Profile currentProfile = ProfilesPage.currentProfile;
+
+            foreach(var pair in currentProfile.ButtonMapping)
+            {
+                ButtonFlags button = pair.Key;
+                IActions actions = pair.Value;
+
+                Mapping[button].SetIActions(actions); 
+            }
         }
     }
 }

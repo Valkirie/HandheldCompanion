@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using WindowsInput.Events;
 
-namespace ControllerCommon.Devices
+namespace ControllerCommon
 {
     public class DeviceChord
     {
@@ -22,10 +22,10 @@ namespace ControllerCommon.Devices
         {
             this.name = name;
             this.silenced = silenced;
-            this.state[button] = true;
+            state[button] = true;
 
-            this.chords[true].AddRange(chordDown);
-            this.chords[false].AddRange(chordUP);
+            chords[true].AddRange(chordDown);
+            chords[false].AddRange(chordUP);
         }
 
         public string GetChord(bool IsKeyDown)
