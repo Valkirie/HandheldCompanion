@@ -18,7 +18,7 @@ namespace ControllerCommon.Devices
 
             // https://www.amd.com/en/products/apu/amd-ryzen-5-5560u
             this.nTDP = new double[] { 12, 12, 15 };
-            this.cTDP = new double[] { 8, 15 };
+            this.cTDP = new double[] { 3, 15 };
             this.GfxClock = new double[] { 100, 1600 };
 
             this.AngularVelocityAxisSwap = new()
