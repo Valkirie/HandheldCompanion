@@ -98,11 +98,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         private void ControllerManager_ControllerSelected(IController Controller)
         {
             // controller based
-            foreach (ButtonMapping mapping in ButtonsStackPanel.Children)
-                mapping.SetController(Controller);
-            foreach (ButtonMapping mapping in BumpersStackPanel.Children)
-                mapping.SetController(Controller);
-            foreach (ButtonMapping mapping in MenuStackPanel.Children)
+            foreach (ButtonMapping mapping in Mapping.Values)
                 mapping.SetController(Controller);
         }
 

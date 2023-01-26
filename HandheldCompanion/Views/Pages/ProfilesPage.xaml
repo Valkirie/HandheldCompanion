@@ -669,7 +669,7 @@
                     <Button Name="ControllerSettingsButton" Padding="15,12,12,12" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Height="66" Click="ControllerSettingsButton_Click">
                         <Grid>
                             <DockPanel HorizontalAlignment="Left">
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xED35;" Height="40" HorizontalAlignment="Center"/>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ControllerSettings}" FontSize="14"/>

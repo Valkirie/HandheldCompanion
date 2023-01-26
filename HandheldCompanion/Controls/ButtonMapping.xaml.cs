@@ -54,6 +54,7 @@ namespace HandheldCompanion.Controls
 
             this.Icon.Glyph = newIcon.Glyph;
             this.Icon.FontFamily = newIcon.FontFamily;
+            this.Icon.FontSize = newIcon.FontSize;
             this.Icon.Foreground = newIcon.Foreground;
         }
 
@@ -72,6 +73,10 @@ namespace HandheldCompanion.Controls
             ActionType type = (ActionType)ActionComboBox.SelectedIndex;
             switch (type)
             {
+                case ActionType.None:
+                    ProfilesPage.currentProfile.ButtonMapping.Remove(Button);
+                    return;
+
                 case ActionType.Button:
                     {
                         if (this.Actions is null)
@@ -92,15 +97,24 @@ namespace HandheldCompanion.Controls
             ActionType type = (ActionType)ActionComboBox.SelectedIndex;
             switch (type)
             {
+                case ActionType.None:
+                    break;
+
                 case ActionType.Button:
                     {
                         ButtonFlags button = (ButtonFlags)TargetComboBox.SelectedIndex;
                         ((ButtonActions)this.Actions).Button = button;
-
-                        ProfilesPage.currentProfile.ButtonMapping[Button] = this.Actions;
                     }
                     break;
             }
+
+            // update profile button mapping
+            ProfilesPage.currentProfile.ButtonMapping[Button] = this.Actions;
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

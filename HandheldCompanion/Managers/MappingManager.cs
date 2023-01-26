@@ -48,65 +48,67 @@ namespace HandheldCompanion.Managers
             if (currentProfile is null)
                 return controllerState;
 
+            // create output state
             ControllerState outputState = controllerState.Clone() as ControllerState;
 
-            if (true) // if (!prevButtonState.Equals(controllerState.ButtonState))
+            foreach (ButtonFlags button in controllerState.ButtonState.Buttons)
             {
-                foreach (var buttonState in controllerState.ButtonState.State)
+                // consume origin button state
+                if (currentProfile.ButtonMapping.ContainsKey(button))
+                    outputState.ButtonState[button] = false;
+            }
+
+            // if (!prevButtonState.Equals(controllerState.ButtonState))
+            foreach (var buttonState in controllerState.ButtonState.State)
+            {
+                ButtonFlags button = buttonState.Key;
+                bool status = buttonState.Value;
+
+                // skip, if not mapped
+                if (!currentProfile.ButtonMapping.ContainsKey(button))
+                    continue;
+
+                // pull action
+                IActions action = currentProfile.ButtonMapping[button];
+                switch (action.ActionType)
                 {
-                    ButtonFlags button = buttonState.Key;
-                    bool status = buttonState.Value;
+                    // button to button
+                    case ActionType.Button:
+                        {
+                            ButtonActions bAction = action as ButtonActions;
+                            
+                            outputState.ButtonState[bAction.Button] |= status;
+                            outputState.ButtonState.Emulated[bAction.Button] = true;
+                        }
+                        break;
 
-                    // skip if not mapped
-                    if (!currentProfile.ButtonMapping.ContainsKey(button))
-                        continue;
+                    // button to axis
+                    case ActionType.Axis:
+                        {
+                            if (!status)
+                                continue;
 
-                    // consume button
-                    if (!outputState.ButtonState.Emulated[button])
-                        outputState.ButtonState[button] = false;
+                            AxisActions aAction = action as AxisActions;
+                            outputState.AxisState[aAction.Axis] = aAction.Value;
+                            outputState.AxisState.Emulated[aAction.Axis] = true;
+                        }
+                        break;
 
-                    // pull action
-                    IActions action = currentProfile.ButtonMapping[button];
+                    // button to keyboard key
+                    case ActionType.Keyboard:
+                        {
+                            KeyboardActions kAction = action as KeyboardActions;
+                            kAction.Execute(button, status);
+                        }
+                        break;
 
-                    switch (action.ActionType)
-                    {
-                        // button to button
-                        case ActionType.Button:
-                            {
-                                ButtonActions bAction = action as ButtonActions;
-                                outputState.ButtonState[bAction.Button] = status;
-                                outputState.ButtonState.Emulated[bAction.Button] = true;
-                            }
-                            break;
-
-                        // button to axis
-                        case ActionType.Axis:
-                            {
-                                if (!status)
-                                    continue;
-
-                                AxisActions aAction = action as AxisActions;
-                                outputState.AxisState[aAction.Axis] = aAction.Value;
-                                outputState.AxisState.Emulated[aAction.Axis] = true;
-                            }
-                            break;
-
-                        // button to keyboard key
-                        case ActionType.Keyboard:
-                            {
-                                KeyboardActions kAction = action as KeyboardActions;
-                                kAction.Execute(button, status);
-                            }
-                            break;
-
-                        // button to mouse click
-                        case ActionType.Mouse:
-                            {
-                                MouseActions mAction = action as MouseActions;
-                                mAction.Execute(button, status);
-                            }
-                            break;
-                    }
+                    // button to mouse click
+                    case ActionType.Mouse:
+                        {
+                            MouseActions mAction = action as MouseActions;
+                            mAction.Execute(button, status);
+                        }
+                        break;
                 }
             }
 

@@ -57,9 +57,11 @@
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
 
+        <!-- Padding is set to NavView OpenPaneLength-->
         <ui:Frame
             Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-            Name="ContentFrame" MaxWidth="1080"
+            Name="ContentFrame"
+            Padding="0,0,150,0"
             HorizontalAlignment="Left"/>
     </ui:NavigationView>
 </Page>
