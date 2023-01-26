@@ -3,13 +3,15 @@
 [![YouTube Channel](https://img.shields.io/youtube/channel/subscribers/UCFLra6QVYJYeaWp2mGaq3Og?style=flat-square&color=orange&label=YouTube%20Channel&logo=youtube&logoColor=white)](https://www.youtube.com/channel/UCFLra6QVYJYeaWp2mGaq3Og)
 [![Donations](https://img.shields.io/badge/PayPal-00457C?style=flat-square&color=orange&label=Donations&logo=paypal&logoColor=white)](https://www.paypal.com/paypalme/BenjaminLSR)
 
-# Controller Service & Handheld Companion
+# Handheld Companion
 
 A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include:
-- Motion control a.k.a. gyro control through a device's inertial measurement unit (IMU, Gyroscope and Accelerometer) or external sensor.
-- Virtual controller simulation of [Microsoft Xbox 360 Controller](https://en.wikipedia.org/wiki/Xbox_360_controller) and [Sony DualShock 4 Controller](https://en.wikipedia.org/wiki/DualShock#DualShock_4)
-- Overlay, virtual touchpads and 3D controller model
-- Per application based profile settings system
+- Motion control a.k.a. gyro control through a device's inertial measurement unit (IMU, Gyroscope and Accelerometer) or external sensor. Settings availible for racing, 1st and 3rd person gaming and emulator support.
+- Quicktools overlay, with easy access to various settings and informatio such as TDP, GPU, Screen Hz, Resolution, Brightness, Volume, Powermode control and battery level.
+- Virtual controller simulation of [Microsoft Xbox 360 Controller](https://en.wikipedia.org/wiki/Xbox_360_controller) and [Sony DualShock 4 Controller](https://en.wikipedia.org/wiki/DualShock#DualShock_4).
+- Profile settings system, automatic detection of active game and applying of settings.
+- PS Remote Play support with DS4 controller, including motion and touchpad.
+- 3D Controller overlay for stream recordings.
 
 ## Use cases
 A few examples of the most common use cases are:
