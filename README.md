@@ -87,13 +87,14 @@ Display a 3D virtual controller, showcasing the motion of the device and all but
   - Machenike HG510 
   - 8BitDo Lite 2
   - Nintendo 64
+  - Dual Sense
 
 ![image](https://thumbs.gfycat.com/BlackandwhiteRareBorderterrier-size_restricted.gif)
 
 ## Contribute
 ### Bugs & Features
 Found a bug and want it fixed? Open a detailed issue on the [GitHub issue tracker](../../issues)!
-Have an idea for a new feature? Let's have a chat about your request on [Discord](https://discord.gg/CY6GFskwwg).
+Have an idea for a new feature? Let's have a chat about your request on [Discord](https://discord.gg/znHuywFz5M).
 
 ### Questions & Support
 Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Discord server](https://discord.gg/znHuywFz5M), where you're welcome to check out and engage in discussions!
