@@ -422,7 +422,7 @@ end;
 #endif
 
 ; #define ClearProfiles
-; #define ClearHotkeys
+; #define ClearHotkeys    
 
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
@@ -442,7 +442,6 @@ SetupIconFile="{#SourcePath}\HandheldCompanion\Resources\icon.ico"
 SourceDir=redist
 OutputDir={#SourcePath}\install
 AllowNoIcons=yes
-
 MinVersion=6.0
 PrivilegesRequired=admin
 
@@ -506,27 +505,80 @@ Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDum
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{userdocs}\HandheldCompanion\dumps"; Flags: uninsdeletekey
 
 [Code]
+#include "./UpdateUninstallWizard.iss"       
+
+
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+var
+  resultCode:integer;
 begin
   if CurUninstallStep = usUninstall then
-  begin
-  
-    if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'))  then
-      if MsgBox('Do you want to delete all existing profiles?', mbConfirmation, MB_YESNO) = IDYES
-      then
+  begin     
+    if not(checkListBox.checked[keepAllCheck]) then
+    begin
+      if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'))  then  
         DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'), True, True, True);
-  
-    if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'))  then
-      if MsgBox('Do you want to delete all existing hotkeys?', mbConfirmation, MB_YESNO) = IDYES
-      then
+      if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'))  then
         DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'), True, True, True);
-		
-    if MsgBox('Do you want to delete all existing settings?', mbConfirmation, MB_YESNO) = IDYES
-    then
-	  DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
-	  DelTree(ExpandConstant('{localappdata}\ControllerService'), True, True, True);
+      DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
+      DelTree(ExpandConstant('{localappdata}\ControllerService'), True, True, True);
+      exit;
+    end
+    else
+    begin
+      if not(checkListBox.checked[profilesCheck]) then
+      begin
+        if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'))  then  
+          DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'), True, True, True);
+      end;
+
+      if not(checkListBox.checked[hotkeysCheck]) then
+      begin
+        if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'))  then
+          DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'), True, True, True);
+      end;
+      
+      if not(checkListBox.checked[applicationSettingsCheck]) then
+      begin 
+        DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
+        DelTree(ExpandConstant('{localappdata}\ControllerService'), True, True, True);
+      end; 
+    end;   
+                   
+    if not(keepHidhideCheckbox.Checked) then
+    begin 
+      if(ShellExec('', 'msiexec.exe', '/X{27AF679E-48DB-4B49-A689-1D6A3A52C472} /qn /norestart', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then  
+      begin
+        log('Successfully executed Hidhide uninstaller');
+        if(resultCode = 0) then
+          log('Hidhide uninstaller finished successfully')
+        else
+          log('Hidhide uninstaller failed with exit code ' +intToStr(resultCode));
+      end
+      else
+      begin
+        log('Failed to execute Hidhide uninstaller');
+      end;
+    end; 
+           
+    if not(keepVigemCheckbox.Checked) then
+    begin 
+      if(ShellExec('', 'msiexec.exe', '/X{9C581C76-2D68-40F8-AA6F-94D3C5215C05} /qn /norestart', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then   
+      begin
+        log('Successfully executed Vigem uninstaller');
+        if(resultCode = 0) then
+          log('Vigem uninstaller finished successfully')
+        else
+          log('Vigem uninstaller failed with exit code ' +intToStr(resultCode));
+      end
+      else
+      begin
+        log('Failed to execute Vigem uninstaller');
+      end;
+    end;
   end;
 end;
+       
 
 procedure InitializeWizard;
 begin
