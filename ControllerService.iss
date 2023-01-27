@@ -1,13 +1,5 @@
-; -- CodeDependencies.iss --
-;
-; This script shows how to download and install any dependency such as .NET,
-; Visual C++ or SQL Server during your application's installation process.
-;
-; contribute: https://github.com/DomGries/InnoDependencyInstaller
-
-
 ; -----------
-; SHARED CODE
+; CODE
 ; -----------
 [Code]
 // types and variables
@@ -380,7 +372,7 @@ end;
 
 [Setup]
 ; -------------
-; EXAMPLE SETUP
+; SETUP
 ; -------------
 #ifndef Dependency_NoExampleSetup
 
@@ -426,7 +418,7 @@ end;
 
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
-AppVerName={#MyAppSetupName} {#MyAppVersion}
+AppVerName={#MyAppSetupName}
 AppCopyright={#MyAppCopyright}
 VersionInfoVersion={#MyAppVersion}
 VersionInfoCompany={#MyAppPublisher}

@@ -262,7 +262,7 @@ end;
 
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
-AppVerName={#MyAppSetupName} {#MyAppVersion}
+AppVerName={#MyAppSetupName}
 AppCopyright={#MyAppCopyright}
 VersionInfoVersion={#MyAppVersion}
 VersionInfoCompany={#MyAppPublisher}
