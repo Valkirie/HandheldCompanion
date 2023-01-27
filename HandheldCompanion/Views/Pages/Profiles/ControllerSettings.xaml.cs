@@ -28,7 +28,11 @@ namespace HandheldCompanion.Views.Pages.Profiles
     /// </summary>
     public partial class ControllerSettings : Page
     {
-        private ButtonsPage buttonsPage;
+        private ButtonsPage buttonsPage = new();
+        private DpadPage dpadPage = new();
+        private TriggersPage triggersPage = new();
+        private JoysticksPage joysticksPage = new();
+        private GyroPage gyroPage = new();
 
         // page vars
         private Dictionary<string, Page> _pages;
@@ -45,11 +49,13 @@ namespace HandheldCompanion.Views.Pages.Profiles
             this.Tag = Tag;
 
             // create controller related pages
-            this.buttonsPage = new ButtonsPage();
-
             this._pages = new()
             {
-                { "ButtonsPage", buttonsPage }
+                { "ButtonsPage", buttonsPage },
+                { "DpadPage", dpadPage },
+                { "TriggersPage", triggersPage },
+                { "JoysticksPage", joysticksPage },
+                { "GyroPage", gyroPage },
             };
 
             PipeClient.ServerMessage += OnServerMessage;

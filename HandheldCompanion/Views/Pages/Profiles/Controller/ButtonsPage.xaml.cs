@@ -6,6 +6,7 @@ using ControllerService.Sensors;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         // BUMPERS
         public static List<ButtonFlags> BUMPERS = new()
         {
-            ButtonFlags.L1, ButtonFlags.R1
+            ButtonFlags.L1, ButtonFlags.R1, ButtonFlags.L3, ButtonFlags.R3, ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5
         };
 
         // MENU
@@ -98,8 +99,30 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         private void ControllerManager_ControllerSelected(IController Controller)
         {
             // controller based
-            foreach (ButtonMapping mapping in Mapping.Values)
-                mapping.SetController(Controller);
+            foreach (var mapping in Mapping)
+            {
+                ButtonFlags button = mapping.Key;
+                ButtonMapping buttonMapping = mapping.Value;
+
+                // specific buttons are handled elsewhere
+                if (OEM.Contains(button))
+                    continue;
+
+                // update mapping visibility
+                if (!Controller.IsButtonSupported(button))
+                    buttonMapping.Visibility = Visibility.Collapsed;
+                else
+                    buttonMapping.Visibility = Visibility.Visible;
+
+                // update icon
+                var newIcon = Controller.GetFontIcon(button);
+
+                // unsupported button
+                if (newIcon is null)
+                    continue;
+
+                buttonMapping.UpdateIcon(newIcon);
+            }
         }
 
         public ButtonsPage(string Tag) : this()

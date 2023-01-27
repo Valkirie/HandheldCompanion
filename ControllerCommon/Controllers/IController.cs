@@ -39,12 +39,13 @@ namespace ControllerCommon.Controllers
             ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
             ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
             ButtonFlags.L1, ButtonFlags.R1,
-            ButtonFlags.L2, ButtonFlags.R2,
+            // ButtonFlags.L2, ButtonFlags.R2,
             ButtonFlags.LeftThumb, ButtonFlags.RightThumb,
-            ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
-            ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
+            // ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
+            // ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
         };
         protected Dictionary<ButtonFlags, Brush> ButtonBrush = new();
+        protected Dictionary<ButtonFlags, string> ButtonName = new();
 
         protected const short UPDATE_INTERVAL = 5;
 
@@ -275,32 +276,59 @@ namespace ControllerCommon.Controllers
 
         public virtual string GetGlyph(ButtonFlags button)
         {
-            return "\u003F";
+            return string.Empty;
         }
 
         public virtual string GetGlyph(AxisFlags axis)
         {
-            return "\u003F";
+            return string.Empty;
         }
 
-        public virtual FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
+        public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
+        {
+            if (!IsButtonSupported(button))
+                return null;
+
+            FontIcon FontIcon = new FontIcon()
+            {
+                Glyph = GetGlyph(button),
+                FontSize = FontIconSize,
+                FontFamily = FontFamily
+            };
+
+            Brush FontBrush = GetGlyphColor(button);
+            if (FontBrush is not null)
+                FontIcon.Foreground = FontBrush;
+            else
+                FontIcon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+
+            return FontIcon;
+        }
+
+        public FontIcon GetFontIcon(AxisFlags axis, int FontIconSize = 20)
         {
             return null;
         }
 
-        public virtual FontIcon GetFontIcon(AxisFlags axis, int FontIconSize = 20)
+        public Brush GetGlyphColor(ButtonFlags button)
         {
-            return null;
-        }
+            if (ButtonBrush.ContainsKey(button))
+                return ButtonBrush[button];
 
-        public virtual Brush GetGlyphColor(ButtonFlags button)
-        {
             return null;
         }
 
         public bool IsButtonSupported(ButtonFlags button)
         {
             return ButtonSupport.Contains(button);
+        }
+
+        public string GetButtonName(ButtonFlags button)
+        {
+            if (ButtonName.ContainsKey(button))
+                return ButtonName[button];
+
+            return button.ToString();
         }
     }
 }

@@ -68,4 +68,25 @@ namespace ControllerCommon.Inputs
         L5 = 48,
         R5 = 49
     }
+
+    /*
+    [Serializable]
+    public class ButtonFlags
+    {
+        private ButtonFlags _ButtonFlags;
+
+        public ButtonFlags this[ButtonFlags button]
+        {
+            get
+            {
+                return _ButtonFlags;
+            }
+
+            set
+            {
+                _ButtonFlags = value;
+            }
+        }
+    }
+    */
 }

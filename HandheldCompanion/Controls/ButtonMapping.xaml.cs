@@ -3,7 +3,9 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Pages;
+using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,18 +42,8 @@ namespace HandheldCompanion.Controls
             this.Icon.Glyph = button.ToString();
         }
 
-        internal void SetController(IController controller)
+        public void UpdateIcon(FontIcon newIcon)
         {
-            // update Icon on controller changes
-            var newIcon = controller.GetFontIcon(Button);
-
-            // unsupported button
-            if (newIcon is null)
-                return;
-
-            // supported button
-            this.Visibility = Visibility.Visible;
-
             this.Icon.Glyph = newIcon.Glyph;
             this.Icon.FontFamily = newIcon.FontFamily;
             this.Icon.FontSize = newIcon.FontSize;
@@ -60,7 +52,10 @@ namespace HandheldCompanion.Controls
 
         internal void SetIActions(IActions actions)
         {
+            // update mapping IActions
             this.Actions = actions;
+
+            // update UI
             this.ActionComboBox.SelectedIndex = (int)actions.ActionType;
         }
 
@@ -68,6 +63,9 @@ namespace HandheldCompanion.Controls
         {
             // clear current dropdown values
             TargetComboBox.Items.Clear();
+
+            // get current controller
+            IController controller = ControllerManager.GetTargetController();
 
             // populate target dropdown based on action type
             ActionType type = (ActionType)ActionComboBox.SelectedIndex;
@@ -82,10 +80,22 @@ namespace HandheldCompanion.Controls
                         if (this.Actions is null)
                             this.Actions = new ButtonActions();
 
-                        foreach (ButtonFlags mode in Enum.GetValues(typeof(ButtonFlags)))
-                            TargetComboBox.Items.Add(mode);
+                        // we need a controller to get compatible buttons
+                        if (controller is null)
+                            return;
 
-                        TargetComboBox.SelectedItem = ((ButtonActions)this.Actions).Button;
+                        foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
+                        {
+                            if (controller.IsButtonSupported(button))
+                            {
+                                // create a label, store ButtonFlags as Tag and Label as controller specific string
+                                Label buttonLabel = new Label() { Tag =  button, Content = controller.GetButtonName(button) };
+                                TargetComboBox.Items.Add(buttonLabel);
+
+                                if (button.Equals(((ButtonActions)this.Actions).Button))
+                                    TargetComboBox.SelectedItem = buttonLabel;
+                            }
+                        }
                     }
                     break;
             }
@@ -102,8 +112,8 @@ namespace HandheldCompanion.Controls
 
                 case ActionType.Button:
                     {
-                        ButtonFlags button = (ButtonFlags)TargetComboBox.SelectedIndex;
-                        ((ButtonActions)this.Actions).Button = button;
+                        Label buttonLabel = TargetComboBox.SelectedItem as Label;
+                        ((ButtonActions)this.Actions).Button = (ButtonFlags)buttonLabel.Tag;
                     }
                     break;
             }

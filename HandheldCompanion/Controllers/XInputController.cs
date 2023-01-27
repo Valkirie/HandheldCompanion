@@ -141,14 +141,6 @@ namespace HandheldCompanion.Controllers
         private XInputStateSecret State;
         private XInputStateSecret prevState;
 
-        protected new Dictionary<ButtonFlags, SolidColorBrush> ButtonBrush = new()
-        {
-            { ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)) },
-            { ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 217, 65, 38)) },
-            { ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)) },
-            { ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)) },
-        };
-
         public XInputController(Controller controller)
         {
             Controller = controller;
@@ -176,7 +168,17 @@ namespace HandheldCompanion.Controllers
 
             InputsTimer.Tick += (sender, e) => UpdateInputs();
 
-            // ui
+            // UI
+            ButtonBrush.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)));
+            ButtonBrush.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 217, 65, 38)));
+            ButtonBrush.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
+            ButtonBrush.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
+
+            ButtonName.Add(ButtonFlags.B1, "A");
+            ButtonName.Add(ButtonFlags.B2, "B");
+            ButtonName.Add(ButtonFlags.B3, "X");
+            ButtonName.Add(ButtonFlags.B4, "Y");
+
             DrawControls();
             RefreshControls();
         }
@@ -367,35 +369,6 @@ namespace HandheldCompanion.Controllers
             }
 
             return base.GetGlyph(axis);
-        }
-
-        public override FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
-        {
-            if (!IsButtonSupported(button))
-                return null;
-
-            FontIcon FontIcon = new FontIcon()
-            {
-                Glyph = this.GetGlyph(button),
-                FontSize = FontIconSize,
-                FontFamily = base.FontFamily
-            };
-
-            Brush FontBrush = GetGlyphColor(button);
-            if (FontBrush is not null)
-                FontIcon.Foreground = FontBrush;
-            else
-                FontIcon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
-
-            return FontIcon;
-        }
-
-        public override Brush GetGlyphColor(ButtonFlags button)
-        {
-            if (ButtonBrush.ContainsKey(button))
-                return ButtonBrush[button];
-
-            return null;
         }
     }
 }

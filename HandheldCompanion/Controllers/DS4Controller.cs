@@ -12,20 +12,23 @@ namespace HandheldCompanion.Controllers
 {
     public class DS4Controller : DInputController
     {
-        private static Dictionary<ButtonFlags, SolidColorBrush> ButtonColors = new()
-        {
-            { ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 116, 139, 255)) },
-            { ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 255, 73, 75)) },
-            { ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 244, 149, 193)) },
-            { ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 73, 191, 115)) },
-        };
-
         public DS4Controller(Joystick joystick, PnPDetails details) : base(joystick, details)
         {
             if (!IsConnected())
                 return;
 
             InputsTimer.Tick += (sender, e) => UpdateInputs();
+
+            // UI
+            ButtonBrush.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 116, 139, 255)));
+            ButtonBrush.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 255, 73, 75)));
+            ButtonBrush.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 244, 149, 193)));
+            ButtonBrush.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 73, 191, 115)));
+
+            ButtonName.Add(ButtonFlags.B1, "Cross");
+            ButtonName.Add(ButtonFlags.B2, "Circle");
+            ButtonName.Add(ButtonFlags.B3, "Square");
+            ButtonName.Add(ButtonFlags.B4, "Triangle");
         }
 
         public override string ToString()
@@ -184,21 +187,6 @@ namespace HandheldCompanion.Controllers
             }
 
             return base.GetGlyph(axis);
-        }
-
-        public override FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
-        {
-            var fontIcon = new FontIcon()
-            {
-                Glyph = GetGlyph(button),
-                FontSize = FontIconSize,
-                FontFamily = FontFamily
-            };
-
-            if (ButtonColors.ContainsKey(button))
-                fontIcon.Foreground = ButtonColors[button];
-
-            return fontIcon;
         }
     }
 }
