@@ -94,7 +94,7 @@ begin
     PageText.Height := UninstallProgressForm.StatusLabel.Height;
     PageText.AutoSize := False;
     PageText.ShowAccelChar := False;
-    PageText.Caption := 'Press Next to proceeed with uninstallation.'; 
+    PageText.Caption := 'Press Next to proceed with uninstallation.'; 
 
     checkListBox := TNewCheckListBox.Create(UninstallFirstPage);
     checkListBox.Parent := UninstallFirstPage;
@@ -134,15 +134,15 @@ begin
     keepVigemCheckbox.Parent := UninstallSecondPage;
     keepVigemCheckbox.Left := UninstallProgressForm.StatusLabel.Left;
     keepVigemCheckbox.Top := PageText.Top + PageText.height + 16;
-    keepVigemCheckbox.Caption := 'Keep vigem';
-    keepVigemCheckbox.checked:= true;
+    keepVigemCheckbox.Caption := 'Keep Vigem';
+    keepVigemCheckbox.checked:= false;
 
     keepHidhideCheckbox := TNewCheckBox.Create(UninstallProgressForm);
     keepHidhideCheckbox.Parent := UninstallSecondPage;
     keepHidhideCheckbox.Left := UninstallProgressForm.StatusLabel.Left;
     keepHidhideCheckbox.Top := keepVigemCheckbox.Top + PageText.height + 6;
-    keepHidhideCheckbox.Caption := 'Keep hidide';
-    keepHidhideCheckbox.checked:= true;
+    keepHidhideCheckbox.Caption := 'Keep HidHide';
+    keepHidhideCheckbox.checked:= false;
   
     UninstallNextButton := TNewButton.Create(UninstallProgressForm);
     UninstallNextButton.Parent := UninstallProgressForm;
