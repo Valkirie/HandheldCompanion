@@ -12,15 +12,14 @@ procedure UpdateUninstallWizard;
 begin
   if UninstallProgressForm.InnerNotebook.ActivePage = UninstallFirstPage then
   begin
-    UninstallProgressForm.PageNameLabel.Caption := 'First uninstall wizard page';
-    UninstallProgressForm.PageDescriptionLabel.Caption := 'Your text here...';
+    UninstallProgressForm.PageNameLabel.Caption := 'Select Settings To Be Kept';
+    UninstallProgressForm.PageDescriptionLabel.Caption := 'Which items are to be kept?';
   end
   else
   if UninstallProgressForm.InnerNotebook.ActivePage = UninstallSecondPage then
   begin
-    UninstallProgressForm.PageNameLabel.Caption := 'Second uninstall wizard page';
-    UninstallProgressForm.PageDescriptionLabel.Caption :=
-      'Your text here...';
+    UninstallProgressForm.PageNameLabel.Caption := 'Select Dependency Applications To Be Kept';
+    UninstallProgressForm.PageDescriptionLabel.Caption := 'Which applications should be kept?';
   end;
   
   UninstallBackButton.Visible:= (UninstallProgressForm.InnerNotebook.ActivePage <> UninstallFirstPage);
