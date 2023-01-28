@@ -664,12 +664,26 @@ namespace HandheldCompanion.Views.Pages
 
         private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            // do something
+            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+                return;
+
+            // Prevent sustained value being higher then boost
+            if (TDPSustainedSlider.Value > TDPBoostSlider.Value)
+            {
+                TDPBoostSlider.Value = TDPSustainedSlider.Value;
+            }
         }
 
         private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            // do something
+            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+                return;
+
+            // Prevent boost value being lower then sustained
+            if (TDPBoostSlider.Value < TDPSustainedSlider.Value)
+            {
+                TDPSustainedSlider.Value = TDPBoostSlider.Value;
+            }
         }
 
         private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
