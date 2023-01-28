@@ -230,13 +230,24 @@ namespace HandheldCompanion.Views.QuickPages
             if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled"))
                 return;
 
+            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+                return;
+
             MainWindow.performanceManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
             MainWindow.performanceManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
+
+            // Prevent sustained value being higher then boost
+            if (TDPSustainedSlider.Value > TDPBoostSlider.Value)
+            {
+                TDPBoostSlider.Value = TDPSustainedSlider.Value;
+                MainWindow.performanceManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
+            }
 
             if (!SettingsManager.IsInitialized)
                 return;
 
             SettingsManager.SetProperty("QuickToolsPerformanceTDPSustainedValue", TDPSustainedSlider.Value);
+            SettingsManager.SetProperty("QuickToolsPerformanceTDPBoostValue", TDPBoostSlider.Value);
         }
 
         private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -244,11 +255,23 @@ namespace HandheldCompanion.Views.QuickPages
             if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled"))
                 return;
 
+            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+                return;
+
             MainWindow.performanceManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
+
+            // Prevent boost value being lower then sustained
+            if (TDPBoostSlider.Value < TDPSustainedSlider.Value)
+            {
+                TDPSustainedSlider.Value = TDPBoostSlider.Value;
+                MainWindow.performanceManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
+                MainWindow.performanceManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
+            }
 
             if (!SettingsManager.IsInitialized)
                 return;
 
+            SettingsManager.SetProperty("QuickToolsPerformanceTDPSustainedValue", TDPSustainedSlider.Value);
             SettingsManager.SetProperty("QuickToolsPerformanceTDPBoostValue", TDPBoostSlider.Value);
         }
 
