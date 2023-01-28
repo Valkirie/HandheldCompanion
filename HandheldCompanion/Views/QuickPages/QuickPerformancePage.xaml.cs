@@ -186,45 +186,6 @@ namespace HandheldCompanion.Views.QuickPages
             UpdateControls();
         }
 
-        private void PowerManager_LimitChanged(PowerType type, int limit)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                // do something
-                switch (type)
-                {
-                    case PowerType.Slow:
-                        {
-                            if (!TDPSustainedSlider.IsEnabled)
-                                return;
-
-                            if (TDPSustainedSlider.Minimum <= limit && TDPSustainedSlider.Maximum >= limit)
-                                TDPSustainedSlider.Value = limit;
-                        }
-                        break;
-                    case PowerType.Fast:
-                        {
-                            if (!TDPBoostSlider.IsEnabled)
-                                return;
-
-                            if (TDPBoostSlider.Minimum <= limit && TDPBoostSlider.Maximum >= limit)
-                                TDPBoostSlider.Value = limit;
-                        }
-                        break;
-                    case PowerType.Stapm:
-                    case PowerType.MsrSlow:
-                    case PowerType.MsrFast:
-                        // do nothing
-                        break;
-                }
-            });
-        }
-
-        private void PowerManager_ValueChanged(PowerType type, float value)
-        {
-            // do something
-        }
-
         private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled"))
