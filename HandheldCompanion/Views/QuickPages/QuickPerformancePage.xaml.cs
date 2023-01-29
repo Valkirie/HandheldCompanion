@@ -201,14 +201,12 @@ namespace HandheldCompanion.Views.QuickPages
             if (TDPSustainedSlider.Value > TDPBoostSlider.Value)
             {
                 TDPBoostSlider.Value = TDPSustainedSlider.Value;
-                MainWindow.performanceManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
             }
 
             if (!SettingsManager.IsInitialized)
                 return;
 
             SettingsManager.SetProperty("QuickToolsPerformanceTDPSustainedValue", TDPSustainedSlider.Value);
-            SettingsManager.SetProperty("QuickToolsPerformanceTDPBoostValue", TDPBoostSlider.Value);
         }
 
         private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -225,14 +223,11 @@ namespace HandheldCompanion.Views.QuickPages
             if (TDPBoostSlider.Value < TDPSustainedSlider.Value)
             {
                 TDPSustainedSlider.Value = TDPBoostSlider.Value;
-                MainWindow.performanceManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
-                MainWindow.performanceManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
             }
 
             if (!SettingsManager.IsInitialized)
                 return;
 
-            SettingsManager.SetProperty("QuickToolsPerformanceTDPSustainedValue", TDPSustainedSlider.Value);
             SettingsManager.SetProperty("QuickToolsPerformanceTDPBoostValue", TDPBoostSlider.Value);
         }
 
