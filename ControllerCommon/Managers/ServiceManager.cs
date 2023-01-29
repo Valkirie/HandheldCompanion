@@ -80,16 +80,12 @@ namespace ControllerCommon.Managers
         public override void Start()
         {
             MonitorTimer.Elapsed += MonitorHelper;
-
-            base.Start();
         }
 
         public override void Stop()
         {
             if (!IsInitialized)
                 return;
-
-            IsInitialized = false;
 
             MonitorTimer.Elapsed -= MonitorHelper;
             MonitorTimer = null;
@@ -166,7 +162,7 @@ namespace ControllerCommon.Managers
                 if (!IsInitialized)
                 {
                     Ready?.Invoke();
-                    IsInitialized = true;
+                    base.Start();
                 }
 
                 Monitor.Exit(updateLock);

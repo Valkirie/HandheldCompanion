@@ -36,7 +36,7 @@
                 <Button Name="SettingsButton" Height="40" Margin="12,0,0,0" VerticalAlignment="Center" Click="SettingsButton_Click">
                     <ui:FlyoutService.Flyout>
                         <ui:Flyout Placement="Left">
-                            <StackPanel>
+                            <StackPanel Width="800">
                                 <TextBlock
                                     Style="{StaticResource BaseTextBlockStyle}"
                                     Text="All items will be removed. Do you want to continue?"
