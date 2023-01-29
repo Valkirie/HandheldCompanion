@@ -69,11 +69,14 @@ namespace HandheldCompanion.Views.Pages
             {
                 switch (name)
                 {
-                    case "HIDcloaked":
+                    case "HIDcloakonconnect":
                         Toggle_Cloaked.IsOn = Convert.ToBoolean(value);
                         break;
                     case "HIDuncloakonclose":
                         Toggle_Uncloak.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "HIDvibrateonconnect":
+                        Toggle_Vibrate.IsOn = Convert.ToBoolean(value);
                         break;
                     case "HIDstrength":
                         SliderStrength.Value = Convert.ToDouble(value);
@@ -325,8 +328,7 @@ namespace HandheldCompanion.Views.Pages
             if (!SettingsManager.IsInitialized)
                 return;
 
-            HidHide.SetCloaking(Toggle_Cloaked.IsOn);
-            SettingsManager.SetProperty("HIDcloaked", Toggle_Cloaked.IsOn);
+            SettingsManager.SetProperty("HIDcloakonconnect", Toggle_Cloaked.IsOn);
         }
 
         private void Toggle_Uncloak_Toggled(object sender, RoutedEventArgs e)
@@ -373,6 +375,14 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("SteamDeckMuteController", Toggle_SDMuteController.IsOn);
+        }
+
+        private void Toggle_Vibrate_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("HIDvibrateonconnect", Toggle_Vibrate.IsOn);
         }
     }
 }

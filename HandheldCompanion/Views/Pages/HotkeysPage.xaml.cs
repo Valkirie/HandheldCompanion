@@ -5,6 +5,7 @@ using ModernWpf.Controls;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
@@ -48,9 +49,11 @@ namespace HandheldCompanion.Views.Pages
                     Tag = type,
                     Spacing = 6
                 };
-                string text = EnumUtils.GetDescriptionFromEnumValue(type);
-                stackPanel.Children.Add(new TextBlock() { Text = text, FontWeight = FontWeights.SemiBold });
 
+                TextBlock textBlock = new TextBlock() { Text = EnumUtils.GetDescriptionFromEnumValue(type) };
+                textBlock.SetResourceReference(Control.StyleProperty, "BaseTextBlockStyle");
+
+                stackPanel.Children.Add(textBlock);
                 HotkeysPanel.Children.Add(stackPanel);
             });
         }

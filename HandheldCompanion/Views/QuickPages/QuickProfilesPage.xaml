@@ -26,8 +26,8 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE748;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <TextBlock Name="ProcessName" Text="{x:Static resx:Resources.QuickProfilesPage_Waiting}" FontSize="14"/>
-                            <TextBlock Name="ProcessPath" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock Name="ProcessName" Text="{x:Static resx:Resources.QuickProfilesPage_Waiting}" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Name="ProcessPath" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
@@ -57,8 +57,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7EE;" Height="40" HorizontalAlignment="Center"/>
 
                             <StackPanel Orientation="Vertical" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_EnableProfile}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_EnableProfileDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_EnableProfile}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_EnableProfileDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </StackPanel>
                         </DockPanel>
 
@@ -85,8 +85,8 @@
 
                         <DockPanel>
                             <ui:SimpleStackPanel VerticalAlignment="Center">
-                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzone}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzone}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
                     </Grid>
@@ -141,8 +141,8 @@
                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE759;" Height="40" HorizontalAlignment="Center"/>
 
                                 <StackPanel Orientation="Vertical" Margin="12,0,0,0">
-                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCSettings}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCSettingsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCSettings}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCSettingsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                                 </StackPanel>
                             </DockPanel>
 
@@ -177,8 +177,8 @@
                             </Grid.ColumnDefinitions>
 
                             <StackPanel Orientation="Vertical">
-                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_StyleofInput}" FontSize="14" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofInputTooltip}"/>
-                                <TextBlock Name="Text_InputHint" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_StyleofInput}" Style="{StaticResource BodyTextBlockStyle}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofInputTooltip}"/>
+                                <TextBlock Name="Text_InputHint" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </StackPanel>
                         </Grid>
 
@@ -195,8 +195,8 @@
                             </Grid.ColumnDefinitions>
 
                             <StackPanel Orientation="Vertical">
-                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_StyleofOutput}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCSelectionRightLeftDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_StyleofOutput}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCSelectionRightLeftDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </StackPanel>
                         </Grid>
 
@@ -213,8 +213,8 @@
                             </Grid.ColumnDefinitions>
 
                             <StackPanel Orientation="Vertical">
-                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOff}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOffDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOff}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOffDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </StackPanel>
                         </Grid>
                         
@@ -238,8 +238,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                                 </StackPanel>
                             </Grid>
 
@@ -265,8 +265,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_Sensitivity}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_SensitivityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_Sensitivity}" ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_SensitivityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                                 </StackPanel>
                             </Grid>
 
@@ -310,8 +310,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TDPOverride}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TDPOverrideDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TDPOverride}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TDPOverrideDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 

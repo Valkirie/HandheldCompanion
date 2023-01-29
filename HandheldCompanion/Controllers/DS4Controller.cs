@@ -25,10 +25,8 @@ namespace HandheldCompanion.Controllers
             ButtonBrush.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 244, 149, 193)));
             ButtonBrush.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 73, 191, 115)));
 
-            ButtonName.Add(ButtonFlags.B1, "Cross");
-            ButtonName.Add(ButtonFlags.B2, "Circle");
-            ButtonName.Add(ButtonFlags.B3, "Square");
-            ButtonName.Add(ButtonFlags.B4, "Triangle");
+            // Specific buttons
+            ButtonSupport.Add(ButtonFlags.LPadClick);
         }
 
         public override string ToString()

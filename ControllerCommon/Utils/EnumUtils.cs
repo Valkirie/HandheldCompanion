@@ -8,10 +8,16 @@ namespace ControllerCommon.Utils
 {
     public static class EnumUtils
     {
-        public static string GetDescriptionFromEnumValue(Enum value)
+        public static string GetDescriptionFromEnumValue(Enum value, string prefix = "")
         {
             // return localized string if available
-            string key = $"Enum.{value.GetType().Name}.{value}";
+            string key = string.Empty;
+
+            if (!string.IsNullOrEmpty(prefix))
+                key = $"Enum.{prefix}.{value.GetType().Name}.{value}";
+            else
+                key = $"Enum.{value.GetType().Name}.{value}";
+
             string root = Properties.Resources.ResourceManager.GetString(key);
 
             if (root is not null)

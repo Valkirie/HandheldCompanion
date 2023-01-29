@@ -62,13 +62,8 @@ namespace HandheldCompanion.Managers
 
             PipeClient.Connected += OnClientConnected;
 
-            // cloak on start, if requested
-            bool HIDcloaked = SettingsManager.GetBoolean("HIDcloaked");
-            HidHide.SetCloaking(HIDcloaked);
-
-            // apply vibration strength
-            double HIDstrength = SettingsManager.GetDouble("HIDstrength");
-            SetHIDStrength(HIDstrength);
+            // enable HidHide
+            HidHide.SetCloaking(true);
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -97,10 +92,9 @@ namespace HandheldCompanion.Managers
             SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
             // uncloak on close, if requested
-            bool HIDuncloakonclose = SettingsManager.GetBoolean("HIDuncloakonclose");
-            foreach (IController controller in Controllers.Values)
-                controller.Unhide();
-            // HidHide.SetCloaking(!HIDuncloakonclose);
+            if (SettingsManager.GetBoolean("HIDuncloakonclose"))
+                foreach (IController controller in Controllers.Values)
+                    controller.Unhide();
 
             LogManager.LogInformation("{0} has stopped", "ControllerManager");
         }
@@ -180,7 +174,8 @@ namespace HandheldCompanion.Managers
             if (target is null)
                 return;
 
-            target.SetVibrationStrength(value);
+            if (SettingsManager.IsInitialized)
+                target.SetVibrationStrength(value);
         }
 
         private static void HidDeviceArrived(PnPDetails details, DeviceEventArgs obj)
@@ -400,9 +395,11 @@ namespace HandheldCompanion.Managers
             targetController.MovementsUpdated += UpdateMovements;
 
             targetController.Plug();
-            targetController.Rumble(targetController.GetUserIndex() + 1);
 
-            if (targetController.HideOnHook)
+            if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
+                targetController.Rumble(targetController.GetUserIndex() + 1);
+
+            if (SettingsManager.GetBoolean("HIDcloakonconnect"))
                 targetController.Hide();
 
             // update settings

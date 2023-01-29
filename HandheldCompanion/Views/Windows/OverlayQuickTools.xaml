@@ -74,8 +74,8 @@
 
             <DockPanel HorizontalAlignment="Left" Margin="15,0,0,0">
                 <ui:FontIcon Name="BatteryIndicatorIcon" VerticalAlignment="Center" FontSize="21"/>
-                <TextBlock Name="BatteryIndicatorPercentage" VerticalAlignment="Center" FontSize="12" Margin="2,0,0,0"/>
-                <TextBlock Name="BatteryIndicatorLifeRemaining" VerticalAlignment="Center" FontSize="12" Margin="4,0,0,0"/>
+                <TextBlock Name="BatteryIndicatorPercentage" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Margin="2,0,0,0"/>
+                <TextBlock Name="BatteryIndicatorLifeRemaining" VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Margin="4,0,0,0"/>
             </DockPanel>
         </Grid>
     </Grid>

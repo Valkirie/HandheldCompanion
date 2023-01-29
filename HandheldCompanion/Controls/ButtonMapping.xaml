@@ -20,7 +20,7 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <ui:FontIcon Name="Icon" FontFamily="{DynamicResource PhoneFontFamilyNormal}" FontSize="12" Height="40" Width="40" HorizontalAlignment="Left"/>
+            <ui:FontIcon Name="Icon" FontFamily="{DynamicResource PhoneFontFamilyNormal}" FontSize="14" Height="40" Width="40" HorizontalAlignment="Left"/>
 
             <DockPanel Grid.Column="1" HorizontalAlignment="Right">
                 <ComboBox Name="ActionComboBox" Width="120" Height="40" VerticalAlignment="Center" SelectionChanged="Action_SelectionChanged">
@@ -33,8 +33,19 @@
 
                 <ComboBox Name="TargetComboBox" Width="120" Height="40" Margin="12,0,0,0" VerticalAlignment="Center" SelectionChanged="Target_SelectionChanged"/>
 
-                <Button Name="SettingsButton" Height="40" Margin="12,0,0,0" IsEnabled="False" VerticalAlignment="Center" Click="SettingsButton_Click">
-                    <ui:SymbolIcon Symbol="Setting"/>
+                <Button Name="SettingsButton" Height="40" Margin="12,0,0,0" VerticalAlignment="Center" Click="SettingsButton_Click">
+                    <ui:FlyoutService.Flyout>
+                        <ui:Flyout Placement="Left">
+                            <StackPanel>
+                                <TextBlock
+                                    Style="{StaticResource BaseTextBlockStyle}"
+                                    Text="All items will be removed. Do you want to continue?"
+                                    Margin="0,0,0,12" />
+                                <Button Content="Yes, empty my cart" />
+                            </StackPanel>
+                        </ui:Flyout>
+                    </ui:FlyoutService.Flyout>
+                    <ui:SymbolIcon Symbol="Setting"/>                    
                 </Button>
             </DockPanel>
         </Grid>

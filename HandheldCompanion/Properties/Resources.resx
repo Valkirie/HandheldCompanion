@@ -178,10 +178,10 @@
     <value>Administrator</value>
   </data>
   <data name="ControllerPage_CloakDevice" xml:space="preserve">
-    <value>Cloak physical controller</value>
+    <value>Hide controller on connect</value>
   </data>
   <data name="ControllerPage_CloakDeviceDesc" xml:space="preserve">
-    <value>Change physical controller visibility to other applications</value>
+    <value>Hide physical controller when connected</value>
   </data>
   <data name="ControllerPage_Connect" xml:space="preserve">
     <value>Connect</value>
@@ -202,10 +202,10 @@
     <value>Input devices</value>
   </data>
   <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
-    <value>Uncloak on close</value>
+    <value>Unhide controller on close</value>
   </data>
   <data name="ControllerPage_UncloakOnCloseDesc" xml:space="preserve">
-    <value>Restore visibility of all physical controllers to other applications on service exit</value>
+    <value>Restore visibility of all physical controllers when application is exited</value>
   </data>
   <data name="ControllerPage_VibrationStrength" xml:space="preserve">
     <value>Vibration strength</value>
@@ -1141,5 +1141,11 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="ProfilesPage_TriggerDeadZoneRightDesc" xml:space="preserve">
     <value>Adjust the inner and outer deadzone percentage of the right trigger</value>
+  </data>
+  <data name="ControllerPage_VibrateDevice" xml:space="preserve">
+    <value>Vibrate controller on connect</value>
+  </data>
+  <data name="ControllerPage_VibrateDeviceDesc" xml:space="preserve">
+    <value>Vibrate physical controller when connected</value>
   </data>
 </root>

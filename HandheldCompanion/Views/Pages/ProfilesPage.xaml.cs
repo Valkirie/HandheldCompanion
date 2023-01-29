@@ -718,7 +718,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            settings.SetProfile();
+            settings.Update();
             MainWindow.NavView_Navigate(settings);
         }
     }

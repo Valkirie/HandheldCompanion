@@ -41,8 +41,6 @@ namespace HandheldCompanion.Controllers
             Capacities |= ControllerCapacities.Gyroscope;
             Capacities |= ControllerCapacities.Accelerometer;
 
-            HideOnHook = false;
-
             try
             {
                 Controller = new();
@@ -213,7 +211,7 @@ namespace HandheldCompanion.Controllers
 
         public override void Rumble(int loop)
         {
-            new Thread(() =>
+            new Thread(async () =>
             {
                 for (int i = 0; i < loop * 2; i++)
                 {
@@ -222,7 +220,7 @@ namespace HandheldCompanion.Controllers
                     else
                         SetVibration(0, 0);
 
-                    Thread.Sleep(100);
+                    await Task.Delay(100);
                 }
             }).Start();
 

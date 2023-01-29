@@ -17,7 +17,7 @@
             
             <!-- Joystick camera options -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="{x:Static resx:Resources.SettingsMode0_CameraOptions}" FontWeight="SemiBold"></Label>
+                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_CameraOptions}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
 
                 <!-- Sensivity X -->
                 <Border                      
@@ -35,8 +35,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_SensitivityX}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_SensitivityXDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_SensitivityX}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_SensitivityXDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -63,8 +63,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xECE7;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_SensitivityY}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_SensitivityYDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_SensitivityY}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_SensitivityYDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -82,8 +82,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE710;" Height="40"/>
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_AimingDownSights}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_AimingDownSightsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_AimingDownSights}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_AimingDownSightsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
                     </Expander.Header>
@@ -97,7 +97,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_AimingDownSightsMultiplier}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_AimingDownSightsMultiplier}" Style="{StaticResource BodyTextBlockStyle}"/>
                                 </StackPanel>
 
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
@@ -116,7 +116,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_AimingDownSightsActivation}" FontSize="14" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_AimingDownSightsActivation}" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
                                 </StackPanel>
 
                                 <ui:SimpleStackPanel Name="UMC_Activator" Grid.Column="1" Margin="12,0,0,0" Spacing="6"/>
@@ -132,8 +132,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE759;" Height="40"/>
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_FlickStick}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_FlickStickDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_FlickStick}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_FlickStickDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
                     </Expander.Header>
@@ -146,7 +146,7 @@
                                     <ColumnDefinition MinWidth="80"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_FlickStickEnable}" FontSize="14" VerticalAlignment="Center"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_FlickStickEnable}" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
 
                                 <ui:ToggleSwitch Grid.Column="1" Name="Toggle_FlickStick" Toggled="Toggle_FlickStick_Toggled"/>
                             </Grid>
@@ -161,8 +161,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_FlickDuration}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_FlickDurationDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_FlickDuration}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_FlickDurationDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                                 </StackPanel>
 
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
@@ -181,8 +181,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_StickSensitivtity}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_StickSensitivtityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_StickSensitivtity}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Text="{x:Static resx:Resources.SettingsMode0_StickSensitivtityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                                 </StackPanel>
 
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
@@ -197,7 +197,8 @@
 
             <!-- Custom response curve -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="{x:Static resx:Resources.SettingsMode0_CustomResponseCurve}" FontWeight="SemiBold"></Label>
+                <TextBlock Text="{x:Static resx:Resources.SettingsMode0_CustomResponseCurve}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                
                 <Border                      
                         Padding="0,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}"

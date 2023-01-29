@@ -34,7 +34,13 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         // BUMPERS
         public static List<ButtonFlags> BUMPERS = new()
         {
-            ButtonFlags.L1, ButtonFlags.R1, ButtonFlags.L3, ButtonFlags.R3, ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5
+            ButtonFlags.L1, ButtonFlags.R1,
+            ButtonFlags.L2, ButtonFlags.R2,
+            ButtonFlags.L3, ButtonFlags.R3,
+            ButtonFlags.L4, ButtonFlags.R4,
+            ButtonFlags.L5, ButtonFlags.R5,
+            ButtonFlags.LPadClick, ButtonFlags.RPadClick,
+            ButtonFlags.LPadTouch, ButtonFlags.RPadTouch
         };
 
         // MENU
@@ -122,6 +128,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                     continue;
 
                 buttonMapping.UpdateIcon(newIcon);
+                buttonMapping.Update();
             }
         }
 
@@ -138,7 +145,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         {
         }
 
-        public void SetProfile()
+        public void Update()
         {
             Profile currentProfile = ProfilesPage.currentProfile;
 
@@ -147,7 +154,11 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 ButtonFlags button = pair.Key;
                 IActions actions = pair.Value;
 
-                Mapping[button].SetIActions(actions); 
+                ButtonMapping mapping = Mapping[button];
+
+                // update actions
+                mapping.Reset();
+                mapping.SetIActions(actions);
             }
         }
     }

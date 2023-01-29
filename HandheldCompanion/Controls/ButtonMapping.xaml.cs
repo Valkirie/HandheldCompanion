@@ -61,6 +61,9 @@ namespace HandheldCompanion.Controls
 
         private void Action_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ActionComboBox.SelectedItem is null)
+                return;
+
             // clear current dropdown values
             TargetComboBox.Items.Clear();
 
@@ -69,43 +72,51 @@ namespace HandheldCompanion.Controls
 
             // populate target dropdown based on action type
             ActionType type = (ActionType)ActionComboBox.SelectedIndex;
-            switch (type)
+
+            if (type == ActionType.None)
             {
-                case ActionType.None:
-                    ProfilesPage.currentProfile.ButtonMapping.Remove(Button);
+                ProfilesPage.currentProfile.ButtonMapping.Remove(Button);
+            }
+            else if (type == ActionType.Button)
+            {
+                if (this.Actions is null)
+                    this.Actions = new ButtonActions();
+
+                // we need a controller to get compatible buttons
+                if (controller is null)
                     return;
 
-                case ActionType.Button:
+                foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
+                {
+                    if (controller.IsButtonSupported(button))
                     {
-                        if (this.Actions is null)
-                            this.Actions = new ButtonActions();
+                        // create a label, store ButtonFlags as Tag and Label as controller specific string
+                        Label buttonLabel = new Label() { Tag = button, Content = controller.GetButtonName(button) };
+                        TargetComboBox.Items.Add(buttonLabel);
 
-                        // we need a controller to get compatible buttons
-                        if (controller is null)
-                            return;
-
-                        foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
-                        {
-                            if (controller.IsButtonSupported(button))
-                            {
-                                // create a label, store ButtonFlags as Tag and Label as controller specific string
-                                Label buttonLabel = new Label() { Tag =  button, Content = controller.GetButtonName(button) };
-                                TargetComboBox.Items.Add(buttonLabel);
-
-                                if (button.Equals(((ButtonActions)this.Actions).Button))
-                                    TargetComboBox.SelectedItem = buttonLabel;
-                            }
-                        }
+                        if (button.Equals(((ButtonActions)this.Actions).Button))
+                            TargetComboBox.SelectedItem = buttonLabel;
                     }
-                    break;
+                }
+            }
+            else if (type == ActionType.Axis)
+            {
+                if (this.Actions is null)
+                    this.Actions = new AxisActions();
+
+                // we need a controller to get compatible buttons
+                if (controller is null)
+                    return;
             }
         }
 
         private void Target_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (TargetComboBox.SelectedItem is null)
+                return;
+
             // generate IActions based on settings
-            ActionType type = (ActionType)ActionComboBox.SelectedIndex;
-            switch (type)
+            switch (this.Actions.ActionType)
             {
                 case ActionType.None:
                     break;
@@ -119,12 +130,28 @@ namespace HandheldCompanion.Controls
             }
 
             // update profile button mapping
+            if (ProfilesPage.currentProfile is null)
+                return;
+
             ProfilesPage.currentProfile.ButtonMapping[Button] = this.Actions;
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        public void Update()
+        {
+            // force full update
+            Action_SelectionChanged(null, null);
+            Target_SelectionChanged(null, null);
+        }
+
+        public void Reset()
+        {
+            ActionComboBox.SelectedItem = null;
+            TargetComboBox.SelectedItem = null;
         }
     }
 }

@@ -36,7 +36,7 @@
                                 <ui:FontIcon Foreground="#F0F1DE0E" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF136;" />
                                 <ui:FontIcon Foreground="Black" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF13C;" />
                             </Grid>
-                            <TextBlock Name="WarningContent" TextWrapping="Wrap" Foreground="White" Grid.Column="1" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <TextBlock Name="WarningContent" TextWrapping="Wrap" Foreground="White" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                         </Grid>
                     </ui:SimpleStackPanel>
                 </Grid>
@@ -58,8 +58,8 @@
                             </Image.Source>
                         </Image>
                         <ui:SimpleStackPanel Orientation="Vertical" VerticalAlignment="Center">
-                            <Label Name="LabelManufacturer" Content="Manufacturer" FontWeight="SemiBold" FontSize="20"></Label>
-                            <Label Name="LabelProductName" Content="Product name" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" ></Label>
+                            <TextBlock Name="LabelManufacturer" Text="Manufacturer" Style="{StaticResource BaseTextBlockStyle}" FontSize="20"></TextBlock>
+                            <TextBlock Name="LabelProductName" Text="Product name" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" ></TextBlock>
                             </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </Grid>
@@ -72,7 +72,7 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorSpecification}" FontSize="14"/>
+                            <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorSpecification}" Style="{StaticResource BodyTextBlockStyle}"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Expander.Header>
@@ -87,13 +87,13 @@
                                 </Grid.ColumnDefinitions>
 
                                 <ui:SimpleStackPanel Spacing="12">
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorInternal}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorExternal}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorInternal}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorExternal}" Style="{StaticResource BodyTextBlockStyle}"/>
                                 </ui:SimpleStackPanel>
 
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
-                                    <TextBlock Name="SensorInternal" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock Name="SensorExternal" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Name="SensorInternal" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Name="SensorExternal" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
                                     </ui:SimpleStackPanel>
                             </Grid>
                         </ui:SimpleStackPanel>
@@ -108,7 +108,7 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE74C;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="{x:Static resx:Resources.AboutPage_Service}" FontSize="14"/>
+                            <TextBlock Text="{x:Static resx:Resources.AboutPage_Service}" Style="{StaticResource BodyTextBlockStyle}"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Expander.Header>
@@ -124,17 +124,17 @@
                                 </Grid.ColumnDefinitions>
 
                                 <ui:SimpleStackPanel Spacing="12">
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Version}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Author}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Contributors}" FontSize="14"/>
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Description}" FontSize="14"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Version}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Author}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Contributors}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Description}" Style="{StaticResource BodyTextBlockStyle}"/>
                                 </ui:SimpleStackPanel>
 
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
-                                    <TextBlock Name="VersionValue" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock Text="BenjaminLSR" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock Text="Nefarius, CasperH20, B-Core, Frank东, Toomy" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
-                                    <TextBlock TextWrapping="Wrap" Text="{x:Static resx:Resources.AboutPage_AboutDescription}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="14"/>
+                                    <TextBlock Name="VersionValue" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Text="BenjaminLSR" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Text="Nefarius, CasperH20, B-Core, Frank东, Toomy" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock TextWrapping="Wrap" Text="{x:Static resx:Resources.AboutPage_AboutDescription}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
 

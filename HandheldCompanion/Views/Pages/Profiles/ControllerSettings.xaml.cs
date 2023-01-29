@@ -57,8 +57,6 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 { "JoysticksPage", joysticksPage },
                 { "GyroPage", gyroPage },
             };
-
-            PipeClient.ServerMessage += OnServerMessage;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -67,14 +65,6 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
         public void Page_Closed()
         {
-            PipeClient.ServerMessage -= OnServerMessage;
-        }
-
-        private void OnServerMessage(PipeMessage message)
-        {
-            switch (message.code)
-            {
-            }
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)
@@ -82,10 +72,10 @@ namespace HandheldCompanion.Views.Pages.Profiles
             ((Expander)sender).BringIntoView();
         }
 
-        public void SetProfile()
+        public void Update()
         {
             // cascade update to (sub)pages
-            buttonsPage.SetProfile();
+            buttonsPage.Update();
         }
 
         #region UI
@@ -128,11 +118,6 @@ namespace HandheldCompanion.Views.Pages.Profiles
             ContentFrame.Navigate(_page);
         }
 
-        private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
-        {
-            TryGoBack();
-        }
-
         private void navView_Loaded(object sender, RoutedEventArgs e)
         {
             // Add handler for ContentFrame navigation.
@@ -146,21 +131,6 @@ namespace HandheldCompanion.Views.Pages.Profiles
             // here to load the home page.
             preNavItemTag = "ButtonsPage";
             NavView_Navigate(preNavItemTag);
-        }
-
-        private bool TryGoBack()
-        {
-            if (!ContentFrame.CanGoBack)
-                return false;
-
-            // Don't go back if the nav pane is overlayed.
-            if (navView.IsPaneOpen &&
-                (navView.DisplayMode == NavigationViewDisplayMode.Compact ||
-                 navView.DisplayMode == NavigationViewDisplayMode.Minimal))
-                return false;
-
-            ContentFrame.GoBack();
-            return true;
         }
 
         private void On_Navigated(object sender, NavigationEventArgs e)

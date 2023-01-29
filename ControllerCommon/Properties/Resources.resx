@@ -120,6 +120,27 @@
   <data name="AutoRollYawSwapDesc" xml:space="preserve">
     <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
   </data>
+  <data name="Enum.DS4Controller.ButtonFlags.B1" xml:space="preserve">
+    <value>Cross</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.B2" xml:space="preserve">
+    <value>Circle</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.B3" xml:space="preserve">
+    <value>Square</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.B4" xml:space="preserve">
+    <value>Triangle</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.Back" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.Special" xml:space="preserve">
+    <value>Sony</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.Start" xml:space="preserve">
+    <value>Options</value>
+  </data>
   <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
     <value>Button A</value>
   </data>
@@ -251,6 +272,39 @@
   </data>
   <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
     <value>Manual</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B1" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B2" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B3" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B4" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.Back" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.L1" xml:space="preserve">
+    <value>LB</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.L2" xml:space="preserve">
+    <value>LT</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.R1" xml:space="preserve">
+    <value>RB</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.R2" xml:space="preserve">
+    <value>RT</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.Special" xml:space="preserve">
+    <value>Guide</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
+    <value>Menu</value>
   </data>
   <data name="JoystickCameraDesc" xml:space="preserve">
     <value>This input will operate as a simple joystick. This is intended for traditional joystick applications</value>

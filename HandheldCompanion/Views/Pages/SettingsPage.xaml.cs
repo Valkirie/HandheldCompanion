@@ -224,8 +224,8 @@ namespace HandheldCompanion.Views.Pages
                             }
                             else
                             {
-                                LabelUpdate.Content = Properties.Resources.SettingsPage_UpToDate;
-                                LabelUpdateDate.Content = Properties.Resources.SettingsPage_LastChecked + MainWindow.updateManager.GetTime();
+                                LabelUpdate.Text = Properties.Resources.SettingsPage_UpToDate;
+                                LabelUpdateDate.Text = Properties.Resources.SettingsPage_LastChecked + MainWindow.updateManager.GetTime();
 
                                 LabelUpdateDate.Visibility = Visibility.Visible;
                                 GridUpdateSymbol.Visibility = Visibility.Visible;
@@ -237,7 +237,7 @@ namespace HandheldCompanion.Views.Pages
 
                     case UpdateStatus.Checking:
                         {
-                            LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateCheck;
+                            LabelUpdate.Text = Properties.Resources.SettingsPage_UpdateCheck;
 
                             GridUpdateSymbol.Visibility = Visibility.Collapsed;
                             LabelUpdateDate.Visibility = Visibility.Collapsed;
@@ -251,7 +251,7 @@ namespace HandheldCompanion.Views.Pages
                             ProgressBarUpdate.Visibility = Visibility.Collapsed;
 
                             Dictionary<string, UpdateFile> updateFiles = (Dictionary<string, UpdateFile>)value;
-                            LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateAvailable;
+                            LabelUpdate.Text = Properties.Resources.SettingsPage_UpdateAvailable;
 
                             foreach (UpdateFile update in updateFiles.Values)
                             {

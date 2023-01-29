@@ -35,8 +35,8 @@ namespace HandheldCompanion.Views.Pages
             Dispatcher.Invoke(() =>
             {
                 // Motherboard properties
-                LabelManufacturer.Content = MainWindow.handheldDevice.ManufacturerName;
-                LabelProductName.Content = MainWindow.handheldDevice.ProductName;
+                LabelManufacturer.Text = MainWindow.handheldDevice.ManufacturerName;
+                LabelProductName.Text = MainWindow.handheldDevice.ProductName;
                 HandheldGrid.Visibility = Visibility.Visible;
 
                 VersionValue.Text = MainWindow.fileVersionInfo.FileVersion;

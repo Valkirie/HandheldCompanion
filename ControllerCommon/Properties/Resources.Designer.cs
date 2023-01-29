@@ -70,6 +70,69 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cross.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_B1 {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Circle.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_B2 {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Square.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_B3 {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Triangle.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_B4 {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Share.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_Back {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sony.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_Special {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.Special", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Options.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_Start {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Button A.
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_A {
@@ -462,6 +525,105 @@ namespace ControllerCommon.Properties {
         public static string Enum_ServiceStartMode_Manual {
             get {
                 return ResourceManager.GetString("Enum.ServiceStartMode.Manual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_B1 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to B.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_B2 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to X.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_B3 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Y.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_B4 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_Back {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LB.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_L1 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LT.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_L2 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RB.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_R1 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RT.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_R2 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Guide.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_Special {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Special", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Menu.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_Start {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Start", resourceCulture);
             }
         }
         

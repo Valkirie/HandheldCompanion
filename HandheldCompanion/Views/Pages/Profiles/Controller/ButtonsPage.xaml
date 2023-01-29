@@ -18,22 +18,22 @@
         <ui:SimpleStackPanel Spacing="6">
             
             <!-- A,B,X,Y -->
-            <Label Content="A,B,X,Y" FontWeight="SemiBold"></Label>
+            <TextBlock Text="A,B,X,Y" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
             <ui:SimpleStackPanel Spacing="6" Name="ButtonsStackPanel">
             </ui:SimpleStackPanel>
 
             <!-- BUMPERS -->
-            <Label Content="BUMPERS" FontWeight="SemiBold"></Label>
+            <TextBlock Text="BUMPERS" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
             <ui:SimpleStackPanel Spacing="6" Name="BumpersStackPanel">
             </ui:SimpleStackPanel>
 
             <!-- MENU -->
-            <Label Content="MENU" FontWeight="SemiBold"></Label>
+            <TextBlock Text="MENU" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
             <ui:SimpleStackPanel Spacing="6" Name="MenuStackPanel">
             </ui:SimpleStackPanel>
 
             <!-- OEM -->
-            <Label Content="OEM" FontWeight="SemiBold"></Label>
+            <TextBlock Text="OEM" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
             <ui:SimpleStackPanel Spacing="6" Name="OEMStackPanel">
             </ui:SimpleStackPanel>
 

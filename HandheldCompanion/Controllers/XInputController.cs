@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -174,11 +175,6 @@ namespace HandheldCompanion.Controllers
             ButtonBrush.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
             ButtonBrush.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
 
-            ButtonName.Add(ButtonFlags.B1, "A");
-            ButtonName.Add(ButtonFlags.B2, "B");
-            ButtonName.Add(ButtonFlags.B3, "X");
-            ButtonName.Add(ButtonFlags.B4, "Y");
-
             DrawControls();
             RefreshControls();
         }
@@ -286,7 +282,7 @@ namespace HandheldCompanion.Controllers
 
         public override void Rumble(int loop)
         {
-            new Thread(() =>
+            new Thread(async () =>
             {
                 for (int i = 0; i < loop * 2; i++)
                 {
@@ -295,7 +291,7 @@ namespace HandheldCompanion.Controllers
                     else
                         SetVibration(0, 0);
 
-                    Thread.Sleep(100);
+                    await Task.Delay(100);
                 }
             }).Start();
 

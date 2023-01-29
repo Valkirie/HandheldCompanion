@@ -16,7 +16,6 @@
         Name="navView" PaneDisplayMode="Left"
         ItemInvoked="navView_ItemInvoked"
         Loaded="navView_Loaded"
-        BackRequested="navView_BackRequested"
         OpenPaneLength="150"
         Margin="20"
         IsPaneToggleButtonVisible="False"

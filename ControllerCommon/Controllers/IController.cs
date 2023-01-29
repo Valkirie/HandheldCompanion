@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using PrecisionTiming;
 using System;
@@ -45,7 +46,6 @@ namespace ControllerCommon.Controllers
             // ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
         };
         protected Dictionary<ButtonFlags, Brush> ButtonBrush = new();
-        protected Dictionary<ButtonFlags, string> ButtonName = new();
 
         protected const short UPDATE_INTERVAL = 5;
 
@@ -53,7 +53,6 @@ namespace ControllerCommon.Controllers
         public ButtonState prevInjectedButtons = new();
 
         public ControllerCapacities Capacities = ControllerCapacities.None;
-        public bool HideOnHook = true;
 
         protected int UserIndex;
         protected double VibrationStrength = 1.0d;
@@ -325,10 +324,7 @@ namespace ControllerCommon.Controllers
 
         public string GetButtonName(ButtonFlags button)
         {
-            if (ButtonName.ContainsKey(button))
-                return ButtonName[button];
-
-            return button.ToString();
+            return EnumUtils.GetDescriptionFromEnumValue(button, this.GetType().Name);
         }
     }
 }
