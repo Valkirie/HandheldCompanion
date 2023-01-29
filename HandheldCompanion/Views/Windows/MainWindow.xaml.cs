@@ -290,7 +290,7 @@ namespace HandheldCompanion.Views
             _managers.Add(updateManager);
 
             serviceManager.Updated += OnServiceUpdate;
-            serviceManager.Ready += () =>
+            serviceManager.Initialized += () =>
             {
                 if (SettingsManager.GetBoolean("StartServiceWithCompanion"))
                 {

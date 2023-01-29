@@ -40,9 +40,6 @@ namespace ControllerCommon.Managers
         private Timer MonitorTimer;
         private object updateLock = new();
 
-        public event ReadyEventHandler Ready;
-        public delegate void ReadyEventHandler();
-
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(ServiceControllerStatus status, int mode);
 
@@ -159,11 +156,9 @@ namespace ControllerCommon.Managers
                 prevStatus = (int)status;
                 prevType = (int)type;
 
+                // initialize only once we've pulled service status
                 if (!IsInitialized)
-                {
-                    Ready?.Invoke();
                     base.Start();
-                }
 
                 Monitor.Exit(updateLock);
             }
