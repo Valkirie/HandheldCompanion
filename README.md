@@ -32,6 +32,7 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - AYA Neo 2
 - ONEXPLAYER MINI and its different versions (Intel, AMD, Gundam)
 - GPD WIN Max 2 (Intel and AMD)
+- GPD Win 2
 - GPD Win 3
 - Steam Deck
 
