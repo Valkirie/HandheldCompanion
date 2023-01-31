@@ -508,8 +508,8 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // update dependencies
-            SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
-            SensorPlacementVisualisation.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
+            Toggle_SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
+            Grid_SensorPlacementVisualisation.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
