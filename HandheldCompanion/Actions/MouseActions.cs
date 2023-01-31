@@ -10,9 +10,13 @@ namespace HandheldCompanion.Actions
     public class MouseActions : IActions
     {
         public MouseActionsType Type { get; set; }
+        private short Value { get; set; }
+
         private bool IsCursorDown { get; set; } = false;
         private bool IsCursorUp { get; set; } = true;
-        private float Sensivity { get; set; } = 10.0f;
+
+        // settings
+        public float Sensivity { get; set; } = 10.0f;
 
         public MouseActions()
         {
@@ -24,14 +28,14 @@ namespace HandheldCompanion.Actions
             this.Type = type;
         }
 
-        public override void Execute(ButtonFlags button, bool value)
+        public override bool Execute(ButtonFlags button, bool value)
         {
             switch (value)
             {
                 case true:
                     {
                         if (IsCursorDown || !IsCursorUp)
-                            return;
+                            return false;
 
                         IsCursorDown = true;
                         IsCursorUp = false;
@@ -41,7 +45,7 @@ namespace HandheldCompanion.Actions
                 case false:
                     {
                         if (IsCursorUp || !IsCursorDown)
-                            return;
+                            return false;
 
                         IsCursorUp = true;
                         IsCursorDown = false;
@@ -49,21 +53,28 @@ namespace HandheldCompanion.Actions
                     }
                     break;
             }
+
+            return true;
         }
 
-        public override void Execute(AxisFlags axis, short value)
+        public override short Execute(AxisFlags axis, short value)
         {
-            switch(Type)
+            // update current value
+            this.Value = value;
+
+            switch (Type)
             {
                 case MouseActionsType.MoveByX:
-                    short x = (short)((float)value / short.MaxValue * Sensivity);
+                    short x = (short)((float)Value / short.MaxValue * Sensivity);
                     MouseSimulator.MoveBy(x, 0);
                     break;
                 case MouseActionsType.MoveByY:
-                    short y = (short)((float)value / short.MaxValue * Sensivity);
+                    short y = (short)((float)Value / short.MaxValue * Sensivity);
                     MouseSimulator.MoveBy(0, -y);
                     break;
             }
+
+            return Value;
         }
     }
 }

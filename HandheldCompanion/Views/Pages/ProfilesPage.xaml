@@ -677,7 +677,7 @@
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE974;" FontSize="12" HorizontalAlignment="Right"/>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE974;" FontSize="12" HorizontalAlignment="Right" Margin="0,0,7,0"/>
                         </Grid>
                     </Button>
                 </ui:SimpleStackPanel>

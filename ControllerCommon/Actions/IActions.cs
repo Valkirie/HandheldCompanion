@@ -18,13 +18,19 @@ namespace ControllerCommon.Actions
     {
         public ActionType ActionType { get; set; }
 
-        public virtual void Execute(ButtonFlags button, bool value)
-        { }
+        public virtual bool Execute(ButtonFlags button, bool value)
+        {
+            return value;
+        }
 
-        public virtual void Execute(AxisFlags axis, bool value)
-        { }
+        public virtual bool Execute(AxisFlags axis, bool value)
+        {
+            return value;
+        }
 
-        public virtual void Execute(AxisFlags axis, short value)
-        { }
+        public virtual short Execute(AxisFlags axis, short value)
+        {
+            return value;
+        }
     }
 }

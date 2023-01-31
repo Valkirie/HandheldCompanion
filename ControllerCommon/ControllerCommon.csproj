@@ -26,7 +26,7 @@
     <PackageReference Include="NAudio" Version="2.1.0" />
     <PackageReference Include="Nefarius.Drivers.HidHide" Version="1.8.54" />
     <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.6.213" />
-    <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.232" />
+    <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.242" />
     <PackageReference Include="NetCoreNamedPipeWrapper" Version="1.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />

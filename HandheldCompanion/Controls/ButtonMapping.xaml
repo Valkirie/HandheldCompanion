@@ -8,46 +8,53 @@
              Visibility="Collapsed"
              mc:Ignorable="d" 
              d:DesignHeight="66" d:DesignWidth="800" d:Visibility="Visible">
-    
-    <Border
-        Padding="15,12,12,12"
-        CornerRadius="{DynamicResource ControlCornerRadius}"
-        Background="{DynamicResource ExpanderContentBackground}">
-        
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="40"></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-            </Grid.ColumnDefinitions>
 
-            <ui:FontIcon Name="Icon" FontFamily="{DynamicResource PhoneFontFamilyNormal}" FontSize="14" Height="40" Width="40" HorizontalAlignment="Left"/>
+    <Expander HorizontalAlignment="Stretch" Padding="15,12,12,12">
+        <Expander.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
 
-            <DockPanel Grid.Column="1" HorizontalAlignment="Right">
-                <ComboBox Name="ActionComboBox" Width="120" Height="40" VerticalAlignment="Center" SelectionChanged="Action_SelectionChanged">
-                    <ComboBoxItem>None</ComboBoxItem>
-                    <ComboBoxItem>Button</ComboBoxItem>
-                    <ComboBoxItem>Axis</ComboBoxItem>
-                    <ComboBoxItem>Keyboard</ComboBoxItem>
-                    <ComboBoxItem>Mouse</ComboBoxItem>
-                </ComboBox>
+                <ui:FontIcon Name="Icon" FontFamily="{DynamicResource PhoneFontFamilyNormal}" FontSize="14" Height="40" Width="40" HorizontalAlignment="Left"/>
 
-                <ComboBox Name="TargetComboBox" Width="120" Height="40" Margin="12,0,0,0" VerticalAlignment="Center" SelectionChanged="Target_SelectionChanged"/>
+                <DockPanel Grid.Column="1" HorizontalAlignment="Right">
+                    <ComboBox Name="ActionComboBox" Width="120" VerticalAlignment="Center" SelectionChanged="Action_SelectionChanged">
+                        <ComboBoxItem>None</ComboBoxItem>
+                        <ComboBoxItem>Button</ComboBoxItem>
+                        <ComboBoxItem>Axis</ComboBoxItem>
+                        <ComboBoxItem>Keyboard</ComboBoxItem>
+                        <ComboBoxItem>Mouse</ComboBoxItem>
+                    </ComboBox>
 
-                <Button Name="SettingsButton" Height="40" Margin="12,0,0,0" VerticalAlignment="Center" Click="SettingsButton_Click">
-                    <ui:FlyoutService.Flyout>
-                        <ui:Flyout Placement="Left">
-                            <StackPanel Width="800">
-                                <TextBlock
-                                    Style="{StaticResource BaseTextBlockStyle}"
-                                    Text="All items will be removed. Do you want to continue?"
-                                    Margin="0,0,0,12" />
-                                <Button Content="Yes, empty my cart" />
-                            </StackPanel>
-                        </ui:Flyout>
-                    </ui:FlyoutService.Flyout>
-                    <ui:SymbolIcon Symbol="Setting"/>                    
-                </Button>
-            </DockPanel>
-        </Grid>
-    </Border>
+                    <ComboBox Name="TargetComboBox" Width="120" Margin="12,0,0,0" VerticalAlignment="Center" SelectionChanged="Target_SelectionChanged"/>
+                </DockPanel>
+            </Grid>
+        </Expander.Header>
+        <Expander.Content>
+            <Grid>
+                <ui:SimpleStackPanel Spacing="12">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Test" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Text="TestDesc" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                            <ui:RadioButtons Name="cB_GyroSteering" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1">
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6"/>
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6"/>
+                            </ui:RadioButtons>
+                        </DockPanel>
+                    </Grid>
+                </ui:SimpleStackPanel>
+            </Grid>
+        </Expander.Content>
+    </Expander>
 </UserControl>
