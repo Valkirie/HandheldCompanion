@@ -7,7 +7,7 @@
              xmlns:ui="http://schemas.modernwpf.com/2019"
              Visibility="Collapsed"
              mc:Ignorable="d" 
-             d:DesignHeight="66" d:DesignWidth="800" d:Visibility="Visible">
+             d:DesignHeight="400" d:DesignWidth="800" d:Visibility="Visible">
 
     <Expander HorizontalAlignment="Stretch" Padding="15,12,12,12">
         <Expander.Header>
@@ -35,24 +35,58 @@
         <Expander.Content>
             <Grid>
                 <ui:SimpleStackPanel Spacing="12">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
+                    <ui:SimpleStackPanel Spacing="6">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition Width="6*" MinWidth="120"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
 
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Text="Test" Style="{StaticResource BodyTextBlockStyle}"/>
-                            <TextBlock Text="TestDesc" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                        </StackPanel>
+                            <TextBlock Text="Hold to repeat" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
 
-                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                            <ui:RadioButtons Name="cB_GyroSteering" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1">
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6"/>
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6"/>
-                            </ui:RadioButtons>
-                        </DockPanel>
-                    </Grid>
+                            <ui:ToggleSwitch Name="Toggle_Turbo" Grid.Column="1" HorizontalAlignment="Right" Toggled="Toggle_Turbo_Toggled" OffContent="" OnContent="" Margin="0,0,-100,0"/>
+                        </Grid>
+
+                        <!-- Separator -->
+                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
+                        <!-- Repeat rate (hidden) -->
+                        <Grid
+                            Visibility="{Binding ElementName=Toggle_Turbo, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                            <ui:SimpleStackPanel Spacing="6">
+
+                                <Grid>
+                                    <TextBlock Text="Repeat rate (ms)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left"/>
+                                    <TextBox Text="{Binding Value, ElementName=Turbo_Slider, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                                </Grid>
+
+                                <Slider Name="Turbo_Slider" Value="90" Minimum="10" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Turbo_Slider_ValueChanged"/>
+
+                                <!-- Separator -->
+                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
+                            </ui:SimpleStackPanel>
+
+                        </Grid>                    
+                    </ui:SimpleStackPanel>
+
+                    <ui:SimpleStackPanel Spacing="6">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition Width="6*" MinWidth="120"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Press to toggle" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+
+                            <ui:ToggleSwitch Name="Toggle_Toggle" Grid.Column="1" HorizontalAlignment="Right" Toggled="Toggle_Toggle_Toggled" OffContent="" OnContent="" Margin="0,0,-100,0"/>
+                        </Grid>
+                        
+                        <!-- Separator -->
+                        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+                    </ui:SimpleStackPanel>
+
                 </ui:SimpleStackPanel>
             </Grid>
         </Expander.Content>

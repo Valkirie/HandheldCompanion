@@ -98,6 +98,10 @@ namespace HandheldCompanion.Controls
                             TargetComboBox.SelectedItem = buttonLabel;
                     }
                 }
+
+                Toggle_Turbo.IsOn = ((ButtonActions)this.Actions).Turbo;
+                Turbo_Slider.Value = ((ButtonActions)this.Actions).TurboDelay;
+                Toggle_Toggle.IsOn = ((ButtonActions)this.Actions).Toggle;
             }
             else if (type == ActionType.Axis)
             {
@@ -136,11 +140,6 @@ namespace HandheldCompanion.Controls
             ProfilesPage.currentProfile.ButtonMapping[Button] = this.Actions;
         }
 
-        private void SettingsButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         public void Update()
         {
             // force full update
@@ -152,6 +151,30 @@ namespace HandheldCompanion.Controls
         {
             ActionComboBox.SelectedItem = null;
             TargetComboBox.SelectedItem = null;
+        }
+
+        private void Toggle_Turbo_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (this.Actions is null || this.Actions.ActionType != ActionType.Button)
+                return;
+
+            ((ButtonActions)this.Actions).Turbo = Toggle_Turbo.IsOn;
+        }
+
+        private void Turbo_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.Actions is null || this.Actions.ActionType != ActionType.Button)
+                return;
+
+            ((ButtonActions)this.Actions).TurboDelay = (byte)Turbo_Slider.Value;
+        }
+
+        private void Toggle_Toggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (this.Actions is null || this.Actions.ActionType != ActionType.Button)
+                return;
+
+            ((ButtonActions)this.Actions).Toggle = Toggle_Toggle.IsOn;
         }
     }
 }

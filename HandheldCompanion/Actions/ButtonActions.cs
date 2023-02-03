@@ -6,23 +6,20 @@ using System.Diagnostics;
 namespace HandheldCompanion.Actions
 {
     [Serializable]
-    public enum ButtonModes
-    {
-        Default = 0,
-        Toggle = 1,
-        Repeat = 2
-    }
-
-    [Serializable]
     public class ButtonActions : IActions
     {
         public ButtonFlags Button { get; set; }
-        public ButtonModes Mode { get; set; }
+
+        public bool Turbo { get; set; }
+        public byte TurboDelay { get; set; } = 90;
+        private short TurboIdx;
+        private bool IsTurboed;
+
+        public bool Toggle { get; set; }
+        private bool IsToggled;
 
         private bool Value;
         private bool prevValue;
-
-        private short RepeatIdx;
 
         public ButtonActions()
         {
@@ -36,31 +33,35 @@ namespace HandheldCompanion.Actions
 
         public override bool Execute(ButtonFlags button, bool value)
         {
-            switch(Mode)
+            if (Toggle)
             {
-                case ButtonModes.Default:
-                    this.Value = value;
-                    break;
-                case ButtonModes.Toggle:
-                    if (prevValue != value && value)
-                        this.Value = !this.Value;
-                    break;
-                case ButtonModes.Repeat:
-                    {
-                        if (value)
-                        {
-                            if (RepeatIdx % 20 == 0)
-                                this.Value = !this.Value;
-                            RepeatIdx++;
-                        }
-                        else
-                        {
-                            this.Value = false;
-                            RepeatIdx = 0;
-                        }
-                    }
-                    break;
+                if (prevValue != value && value)
+                    IsToggled = !IsToggled;
             }
+
+            if (Turbo)
+            {
+                if (value || IsToggled)
+                {
+                    if (TurboIdx % TurboDelay == 0)
+                        IsTurboed = !IsTurboed;
+                    TurboIdx+=5;
+                }
+                else
+                {
+                    IsTurboed = false;
+                    TurboIdx = 0;
+                }
+            }
+
+            if (Toggle && Turbo)
+                this.Value = IsToggled && IsTurboed;
+            else if (Toggle)
+                this.Value = IsToggled;
+            else if (Turbo)
+                this.Value = IsTurboed;
+            else
+                this.Value = value;
 
             // update previous value
             prevValue = value;
