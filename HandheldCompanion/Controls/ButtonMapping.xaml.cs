@@ -64,6 +64,10 @@ namespace HandheldCompanion.Controls
             if (ActionComboBox.SelectedItem is null)
                 return;
 
+            // we're not ready yet
+            if (TargetComboBox is null)
+                return;
+
             // clear current dropdown values
             TargetComboBox.Items.Clear();
 
@@ -75,7 +79,8 @@ namespace HandheldCompanion.Controls
 
             if (type == ActionType.None)
             {
-                ProfilesPage.currentProfile.ButtonMapping.Remove(Button);
+                if (ProfilesPage.currentProfile is not null)
+                    ProfilesPage.currentProfile.ButtonMapping.Remove(Button);
             }
             else if (type == ActionType.Button)
             {
@@ -124,6 +129,9 @@ namespace HandheldCompanion.Controls
                             TargetComboBox.SelectedItem = buttonLabel;
                     }
                 }
+
+                Axis_Slider.Value = ((AxisActions)this.Actions).AxisPercentage;
+                AxisPolarity.SelectedIndex = ((AxisActions)this.Actions).AxisPolarity;
             }
         }
 
@@ -196,6 +204,24 @@ namespace HandheldCompanion.Controls
                 return;
 
             ((ButtonActions)this.Actions).Toggle = Toggle_Toggle.IsOn;
+        }
+        #endregion
+
+        #region Button2Axis
+        private void Axis_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.Actions is null || this.Actions.ActionType != ActionType.Axis)
+                return;
+
+            ((AxisActions)this.Actions).AxisPercentage = Axis_Slider.Value;
+        }
+
+        private void AxisPolarity_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.Actions is null || this.Actions.ActionType != ActionType.Axis)
+                return;
+
+            ((AxisActions)this.Actions).AxisPolarity = (byte)AxisPolarity.SelectedIndex;
         }
         #endregion
     }

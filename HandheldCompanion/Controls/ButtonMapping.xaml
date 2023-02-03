@@ -7,7 +7,7 @@
              xmlns:ui="http://schemas.modernwpf.com/2019"
              Visibility="Collapsed"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="800" d:Visibility="Visible">
+             d:DesignHeight="1000" d:DesignWidth="800" d:Visibility="Visible">
 
     <Expander HorizontalAlignment="Stretch" Padding="15,12,12,12">
         <Expander.Header>
@@ -20,7 +20,7 @@
                 <ui:FontIcon Name="Icon" FontFamily="{DynamicResource PhoneFontFamilyNormal}" FontSize="14" Height="40" Width="40" HorizontalAlignment="Left"/>
 
                 <DockPanel Grid.Column="1" HorizontalAlignment="Right">
-                    <ComboBox Name="ActionComboBox" Width="120" VerticalAlignment="Center" SelectionChanged="Action_SelectionChanged">
+                    <ComboBox Name="ActionComboBox" Width="120" VerticalAlignment="Center" SelectionChanged="Action_SelectionChanged" SelectedIndex="0">
                         <ComboBoxItem Content="None" IsEnabled="True"/>
                         <ComboBoxItem Content="Button" IsEnabled="True"/>
                         <ComboBoxItem Content="Axis" IsEnabled="True"/>
@@ -28,21 +28,24 @@
                         <ComboBoxItem Content="Mouse" IsEnabled="False"/>
                     </ComboBox>
 
-                    <ComboBox Name="TargetComboBox" Width="120" Margin="12,0,0,0" VerticalAlignment="Center" SelectionChanged="Target_SelectionChanged"/>
+                    <ComboBox Name="TargetComboBox" Width="140" Margin="12,0,0,0" VerticalAlignment="Center" SelectionChanged="Target_SelectionChanged"/>
                 </DockPanel>
             </Grid>
         </Expander.Header>
         <Expander.Content>
-            <Grid>
+            <StackPanel>
                 <!-- Button 2 Button -->
                 <Grid Name="Button2Button" d:Visibility="Visible"
                       Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1}">
+
                     <ui:SimpleStackPanel Spacing="12">
+                        <TextBlock Text="Button mapping: Settings" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+
                         <ui:SimpleStackPanel Spacing="6">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="4*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="6*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="8*" MinWidth="120"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Text="Hold to repeat" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
@@ -54,13 +57,13 @@
                             <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
                             <!-- Repeat rate (hidden) -->
-                            <Grid
-                                Visibility="{Binding ElementName=Toggle_Turbo, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid d:Visibility="Visible"
+                                  Visibility="{Binding ElementName=Toggle_Turbo, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                 <ui:SimpleStackPanel Spacing="6">
 
                                     <Grid>
-                                        <TextBlock Text="Repeat rate (ms)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left"/>
+                                        <TextBlock Text="Repeat rate (ms)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                         <TextBox Text="{Binding Value, ElementName=Turbo_Slider, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
                                     </Grid>
 
@@ -70,35 +73,67 @@
                                     <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
                                 </ui:SimpleStackPanel>
-
                             </Grid>                    
                         </ui:SimpleStackPanel>
 
                         <ui:SimpleStackPanel Spacing="6">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="4*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="6*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="8*" MinWidth="120"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Text="Press to toggle" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
 
                                 <ui:ToggleSwitch Name="Toggle_Toggle" Grid.Column="1" HorizontalAlignment="Right" Toggled="Toggle_Toggle_Toggled" OffContent="" OnContent="" Margin="0,0,-100,0"/>
-                            </Grid>
+                            </Grid>                            
                         
                             <!-- Separator -->
                             <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+                            
                         </ui:SimpleStackPanel>
-
                     </ui:SimpleStackPanel>
                 </Grid>
 
                 <!-- Button 2 Axis -->
                 <Grid Name="Button2Axis" d:Visibility="Visible"
                       Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
-                    
+
+                    <ui:SimpleStackPanel Spacing="12">
+                        <TextBlock Text="Axis mapping: Settings" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                        
+                        <ui:SimpleStackPanel Spacing="6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="8*" MinWidth="120"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Axis" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+
+                                <ui:RadioButtons Name="AxisPolarity" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" SelectedIndex="0" SelectionChanged="AxisPolarity_SelectionChanged">
+                                    <RadioButton Content="Positive"/>
+                                    <RadioButton Content="Negative"/>
+                                </ui:RadioButtons>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
+                            <Grid>
+                                <TextBlock Text="Axis value (%)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding Value, ElementName=Axis_Slider, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                            </Grid>
+
+                            <Slider Name="Axis_Slider" Value="100" Minimum="0" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="Axis_Slider_ValueChanged"/>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+                            
+                        </ui:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
                 </Grid>
-            </Grid>
+            </StackPanel>
         </Expander.Content>
     </Expander>
 </UserControl>
