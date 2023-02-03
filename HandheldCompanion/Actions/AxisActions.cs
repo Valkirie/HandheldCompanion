@@ -8,11 +8,11 @@ namespace HandheldCompanion.Actions
     public class AxisActions : IActions
     {
         public AxisFlags Axis { get; set; }
-        public short Value { get; set; }
 
         public AxisActions()
         {
             this.ActionType = ActionType.Axis;
+            this.Value = (short)0;
         }
 
         public AxisActions(AxisFlags axis) : this()
@@ -20,10 +20,13 @@ namespace HandheldCompanion.Actions
             this.Axis = axis;
         }
 
-        public AxisActions(AxisFlags axis, short value) : this()
+        public short GetValue()
         {
-            this.Axis = axis;
-            this.Value = value;
+            return (short)this.Value;
+        }
+
+        public override void Execute(ButtonFlags button, bool value)
+        {
         }
     }
 }

@@ -9,8 +9,6 @@ namespace ControllerCommon.Inputs
     public class AxisState : ICloneable
     {
         public Dictionary<AxisFlags, short> State = new();
-        [JsonIgnore]
-        public Dictionary<AxisFlags, bool> Emulated = new();
 
         public short this[AxisFlags axis]
         {
@@ -27,7 +25,6 @@ namespace ControllerCommon.Inputs
             set
             {
                 State[axis] = value;
-                Emulated[axis] = false;
             }
         }
 

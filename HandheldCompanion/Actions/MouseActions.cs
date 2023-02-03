@@ -10,7 +10,6 @@ namespace HandheldCompanion.Actions
     public class MouseActions : IActions
     {
         public MouseActionsType Type { get; set; }
-        private short Value { get; set; }
 
         private bool IsCursorDown { get; set; } = false;
         private bool IsCursorUp { get; set; } = true;
@@ -28,14 +27,17 @@ namespace HandheldCompanion.Actions
             this.Type = type;
         }
 
-        public override bool Execute(ButtonFlags button, bool value)
+        public override void Execute(ButtonFlags button, bool value)
         {
+            // update current value
+            this.Value = value;
+
             switch (value)
             {
                 case true:
                     {
                         if (IsCursorDown || !IsCursorUp)
-                            return false;
+                            return;
 
                         IsCursorDown = true;
                         IsCursorUp = false;
@@ -45,7 +47,7 @@ namespace HandheldCompanion.Actions
                 case false:
                     {
                         if (IsCursorUp || !IsCursorDown)
-                            return false;
+                            return;
 
                         IsCursorUp = true;
                         IsCursorDown = false;
@@ -53,11 +55,9 @@ namespace HandheldCompanion.Actions
                     }
                     break;
             }
-
-            return true;
         }
 
-        public override short Execute(AxisFlags axis, short value)
+        public override void Execute(AxisFlags axis, short value)
         {
             // update current value
             this.Value = value;
@@ -73,8 +73,6 @@ namespace HandheldCompanion.Actions
                     MouseSimulator.MoveBy(0, -y);
                     break;
             }
-
-            return Value;
         }
     }
 }

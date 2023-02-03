@@ -45,6 +45,14 @@ namespace ControllerCommon.Controllers
             // ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
             // ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
         };
+
+        protected List<AxisFlags> AxisSupport = new()
+        {
+            AxisFlags.LeftThumbX, AxisFlags.LeftThumbY,
+            AxisFlags.RightThumbX, AxisFlags.RightThumbY,
+            AxisFlags.L2, AxisFlags.R2,
+        };
+
         protected Dictionary<ButtonFlags, Brush> ButtonBrush = new();
 
         protected const short UPDATE_INTERVAL = 5;
@@ -322,9 +330,19 @@ namespace ControllerCommon.Controllers
             return ButtonSupport.Contains(button);
         }
 
+        public bool IsAxisSupported(AxisFlags axis)
+        {
+            return AxisSupport.Contains(axis);
+        }
+
         public string GetButtonName(ButtonFlags button)
         {
             return EnumUtils.GetDescriptionFromEnumValue(button, this.GetType().Name);
+        }
+
+        public string GetAxisName(AxisFlags axis)
+        {
+            return EnumUtils.GetDescriptionFromEnumValue(axis, this.GetType().Name);
         }
     }
 }

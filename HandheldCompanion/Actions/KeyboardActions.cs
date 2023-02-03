@@ -23,14 +23,17 @@ namespace HandheldCompanion.Actions
             this.Key = key;
         }
 
-        public override bool Execute(ButtonFlags button, bool value)
+        public override void Execute(ButtonFlags button, bool value)
         {
+            // update current value
+            this.Value = value;
+
             switch (value)
             {
                 case true:
                     {
                         if (IsKeyDown || !IsKeyUp)
-                            return false;
+                            return;
 
                         IsKeyDown = true;
                         IsKeyUp = false;
@@ -40,7 +43,7 @@ namespace HandheldCompanion.Actions
                 case false:
                     {
                         if (IsKeyUp || !IsKeyDown)
-                            return false;
+                            return;
 
                         IsKeyUp = true;
                         IsKeyDown = false;
@@ -48,8 +51,6 @@ namespace HandheldCompanion.Actions
                     }
                     break;
             }
-
-            return true;
         }
     }
 }

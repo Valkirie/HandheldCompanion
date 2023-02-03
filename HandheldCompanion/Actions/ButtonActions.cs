@@ -18,12 +18,10 @@ namespace HandheldCompanion.Actions
         public bool Toggle { get; set; }
         private bool IsToggled;
 
-        private bool Value;
-        private bool prevValue;
-
         public ButtonActions()
         {
             this.ActionType = ActionType.Button;
+            this.Value = (bool)false;
         }
 
         public ButtonActions(ButtonFlags button) : this()
@@ -31,11 +29,16 @@ namespace HandheldCompanion.Actions
             this.Button = button;
         }
 
-        public override bool Execute(ButtonFlags button, bool value)
+        public bool GetValue()
+        {
+            return (bool)this.Value;
+        }
+
+        public override void Execute(ButtonFlags button, bool value)
         {
             if (Toggle)
             {
-                if (prevValue != value && value)
+                if ((bool)prevValue != value && value)
                     IsToggled = !IsToggled;
             }
 
@@ -65,8 +68,6 @@ namespace HandheldCompanion.Actions
 
             // update previous value
             prevValue = value;
-
-            return Value;
         }
     }
 }

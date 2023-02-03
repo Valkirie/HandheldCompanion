@@ -8,9 +8,9 @@ namespace ControllerCommon.Actions
     {
         None = 0,
         Button = 1,
-        Mouse = 2,
+        Axis = 2,
         Keyboard = 3,
-        Axis = 4
+        Mouse = 4
     }
 
     [Serializable]
@@ -18,19 +18,23 @@ namespace ControllerCommon.Actions
     {
         public ActionType ActionType { get; set; }
 
-        public virtual bool Execute(ButtonFlags button, bool value)
+        protected object Value;
+        protected object prevValue;
+
+        public virtual void Execute(ButtonFlags button, bool value)
         {
-            return value;
         }
 
-        public virtual bool Execute(AxisFlags axis, bool value)
+        public virtual void Execute(ButtonFlags button, short value)
         {
-            return value;
         }
 
-        public virtual short Execute(AxisFlags axis, short value)
+        public virtual void Execute(AxisFlags axis, bool value)
         {
-            return value;
+        }
+
+        public virtual void Execute(AxisFlags axis, short value)
+        {
         }
     }
 }

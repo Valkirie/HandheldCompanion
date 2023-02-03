@@ -38,6 +38,7 @@
             <!-- Other app resources here -->
             <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:IndexToVisibilityConverter x:Key="IndexToVisibilityConverter" />
             <converters:IsEnabledConverter x:Key="IsEnabledConverter" />
             <converters:PercentageConverter x:Key="PercentageConverter" />
 

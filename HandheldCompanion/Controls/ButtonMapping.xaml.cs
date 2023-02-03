@@ -79,7 +79,7 @@ namespace HandheldCompanion.Controls
             }
             else if (type == ActionType.Button)
             {
-                if (this.Actions is null)
+                if (this.Actions is null || this.Actions is not ButtonActions)
                     this.Actions = new ButtonActions();
 
                 // we need a controller to get compatible buttons
@@ -105,12 +105,25 @@ namespace HandheldCompanion.Controls
             }
             else if (type == ActionType.Axis)
             {
-                if (this.Actions is null)
+                if (this.Actions is null || this.Actions is not AxisActions)
                     this.Actions = new AxisActions();
 
                 // we need a controller to get compatible buttons
                 if (controller is null)
                     return;
+
+                foreach (AxisFlags axis in Enum.GetValues(typeof(AxisFlags)))
+                {
+                    if (controller.IsAxisSupported(axis))
+                    {
+                        // create a label, store ButtonFlags as Tag and Label as controller specific string
+                        Label buttonLabel = new Label() { Tag = axis, Content = controller.GetAxisName(axis) };
+                        TargetComboBox.Items.Add(buttonLabel);
+
+                        if (axis.Equals(((AxisActions)this.Actions).Axis))
+                            TargetComboBox.SelectedItem = buttonLabel;
+                    }
+                }
             }
         }
 
@@ -129,6 +142,13 @@ namespace HandheldCompanion.Controls
                     {
                         Label buttonLabel = TargetComboBox.SelectedItem as Label;
                         ((ButtonActions)this.Actions).Button = (ButtonFlags)buttonLabel.Tag;
+                    }
+                    break;
+
+                case ActionType.Axis:
+                    {
+                        Label buttonLabel = TargetComboBox.SelectedItem as Label;
+                        ((AxisActions)this.Actions).Axis = (AxisFlags)buttonLabel.Tag;
                     }
                     break;
             }
@@ -153,6 +173,7 @@ namespace HandheldCompanion.Controls
             TargetComboBox.SelectedItem = null;
         }
 
+        #region Button2Button
         private void Toggle_Turbo_Toggled(object sender, RoutedEventArgs e)
         {
             if (this.Actions is null || this.Actions.ActionType != ActionType.Button)
@@ -176,5 +197,6 @@ namespace HandheldCompanion.Controls
 
             ((ButtonActions)this.Actions).Toggle = Toggle_Toggle.IsOn;
         }
+        #endregion
     }
 }

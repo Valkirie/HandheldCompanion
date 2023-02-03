@@ -49,12 +49,15 @@ namespace HandheldCompanion.Managers
             if (currentProfile is null)
                 return controllerState;
 
-            // update state(s)
-            outputState.ButtonState = controllerState.ButtonState.Clone() as ButtonState;
-
             // consume origin button state
+            outputState.ButtonState = controllerState.ButtonState.Clone() as ButtonState;
             foreach (ButtonFlags button in currentProfile.ButtonMapping.Keys)
                 outputState.ButtonState[button] = false;
+
+            // consume origin axis state
+            outputState.AxisState = controllerState.AxisState.Clone() as AxisState;
+            foreach (AxisFlags axis in currentProfile.AxisMapping.Keys)
+                outputState.AxisState[axis] = 0;
 
             foreach (var buttonState in controllerState.ButtonState.State)
             {
@@ -75,8 +78,8 @@ namespace HandheldCompanion.Managers
                             ButtonActions bAction = action as ButtonActions;
                             value |= outputState.ButtonState[bAction.Button];
 
-                            bool output = bAction.Execute(button, value);
-                            outputState.ButtonState[bAction.Button] = output;
+                            bAction.Execute(button, value);
+                            outputState.ButtonState[bAction.Button] = bAction.GetValue();
                         }
                         break;
 
@@ -87,7 +90,9 @@ namespace HandheldCompanion.Managers
                                 continue;
 
                             AxisActions aAction = action as AxisActions;
-                            outputState.AxisState[aAction.Axis] = aAction.Value;
+                            aAction.Execute(button, value);
+
+                            outputState.AxisState[aAction.Axis] = aAction.GetValue();
                         }
                         break;
 
