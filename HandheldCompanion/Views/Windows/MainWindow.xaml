@@ -18,13 +18,14 @@
         MinWidth="700" MinHeight="500" Icon="/Resources/icon.png">
 
     <ui:NavigationView
-        Name="navView" PaneDisplayMode="Auto"
+        Name="navView"
         ItemInvoked="navView_ItemInvoked"
         OpenPaneLength="160" IsBackEnabled="True"
         SelectionFollowsFocus="Enabled"
         ShoulderNavigationEnabled="WhenSelectionFollowsFocus"
         Loaded="navView_Loaded"
-        BackRequested="navView_BackRequested" IsSettingsVisible="False">
+        BackRequested="navView_BackRequested"
+        IsSettingsVisible="False">
 
         <ui:NavigationView.MenuItems>
             <!-- Game icon -->

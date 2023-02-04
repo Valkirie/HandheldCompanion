@@ -730,5 +730,17 @@ namespace HandheldCompanion.Properties {
                 this["HIDvibrateonconnect"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool navViewIsPaneOpen {
+            get {
+                return ((bool)(this["navViewIsPaneOpen"]));
+            }
+            set {
+                this["navViewIsPaneOpen"] = value;
+            }
+        }
     }
 }
