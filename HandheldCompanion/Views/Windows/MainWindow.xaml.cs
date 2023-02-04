@@ -531,16 +531,16 @@ namespace HandheldCompanion.Views
                 {
                     case "ServiceStart":
                         _ = serviceManager.StartServiceAsync();
-                        break;
+                        return;
                     case "ServiceStop":
                         _ = serviceManager.StopServiceAsync();
-                        break;
+                        return;
                     case "ServiceInstall":
                         serviceManager.CreateService(CurrentPathService);
-                        break;
+                        return;
                     case "ServiceDelete":
                         serviceManager.DeleteService();
-                        break;
+                        return;
                     default:
                         preNavItemTag = navItemTag;
                         break;
