@@ -27,7 +27,7 @@
                         <ComboBoxItem Content="Button" IsEnabled="True"/>
                         <ComboBoxItem Content="Axis" IsEnabled="True"/>
                         <ComboBoxItem Content="Keyboard" IsEnabled="True"/>
-                        <ComboBoxItem Content="Mouse" IsEnabled="False"/>
+                        <ComboBoxItem Content="Mouse" IsEnabled="True"/>
                     </ComboBox>
 
                     <ComboBox Name="TargetComboBox" Width="140" Margin="12,0,0,0" VerticalAlignment="Center" SelectionChanged="Target_SelectionChanged" IsEnabled="False"/>
@@ -38,7 +38,7 @@
             <StackPanel>
                 <!-- Button 2 Button/Keyboard -->
                 <Grid Name="Button2Button" d:Visibility="Visible"
-                      Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3}">
+                      Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
 
                     <ui:SimpleStackPanel Spacing="12">
                         <ui:SimpleStackPanel Spacing="6">

@@ -6,7 +6,9 @@ using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Pages;
+using LiveCharts.Wpf;
 using ModernWpf.Controls;
+using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +23,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static HandheldCompanion.Simulators.MouseSimulator;
 
 namespace HandheldCompanion.Controls
 {
@@ -142,7 +145,8 @@ namespace HandheldCompanion.Controls
                 if (this.Actions is null || this.Actions is not KeyboardActions)
                     this.Actions = new KeyboardActions();
 
-                foreach(VirtualKeyCode key in Enum.GetValues(typeof(VirtualKeyCode)))
+                // localize me ?
+                foreach (VirtualKeyCode key in Enum.GetValues(typeof(VirtualKeyCode)))
                     TargetComboBox.Items.Add(key);
 
                 TargetComboBox.SelectedItem = ((KeyboardActions)this.Actions).Key;
@@ -151,6 +155,28 @@ namespace HandheldCompanion.Controls
                 Toggle_Turbo.IsOn = ((KeyboardActions)this.Actions).Turbo;
                 Turbo_Slider.Value = ((KeyboardActions)this.Actions).TurboDelay;
                 Toggle_Toggle.IsOn = ((KeyboardActions)this.Actions).Toggle;
+            }
+            else if (type == ActionType.Mouse)
+            {
+                if (this.Actions is null || this.Actions is not MouseActions)
+                    this.Actions = new MouseActions();
+
+                foreach (MouseActionsType mouseType in Enum.GetValues(typeof(MouseActionsType)))
+                {
+                    // skip axis related actions
+                    if (mouseType > MouseActionsType.MiddleButton)
+                        continue;
+
+                    // localize me ?
+                    TargetComboBox.Items.Add(mouseType);
+                }
+
+                TargetComboBox.SelectedItem = ((MouseActions)this.Actions).MouseType;
+
+                // settings
+                Toggle_Turbo.IsOn = ((MouseActions)this.Actions).Turbo;
+                Turbo_Slider.Value = ((MouseActions)this.Actions).TurboDelay;
+                Toggle_Toggle.IsOn = ((MouseActions)this.Actions).Toggle;
             }
         }
 
@@ -182,6 +208,12 @@ namespace HandheldCompanion.Controls
                 case ActionType.Keyboard:
                     {
                         ((KeyboardActions)this.Actions).Key = (VirtualKeyCode)TargetComboBox.SelectedItem;
+                    }
+                    break;
+
+                case ActionType.Mouse:
+                    {
+                        ((MouseActions)this.Actions).MouseType = (MouseActionsType)TargetComboBox.SelectedItem;
                     }
                     break;
             }
@@ -220,6 +252,9 @@ namespace HandheldCompanion.Controls
                 case ActionType.Keyboard:
                     ((KeyboardActions)this.Actions).Turbo = Toggle_Turbo.IsOn;
                     break;
+                case ActionType.Mouse:
+                    ((MouseActions)this.Actions).Turbo = Toggle_Turbo.IsOn;
+                    break;
             }
         }
 
@@ -236,6 +271,9 @@ namespace HandheldCompanion.Controls
                 case ActionType.Keyboard:
                     ((KeyboardActions)this.Actions).TurboDelay = (byte)Turbo_Slider.Value;
                     break;
+                case ActionType.Mouse:
+                    ((MouseActions)this.Actions).TurboDelay = (byte)Turbo_Slider.Value;
+                    break;
             }
         }
 
@@ -251,6 +289,9 @@ namespace HandheldCompanion.Controls
                     break;
                 case ActionType.Keyboard:
                     ((KeyboardActions)this.Actions).Toggle = Toggle_Toggle.IsOn;
+                    break;
+                case ActionType.Mouse:
+                    ((MouseActions)this.Actions).Toggle = Toggle_Toggle.IsOn;
                     break;
             }
         }

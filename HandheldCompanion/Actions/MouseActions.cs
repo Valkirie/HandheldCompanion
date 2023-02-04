@@ -9,10 +9,18 @@ namespace HandheldCompanion.Actions
     [Serializable]
     public class MouseActions : IActions
     {
-        public MouseActionsType Type { get; set; }
+        public MouseActionsType MouseType { get; set; }
 
-        private bool IsCursorDown { get; set; } = false;
-        private bool IsCursorUp { get; set; } = true;
+        private bool IsCursorDown { get; set; }
+        private bool IsCursorUp { get; set; }
+
+        public bool Turbo { get; set; }
+        public byte TurboDelay { get; set; } = 90;
+        private short TurboIdx;
+        private bool IsTurboed;
+
+        public bool Toggle { get; set; }
+        private bool IsToggled;
 
         // settings
         public float Sensivity { get; set; } = 10.0f;
@@ -20,19 +28,56 @@ namespace HandheldCompanion.Actions
         public MouseActions()
         {
             this.ActionType = ActionType.Mouse;
+            this.IsCursorDown = false;
+            this.IsCursorUp = true;
         }
 
         public MouseActions(MouseActionsType type) : this()
         {
-            this.Type = type;
+            this.MouseType = type;
         }
 
         public override void Execute(ButtonFlags button, bool value)
         {
-            // update current value
-            this.Value = value;
+            if (Toggle)
+            {
+                if ((bool)prevValue != value && value)
+                    IsToggled = !IsToggled;
+            }
+            else
+                IsToggled = false;
 
-            switch (value)
+            if (Turbo)
+            {
+                if (value || IsToggled)
+                {
+                    if (TurboIdx % TurboDelay == 0)
+                        IsTurboed = !IsTurboed;
+                    TurboIdx += 5;
+                }
+                else
+                {
+                    IsTurboed = false;
+                    TurboIdx = 0;
+                }
+            }
+            else
+                IsTurboed = false;
+
+            // update previous value
+            prevValue = value;
+
+            // update value
+            if (Toggle && Turbo)
+                this.Value = IsToggled && IsTurboed;
+            else if (Toggle)
+                this.Value = IsToggled;
+            else if (Turbo)
+                this.Value = IsTurboed;
+            else
+                this.Value = value;
+
+            switch (this.Value)
             {
                 case true:
                     {
@@ -41,7 +86,7 @@ namespace HandheldCompanion.Actions
 
                         IsCursorDown = true;
                         IsCursorUp = false;
-                        MouseSimulator.MouseDown(Type);
+                        MouseSimulator.MouseDown(MouseType);
                     }
                     break;
                 case false:
@@ -51,7 +96,7 @@ namespace HandheldCompanion.Actions
 
                         IsCursorUp = true;
                         IsCursorDown = false;
-                        MouseSimulator.MouseUp(Type);
+                        MouseSimulator.MouseUp(MouseType);
                     }
                     break;
             }
@@ -62,7 +107,7 @@ namespace HandheldCompanion.Actions
             // update current value
             this.Value = value;
 
-            switch (Type)
+            switch (MouseType)
             {
                 case MouseActionsType.MoveByX:
                     short x = (short)((float)Value / short.MaxValue * Sensivity);
