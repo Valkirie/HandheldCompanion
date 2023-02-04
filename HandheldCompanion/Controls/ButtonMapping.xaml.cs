@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
@@ -70,6 +71,7 @@ namespace HandheldCompanion.Controls
 
             // clear current dropdown values
             TargetComboBox.Items.Clear();
+            TargetComboBox.IsEnabled = ActionComboBox.SelectedIndex != 0;
 
             // get current controller
             IController controller = ControllerManager.GetTargetController();
@@ -104,6 +106,7 @@ namespace HandheldCompanion.Controls
                     }
                 }
 
+                // settings
                 Toggle_Turbo.IsOn = ((ButtonActions)this.Actions).Turbo;
                 Turbo_Slider.Value = ((ButtonActions)this.Actions).TurboDelay;
                 Toggle_Toggle.IsOn = ((ButtonActions)this.Actions).Toggle;
@@ -130,8 +133,24 @@ namespace HandheldCompanion.Controls
                     }
                 }
 
+                // settings
                 Axis_Slider.Value = ((AxisActions)this.Actions).AxisPercentage;
                 AxisPolarity.SelectedIndex = ((AxisActions)this.Actions).AxisPolarity;
+            }
+            else if (type == ActionType.Keyboard)
+            {
+                if (this.Actions is null || this.Actions is not KeyboardActions)
+                    this.Actions = new KeyboardActions();
+
+                foreach(VirtualKeyCode key in Enum.GetValues(typeof(VirtualKeyCode)))
+                    TargetComboBox.Items.Add(key);
+
+                TargetComboBox.SelectedItem = ((KeyboardActions)this.Actions).Key;
+
+                // settings
+                Toggle_Turbo.IsOn = ((KeyboardActions)this.Actions).Turbo;
+                Turbo_Slider.Value = ((KeyboardActions)this.Actions).TurboDelay;
+                Toggle_Toggle.IsOn = ((KeyboardActions)this.Actions).Toggle;
             }
         }
 
@@ -159,6 +178,12 @@ namespace HandheldCompanion.Controls
                         ((AxisActions)this.Actions).Axis = (AxisFlags)buttonLabel.Tag;
                     }
                     break;
+
+                case ActionType.Keyboard:
+                    {
+                        ((KeyboardActions)this.Actions).Key = (VirtualKeyCode)TargetComboBox.SelectedItem;
+                    }
+                    break;
             }
 
             // update profile button mapping
@@ -184,26 +209,50 @@ namespace HandheldCompanion.Controls
         #region Button2Button
         private void Toggle_Turbo_Toggled(object sender, RoutedEventArgs e)
         {
-            if (this.Actions is null || this.Actions.ActionType != ActionType.Button)
+            if (this.Actions is null)
                 return;
 
-            ((ButtonActions)this.Actions).Turbo = Toggle_Turbo.IsOn;
+            switch(this.Actions.ActionType)
+            {
+                case ActionType.Button:
+                    ((ButtonActions)this.Actions).Turbo = Toggle_Turbo.IsOn;
+                    break;
+                case ActionType.Keyboard:
+                    ((KeyboardActions)this.Actions).Turbo = Toggle_Turbo.IsOn;
+                    break;
+            }
         }
 
         private void Turbo_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (this.Actions is null || this.Actions.ActionType != ActionType.Button)
+            if (this.Actions is null)
                 return;
 
-            ((ButtonActions)this.Actions).TurboDelay = (byte)Turbo_Slider.Value;
+            switch (this.Actions.ActionType)
+            {
+                case ActionType.Button:
+                    ((ButtonActions)this.Actions).TurboDelay = (byte)Turbo_Slider.Value;
+                    break;
+                case ActionType.Keyboard:
+                    ((KeyboardActions)this.Actions).TurboDelay = (byte)Turbo_Slider.Value;
+                    break;
+            }
         }
 
         private void Toggle_Toggle_Toggled(object sender, RoutedEventArgs e)
         {
-            if (this.Actions is null || this.Actions.ActionType != ActionType.Button)
+            if (this.Actions is null)
                 return;
 
-            ((ButtonActions)this.Actions).Toggle = Toggle_Toggle.IsOn;
+            switch (this.Actions.ActionType)
+            {
+                case ActionType.Button:
+                    ((ButtonActions)this.Actions).Toggle = Toggle_Toggle.IsOn;
+                    break;
+                case ActionType.Keyboard:
+                    ((KeyboardActions)this.Actions).Toggle = Toggle_Toggle.IsOn;
+                    break;
+            }
         }
         #endregion
 

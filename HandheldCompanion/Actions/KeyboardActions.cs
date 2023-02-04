@@ -10,12 +10,22 @@ namespace HandheldCompanion.Actions
     public class KeyboardActions : IActions
     {
         public VirtualKeyCode Key { get; set; }
-        private bool IsKeyDown { get; set; } = false;
-        private bool IsKeyUp { get; set; } = true;
+        private bool IsKeyDown { get; set; }
+        private bool IsKeyUp { get; set; }
+
+        public bool Turbo { get; set; }
+        public byte TurboDelay { get; set; } = 90;
+        private short TurboIdx;
+        private bool IsTurboed;
+
+        public bool Toggle { get; set; }
+        private bool IsToggled;
 
         public KeyboardActions()
         {
             this.ActionType = ActionType.Keyboard;
+            this.IsKeyDown = false;
+            this.IsKeyUp = true;
         }
 
         public KeyboardActions(VirtualKeyCode key) : this()
@@ -25,10 +35,45 @@ namespace HandheldCompanion.Actions
 
         public override void Execute(ButtonFlags button, bool value)
         {
-            // update current value
-            this.Value = value;
+            if (Toggle)
+            {
+                if ((bool)prevValue != value && value)
+                    IsToggled = !IsToggled;
+            }
+            else
+                IsToggled = false;
 
-            switch (value)
+            if (Turbo)
+            {
+                if (value || IsToggled)
+                {
+                    if (TurboIdx % TurboDelay == 0)
+                        IsTurboed = !IsTurboed;
+                    TurboIdx += 5;
+                }
+                else
+                {
+                    IsTurboed = false;
+                    TurboIdx = 0;
+                }
+            }
+            else
+                IsTurboed = false;
+
+            // update previous value
+            prevValue = value;
+
+            // update value
+            if (Toggle && Turbo)
+                this.Value = IsToggled && IsTurboed;
+            else if (Toggle)
+                this.Value = IsToggled;
+            else if (Turbo)
+                this.Value = IsTurboed;
+            else
+                this.Value = value;
+
+            switch (this.Value)
             {
                 case true:
                     {

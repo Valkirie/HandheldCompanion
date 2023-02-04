@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -17,10 +18,18 @@ namespace HandheldCompanion.Converters
         /// <returns>Visible or Collapsed</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            int bValue = System.Convert.ToInt32(value);
-            int bParameter = System.Convert.ToInt32(parameter);
+            string sValue = System.Convert.ToString(value);
+            string sParameter = System.Convert.ToString(parameter);
 
-            return (bValue == bParameter) ? Visibility.Visible : Visibility.Collapsed;
+            if (!string.IsNullOrEmpty(sParameter))
+            {
+                string[] parameters = sParameter.Split(new char[] { '|' });
+                foreach (string idx in parameters)
+                    if (idx.Equals(sValue))
+                        return Visibility.Visible;
+            }
+
+            return Visibility.Collapsed;
         }
 
         /// <summary>

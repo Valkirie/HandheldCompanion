@@ -21,7 +21,7 @@ namespace HandheldCompanion.Actions
         public ButtonActions()
         {
             this.ActionType = ActionType.Button;
-            this.Value = (bool)false;
+            this.Value = false;
         }
 
         public ButtonActions(ButtonFlags button) : this()
@@ -41,6 +41,8 @@ namespace HandheldCompanion.Actions
                 if ((bool)prevValue != value && value)
                     IsToggled = !IsToggled;
             }
+            else
+                IsToggled = false;
 
             if (Turbo)
             {
@@ -56,6 +58,11 @@ namespace HandheldCompanion.Actions
                     TurboIdx = 0;
                 }
             }
+            else
+                IsTurboed = false;
+
+            // update previous value
+            prevValue = value;
 
             if (Toggle && Turbo)
                 this.Value = IsToggled && IsTurboed;
@@ -65,9 +72,6 @@ namespace HandheldCompanion.Actions
                 this.Value = IsTurboed;
             else
                 this.Value = value;
-
-            // update previous value
-            prevValue = value;
         }
     }
 }
