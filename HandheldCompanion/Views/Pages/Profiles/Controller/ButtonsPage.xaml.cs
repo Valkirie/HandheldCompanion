@@ -154,6 +154,9 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 ButtonFlags button = pair.Key;
                 IActions actions = pair.Value;
 
+                if (!Mapping.ContainsKey(button))
+                    continue;
+
                 ButtonMapping mapping = Mapping[button];
 
                 // update actions

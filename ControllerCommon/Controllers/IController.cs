@@ -283,6 +283,18 @@ namespace ControllerCommon.Controllers
 
         public virtual string GetGlyph(ButtonFlags button)
         {
+            switch (button)
+            {
+                case ButtonFlags.DPadUp:
+                    return "\u219F"; // Button A
+                case ButtonFlags.DPadDown:
+                    return "\u21A1"; // Button B
+                case ButtonFlags.DPadLeft:
+                    return "\u219E"; // Button X
+                case ButtonFlags.DPadRight:
+                    return "\u21A0"; // Button Y
+            }
+
             return string.Empty;
         }
 

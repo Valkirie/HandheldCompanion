@@ -76,6 +76,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
         {
             // cascade update to (sub)pages
             buttonsPage.Update();
+            dpadPage.Update();
         }
 
         #region UI
