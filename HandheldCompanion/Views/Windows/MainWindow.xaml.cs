@@ -287,9 +287,11 @@ namespace HandheldCompanion.Views
             _managers.Add(performanceManager);
             _managers.Add(updateManager);
 
-            serviceManager.Updated += OnServiceUpdate;
             serviceManager.Initialized += () =>
             {
+                // listen for service update once initialized
+                serviceManager.Updated += OnServiceUpdate;
+
                 if (SettingsManager.GetBoolean("StartServiceWithCompanion"))
                 {
                     if (!serviceManager.Exists())

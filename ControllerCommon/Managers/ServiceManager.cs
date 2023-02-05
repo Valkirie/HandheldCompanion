@@ -146,21 +146,26 @@ namespace ControllerCommon.Managers
                     type = ServiceStartMode.Disabled;
                 }
 
-                if (prevStatus != (int)status || prevType != (int)type || nextStatus != 0)
-                {
-                    Updated?.Invoke(status, (int)type);
-                    nextStatus = ServiceControllerStatus.None;
-                    LogManager.LogInformation("Controller Service status has changed to: {0}", status.ToString());
-                }
-
-                prevStatus = (int)status;
-                prevType = (int)type;
+                // exit lock before calling base function ?
+                Monitor.Exit(updateLock);
 
                 // initialize only once we've pulled service status
                 if (!IsInitialized)
+                {
                     base.Start();
+                }
+                else
+                {
+                    if (prevStatus != (int)status || prevType != (int)type || nextStatus != 0)
+                    {
+                        Updated?.Invoke(status, (int)type);
+                        nextStatus = ServiceControllerStatus.None;
+                        LogManager.LogInformation("Controller Service status has changed to: {0}", status.ToString());
+                    }
 
-                Monitor.Exit(updateLock);
+                    prevStatus = (int)status;
+                    prevType = (int)type;
+                }
             }
         }
 
@@ -215,8 +220,8 @@ namespace ControllerCommon.Managers
             if (status == ServiceControllerStatus.Running)
                 return;
 
-            while (!IsInitialized)
-                await Task.Delay(1000);
+            if (!IsInitialized)
+                return;
 
             while (status != ServiceControllerStatus.Running && status != ServiceControllerStatus.StartPending)
             {

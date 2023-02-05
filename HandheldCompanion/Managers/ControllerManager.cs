@@ -208,6 +208,13 @@ namespace HandheldCompanion.Managers
                     catch { }
                 }
 
+                // unsupported controller
+                if (joystick is null)
+                {
+                    LogManager.LogError("Couldn't find any DInput controller with InterfacePath:{0}", details.SymLink);
+                    return;
+                }
+
                 // search for a supported controller
                 switch (joystick.Properties.VendorId)
                 {
@@ -217,6 +224,7 @@ namespace HandheldCompanion.Managers
                             switch (joystick.Properties.ProductId)
                             {
                                 // DualShock4
+                                case 1476:
                                 case 2508:
                                     controller = new DS4Controller(joystick, details);
                                     break;
