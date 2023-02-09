@@ -281,6 +281,9 @@ namespace HandheldCompanion.Managers
 
         public static bool SetResolution(int width, int height, int displayFrequency)
         {
+            if (!IsInitialized)
+                return false;
+
             bool ret = false;
             long RetVal = 0;
             DEVMODE dm = new DEVMODE();
@@ -300,6 +303,9 @@ namespace HandheldCompanion.Managers
 
         public static bool SetResolution(int width, int height, int displayFrequency, int bitsPerPel)
         {
+            if (!IsInitialized)
+                return false;
+
             bool ret = false;
             long RetVal = 0;
             DEVMODE dm = new DEVMODE();

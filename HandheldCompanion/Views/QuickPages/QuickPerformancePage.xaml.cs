@@ -321,6 +321,9 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ComboBoxResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ComboBoxResolution.SelectedItem is null)
+                return;
+
             ScreenResolution resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
 
             ComboBoxFrequency.Items.Clear();
@@ -335,6 +338,9 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ComboBoxFrequency_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ComboBoxFrequency.SelectedItem is null)
+                return;
+
             SetResolution();
         }
 
