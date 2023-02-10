@@ -137,7 +137,7 @@ namespace HandheldCompanion.Managers
             {
                 Profile profile = GetProfileFromExec(processEx.Name);
 
-                if (profile is null)
+                if (profile is null || profile.Default)
                     return;
 
                 if (profile.Running)
@@ -149,7 +149,7 @@ namespace HandheldCompanion.Managers
 
                     // (re)set current profile
                     if (isCurrent)
-                        currentProfile = GetDefault();
+                        currentProfile = profile;
 
                     // raise event
                     Discarded?.Invoke(profile, isCurrent);
@@ -167,7 +167,7 @@ namespace HandheldCompanion.Managers
             {
                 Profile profile = GetProfileFromExec(processEx.Name);
 
-                if (profile is null)
+                if (profile is null || profile.Default)
                     return;
 
                 profile.ExecutablePath = processEx.Path;
@@ -184,9 +184,6 @@ namespace HandheldCompanion.Managers
             try
             {
                 var profile = GetProfileFromExec(proc.Name);
-
-                if (profile is null)
-                    profile = GetDefault();
 
                 if (!profile.Enabled)
                     return;
@@ -518,7 +515,8 @@ namespace HandheldCompanion.Managers
 
         public static Profile GetProfileFromExec(string executable)
         {
-            return profiles.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            var profile = profiles.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            return profile is not null ? profile : GetDefault();
         }
     }
 }

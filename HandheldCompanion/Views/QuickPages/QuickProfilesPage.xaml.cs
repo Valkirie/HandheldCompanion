@@ -251,7 +251,7 @@ namespace HandheldCompanion.Views.QuickPages
                 b_CreateProfile.IsEnabled = processEx.Filter == ProcessEx.ProcessFilter.Allowed;
 
                 Profile profile = ProfileManager.GetProfileFromExec(currentProcess.Name);
-                if (profile is null)
+                if (profile is null || profile.Default)
                 {
                     b_CreateProfile.Visibility = Visibility.Visible;
                     GridProfile.Visibility = Visibility.Collapsed;
