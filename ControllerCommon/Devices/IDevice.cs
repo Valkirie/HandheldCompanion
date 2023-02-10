@@ -215,5 +215,10 @@ namespace ControllerCommon.Devices
         {
             // OEMChords.Add(new DeviceChord("temp", new List<KeyCode>() { KeyCode.F1 }, new List<KeyCode>() { KeyCode.F1 }, false, ButtonFlags.OEM1));
         }
+
+        public string GetButtonName(ButtonFlags button)
+        {
+            return EnumUtils.GetDescriptionFromEnumValue(button, this.GetType().Name);
+        }
     }
 }

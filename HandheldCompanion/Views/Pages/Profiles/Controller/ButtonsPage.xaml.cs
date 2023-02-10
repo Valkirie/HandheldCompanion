@@ -91,14 +91,14 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
             foreach (ButtonFlags button in OEM)
             {
+                if (!MainWindow.handheldDevice.OEMButtons.Contains(button))
+                    continue;
+
                 ButtonMapping buttonMapping = new ButtonMapping(button);
+                buttonMapping.Visibility = Visibility.Visible;
                 OEMStackPanel.Children.Add(buttonMapping);
 
                 Mapping.Add(button, buttonMapping);
-
-                // only draw OEM buttons that are supported by the current device
-                if (MainWindow.handheldDevice.OEMButtons.Contains(button))
-                    buttonMapping.Visibility = Visibility.Visible;
             }
         }
 

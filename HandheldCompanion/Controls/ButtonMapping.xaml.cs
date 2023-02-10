@@ -6,6 +6,7 @@ using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Views;
 using HandheldCompanion.Views.Pages;
 using LiveCharts.Wpf;
 using ModernWpf.Controls;
@@ -49,7 +50,25 @@ namespace HandheldCompanion.Controls
         public ButtonMapping(ButtonFlags button) : this()
         {
             this.Button = button;
-            this.Icon.Glyph = button.ToString();
+
+            switch(button)
+            {
+                default:
+                    this.Icon.Glyph = button.ToString();
+                    break;
+                case ButtonFlags.OEM1:
+                case ButtonFlags.OEM2:
+                case ButtonFlags.OEM3:
+                case ButtonFlags.OEM4:
+                case ButtonFlags.OEM5:
+                case ButtonFlags.OEM6:
+                case ButtonFlags.OEM7:
+                case ButtonFlags.OEM8:
+                case ButtonFlags.OEM9:
+                case ButtonFlags.OEM10:
+                    this.Icon.Glyph = MainWindow.handheldDevice.GetButtonName(button);
+                    break;
+            }
         }
 
         public void UpdateIcon(FontIcon newIcon)

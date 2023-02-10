@@ -36,18 +36,6 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            OEMChords.Add(new DeviceChord("Custom Key Top Right",
-                new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F10 },
-                new List<KeyCode>() { KeyCode.F10, KeyCode.LWin, KeyCode.RControlKey },
-                false, ButtonFlags.OEM3
-                ));
-
-            OEMChords.Add(new DeviceChord("Custom Key Top Left",
-                new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F11 },
-                new List<KeyCode>() { KeyCode.F11, KeyCode.LWin, KeyCode.RControlKey },
-                false, ButtonFlags.OEM4
-                ));
-
             OEMChords.Add(new DeviceChord("Custom Key Big",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 },
                 new List<KeyCode>() { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey },
@@ -58,6 +46,18 @@ namespace ControllerCommon.Devices
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 false, ButtonFlags.OEM2
+                ));
+
+            OEMChords.Add(new DeviceChord("Custom Key Top Right",
+                new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F10 },
+                new List<KeyCode>() { KeyCode.F10, KeyCode.LWin, KeyCode.RControlKey },
+                false, ButtonFlags.OEM3
+                ));
+
+            OEMChords.Add(new DeviceChord("Custom Key Top Left",
+                new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F11 },
+                new List<KeyCode>() { KeyCode.F11, KeyCode.LWin, KeyCode.RControlKey },
+                false, ButtonFlags.OEM4
                 ));
         }
     }
