@@ -10,14 +10,6 @@ namespace HandheldCompanion.Actions
     {
         public ButtonFlags Button { get; set; }
 
-        public bool Turbo { get; set; }
-        public byte TurboDelay { get; set; } = 90;
-        private short TurboIdx;
-        private bool IsTurboed;
-
-        public bool Toggle { get; set; }
-        private bool IsToggled;
-
         public ButtonActions()
         {
             this.ActionType = ActionType.Button;

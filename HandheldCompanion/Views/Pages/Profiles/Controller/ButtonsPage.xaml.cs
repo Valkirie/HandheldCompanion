@@ -56,7 +56,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             ButtonFlags.OEM6, ButtonFlags.OEM7, ButtonFlags.OEM8, ButtonFlags.OEM9, ButtonFlags.OEM10
         };
 
-        private Dictionary<ButtonFlags, ButtonMapping> Mapping = new();
+        public Dictionary<ButtonFlags, ButtonMapping> Mapping = new();
 
         public ButtonsPage()
         {
@@ -145,11 +145,12 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         {
         }
 
-        public void Update()
+        public void Refresh(Dictionary<ButtonFlags, IActions> buttonMapping)
         {
-            Profile currentProfile = ProfilesPage.currentProfile;
+            foreach (ButtonMapping mapping in Mapping.Values)
+                mapping.Reset();
 
-            foreach(var pair in currentProfile.ButtonMapping)
+            foreach(var pair in buttonMapping)
             {
                 ButtonFlags button = pair.Key;
                 IActions actions = pair.Value;
@@ -157,10 +158,8 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 if (!Mapping.ContainsKey(button))
                     continue;
 
-                ButtonMapping mapping = Mapping[button];
-
                 // update actions
-                mapping.Reset();
+                ButtonMapping mapping = Mapping[button];
                 mapping.SetIActions(actions);
             }
         }

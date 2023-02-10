@@ -64,8 +64,7 @@ namespace ControllerCommon
         public bool Enabled { get; set; }
         public bool Default { get; set; }
 
-        public Dictionary<ButtonFlags, IActions> ButtonMapping { get; set; } = new();
-        public Dictionary<AxisFlags, IActions> AxisMapping { get; set; } = new();
+        public Layout Layout { get; set; } = new();
 
         [JsonIgnore]
         public bool Running { get; set; }

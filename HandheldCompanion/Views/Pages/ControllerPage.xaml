@@ -12,7 +12,8 @@
     mc:Ignorable="d" 
     d:DesignHeight="1000" d:DesignWidth="1000"
     Loaded="Page_Loaded"
-    Title="{x:Static resx:Resources.ControllerPage_Controller}">
+    Title="{x:Static resx:Resources.ControllerPage_Controller}"
+    d:Background="{DynamicResource ExpanderContentBackground}">
 
     <Page.Resources>
         <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
@@ -127,6 +128,36 @@
                             </DockPanel>
 
                             <ui:ToggleSwitch Name="Toggle_Vibrate" Grid.Column="1" Toggled="Toggle_Vibrate_Toggled"/>
+                        </Grid>
+                    </Border>
+                </ui:SimpleStackPanel>
+
+                <!-- Non-game controller layouts -->
+                <ui:SimpleStackPanel Spacing="6">
+                    <TextBlock Text="Non-game controller layouts" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                    
+                    <!-- Non-game controller layout -->
+                    <Border  
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource ExpanderContentBackground}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
+
+                                <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                    <TextBlock Text="Desktop layout" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Text="Define controller layout when in Desktop mode" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <Button Name="Button_Layout" Content="Edit" Grid.Column="1" Height="40" Width="120" HorizontalAlignment="Right" Click="Button_Layout_Click"/>
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>

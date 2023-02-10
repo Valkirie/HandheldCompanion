@@ -2,61 +2,119 @@
 using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using ControllerCommon.Managers;
+using Gma.System.MouseKeyHook.HotKeys;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
+using Newtonsoft.Json;
 using System;
+using System.Globalization;
+using System.IO;
 using static HandheldCompanion.Simulators.MouseSimulator;
 
 namespace HandheldCompanion.Managers
 {
-    static class MappingManager
+    static class LayoutManager
     {
-        private static Profile currentProfile;
+        public static Layout customLayout = new();
+        public static Layout profileLayout = new();
+        private static Layout currentLayout;
 
+        private static ControllerState outputState = new();
         private static ButtonState prevButtonState = new();
         private static AxisState prevAxisState = new();
 
-        static MappingManager()
+        public static string InstallPath;
+        private static bool IsInitialized;
+
+        static LayoutManager()
         {
+            // initialiaze path
+            InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "layouts");
+            if (!Directory.Exists(InstallPath))
+                Directory.CreateDirectory(InstallPath);
+
+            // process existing profiles
+            string[] fileEntries = Directory.GetFiles(InstallPath, "*.json", SearchOption.AllDirectories);
+            foreach (string fileName in fileEntries)
+                ProcessLayout(fileName);
+
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        }
+
+        private static void ProcessLayout(string fileName)
+        {
+            Layout layout = null;
+            try
+            {
+                string outputraw = File.ReadAllText(fileName);
+                layout = JsonConvert.DeserializeObject<Layout>(outputraw, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Could not parse layout {0}. {1}", fileName, ex.Message);
+            }
+
+            // failed to parse
+            if (layout is null || layout.ButtonLayout is null || layout.AxisLayout is null)
+            {
+                LogManager.LogError("Could not parse layout {0}", fileName);
+                return;
+            }
+            
+            // update current layout
+            // todo: support multiple layouts when non-gaming ?
+            customLayout = layout;
+        }
+
+        private static void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            switch (name)
+            {
+                case "shortcutDesktopLayout":
+                    {
+                        bool toggle = Convert.ToBoolean(value);
+                        switch(toggle)
+                        {
+                            case true:
+                                currentLayout = customLayout;
+                                break;
+                            case false:
+                                currentLayout = profileLayout;
+                                break;
+                        }
+                    }
+                    break;
+            }
         }
 
         private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
-            currentProfile = ProfileManager.GetProfileFromExec(processEx.Executable);
-            if (currentProfile is null)
-                currentProfile = ProfileManager.GetDefault();
+            var profile = ProfileManager.GetProfileFromExec(processEx.Executable);
+            profileLayout = profile.Layout;
+
+            // only update current layout if we're not into desktop layout mode
+            if (!SettingsManager.GetBoolean("shortcutDesktopLayout"))
+                currentLayout = profile.Layout;
         }
 
-        public static void SetAction(ButtonFlags button, IActions action)
-        {
-            currentProfile.ButtonMapping[button] = action;
-        }
-
-        public static bool HasAction(ButtonFlags button)
-        {
-            return currentProfile.ButtonMapping.ContainsKey(button);
-        }
-
-        public static IActions GetAction(ButtonFlags button)
-        {
-            return currentProfile.ButtonMapping[button];
-        }
-
-        private static ControllerState outputState = new();
         public static ControllerState MapController(ControllerState controllerState)
         {
-            if (currentProfile is null)
+            if (currentLayout is null)
                 return controllerState;
 
             // consume origin button state
             outputState.ButtonState = controllerState.ButtonState.Clone() as ButtonState;
-            foreach (ButtonFlags button in currentProfile.ButtonMapping.Keys)
+            foreach (ButtonFlags button in currentLayout.ButtonLayout.Keys)
                 outputState.ButtonState[button] = false;
 
             // consume origin axis state
             outputState.AxisState = controllerState.AxisState.Clone() as AxisState;
-            foreach (AxisFlags axis in currentProfile.AxisMapping.Keys)
+            foreach (AxisFlags axis in currentLayout.AxisLayout.Keys)
                 outputState.AxisState[axis] = 0;
 
             foreach (var buttonState in controllerState.ButtonState.State)
@@ -65,11 +123,11 @@ namespace HandheldCompanion.Managers
                 bool value = buttonState.Value;
 
                 // skip, if not mapped
-                if (!currentProfile.ButtonMapping.ContainsKey(button))
+                if (!currentLayout.ButtonLayout.ContainsKey(button))
                     continue;
 
                 // pull action
-                IActions action = currentProfile.ButtonMapping[button];
+                IActions action = currentLayout.ButtonLayout[button];
                 switch (action.ActionType)
                 {
                     // button to button

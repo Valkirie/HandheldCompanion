@@ -13,14 +13,6 @@ namespace HandheldCompanion.Actions
         private bool IsKeyDown { get; set; }
         private bool IsKeyUp { get; set; }
 
-        public bool Turbo { get; set; }
-        public byte TurboDelay { get; set; } = 90;
-        private short TurboIdx;
-        private bool IsTurboed;
-
-        public bool Toggle { get; set; }
-        private bool IsToggled;
-
         public KeyboardActions()
         {
             this.ActionType = ActionType.Keyboard;

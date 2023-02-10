@@ -41,7 +41,8 @@ namespace HandheldCompanion.Managers
         public delegate void DiscardedEventHandler(Profile profile, bool isCurrent);
         #endregion
 
-        public static Profile currentProfile = new();
+        private static Profile currentProfile = new();
+
         public static string InstallPath;
         private static bool IsInitialized;
 

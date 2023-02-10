@@ -21,6 +21,14 @@ namespace ControllerCommon.Actions
         protected object Value;
         protected object prevValue;
 
+        public bool Turbo { get; set; }
+        public byte TurboDelay { get; set; } = 90;
+        protected short TurboIdx;
+        protected bool IsTurboed;
+
+        public bool Toggle { get; set; }
+        protected bool IsToggled;
+
         public virtual void Execute(ButtonFlags button, bool value)
         {
         }

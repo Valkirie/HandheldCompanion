@@ -11,6 +11,7 @@ namespace HandheldCompanion.Managers
     public static class SettingsManager
     {
         public static bool IsInitialized { get; internal set; }
+        private static Dictionary<string, object> Settings = new();
 
         public static event SettingValueChangedEventHandler SettingValueChanged;
         public delegate void SettingValueChangedEventHandler(string name, object value);
@@ -45,17 +46,13 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has stopped", "SettingsManager");
         }
 
-        public static void SetProperty(string name, object value, bool force = false)
+        public static void SetProperty(string name, object value, bool force = false, bool temporary = false)
         {
-            // should not happen
-            if (!PropertyExists(name))
-                return;
-
-            object prevValue = Properties.Settings.Default[name];
-
+            object prevValue = GetProperty(name, temporary);
             if (prevValue.ToString() == value.ToString() && !force)
                 return;
 
+            // specific cases
             switch (name)
             {
                 case "OverlayControllerBackgroundColor":
@@ -65,9 +62,16 @@ namespace HandheldCompanion.Managers
 
             try
             {
-                Properties.Settings.Default[name] = value;
-                Properties.Settings.Default.Save();
+                if (!temporary)
+                {
+                    Properties.Settings.Default[name] = value;
+                    Properties.Settings.Default.Save();
+                }
 
+                // update internal settings dictionary (used for temporary settings)
+                Settings[name] = value;
+
+                // raise event
                 SettingValueChanged?.Invoke(name, value);
 
                 LogManager.LogDebug("Settings {0} set to {1}", name, value);
@@ -90,7 +94,7 @@ namespace HandheldCompanion.Managers
             return result;
         }
 
-        private static object GetProperty(string name)
+        private static object GetProperty(string name, bool temporary = false)
         {
             // used to handle cases
             switch (name)
@@ -136,33 +140,40 @@ namespace HandheldCompanion.Managers
                     }
 
                 default:
-                    return Properties.Settings.Default[name];
+                    {
+                        if (temporary && Settings.ContainsKey(name))
+                            return Settings[name];
+                        else if (PropertyExists(name))
+                            return Properties.Settings.Default[name];
+
+                        return false;
+                    }
             }
         }
 
-        public static string GetString(string name)
+        public static string GetString(string name, bool temporary = false)
         {
-            return Convert.ToString(GetProperty(name));
+            return Convert.ToString(GetProperty(name, temporary));
         }
 
-        public static bool GetBoolean(string name)
+        public static bool GetBoolean(string name, bool temporary = false)
         {
-            return Convert.ToBoolean(GetProperty(name));
+            return Convert.ToBoolean(GetProperty(name, temporary));
         }
 
-        public static int GetInt(string name)
+        public static int GetInt(string name, bool temporary = false)
         {
-            return Convert.ToInt32(GetProperty(name));
+            return Convert.ToInt32(GetProperty(name, temporary));
         }
 
-        public static DateTime GetDateTime(string name)
+        public static DateTime GetDateTime(string name, bool temporary = false)
         {
-            return Convert.ToDateTime(GetProperty(name));
+            return Convert.ToDateTime(GetProperty(name, temporary));
         }
 
-        public static double GetDouble(string name)
+        public static double GetDouble(string name, bool temporary = false)
         {
-            return Convert.ToDouble(GetProperty(name));
+            return Convert.ToDouble(GetProperty(name, temporary));
         }
     }
 }

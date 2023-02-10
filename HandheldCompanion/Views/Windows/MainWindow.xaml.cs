@@ -3,6 +3,7 @@ using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Pages;
+using HandheldCompanion.Views.Pages.Profiles;
 using HandheldCompanion.Views.Windows;
 using ModernWpf.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -44,6 +45,7 @@ namespace HandheldCompanion.Views
         public static AboutPage aboutPage;
         public static OverlayPage overlayPage;
         public static HotkeysPage hotkeysPage;
+        public static LayoutPage layoutPage;
 
         // overlay(s) vars
         public static OverlayModel overlayModel;
@@ -246,6 +248,7 @@ namespace HandheldCompanion.Views
             aboutPage = new AboutPage("about");
             overlayPage = new OverlayPage("overlay");
             hotkeysPage = new HotkeysPage("hotkeys");
+            layoutPage = new LayoutPage("layout");
 
             // store pages
             _pages.Add("ControllerPage", controllerPage);
@@ -254,6 +257,7 @@ namespace HandheldCompanion.Views
             _pages.Add("OverlayPage", overlayPage);
             _pages.Add("SettingsPage", settingsPage);
             _pages.Add("HotkeysPage", hotkeysPage);
+            _pages.Add("LayoutPage", layoutPage);
 
             // handle controllerPage events
             controllerPage.HIDchanged += (HID) =>
@@ -609,6 +613,7 @@ namespace HandheldCompanion.Views
             settingsPage.Page_Closed();
             overlayPage.Page_Closed();
             hotkeysPage.Page_Closed();
+            layoutPage.Page_Closed();
 
             // force kill application
             Environment.Exit(0);

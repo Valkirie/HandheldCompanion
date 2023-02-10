@@ -384,5 +384,12 @@ namespace HandheldCompanion.Views.Pages
 
             SettingsManager.SetProperty("HIDvibrateonconnect", Toggle_Vibrate.IsOn);
         }
+
+        private void Button_Layout_Click(object sender, RoutedEventArgs e)
+        {
+            // update layout page with current layout
+            MainWindow.layoutPage.UpdateLayout(LayoutManager.customLayout);
+            MainWindow.NavView_Navigate(MainWindow.layoutPage);
+        }
     }
 }

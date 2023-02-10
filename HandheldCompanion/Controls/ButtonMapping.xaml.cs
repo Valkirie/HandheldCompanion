@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Actions;
+﻿using ControllerCommon;
+using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using GregsStack.InputSimulatorStandard.Native;
@@ -34,6 +35,11 @@ namespace HandheldCompanion.Controls
     {
         private ButtonFlags Button;
         private IActions Actions;
+
+        public event DeletedEventHandler Deleted;
+        public delegate void DeletedEventHandler(ButtonFlags button);
+        public event UpdatedEventHandler Updated;
+        public delegate void UpdatedEventHandler(ButtonFlags button, IActions action);
 
         public ButtonMapping()
         {
@@ -84,8 +90,7 @@ namespace HandheldCompanion.Controls
 
             if (type == ActionType.None)
             {
-                if (ProfilesPage.currentProfile is not null)
-                    ProfilesPage.currentProfile.ButtonMapping.Remove(Button);
+                Deleted?.Invoke(Button);
             }
             else if (type == ActionType.Button)
             {
@@ -218,11 +223,8 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update profile button mapping
-            if (ProfilesPage.currentProfile is null)
-                return;
-
-            ProfilesPage.currentProfile.ButtonMapping[Button] = this.Actions;
+            // update button mapping
+            Updated?.Invoke(Button, Actions);
         }
 
         public void Update()

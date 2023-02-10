@@ -1,10 +1,13 @@
 using ControllerCommon;
+using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerService.Sensors;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Pages.Profiles.Controller;
 using HandheldCompanion.Views.Windows;
+using Microsoft.Win32.TaskScheduler;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
@@ -19,6 +22,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using Windows.Networking.NetworkOperators;
+using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages.Profiles
@@ -26,37 +30,67 @@ namespace HandheldCompanion.Views.Pages.Profiles
     /// <summary>
     /// Interaction logic for ControllerSettings.xaml
     /// </summary>
-    public partial class ControllerSettings : Page
+    public partial class LayoutPage : Page
     {
+        // page vars
         private ButtonsPage buttonsPage = new();
         private DpadPage dpadPage = new();
         private TriggersPage triggersPage = new();
         private JoysticksPage joysticksPage = new();
         private GyroPage gyroPage = new();
-
-        // page vars
         private Dictionary<string, Page> _pages;
 
         private string preNavItemTag;
 
-        public ControllerSettings()
+        private Layout currentLayout = new();
+
+        public LayoutPage()
         {
             InitializeComponent();
         }
 
-        public ControllerSettings(string Tag) : this()
+        public LayoutPage(string Tag) : this()
         {
             this.Tag = Tag;
 
             // create controller related pages
             this._pages = new()
             {
+                // buttons
                 { "ButtonsPage", buttonsPage },
                 { "DpadPage", dpadPage },
+
+                // axis
                 { "TriggersPage", triggersPage },
                 { "JoysticksPage", joysticksPage },
+
+                // gyro
                 { "GyroPage", gyroPage },
             };
+
+            // not my proudest code
+            foreach (ButtonMapping buttonMapping in buttonsPage.Mapping.Values)
+            {
+                buttonMapping.Updated += ButtonMapping_Updated;
+                buttonMapping.Deleted += ButtonMapping_Deleted;
+            }
+
+            foreach (ButtonMapping buttonMapping in dpadPage.Mapping.Values)
+            {
+                buttonMapping.Updated += ButtonMapping_Updated;
+                buttonMapping.Deleted += ButtonMapping_Deleted;
+            }
+        }
+
+        private void ButtonMapping_Deleted(ButtonFlags button)
+        {
+            if (currentLayout.ButtonLayout.ContainsKey(button))
+                currentLayout.ButtonLayout.Remove(button);
+        }
+
+        private void ButtonMapping_Updated(ButtonFlags button, IActions action)
+        {
+            currentLayout.ButtonLayout[button] = action;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -72,11 +106,14 @@ namespace HandheldCompanion.Views.Pages.Profiles
             ((Expander)sender).BringIntoView();
         }
 
-        public void Update()
+        public void UpdateLayout(Layout layout)
         {
+            // update current layout
+            currentLayout = layout;
+
             // cascade update to (sub)pages
-            buttonsPage.Update();
-            dpadPage.Update();
+            buttonsPage.Refresh(currentLayout.ButtonLayout);
+            dpadPage.Refresh(currentLayout.ButtonLayout);
         }
 
         #region UI

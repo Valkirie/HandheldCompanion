@@ -31,7 +31,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight
         };
 
-        private Dictionary<ButtonFlags, ButtonMapping> Mapping = new();
+        public Dictionary<ButtonFlags, ButtonMapping> Mapping = new();
 
         public DpadPage()
         {
@@ -88,11 +88,12 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         {
         }
 
-        public void Update()
+        public void Refresh(Dictionary<ButtonFlags, IActions> buttonMapping)
         {
-            Profile currentProfile = ProfilesPage.currentProfile;
+            foreach (ButtonMapping mapping in Mapping.Values)
+                mapping.Reset();
 
-            foreach (var pair in currentProfile.ButtonMapping)
+            foreach (var pair in buttonMapping)
             {
                 ButtonFlags button = pair.Key;
                 IActions actions = pair.Value;
@@ -100,10 +101,8 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 if (!Mapping.ContainsKey(button))
                     continue;
 
-                ButtonMapping mapping = Mapping[button];
-
                 // update actions
-                mapping.Reset();
+                ButtonMapping mapping = Mapping[button];
                 mapping.SetIActions(actions);
             }
         }

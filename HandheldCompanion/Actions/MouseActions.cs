@@ -14,14 +14,6 @@ namespace HandheldCompanion.Actions
         private bool IsCursorDown { get; set; }
         private bool IsCursorUp { get; set; }
 
-        public bool Turbo { get; set; }
-        public byte TurboDelay { get; set; } = 90;
-        private short TurboIdx;
-        private bool IsTurboed;
-
-        public bool Toggle { get; set; }
-        private bool IsToggled;
-
         // settings
         public float Sensivity { get; set; } = 10.0f;
 

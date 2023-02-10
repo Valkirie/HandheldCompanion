@@ -441,7 +441,7 @@ namespace HandheldCompanion.Managers
             MainWindow.overlayModel.UpdateReport(controllerState);
 
             // todo: pass inputs to (re)mapper
-            controllerState = MappingManager.MapController(controllerState);
+            controllerState = LayoutManager.MapController(controllerState);
 
             // Neptune controller specific scenarios
             if (targetController is not null)

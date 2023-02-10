@@ -141,6 +141,7 @@ namespace HandheldCompanion.Managers
                 {
                     case "SteamDeckLizardMouse":
                     case "SteamDeckLizardButtons":
+                    case "shortcutDesktopLayout":
                         {
                             bool toggle = Convert.ToBoolean(value);
                             hotkey.SetToggle(toggle);
@@ -331,6 +332,14 @@ namespace HandheldCompanion.Managers
                         {
                             bool SteamDeckLizardMode = SettingsManager.GetBoolean(listener);
                             SettingsManager.SetProperty(listener, !SteamDeckLizardMode);
+                        }
+                        break;
+
+                    // temporary settings
+                    case "shortcutDesktopLayout":
+                        {
+                            bool prevValue = SettingsManager.GetBoolean(listener, true);
+                            SettingsManager.SetProperty(listener, !prevValue, false, true);
                         }
                         break;
 

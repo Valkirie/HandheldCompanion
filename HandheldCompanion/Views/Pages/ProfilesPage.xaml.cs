@@ -28,7 +28,6 @@ namespace HandheldCompanion.Views.Pages
 
         private SettingsMode0 page0 = new SettingsMode0("SettingsMode0");
         private SettingsMode1 page1 = new SettingsMode1("SettingsMode1");
-        private ControllerSettings settings = new ControllerSettings("ControllerSettings");
 
         public ProfilesPage()
         {
@@ -718,8 +717,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            settings.Update();
-            MainWindow.NavView_Navigate(settings);
+            // update layout page with current layout
+            MainWindow.layoutPage.UpdateLayout(currentProfile.Layout);
+            MainWindow.NavView_Navigate(MainWindow.layoutPage);
         }
     }
 }
