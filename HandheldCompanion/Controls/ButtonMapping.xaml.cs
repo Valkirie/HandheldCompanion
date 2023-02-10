@@ -76,7 +76,9 @@ namespace HandheldCompanion.Controls
             this.Icon.Glyph = newIcon.Glyph;
             this.Icon.FontFamily = newIcon.FontFamily;
             this.Icon.FontSize = newIcon.FontSize;
-            this.Icon.Foreground = newIcon.Foreground;
+
+            if (newIcon.Foreground is not null)
+                this.Icon.Foreground = newIcon.Foreground;
         }
 
         internal void SetIActions(IActions actions)

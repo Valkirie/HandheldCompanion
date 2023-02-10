@@ -316,10 +316,7 @@ namespace ControllerCommon.Controllers
             };
 
             Brush FontBrush = GetGlyphColor(button);
-            if (FontBrush is not null)
-                FontIcon.Foreground = FontBrush;
-            else
-                FontIcon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+            FontIcon.Foreground = FontBrush;
 
             return FontIcon;
         }
