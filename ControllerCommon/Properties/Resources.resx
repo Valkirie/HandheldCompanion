@@ -120,16 +120,16 @@
   <data name="AutoRollYawSwapDesc" xml:space="preserve">
     <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
   </data>
-  <data name="Enum.AYANeoAIRPro.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
-  <data name="Enum.AYANeoAIRPro.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM2" xml:space="preserve">
     <value>=</value>
   </data>
-  <data name="Enum.AYANeoAIRPro.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM3" xml:space="preserve">
     <value>RC</value>
   </data>
-  <data name="Enum.AYANeoAIRPro.ButtonFlags.OEM4" xml:space="preserve">
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
   <data name="Enum.DS4Controller.ButtonFlags.B1" xml:space="preserve">

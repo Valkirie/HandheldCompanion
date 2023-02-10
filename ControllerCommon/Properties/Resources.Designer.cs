@@ -72,36 +72,36 @@ namespace ControllerCommon.Properties {
         /// <summary>
         ///   Looks up a localized string similar to AYA.
         /// </summary>
-        public static string Enum_AYANeoAIRPro_ButtonFlags_OEM1 {
+        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM1 {
             get {
-                return ResourceManager.GetString("Enum.AYANeoAIRPro.ButtonFlags.OEM1", resourceCulture);
+                return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM1", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to =.
         /// </summary>
-        public static string Enum_AYANeoAIRPro_ButtonFlags_OEM2 {
+        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM2 {
             get {
-                return ResourceManager.GetString("Enum.AYANeoAIRPro.ButtonFlags.OEM2", resourceCulture);
+                return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM2", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to RC.
         /// </summary>
-        public static string Enum_AYANeoAIRPro_ButtonFlags_OEM3 {
+        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM3 {
             get {
-                return ResourceManager.GetString("Enum.AYANeoAIRPro.ButtonFlags.OEM3", resourceCulture);
+                return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM3", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to LC.
         /// </summary>
-        public static string Enum_AYANeoAIRPro_ButtonFlags_OEM4 {
+        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM4 {
             get {
-                return ResourceManager.GetString("Enum.AYANeoAIRPro.ButtonFlags.OEM4", resourceCulture);
+                return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM4", resourceCulture);
             }
         }
         
