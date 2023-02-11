@@ -29,6 +29,8 @@ namespace ControllerCommon.Actions
         public bool Toggle { get; set; }
         protected bool IsToggled;
 
+        protected const short UPDATE_INTERVAL = 10;
+
         public virtual void Execute(ButtonFlags button, bool value)
         {
         }

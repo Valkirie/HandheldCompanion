@@ -98,7 +98,7 @@ namespace ControllerService
 
         private ControllerState Inputs = new();
 
-        public const int UpdateInterval = 5;
+        protected const short UPDATE_INTERVAL = 10;
 
         void GetPadDetailForIdx(int padIdx, ref DualShockPadMeta meta)
         {
@@ -107,7 +107,6 @@ namespace ControllerService
 
         public string ip;
         public int port;
-        private Vector3 empty = new();
 
         public event StartedEventHandler Started;
         public delegate void StartedEventHandler(DSUServer server);
@@ -153,7 +152,7 @@ namespace ControllerService
 
             // initialize timers
             UpdateTimer = new PrecisionTimer();
-            UpdateTimer.SetInterval(UpdateInterval);
+            UpdateTimer.SetInterval(UPDATE_INTERVAL);
             UpdateTimer.SetAutoResetMode(true);
         }
 
@@ -648,7 +647,7 @@ namespace ControllerService
                 outIdx += 8;
 
                 //accelerometer
-                if (IMU.Acceleration[XInputSensorFlags.Default] != empty)
+                if (IMU.Acceleration[XInputSensorFlags.Default] != Vector3.Zero)
                 {
                     // accelXG
                     Array.Copy(BitConverter.GetBytes(IMU.Acceleration[XInputSensorFlags.Default].X), 0, outputData, outIdx, 4);
@@ -667,7 +666,7 @@ namespace ControllerService
                 }
 
                 //gyroscope
-                if (IMU.AngularVelocity[XInputSensorFlags.CenteredRatio] != empty)
+                if (IMU.AngularVelocity[XInputSensorFlags.CenteredRatio] != Vector3.Zero)
                 {
                     // angVelPitch
                     Array.Copy(BitConverter.GetBytes(IMU.AngularVelocity[XInputSensorFlags.CenteredRatio].X), 0, outputData, outIdx, 4);

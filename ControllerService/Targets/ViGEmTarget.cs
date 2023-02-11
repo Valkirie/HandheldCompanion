@@ -18,6 +18,7 @@ namespace ControllerService.Targets
         public FlickStick flickStick;
         protected ControllerState Inputs = new();
         protected PrecisionTimer UpdateTimer;
+        protected const short UPDATE_INTERVAL = 10;
 
         public HIDmode HID = HIDmode.NoController;
 
@@ -44,7 +45,7 @@ namespace ControllerService.Targets
             flickStick = new FlickStick();
 
             UpdateTimer = new PrecisionTimer();
-            UpdateTimer.SetInterval(5);
+            UpdateTimer.SetInterval(UPDATE_INTERVAL);
             UpdateTimer.SetAutoResetMode(true);
 
             ControllerService.ForegroundUpdated += ForegroundUpdated;

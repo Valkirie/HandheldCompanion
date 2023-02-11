@@ -55,7 +55,7 @@ namespace ControllerCommon.Controllers
 
         protected Dictionary<ButtonFlags, Brush> ButtonBrush = new();
 
-        protected const short UPDATE_INTERVAL = 5;
+        protected const short UPDATE_INTERVAL = 10;
 
         public ButtonState InjectedButtons = new();
         public ButtonState prevInjectedButtons = new();
