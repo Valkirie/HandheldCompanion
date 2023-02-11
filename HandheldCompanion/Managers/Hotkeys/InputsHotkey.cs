@@ -43,7 +43,7 @@ namespace HandheldCompanion.Managers
 
             // Handheld Companion hotkeys
             { 30, new InputsHotkey(InputsHotkeyType.HC,         "\uE7C4",   "shortcutMainwindow",               "Segoe Fluent Icons",   20, false,  true) },
-            { 31, new InputsHotkey(InputsHotkeyType.HC,         "\uE7C4",   "shortcutDesktopLayout",            "Segoe Fluent Icons",   20, false,  true) },
+            { 31, new InputsHotkey(InputsHotkeyType.HC,         "\uE961",   "shortcutDesktopLayout",            "Segoe Fluent Icons",   20, false,  true) },
 
             // Device specific hotkeys
             // { 40, new InputsHotkey(InputsHotkeyType.Device,     "\uE2E8",   "shortcutGuide",                    "Segoe UI Symbol",      20, false,  true) },

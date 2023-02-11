@@ -559,6 +559,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Desktop layout.
+        /// </summary>
+        public static string InputsHotkey_shortcutDesktopLayout {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutDesktopLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Desktop controller layout.
+        /// </summary>
+        public static string InputsHotkey_shortcutDesktopLayoutDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutDesktopLayoutDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Escape.
         /// </summary>
         public static string InputsHotkey_shortcutESC {
