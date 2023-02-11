@@ -293,14 +293,26 @@ namespace ControllerCommon.Controllers
                     return "\u219E"; // Button X
                 case ButtonFlags.DPadRight:
                     return "\u21A0"; // Button Y
+                case ButtonFlags.LeftThumb:
+                    return "\u21BA";
+                case ButtonFlags.RightThumb:
+                    return "\u21BB";
             }
 
-            return string.Empty;
+            return button.ToString();
         }
 
         public virtual string GetGlyph(AxisFlags axis)
         {
-            return string.Empty;
+            switch(axis)
+            {
+                case AxisFlags.LeftThumbX:
+                    return "\u21C4";
+                case AxisFlags.LeftThumbY:
+                    return "\u21C5";
+            }
+
+            return axis.ToString();
         }
 
         public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
@@ -323,13 +335,34 @@ namespace ControllerCommon.Controllers
 
         public FontIcon GetFontIcon(AxisFlags axis, int FontIconSize = 20)
         {
-            return null;
+            if (!IsAxisSupported(axis))
+                return null;
+
+            FontIcon FontIcon = new FontIcon()
+            {
+                Glyph = GetGlyph(axis),
+                FontSize = FontIconSize,
+                FontFamily = FontFamily
+            };
+
+            Brush FontBrush = GetGlyphColor(axis);
+            FontIcon.Foreground = FontBrush;
+
+            return FontIcon;
         }
 
         public Brush GetGlyphColor(ButtonFlags button)
         {
             if (ButtonBrush.ContainsKey(button))
                 return ButtonBrush[button];
+
+            return null;
+        }
+
+        public Brush GetGlyphColor(AxisFlags axis)
+        {
+            /* if (AxisBrush.ContainsKey(axis))
+                return AxisBrush[axis]; */
 
             return null;
         }

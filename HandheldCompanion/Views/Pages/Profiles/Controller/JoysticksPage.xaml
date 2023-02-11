@@ -15,7 +15,18 @@
       Loaded="Page_Loaded">
 
     <Grid Name="MainGrid">
-        <ui:SimpleStackPanel Spacing="6">            
+        <ui:SimpleStackPanel Spacing="6">
+
+            <!-- LEFT JOYSTICK -->
+            <TextBlock Text="LEFT JOYSTICK" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+            <ui:SimpleStackPanel Spacing="6" Name="LeftJoystickStackPanel">
+            </ui:SimpleStackPanel>
+
+            <!-- RIGHT JOYSTICK -->
+            <TextBlock Text="RIGHT JOYSTICK" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+            <ui:SimpleStackPanel Spacing="6" Name="RightJoystickStackPanel">
+            </ui:SimpleStackPanel>
+
         </ui:SimpleStackPanel>
     </Grid>
 </Page>

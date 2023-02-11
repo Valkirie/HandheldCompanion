@@ -22,7 +22,8 @@ namespace ControllerCommon.Inputs
         LPadClick = 42, RPadClick = 43,
         L3 = 44, R3 = 45,
         L4 = 46, R4 = 47,
-        L5 = 48, R5 = 49
+        L5 = 48, R5 = 49,
+        LeftThumbTouch = 50, RightThumbTouch = 51
     }
 
     /*

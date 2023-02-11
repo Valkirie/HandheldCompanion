@@ -36,7 +36,7 @@
         </Expander.Header>
         <Expander.Content>
             <StackPanel>
-                <!-- Button 2 Button/Keyboard -->
+                <!-- Button 2 Button/Keyboard/Mouse -->
                 <Grid Name="Button2Button" d:Visibility="Visible"
                       Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
 

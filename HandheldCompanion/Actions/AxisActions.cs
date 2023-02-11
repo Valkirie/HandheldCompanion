@@ -9,8 +9,12 @@ namespace HandheldCompanion.Actions
     {
         public AxisFlags Axis { get; set; }
 
+        // Button to axis
         public double AxisPercentage { get; set; } = 100.0d;
         public byte AxisPolarity { get; set; } = 0;
+
+        // Axis to axis
+        public bool AxisInverted { get; set; } = false;
 
         public AxisActions()
         {
@@ -31,6 +35,11 @@ namespace HandheldCompanion.Actions
         public override void Execute(ButtonFlags button, bool value)
         {
             this.Value = (short)(this.AxisPercentage * short.MaxValue / 100.0d) * (AxisPolarity == 0 ? 1 : -1);
+        }
+
+        public override void Execute(AxisFlags axis, short value)
+        {
+            this.Value = (short)(value * (AxisInverted ? -1 : 1));
         }
     }
 }

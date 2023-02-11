@@ -191,25 +191,18 @@ namespace HandheldCompanion.Managers
                 }
             }
 
-            /*
-            if (!prevAxisState.Equals(controllerState.AxisState))
             foreach (var axisState in controllerState.AxisState.State)
             {
                 AxisFlags axis = axisState.Key;
-                int value = axisState.Value;
+                short value = axisState.Value;
                 bool below_deadzone = Math.Abs(value) <= ControllerState.AxisDeadzones[axis];
 
-                // skip if not mapped
-                if (!currentProfile.AxisMapping.ContainsKey(axis))
+                // skip, if not mapped
+                if (!currentLayout.AxisLayout.ContainsKey(axis))
                     continue;
 
-                // consume axis
-                if (!outputState.AxisState.Emulated[axis])
-                    outputState.AxisState[axis] = 0;
-
                 // pull action
-                IActions action = currentProfile.AxisMapping[axis];
-
+                IActions action = currentLayout.AxisLayout[axis];
                 switch (action.ActionType)
                 {
                     // axis to button
@@ -220,7 +213,6 @@ namespace HandheldCompanion.Managers
 
                             ButtonActions bAction = action as ButtonActions;
                             outputState.ButtonState[bAction.Button] = !below_deadzone;
-                            outputState.ButtonState.Emulated[bAction.Button] = true;
                         }
                         break;
 
@@ -228,8 +220,9 @@ namespace HandheldCompanion.Managers
                     case ActionType.Axis:
                         {
                             AxisActions aAction = action as AxisActions;
-                            outputState.AxisState[aAction.Axis] = (short)value;
-                            outputState.AxisState.Emulated[aAction.Axis] = true;
+                            aAction.Execute(axis, value);
+
+                            outputState.AxisState[aAction.Axis] = aAction.GetValue();
                         }
                         break;
 
@@ -240,7 +233,6 @@ namespace HandheldCompanion.Managers
                                 break;
 
                             KeyboardActions kAction = action as KeyboardActions;
-                            kAction.Execute(!below_deadzone);
                         }
                         break;
 
@@ -255,10 +247,7 @@ namespace HandheldCompanion.Managers
                         }
                         break;
                 }
-                
-                prevAxisState = controllerState.AxisState.Clone() as AxisState;
             }
-            */
 
             return outputState;
         }

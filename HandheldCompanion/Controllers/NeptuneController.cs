@@ -109,8 +109,8 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.LeftThumb] = input.State.ButtonState[NeptuneControllerButton.BtnLStickPress];
             Inputs.ButtonState[ButtonFlags.RightThumb] = input.State.ButtonState[NeptuneControllerButton.BtnRStickPress];
 
-            Inputs.ButtonState[ButtonFlags.OEM2] = input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch];
-            Inputs.ButtonState[ButtonFlags.OEM3] = input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch];
+            Inputs.ButtonState[ButtonFlags.LeftThumbTouch] = input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch];
+            Inputs.ButtonState[ButtonFlags.RightThumbTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch];
 
             Inputs.ButtonState[ButtonFlags.L1] = input.State.ButtonState[NeptuneControllerButton.BtnL1];
             Inputs.ButtonState[ButtonFlags.R2] = input.State.ButtonState[NeptuneControllerButton.BtnR1];

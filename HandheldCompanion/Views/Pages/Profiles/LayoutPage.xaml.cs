@@ -68,17 +68,16 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 { "GyroPage", gyroPage },
             };
 
-            // not my proudest code
-            foreach (ButtonMapping buttonMapping in buttonsPage.Mapping.Values)
+            foreach (ButtonMapping buttonMapping in buttonsPage.Mapping.Values.Union(dpadPage.Mapping.Values).Union(joysticksPage.MappingButtons.Values))
             {
                 buttonMapping.Updated += ButtonMapping_Updated;
                 buttonMapping.Deleted += ButtonMapping_Deleted;
             }
 
-            foreach (ButtonMapping buttonMapping in dpadPage.Mapping.Values)
+            foreach (AxisMapping axisMapping in joysticksPage.MappingAxis.Values)
             {
-                buttonMapping.Updated += ButtonMapping_Updated;
-                buttonMapping.Deleted += ButtonMapping_Deleted;
+                axisMapping.Updated += AxisMapping_Updated;
+                axisMapping.Deleted += AxisMapping_Deleted;
             }
         }
 
@@ -90,6 +89,16 @@ namespace HandheldCompanion.Views.Pages.Profiles
         private void ButtonMapping_Updated(ButtonFlags button, IActions action)
         {
             currentLayout.UpdateLayout(button, action);
+        }
+
+        private void AxisMapping_Deleted(AxisFlags axis)
+        {
+            currentLayout.RemoveLayout(axis);
+        }
+
+        private void AxisMapping_Updated(AxisFlags axis, IActions action)
+        {
+            currentLayout.UpdateLayout(axis, action);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -114,6 +123,8 @@ namespace HandheldCompanion.Views.Pages.Profiles
             // cascade update to (sub)pages
             buttonsPage.Refresh(currentLayout.ButtonLayout);
             dpadPage.Refresh(currentLayout.ButtonLayout);
+
+            joysticksPage.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
         }
 
         private void CurrentLayout_Updated(Layout layout)

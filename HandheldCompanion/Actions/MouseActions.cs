@@ -102,11 +102,11 @@ namespace HandheldCompanion.Actions
             switch (MouseType)
             {
                 case MouseActionsType.MoveByX:
-                    short x = (short)((float)Value / short.MaxValue * Sensivity);
+                    short x = (short)((float)value / short.MaxValue * Sensivity);
                     MouseSimulator.MoveBy(x, 0);
                     break;
                 case MouseActionsType.MoveByY:
-                    short y = (short)((float)Value / short.MaxValue * Sensivity);
+                    short y = (short)((float)value / short.MaxValue * Sensivity);
                     MouseSimulator.MoveBy(0, -y);
                     break;
             }

@@ -132,6 +132,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\AxisMapping.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
