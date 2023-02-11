@@ -6,6 +6,7 @@ using ControllerService.Sensors;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using ModernWpf.Controls;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -121,7 +122,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                     buttonMapping.Visibility = Visibility.Visible;
 
                 // update icon
-                var newIcon = Controller.GetFontIcon(button);
+                FontIcon newIcon = Controller.GetFontIcon(button);
 
                 // unsupported button
                 if (newIcon is null)

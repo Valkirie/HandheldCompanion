@@ -37,10 +37,12 @@ namespace HandheldCompanion.Controls
         private ButtonFlags Button;
         private IActions Actions;
 
+        #region events
         public event DeletedEventHandler Deleted;
         public delegate void DeletedEventHandler(ButtonFlags button);
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(ButtonFlags button, IActions action);
+        #endregion
 
         public ButtonMapping()
         {
@@ -79,6 +81,8 @@ namespace HandheldCompanion.Controls
 
             if (newIcon.Foreground is not null)
                 this.Icon.Foreground = newIcon.Foreground;
+            else
+                this.Icon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
         }
 
         internal void SetIActions(IActions actions)
