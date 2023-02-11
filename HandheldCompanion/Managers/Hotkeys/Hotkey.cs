@@ -1,7 +1,9 @@
 ﻿using ControllerCommon.Controllers;
+using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Views;
 using ModernWpf.Controls;
 using Newtonsoft.Json;
 using System;
@@ -104,7 +106,7 @@ namespace HandheldCompanion.Managers
         public void Refresh()
         {
             // update name
-            if (string.IsNullOrEmpty(Name))
+            if (string.IsNullOrEmpty(Name) || inputsHotkey.hotkeyType != InputsHotkeyType.Custom)
                 Name = inputsHotkey.GetName();
 
             mainControl.HotkeyCustomName.TextChanged += HotkeyCustomName_TextChanged;
@@ -229,10 +231,6 @@ namespace HandheldCompanion.Managers
                 Orientation = Orientation.Horizontal,
                 Spacing = 6
             };
-
-            IController controller = ControllerManager.GetTargetController();
-            if (controller is null)
-                return;
 
             mainControl.MainGrid.IsEnabled = true;
             if (HasInput())
