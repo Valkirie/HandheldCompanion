@@ -16,7 +16,7 @@ namespace HandheldCompanion.Managers
 {
     static class LayoutManager
     {
-        public static Layout customLayout = new();
+        public static Layout desktopLayout = new("Desktop");
         public static Layout profileLayout = new();
         private static Layout currentLayout;
 
@@ -38,6 +38,8 @@ namespace HandheldCompanion.Managers
             string[] fileEntries = Directory.GetFiles(InstallPath, "*.json", SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
                 ProcessLayout(fileName);
+
+            desktopLayout.Updated += DesktopLayout_Updated;
 
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
@@ -68,7 +70,24 @@ namespace HandheldCompanion.Managers
             
             // update current layout
             // todo: support multiple layouts when non-gaming ?
-            customLayout = layout;
+            desktopLayout = layout;
+            desktopLayout.Updated += DesktopLayout_Updated;
+        }
+
+        private static void DesktopLayout_Updated(Layout layout)
+        {
+            SerializeLayout(layout);
+        }
+
+        private static void SerializeLayout(Layout layout)
+        {
+            string jsonString = JsonConvert.SerializeObject(layout, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
+
+            string settingsPath = Path.Combine(InstallPath, $"{layout.Name}.json");
+            File.WriteAllText(settingsPath, jsonString);
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -81,7 +100,7 @@ namespace HandheldCompanion.Managers
                         switch(toggle)
                         {
                             case true:
-                                currentLayout = customLayout;
+                                currentLayout = desktopLayout;
                                 break;
                             case false:
                                 currentLayout = profileLayout;
@@ -98,7 +117,7 @@ namespace HandheldCompanion.Managers
             profileLayout = profile.Layout;
 
             // only update current layout if we're not into desktop layout mode
-            if (!SettingsManager.GetBoolean("shortcutDesktopLayout"))
+            if (!SettingsManager.GetBoolean("shortcutDesktopLayout", true))
                 currentLayout = profile.Layout;
         }
 

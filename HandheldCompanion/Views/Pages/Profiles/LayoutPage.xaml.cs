@@ -84,13 +84,12 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
         private void ButtonMapping_Deleted(ButtonFlags button)
         {
-            if (currentLayout.ButtonLayout.ContainsKey(button))
-                currentLayout.ButtonLayout.Remove(button);
+            currentLayout.RemoveLayout(button);
         }
 
         private void ButtonMapping_Updated(ButtonFlags button, IActions action)
         {
-            currentLayout.ButtonLayout[button] = action;
+            currentLayout.UpdateLayout(button, action);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -110,10 +109,16 @@ namespace HandheldCompanion.Views.Pages.Profiles
         {
             // update current layout
             currentLayout = layout;
+            currentLayout.Updated += CurrentLayout_Updated;
 
             // cascade update to (sub)pages
             buttonsPage.Refresh(currentLayout.ButtonLayout);
             dpadPage.Refresh(currentLayout.ButtonLayout);
+        }
+
+        private void CurrentLayout_Updated(Layout layout)
+        {
+            // do something
         }
 
         #region UI
