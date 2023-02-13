@@ -1,8 +1,10 @@
-﻿using ControllerCommon;
+﻿using ABI.System.Numerics;
+using ControllerCommon;
 using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using Gma.System.MouseKeyHook.HotKeys;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
@@ -10,7 +12,9 @@ using Newtonsoft.Json;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Numerics;
 using static HandheldCompanion.Simulators.MouseSimulator;
+using Vector2 = System.Numerics.Vector2;
 
 namespace HandheldCompanion.Managers
 {
@@ -247,6 +251,26 @@ namespace HandheldCompanion.Managers
                         }
                         break;
                 }
+            }
+
+            // apply thumbs anti-deadzones
+            for (int i = (int)AxisFlags.LeftThumbX; i < (int)AxisFlags.RightThumbY; i += 2)
+            {
+                AxisFlags ThumbX = (AxisFlags)i;
+                AxisFlags ThumbY = (AxisFlags)i + 1;
+
+                float ThumbAntiDeadZoneX = 0.0f;
+                float ThumbAntiDeadZoneY = 0.0f;
+
+                if (currentLayout.AxisLayout.ContainsKey(ThumbX) && currentLayout.AxisLayout[ThumbX].ActionType == ActionType.Axis)
+                    ThumbAntiDeadZoneX = ((AxisActions)(currentLayout.AxisLayout[ThumbX])).AxisAntiDeadZone;
+                if (currentLayout.AxisLayout.ContainsKey(ThumbY) && currentLayout.AxisLayout[ThumbY].ActionType == ActionType.Axis)
+                    ThumbAntiDeadZoneY = ((AxisActions)(currentLayout.AxisLayout[ThumbY])).AxisAntiDeadZone;
+
+                Vector2 ThumbVector = new Vector2(outputState.AxisState[ThumbX], outputState.AxisState[ThumbY]);
+
+                outputState.AxisState[ThumbX] = (short)InputUtils.ApplyAntiDeadzone(ThumbVector, ThumbAntiDeadZoneX).X;
+                outputState.AxisState[ThumbY] = (short)InputUtils.ApplyAntiDeadzone(ThumbVector, ThumbAntiDeadZoneY).Y;
             }
 
             return outputState;

@@ -70,59 +70,6 @@
             <!-- Separator -->
             <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
-            <!-- Controller settings -->
-            <Expander
-                Padding="15,6,15,6" 
-                HorizontalAlignment="Stretch"
-                IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
-                
-                <Expander.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="370"></ColumnDefinition>
-                            <ColumnDefinition></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:SimpleStackPanel VerticalAlignment="Center">
-                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzone}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-                    </Grid>
-                </Expander.Header>
-
-                <!-- Content -->
-                <Expander.Content>
-                    <ui:SimpleStackPanel Spacing="6">
-                        <StackPanel>
-                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="Left joystick" />
-
-                            <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderAntiDeadzoneLeft, Mode=OneWay}" />
-                                <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneUnitPercentage}" />
-                                <Slider Name="SliderAntiDeadzoneLeft" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-								        ValueChanged="SliderAntiDeadzoneLeft_ValueChanged" />
-                            </DockPanel>
-                        </StackPanel>
-                        
-                        <StackPanel>
-                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="Right joystick" />
-
-                            <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBlock Width="20" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Value, StringFormat=N0, ElementName=SliderAntiDeadzoneRight, Mode=OneWay}" />
-                                <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneUnitPercentage}" />
-                                <Slider Name="SliderAntiDeadzoneRight" Margin="8,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-								        ValueChanged="SliderAntiDeadzoneRight_ValueChanged" />
-                            </DockPanel>
-                        </StackPanel>
-                    </ui:SimpleStackPanel>
-                </Expander.Content>
-            </Expander>
-
-            <!-- Separator -->
-            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
-
             <Grid Name="StackProfileUMC">
                 <!-- Header -->
                 <Border

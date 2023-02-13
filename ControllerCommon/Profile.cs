@@ -79,18 +79,6 @@ namespace ControllerCommon
 
         public bool thumb_improve_circularity_left { get; set; } = true;
         public bool thumb_improve_circularity_right { get; set; } = true;
-        public int thumb_deadzone_inner_left { get; set; } = 0;
-        public int thumb_deadzone_outer_left { get; set; } = 0;
-        public int thumb_deadzone_inner_right { get; set; } = 0;
-        public int thumb_deadzone_outer_right { get; set; } = 0;
-
-        public float thumb_anti_deadzone_left { get; set; } = 0.0f;        // todo: typeme
-        public float thumb_anti_deadzone_right { get; set; } = 0.0f;        // todo: typeme
-
-        public int trigger_deadzone_inner_left { get; set; } = 0;
-        public int trigger_deadzone_outer_left { get; set; } = 0;
-        public int trigger_deadzone_inner_right { get; set; } = 0;
-        public int trigger_deadzone_outer_right { get; set; } = 0;
 
         public bool MotionEnabled { get; set; }
         public MotionInput MotionInput { get; set; } = MotionInput.JoystickCamera;

@@ -222,8 +222,6 @@ namespace HandheldCompanion.Views.QuickPages
                     SliderUMCAntiDeadzone.Value = profile.MotionAntiDeadzone;
                     SliderSensitivityX.Value = profile.MotionSensivityX;
                     SliderSensitivityY.Value = profile.MotionSensivityY;
-                    SliderAntiDeadzoneLeft.Value = profile.thumb_anti_deadzone_left;
-                    SliderAntiDeadzoneRight.Value = profile.thumb_anti_deadzone_right;
 
                     // todo: improve me ?
                     ProfilesPageHotkey.inputsChord.State = profile.MotionTrigger.Clone() as ButtonState;
@@ -449,34 +447,6 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
-                RequestUpdate();
-
-                Monitor.Exit(updateLock);
-            }
-        }
-
-        private void SliderAntiDeadzoneLeft_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (currentProfile is null)
-                return;
-
-            if (Monitor.TryEnter(updateLock))
-            {
-                currentProfile.thumb_anti_deadzone_left = (float)SliderAntiDeadzoneLeft.Value;
-                RequestUpdate();
-
-                Monitor.Exit(updateLock);
-            }
-        }
-
-        private void SliderAntiDeadzoneRight_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (currentProfile is null)
-                return;
-
-            if (Monitor.TryEnter(updateLock))
-            {
-                currentProfile.thumb_anti_deadzone_right = (float)SliderAntiDeadzoneRight.Value;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);

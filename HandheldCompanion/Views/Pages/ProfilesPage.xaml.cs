@@ -366,20 +366,6 @@ namespace HandheldCompanion.Views.Pages
 
                 // Controller settings
                 Toggle_ThumbImproveCircularityLeft.IsOn = currentProfile.thumb_improve_circularity_left;
-                NumberBox_JoystickInnerDeadZoneLeft.Value = currentProfile.thumb_deadzone_inner_left;
-                NumberBox_JoystickOuterDeadZoneLeft.Value = currentProfile.thumb_deadzone_outer_left;
-
-                Toggle_ThumbImproveCircularityRight.IsOn = currentProfile.thumb_improve_circularity_right;
-                NumberBox_JoystickInnerDeadZoneRight.Value = currentProfile.thumb_deadzone_inner_right;
-                NumberBox_JoystickOuterDeadZoneRight.Value = currentProfile.thumb_deadzone_outer_right;
-
-                tb_ProfileAntiDeadzoneLeft.Value = currentProfile.thumb_anti_deadzone_left;
-                tb_ProfileAntiDeadzoneRight.Value = currentProfile.thumb_anti_deadzone_right;
-
-                NumberBox_TriggerInnerDeadZoneLeft.Value = currentProfile.trigger_deadzone_inner_left;
-                NumberBox_TriggerOuterDeadZoneLeft.Value = currentProfile.trigger_deadzone_outer_left;
-                NumberBox_TriggerInnerDeadZoneRight.Value = currentProfile.trigger_deadzone_inner_right;
-                NumberBox_TriggerOuterDeadZoneRight.Value = currentProfile.trigger_deadzone_outer_right;
 
                 // Motion control settings
                 tb_ProfileGyroValue.Value = currentProfile.GyrometerMultiplier;
@@ -481,21 +467,6 @@ namespace HandheldCompanion.Views.Pages
 
             // Controller settings
             currentProfile.thumb_improve_circularity_left = (bool)Toggle_ThumbImproveCircularityLeft.IsOn;
-            currentProfile.thumb_deadzone_inner_left = (int)NumberBox_JoystickInnerDeadZoneLeft.Value;
-            currentProfile.thumb_deadzone_outer_left = (int)NumberBox_JoystickOuterDeadZoneLeft.Value;
-            
-            currentProfile.thumb_improve_circularity_right = (bool)Toggle_ThumbImproveCircularityRight.IsOn;
-            currentProfile.thumb_deadzone_inner_right = (int)NumberBox_JoystickInnerDeadZoneRight.Value;
-            currentProfile.thumb_deadzone_outer_right = (int)NumberBox_JoystickOuterDeadZoneRight.Value;
-
-            currentProfile.thumb_anti_deadzone_left = (float)tb_ProfileAntiDeadzoneLeft.Value;
-            currentProfile.thumb_anti_deadzone_right = (float)tb_ProfileAntiDeadzoneRight.Value;
-
-            currentProfile.trigger_deadzone_inner_left = (int)NumberBox_TriggerInnerDeadZoneLeft.Value;
-            currentProfile.trigger_deadzone_outer_left = (int)NumberBox_TriggerOuterDeadZoneLeft.Value;
-
-            currentProfile.trigger_deadzone_inner_right = (int)NumberBox_TriggerInnerDeadZoneRight.Value;
-            currentProfile.trigger_deadzone_outer_right = (int)NumberBox_TriggerOuterDeadZoneRight.Value;
 
             // Motion control settings
             currentProfile.GyrometerMultiplier = (float)tb_ProfileGyroValue.Value;
@@ -570,69 +541,9 @@ namespace HandheldCompanion.Views.Pages
             // do something
         }
 
-        private void NumberBox_JoystickInnerDeadZoneLeft_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_JoystickInnerDeadZoneLeft.Maximum = 100 - NumberBox_JoystickOuterDeadZoneLeft.Value - 1;
-        }
-
-        private void NumberBox_JoystickOuterDeadZoneLeft_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_JoystickOuterDeadZoneLeft.Maximum = 100 - NumberBox_JoystickInnerDeadZoneLeft.Value - 1;
-        }
         private void Toggle_ThumbImproveCircularityRight_Toggled(object sender, RoutedEventArgs e)
         {
             // do something
-        }
-        private void NumberBox_JoystickInnerDeadZoneRight_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_JoystickInnerDeadZoneRight.Maximum = 100 - NumberBox_JoystickOuterDeadZoneRight.Value - 1;
-        }
-
-        private void NumberBox_JoystickOuterDeadZoneRight_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_JoystickOuterDeadZoneRight.Maximum = 100 - NumberBox_JoystickInnerDeadZoneRight.Value - 1;
-        }
-        private void NumberBox_TriggerInnerDeadZoneLeft_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_TriggerInnerDeadZoneLeft.Maximum = 100 - NumberBox_TriggerOuterDeadZoneLeft.Value - 1;
-        }
-
-        private void NumberBox_TriggerOuterDeadZoneLeft_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_TriggerOuterDeadZoneLeft.Maximum = 100 - NumberBox_TriggerInnerDeadZoneLeft.Value - 1;
-        }
-        private void NumberBox_TriggerInnerDeadZoneRight_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_TriggerInnerDeadZoneRight.Maximum = 100 - NumberBox_TriggerOuterDeadZoneRight.Value - 1;
-        }
-
-        private void NumberBox_TriggerOuterDeadZoneRight_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_TriggerOuterDeadZoneRight.Maximum = 100 - NumberBox_TriggerInnerDeadZoneRight.Value - 1;
         }
 
         private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)

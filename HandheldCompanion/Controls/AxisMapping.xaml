@@ -48,14 +48,59 @@
                                     <ColumnDefinition Width="8*" MinWidth="120"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="Invert" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Invert Axis" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
 
                                 <ui:ToggleSwitch Name="Axis_Invert" Grid.Column="1" HorizontalAlignment="Right" Toggled="Axis_Invert_Toggled" OffContent="" OnContent="" Margin="0,0,-100,0"/>
                             </Grid>
-                            
+
                             <!-- Separator -->
                             <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
                             
+                            <!-- Inner deadzone -->
+                            <Grid>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock Text="Inner deadzone (%)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Value, ElementName=Axis_InnerDeadzone_Slider, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                                    </Grid>
+
+                                    <Slider Name="Axis_InnerDeadzone_Slider" FlowDirection="LeftToRight" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis_InnerDeadzone_Slider_ValueChanged"/>
+                                </ui:SimpleStackPanel>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
+                            <!-- Inner deadzone -->
+                            <Grid>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock Text="Outer deadzone (%)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Value, ElementName=Axis_OuterDeadzone_Slider, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                                    </Grid>
+
+                                    <Slider Name="Axis_OuterDeadzone_Slider" FlowDirection="RightToLeft" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis_OuterDeadzone_Slider_ValueChanged"/>
+                                </ui:SimpleStackPanel>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
+                            <!-- Inner deadzone -->
+                            <Grid>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock Text="Anti deadzone (%)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Value, ElementName=Axis_AntiDeadZone_Slider, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                                    </Grid>
+
+                                    <Slider Name="Axis_AntiDeadZone_Slider" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis_AntiDeadZone_Slider_ValueChanged"/>
+                                </ui:SimpleStackPanel>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </Grid>

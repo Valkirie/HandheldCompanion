@@ -27,9 +27,6 @@ namespace ControllerService.Targets
         protected Vector2 LeftThumb;
         protected Vector2 RightThumb;
 
-        protected float L2;
-        protected float R2;
-
         public event ConnectedEventHandler Connected;
         public delegate void ConnectedEventHandler(ViGEmTarget target);
 
@@ -95,38 +92,12 @@ namespace ControllerService.Targets
             LeftThumb = new Vector2(Inputs.AxisState[AxisFlags.LeftThumbX], Inputs.AxisState[AxisFlags.LeftThumbY]);
             RightThumb = new Vector2(Inputs.AxisState[AxisFlags.RightThumbX], Inputs.AxisState[AxisFlags.RightThumbY]);
 
-            // Apply user defined scaled radial inner and outer deadzones to left and right joysticks
-            LeftThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(
-                LeftThumb,
-                ControllerService.currentProfile.thumb_deadzone_inner_left,
-                ControllerService.currentProfile.thumb_deadzone_outer_left);
-
-            RightThumb = InputUtils.ThumbScaledRadialInnerOuterDeadzone(
-                RightThumb,
-                ControllerService.currentProfile.thumb_deadzone_inner_right,
-                ControllerService.currentProfile.thumb_deadzone_outer_right);
-
-            // Apply user defined in game deadzone setting compensation ie anti deadzone prior to UMC additions
-            LeftThumb = InputUtils.ApplyAntiDeadzone(LeftThumb, ControllerService.currentProfile.thumb_anti_deadzone_left);
-            RightThumb = InputUtils.ApplyAntiDeadzone(RightThumb, ControllerService.currentProfile.thumb_anti_deadzone_right);
-
             // Improve joystick circularity
             if (ControllerService.currentProfile.thumb_improve_circularity_left)
                 LeftThumb = InputUtils.ImproveCircularity(LeftThumb);
 
             if (ControllerService.currentProfile.thumb_improve_circularity_right)
                 RightThumb = InputUtils.ImproveCircularity(RightThumb);
-
-            // Trigger deadzone adjustments
-            L2 = InputUtils.TriggerInnerOuterDeadzone(
-                Inputs.AxisState[AxisFlags.L2],
-                ControllerService.currentProfile.trigger_deadzone_inner_left,
-                ControllerService.currentProfile.trigger_deadzone_outer_left);
-
-            R2 = InputUtils.TriggerInnerOuterDeadzone(
-                Inputs.AxisState[AxisFlags.R2],
-                ControllerService.currentProfile.trigger_deadzone_inner_right,
-                ControllerService.currentProfile.trigger_deadzone_outer_right);
 
             if (ControllerService.currentProfile.MotionEnabled)
             {

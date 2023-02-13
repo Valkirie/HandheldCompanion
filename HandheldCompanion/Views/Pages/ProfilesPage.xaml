@@ -214,28 +214,6 @@
                                 <!-- Separator -->
                                 <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
 
-                                <!-- Joystick deadzone left -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
-                                        <ColumnDefinition MaxWidth="10"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_JoystickDeadZoneLeft}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_JoystickDeadZoneLeftDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                                    </StackPanel>
-
-                                    <ui:NumberBox Name="NumberBox_JoystickInnerDeadZoneLeft" Grid.Column="1" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_JoystickInnerDeadZoneLeft_ValueChanged"></ui:NumberBox>
-                                    <ui:NumberBox Name="NumberBox_JoystickOuterDeadZoneLeft" Grid.Column="3" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_JoystickOuterDeadZoneLeft_ValueChanged"></ui:NumberBox>
-                                    
-                                </Grid>
-
-                                <!-- Separator -->
-                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
-
                                 <!-- Improve circularity right -->
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -250,112 +228,6 @@
 
                                     <ui:ToggleSwitch Grid.Column="1" Name="Toggle_ThumbImproveCircularityRight" Toggled="Toggle_ThumbImproveCircularityRight_Toggled"/>
                                 </Grid>
-
-                                <!-- Separator -->
-                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
-
-
-                                <!-- Joystick deadzone right -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
-                                        <ColumnDefinition MaxWidth="10"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_JoystickDeadZoneRight}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_JoystickDeadZoneRightDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                                    </StackPanel>
-
-                                    <ui:NumberBox Name="NumberBox_JoystickInnerDeadZoneRight" Grid.Column="1" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_JoystickInnerDeadZoneRight_ValueChanged"></ui:NumberBox>
-                                    <ui:NumberBox Name="NumberBox_JoystickOuterDeadZoneRight" Grid.Column="3" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_JoystickOuterDeadZoneRight_ValueChanged"></ui:NumberBox>
-
-                                </Grid>
-
-                                <!-- Separator -->
-                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
-
-                                <!-- anti deadzone -->
-                                <Grid IsEnabled="{Binding ElementName=ControllerSettings, Path=IsOn}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzone}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                                    </StackPanel>
-
-                                    <ui:SimpleStackPanel Spacing="6" Grid.Column="1" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                        <StackPanel>
-                                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="Left joystick" />
-
-                                            <DockPanel>
-                                                <TextBlock Width="25" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzoneLeft, Mode=OneWay}" />
-                                                <TextBlock VerticalAlignment="Center" Text="%" />
-                                                <Slider Margin="6,0,0,0" Name="tb_ProfileAntiDeadzoneLeft" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
-                                            </DockPanel>
-                                        </StackPanel>
-
-                                        <StackPanel>
-                                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="Right joystick" />
-                                            
-                                            <DockPanel>
-                                                <TextBlock Width="25" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding Value, ElementName=tb_ProfileAntiDeadzoneRight, Mode=OneWay}" />
-                                                <TextBlock VerticalAlignment="Center" Text="%" />
-                                                <Slider Margin="6,0,0,0" Name="tb_ProfileAntiDeadzoneRight" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" LargeChange="10" Maximum="40" TickPlacement="BottomRight" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" />
-                                            </DockPanel>
-                                        </StackPanel>
-                                    </ui:SimpleStackPanel>
-                                </Grid>
-
-                                <!-- Separator -->
-                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
-
-                                <!-- Trigger deadzone left -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
-                                        <ColumnDefinition MaxWidth="10"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TriggerDeadZoneLeft}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TriggerDeadZoneLeftDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                                    </StackPanel>
-
-                                    <ui:NumberBox Name="NumberBox_TriggerInnerDeadZoneLeft" Grid.Column="1" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TriggerInnerDeadZoneLeft_ValueChanged"></ui:NumberBox>
-                                    <ui:NumberBox Name="NumberBox_TriggerOuterDeadZoneLeft" Grid.Column="3" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TriggerOuterDeadZoneLeft_ValueChanged"></ui:NumberBox>
-
-                                </Grid>
-
-                                <!-- Separator -->
-                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
-
-                                <!-- Trigger deadzone right -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
-                                        <ColumnDefinition MaxWidth="10"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="120"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TriggerDeadZoneRight}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_TriggerDeadZoneRightDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                                    </StackPanel>
-
-                                    <ui:NumberBox Name="NumberBox_TriggerInnerDeadZoneRight" Grid.Column="1" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TriggerInnerDeadZoneRight_ValueChanged"></ui:NumberBox>
-                                    <ui:NumberBox Name="NumberBox_TriggerOuterDeadZoneRight" Grid.Column="3" VerticalAlignment="Center" Value="0" Minimum="0" Maximum="100" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TriggerOuterDeadZoneRight_ValueChanged"></ui:NumberBox>
-
-                                </Grid>
-
                             </ui:SimpleStackPanel>
                         </Expander.Content>
                     </Expander>
@@ -664,8 +536,8 @@
                                 <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ControllerSettings}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ControllerSettingsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                                    <TextBlock Text="Controller layout" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Text="Change the virtual controller layout" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 

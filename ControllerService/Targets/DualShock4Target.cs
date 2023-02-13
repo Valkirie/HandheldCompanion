@@ -130,9 +130,9 @@ namespace ControllerService.Targets
                 if (Inputs.ButtonState[ButtonFlags.R1])
                     tempButtons |= DualShock4Button.ShoulderRight.Value;
 
-                if (L2 > 0)
+                if (Inputs.AxisState[AxisFlags.L2] > 0)
                     tempButtons |= DualShock4Button.TriggerLeft.Value;
-                if (R2 > 0)
+                if (Inputs.AxisState[AxisFlags.R2] > 0)
                     tempButtons |= DualShock4Button.TriggerRight.Value;
 
                 if (Inputs.ButtonState[ButtonFlags.DPadUp] && Inputs.ButtonState[ButtonFlags.DPadLeft])
@@ -165,8 +165,8 @@ namespace ControllerService.Targets
                 outDS4Report.wButtons = tempButtons;
                 outDS4Report.wButtons |= tempDPad.Value;
 
-                outDS4Report.bTriggerL = (byte)L2;
-                outDS4Report.bTriggerR = (byte)R2;
+                outDS4Report.bTriggerL = (byte)Inputs.AxisState[AxisFlags.L2];
+                outDS4Report.bTriggerR = (byte)Inputs.AxisState[AxisFlags.R2];
 
                 outDS4Report.bThumbLX = InputUtils.NormalizeXboxInput(LeftThumb.X);
                 outDS4Report.bThumbLY = (byte)(byte.MaxValue - InputUtils.NormalizeXboxInput(LeftThumb.Y));

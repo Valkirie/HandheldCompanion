@@ -126,6 +126,9 @@ namespace HandheldCompanion.Controls
 
                 // settings
                 Axis_Invert.IsOn = ((AxisActions)this.Actions).AxisInverted;
+                Axis_InnerDeadzone_Slider.Value = ((AxisActions)this.Actions).AxisDeadZoneInner;
+                Axis_OuterDeadzone_Slider.Value = ((AxisActions)this.Actions).AxisDeadZoneOuter;
+                Axis_AntiDeadZone_Slider.Value = ((AxisActions)this.Actions).AxisAntiDeadZone;
             }
             else if (type == ActionType.Keyboard)
             {
@@ -213,6 +216,45 @@ namespace HandheldCompanion.Controls
             {
                 case ActionType.Axis:
                     ((AxisActions)this.Actions).AxisInverted = Axis_Invert.IsOn;
+                    break;
+            }
+        }
+
+        private void Axis_InnerDeadzone_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.Actions is null)
+                return;
+
+            switch (this.Actions.ActionType)
+            {
+                case ActionType.Axis:
+                    ((AxisActions)this.Actions).AxisDeadZoneInner = (int)Axis_InnerDeadzone_Slider.Value;
+                    break;
+            }
+        }
+
+        private void Axis_OuterDeadzone_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.Actions is null)
+                return;
+
+            switch (this.Actions.ActionType)
+            {
+                case ActionType.Axis:
+                    ((AxisActions)this.Actions).AxisDeadZoneOuter = (int)Axis_OuterDeadzone_Slider.Value;
+                    break;
+            }
+        }
+
+        private void Axis_AntiDeadZone_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.Actions is null)
+                return;
+
+            switch (this.Actions.ActionType)
+            {
+                case ActionType.Axis:
+                    ((AxisActions)this.Actions).AxisAntiDeadZone = (int)Axis_AntiDeadZone_Slider.Value;
                     break;
             }
         }
