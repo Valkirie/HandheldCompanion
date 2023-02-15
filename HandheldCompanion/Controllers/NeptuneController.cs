@@ -70,6 +70,11 @@ namespace HandheldCompanion.Controllers
             RefreshControls();
 
             // Specific buttons
+            ButtonSupport.Add(ButtonFlags.L4);
+            ButtonSupport.Add(ButtonFlags.R4);
+            ButtonSupport.Add(ButtonFlags.L5);
+            ButtonSupport.Add(ButtonFlags.R5);
+
             AxisSupport.Add(AxisFlags.RightPadX);
             AxisSupport.Add(AxisFlags.RightPadY);
         }
@@ -101,8 +106,8 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.Start] = input.State.ButtonState[NeptuneControllerButton.BtnOptions];
             Inputs.ButtonState[ButtonFlags.Back] = input.State.ButtonState[NeptuneControllerButton.BtnMenu];
 
-            Inputs.ButtonState[ButtonFlags.Special] = input.State.ButtonState[NeptuneControllerButton.BtnSteam];
-            Inputs.ButtonState[ButtonFlags.OEM1] = input.State.ButtonState[NeptuneControllerButton.BtnQuickAccess];
+            Inputs.ButtonState[ButtonFlags.OEM1] = input.State.ButtonState[NeptuneControllerButton.BtnSteam];
+            Inputs.ButtonState[ButtonFlags.OEM2] = input.State.ButtonState[NeptuneControllerButton.BtnQuickAccess];
 
             var L2 = input.State.AxesState[NeptuneControllerAxis.L2] * byte.MaxValue / short.MaxValue;
             var R2 = input.State.AxesState[NeptuneControllerAxis.R2] * byte.MaxValue / short.MaxValue;
@@ -340,6 +345,50 @@ namespace HandheldCompanion.Controllers
         public void SetVirtualMuted(bool mute)
         {
             isVirtualMuted = mute;
+        }
+
+        public override string GetGlyph(ButtonFlags button)
+        {
+            switch (button)
+            {
+                case ButtonFlags.B1:
+                    return "\u21D3"; // Button A
+                case ButtonFlags.B2:
+                    return "\u21D2"; // Button B
+                case ButtonFlags.B3:
+                    return "\u21D0"; // Button X
+                case ButtonFlags.B4:
+                    return "\u21D1"; // Button Y
+                case ButtonFlags.L1:
+                    return "\u2198";
+                case ButtonFlags.R1:
+                    return "\u2199";
+                case ButtonFlags.Back:
+                    return "\u21FA";
+                case ButtonFlags.Start:
+                    return "\u21FB";
+                case ButtonFlags.L2:
+                    return "\u2196";
+                case ButtonFlags.R2:
+                    return "\u2197";
+                case ButtonFlags.Special:
+                    return "\uE001";
+            }
+
+            return base.GetGlyph(button);
+        }
+
+        public override string GetGlyph(AxisFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisFlags.L2:
+                    return "\u2196";
+                case AxisFlags.R2:
+                    return "\u2197";
+            }
+
+            return base.GetGlyph(axis);
         }
     }
 }

@@ -240,38 +240,18 @@ namespace HandheldCompanion.Managers
 
                 foreach (ButtonFlags button in inputsChord.State.Buttons)
                 {
-                    switch(button)
+                    if (controller is not null && controller.IsButtonSupported(button))
                     {
-                        default:
-                            {
-                                if (controller is null)
-                                    continue;
+                        FontIcon fontIcon = controller.GetFontIcon(button);
+                        if (fontIcon.Foreground is null)
+                            fontIcon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
 
-                                FontIcon fontIcon = controller.GetFontIcon(button);
-                                if (fontIcon.Foreground is null)
-                                    fontIcon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-
-                                inputContent.Children.Add(fontIcon);
-                            }
-                            break;
-                        case ButtonFlags.OEM1:
-                        case ButtonFlags.OEM2:
-                        case ButtonFlags.OEM3:
-                        case ButtonFlags.OEM4:
-                        case ButtonFlags.OEM5:
-                        case ButtonFlags.OEM6:
-                        case ButtonFlags.OEM7:
-                        case ButtonFlags.OEM8:
-                        case ButtonFlags.OEM9:
-                        case ButtonFlags.OEM10:
-                            {
-                                if (device is null)
-                                    continue;
-
-                                Label buttonLabel = new Label() { Content = device.GetButtonName(button) };
-                                inputContent.Children.Add(buttonLabel);
-                            }
-                            break;
+                        inputContent.Children.Add(fontIcon);
+                    }
+                    else if (device is not null)
+                    {
+                        Label buttonLabel = new Label() { Content = device.GetButtonName(button) };
+                        inputContent.Children.Add(buttonLabel);
                     }
                 }
 

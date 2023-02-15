@@ -40,7 +40,7 @@ namespace ControllerCommon.Controllers
             ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
             ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
             ButtonFlags.L1, ButtonFlags.R1,
-            // ButtonFlags.L2, ButtonFlags.R2,
+            ButtonFlags.L2, ButtonFlags.R2,
             ButtonFlags.LeftThumb, ButtonFlags.RightThumb,
             // ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
             // ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
