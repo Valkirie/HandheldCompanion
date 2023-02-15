@@ -16,29 +16,35 @@ namespace ControllerCommon
         {
             var service = new HidHideControlService();
 
+            // verifying HidHide is installed
             if (!service.IsInstalled)
             {
                 LogManager.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
                 throw new InvalidOperationException();
             }
 
-            // verifying HidHide is installed
-            string InstallPath = RegistryUtils.GetHKLM(@"SOFTWARE\Nefarius Software Solutions e.U.\HidHide", "Path");
+            // prepare backup path
+            string InstallPath = RegistryUtils.GetString(@"SOFTWARE\Nefarius Software Solutions e.U.\HidHide", "Path");
             if (!string.IsNullOrEmpty(InstallPath))
+            {
                 InstallPath = Path.Combine(InstallPath, "x64", "HidHideCLI.exe");
 
-            process = new Process
-            {
-                StartInfo =
+                if (File.Exists(InstallPath))
                 {
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
-                    FileName = InstallPath,
-                    Verb = "runas"
+                    process = new Process
+                    {
+                        StartInfo =
+                        {
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true,
+                            CreateNoWindow = true,
+                            FileName = InstallPath,
+                            Verb = "runas"
+                        }
+                    };
                 }
-            };
+            }
         }
 
         public static List<string> GetRegisteredApplications()
@@ -90,6 +96,9 @@ namespace ControllerCommon
             }
             catch
             {
+                if (process is null)
+                    return;
+
                 process.StartInfo.Arguments = $"--app-unreg \"{fileName}\"";
                 process.Start();
                 process.WaitForExit();
@@ -112,6 +121,9 @@ namespace ControllerCommon
             }
             catch
             {
+                if (process is null)
+                    return;
+
                 process.StartInfo.Arguments = $"--app-reg \"{fileName}\"";
                 process.Start();
                 process.WaitForExit();
