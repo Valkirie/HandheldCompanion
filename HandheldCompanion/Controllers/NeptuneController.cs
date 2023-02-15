@@ -65,9 +65,13 @@ namespace HandheldCompanion.Controllers
             bool Muted = SettingsManager.GetBoolean("SteamDeckMuteController");
             SetVirtualMuted(Muted);
 
-            // ui
+            // UI
             DrawControls();
             RefreshControls();
+
+            // Specific buttons
+            AxisSupport.Add(AxisFlags.RightPadX);
+            AxisSupport.Add(AxisFlags.RightPadY);
         }
 
         public override string ToString()
@@ -145,17 +149,33 @@ namespace HandheldCompanion.Controllers
             Inputs.AxisState[AxisFlags.L2] = (short)L2;
             Inputs.AxisState[AxisFlags.R2] = (short)R2;
 
-            Inputs.AxisState[AxisFlags.LeftPadX] = (short)(short.MaxValue + input.State.AxesState[NeptuneControllerAxis.LeftPadX]);
-            Inputs.AxisState[AxisFlags.LeftPadY] = (short)(short.MaxValue - input.State.AxesState[NeptuneControllerAxis.LeftPadY]);
-
-            Inputs.AxisState[AxisFlags.RightPadX] = (short)(short.MaxValue + input.State.AxesState[NeptuneControllerAxis.RightPadX]);
-            Inputs.AxisState[AxisFlags.RightPadY] = (short)(short.MaxValue - input.State.AxesState[NeptuneControllerAxis.RightPadY]);
-
             Inputs.ButtonState[ButtonFlags.LPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch];
             Inputs.ButtonState[ButtonFlags.LPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnLPadPress];
 
+            if (Inputs.ButtonState[ButtonFlags.LPadTouch])
+            {
+                Inputs.AxisState[AxisFlags.LeftPadX] = input.State.AxesState[NeptuneControllerAxis.LeftPadX];
+                Inputs.AxisState[AxisFlags.LeftPadY] = input.State.AxesState[NeptuneControllerAxis.LeftPadY];
+            }
+            else
+            {
+                Inputs.AxisState[AxisFlags.LeftPadX] = 0;
+                Inputs.AxisState[AxisFlags.LeftPadY] = 0;
+            }
+
             Inputs.ButtonState[ButtonFlags.RPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch];
             Inputs.ButtonState[ButtonFlags.RPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnRPadPress];
+
+            if (Inputs.ButtonState[ButtonFlags.RPadTouch])
+            {
+                Inputs.AxisState[AxisFlags.RightPadX] = input.State.AxesState[NeptuneControllerAxis.RightPadX];
+                Inputs.AxisState[AxisFlags.RightPadY] = input.State.AxesState[NeptuneControllerAxis.RightPadY];
+            }
+            else
+            {
+                Inputs.AxisState[AxisFlags.RightPadX] = 0;
+                Inputs.AxisState[AxisFlags.RightPadY] = 0;
+            }
 
             // temporary workaround
             if (IsLizardMouseEnabled())

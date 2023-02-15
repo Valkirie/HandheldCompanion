@@ -23,6 +23,10 @@ namespace ControllerCommon.Controllers
             { AxisFlags.LeftThumbX, Gamepad.LeftThumbDeadZone },
             { AxisFlags.L2, Gamepad.TriggerThreshold },
             { AxisFlags.R2, Gamepad.TriggerThreshold },
+            { AxisFlags.LeftPadX, Gamepad.TriggerThreshold },
+            { AxisFlags.LeftPadY, Gamepad.TriggerThreshold },
+            { AxisFlags.RightPadX, Gamepad.TriggerThreshold },
+            { AxisFlags.RightPadY, Gamepad.TriggerThreshold },
         };
 
         public int Timestamp;

@@ -1,7 +1,10 @@
 ﻿using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Simulators;
+using PrecisionTiming;
 using System;
+using System.Diagnostics;
+using System.Drawing;
 using static HandheldCompanion.Simulators.MouseSimulator;
 
 namespace HandheldCompanion.Actions
@@ -15,13 +18,27 @@ namespace HandheldCompanion.Actions
         private bool IsCursorUp { get; set; }
 
         // settings
-        public float Sensivity { get; set; } = 10.0f;
+        public float Sensivity { get; set; } = 20.0f;
+        public bool IsTrackpad { get; set; } = true;
 
         public MouseActions()
         {
             this.ActionType = ActionType.Mouse;
             this.IsCursorDown = false;
             this.IsCursorUp = true;
+
+            this.Value = (short)0;
+            this.prevValue = (short)0;
+
+            this.UpdateTimer = new PrecisionTimer();
+            this.UpdateTimer.SetInterval(300);
+            this.UpdateTimer.SetAutoResetMode(false);
+            this.UpdateTimer.Tick += (e, sender) => ResetCursor();
+        }
+
+        private void ResetCursor()
+        {
+            entrypoint = Convert.ToInt16(prevValue);
         }
 
         public MouseActions(MouseActionsType type) : this()
@@ -95,22 +112,68 @@ namespace HandheldCompanion.Actions
             }
         }
 
+        private short entrypoint = 0;
+        private Point entryMousePos = new(0, 0);
+
         public override void Execute(AxisFlags axis, short value)
         {
-            // update current value
-            this.Value = value;
+            if (IsTrackpad)
+            {
+                // no touch input
+                if (value == 0)
+                {
+                    entrypoint = 0;
+                    prevValue = 0;
+                    return;
+                }
+
+                // touch input
+                var MousePosition = MouseSimulator.GetMousePosition();
+                if (Convert.ToInt16(prevValue) == 0)
+                {
+                    entrypoint = value;
+                    prevValue = value;
+                    entryMousePos = MousePosition;
+                    return;
+                }
+
+                // get travel distance between two ticks (10ms)
+                double dist = Math.Abs(value - Convert.ToInt16(prevValue));
+
+                // get relative distance between entry point and current point
+                var output = (value - Convert.ToInt16(entrypoint)) / 300;
+
+                // update previous value
+                prevValue = value;
+
+                switch (MouseType)
+                {
+                    case MouseActionsType.MoveByX:
+                        int outputX = (int)(entryMousePos.X + output);
+                        MouseSimulator.MoveTo(outputX, MousePosition.Y);
+                        break;
+                    case MouseActionsType.MoveByY:
+                        int outputY = (int)(entryMousePos.Y - output);
+                        MouseSimulator.MoveTo(MousePosition.X, outputY);
+                        break;
+                }
+
+                return;
+            }
+
+            short MoveBy = (short)(Convert.ToDouble(value) / short.MaxValue * Sensivity);
 
             switch (MouseType)
             {
                 case MouseActionsType.MoveByX:
-                    short x = (short)((float)value / short.MaxValue * Sensivity);
-                    MouseSimulator.MoveBy(x, 0);
+                    MouseSimulator.MoveBy(MoveBy, 0);
                     break;
                 case MouseActionsType.MoveByY:
-                    short y = (short)((float)value / short.MaxValue * Sensivity);
-                    MouseSimulator.MoveBy(0, -y);
+                    MouseSimulator.MoveBy(0, -MoveBy);
                     break;
             }
+
+            this.prevValue = value;
         }
     }
 }

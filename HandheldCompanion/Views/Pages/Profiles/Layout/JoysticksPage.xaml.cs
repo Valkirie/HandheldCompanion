@@ -35,6 +35,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         public static List<AxisFlags> LeftThumbAxis = new()
         {
             AxisFlags.LeftThumbX, AxisFlags.LeftThumbY,
+            AxisFlags.RightPadX, AxisFlags.RightPadY,
         };
 
         public Dictionary<ButtonFlags, ButtonMapping> MappingButtons = new();

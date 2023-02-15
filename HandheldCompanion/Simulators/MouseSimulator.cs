@@ -1,5 +1,6 @@
 ﻿using GregsStack.InputSimulatorStandard;
 using System;
+using System.Drawing;
 
 namespace HandheldCompanion.Simulators
 {
@@ -57,6 +58,16 @@ namespace HandheldCompanion.Simulators
         public static void MoveBy(int x, int y)
         {
             InputSimulator.Mouse.MoveMouseBy(x, y);
+        }
+
+        public static void MoveTo(int x, int y)
+        {
+            InputSimulator.Mouse.MoveMouseTo(x, y);
+        }
+
+        public static Point GetMousePosition()
+        {
+            return InputSimulator.Mouse.Position;
         }
     }
 }

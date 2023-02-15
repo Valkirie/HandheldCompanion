@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Inputs;
+using PrecisionTiming;
 using System;
 
 namespace ControllerCommon.Actions
@@ -29,7 +30,9 @@ namespace ControllerCommon.Actions
         public bool Toggle { get; set; }
         protected bool IsToggled;
 
+        // move me
         protected const short UPDATE_INTERVAL = 10;
+        protected PrecisionTimer UpdateTimer;
 
         public virtual void Execute(ButtonFlags button, bool value)
         {

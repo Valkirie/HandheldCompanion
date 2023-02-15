@@ -181,6 +181,8 @@ namespace HandheldCompanion.Managers
         private static void HidDeviceArrived(PnPDetails details, DeviceEventArgs obj)
         {
             DirectInput directInput = new DirectInput();
+            int VendorId = details.attributes.VendorID;
+            int ProductId = details.attributes.ProductID;
 
             // use dispatcher because we're drawing UI elements when initializing the controller object
             Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -209,19 +211,19 @@ namespace HandheldCompanion.Managers
                 }
 
                 // unsupported controller
-                if (joystick is null)
+                if (joystick is not null)
                 {
-                    LogManager.LogError("Couldn't find any DInput controller with InterfacePath:{0}", details.SymLink);
-                    return;
+                    VendorId = joystick.Properties.VendorId;
+                    ProductId = joystick.Properties.ProductId;
                 }
 
                 // search for a supported controller
-                switch (joystick.Properties.VendorId)
+                switch (VendorId)
                 {
                     // SONY
                     case 1356:
                         {
-                            switch (joystick.Properties.ProductId)
+                            switch (ProductId)
                             {
                                 // DualShock4
                                 case 1476:
@@ -235,7 +237,7 @@ namespace HandheldCompanion.Managers
                     // STEAM
                     case 0x28DE:
                         {
-                            switch (joystick.Properties.ProductId)
+                            switch (ProductId)
                             {
                                 // STEAM DECK
                                 case 0x1205:
@@ -248,7 +250,7 @@ namespace HandheldCompanion.Managers
                     // NINTENDO
                     case 0x057E:
                         {
-                            switch (joystick.Properties.ProductId)
+                            switch (ProductId)
                             {
                                 // Nintendo Wireless Gamepad
                                 case 0x2009:

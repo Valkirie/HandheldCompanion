@@ -243,9 +243,6 @@ namespace HandheldCompanion.Managers
                     // axis to mouse movements
                     case ActionType.Mouse:
                         {
-                            if (below_deadzone)
-                                break;
-
                             MouseActions mAction = action as MouseActions;
                             mAction.Execute(axis, (short)value);
                         }
