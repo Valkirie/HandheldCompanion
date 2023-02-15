@@ -28,7 +28,11 @@ namespace HandheldCompanion.Views.QuickPages
 
             DesktopManager.VolumeNotification += DeviceManager_VolumeNotification;
             DesktopManager.BrightnessNotification += DesktopManager_BrightnessNotification;
+            DesktopManager.Initialized += DesktopManager_Initialized;
+        }
 
+        private void DesktopManager_Initialized()
+        { 
             // get current system brightness
             switch (DesktopManager.HasBrightnessSupport())
             {

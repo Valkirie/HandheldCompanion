@@ -399,9 +399,6 @@ namespace HandheldCompanion.Managers
 
         public static short GetBrightness()
         {
-            if (!BrightnessSupport)
-                return -1;
-
             try
             {
                 using (var mclass = new ManagementClass("WmiMonitorBrightness"))
