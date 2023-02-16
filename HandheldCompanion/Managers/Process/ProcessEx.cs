@@ -84,7 +84,7 @@ namespace HandheldCompanion.Managers
                 }
 
                 // UI thread
-                Application.Current.Dispatcher.Invoke(new Action(() =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     if (MainWindowHandle != IntPtr.Zero)
                     {
@@ -155,7 +155,7 @@ namespace HandheldCompanion.Managers
 
                     // manage process throttling
                     processQoS.Text = EnumUtils.GetDescriptionFromEnumValue(EcoQoS);
-                }));
+                });
             }
             catch { }
         }
@@ -317,21 +317,21 @@ namespace HandheldCompanion.Managers
         private void ProcessResume_Click(object sender, RoutedEventArgs e)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 processResume.IsEnabled = false;
                 ProcessManager.ResumeProcess(this);
-            }));
+            });
         }
 
         private void ProcessSuspend_Click(object sender, RoutedEventArgs e)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 processSuspend.IsEnabled = false;
                 ProcessManager.SuspendProcess(this);
-            }));
+            });
         }
     }
 }

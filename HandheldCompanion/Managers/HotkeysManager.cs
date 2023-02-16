@@ -137,7 +137,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // UI thread
-            Dispatcher.CurrentDispatcher.Invoke(new Action(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -150,7 +150,7 @@ namespace HandheldCompanion.Managers
                         }
                         break;
                 }
-            }));
+            });
         }
 
         private static void StartListening(Hotkey hotkey, ListenerType type)
@@ -195,7 +195,8 @@ namespace HandheldCompanion.Managers
 
         private static void TriggerUpdated(string listener, InputsChord inputs, ListenerType type)
         {
-            Dispatcher.CurrentDispatcher.Invoke(new Action(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // we use @ as a special character to link two ore more listeners together
                 listener = listener.TrimEnd('@');
@@ -208,7 +209,7 @@ namespace HandheldCompanion.Managers
                     // overwrite current file
                     SerializeHotkey(hotkey, true);
                 }
-            }));
+            });
         }
 
         private static Hotkey ProcessHotkey(string fileName)
@@ -252,10 +253,10 @@ namespace HandheldCompanion.Managers
             foreach (Hotkey hotkey in hotkeys)
             {
                 // UI thread
-                Dispatcher.CurrentDispatcher.Invoke(new Action(() =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     hotkey.Highlight();
-                }));
+                });
 
                 // These are special shortcut keys with no related events
                 if (hotkey == hotkeys.Last() && hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.Embedded)

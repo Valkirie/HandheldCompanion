@@ -77,7 +77,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(brightnessLock))
             {
                 // UI thread
-                Dispatcher.CurrentDispatcher.Invoke(() =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     SliderBrightness.Value = brightness;
                 });
@@ -91,7 +91,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(volumeLock))
             {
                 // UI thread
-                Dispatcher.CurrentDispatcher.Invoke(() =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     // todo: update volume icon on update
                     SliderVolume.Value = volume;

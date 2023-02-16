@@ -103,7 +103,7 @@ namespace HandheldCompanion.Managers
         private static void SettingsManager_SettingValueChanged(string name, object value)
         {
             // UI thread
-            Dispatcher.CurrentDispatcher.Invoke(new Action(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -150,7 +150,7 @@ namespace HandheldCompanion.Managers
                         }
                         break;
                 }
-            }));
+            });
         }
 
         private static void SystemManager_Initialized()
@@ -187,7 +187,7 @@ namespace HandheldCompanion.Managers
             int ProductId = details.attributes.ProductID;
 
             // UI thread
-            Dispatcher.CurrentDispatcher.Invoke(new Action(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // initialize controller vars
                 Joystick joystick = null;
@@ -285,7 +285,7 @@ namespace HandheldCompanion.Managers
 
                 // raise event
                 ControllerPlugged?.Invoke(controller);
-            }));
+            });
         }
 
         private static void HidDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
@@ -329,7 +329,7 @@ namespace HandheldCompanion.Managers
             }
 
             // UI thread
-            Dispatcher.CurrentDispatcher.Invoke(new Action(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 XInputController controller = new(_controller);
 
@@ -352,7 +352,7 @@ namespace HandheldCompanion.Managers
 
                 // raise event
                 ControllerPlugged?.Invoke(controller);
-            }));
+            });
         }
 
         private static void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)

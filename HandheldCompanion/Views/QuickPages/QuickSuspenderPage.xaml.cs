@@ -23,7 +23,7 @@ namespace HandheldCompanion.Views.QuickPages
             try
             {
                 // UI thread
-                Dispatcher.CurrentDispatcher.Invoke(() =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     var element = processEx.GetControl();
                     if (CurrentProcesses.Children.Contains(element))
@@ -40,7 +40,7 @@ namespace HandheldCompanion.Views.QuickPages
             try
             {
                 // UI thread
-                Dispatcher.CurrentDispatcher.Invoke(() =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     processEx.DrawControl();
                     var element = processEx.GetControl();
