@@ -116,7 +116,7 @@ namespace HandheldCompanion.Views.Windows
 
         private void QuickTools_SourceInitialized(object? sender, EventArgs e)
         {
-            this.HideMinimizeAndMaximizeButtons();
+            // this.HideMinimizeAndMaximizeButtons();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
