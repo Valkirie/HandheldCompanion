@@ -5,6 +5,7 @@ using HandheldCompanion.Managers.Desktop;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace HandheldCompanion.Views.QuickPages
 {
@@ -54,7 +55,8 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void HotkeysManager_CommandExecuted(string listener)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 switch (listener)
                 {
@@ -82,7 +84,8 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -160,7 +163,8 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void UpdateControls()
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 if (currentProfile is not null)
                 {
@@ -188,7 +192,8 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void PowerManager_LimitChanged(PowerType type, int limit)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 // do something
                 switch (type)
@@ -301,8 +306,8 @@ namespace HandheldCompanion.Views.QuickPages
             // update settings
             int value = (int)PowerModeSlider.Value;
 
-            // update UI
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 foreach (TextBlock tb in PowerModeGrid.Children)
                     tb.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");

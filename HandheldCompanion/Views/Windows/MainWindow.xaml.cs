@@ -22,6 +22,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using Application = System.Windows.Application;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
@@ -219,7 +220,8 @@ namespace HandheldCompanion.Views
 
         public void SwapWindowState()
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (WindowState)
                 {
@@ -433,7 +435,8 @@ namespace HandheldCompanion.Views
 
         private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
 
                 switch ((ServiceStartMode)mode)

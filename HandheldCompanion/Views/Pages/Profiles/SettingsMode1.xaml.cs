@@ -73,7 +73,8 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
         private void Rotate_Needle(float y)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 lvAngularGauge.Value = y;
             });

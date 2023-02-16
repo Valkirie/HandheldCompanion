@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 
 namespace HandheldCompanion.Views.Windows
 {
@@ -66,7 +67,8 @@ namespace HandheldCompanion.Views.Windows
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -207,7 +209,8 @@ namespace HandheldCompanion.Views.Windows
 
         public override void UpdateVisibility()
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 switch (Visibility)
                 {
@@ -270,7 +273,8 @@ namespace HandheldCompanion.Views.Windows
 
             if (!prevState.Equals(Inputs.ButtonState))
             {
-                Dispatcher.Invoke(() =>
+                // UI thread
+                Dispatcher.CurrentDispatcher.Invoke(() =>
                 {
                     GeometryModel3D model = null;
                     foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
@@ -299,7 +303,8 @@ namespace HandheldCompanion.Views.Windows
             // update model
             UpdateModelVisual3D();
 
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 float GradientFactor; // Used for multiple models
 
@@ -537,7 +542,8 @@ namespace HandheldCompanion.Views.Windows
 
         private void UpdateModelVisual3D()
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 Transform3DGroup Transform3DGroupModel = new Transform3DGroup();
 

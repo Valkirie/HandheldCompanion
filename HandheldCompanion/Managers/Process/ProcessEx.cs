@@ -83,6 +83,7 @@ namespace HandheldCompanion.Managers
                     return;
                 }
 
+                // UI thread
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
                     if (MainWindowHandle != IntPtr.Zero)
@@ -315,6 +316,7 @@ namespace HandheldCompanion.Managers
 
         private void ProcessResume_Click(object sender, RoutedEventArgs e)
         {
+            // UI thread
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 processResume.IsEnabled = false;
@@ -324,6 +326,7 @@ namespace HandheldCompanion.Managers
 
         private void ProcessSuspend_Click(object sender, RoutedEventArgs e)
         {
+            // UI thread
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 processSuspend.IsEnabled = false;

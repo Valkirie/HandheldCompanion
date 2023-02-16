@@ -28,7 +28,8 @@ namespace HandheldCompanion.Views.Pages
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {

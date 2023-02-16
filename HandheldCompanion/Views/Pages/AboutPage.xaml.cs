@@ -31,8 +31,8 @@ namespace HandheldCompanion.Views.Pages
             // Device visual
             Uri ImageSource = new Uri($"pack://application:,,,/Resources/{MainWindow.handheldDevice.ProductIllustration}.png");
 
-            // threaded call to update UI
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // Motherboard properties
                 LabelManufacturer.Text = MainWindow.handheldDevice.ManufacturerName;

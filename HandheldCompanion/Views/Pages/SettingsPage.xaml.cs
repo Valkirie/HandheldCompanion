@@ -68,7 +68,8 @@ namespace HandheldCompanion.Views.Pages
 
         private void SettingsManager_SettingValueChanged(string? name, object value)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -134,7 +135,8 @@ namespace HandheldCompanion.Views.Pages
 
         public void UpdateDevice(PnPDevice device = null)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 SensorInternal.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.Windows];
                 SensorExternal.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.SerialUSBIMU];
@@ -207,7 +209,8 @@ namespace HandheldCompanion.Views.Pages
 
         private void UpdateManager_Updated(UpdateStatus status, UpdateFile updateFile, object value)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (status)
                 {
@@ -567,7 +570,8 @@ namespace HandheldCompanion.Views.Pages
         #region serviceManager
         private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (status)
                 {

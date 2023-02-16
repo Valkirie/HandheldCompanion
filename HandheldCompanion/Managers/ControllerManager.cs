@@ -13,6 +13,7 @@ using System.Windows;
 using DeviceType = SharpDX.DirectInput.DeviceType;
 using ButtonState = ControllerCommon.Inputs.ButtonState;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using System.Windows.Threading;
 
 namespace HandheldCompanion.Managers
 {
@@ -101,7 +102,8 @@ namespace HandheldCompanion.Managers
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
         {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(new Action(() =>
             {
                 switch (name)
                 {
@@ -184,8 +186,8 @@ namespace HandheldCompanion.Managers
             int VendorId = details.attributes.VendorID;
             int ProductId = details.attributes.ProductID;
 
-            // use dispatcher because we're drawing UI elements when initializing the controller object
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(new Action(() =>
             {
                 // initialize controller vars
                 Joystick joystick = null;
@@ -326,8 +328,8 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            // use dispatcher because we're drawing UI elements when initializing the controller object
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(new Action(() =>
             {
                 XInputController controller = new(_controller);
 

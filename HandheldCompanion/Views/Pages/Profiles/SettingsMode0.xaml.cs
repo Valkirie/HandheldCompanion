@@ -119,7 +119,8 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
         private void Highlight_Thumb(float value)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 double dist_x = value / IMUGyrometer.sensorSpec.maxIn;
 

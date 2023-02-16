@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 using static HandheldCompanion.Managers.InputsHotkey;
 using static HandheldCompanion.Managers.InputsManager;
 
@@ -135,7 +136,8 @@ namespace HandheldCompanion.Managers
             if (hotkey is null)
                 return;
 
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(new Action(() =>
             {
                 switch (name)
                 {
@@ -193,7 +195,7 @@ namespace HandheldCompanion.Managers
 
         private static void TriggerUpdated(string listener, InputsChord inputs, ListenerType type)
         {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            Dispatcher.CurrentDispatcher.Invoke(new Action(() =>
             {
                 // we use @ as a special character to link two ore more listeners together
                 listener = listener.TrimEnd('@');
@@ -249,7 +251,8 @@ namespace HandheldCompanion.Managers
 
             foreach (Hotkey hotkey in hotkeys)
             {
-                Application.Current.Dispatcher.Invoke(new Action(() =>
+                // UI thread
+                Dispatcher.CurrentDispatcher.Invoke(new Action(() =>
                 {
                     hotkey.Highlight();
                 }));

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Windows.Navigation;
 using System.Xml.Linq;
 using Windows.System.Power;
+using System.Windows.Threading;
 using Page = System.Windows.Controls.Page;
 using PowerManager = ControllerCommon.Managers.PowerManager;
 using SystemPowerManager = Windows.System.Power.PowerManager;
@@ -60,7 +61,8 @@ namespace HandheldCompanion.Views.Windows
 
         private void PowerManager_PowerStatusChanged(PowerStatus status)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 int BatteryLifePercent = (int)Math.Truncate(status.BatteryLifePercent * 100.0f);
                 BatteryIndicatorPercentage.Text = $"{BatteryLifePercent}%";
@@ -125,7 +127,8 @@ namespace HandheldCompanion.Views.Windows
 
         public void UpdateVisibility()
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 switch (Visibility)
                 {

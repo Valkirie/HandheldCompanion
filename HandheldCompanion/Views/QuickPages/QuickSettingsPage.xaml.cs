@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace HandheldCompanion.Views.QuickPages
 {
@@ -75,7 +76,8 @@ namespace HandheldCompanion.Views.QuickPages
         {
             if (Monitor.TryEnter(brightnessLock))
             {
-                Dispatcher.Invoke(() =>
+                // UI thread
+                Dispatcher.CurrentDispatcher.Invoke(() =>
                 {
                     SliderBrightness.Value = brightness;
                 });
@@ -88,7 +90,8 @@ namespace HandheldCompanion.Views.QuickPages
         {
             if (Monitor.TryEnter(volumeLock))
             {
-                Dispatcher.Invoke(() =>
+                // UI thread
+                Dispatcher.CurrentDispatcher.Invoke(() =>
                 {
                     // todo: update volume icon on update
                     SliderVolume.Value = volume;

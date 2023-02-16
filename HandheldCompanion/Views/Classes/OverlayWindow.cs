@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace HandheldCompanion.Views.Classes
 {
@@ -126,7 +127,8 @@ namespace HandheldCompanion.Views.Classes
 
         public virtual void UpdateVisibility()
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 switch (Visibility)
                 {
