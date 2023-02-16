@@ -51,10 +51,9 @@ namespace HandheldCompanion.Views.Windows
             _pages.Add("QuickSuspenderPage", suspenderPage);
 
             // update Position and Size
-            Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("QuickToolsHeight"));
-
             Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("QuickToolsLeft"));
             Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("QuickToolsTop"));
+            Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("QuickToolsHeight"));
 
             SourceInitialized += QuickTools_SourceInitialized;
         }
@@ -259,7 +258,7 @@ namespace HandheldCompanion.Views.Windows
                 case WindowState.Maximized:
                     SettingsManager.SetProperty("QuickToolsLeft", Left);
                     SettingsManager.SetProperty("QuickToolsTop", Top);
-                    SettingsManager.SetProperty("QuickToolsHeight", ActualHeight);
+                    SettingsManager.SetProperty("QuickToolsHeight", Height);
                     break;
             }
 
