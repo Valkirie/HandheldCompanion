@@ -96,7 +96,7 @@ namespace HandheldCompanion.Controllers
                 return;
             */
 
-            Inputs.ButtonState = InjectedButtons as ButtonState;
+            Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
 
             Inputs.ButtonState[ButtonFlags.B1] = input.State.ButtonState[NeptuneControllerButton.BtnA];
             Inputs.ButtonState[ButtonFlags.B2] = input.State.ButtonState[NeptuneControllerButton.BtnB];
@@ -184,6 +184,8 @@ namespace HandheldCompanion.Controllers
 
                 // you don't want to combine touch + click
                 Inputs.ButtonState[ButtonFlags.LPadTouch] = false;
+
+                Console.WriteLine($"X:{Inputs.AxisState[AxisFlags.LeftPadX]},Y:{Inputs.AxisState[AxisFlags.LeftPadY]}");
             }
 
             Inputs.ButtonState[ButtonFlags.RPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch];
@@ -199,7 +201,7 @@ namespace HandheldCompanion.Controllers
             }
 
             Inputs.ButtonState[ButtonFlags.RPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnRPadPress];
-            if (Inputs.ButtonState[ButtonFlags.LPadClick])
+            if (Inputs.ButtonState[ButtonFlags.RPadClick])
             {
                 // you don't want to combine touch + click
                 Inputs.ButtonState[ButtonFlags.LPadTouch] = false;
