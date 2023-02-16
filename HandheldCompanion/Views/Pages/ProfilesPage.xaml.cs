@@ -172,7 +172,7 @@ namespace HandheldCompanion.Views.Pages
                 cB_Profiles.SelectedItem = profile;
             });
 
-            switch(source)
+            switch (source)
             {
                 case ProfileUpdateSource.Background:
                 case ProfileUpdateSource.Creation:

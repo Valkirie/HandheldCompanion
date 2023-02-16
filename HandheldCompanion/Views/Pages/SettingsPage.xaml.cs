@@ -1,7 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Views.Windows;
 using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;

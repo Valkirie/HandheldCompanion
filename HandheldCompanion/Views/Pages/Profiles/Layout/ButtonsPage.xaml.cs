@@ -1,22 +1,13 @@
-using ControllerCommon;
 using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
-using ControllerService.Sensors;
-using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceProcess;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Media;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages.Profiles.Controller
@@ -151,7 +142,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (ButtonMapping mapping in Mapping.Values)
                 mapping.Reset();
 
-            foreach(var pair in buttonMapping)
+            foreach (var pair in buttonMapping)
             {
                 ButtonFlags button = pair.Key;
                 IActions actions = pair.Value;

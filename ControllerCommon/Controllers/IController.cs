@@ -1,5 +1,4 @@
-﻿using ControllerCommon.Actions;
-using ControllerCommon.Inputs;
+﻿using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ModernWpf.Controls;
@@ -216,7 +215,7 @@ namespace ControllerCommon.Controllers
             if (State.IsEmpty())
                 return;
 
-            foreach(var button in State.Buttons)
+            foreach (var button in State.Buttons)
                 InjectedButtons[button] = IsKeyDown;
 
             LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", State, IsKeyDown, IsKeyUp, ToString());
@@ -320,7 +319,7 @@ namespace ControllerCommon.Controllers
 
         public virtual string GetGlyph(AxisFlags axis)
         {
-            switch(axis)
+            switch (axis)
             {
                 case AxisFlags.LeftThumbX:
                     return "\u21C4";

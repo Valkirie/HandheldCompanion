@@ -10,7 +10,6 @@ using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages

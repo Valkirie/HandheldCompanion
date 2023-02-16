@@ -1,9 +1,4 @@
-﻿using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
-using System.Collections.Generic;
-using WindowsInput.Events;
-
-namespace ControllerCommon.Devices
+﻿namespace ControllerCommon.Devices
 {
     public class GPDWin2 : IDevice
     {

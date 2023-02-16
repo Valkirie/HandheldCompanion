@@ -2,16 +2,12 @@
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
-using ModernWpf.Controls;
-using neptune_hidapi.net;
 using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Controllers

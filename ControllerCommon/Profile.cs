@@ -1,4 +1,3 @@
-using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
 using Newtonsoft.Json;
@@ -172,7 +171,7 @@ namespace ControllerCommon
         public string GetFileName()
         {
             string name = Name;
-            switch(Default)
+            switch (Default)
             {
                 case false:
                     name = System.IO.Path.GetFileNameWithoutExtension(Executable);

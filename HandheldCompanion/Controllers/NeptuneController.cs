@@ -4,10 +4,8 @@ using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers;
 using neptune_hidapi.net;
-using PrecisionTiming;
 using SharpDX.XInput;
 using System;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -180,7 +178,7 @@ namespace HandheldCompanion.Controllers
                 if (Inputs.AxisState[AxisFlags.LeftPadY] >= 21844)
                     Inputs.ButtonState[ButtonFlags.LPadClickUp] = true;
                 else if (Inputs.AxisState[AxisFlags.LeftPadY] <= -21844)
-                        Inputs.ButtonState[ButtonFlags.LPadClickDown] = true;
+                    Inputs.ButtonState[ButtonFlags.LPadClickDown] = true;
 
                 // you don't want to combine touch + click
                 Inputs.ButtonState[ButtonFlags.LPadTouch] = false;

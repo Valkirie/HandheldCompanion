@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Managers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace HandheldCompanion.Views.QuickPages
 {

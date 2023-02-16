@@ -1,27 +1,14 @@
-using ControllerCommon;
 using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
-using ControllerService.Sensors;
 using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Pages.Profiles.Controller;
-using HandheldCompanion.Views.Windows;
-using Microsoft.Win32.TaskScheduler;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.ServiceProcess;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Navigation;
-using Windows.Networking.NetworkOperators;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 

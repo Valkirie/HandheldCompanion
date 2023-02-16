@@ -25,7 +25,7 @@ namespace HandheldCompanion.Simulators
 
         public static void MouseDown(MouseActionsType type)
         {
-            switch(type)
+            switch (type)
             {
                 case MouseActionsType.LeftButton:
                     InputSimulator.Mouse.LeftButtonDown();

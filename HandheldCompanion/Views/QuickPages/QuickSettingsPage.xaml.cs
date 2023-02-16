@@ -1,14 +1,8 @@
-﻿using ControllerCommon.Managers;
-using ControllerCommon.Utils;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Views.Windows;
-using NAudio.CoreAudioApi;
-using System;
+﻿using HandheldCompanion.Managers;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace HandheldCompanion.Views.QuickPages
 {

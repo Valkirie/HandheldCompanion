@@ -1,11 +1,7 @@
 ﻿using ControllerCommon;
-using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
-using ModernWpf.Controls;
 using SharpDX.DirectInput;
-using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Controllers

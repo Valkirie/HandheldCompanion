@@ -1,5 +1,4 @@
 using ControllerCommon;
-using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerService.Sensors;
 using HandheldCompanion.Controls;

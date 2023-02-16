@@ -8,13 +8,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Navigation;
-using System.Xml.Linq;
 using Windows.System.Power;
-using System.Windows.Threading;
+using Application = System.Windows.Application;
 using Page = System.Windows.Controls.Page;
 using PowerManager = ControllerCommon.Managers.PowerManager;
 using SystemPowerManager = Windows.System.Power.PowerManager;
-using Application = System.Windows.Application;
 
 namespace HandheldCompanion.Views.Windows
 {

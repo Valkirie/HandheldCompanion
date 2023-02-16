@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using static ControllerCommon.Utils.ProcessUtils;
 
 namespace HandheldCompanion.Managers
@@ -346,7 +345,7 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateOrCreateProfile(Profile profile, ProfileUpdateSource source = ProfileUpdateSource.Background)
         {
-            switch(source)
+            switch (source)
             {
                 // update current profile on creation
                 case ProfileUpdateSource.Creation:

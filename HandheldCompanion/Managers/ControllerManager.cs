@@ -4,6 +4,7 @@ using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Views;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
@@ -11,9 +12,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using DeviceType = SharpDX.DirectInput.DeviceType;
-using ButtonState = ControllerCommon.Inputs.ButtonState;
-using Nefarius.Utilities.DeviceManagement.PnP;
-using System.Windows.Threading;
 
 namespace HandheldCompanion.Managers
 {

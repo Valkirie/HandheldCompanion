@@ -1,7 +1,6 @@
 ﻿using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
 using System;
-using System.Diagnostics;
 
 namespace HandheldCompanion.Actions
 {

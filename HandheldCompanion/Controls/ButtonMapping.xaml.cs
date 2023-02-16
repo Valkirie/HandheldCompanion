@@ -1,30 +1,14 @@
-﻿using ControllerCommon;
-using ControllerCommon.Actions;
+﻿using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
-using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
-using HandheldCompanion.Views.Pages;
-using LiveCharts.Wpf;
 using ModernWpf.Controls;
-using SharpDX.DirectInput;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using static HandheldCompanion.Simulators.MouseSimulator;
 
 namespace HandheldCompanion.Controls
@@ -53,7 +37,7 @@ namespace HandheldCompanion.Controls
         {
             this.Button = button;
 
-            switch(button)
+            switch (button)
             {
                 default:
                     this.Icon.Glyph = button.ToString();
@@ -271,7 +255,7 @@ namespace HandheldCompanion.Controls
             if (this.Actions is null)
                 return;
 
-            switch(this.Actions.ActionType)
+            switch (this.Actions.ActionType)
             {
                 case ActionType.Button:
                     ((ButtonActions)this.Actions).Turbo = Toggle_Turbo.IsOn;

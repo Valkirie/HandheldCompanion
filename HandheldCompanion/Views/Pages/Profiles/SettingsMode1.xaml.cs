@@ -44,7 +44,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
             lvLineSeriesValues.Values = GeneratePoints(ProfilesPage.currentProfile.SteeringPower);
         }
-        
+
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
         }

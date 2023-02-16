@@ -12,7 +12,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
-using System.Windows.Threading;
 using static HandheldCompanion.Managers.InputsHotkey;
 using static HandheldCompanion.Managers.InputsManager;
 
@@ -180,7 +179,7 @@ namespace HandheldCompanion.Managers
                     }
                     break;
                 case true:
-                        hotkey.Unpinned();
+                    hotkey.Unpinned();
                     break;
             }
 

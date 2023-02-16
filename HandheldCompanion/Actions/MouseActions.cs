@@ -3,7 +3,6 @@ using ControllerCommon.Inputs;
 using HandheldCompanion.Simulators;
 using PrecisionTiming;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using static HandheldCompanion.Simulators.MouseSimulator;
 
