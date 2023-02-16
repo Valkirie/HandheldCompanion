@@ -221,7 +221,7 @@ namespace HandheldCompanion.Views
         public void SwapWindowState()
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (WindowState)
                 {
